@@ -1,0 +1,35 @@
+#ifndef __Hexa_idl__
+#define __Hexa_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+#include "Vertex.idl"
+#include "Edge.idl"
+#include "Quad.idl"
+
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+    interface Hexa : Element
+    {
+        Quad getQuad( in long n ) raises(SALOME::SALOME_Exception);
+        Edge getEdge( in long n ) raises(SALOME::SALOME_Exception);
+        Vertex getVertex( in long n ) raises(SALOME::SALOME_Exception);
+
+	void setScalar( in double val ) //CS_NOT_SPEC
+		raises (SALOME::SALOME_Exception);
+    };
+
+    typedef sequence<Hexa>  Hexas;
+};
+#endif
+

@@ -1,0 +1,41 @@
+#ifndef __CrossElements_idl__
+#define __CrossElements_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+#include "Vertex.idl"
+#include "Edge.idl"
+#include "Quad.idl"
+#include "Hexa.idl"
+#include "Cylinder.idl"
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+
+//   interface CrossElements : Elements
+  interface CrossElements: Element
+  {
+      Hexa getHexaIJK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Quad getQuadIJ(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Quad getQuadJK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Quad getQuadIK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Edge getEdgeI(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Edge getEdgeJ(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Edge getEdgeK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+      Vertex getVertexIJK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
+
+      // Tutaux en T (like castles in scotland)
+      long crossCylinders (in Cylinder cyl1, in Cylinder cyl2) raises (SALOME::SALOME_Exception);
+
+      long saveVtk( in string fname );//CS_NOT_SPEC
+  };
+
+};
+
+#endif

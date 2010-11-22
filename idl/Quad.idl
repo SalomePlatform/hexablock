@@ -1,0 +1,51 @@
+#ifndef __Quad_idl__
+#define __Quad_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "GEOM_Gen.idl"
+
+#include "Element.idl"
+#include "Vertex.idl"
+#include "Edge.idl"
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+  interface Quad : Element
+  {
+      Edge getEdge( in long n )
+          raises (SALOME::SALOME_Exception);
+
+      Vertex getVertex( in long n )
+          raises (SALOME::SALOME_Exception);
+
+//       void addAssociation( in GEOM::GEOM_Object geom_object_2D )
+//           raises (SALOME::SALOME_Exception);
+// 
+//       GEOM_Objects getAssociations()
+//           raises (SALOME::SALOME_Exception);
+
+      long addAssociation( in GEOM::GEOM_Object geom_object_2D ) //CS_NOT_SPEC
+          raises (SALOME::SALOME_Exception);
+
+      GEOM::ListOfGO getAssociations() //CS_NOT_SPEC CS_WARNING: not working when reloading a document
+          raises (SALOME::SALOME_Exception);
+// 
+//       void removeAssociation()
+//           raises (SALOME::SALOME_Exception);
+
+      void setScalar( in double val ) //CS_NOT_SPEC
+	raises (SALOME::SALOME_Exception);
+
+  };
+};
+
+#endif

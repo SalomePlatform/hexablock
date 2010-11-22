@@ -1,0 +1,25 @@
+#ifndef __Element_idl__
+#define __Element_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+  interface Element : SALOME::GenericObj
+  {
+      void dump() raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
+      void printName() raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
+  };
+
+
+
+};
+
+#endif

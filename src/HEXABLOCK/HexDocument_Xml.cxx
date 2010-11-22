@@ -1,0 +1,404 @@
+
+// C++ : Classe Document : methodes internes
+
+#include "HexDocument.hxx"
+
+#include "HexEltBase.hxx"
+#include "HexVertex.hxx"
+#include "HexEdge.hxx"
+#include "HexQuad.hxx"
+#include "HexHexa.hxx"
+
+#include "HexElements.hxx"
+
+#include "HexVector.hxx"
+#include "HexCylinder.hxx"
+#include "HexPipe.hxx"
+#include "HexMatrix.hxx"
+#include "HexCloner.hxx"
+#include "HexPropagation.hxx"
+#include "HexLaw.hxx"
+
+#include "HexXmlWriter.hxx"
+#include "HexXmlTree.hxx"
+
+BEGIN_NAMESPACE_HEXA
+
+// ======================================================== get_coords
+int get_coords (const string& chaine, double& x, double& y, double& z)
+{
+   // int nv = sscanf (chaine.c_str (), "%lg %lg %lg", &x, &y, &z);
+   cpchar buffer = chaine.c_str ();
+   int nv = sscanf (buffer, "%lg %lg %lg", &x, &y, &z);
+   if (nv!=3) return HERR;
+   return HOK;
+}
+// ======================================================== get_values
+int get_values (const string& chaine, int size, int table[])
+{
+   int lg  = chaine.size();
+   int nv  = 0;
+   int val = 0;
+   bool encours = false;
+
+   for (int nc=0 ; nc<lg ; nc++)
+       {
+       char car  = chaine[nc];
+       if (car >= '0' && car <= '9')
+          {
+          val = 10* val + car - '0';
+          encours = true;
+          }
+       else if (encours)
+          {
+          table [nv] = val;
+          encours = false;
+          val     = 0;
+          nv++;
+          if (nv >= size) 
+             return nv;
+          }
+       }
+
+   if (encours)
+      table [nv] = val;
+   return nv;
+}
+// ======================================================== get_int
+int get_int (const string& chaine)
+{
+   int val [2] = {0, 0};
+   get_values (chaine, 1, val);
+   return val[0];
+}
+// ======================================================== loadXml
+int Document::loadXml ()
+{
+   XmlTree xml("");
+   xml.parseFile (doc_name + ".xml");
+   xml.dump ();
+
+   vector <Vertex*> t_vertex;
+   vector <Edge*>   t_edge;
+   vector <Quad*>   t_quad;
+   vector <Hexa*>   t_hexa;
+   int table [10];
+
+   XmlTree* rubrique = xml.findChild ("ListVertices");
+   int nbrelts       = rubrique->getNbrChildren ();
+   t_vertex.resize (nbrelts);
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       double px, py, pz;
+       const  string& nom    = node->findValue ("id");
+       const  string& coords = node->findValue ("coord");
+       get_coords (coords, px, py, pz);
+
+       int nver = get_int (nom);
+       t_vertex [nver] = addVertex (px, py, pz);
+       Display  (nver);
+       }
+
+
+   rubrique = xml.findChild ("ListEdges");
+   nbrelts  = rubrique->getNbrChildren ();
+   t_edge.resize (nbrelts);
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       const  string& nom      = node->findValue ("id");
+       const  string& vertices = node->findValue ("vertices");
+       get_values (vertices, V_TWO, table);
+
+       int ned = get_int (nom);
+       t_edge [ned] = new Edge (t_vertex [table[0]], t_vertex [table[1]]);
+       Display  (ned);
+       }
+
+   rubrique = xml.findChild ("ListQuads");
+   nbrelts  = rubrique->getNbrChildren ();
+   t_quad.resize (nbrelts);
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       const string& nom   = node->findValue ("id");
+       const string& edges = node->findValue ("edges");
+       get_values (edges, QUAD4, table);
+
+       int nquad = get_int (nom);
+       t_quad [nquad] = new Quad (t_edge [table[0]], t_edge [table[1]],
+                                  t_edge [table[2]], t_edge [table[3]]);
+       Display  (nquad);
+       }
+
+   rubrique = xml.findChild ("ListHexas");
+   nbrelts  = rubrique->getNbrChildren ();
+   t_hexa.resize (nbrelts);
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       const  string& nom   = node->findValue ("id");
+       const  string& quads = node->findValue ("quads");
+       get_values (quads, HQ_MAXI, table);
+
+       int nhexa      = get_int (nom);
+       t_hexa [nhexa] = new Hexa (t_quad [table[0]], t_quad [table[1]],
+                                  t_quad [table[2]], t_quad [table[3]],
+                                  t_quad [table[4]], t_quad [table[5]]);
+       Display  (nhexa);
+       }
+
+
+   return HOK;
+}
+// ======================================================== renumeroter
+void Document::renumeroter ()
+{
+   doc_modified = true;
+                                       // -- 1) Raz numerotation precedente
+   markAll (NO_COUNTED);
+}
+// ======================================================== saveFile
+int Document::saveFile ()
+{
+                                       // -- 1) Raz numerotation precedente
+   renumeroter ();
+   if (maj_propagation)
+       majPropagation ();
+
+   doc_modified = false;
+   XmlWriter xml;
+   xml.openXml  (doc_name);
+   xml.openMark ("Document");
+   xml.addAttribute ("name", doc_name);
+   xml.endMark ();
+
+   cpchar balise [] = {"ListXXX", 
+          "ListVertices", "ListEdges", "ListQuads", "ListHexas", "ListXXXX" };
+
+   for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
+       {
+       xml.addMark (balise [type]);
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           if (elt !=NULL && elt->isHere())
+              elt->saveXml (xml);
+           }
+       xml.closeMark (true);
+       }
+
+   xml.addMark ("ListDicretizationLaws");
+   for (int nro=0 ; nro<nbr_laws ; nro++)
+       doc_laws [nro]->saveXml (xml);
+   xml.closeMark (true);
+
+   xml.addMark ("ListPropagations");
+   for (int nro=0 ; nro<nbr_propagations ; nro++)
+       doc_propagation[nro]->saveXml (xml);
+   xml.closeMark ();
+
+   xml.closeMark ();
+   xml.closeXml  ();
+   return  HOK;
+}
+// ======================================================== markAll
+void Document::markAll (int marque, int type)
+{
+   int debut = EL_VERTEX;
+   int fin   = EL_HEXA;
+   if (type>=0 && type<EL_MAXI)
+      debut = fin = type;
+
+   for (int type=debut ; type <= fin ; type++)
+       {
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           elt->setMark (marque);
+       }
+}
+// ====================================================== saveVtk
+int Document::saveVtk (cpchar nomfic)
+{
+                                           // -- 1) Raz numerotation precedente
+   markAll (NO_COUNTED, EL_VERTEX);
+
+   int nbnodes = 0;
+   int nbcells = 0;
+                                           // -- 2) Comptage
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          {
+          nbcells ++;
+          nbnodes += cell->countNodes ();
+          }
+       }
+
+   pfile    vtk = fopen (nomfic, "w");
+   fprintf (vtk, "# vtk DataFile Version 3.1\n");
+   fprintf (vtk, "%s \n", nomfic);
+   fprintf (vtk, "ASCII\n");
+   fprintf (vtk, "DATASET UNSTRUCTURED_GRID\n");
+   fprintf (vtk, "POINTS %d float\n", nbnodes);
+
+                                           // -- 2) Les noeuds
+   int nronode = 0;
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->printNodes (vtk, nronode);
+       }
+                                           // -- 2) Les hexas
+
+   fprintf (vtk, "CELLS %d %d\n", nbcells, nbcells*(HV_MAXI+1));
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->printHexa (vtk);
+       }
+
+   fprintf (vtk, "CELL_TYPES %d\n", nbcells);
+   for (int nro=0 ; nro<nbcells ; nro++)
+       fprintf (vtk, "%d\n", HE_MAXI);
+
+   fprintf (vtk, "POINT_DATA %d \n", nbnodes);
+   fprintf (vtk, "SCALARS A float\n");
+   fprintf (vtk, "LOOKUP_TABLE default\n");
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->colorNodes (vtk);
+       }
+
+   fclose (vtk);
+   return HOK;
+}
+// ====================================================== purge
+void Document::purge ()
+{
+   purge_elements = true;
+                       // ------------------- Raz marques
+   markAll (NO_USED);
+
+                       // ------------------- Marquage elements utilises
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->markElements (IS_USED);
+       }
+                       // ------------------- Elimination elements inutilises
+   for (int type=EL_VERTEX ; type <= EL_QUAD ; type++)
+       {
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           if (elt->getMark  () == NO_USED)
+               elt->suppress ();
+           }
+       }
+                       // ------------------- Sortie elements inutilises
+
+   EltBase* trash = doc_last_elt [EL_REMOVED];
+
+   for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
+       {
+       doc_nbr_elt [type] = 0;
+       EltBase* last = doc_first_elt [type];
+       for (EltBase* elt = last->next (); elt!=NULL; elt = last->next())
+           {
+           if (elt->isHere  ())
+               {
+               doc_nbr_elt  [type] ++;
+               last = elt;
+               }
+	   else
+               {
+               last  -> setNext (elt -> next());
+               trash -> setNext (elt);
+               trash = elt;
+               trash -> setNext (NULL);
+               }
+           }
+       doc_last_elt [type] = last;
+       }
+
+   doc_last_elt [EL_REMOVED] = trash;
+   update ();
+}
+// ======================================================== majReferences
+void Document::majReferences ()
+{
+   maj_connection = false;
+
+   for (int type=EL_VERTEX ; type <= EL_QUAD ; type++)
+       {
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           elt->razReferences ();
+           }
+       }
+
+   for (int type=EL_EDGE ; type <= EL_HEXA ; type++)
+       {
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           if (elt->isHere ())
+               elt->majReferences ();
+           }
+       }
+}
+// ======================================================== dump
+void Document::dump ()
+{
+   cpchar nom_type [] = { "Elments non classes", 
+          "Sommets", "Aretes", "Faces", "Hexaedres", "Elements detruits" };
+
+   for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
+       {
+       printf ("\n");
+       printf (" ++++ Liste des %s\n", nom_type[type]);
+       printf ("\n");
+
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           elt->dump ();
+           }
+       }
+
+   printf (" ++++ End od dump\n");
+}
+// ======================================================== putError
+void Document::putError (cpchar mess, cpchar info1, cpchar info2)
+{
+     nbr_errors ++;
+     printf (" ********************************************************** \n");
+     printf (" ****  HexaBlocks Error nro %d :\n", nbr_errors);
+     printf (" **** ");
+     printf (mess, info1, info2);
+     printf ("\n");
+     printf (" **** \n");
+     printf (" ********************************************************** \n");
+}
+
+END_NAMESPACE_HEXA

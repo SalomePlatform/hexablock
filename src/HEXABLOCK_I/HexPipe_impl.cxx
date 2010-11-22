@@ -1,0 +1,75 @@
+using namespace std;
+#include "HEXABLOCK.hxx"
+#include "utilities.h"
+
+#include <string>
+
+#include "hexa_base.hxx"
+#include "HexVertex_impl.hxx"
+#include "HexVector_impl.hxx"
+#include "HexPipe_impl.hxx"
+
+Pipe_impl::Pipe_impl( HEXA_NS::Pipe *ptrCpp ):_pipe_cpp(ptrCpp)
+{
+}
+
+HEXA_NS::Pipe* Pipe_impl::GetImpl() throw (SALOME::SALOME_Exception)
+{
+  return _pipe_cpp;
+}
+
+Vertex_ptr Pipe_impl::getBase() throw (SALOME::SALOME_Exception)
+{
+  Vertex_ptr result = Vertex::_nil();
+
+  HEXA_NS::Vertex* v = _pipe_cpp->getBase();
+  if ( v!= NULL ){  
+    Vertex_impl* servantCorba = new Vertex_impl(v);
+    result = servantCorba->_this();
+  }
+  return result;
+}
+
+Vector_ptr Pipe_impl::getDirection() throw (SALOME::SALOME_Exception)
+{
+  Vector_ptr result = Vector::_nil();
+
+  HEXA_NS::Vector* v = _pipe_cpp->getDirection();
+
+  if ( v!= NULL ){  
+    Vector_impl* servantCorba = new Vector_impl(v);
+    result = servantCorba->_this();
+  }
+  return result;
+}
+
+::CORBA::Double Pipe_impl::getInternal_radius() throw (SALOME::SALOME_Exception)
+{
+//   ::CORBA::Double d = _pipe_cpp->getInternal_radius(); CS_TODO
+  ::CORBA::Double d = _pipe_cpp->getInternalRadius();
+  return d;
+}
+
+::CORBA::Double Pipe_impl::getRadius() throw (SALOME::SALOME_Exception)
+{
+  ::CORBA::Double d = _pipe_cpp->getRadius();
+  return d;
+}
+
+::CORBA::Double Pipe_impl::getHeight() throw (SALOME::SALOME_Exception)
+{
+  ::CORBA::Double d = _pipe_cpp->getHeight();
+  return d;
+}
+
+
+void Pipe_impl::dump() throw (SALOME::SALOME_Exception)
+{
+  _pipe_cpp->dump();
+}
+
+
+void Pipe_impl::printName() throw (SALOME::SALOME_Exception)
+{
+  _pipe_cpp->printName();
+}

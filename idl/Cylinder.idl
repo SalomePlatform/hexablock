@@ -1,0 +1,33 @@
+#ifndef __Cylinder_idl__
+#define __Cylinder_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+#include "Vertex.idl"
+#include "Vector.idl"
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+    interface Cylinder : Element
+    {
+        Vertex getBase() raises (SALOME::SALOME_Exception);
+        Vector getDirection() raises (SALOME::SALOME_Exception);
+        double getRadius() raises (SALOME::SALOME_Exception);
+        double getHeight() raises (SALOME::SALOME_Exception);
+
+//         long saveVtk( in string fname );//CS_NOT_SPEC
+    };
+};
+
+#endif
+

@@ -1,0 +1,27 @@
+#ifndef __Vector_idl__
+#define __Vector_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+  interface Vector : Element
+  {
+    double getDX() raises (SALOME::SALOME_Exception);
+    double getDY() raises (SALOME::SALOME_Exception);
+    double getDZ() raises (SALOME::SALOME_Exception);
+  };
+};
+
+#endif

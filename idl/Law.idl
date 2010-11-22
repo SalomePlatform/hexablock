@@ -1,0 +1,33 @@
+#ifndef __Law_idl__
+#define __Law_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Vertex.idl"
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+    enum KindLaw { UNIFORM, ARITHMETIC, GEOMETRIC };
+
+    interface Law : SALOME::GenericObj
+    {
+        void setName( in string name ) raises (SALOME::SALOME_Exception);
+        string getName() raises (SALOME::SALOME_Exception);
+
+        void setNodes( in long n ) raises (SALOME::SALOME_Exception);
+        long getNodes() raises (SALOME::SALOME_Exception);
+
+        void setKind( in KindLaw k ) raises (SALOME::SALOME_Exception);
+        KindLaw getKind() raises (SALOME::SALOME_Exception);
+
+        void setCoefficient( in double c ) raises (SALOME::SALOME_Exception);
+        double getCoefficient() raises (SALOME::SALOME_Exception);
+    };
+};
+
+#endif

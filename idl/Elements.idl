@@ -1,0 +1,69 @@
+#ifndef __Elements_idl__
+#define __Elements_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+#include "Vertex.idl"
+#include "Edge.idl"
+#include "Quad.idl"
+#include "Hexa.idl"
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+
+//   enum EnumCoord { dir_x, dir_y, dir_z, DIM3 };
+  enum EnumCoord { DIR_X, DIR_Y, DIR_Z, DIM3 };
+
+  interface Elements : Element
+  {
+      long countVertex() raises (SALOME::SALOME_Exception);
+      long countEdge() raises (SALOME::SALOME_Exception);
+      long countQuad() raises (SALOME::SALOME_Exception);
+      long countHexa() raises (SALOME::SALOME_Exception);
+
+      Vertex getVertex( in long n ) raises (SALOME::SALOME_Exception);
+      Edge getEdge( in long n ) raises (SALOME::SALOME_Exception);
+      Quad getQuad( in long n ) raises (SALOME::SALOME_Exception);
+      Hexa getHexa( in long n ) raises (SALOME::SALOME_Exception);
+
+      long findVertex( in Vertex p ) raises (SALOME::SALOME_Exception);
+
+      Vertex  getVertexIJK( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+
+      Edge getEdgeI( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+      Edge getEdgeJ( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+      Edge getEdgeK( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+
+      Quad getQuadIJ( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+      Quad getQuadIK( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+      Quad getQuadJK( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+
+      Hexa getHexaIJK( in long x, in long y, in long  z)
+        raises (SALOME::SALOME_Exception);
+
+
+//       Quad  getQuad1( in EnumCoord dir, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception); //CS_NOT_SPEC
+// 
+//       Edge  getEdge1( in EnumCoord dir, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception); //CS_NOT_SPEC
+
+      long saveVtk( in string fname );//CS_NOT_SPEC
+
+  };
+
+
+};
+
+#endif

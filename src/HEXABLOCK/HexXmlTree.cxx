@@ -1,0 +1,355 @@
+
+// C++ : ParserXml
+
+#include "HexXmlTree.hxx"
+
+BEGIN_NAMESPACE_HEXA
+
+enum { HEND_FILE = -2, HEND_LINE = -1, CRLF = 13 };
+
+// ====================================================== Constructeur 
+XmlTree::XmlTree (const string& nom, XmlTree* dad)
+{
+    item_name     = nom;
+    item_vide     = "";
+    xml_parent    = dad;
+    nbr_attributs = 0;
+    nbr_items     = 0;
+
+   fic_buffer  = "";
+   len_buffer  = 0;
+   fic_xml     = NULL;
+   nro_ligne   = 0;
+   fic_pos     = 1988;
+}
+// ====================================================== Destructeur
+XmlTree::~XmlTree ()
+{
+}
+// ====================================================== findChild
+XmlTree* XmlTree::findChild (const string& nom)
+{
+   for (int nro = 0 ; nro<nbr_items ; nro++)
+       {
+       if (nom == tab_items [nro]->item_name)
+           return tab_items [nro];
+       }
+   return NULL;
+}
+// ====================================================== findAttribute
+int XmlTree::findAttribute (const string& nom)
+{
+   for (int nro = 0 ; nro<nbr_attributs ; nro++)
+       {
+       if (nom == tab_attributs [nro])
+          return nro;
+       }
+   return NOTHING;
+}
+// ====================================================== findValue
+const string& XmlTree::findValue (const string& nom)
+{
+   for (int nro = 0 ; nro<nbr_attributs ; nro++)
+       {
+       if (nom == tab_attributs [nro])
+          return  tab_values    [nro];
+       }
+   return item_vide;
+}
+// ====================================================== parseFile
+int XmlTree::parseFile (const string& ficnom)
+{
+   fic_buffer  = "";
+   len_buffer  = 0;
+   nro_ligne   = 0;
+   fic_pos     = 1988;
+
+   fic_xml = fopen (ficnom.c_str(), "r");
+   if (fic_xml==NULL)
+      return HERR;
+
+   enum EnumEtat { M_PREMS, M_BALISE_OUVERTE, M_NEUTRE };
+   EnumEtat etat =  M_PREMS;
+
+   XmlTree* node = this;
+   EnumItem item_lu;
+   string   nom, valeur, foo;
+   while ((item_lu=readItem (nom)) != M_NONE)
+      {
+      switch (item_lu) 
+         {
+         case M_BEGIN :
+              item_lu = getItem (nom, M_IDENT);
+              if (etat==M_PREMS) 
+                 setName (nom);
+              else
+                 node = node -> addChild  (nom);
+              etat = M_BALISE_OUVERTE;
+              break;
+
+         case M_END   :
+              if (etat != M_BALISE_OUVERTE) 
+                 putError (" balise ouverte");
+              etat = M_NEUTRE;
+              break;
+
+         case M_BEGIN_CLOSE :
+              if (etat == M_BALISE_OUVERTE) 
+                 putError (" balise ouverte");
+              getItem (nom, M_IDENT);
+              getItem (foo, M_END);
+              node = node -> getParent ();
+              break;
+
+         case M_CLOSE :
+              if (etat != M_BALISE_OUVERTE) 
+                 putError (" balise deja fermee");
+              node = node -> getParent ();
+              etat = M_NEUTRE;
+              break;
+
+         case M_IDENT :
+              getItem (valeur, M_EQUALS);
+              getItem (valeur, M_STRING);
+              node -> addAttribut (nom, valeur);
+              break;
+
+         case M_COMMENT : goTo ("-->");
+              break;
+
+         case M_PROLOG  : goTo ("?>");
+              break;
+
+         default :
+         case M_EQUALS :
+         case M_STRING :
+         case M_END_COMMENT :
+         case M_END_PROLOG :
+              putError ("Item incorrect");
+         }
+      }
+   return HOK;
+}
+// ====================================================== getItem
+EnumItem XmlTree::getItem (string& value, EnumItem waited)
+{
+   EnumItem item = readItem (value);
+
+   if (item == waited) 
+      return item;
+   putError ("Erreur de sequence");
+   return item;
+}
+// ====================================================== readItem
+EnumItem XmlTree::readItem (string& value)
+{
+   value  = "";
+
+   while (true)
+         {
+         if (fic_pos>=len_buffer)
+            {
+            int ier=readLine ();
+            if (ier==HEND_FILE) 
+               return M_NONE;
+            }
+         else
+            {
+            char  car = fic_buffer [fic_pos++];
+
+            if (car=='=')
+               return M_EQUALS;
+            else if (car=='>')
+               return M_END;
+            else if (car=='"')
+               {
+               getString (value);
+               return M_STRING;
+               }
+            else if (isalpha (car))
+               {
+               getIdent (value);
+               return M_IDENT;
+               }
+
+            char ncar = fic_pos >= len_buffer ? ' ' : fic_buffer [fic_pos];
+            if (car=='/' && ncar == '>')
+               {
+               fic_pos++;
+               return M_CLOSE;
+               }
+            else if (car=='<')
+               {
+               if (ncar=='/') 
+                  {
+                  fic_pos++;
+                  return M_BEGIN_CLOSE;
+                  }
+               else if (ncar=='?') 
+                  {
+                  fic_pos++;
+                  return M_PROLOG;
+                  }
+               else if (ncar=='!') 
+                  {
+                  fic_pos++;
+                  return M_COMMENT;
+                  }
+               else
+                  return M_BEGIN;
+               }
+            }
+         }
+}
+// ====================================================== getIdent
+int XmlTree::getIdent (string& ident)
+{
+   ident = "";
+
+   for (int nc=fic_pos-1; nc<len_buffer ; nc++)
+       {
+       char car = fic_buffer[nc];
+       if (isalnum (car))
+           {
+           ident.push_back (car);
+           }
+       else
+           {
+           fic_pos = nc;
+           return HOK;
+           }
+       }
+
+   fic_pos = len_buffer;
+   return HOK;
+}
+// ====================================================== goTo
+int XmlTree::goTo (cpchar ouca)
+{
+   int nbc = strlen (ouca) - 1;
+   int pos = 0;
+   int car = ' ';
+
+   while ((car = getChar ()) != EOF)
+       {
+       if (car!=ouca[pos])
+          pos = 0;
+       else if (pos<nbc)
+          pos++;
+       else 
+          return HOK;
+       }
+
+   return HERR;
+}
+// ====================================================== getString
+int XmlTree::getString (string& chaine)
+{
+   chaine  = "";
+   int car = ' ';
+
+   while ((car = getChar ()) != EOF)
+       {
+       if (car=='"') 
+          return HOK;
+       chaine.push_back (car); 
+       }
+
+   return HERR;
+}
+// ====================================================== getChar
+int XmlTree::getChar ()
+{
+   while (true)
+         {
+         if (fic_pos<len_buffer)
+            {
+            fic_pos++;
+            return fic_buffer [fic_pos-1];
+            }
+         int ier = readLine ();
+         if (ier==HEND_FILE)
+            return EOF;
+         else
+            return EOL;
+         }
+}
+// ====================================================== readLine
+int XmlTree::readLine ()
+{
+   nro_ligne++;
+   fic_buffer = "";
+   fic_pos    = 0;
+
+   if (fic_xml==NULL || feof (fic_xml))
+       return HEND_FILE;
+
+   len_buffer = 0;
+   int ier = HEND_LINE;
+   while (ier==HEND_LINE)
+         {
+         int carac = fgetc (fic_xml);
+         if (carac==EOL || carac==CRLF)
+            {
+            ier = HOK;
+            }
+         else if (carac!=EOF)
+            {
+            fic_buffer.push_back (carac); 
+            len_buffer ++;
+            }
+         else if (len_buffer > 0)
+            ier = HOK;
+         else 
+            ier = HEND_FILE;
+         }
+   return HOK;
+}
+// ====================================================== putError
+void XmlTree::putError (cpchar mess)
+{
+     printf (" ***** Erreur : %s\n", mess);
+     printf (" +++ Derniere ligne lue : nro %d, %deme caractere\n", 
+               nro_ligne, fic_pos);
+     printf ("%s\n", fic_buffer.c_str());
+     //  exit (102);
+}
+// ====================================================== addChild
+XmlTree* XmlTree::addChild (const string& nom)
+{
+   XmlTree* child = new XmlTree (nom, this);
+   tab_items.push_back (child);
+   nbr_items ++;
+   return child;
+}
+// ====================================================== addAttribut
+void XmlTree::addAttribut (const string& nom, const string& value)
+{
+   tab_attributs.push_back (nom);
+   tab_values   .push_back (value);
+   nbr_attributs ++;
+   // printf (" %s = %s\n", nom.c_str(), value.c_str());
+}
+// ====================================================== dump
+void XmlTree::dump (int niveau)
+{
+   string marge = "";
+   for (int niv=0 ; niv<niveau ; niv++)
+       marge += " | ";
+
+   cout << marge << item_name << endl;
+
+   for (int nc=0 ; nc<nbr_attributs ; nc++)
+       {
+       cout << marge  << " : " 
+            << tab_attributs [nc] << " = '" << tab_values [nc] 
+            << "'" << endl;
+       }
+
+   for (int nc=0 ; nc<nbr_items ; nc++)
+       {
+       tab_items [nc]->dump (niveau+1);
+       }
+
+}
+END_NAMESPACE_HEXA

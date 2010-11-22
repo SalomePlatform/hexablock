@@ -1,0 +1,57 @@
+#ifndef __Group_idl__
+#define __Group_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+    enum GroupKind {  HEXA_GROUP,
+                      QUAD_GROUP,
+                      EDGE_GROUP,
+                      HEXANODE_GROUP,
+                      QUADNODE_GROUP,
+                      EDGENODE_GROUP,
+                      VERTEXNODE_GROUP };
+
+    interface Group : SALOME::GenericObj
+    {
+        /*!
+        comment
+        */
+        string getName()
+          raises (SALOME::SALOME_Exception);
+        void setName( in string name )
+          raises (SALOME::SALOME_Exception);
+        GroupKind getKind()
+          raises (SALOME::SALOME_Exception);
+        long addElement( in Element e)
+          raises (SALOME::SALOME_Exception);
+        long countElement()
+          raises (SALOME::SALOME_Exception);
+        Element getElement( in long index )
+          raises (SALOME::SALOME_Exception);
+        long removeElement( in long index )
+            raises (SALOME::SALOME_Exception);
+        void clearElement()
+            raises (SALOME::SALOME_Exception);
+    };
+
+//     interface HexaGroup : Group {};
+//     interface QuadGroup : Group {};
+//     interface EdgeGroup : Group {};
+// 
+//     interface HexaNodeGroup : Group {};
+//     interface QuadNodeGroup : Group {};
+//     interface EdgeNodeGroup : Group {};
+//     interface VertexNodeGroup : Group {};
+};
+
+#endif

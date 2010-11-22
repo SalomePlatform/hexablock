@@ -1,0 +1,50 @@
+#ifndef __Vertex_idl__
+#define __Vertex_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "GEOM_Gen.idl"
+
+#include "Element.idl"
+
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component 
+*/
+module HEXABLOCK_ORB
+{
+
+    interface Vertex : Element
+    {
+        double getX() raises (SALOME::SALOME_Exception);
+        double getY() raises (SALOME::SALOME_Exception);
+        double getZ() raises (SALOME::SALOME_Exception);
+
+        void setX( in double x ) raises (SALOME::SALOME_Exception);
+        void setY( in double y ) raises (SALOME::SALOME_Exception);
+        void setZ( in double z ) raises (SALOME::SALOME_Exception);
+
+        void setAssociation( in GEOM::GEOM_Object geom_object_vertex )
+            raises (SALOME::SALOME_Exception);
+
+        GEOM::GEOM_Object getAssociation()
+            raises (SALOME::SALOME_Exception);
+// 
+//         void removeAssociation()
+//             raises (SALOME::SALOME_Exception);
+
+	void setScalar( in double val ) //CS_NOT_SPEC
+		raises (SALOME::SALOME_Exception);
+
+    };
+
+
+};
+
+#endif
+

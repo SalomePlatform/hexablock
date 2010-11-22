@@ -1,0 +1,32 @@
+#ifndef __Propagation_idl__
+#define __Propagation_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+#include "Edge.idl"
+#include "Law.idl"
+
+
+
+/*!  \ingroup EXAMPLES
+
+*/
+module HEXABLOCK_ORB
+{
+  typedef sequence<boolean>  Ways;
+
+  interface Propagation : SALOME::GenericObj
+  {
+    Edges getEdges() raises (SALOME::SALOME_Exception);
+//     Ways getWays() raises (SALOME::SALOME_Exception);
+    void setLaw(in Law l) raises (SALOME::SALOME_Exception);
+    Law getLaw() raises (SALOME::SALOME_Exception);
+    void setWay(in boolean w) raises (SALOME::SALOME_Exception);
+    boolean getWay() raises (SALOME::SALOME_Exception);
+  };
+
+};
+
+#endif
