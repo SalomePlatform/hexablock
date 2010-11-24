@@ -79,9 +79,6 @@ libHEXABLOCKEngine_la_CPPFLAGS = \
 libHEXABLOCKEngine_la_LDFLAGS = \
 	../../idl/libSalomeIDLHEXABLOCK.la \
 	../HEXABLOCK/libHEXABLOCKimpl.la \
-	$(KERNEL_LDFLAGS) \
+	$(KERNEL_LDFLAGS) -lOpUtil -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lSalomeLifeCycleCORBA \
 	$(CAS_LDPATH) \
-	-lSalomeContainer \
-	-lOpUtil \
-	-lSalomeIDLKernel \
         -lGEOMClient
