@@ -18,7 +18,8 @@ dist_salomescript_PYTHON = \
 	INTER_3_CYLINDRE.py \
 	test_INTER_3_CYLINDRE_no_assoc.py \
 	Test_HEXABLOCK.py \
-	test_HEXABLOCK.py
+	test_HEXABLOCK.py \
+	test_distrib.py
 
 nodist_salomescript_DATA = \
 	tees.brep \
