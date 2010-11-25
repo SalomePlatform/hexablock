@@ -1,6 +1,5 @@
 
 // C++ : Table des noeuds
-
 #include "HexElements.hxx"
 
 #include "HexDocument.hxx"
