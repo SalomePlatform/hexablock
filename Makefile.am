@@ -47,4 +47,4 @@ dist-hook:
 	rm -rf `find $(distdir) -name CVS`
 
 unittest:
-	( ./src/TEST_CPP/Tes_tHEXABLOCK )
+	( ./src/TEST_CPP/Test_HEXABLOCK )

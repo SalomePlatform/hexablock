@@ -29,7 +29,7 @@
 # Modified by : Marc Tajchman (CEA)
 # Created from configure.in.base
 #
-AC_INIT([Salome6 Project HEXABLOCK module],[5.1.2], [webmaster.salome@opencascade.com], [SalomeHEXABLOCK])
+AC_INIT([Salome6 Project HEXABLOCK module],[6.2.0], [webmaster.salome@opencascade.com], [SalomeHEXABLOCK])
 AC_CONFIG_AUX_DIR(adm_local/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -217,6 +217,16 @@ CHECK_CPPUNIT
 
 
 echo
+echo ----------------------------------------------
+echo testing Sphinx
+echo ----------------------------------------------
+echo
+
+CHECK_SPHINX
+
+
+
+echo
 echo ---------------------------------------------
 echo Testing Kernel
 echo ---------------------------------------------
@@ -228,22 +238,22 @@ CHECK_KERNEL
 
 echo
 echo ---------------------------------------------
+echo Testing GUI
+echo ---------------------------------------------
+echo
+
+CHECK_SALOME_GUI
+
+
+
+echo
+echo ---------------------------------------------
 echo Testing Geom
 echo ---------------------------------------------
 echo
 
 CHECK_GEOM
 
-
-
-
-echo
-echo ---------------------------------------------
-echo Testing GUI
-echo ---------------------------------------------
-echo
-
-CHECK_SALOME_GUI
 
 echo
 echo ---------------------------------------------
@@ -265,7 +275,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok Kernel_ok SalomeGUI_ok"
+variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok occ_ok sphinx_ok Kernel_ok SalomeGUI_ok Geom_ok"
 
 for var in $variables
 do

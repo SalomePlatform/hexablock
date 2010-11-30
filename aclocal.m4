@@ -10417,3 +10417,4 @@ dnl python_site_given=no]
   fi
 ])
 
+m4_include([adm_local/unix/config_files/check_sphinx.m4])
