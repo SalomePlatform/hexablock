@@ -23,7 +23,7 @@ public:
 
 public:
     Propagation  ();
-    void saveXml (XmlWriter& xml);
+    void saveXml (XmlWriter* xml);
     void addEdge (Edge* arete);
     void majLaw  ();
 
@@ -76,17 +76,17 @@ inline void Propagation::addEdge (Edge* arete)
        prop_law =  arete->getLaw();
 }
 // =========================================================== saveXml
-inline void Propagation::saveXml (XmlWriter& xml)
+inline void Propagation::saveXml (XmlWriter* xml)
 {
     char   buffer[12];
     cpchar booleen [] = { "true", "false" };
     cpchar law = prop_law == NULL ? "default" : prop_law->getName();
 
-    xml.openMark     ("Propagation");
-    xml.addAttribute ("edge", prop_edges[0]->getName (buffer));
-    xml.addAttribute ("law",  law);
-    xml.addAttribute ("way",  booleen [prop_way]);
-    xml.closeMark ();
+    xml->openMark     ("Propagation");
+    xml->addAttribute ("edge", prop_edges[0]->getName (buffer));
+    xml->addAttribute ("law",  law);
+    xml->addAttribute ("way",  booleen [prop_way]);
+    xml->closeMark ();
 }
 END_NAMESPACE_HEXA
 

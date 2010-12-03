@@ -34,9 +34,10 @@ public :
    virtual void    removeAssociation ()           { el_assoc = NULL  ; }
    virtual Shape*  getAssociation ()              { return el_assoc  ; }
 
+   void copyAssociation    (EltBase* orig);
+   void replaceAssociation (EltBase* orig);
+
 public :
-   // virtual void replaceHexa   (Hexa* old, Hexa* nouveau) {}
-   // virtual void replaceQuad   (Quad* old, Quad* nouveau) {}
    virtual void replaceEdge   (Edge* old, Edge* nouveau) 
                                { printf ("rep-edge\n") ; }
    virtual void replaceVertex (Vertex* old, Vertex* nouveau) 
@@ -49,7 +50,7 @@ public :
    virtual  void remove ();
    virtual  void suppress ();
    virtual  void dump ();
-   virtual  void saveXml (XmlWriter& xml)   {}
+   virtual  void saveXml (XmlWriter* xml)   {}
    virtual  void majReferences () { }
 
    EltBase*  next ()                        { return el_next; }
@@ -89,13 +90,13 @@ protected :
    std::vector <EltBase*> el_parent;
 };
 // ========================================================= getName 
-inline char* EltBase::getName  (pchar nom)
+inline char* EltBase::getName  (pchar buffer)
 {
 // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
    cpchar nm_type = "xveqh????";
 
-   sprintf (nom, "%c%04d", nm_type[el_type], el_id);
-   return nom;
+   sprintf (buffer, "%c%04d", nm_type[el_type], el_id);
+   return   buffer;
 }
 // ========================================================= printName 
 inline void EltBase::printName  (cpchar sep)
@@ -133,7 +134,7 @@ inline EltBase* EltBase::getFather  (int nro)
 
    return elt;
 }
-// ========================================================= getFather 
+// ========================================================= hasParents 
 inline bool EltBase::hasParents ()
 {
    int nbp = el_parent.size();

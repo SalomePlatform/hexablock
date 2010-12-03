@@ -92,19 +92,19 @@ Quad* Edge::getParent  (int nro)
    return static_cast <Quad*> (getFather (nro));
 }
 // ========================================================= getParent 
-void Edge::saveXml (XmlWriter& xml)
+void Edge::saveXml (XmlWriter* xml)
 {
    char buffer[12];
    string vertices = e_vertex [V_AMONT]->getName(buffer);
    vertices += " ";
    vertices       += e_vertex [V_AVAL ]->getName(buffer);
 
-   xml.openMark     ("Edge");
-   xml.addAttribute ("id",       getName (buffer));
-   xml.addAttribute ("vertices", vertices);
+   xml->openMark     ("Edge");
+   xml->addAttribute ("id",       getName (buffer));
+   xml->addAttribute ("vertices", vertices);
    if (el_assoc!=NULL)
-      xml.addAttribute ("shape", el_assoc->getBrep ().c_str());
-   xml.closeMark ();
+      xml->addAttribute ("shape", el_assoc->getBrep ().c_str());
+   xml->closeMark ();
 }
 // ======================================================== replaceVertex
 void Edge::replaceVertex (Vertex* old, Vertex* par)

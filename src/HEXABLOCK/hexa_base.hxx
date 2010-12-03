@@ -141,21 +141,23 @@ class Vector;
 class Matrix;
 class Cloner;
 class XmlWriter;
+class XmlTree;
 
 class  Elements;
 class  GridElements;
 class  SphericalGrid;
 class  CrossElements;
 
-typedef std::vector <Quad*> Quads;
-typedef std::vector <Edge*> Edges;
-
 struct  StrOrient;
-struct  Globale;
 class   Shape;
+class   Globale;
 class   Propagation;
 class   Law;
 class   Group;
+
+typedef std::vector <Quad*>  Quads;
+typedef std::vector <Edge*>  Edges;
+typedef std::vector <Shape*> Shapes;
 
 END_NAMESPACE_HEXA
 

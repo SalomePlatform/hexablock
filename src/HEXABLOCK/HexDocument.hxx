@@ -88,6 +88,7 @@ public :
    int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
    int     mergeQuads    (Quad* q1, Quad* q2, Vertex* v1, Vertex* v2, 
                                               Vertex* v3, Vertex* v4);
+   int     closeQuads    (Quad* q1, Quad* q2);
 
    Elements* makeTranslation   (Elements* elts, Vector* trans);
    Elements* makeScale         (Elements* elts, Vertex* ver, double k);
@@ -141,13 +142,16 @@ public :
    Cylinder* getCylinder (int nro)   { return doc_cylinder [nro]; }
    Pipe*     getPipe     (int nro)   { return doc_pipe [nro]; }
 
-   void  purge ();
+   void purge ();
+   int  associateEdges (Edges* aretes, Shapes* lignes);
 
 public:
     Document (cpchar filename);
    ~Document ();
 
-    int loadXml ();
+    int    loadXml ();
+    int    setXml (cpchar flux);
+    cpchar getXml ();
 
     EltBase* getFirstEltBase (EnumElt type) { return doc_first_elt [type]; }
     EltBase* getLastEltBase  (EnumElt type) { return doc_last_elt  [type]; }
@@ -159,7 +163,9 @@ public:
     int  saveVtk  (cpchar nomfic); 
     int  saveVtk  (cpchar radical, int &nro); 
 
-    void  putError (cpchar mess, cpchar info1=NULL, cpchar info2=NULL);
+    void  putError  (cpchar mess, cpchar info1=NULL, cpchar info2=NULL);
+    void  hputError (cpchar mess, EltBase* e1, EltBase* e2=NULL);
+
     void  majReferences  ();                  // M.A.J relation "utilise par"
     void  update ()            { if (maj_connection) majReferences (); }
     bool  debug (int niv=0)    { return doc_db > niv ; }
@@ -168,9 +174,13 @@ public:
    Globale* glob;
 
 private :
+   int   genXml   (cpchar filename);
+   int   parseXml (XmlTree& xml);
+
    void  replaceVertex (Vertex* v1, Vertex* v2);
    void  replaceEdge   (Edge*   e1, Edge* e2);
    void  replaceQuad   (Quad*   q1, Quad* q2);
+
    int   countElement  (EnumElt type);
    EltBase* getElement (EnumElt type, int nro);
 
@@ -188,7 +198,7 @@ private :
    int  doc_db;
    int  nbr_errors;
 
-   string   doc_name; 
+   std::string doc_name; 
    EltBase* doc_first_elt [EL_MAXI];
    EltBase* doc_last_elt  [EL_MAXI];
    int      doc_nbr_elt   [EL_MAXI];
@@ -206,6 +216,7 @@ private :
    std::vector <Vector*>      doc_vector;
    std::vector <Cylinder*>    doc_cylinder;
    std::vector <Pipe*>        doc_pipe;
+   XmlWriter*                 doc_xml; 
 };
 // ========================================================= saveVtk (avec nro)
 inline int Document::saveVtk  (cpchar radical, int &nro)

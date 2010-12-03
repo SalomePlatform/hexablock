@@ -24,7 +24,7 @@ public :
    Vertex (Vertex* other);
    virtual ~Vertex () {}
    virtual void dump () ;
-   virtual void saveXml (XmlWriter& xml);
+   virtual void saveXml (XmlWriter* xml);
 
    void   setScalar (double val)             { v_scalar = val ; }
    double getScalar ()                       { return v_scalar ; }
@@ -34,7 +34,8 @@ public :
                                             double zmin, double zmax);
    Edge* getParent (int nro); 
    Vertex* makeSymetric (Vertex* other);
-   void    translate  (Vector* vecteur, double fact=1.0);
+   void    translate (Vector* vecteur, double fact=1.0);
+   void    replace   (Vertex* old);
 
    static Vertex* createMiddle (Vertex* left, Vertex* right);
 

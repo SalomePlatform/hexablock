@@ -325,7 +325,7 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
    return NULL;
 }
 // ========================================================= getParent 
-void Quad::saveXml (XmlWriter& xml)
+void Quad::saveXml (XmlWriter* xml)
 {
    char buffer[12];
    string edges;
@@ -336,12 +336,12 @@ void Quad::saveXml (XmlWriter& xml)
        edges += q_edge[nro]->getName(buffer);
        }
 
-   xml.openMark     ("Quad");
-   xml.addAttribute ("id",    getName (buffer));
-   xml.addAttribute ("edges", edges);
+   xml->openMark     ("Quad");
+   xml->addAttribute ("id",    getName (buffer));
+   xml->addAttribute ("edges", edges);
    if (el_assoc!=NULL)
-      xml.addAttribute ("shape", el_assoc->getBrep().c_str());
-   xml.closeMark ();
+      xml->addAttribute ("shape", el_assoc->getBrep().c_str());
+   xml->closeMark ();
 }
 // ======================================================== replaceEdge
 void Quad::replaceEdge (Edge* old, Edge* par)

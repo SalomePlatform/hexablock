@@ -13,21 +13,30 @@ XmlWriter::XmlWriter  ()
    xml_file  = stdout;
    xml_level = 0;
    xml_pos   = 0;
+   on_file   = true;
 }
 // ========================================================= openXml 
 int XmlWriter::openXml (cpchar nomfic)
 {
-   xml_level    = 0;
-   xml_pos      = 0;
-   string fname = nomfic;
+   xml_level  = 0;
+   xml_pos    = 0;
+   xml_buffer = "";
+   xml_file   = stdout;
+   on_file    = false;
 
-   fname   += ".xml";
-   xml_file = fopen (fname.c_str(), "w");
-   if (xml_file==NULL)
+   if (nomfic != NULL)
       {
-      xml_file = stdout;
-      return HERR;
+      on_file  = true;
+      string fname = nomfic;
+      fname   += ".xml";
+      xml_file = fopen (fname.c_str(), "w");
+      if (xml_file==NULL)
+         {
+         xml_file = stdout;
+         return HERR;
+         }
       }
+
    ecrire ("<?xml version='1.0'?>");
    return HOK;
 }
@@ -103,10 +112,14 @@ void XmlWriter::closeMark (bool jump)
 void XmlWriter::jumpLine ()
 {
    if (xml_pos>0)
-      putc ('\n', xml_file);
+      addMot ("\n");
 
    xml_pos = xml_level * xml_decal;
-   for (int nc=0 ; nc < xml_pos ; nc++) putc (' ', xml_file);
+   if (xml_pos > 0)
+      {
+      string  space (xml_pos, ' ');
+      addMot (space.c_str());
+      }
 }
 // ========================================================= ecrire
 void XmlWriter::ecrire (cpchar mot)
@@ -120,7 +133,7 @@ void XmlWriter::ecrire (cpchar mot)
        xml_pos += lg;
        }
 
-   fprintf (xml_file, mot);
+   addMot (mot);
 }
 // ========================================================= alaLigne
 void XmlWriter::alaLigne (bool force)
@@ -128,8 +141,8 @@ void XmlWriter::alaLigne (bool force)
    if (xml_pos==0 && NOT force) 
       return;
 
-   fprintf (xml_file, "\n");
    xml_pos = 0;
+   addMot ("\n");
 }
 // ========================================================= addAttribute 
 void XmlWriter::addAttribute (cpchar cle, cpchar valeur)

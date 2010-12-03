@@ -23,7 +23,7 @@ public:
 
 public:
     Law (cpchar name, int nbnodes);
-    void saveXml (XmlWriter& xml);
+    void saveXml (XmlWriter* xml);
 
 private:
     std::string law_name;
@@ -58,16 +58,16 @@ inline int Law::setName (const char* name)
    return HOK;
 }
 // ================================================== saveXml
-inline void Law::saveXml (XmlWriter& xml)
+inline void Law::saveXml (XmlWriter* xml)
 {
    cpchar kind_law [] = { "Uniform", "Arithmetic", "Geometric" };
 
-   xml.openMark     ("Law");
-   xml.addAttribute ("id",          getName ());
-   xml.addAttribute ("kind",    kind_law [law_type]);
-   xml.addAttribute ("nodes",   nbr_nodes);
-   xml.addAttribute ("coeff", law_coefficient);
-   xml.closeMark ();
+   xml->openMark     ("Law");
+   xml->addAttribute ("id",          getName ());
+   xml->addAttribute ("kind",    kind_law [law_type]);
+   xml->addAttribute ("nodes",   nbr_nodes);
+   xml->addAttribute ("coeff", law_coefficient);
+   xml->closeMark ();
 }
 END_NAMESPACE_HEXA
 #endif

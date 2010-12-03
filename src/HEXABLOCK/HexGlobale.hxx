@@ -53,7 +53,6 @@ public :
    bool isinArgs (cpchar opt)  { return findArg (opt) >= 0; }
    cpchar getArg  (int nro)    { return nro>=nbr_args ? NULL : tab_args[nro]; }
 
-
 private :
    Globale ();         // Constructeur prive
 
@@ -64,12 +63,14 @@ private :
    void setOpposedVertex (EnumHVertex lun, EnumHVertex lautre);
    void setOpposedQuad   (EnumHQuad   lun, EnumHQuad   lautre);
 
+   void setNames ();
+
 private :
    int     nbr_args;
    cpchar* tab_args;
 
    int         coord_vertex [HV_MAXI] [DIM3];
-   EnumHVertex edge_vertex  [HV_MAXI] [V_TWO];
+   EnumHVertex edge_vertex  [HE_MAXI] [V_TWO];
    EnumHEdge   quad_edge    [HQ_MAXI] [QUAD4];
 
    cpchar h_edge_name   [HE_MAXI]; 

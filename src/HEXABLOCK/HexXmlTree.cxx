@@ -10,17 +10,21 @@ enum { HEND_FILE = -2, HEND_LINE = -1, CRLF = 13 };
 // ====================================================== Constructeur 
 XmlTree::XmlTree (const string& nom, XmlTree* dad)
 {
-    item_name     = nom;
-    item_vide     = "";
-    xml_parent    = dad;
-    nbr_attributs = 0;
-    nbr_items     = 0;
+   item_name     = nom;
+   item_vide     = "";
+   xml_parent    = dad;
+   nbr_attributs = 0;
+   nbr_items     = 0;
 
    fic_buffer  = "";
    len_buffer  = 0;
-   fic_xml     = NULL;
+   xml_file    = NULL;
    nro_ligne   = 0;
    fic_pos     = 1988;
+
+   xml_flow  = NULL;
+   pos_flow  = 0;
+   xml_ended = true;
 }
 // ====================================================== Destructeur
 XmlTree::~XmlTree ()
@@ -63,10 +67,35 @@ int XmlTree::parseFile (const string& ficnom)
    len_buffer  = 0;
    nro_ligne   = 0;
    fic_pos     = 1988;
+   xml_flow    = NULL;
+   pos_flow    = 0;
+   xml_ended   = true;
 
-   fic_xml = fopen (ficnom.c_str(), "r");
-   if (fic_xml==NULL)
+   xml_file = fopen (ficnom.c_str(), "r");
+   if (xml_file==NULL)
       return HERR;
+
+   int ier = parseXml ();
+   return ier;
+}
+// ====================================================== parseFlow
+int XmlTree::parseFlow (cpchar flux)
+{
+   fic_buffer  = "";
+   len_buffer  = 0;
+   nro_ligne   = 0;
+   fic_pos     = 1988;
+
+   xml_flow    = flux;
+   pos_flow    = 0;
+
+   int ier = parseXml ();
+   return ier;
+}
+// ====================================================== parseXml
+int XmlTree::parseXml ()
+{
+   xml_ended  = false;
 
    enum EnumEtat { M_PREMS, M_BALISE_OUVERTE, M_NEUTRE };
    EnumEtat etat =  M_PREMS;
@@ -281,27 +310,35 @@ int XmlTree::readLine ()
    fic_buffer = "";
    fic_pos    = 0;
 
-   if (fic_xml==NULL || feof (fic_xml))
+   if (xml_ended)
        return HEND_FILE;
 
    len_buffer = 0;
    int ier = HEND_LINE;
    while (ier==HEND_LINE)
          {
-         int carac = fgetc (fic_xml);
+         int carac = xml_flow != NULL ? xml_flow [pos_flow++] 
+		                      : fgetc (xml_file);
+
          if (carac==EOL || carac==CRLF)
             {
             ier = HOK;
             }
-         else if (carac!=EOF)
+         else if (carac!=EOF && carac!=EOS)
             {
             fic_buffer.push_back (carac); 
             len_buffer ++;
             }
          else if (len_buffer > 0)
+            {
+            xml_ended = true;
             ier = HOK;
+            }
          else 
+            {
+            xml_ended = true;
             ier = HEND_FILE;
+            }
          }
    return HOK;
 }

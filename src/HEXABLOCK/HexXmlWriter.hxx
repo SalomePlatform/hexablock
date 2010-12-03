@@ -16,9 +16,10 @@ public :
    XmlWriter ();
   ~XmlWriter ()    { closeXml () ; }
 
-   int  openXml  (string& nom) { return openXml (nom.c_str()); }
-   int  openXml  (cpchar nom);
-   void closeXml ();
+   int    openXml  (string& nom)     { return openXml (nom.c_str()); }
+   int    openXml  (cpchar nom=NULL);
+   void   closeXml ();
+   cpchar getXml   ()                { return xml_buffer.c_str();    }
 
    void openMark  (cpchar balise);                 // <Balise .. 
    void addMark   (cpchar balise, bool jump=true); // <Balise> + eol
@@ -35,12 +36,15 @@ private :
     void alaLigne (bool force=false);
     void ecrire   (cpchar  mot);
     void ecrire   (string& mot) { ecrire (mot.c_str()) ; }
+    void addMot   (cpchar  mot);
 
 private :
     enum  {xml_decal=3, xml_size=80};
     pfile  xml_file;
     int    xml_level;
     int    xml_pos;
+    bool   on_file;
+    std::string  xml_buffer;
     std::stack <std::string, std::vector <std::string> >  pile_mark; 
     std::stack <int,         std::vector <int> >          pile_etat; 
 };
@@ -62,6 +66,14 @@ inline void XmlWriter::addAttribute (cpchar attrib, double valeur)
 inline void XmlWriter::addAttribute (cpchar attrib, string& valeur)
 {
    addAttribute (attrib, valeur.c_str());
+}
+// ====================================================== addmot
+inline void XmlWriter::addMot (cpchar mot)
+{
+   if (on_file) 
+      fprintf (xml_file, mot);
+   else 
+      xml_buffer += mot;
 }
 
 END_NAMESPACE_HEXA

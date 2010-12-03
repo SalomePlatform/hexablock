@@ -25,18 +25,18 @@ Edge* Vertex::getParent  (int nro)
    return static_cast <Edge*> (getFather (nro));
 }
 // ========================================================= saveXml 
-void Vertex::saveXml  (XmlWriter& xml)
+void Vertex::saveXml  (XmlWriter* xml)
 {
    char buffer[12], coord[80];
 
    sprintf (coord, "%g %g %g", v_x,v_y,v_z);
 
-   xml.openMark     ("Vertex");
-   xml.addAttribute ("id",    getName (buffer));
-   xml.addAttribute ("coord", coord);
+   xml->openMark     ("Vertex");
+   xml->addAttribute ("id",    getName (buffer));
+   xml->addAttribute ("coord", coord);
    if (el_assoc!=NULL)
-      xml.addAttribute ("shape", el_assoc->getBrep().c_str());
-   xml.closeMark ();
+      xml->addAttribute ("shape", el_assoc->getBrep().c_str());
+   xml->closeMark ();
 }
 // ========================================================= translate 
 void  Vertex::translate  (Vector* vecteur, double fact)

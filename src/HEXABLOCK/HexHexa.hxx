@@ -68,7 +68,7 @@ public:
     void propager (Propagation* prop, int nro);
     void setScalar (double valeur);
 
-    virtual void saveXml (XmlWriter& xml);
+    virtual void saveXml (XmlWriter* xml);
 
     Elements*  disconnectQuad   (Quad*   face);
     Elements*  disconnectEdge   (Edge*   arete);

@@ -3,6 +3,7 @@
 
 #include "HexEltBase.hxx"
 #include "HexDocument.hxx"
+#include "HexDiagnostics.hxx"
 
 BEGIN_NAMESPACE_HEXA
 // =================================================== Constructeur
@@ -65,6 +66,28 @@ void EltBase::suppress ()
 
    el_root->setDeprecated (2);
    el_type = EL_REMOVED;
+}
+// ========================================================= replaceAssociation 
+void EltBase::replaceAssociation (EltBase* orig)
+{
+   if (   orig == NULL || orig->el_assoc == NULL
+       || orig == this || orig->el_assoc == el_assoc)
+      return;
+
+   if (el_assoc==NULL)
+      el_assoc = orig->el_assoc;
+   else 
+      el_root->hputError (W_REPL_ASSOC, this, orig);
+}
+// ========================================================= copyAssociation 
+void EltBase::copyAssociation (EltBase* orig)
+{
+   if (   orig == NULL || orig->el_assoc == NULL
+       || orig == this || orig->el_assoc == el_assoc)
+      return;
+
+   el_assoc = orig->el_assoc;
+   el_root->hputError (W_DISCO_ASSOC, orig);
 }
 END_NAMESPACE_HEXA
 

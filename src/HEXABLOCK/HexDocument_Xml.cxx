@@ -76,6 +76,22 @@ int Document::loadXml ()
 {
    XmlTree xml("");
    xml.parseFile (doc_name + ".xml");
+
+   int    ier = parseXml (xml);
+   return ier;
+}
+// ======================================================== setXml
+int Document::setXml (cpchar flux)
+{
+   XmlTree xml("");
+   xml.parseFlow (flux);
+
+   int    ier = parseXml (xml);
+   return ier;
+}
+// ======================================================== parseXml
+int Document::parseXml (XmlTree& xml)
+{
    xml.dump ();
 
    vector <Vertex*> t_vertex;
@@ -166,45 +182,63 @@ void Document::renumeroter ()
 // ======================================================== saveFile
 int Document::saveFile ()
 {
+   int    ier = genXml (doc_name.c_str ());
+   return ier;
+}
+// ======================================================== saveFile
+cpchar Document::getXml ()
+{
+   int ier = genXml (NULL);
+   if (ier!=HOK)
+      return NULL;
+
+   return doc_xml->getXml ();
+}
+// ======================================================== genXml
+int Document::genXml (cpchar filename)
+{
                                        // -- 1) Raz numerotation precedente
    renumeroter ();
    if (maj_propagation)
        majPropagation ();
 
    doc_modified = false;
-   XmlWriter xml;
-   xml.openXml  (doc_name);
-   xml.openMark ("Document");
-   xml.addAttribute ("name", doc_name);
-   xml.endMark ();
+
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   doc_xml->openXml  (filename);
+   doc_xml->openMark ("Document");
+   doc_xml->addAttribute ("name", doc_name);
+   doc_xml->endMark ();
 
    cpchar balise [] = {"ListXXX", 
           "ListVertices", "ListEdges", "ListQuads", "ListHexas", "ListXXXX" };
 
    for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
        {
-       xml.addMark (balise [type]);
+       doc_xml->addMark (balise [type]);
        for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
                      elt = elt->next())
            {
            if (elt !=NULL && elt->isHere())
-              elt->saveXml (xml);
+              elt->saveXml (doc_xml);
            }
-       xml.closeMark (true);
+       doc_xml->closeMark (true);
        }
 
-   xml.addMark ("ListDicretizationLaws");
+   doc_xml->addMark ("ListDicretizationLaws");
    for (int nro=0 ; nro<nbr_laws ; nro++)
-       doc_laws [nro]->saveXml (xml);
-   xml.closeMark (true);
+       doc_laws [nro]->saveXml (doc_xml);
+   doc_xml->closeMark (true);
 
-   xml.addMark ("ListPropagations");
+   doc_xml->addMark ("ListPropagations");
    for (int nro=0 ; nro<nbr_propagations ; nro++)
-       doc_propagation[nro]->saveXml (xml);
-   xml.closeMark ();
+       doc_propagation[nro]->saveXml (doc_xml);
+   doc_xml->closeMark ();
 
-   xml.closeMark ();
-   xml.closeXml  ();
+   doc_xml->closeMark ();
+   doc_xml->closeXml  ();
    return  HOK;
 }
 // ======================================================== markAll
@@ -329,7 +363,7 @@ void Document::purge ()
                doc_nbr_elt  [type] ++;
                last = elt;
                }
-	   else
+           else
                {
                last  -> setNext (elt -> next());
                trash -> setNext (elt);
@@ -399,6 +433,17 @@ void Document::putError (cpchar mess, cpchar info1, cpchar info2)
      printf ("\n");
      printf (" **** \n");
      printf (" ********************************************************** \n");
+}
+// ======================================================== hputError
+void Document::hputError (cpchar mess, EltBase* e1, EltBase* e2)
+{
+   char name1 [32] = { 0 };
+   char name2 [32] = { 0 };
+
+   if (e1!=NULL) e1->getName (name1);
+   if (e2!=NULL) e2->getName (name2);
+
+   putError (mess, name1, name2);
 }
 
 END_NAMESPACE_HEXA

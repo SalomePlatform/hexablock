@@ -63,9 +63,10 @@ public:
     virtual void majReferences();            // M.A.J relation "utilise par"
     virtual void dump ();
     virtual void dumpPlus ();
-    virtual void saveXml (XmlWriter& xml);
+    virtual void saveXml (XmlWriter* xml);
     void setScalar (double valeur);
 
+    void         replace (Quad* old);
     virtual void replaceEdge   (Edge*   old, Edge*   nouveau);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 

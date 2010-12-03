@@ -21,6 +21,7 @@ public :
   ~XmlTree ();
 
    int  parseFile (const string& name);
+   int  parseFlow (cpchar flow);
 
    cpchar getName  ()   { return item_name.c_str() ; }
    int    getNbrAttributs  ()   { return nbr_attributs ; }
@@ -46,6 +47,7 @@ public :
    int      goTo        (cpchar  ouca);
 
 private :
+   int  parseXml ();
    int  readLine ();
    EnumItem  readItem  (string& item);
    EnumItem  getItem   (string& item, EnumItem waited=M_NONE);
@@ -67,9 +69,12 @@ private :
                                // Lecture
    string   fic_buffer;
    int      len_buffer;
-   pfile    fic_xml;
    int      nro_ligne;
    int      fic_pos;
+   int      pos_flow;
+   pfile    xml_file;
+   cpchar   xml_flow;
+   bool     xml_ended; 
 };
 END_NAMESPACE_HEXA
 #endif

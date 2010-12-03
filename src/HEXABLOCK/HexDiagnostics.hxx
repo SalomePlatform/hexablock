@@ -11,5 +11,7 @@
 
 #define W_H_NULL_VERTEX "addHexa : Le sommet %s est nul"
 #define W_H_EQ_VERTEX   "addHexa : Les sommets %s et %s sont confondus"
+#define W_REPL_ASSOC "mergeXXXX : Les elements fusionnes %s et %s sont associes"
+#define W_DISCO_ASSOC "disconnextXXXX : L'element disconnecte %s etait associe"
 
 #endif

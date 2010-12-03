@@ -15,7 +15,6 @@
 #include "HexMatrix.hxx"
 #include "HexElements.hxx"
 
-
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== Constructeur
@@ -262,7 +261,7 @@ void Hexa::printNodes (pfile vtk, int& compteur)
    for (int nb=0 ; nb<HV_MAXI ; nb++) 
        if (h_vertex[nb]->getMark()==NO_USED)
           {
-          fprintf (vtk, "%g %g %g\n", h_vertex[nb]->getX(),
+          fprintf (vtk, "%g %g %g\n", h_vertex[nb]->getX(), 
                                       h_vertex[nb]->getY(), 
                                       h_vertex[nb]->getZ());
           h_vertex[nb]->setMark (compteur);
@@ -336,7 +335,7 @@ void Hexa::propager (Propagation* prop, int nro)
            h_edge[nro]->propager (prop, nro);
 }
 // ========================================================= saveXml 
-void Hexa::saveXml (XmlWriter& xml)
+void Hexa::saveXml (XmlWriter* xml)
 {
    char ident[12];
    string quads;
@@ -348,10 +347,10 @@ void Hexa::saveXml (XmlWriter& xml)
        }
 
    getName (ident);
-   xml.openMark     ("Hexa");
-   xml.addAttribute ("id",    ident);
-   xml.addAttribute ("quads", quads);
-   xml.closeMark ();
+   xml->openMark     ("Hexa");
+   xml->addAttribute ("id",    ident);
+   xml->addAttribute ("quads", quads);
+   xml->closeMark ();
 }
 // ========================================================= findQuad 
 int Hexa::findQuad (Quad* element)

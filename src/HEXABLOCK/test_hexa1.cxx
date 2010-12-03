@@ -309,7 +309,7 @@ int test_decoupage ()
    return HOK;
 }
 // ======================================================== test_gen_xml
-int test_gen_xml ()
+int test_gen_xml (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -361,10 +361,66 @@ int test_gen_xml ()
 
    return HOK;
 }
-// ======================================================== test_relecture
-int test_relecture ()
+// ======================================================== test_string_xml
+int test_string_xml (int nbargs, cpchar tabargs[])
 {
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 2;
 
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig = doc->addVertex (0,0,0);
+   Hex::Vector* dir  = doc->addVector (1,1,1);
+   Hex::Elements*  grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+
+   Hex::Hexa*   cell    = grid->getHexa (0);
+   Hex::Quad*   face    = cell->getQuad (0);
+   Hex::Edge*   arete   = cell->getEdge (0);
+   Hex::Vertex* noeud   = cell->getVertex (0);
+
+   Hex::Shape* shape1 = new Hex::Shape("riri");
+   Hex::Shape* shape2 = new Hex::Shape("fifi");
+   Hex::Shape* shape3 = new Hex::Shape("loulou");
+
+   noeud->setAssociation (shape1);
+   arete->setAssociation (shape2);
+   face ->setAssociation (shape3);
+
+   Hex::Law* law1 = doc->addLaw("loi1", 1);
+   Hex::Law* law2 = doc->addLaw("loi2", 2);
+   Hex::Law* law3 = doc->addLaw("loi3", 3);
+
+   law1->setKind (Hex::Uniform);
+   law2->setKind (Hex::Arithmetic);
+   law3->setKind (Hex::Geometric);
+
+   Hex::Propagation* prop1 = doc->getPropagation (0);
+   Hex::Propagation* prop2 = doc->getPropagation (1);
+   Hex::Propagation* prop3 = doc->getPropagation (2);
+
+   prop1->setLaw (law1);
+   prop2->setLaw (law2);
+   prop3->setLaw (law3);
+
+   prop1->setWay (true);
+   prop2->setWay (false);
+   prop3->setWay (true);
+
+   doc ->saveVtk ("mini.vtk");
+   doc ->setFile ("Essai");
+
+   cpchar flux = doc ->getXml ();
+   Hex::Document* docbis = mon_ex.addDocument ();
+   docbis->setXml (flux);
+   docbis ->saveVtk ("clone.vtk");
+
+   return HOK;
+}
+// ======================================================== test_relecture
+int test_relecture (int nbargs, cpchar tabargs[])
+{
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.loadDocument ("Essai");
 
@@ -419,28 +475,24 @@ int test_separ ()
 
    return HOK;
 }
-// ======================================================== test_cyl_karima
-int test_cyl_karima ()
+// ======================================================== test_shperical
+int test_spherical (int nbargs, const char* tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* c2 = doc->addVertex (0,0,0);
-   Hex::Vector* dz = doc->addVector (0,0,1);
-   Hex::Vector* dx = doc->addVector (1,0,0);
+   Hex::Vertex* orig = doc->addVertex (0,0,0);
+   Hex::Vector* dir  = doc->addVector (1,1,1);
+   int          nbr    = 3;
 
-   double dr = 4.12;
+   Hex::Elements* grid = doc->makeSpherical (orig, dir, nbr);
 
-   double a2 = 180;
-   int    l2 = 70;
-
-   int nr2 = 5;
-   int na2 = 5;
-   int nl2 = 1;
-
-/* Hex::Elements* cyl2 = */ doc->makeCylindrical (c2, dx, dz, dr, a2, l2, 
-                                                  nr2, na2, nl2, false );
-   doc->saveVtk ("cyl_karima.vtk");
+   int nbhexas = grid->countHexa ();
+   Display (nbhexas);
+   for (int nro=0 ; nro<nbhexas ; nro +=3)
+       grid->getHexa(nro)->remove();
+   Display (doc->countHexa ());
+   doc->saveVtk ("shperical.vtk");
    // doc->dump ();
 
    return HOK;
@@ -691,8 +743,11 @@ int test_lorraine()
    for (int ny=0; ny<4 ;  ny++)
        hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_int, ny, 0)); 
 
-   doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, 5);
+   int hauteur = 3;
+   doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, hauteur);
    doc->saveVtk ("lorraine.vtk");
+
+
    // doc->dump ();
    return HOK;
 }

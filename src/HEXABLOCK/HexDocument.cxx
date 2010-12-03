@@ -40,6 +40,7 @@ Document::Document (cpchar filename)
    nbr_laws      = 0;
    nbr_propagations = 0;
    maj_propagation  = true;
+   doc_xml          = NULL;
 
    addLaw ("DefaultLaw", 0);
 
@@ -52,6 +53,8 @@ Document::Document (cpchar filename)
 // ======================================================== Destructeur
 Document::~Document ()
 {
+   delete doc_xml;
+
    for (EnumElt type = EL_NONE ; type < EL_MAXI ; type=(EnumElt) (type+1))
        {
        //  printf ("____________________________ Type=%d\n", type);
@@ -267,9 +270,40 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
        || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted()) 
       return HERR;
 
+   int nbcomm = 0;
    for (int nro=0 ; nro<QUAD4 ; nro++) 
-       if (old->indexVertex (par->getVertex(nro))!= NOTHING)
-          return HERR+nro+1;
+       {
+       int nold = old->indexVertex (par->getVertex(nro));
+       if (nold != NOTHING)
+          {
+          Vertex* uv = par->getVertex(nro);
+          char nom[12];
+          nbcomm ++;
+          if (nbcomm==1)
+             {
+             printf ("  +++ Sommets communs dans mergeQuads");
+             printf (" (%s,",  par->getName (nom));
+             printf (" %s)\n", old->getName (nom));
+             v1 = v2 = uv;
+             }
+          else
+             {
+             v3 = v4 = uv;
+             }
+          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  nold, 
+                                                        uv->getName (nom));
+          }
+       }
+
+   if (nbcomm == 2)
+      {
+      printf ("  +++ Les vertex passes en arguments sont ignores\n");
+      }
+   else if (nbcomm != 0)
+      {
+      printf ("  *** _____________________ mergeQuads refuse: \n");
+      return HERR;
+      }
 
    if (debug())
       {
@@ -336,6 +370,105 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
    purge_elements = false;
    return HOK;
 }
+// ======================================================== closeQuads
+int Document::closeQuads (Quad* dest, Quad* orig)
+{
+   update ();
+   char nom[12];
+
+   if (dest==orig)
+      {
+      printf (" *** Quads identiques dans closeQuads : %s\n", 
+                 dest->getName(nom));
+      return HERR;
+      }
+   else if (dest==NULL || dest->isDeleted())
+      {
+      printf (" *** Quad nro 1 incorrect dans closeQuads \n");
+      return HERR;
+      }
+   else if (orig==NULL || orig->isDeleted() )
+      {
+      printf (" *** Quad nro 2 incorrect dans closeQuads \n");
+      return HERR;
+      }
+
+   Edge* edc = NULL;
+   for (int nro=0 ; nro<QUAD4 ; nro++) 
+       {
+       int norig = orig->indexEdge (dest->getEdge(nro));
+       if (norig != NOTHING)
+          {
+          if (edc != NULL) 
+             {
+             printf ("  *** Plus d'une arete commune dans closeQuads");
+             printf (" (%s,",  dest->getName (nom));
+             printf (" %s)\n", orig->getName (nom));
+             return HERR;
+             }
+          edc = dest->getEdge (nro);
+          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig, 
+                                                        edc->getName (nom));
+          }
+       }
+
+   Vertex* va = edc->getVertex (V_AMONT);
+   Vertex* vb = edc->getVertex (V_AVAL);
+   Vertex *tv1 [QUAD4], *tv2 [QUAD4];
+   Edge   *te1 [QUAD4], *te2 [QUAD4];
+
+   int ier1 = dest->ordoVertex (va, vb, tv1);
+   int ier2 = orig->ordoVertex (va, vb, tv2);
+
+   if (ier1 != HOK)      return ier1;
+   else if (ier2 != HOK) return ier2;
+
+   for (int nro=0 ; nro<QUAD4 ; nro++)
+       {
+       te1 [nro] = dest->getEdge(nro);
+       Vertex* va1 = te1[nro]->getVertex(V_AMONT);
+       Vertex* vb1 = te1[nro]->getVertex(V_AVAL);
+       int na = index_tv  (tv1, va1);
+       int nb = index_tv  (tv1, vb1);
+       if (na==NOTHING || nb==NOTHING)
+          return HERR;
+
+       te2 [nro] = orig->findEdge (tv2[na], tv2[nb]);
+       if (te2[nro]==NULL)
+          return HERR;
+       }
+
+   if (debug())
+      {
+      printf ("  ----------------- Correspondances mergeQuads : \n");
+      for (int nro=0 ; nro<QUAD4 ; nro++)
+          {
+          printf ("  %d  : ", nro);
+          tv2 [nro]->printName(" -> ");
+          tv1 [nro]->printName("\n");
+          }
+      for (int nro=0 ; nro<QUAD4 ; nro++)
+          {
+          printf ("  %d  : ", nro);
+          te2 [nro]->printName(" (");
+          te2 [nro]->getVertex(0)->printName(", ");
+          te2 [nro]->getVertex(1)->printName(") -> ");
+          te1 [nro]->printName(" (");
+          te1 [nro]->getVertex(0)->printName(", ");
+          te1 [nro]->getVertex(1)->printName(")\n");
+          }
+      }
+
+   replaceQuad (orig, dest);
+   for (int nro=0 ; nro<QUAD4 ; nro++) 
+       replaceEdge   (te2[nro], te1[nro]);
+   for (int nro=0 ; nro<QUAD4 ; nro++) 
+       replaceVertex (tv2[nro], tv1[nro]);
+
+   maj_connection = false;
+   purge_elements = false;
+   return HOK;
+}
 // ======================================================== mergeEdges
 int Document::mergeEdges (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2)
 {
@@ -379,6 +512,8 @@ void Document::replaceVertex (Vertex* old, Vertex* par)
    if (old==par)
       return;
 
+   par->replaceAssociation (old);
+
    for (int type=EL_EDGE ; type <= EL_HEXA ; type++)
        {
        for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
@@ -394,6 +529,8 @@ void Document::replaceEdge (Edge* old, Edge* par)
    if (old==par)
       return;
 
+   par->replaceAssociation (old);
+
    for (int type=EL_QUAD ; type <= EL_HEXA ; type++)
        {
        for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
@@ -408,6 +545,8 @@ void Document::replaceQuad (Quad* old, Quad* par)
 {
    if (old==par)
       return;
+
+   par->replaceAssociation (old);
 
    for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
                  elt = elt->next())

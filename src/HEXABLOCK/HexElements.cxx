@@ -1,5 +1,6 @@
 
 // C++ : Table des noeuds
+
 #include "HexElements.hxx"
 
 #include "HexDocument.hxx"
@@ -12,7 +13,7 @@
 
 #include <cmath>
 
-static bool db=true;
+static bool db=false;
 
 BEGIN_NAMESPACE_HEXA
 
@@ -197,8 +198,20 @@ int Elements::makeSphericalGrid (Vertex* c, Vector* dv, int nb, double  k)
        }
 
    for (int nro=0 ; nro<HE_MAXI; nro++)
-       i_edge[nro] = newEdge (i_node[glob->EdgeVertex (nro, V_AMONT)], 
-                              i_node[glob->EdgeVertex (nro, V_AVAL) ]);
+       {
+       int v1 = glob->EdgeVertex (nro, V_AMONT);
+       int v2 = glob->EdgeVertex (nro, V_AVAL);
+       i_edge[nro] = newEdge (i_node[v1], i_node[v2]);
+
+       if (db)
+          {
+          char nm0[8], nm1 [8], nm2 [8];
+          printf (" %2d : %s = %s = [%s, %s] = [%d,%d] = [%s,%s]\n", nro, 
+                 glob->namofHexaEdge(nro), i_edge[nro]->getName(nm0), 
+                 glob->namofHexaVertex(v1), glob->namofHexaVertex(v2), v1, v2,
+                 i_node[v1]->getName(nm1), i_node[v2]->getName(nm2));
+          }
+       }
         
    for (int nro=0 ; nro<HQ_MAXI; nro++)
        i_quad[nro] = newQuad (i_edge[glob->QuadEdge (nro, E_A)], 

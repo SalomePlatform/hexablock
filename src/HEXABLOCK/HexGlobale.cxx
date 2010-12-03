@@ -5,36 +5,39 @@
 
 BEGIN_NAMESPACE_HEXA
 
+static bool db = false;
+
 /* -----------------------------------------------------
 
                 // ---- Numerotation des faces (%x) 
                    
-              +----bf-----+
+       6=bed  +----bd-----+ bdf=7
              /|          /|
-           bc |   B    bd |
+           be |   B    bf |
            /  |        /  |
-          +----be-----+   |   
-          |  cf     F |   df
-          | C |       | D |             z
-         ce   | E     de  |             ^
-          |   +----af-|---+             |   y
+    4=bce +----bc-----+...|...bcf=5
+          |  de     D |   df
+          | E |       | F |             z
+         ce   | C     cf  |             ^
+  2=ade...|...+----ad-|---+ adf=3       |   y
           |  /        |  /              |  /
-          | ac    A   | ad              | /
+          | ae    A   | af              | /
           |/          |/                |/
-          +----ae-----+                 +----->  x
+    0=ace +----ac-----+ acf=1           +----->  x
                 
  * ----------------------------------------------------- */
 
 Globale* Globale::unique_instance = NULL;
 
-
 // ====================================================== Constructeur
 Globale::Globale  ()
 {
+   setNames ();
+
    setCoordVertex ( V_ACE, 0, 0, 0 );
    setCoordVertex ( V_ACF, 1, 0, 0 );
-   setCoordVertex ( V_ADF, 0, 1, 0 );
-   setCoordVertex ( V_ADE, 1, 1, 0 );
+   setCoordVertex ( V_ADF, 1, 1, 0 );
+   setCoordVertex ( V_ADE, 0, 1, 0 );
 
    setCoordVertex ( V_BCE, 0, 0, 1 );
    setCoordVertex ( V_BCF, 1, 0, 1 );
@@ -60,17 +63,67 @@ Globale::Globale  ()
    setQuadEdge ( Q_B, E_BC, E_BF, E_BD, E_BE );
    setQuadEdge ( Q_C, E_AC, E_CF, E_BC, E_CE );
    setQuadEdge ( Q_D, E_AD, E_DF, E_BD, E_DE );
-   setQuadEdge ( Q_E, E_AF, E_DF, E_BF, E_CF );
+   setQuadEdge ( Q_E, E_AE, E_DE, E_BE, E_CE );
+   setQuadEdge ( Q_F, E_AF, E_DF, E_BF, E_CF );
 
    setOpposedVertex ( V_ACE, V_BDF);
    setOpposedVertex ( V_ACF, V_BDE);
    setOpposedVertex ( V_ADF, V_BCE);
    setOpposedVertex ( V_ADE, V_BCF);
 
-   setOpposedQuad   ( Q_A, Q_B );
-   setOpposedQuad   ( Q_C, Q_D );
-   setOpposedQuad   ( Q_E, Q_F );
+   setOpposedQuad  ( Q_A, Q_B );
+   setOpposedQuad  ( Q_C, Q_D );
+   setOpposedQuad  ( Q_E, Q_F );
+}
+// ====================================================== getInstance
+Globale* Globale::getInstance  ()
+{
+   if (unique_instance==NULL) 
+       unique_instance = new Globale ();
 
+   return unique_instance;
+}
+// ====================================================== setCoordVertex
+void Globale::setCoordVertex (EnumHVertex node, int px, int py, int pz)
+{
+    coord_vertex [node] [dir_x] = 2*px-1;
+    coord_vertex [node] [dir_y] = 2*py-1;
+    coord_vertex [node] [dir_z] = 2*pz-1;
+}
+// ====================================================== setEdgeVertex 
+void Globale::setEdgeVertex (EnumHEdge edge, EnumHVertex v1, EnumHVertex v2)
+{
+    edge_vertex [edge] [V_AMONT] = v1;
+    edge_vertex [edge] [V_AVAL ] = v2;
+
+    if (db) 
+       printf (" %s = %2d = [%s, %s] = [%d,%d]\n", h_edge_name[edge], edge, 
+           h_vertex_name[v1], h_vertex_name[v2], v1, v2);
+}
+// ====================================================== setQuadEdge
+void Globale::setQuadEdge (EnumHQuad face, EnumHEdge c1, EnumHEdge c2, 
+		                           EnumHEdge c3, EnumHEdge c4)
+{
+    quad_edge [face] [E_A] = c1;
+    quad_edge [face] [E_B] = c2;
+    quad_edge [face] [E_C] = c3;
+    quad_edge [face] [E_D] = c4;
+}
+// ====================================================== setopposedVertex 
+void Globale::setOpposedVertex (EnumHVertex lun, EnumHVertex lautre)
+{
+    h_opposed_vertex [lun]    = lautre;
+    h_opposed_vertex [lautre] = lun;
+}
+// ====================================================== setopposedQuad 
+void Globale::setOpposedQuad (EnumHQuad lun, EnumHQuad lautre)
+{
+    h_opposed_quad [lun]    = lautre;
+    h_opposed_quad [lautre] = lun;
+}
+// ====================================================== setNames
+void Globale::setNames  ()
+{
 #define SetNameHexaVertex(v) h_vertex_name [v] = #v
 #define SetNameHexaEdge(e)   h_edge_name   [e] = #e
 #define SetNameHexaQuad(q)   h_quad_name   [q] = #q
@@ -103,48 +156,6 @@ Globale::Globale  ()
    SetNameHexaQuad ( Q_D );
    SetNameHexaQuad ( Q_E );
    SetNameHexaQuad ( Q_F );
-}
-// ====================================================== getInstance
-Globale* Globale::getInstance  ()
-{
-   if (unique_instance==NULL) 
-       unique_instance = new Globale ();
-
-   return unique_instance;
-}
-// ====================================================== setCoordVertex
-void Globale::setCoordVertex (EnumHVertex node, int px, int py, int pz)
-{
-    coord_vertex [node] [dir_x] = 2*px-1;
-    coord_vertex [node] [dir_y] = 2*py-1;
-    coord_vertex [node] [dir_z] = 2*pz-1;
-}
-// ====================================================== setEdgeVertex 
-void Globale::setEdgeVertex (EnumHEdge edge, EnumHVertex v1, EnumHVertex v2)
-{
-    edge_vertex [edge] [V_AMONT] = v1;
-    edge_vertex [edge] [V_AVAL ] = v2;
-}
-// ====================================================== setQuadEdge
-void Globale::setQuadEdge (EnumHQuad face, EnumHEdge c1, EnumHEdge c2, 
-		                           EnumHEdge c3, EnumHEdge c4)
-{
-    quad_edge [face] [E_A] = c1;
-    quad_edge [face] [E_B] = c2;
-    quad_edge [face] [E_C] = c3;
-    quad_edge [face] [E_D] = c4;
-}
-// ====================================================== setopposedVertex 
-void Globale::setOpposedVertex (EnumHVertex lun, EnumHVertex lautre)
-{
-    h_opposed_vertex [lun]    = lautre;
-    h_opposed_vertex [lautre] = lun;
-}
-// ====================================================== setopposedQuad 
-void Globale::setOpposedQuad (EnumHQuad lun, EnumHQuad lautre)
-{
-    h_opposed_quad [lun]    = lautre;
-    h_opposed_quad [lautre] = lun;
 }
 
 END_NAMESPACE_HEXA
