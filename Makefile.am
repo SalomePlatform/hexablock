@@ -29,7 +29,8 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 ACLOCAL_AMFLAGS = -I adm_local/unix/config_files \
                   -I ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files \
-                  -I ${GUI_ROOT_DIR}/adm_local/unix/config_files 
+                  -I ${GUI_ROOT_DIR}/adm_local/unix/config_files \
+                  -I ${GEOM_ROOT_DIR}/adm_local/unix/config_files 
 
 SUBDIRS = idl adm_local resources src bin doc
 
