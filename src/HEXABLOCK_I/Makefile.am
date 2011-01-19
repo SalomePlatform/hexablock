@@ -81,4 +81,5 @@ libHEXABLOCKEngine_la_LDFLAGS = \
 	../HEXABLOCK/libHEXABLOCKimpl.la \
 	$(KERNEL_LDFLAGS) -lOpUtil -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lSalomeLifeCycleCORBA \
 	$(CAS_LDPATH) \
-        -lGEOMClient
+        $(GEOM_LDFLAGS) -lGEOMClient
+
