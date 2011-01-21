@@ -30,12 +30,17 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 DIST_SUBDIRS = HEXABLOCK \
 	HEXABLOCK_I \
 	HEXABLOCKGUI \
-	TEST_CPP \
 	TEST_PY
+
+if CPPUNIT_IS_OK
+  DIST_SUBDIRS += TEST_CPP
+endif
 
 SUBDIRS = HEXABLOCK \
 	HEXABLOCK_I \
 	HEXABLOCKGUI \
-	TEST_CPP \
 	TEST_PY
 
+if CPPUNIT_IS_OK
+  SUBDIRS += TEST_CPP
+endif
