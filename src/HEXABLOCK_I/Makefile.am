@@ -37,9 +37,19 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # header files  
 salomeinclude_HEADERS = \
 	HEXABLOCK.hxx \
+	HexCrossElements_impl.hxx \
+	HexCylinder_impl.hxx \
 	HexDocument_impl.hxx \
+	HexEdge_impl.hxx \
+	HexElements_impl.hxx \
+	HexGroup_impl.hxx \
+	HexHexa_impl.hxx \
+	HexLaw_impl.hxx \
+	HexPipe_impl.hxx \
 	HexPropagation_impl.hxx \
-	HexQuad_impl.hxx
+	HexQuad_impl.hxx \
+	HexVector_impl.hxx \
+	HexVertex_impl.hxx
 
 # Scripts to be installed
 dist_salomescript_PYTHON = hexablock.py

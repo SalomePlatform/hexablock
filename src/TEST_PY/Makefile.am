@@ -21,7 +21,7 @@ dist_salomescript_PYTHON = \
 	test_HEXABLOCK.py \
 	test_distrib.py
 
-nodist_salomescript_DATA = \
+dist_salomescript_DATA = \
 	tees.brep \
 	tuyau.brep \
 	crank.stp

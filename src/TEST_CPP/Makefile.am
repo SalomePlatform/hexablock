@@ -45,7 +45,7 @@ COMMON_LIBS =\
 # ===============================================================
 lib_LTLIBRARIES = libHEXABLOCKTest.la
 libHEXABLOCKTest_la_SOURCES  = \
-	ModelTest.cxx
+	ModelTest.cxx ModelTest.hxx
 
 libHEXABLOCKTest_la_CPPFLAGS = $(COMMON_CPPFLAGS)
 libHEXABLOCKTest_la_LDFLAGS  = -no-undefined -version-info=0:0:0
