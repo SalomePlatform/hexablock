@@ -35,6 +35,8 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([-Wno-portability])
 
+SHORT_VERSION=`echo $VERSION | awk -F. '{printf("%d.%d",$1,$2)}'`
+AC_SUBST(SHORT_VERSION)
 XVERSION=`echo $VERSION | awk -F. '{printf("0x%02x%02x%02x",$1,$2,$3)}'`
 AC_SUBST(XVERSION)
 
@@ -318,6 +320,7 @@ AC_OUTPUT([ \
   bin/runAppli \
   bin/Makefile \
   doc/Makefile \
+  doc/conf.py \
   HEXABLOCK_version.h \
   resources/HEXABLOCKCatalog.xml \
   src/Makefile \
