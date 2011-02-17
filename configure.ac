@@ -170,6 +170,12 @@ echo
 
 CHECK_QT
 
+
+
+
+
+
+
 echo
 echo ---------------------------------------------
 echo BOOST Library
@@ -270,6 +276,33 @@ if test "x${CORBA_IN_GUI}" != "xyes"; then
 fi
 
 
+
+
+echo
+echo ---------------------------------------------
+echo Testing LIBXML
+echo ---------------------------------------------
+echo
+AC_CHECK_LIBXML
+
+
+echo
+echo ---------------------------------------------
+echo Testing QT4
+echo ---------------------------------------------
+echo
+I2_CHECK_QT4
+
+
+
+echo
+echo ---------------------------------------------
+echo testing VTK
+echo ---------------------------------------------
+echo
+CHECK_VTK
+
+
 echo
 echo ---------------------------------------------
 echo Summary
@@ -277,7 +310,7 @@ echo ---------------------------------------------
 echo
 
 echo Configure
-variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok occ_ok sphinx_ok Kernel_ok SalomeGUI_ok Geom_ok"
+variables="cc_ok threads_ok boost_ok python_ok omniORB_ok qt_ok occ_ok sphinx_ok vtk_ok Kernel_ok SalomeGUI_ok Geom_ok"
 
 for var in $variables
 do
@@ -289,6 +322,7 @@ echo
 echo "Default ORB   : $DEFAULT_ORB"
 echo
 
+dnl AM_CONDITIONAL(ENABLE_VTKVIEWER, [test "$DISABLE_VTKVIEWER" = no])
 dnl We don t need to say when we re entering directories if we re using
 dnl GNU make becuase make does it for us.
 if test "X$GMAKE" = "Xyes"; then
@@ -306,10 +340,14 @@ AC_OUTPUT_COMMANDS([ \
       chmod +x ./bin/*; \
 ])
 
+
+
+AM_CONDITIONAL(WINDOWS, [ test ])
+
 # This list is initiated using autoscan and must be updated manually
 # when adding a new file <filename>.in to manage. When you execute
 # autoscan, the Makefile list is generated in the output file configure.scan.
-# 
+#
 # This could be helpfull to update de configuration.
 AC_OUTPUT([ \
   salome_adm/unix/SALOMEconfig.h \
@@ -322,14 +360,13 @@ AC_OUTPUT([ \
   doc/Makefile \
   doc/conf.py \
   HEXABLOCK_version.h \
-  resources/HEXABLOCKCatalog.xml \
   src/Makefile \
+  src/HEXABLOCKGUI/Makefile \
+  src/HEXABLOCKGUI/resources/HEXABLOCKCatalog.xml \
   src/HEXABLOCK/Makefile \
   src/HEXABLOCK_I/Makefile \
-  src/HEXABLOCKGUI/Makefile \
   src/TEST_CPP/Makefile \
   src/TEST_PY/Makefile \
-  resources/Makefile \
   idl/Makefile \
   Makefile \
 ])

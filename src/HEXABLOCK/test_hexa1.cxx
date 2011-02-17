@@ -20,7 +20,7 @@
 void print_propagations (Hex::Document* doc)
 {
    int nb = doc->countPropagation ();
-   Display (nb);
+   HexDisplay (nb);
    for (int nro=0 ; nro<nb ; nro++)
        {
        Hex::Propagation*  prop  = doc ->getPropagation (nro);
@@ -214,11 +214,11 @@ int test_joint ()
    int nbr_joint_vertex =  joint->countVertex ();
    int nbr_surf_vertex  =  nbr_joint_vertex/(hauteur+1);
 
-   Display (nbr_joint_vertex);
-   Display (nbr_surf_vertex);
+   HexDisplay (nbr_joint_vertex);
+   HexDisplay (nbr_surf_vertex);
 
    int indice0 = joint->findVertex (v1);
-   Display (indice0);
+   HexDisplay (indice0);
 
    for (int nh=0 ; nh<nbr_surf_vertex ; nh++) 
        joint->getVertex(nh)->setScalar (5);
@@ -488,10 +488,10 @@ int test_spherical (int nbargs, const char* tabargs[])
    Hex::Elements* grid = doc->makeSpherical (orig, dir, nbr);
 
    int nbhexas = grid->countHexa ();
-   Display (nbhexas);
+   HexDisplay (nbhexas);
    for (int nro=0 ; nro<nbhexas ; nro +=3)
        grid->getHexa(nro)->remove();
-   Display (doc->countHexa ());
+   HexDisplay (doc->countHexa ());
    doc->saveVtk ("shperical.vtk");
    // doc->dump ();
 

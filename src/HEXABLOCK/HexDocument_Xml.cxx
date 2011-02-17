@@ -114,7 +114,7 @@ int Document::parseXml (XmlTree& xml)
 
        int nver = get_int (nom);
        t_vertex [nver] = addVertex (px, py, pz);
-       Display  (nver);
+       HexDisplay  (nver);
        }
 
 
@@ -131,7 +131,7 @@ int Document::parseXml (XmlTree& xml)
 
        int ned = get_int (nom);
        t_edge [ned] = new Edge (t_vertex [table[0]], t_vertex [table[1]]);
-       Display  (ned);
+       HexDisplay  (ned);
        }
 
    rubrique = xml.findChild ("ListQuads");
@@ -148,7 +148,7 @@ int Document::parseXml (XmlTree& xml)
        int nquad = get_int (nom);
        t_quad [nquad] = new Quad (t_edge [table[0]], t_edge [table[1]],
                                   t_edge [table[2]], t_edge [table[3]]);
-       Display  (nquad);
+       HexDisplay  (nquad);
        }
 
    rubrique = xml.findChild ("ListHexas");
@@ -166,7 +166,7 @@ int Document::parseXml (XmlTree& xml)
        t_hexa [nhexa] = new Hexa (t_quad [table[0]], t_quad [table[1]],
                                   t_quad [table[2]], t_quad [table[3]],
                                   t_quad [table[4]], t_quad [table[5]]);
-       Display  (nhexa);
+       HexDisplay  (nhexa);
        }
 
 

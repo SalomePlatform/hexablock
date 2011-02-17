@@ -39,7 +39,7 @@ ModelTest::~ModelTest(void)
 void ModelTest::_print_propagations (Hex::Document* doc)
 {
    int nb = doc->countPropagation ();
-   Display (nb);
+   HexDisplay (nb);
    for (int nro=0 ; nro<nb ; nro++)
        {
        Hex::Propagation*  prop  = doc ->getPropagation (nro);
@@ -424,6 +424,8 @@ void ModelTest::Test_relecture ()
 
    CPPUNIT_ASSERT( true );
 }
+
+
 // ======================================================== Test_clone
 void ModelTest::Test_clone ()
 {

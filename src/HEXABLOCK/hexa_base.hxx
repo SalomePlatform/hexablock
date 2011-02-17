@@ -55,7 +55,7 @@ typedef double Real;
 #include <iostream>
 using namespace std;
 
-#define Display(x)      cout << " ... " #x " = " << x << endl
+#define HexDisplay(x)      cout << " ... " #x " = " << x << endl
 #define Echo(m)         cout << " _______________ " << m << endl
 
 //  #define Libere(obj)     { if (obj!=NULL) free (obj)      ;  obj=NULL; }

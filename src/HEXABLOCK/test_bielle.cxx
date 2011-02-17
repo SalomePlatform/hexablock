@@ -184,8 +184,8 @@ quad_list = [ quad_11 , quad_12 ]
 
    int n2 = 0;
    int n1 = quad_11->inter (quad_12, n2); 
-   Display (n1);
-   Display (n2);
+   HexDisplay (n1);
+   HexDisplay (n2);
 
 
    DumpElt (quad_21);

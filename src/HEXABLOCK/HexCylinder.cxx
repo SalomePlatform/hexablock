@@ -119,7 +119,7 @@ Vertex* Cylinder::interCylinder(Cylinder* other)
                                       // Aucune solution trouvee
     if (prems)
        {
-       Display (prems);
+       HexDisplay (prems);
        return NULL;
        }
                                     // Intersection des droites

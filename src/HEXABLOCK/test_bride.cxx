@@ -166,7 +166,7 @@ int test_bride ()
    ******************************************************************* */
    int fusion_g1_g2_quad_A = doc->mergeQuads( quad_A_g2 , quad_A_g1 , 
 		   vtx_A_1_g2 , vtx_A_1_g1 , vtx_A_2_g2 , vtx_A_2_g1 );
-   Display (fusion_g1_g2_quad_A);
+   HexDisplay (fusion_g1_g2_quad_A);
    HexDump (quad_A_g2);
    HexDump (quad_AB_g2);
 
@@ -194,7 +194,7 @@ int test_bride ()
    ******************************************************************* */
    int fusion_g1_g2_quad_B = doc->mergeQuads( quad_AB_g2 , quad_B_g1 , 
 		   vtx_B_1_g2 , vtx_B_2_g1 , vtx_B_2_g2 , vtx_B_1_g1 );
-   Display (fusion_g1_g2_quad_B);
+   HexDisplay (fusion_g1_g2_quad_B);
 
 
    prop  = doc->findPropagation (arete);
@@ -228,7 +228,7 @@ int test_bride ()
 
    int fusion_g1_g2 = doc->mergeEdges( edge_B_g2 , edge_C_g1 , vtx_B_1_h_g2 , vtx_C_1_h_g1 );
 
-   Display (fusion_g1_g2);
+   HexDisplay (fusion_g1_g2);
 
 
 // rajouter l hexa qui manque entre les deux grilles

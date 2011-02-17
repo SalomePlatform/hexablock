@@ -626,21 +626,21 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
 
    if (db) 
       {
-      Display (cross_gray1);
-      Display (cross_pray1);
-      Display (cross_he1  );
+      HexDisplay (cross_gray1);
+      HexDisplay (cross_pray1);
+      HexDisplay (cross_he1  );
                                              // Big
-      Display (cross_gray2);
-      Display (cross_pray2);
-      Display (cross_he2  );
+      HexDisplay (cross_gray2);
+      HexDisplay (cross_pray2);
+      HexDisplay (cross_he2  );
 
-      Display (cross_igray2);
-      Display (cross_ipray2);
-      Display (cross_hi2   );
+      HexDisplay (cross_igray2);
+      HexDisplay (cross_ipray2);
+      HexDisplay (cross_hi2   );
 
-      Display (cross_ipray1);
-      Display (cross_igray1);
-      Display (cross_hi1   );
+      HexDisplay (cross_ipray1);
+      HexDisplay (cross_igray1);
+      HexDisplay (cross_hi1   );
       }
 
    createLittleCyl ();

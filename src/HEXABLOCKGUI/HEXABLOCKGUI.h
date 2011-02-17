@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2006-2010  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,37 +16,171 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  HEXABLOCKGUI : HEXABLOCK component GUI implemetation 
-//
-#ifndef _HEXABLOCKGUI_H_
-#define _HEXABLOCKGUI_H_
 
+#ifndef _HEXABLOCKGUI_HXX_
+#define _HEXABLOCKGUI_HXX_
+
+#include <iostream>
+#include <map>
+
+#include <QTreeView>
+#include <QModelIndex>
+#include <QDockWidget>
+
+#include <OB_Browser.h>
 #include <SalomeApp_Module.h>
-
+#include <LightApp_SelectionMgr.h>
 #include <SALOMEconfig.h>
+
+// #include "Resource.hxx"
+#include "HEXABLOCKGUI_Resource.hxx"
+
 #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)
 
+namespace HEXABLOCK
+{
+  namespace GUI
+  {
+    class DocumentGraphicView;
+    class DocumentDelegate;
+    class DocumentModel;
+    class DocumentSelectionModel;
+    class PatternDataModel;
+    class PatternBuilderModel;
+  }
+}
+
+
 class SalomeApp_Application;
-class HEXABLOCKGUI: public SalomeApp_Module
+class SUIT_ViewWindow;
+
+
+
+class HEXABLOCKGUI : public SalomeApp_Module 
 {
   Q_OBJECT
 
+  friend class HEXABLOCKGUI_Resource;
+
 public:
   HEXABLOCKGUI();
-
-  void    initialize( CAM_Application* );
-  QString engineIOR() const;
-  void    windows( QMap<int, int>& ) const;
+  virtual ~HEXABLOCKGUI();
 
   static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
+  static LightApp_SelectionMgr*   selectionMgr();
+
+  void initialize( CAM_Application* app);
+  void windows( QMap<int, int>& theMap) const;
+  virtual QString  engineIOR() const;
+
+  virtual void viewManagers(QStringList& list) const;
+  virtual void setResource(SUIT_ResourceMgr* r);
+  virtual void createPreferences();
+  virtual void preferencesChanged( const QString& sect, const QString& name );
+  virtual void studyActivated();
+
+  //------------------------------------
+  void createAndFillDockWidget();
+  void createActions();
+  void createMenus();
+  void createTools();
+
+  void initialMenus();
+  void showBaseMenus(bool show);
+  void showEditionMenus(bool show);
+  void showExecMenus(bool show);
+  void showCommonMenus(bool show);
+  void switchModel(SUIT_ViewWindow *view);
+  void showDockWidgets(bool isVisible);
+
 
 public slots:
-  bool    deactivateModule( SUIT_Study* );
-  bool    activateModule( SUIT_Study* );
-
+  bool deactivateModule( SUIT_Study* theStudy);
+  bool activateModule( SUIT_Study* theStudy);
+  void onDblClick(const QModelIndex& index);
+  
 protected slots:
-  void            OnMyNewItem();
-  void            OnGetBanner();
+  void onWindowActivated( SUIT_ViewWindow* svw);
+  void onWindowClosed( SUIT_ViewWindow* svw);
+//   void onTryClose(bool &isClosed, QxScene_ViewWindow* window);
+
+protected:
+  virtual  CAM_DataModel* createDataModel();
+  bool createSComponent();
+
+  bool _selectFromTree;
+  HEXABLOCKGUI_Resource* _myresource;
+//   std::map<int, HEXABLOCK::HMI::QtGuiContext*> _studyContextMap;
+  static int _oldStudyId;
+
+
+private slots:
+  void newDocument();
+  void importDocument( const QString &path = QString() );
+  void addVertex();
+  void addQuad();
+
+  void printVTK();
+
+private:
+  QStringList getQuickDirList();
+  HEXABLOCK::GUI::DocumentGraphicView* newGraphicView();
+
+  // -------------------------------------------------------------------------------------------------
+  //          MainWindow presentation
+  // -------------------------------------------------------------------------------------------------
+  QDockWidget *_dwPattern;       // Hexablock model edition
+  QDockWidget *_dwAssociation;   // Hexablock association edition
+  QDockWidget *_dwGroups;        // Hexablock groups edition
+  QDockWidget *_dwMesh;          // Hexablock meshing edtion
+  QDockWidget *_dwObjectBrowser; // Salome study
+  QDockWidget *_dwInputPanel;    // user Input
+
+  // Actions
+  int _menuId;
+  // Object Browser
+  QAction *_newAct;
+  QAction *_importAct;
+
+  // Pattern
+  QAction *_addVertex;
+  QAction *_addQuad;
+
+
+  // -------------------------------------------------------------------------------------------------
+  //          Model/View implementation  
+  // -------------------------------------------------------------------------------------------------
+
+  //      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL
+  HEXABLOCK::GUI::DocumentModel       *_currentModel;//  a model for each document : 1..n  ( multiple document allowed )
+  HEXABLOCK::GUI::PatternDataModel    *_patternDataModel;    // sub-part of DocumentModel
+  HEXABLOCK::GUI::PatternBuilderModel *_patternBuilderModel; // sub-part of DocumentModel
+
+  //      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW
+//   QTreeView                           *_patternTreeView; //  document's pattern : 1 ( only one view )
+//   QtxTreeView                         *_patternTreeView; //  document's pattern : 1 (
+//   OB_Browser  *_patternTreeView; //  document's pattern : 1 
+  QTreeView                           *_patternDataTreeView;    //  document's pattern : 1 ( only one view )
+  QTreeView                           *_patternBuilderTreeView; //  document's pattern : 1 ( only one view )
+  QTreeView                           *_associationTreeView;    //  document's association : 1 ( only one view )
+  QTreeView                           *_groupsTreeView; //  document's groups
+  QTreeView                           *_meshTreeView;   //  document's mesh property: 1 ( only one view )
+  HEXABLOCK::GUI::DocumentGraphicView *_currentGraphicView;// graphical view (SVTK view) of the document : 1..n ( multiple view )
+
+  //      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE
+  HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree 
+
+  //    SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL     SELECTION_MODEL
+  HEXABLOCK::GUI::DocumentSelectionModel *_currentSelectionModel;// 1..n   selection
+
+  int _documentCnt;
+  bool _isSaved;
+
+
+  //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
+  SUIT_ViewManager *_suitVM;
+  std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentModel*> _mapViewModel; // switch view -> switch (model/document)
+
 };
 
 #endif
