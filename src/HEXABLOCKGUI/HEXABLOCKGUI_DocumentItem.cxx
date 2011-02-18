@@ -18,6 +18,7 @@
 //
 
 #include "HEXABLOCKGUI_DocumentItem.hxx"
+#include <inttypes.h>
 
 /*
 #include <QVariant>*/
@@ -30,7 +31,7 @@ using namespace std;
 using namespace HEXABLOCK::GUI;
 
 
-// ----------------------- VERTEX 
+// ----------------------- VERTEX
 
 VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
   QStandardItem(),
@@ -41,17 +42,17 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
   setText(name);
 //   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
   setData( VERTEX_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<int>(_hexaVertex)), HEXA_ENTRY_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaVertex)), HEXA_ENTRY_ROLE );
 //   setData( QString("toto"), HEXA_ENTRY_ROLE );
 }
- 
+
 int VertexItem::type() const
 {
-  return VERTEXITEM; 
+  return VERTEXITEM;
 }
 
-QVariant VertexItem::data( int role ) const 
-{ 
+QVariant VertexItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaVertex );
     } else {
@@ -71,7 +72,7 @@ void VertexItem::setData ( const QVariant & value, int role )
 
 
 
-// ----------------------- EDGE 
+// ----------------------- EDGE
 
 EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QStandardItem(),
@@ -81,16 +82,16 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QString name = _hexaEdge->getName(pName);
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<int>(_hexaEdge)), HEXA_ENTRY_ROLE );
-}
- 
-int EdgeItem::type() const
-{
-  return EDGEITEM; 
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaEdge)), HEXA_ENTRY_ROLE );
 }
 
-QVariant EdgeItem::data( int role ) const 
-{ 
+int EdgeItem::type() const
+{
+  return EDGEITEM;
+}
+
+QVariant EdgeItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaEdge );
     } else {
@@ -120,17 +121,17 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   QString name = _hexaQuad->getName(pName);
   setText(name);
   setData( QUAD_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<int>(_hexaQuad)), HEXA_ENTRY_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
 }
 
 
 int QuadItem::type() const
 {
-  return QUADITEM; 
+  return QUADITEM;
 }
 
-QVariant QuadItem::data( int role ) const 
-{ 
+QVariant QuadItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaQuad );
     } else {
@@ -162,7 +163,7 @@ HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
   QString name = _hexaHexa->getName(pName);
   setText(name);
   setData( HEXA_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<int>(_hexaHexa)), HEXA_ENTRY_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
 }
 
 
@@ -171,8 +172,8 @@ int HexaItem::type() const
   return HEXAITEM;
 }
 
-QVariant HexaItem::data( int role ) const 
-{ 
+QVariant HexaItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaHexa );
     } else {
