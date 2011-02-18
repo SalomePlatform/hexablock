@@ -171,7 +171,7 @@ ICONS =  \
 	resources/ExecHEXABLOCK.png
 
 QMFILES = \
-	resources/HEXABLOCK_msg_fr.ts \
+	resources/HEXABLOCK_msg_en.ts \
 	resources/HEXABLOCK_msg_fr.ts \
 	resources/HEXABLOCK_icons.ts
 
