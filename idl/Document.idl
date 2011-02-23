@@ -6,7 +6,9 @@
 #include "SALOME_Exception.idl"
 #include "SALOME_GenericObj.idl"
 
-// #include "GEOM_Gen.idl"
+#include "GEOM_Gen.idl"
+
+#include "Edge.idl"
 
 /*!  \ingroup EXAMPLES
 
@@ -31,6 +33,8 @@ module HEXABLOCK_ORB
   interface Propagation;
 
   typedef sequence<Quad>  Quads;
+  typedef GEOM::GEOM_Object  Shape;
+  typedef sequence<GEOM::GEOM_Object>  Shapes;
 
   interface Document : SALOME::GenericObj
   {
@@ -235,11 +239,10 @@ module HEXABLOCK_ORB
    
 
     /*!
-        Tuyau dÃ©coupÃ© en blocs
+        Tuyau decoupe en blocs
     */
-//     Elements makePipe( in Pipe p, in long nr, in long na, in long nl )
-//         raises (SALOME::SALOME_Exception);
-
+    Elements makePipe( in Pipe p, in Vector v, in long nr, in long na, in long nl )
+        raises (SALOME::SALOME_Exception);
 
     /*!
         2 Cylindres en T dÃ©coupÃ©s en blocs
@@ -248,11 +251,10 @@ module HEXABLOCK_ORB
       raises (SALOME::SALOME_Exception);//CS_NEW CS_NOT_SPEC
 
     /*!
-        2 Tuyau dÃ©coupÃ© en intersection dÃ©coupÃ©s en blocs
+        2 Tuyau decoupe en intersection decoupees en blocs
     */
-//     Elements makePipes( in Pipe p1, in long n1r, in long n1a, in long n1l,
-//                         in Pipe p2, in long n2r, in long n2a, in long n2l )
-//         raises (SALOME::SALOME_Exception);
+    Elements makePipes( in Pipe p1, in Pipe p2 )
+        raises (SALOME::SALOME_Exception);
 
     /*!
         Prismer des quadrangles
@@ -462,6 +464,18 @@ module HEXABLOCK_ORB
 
     Propagation findPropagation( in Edge e )
         raises (SALOME::SALOME_Exception);
+
+    /*!
+        Association on lines
+    */
+   long associateOpenedLine (in Edge mstart, in Edges mline, in Shape gstart, 
+                             in double pstart, in Shapes gline, in double pend)
+        raises (SALOME::SALOME_Exception);
+
+   long associateClosedLine (in Vertex mfirst, in Edge mstart, in Edges  mline, 
+                            in Shape  gstart, in double pstart, in Shapes gline)
+        raises (SALOME::SALOME_Exception);
+
 
   };
 };
