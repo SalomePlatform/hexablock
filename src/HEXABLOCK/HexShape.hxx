@@ -29,7 +29,7 @@ private :
     std::string b_rep;
 };
 
-typedef Shape* TopoDS_Shape;
+// typedef Shape* TopoDS_Shape;
 
 END_NAMESPACE_HEXA
 #endif

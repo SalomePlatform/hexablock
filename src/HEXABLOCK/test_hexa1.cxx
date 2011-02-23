@@ -160,7 +160,7 @@ int test_find ()
    return HOK;
 }
 // ======================================================== test_joint
-int test_joint ()
+int test_joint (int nbargs, cpchar tabargs[])
 {
    const int dimx = 11;
    const int dimy = 11;
@@ -265,7 +265,7 @@ int test_prism ()
    return HOK;
 }
 // ======================================================== test_hexa1
-int test_hexa1 ()
+int test_hexa1 (int nbargs, cpchar tabargs[])
 {
    const int size_x = 1;
    const int size_y = 1;
@@ -539,6 +539,57 @@ int test_grille_cyl ()
 
    return HOK;
 }
+// ================================================== test_asso_line
+int test_asso_line (int nbargs, cpchar tabargs[])
+{
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
+
+   Hex::Vector* vz = doc->addVector (0,0,1);
+   Hex::Vector* vx = doc->addVector (1,0,0);
+
+   double dr = 1;
+   double dl = 1;
+   int    nr = 2;
+   int    nl = 3;
+   int    ntheta = 8;
+
+   Hex::Elements *c1 = NULL;
+
+   c1 = doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, ntheta, nl, true);
+
+   Hex::Edges m_line;
+   Hex::Edge* m_start = c1->getEdgeJ (nr, 1, 0);
+
+   for (int na=2 ; na<ntheta ; na++)
+       {
+       Hex::Edge*  arete = c1->getEdgeJ (nr, na, 0);
+       arete->setScalar (5);
+       m_line.push_back (arete);
+       }
+
+   // m_line.push_back (c1->getEdgeJ (nr, 0, 2));
+   // m_line.push_back (NULL);
+   Hex::Shape* gstart = NULL;
+   Hex::Shapes gline;
+   double pstart = 0 , pend = 0;
+
+   int ier = doc-> associateOpenedLine (m_start, m_line, 
+                                        gstart,  pstart, gline, pend);
+   Display (ier);
+   doc->saveVtk ("asso_line.vtk");
+
+  m_line.push_back (c1->getEdgeJ (nr, 0, 0));
+   Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
+   ier = doc-> associateClosedLine (m_first, m_start, m_line, 
+                                        gstart,  pstart, gline);
+   Display (ier);
+   // doc->dump ();
+
+   return HOK;
+}
 // ===================================================== test_cylinder
 int test_cylinder ()
 {
@@ -752,7 +803,7 @@ int test_lorraine()
    return HOK;
 }
 // ======================================================== test_disconnect
-int test_disconnect ()
+int test_disconnect (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -765,7 +816,7 @@ int test_disconnect ()
    Hex::Vertex*   orig2 = doc->addVertex (4,0,0);
    Hex::Vertex*   orig3 = doc->addVertex (8,0,0);
 
-   Hex::Vector*   dir  = doc->addVector (1,1,1);
+   Hex::Vector*   dir   = doc->addVector (1,1,1);
    Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, size_x,size_y,size_z);
    Hex::Elements* grid2 = doc->makeCartesian (orig2, dir, size_x,size_y,size_z);
    Hex::Elements* grid3 = doc->makeCartesian (orig3, dir, size_x,size_y,size_z);

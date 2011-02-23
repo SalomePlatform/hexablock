@@ -20,6 +20,9 @@ using namespace std;
 #include "HexLaw_impl.hxx"
 #include "HexPropagation_impl.hxx"
 #include "HexGroup_impl.hxx"
+#include "HexPipe_impl.hxx"
+
+#include "HexShape.hxx"
 
 
 using namespace HEXABLOCK_ORB;
@@ -728,19 +731,22 @@ Elements_ptr Document_impl::makeCylinder(Cylinder_ptr cylIn, Vector_ptr vrIn, ::
   return result;
 }
 
-// Elements_ptr Document_impl::makePipe( Pipe_ptr pIn, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl)
-//   throw (SALOME::SALOME_Exception)
-// {
-//   Pipe_impl* pServant = ::DownCast<Pipe_impl*>( pIn );
-//   ASSERT( pServant );
-// 
-//   if ( pServant ) {
-//     HEXA_NS::Pipe* p= pServant->GetImpl();
-//     HEXA_NS::Elements* l = _document_cpp->makePipe(  p, nr, na, nl );
-//     Elements_impl* servantCorba = new Elements_impl(l);
-//     return servantCorba->_this();
-//   }
-// }
+Elements_ptr Document_impl::makePipe( Pipe_ptr pIn, Vector_ptr vrIn,  
+                         ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl)
+   throw (SALOME::SALOME_Exception)
+{
+   Pipe_impl*   pServant  = ::DownCast<Pipe_impl*>( pIn );
+   Vector_impl* vrServant = ::DownCast<Vector_impl*>( vrIn );
+   ASSERT( pServant );
+ 
+   if ( pServant ) {
+     HEXA_NS::Pipe*   p   = pServant ->GetImpl();
+     HEXA_NS::Vector* vr  = vrServant->GetImpl();
+     HEXA_NS::Elements* l = _document_cpp->makePipe( p, vr, nr, na, nl );
+     Elements_impl* servantCorba = new Elements_impl(l);
+     return servantCorba->_this();
+   }
+}
 
 
 CrossElements_ptr Document_impl::makeCylinders(Cylinder_ptr c1In, Cylinder_ptr c2In)
@@ -766,26 +772,23 @@ CrossElements_ptr Document_impl::makeCylinders(Cylinder_ptr c1In, Cylinder_ptr c
   return result;
 }
 
-
-// Elements_ptr Document_impl::makePipes(
-//             Pipe_ptr p1In, ::CORBA::Long n1r, ::CORBA::Long n1a, ::CORBA::Long n1l,
-//             Pipe_ptr p2In, ::CORBA::Long n2r, ::CORBA::Long n2a, ::CORBA::Long n2l )
-//   throw (SALOME::SALOME_Exception)
-// {
-//   Pipe_impl* p1Servant = ::DownCast<Pipe_impl*>( p1In );
-//   Pipe_impl* p2Servant = ::DownCast<Pipe_impl*>( p2In );
-//   ASSERT( p1Servant );
-//   ASSERT( p2Servant );
-// 
-//   if ( p1Servant && p2Servant ) {
-//     HEXA_NS::Pipe* p1= p1Servant->GetImpl();
-//     HEXA_NS::Pipe* p2= p2Servant->GetImpl();
-// 
-//     HEXA_NS::Elements* l = _document_cpp->makePipes( p1, n1r, n1a, n1l, p2, n2r, n2a, n2l );
-//     Elements_impl* servantCorba = new Elements_impl(l);
-//     return servantCorba->_this();
-//   }
-// }
+Elements_ptr Document_impl::makePipes( Pipe_ptr p1In, Pipe_ptr p2In)
+   throw (SALOME::SALOME_Exception)
+{
+   Pipe_impl* p1Servant = ::DownCast<Pipe_impl*>( p1In );
+   Pipe_impl* p2Servant = ::DownCast<Pipe_impl*>( p2In );
+   ASSERT( p1Servant );
+   ASSERT( p2Servant );
+ 
+   if ( p1Servant && p2Servant ) {
+     HEXA_NS::Pipe* p1= p1Servant->GetImpl();
+     HEXA_NS::Pipe* p2= p2Servant->GetImpl();
+ 
+     HEXA_NS::Elements* l = _document_cpp->makePipes( p1, p2);
+     Elements_impl* servantCorba = new Elements_impl(l);
+     return servantCorba->_this();
+   }
+}
 
 
 
@@ -1037,8 +1040,8 @@ Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) thro
 
     HEXA_NS::Elements* elements = _document_cpp->disconnectQuad(h, q);
     if (elements != NULL ){
-	Elements_impl* servantCorba = new Elements_impl(elements);
-	result = servantCorba->_this();
+       Elements_impl* servantCorba = new Elements_impl(elements);
+       result = servantCorba->_this();
     }
 //     HEXA_NS::Quad* qOut = _document_cpp->disconnectQuad(h, q);
 //     if (qOut != NULL ){
@@ -1446,6 +1449,100 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
 
   return result;
 }
+// ======================================================= associateOpenedLine
+::CORBA::Long Document_impl::associateOpenedLine (Edge_ptr   mstart, 
+                            const Edges&          mline, 
+                            GEOM::GEOM_Object_ptr gstart, 
+                            ::CORBA::Double       pstart, 
+                            const Shapes&         gline, 
+                            ::CORBA::Double       pend) 
+                      throw (SALOME::SALOME_Exception)
+{
+   Edge_impl* im_start = ::DownCast<Edge_impl*>( mstart );
+
+   ASSERT ( im_start );
+   if (im_start == NULL)
+      return HERR;
+
+   std::vector <HEXA_NS::Edge*> md_line;
+   for (int i = 0; i < mline.length(); i++) 
+       {
+       Edge_impl* im_edge = ::DownCast<Edge_impl*> ( mline[i] );
+       ASSERT( im_edge );
+       HEXA_NS::Edge* un_edge = im_edge->GetImpl();
+       md_line.push_back (un_edge);
+       }
+
+   TopoDS_Shape shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gstart);
+   string       b_rep = shape2string( shape );
+   HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
+
+   std::vector <HEXA_NS::Shape*> gg_line;
+   for (int i = 0; i < gline.length(); i++) 
+       {
+       shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
+       b_rep = shape2string( shape );
+       HEXA_NS::Shape* gg_edge = new HEXA_NS::Shape( b_rep );
+       gg_line.push_back (gg_edge);
+       }
+
+                // Call model
+
+  HEXA_NS::Edge* md_start = im_start->GetImpl();
+
+  ::CORBA::Long ier = _document_cpp->associateOpenedLine (md_start, md_line, 
+                                          gg_start, pstart, gg_line, pend);
+  return ier;
+}
+
+// ======================================================= associateClosedLine
+::CORBA::Long Document_impl::associateClosedLine (Vertex_ptr mfirst, 
+                            Edge_ptr                mstart, 
+                            const Edges&            mline, 
+                            GEOM::GEOM_Object_ptr   gstart, 
+                            ::CORBA::Double         pstart, 
+                            const Shapes&           gline)
+                      throw (SALOME::SALOME_Exception)
+{
+   std::vector <HEXA_NS::Edge*> md_line;
+   for (int i = 0; i < mline.length(); i++) 
+       {
+       Edge_impl* im_edge = ::DownCast<Edge_impl*> ( mline[i] );
+       ASSERT( im_edge );
+       HEXA_NS::Edge* un_edge = im_edge->GetImpl();
+       md_line.push_back (un_edge);
+       }
+
+   TopoDS_Shape shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gstart);
+   string       b_rep = shape2string( shape );
+   HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
+
+   std::vector <HEXA_NS::Shape*> gg_line;
+   for (int i = 0; i < gline.length(); i++) 
+       {
+       shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
+       b_rep = shape2string( shape );
+       HEXA_NS::Shape* gg_edge = new HEXA_NS::Shape( b_rep );
+       gg_line.push_back (gg_edge);
+       }
+
+                // Call model
+
+  Edge_impl*   im_start = ::DownCast<Edge_impl*>  ( mstart );
+  Vertex_impl* im_first = ::DownCast<Vertex_impl*>( mfirst );
+
+  HEXA_NS::Vertex* md_first = im_first->GetImpl();
+  HEXA_NS::Edge*   md_start = im_start->GetImpl();
+
+  printf (" +++ HexDocument_impl.cxx : Appel de associateClosedLine \n");
+
+  ::CORBA::Long ier = _document_cpp->associateClosedLine (md_first, md_start, 
+                                         md_line, gg_start, pstart, gg_line);
+  HexDisplay (ier);
+  return ier;
+}
+
+
 
 
 

@@ -33,43 +33,32 @@ int get_coords (const string& chaine, double& x, double& y, double& z)
    if (nv!=3) return HERR;
    return HOK;
 }
-// ======================================================== get_values
-int get_values (const string& chaine, int size, int table[])
+// ======================================================== get_names
+void get_names (const string& chaine, int size, vector<string>& table)
 {
-   int lg  = chaine.size();
-   int nv  = 0;
-   int val = 0;
+   table.clear ();
+   int    lg    = chaine.size();
+   string mot   = "";
    bool encours = false;
 
    for (int nc=0 ; nc<lg ; nc++)
        {
        char car  = chaine[nc];
-       if (car >= '0' && car <= '9')
+       if (isalnum (car))
           {
-          val = 10* val + car - '0';
+          mot += car;
           encours = true;
           }
        else if (encours)
           {
-          table [nv] = val;
+          table.push_back (mot);
           encours = false;
-          val     = 0;
-          nv++;
-          if (nv >= size) 
-             return nv;
+          mot     = "";
           }
        }
 
    if (encours)
-      table [nv] = val;
-   return nv;
-}
-// ======================================================== get_int
-int get_int (const string& chaine)
-{
-   int val [2] = {0, 0};
-   get_values (chaine, 1, val);
-   return val[0];
+      table.push_back (mot);
 }
 // ======================================================== loadXml
 int Document::loadXml ()
@@ -94,15 +83,14 @@ int Document::parseXml (XmlTree& xml)
 {
    xml.dump ();
 
-   vector <Vertex*> t_vertex;
-   vector <Edge*>   t_edge;
-   vector <Quad*>   t_quad;
-   vector <Hexa*>   t_hexa;
-   int table [10];
+   map <std::string, Vertex*> t_vertex;
+   map <std::string, Edge*>   t_edge;
+   map <std::string, Quad*>   t_quad;
+   map <std::string, Hexa*>   t_hexa;
+   vector <string> tname;
 
    XmlTree* rubrique = xml.findChild ("ListVertices");
    int nbrelts       = rubrique->getNbrChildren ();
-   t_vertex.resize (nbrelts);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -112,63 +100,50 @@ int Document::parseXml (XmlTree& xml)
        const  string& coords = node->findValue ("coord");
        get_coords (coords, px, py, pz);
 
-       int nver = get_int (nom);
-       t_vertex [nver] = addVertex (px, py, pz);
-       HexDisplay  (nver);
+       t_vertex [nom] = addVertex (px, py, pz);
        }
-
 
    rubrique = xml.findChild ("ListEdges");
    nbrelts  = rubrique->getNbrChildren ();
-   t_edge.resize (nbrelts);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
        const  string& nom      = node->findValue ("id");
        const  string& vertices = node->findValue ("vertices");
-       get_values (vertices, V_TWO, table);
+       get_names (vertices, V_TWO, tname);
 
-       int ned = get_int (nom);
-       t_edge [ned] = new Edge (t_vertex [table[0]], t_vertex [table[1]]);
-       HexDisplay  (ned);
+       t_edge [nom] = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
        }
 
    rubrique = xml.findChild ("ListQuads");
    nbrelts  = rubrique->getNbrChildren ();
-   t_quad.resize (nbrelts);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
        const string& nom   = node->findValue ("id");
        const string& edges = node->findValue ("edges");
-       get_values (edges, QUAD4, table);
+       get_names (edges, V_TWO, tname);
 
-       int nquad = get_int (nom);
-       t_quad [nquad] = new Quad (t_edge [table[0]], t_edge [table[1]],
-                                  t_edge [table[2]], t_edge [table[3]]);
-       HexDisplay  (nquad);
+       t_quad [nom] = new Quad (t_edge [tname[0]], t_edge [tname[1]],
+                                t_edge [tname[2]], t_edge [tname[3]]);
        }
 
    rubrique = xml.findChild ("ListHexas");
    nbrelts  = rubrique->getNbrChildren ();
-   t_hexa.resize (nbrelts);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
        const  string& nom   = node->findValue ("id");
        const  string& quads = node->findValue ("quads");
-       get_values (quads, HQ_MAXI, table);
+       get_names (quads, V_TWO, tname);
 
-       int nhexa      = get_int (nom);
-       t_hexa [nhexa] = new Hexa (t_quad [table[0]], t_quad [table[1]],
-                                  t_quad [table[2]], t_quad [table[3]],
-                                  t_quad [table[4]], t_quad [table[5]]);
-       HexDisplay  (nhexa);
+       t_hexa [nom] = new Hexa (t_quad [tname[0]], t_quad [tname[1]],
+                                t_quad [tname[2]], t_quad [tname[3]],
+                                t_quad [tname[4]], t_quad [tname[5]]);
        }
-
 
    return HOK;
 }

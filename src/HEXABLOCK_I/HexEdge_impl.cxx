@@ -80,11 +80,11 @@ void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
   ok = _edge_cpp->addAssociation( s );
 
 
-  Edge_impl::Assoc assoc;
-  assoc.geomObj = GEOM::GEOM_Object::_duplicate( geom_object_1D );
-  assoc.debut   = debut;
-  assoc.fin     = fin;
-  _associations.push_back(assoc);
+  /// Edge_impl::Assoc assoc;
+  /// assoc.geomObj = GEOM::GEOM_Object::_duplicate( geom_object_1D );
+  /// assoc.debut   = debut;
+  /// assoc.fin     = fin;
+  /// _associations.push_back(assoc);
 
   return ok;
 }

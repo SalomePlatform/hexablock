@@ -64,12 +64,12 @@ salomeinclude_HEADERS = \
 	HexCrossElements.hxx
 
 
-
 # Libraries targets
 # SD/Propagation/HexPropagation.cxx \
 # SD/Law/HexLaw.cxx \
 #
 lib_LTLIBRARIES = libHEXABLOCKimpl.la
+
 dist_libHEXABLOCKimpl_la_SOURCES = \
 	hexa_utils.cxx \
 	HexEltBase.cxx \
@@ -87,11 +87,13 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexPipe.cxx \
 	HexShape.cxx \
 	HexDocument_trans.cxx \
+	HexDocument_asso.cxx \
 	HexDocument_Xml.cxx \
 	HexDocument.cxx \
 	HexXmlTree.cxx \
 	HexXmlWriter.cxx \
 	HexCrossElements.cxx \
+	HexUseCascade.cxx \
 	Hex.cxx
 
 # libHEXABLOCKimpl_la_CPPFLAGS = \
@@ -99,3 +101,42 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 # 
 # libHEXABLOCKimpl_la_LDFLAGS = \
 # 	-lOpUtil
+
+libHEXABLOCKimpl_la_CPPFLAGS = \
+	$(KERNEL_CXXFLAGS)    \
+	$(CAS_CPPFLAGS)       \
+        $(VTK_INCLUDES)       \
+	$(GEOM_CXXFLAGS)      \
+	$(HEXABLOCK_CXXFLAGS) \
+	$(MED_CXXFLAGS)       \
+	$(SMESH_CXXFLAGS)     \
+	$(BOOST_CPPFLAGS)     \
+	$(CORBA_CXXFLAGS)     \
+	$(CORBA_INCLUDES)     \
+	-I$(top_builddir)/idl
+
+libHEXABLOCKimpl_la_LDFLAGS = \
+	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo \
+	$(MED_LDFLAGS) -lSalomeIDLMED \
+	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics
+
+####  libHexaBlockimpl_la_CPPFLAGS =  \
+	####  $(KERNEL_CXXFLAGS)    \
+	####  $(CAS_CPPFLAGS)       \
+        ####  $(VTK_INCLUDES)       \
+	####  $(GEOM_CXXFLAGS)      \
+	####  $(HEXABLOCK_CXXFLAGS) \
+	####  $(MED_CXXFLAGS)       \
+	####  $(SMESH_CXXFLAGS)     \
+	####  $(BOOST_CPPFLAGS)     \
+	####  $(CORBA_CXXFLAGS)     \
+	####  $(CORBA_INCLUDES)     \
+	####  -I$(top_builddir)/idl
+
+####  libHexaBlockimpl_la_LDFLAGS  = \
+	####  ../../idl/libSalomeIDLHEXABLOCKPLUGIN.la \
+	####  $(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo \
+	####  $(HEXABLOCK_LDFLAGS) -lHEXABLOCKEngine \
+	####  $(MED_LDFLAGS) -lSalomeIDLMED \
+	####  $(SMESH_LDFLAGS) -lSMESHimpl -lSMESHEngine -lSMESHDS -lSMDS \
+	####  $(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics

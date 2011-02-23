@@ -47,7 +47,7 @@ public:
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
     int   addAssociation (Shape* forme); 
-    const std::vector <Shape*> & getAssociations () { return tab_assoc ; }
+    const Shapes & getAssociations () { return tab_assoc ; }
 
 private:
     friend class Cloner;
@@ -56,7 +56,7 @@ private:
     bool    e_way;     // Sens de propagation
     Law*    e_law;     // Le soleil brille, brille, brille
 
-    std::vector <Shape*> tab_assoc;
+    Shapes tab_assoc;
 };
 
 // ----------------------------------------------- Inlining

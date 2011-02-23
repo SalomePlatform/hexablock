@@ -63,7 +63,7 @@ public :
    Elements* joinQuad  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,  
                                       Vertex* v3, Vertex* v4, int nb);
    Elements* joinQuads (Quads& start, Quad* dest, Vertex* v1, Vertex* v2, 
-		                      Vertex* v3, Vertex* v4, int nb);
+                                      Vertex* v3, Vertex* v4, int nb);
 
    Cylinder* addCylinder   (Vertex* b, Vector* d, double r,  double h);
    Elements* makeCylinder  (Cylinder* cyl, Vector* vx, int nr, int na, int nl);
@@ -72,9 +72,6 @@ public :
    Pipe*     addPipe   (Vertex* b, Vector* d, double ri, double re, double h);
    Elements* makePipe  (Pipe* pip, Vector* vx, int nr, int na, int nl);
    CrossElements* makePipes (Pipe* pipe1, Pipe* pipe2);
-
-   // CrossElements* makePipes (Pipe* pipe1, int nr1, int na1, int nl1, 
-   //                          Pipe* pipe2, int nr2, int na2, int nl2);
 
    int     removeHexa (Hexa* maille);
    int     removeConnectedHexa (Hexa* maille);
@@ -143,7 +140,13 @@ public :
    Pipe*     getPipe     (int nro)   { return doc_pipe [nro]; }
 
    void purge ();
-   int  associateEdges (Edges* aretes, Shapes* lignes);
+   int  associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
+                             double pstart, Shapes& gline, double pend);
+   int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
+                             Shape*  gstart, double pstart, Shapes& gline);
+
+   int  associateCascade (Edges& mline, int msens[], Shape* gstart, 
+		          Shapes& gline, double pstart, double pend, bool clos);
 
 public:
     Document (cpchar filename);
@@ -164,6 +167,7 @@ public:
     int  saveVtk  (cpchar radical, int &nro); 
 
     void  putError  (cpchar mess, cpchar info1=NULL, cpchar info2=NULL);
+    void  nputError (cpchar mess, int info1,  cpchar info2=NULL);
     void  hputError (cpchar mess, EltBase* e1, EltBase* e2=NULL);
 
     void  majReferences  ();                  // M.A.J relation "utilise par"
@@ -188,6 +192,8 @@ private :
    void  renumeroter ();
 
    Elements* clonerElements (Elements* table, Matrix* matrice);
+   int associateLine (Vertex* mfirst, Edge*  mstart, Edges& mline, 
+                   Shape*  gstart, double pstart, Shapes& gline, double pend);
 
 private :
    friend class EltBase;

@@ -72,12 +72,14 @@ public:
     ::CORBA::Double k ) throw (SALOME::SALOME_Exception); //CS_TODO
 //   Elements_ptr makeCylinder(Cylinder_ptr cyl, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
   Elements_ptr makeCylinder(Cylinder_ptr cyl, Vector_ptr vr, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makePipe(Pipe_ptr p, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
+  Elements_ptr makePipe(Pipe_ptr p, Vector_ptr vr, ::CORBA::Long nr, 
+                                 ::CORBA::Long na, ::CORBA::Long nl) 
+                throw (SALOME::SALOME_Exception);
 
 //   Elements_ptr makeCylinders(Cylinder_ptr c1, Cylinder_ptr c2) throw (SALOME::SALOME_Exception);
     CrossElements_ptr makeCylinders(Cylinder_ptr cyl1, Cylinder_ptr cyl2) throw (SALOME::SALOME_Exception);
 
-//   Elements_ptr makePipes(Pipe_ptr p1, ::CORBA::Long n1r, ::CORBA::Long n1a, ::CORBA::Long n1l, Pipe_ptr p2, ::CORBA::Long n2r, ::CORBA::Long n2a, ::CORBA::Long n2l) throw (SALOME::SALOME_Exception);
+   Elements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2) throw (SALOME::SALOME_Exception);
 
   Elements_ptr prismQuad(Quad_ptr qd, Vector_ptr v, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
   Elements_ptr prismQuads(const Quads& qds, Vector_ptr v, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
@@ -143,6 +145,23 @@ public:
   ::CORBA::Long countPropagation() throw (SALOME::SALOME_Exception);
   Propagation_ptr getPropagation(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Propagation_ptr findPropagation(Edge_ptr e) throw (SALOME::SALOME_Exception);
+
+          // Evols 13/12/2010
+
+ ::CORBA::Long associateOpenedLine (Edge_ptr        mstart, 
+                            const Edges&            mline, 
+                            GEOM::GEOM_Object_ptr   gstart, 
+                            ::CORBA::Double         pstart, 
+                            const Shapes&           gline, 
+                            ::CORBA::Double pend) 
+                      throw (SALOME::SALOME_Exception);
+ ::CORBA::Long associateClosedLine (Vertex_ptr      mfirst, 
+                            Edge_ptr                mstart, 
+                            const Edges&            mline, 
+                            GEOM::GEOM_Object_ptr   gstart, 
+                            ::CORBA::Double         pstart, 
+                            const Shapes&           gline)
+                      throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Document *_document_cpp;

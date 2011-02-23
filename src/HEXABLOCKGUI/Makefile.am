@@ -98,6 +98,7 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(VTK_INCLUDES) \
 	-I$(KERNEL_ROOT_DIR)/include/salome \
 	-I$(GUI_ROOT_DIR)/include/salome \
+	-I$(GEOM_ROOT_DIR)/include/salome \
 	-I$(srcdir)/../HEXABLOCK \
 	-I../../idl \
 	$(qt4_cppflags) \
