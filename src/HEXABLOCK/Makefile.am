@@ -108,7 +108,6 @@ libHEXABLOCKimpl_la_CPPFLAGS = \
         $(VTK_INCLUDES)       \
 	$(GEOM_CXXFLAGS)      \
 	$(HEXABLOCK_CXXFLAGS) \
-	$(MED_CXXFLAGS)       \
 	$(SMESH_CXXFLAGS)     \
 	$(BOOST_CPPFLAGS)     \
 	$(CORBA_CXXFLAGS)     \
@@ -117,7 +116,6 @@ libHEXABLOCKimpl_la_CPPFLAGS = \
 
 libHEXABLOCKimpl_la_LDFLAGS = \
 	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo \
-	$(MED_LDFLAGS) -lSalomeIDLMED \
 	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics
 
 ####  libHexaBlockimpl_la_CPPFLAGS =  \

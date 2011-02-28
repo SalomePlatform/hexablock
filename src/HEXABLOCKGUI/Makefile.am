@@ -34,7 +34,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # header files 
 salomeinclude_HEADERS = \
 	HEXABLOCKGUI_Export.hxx \
-	HEXABLOCKGUI.h
+	HEXABLOCKGUI.hxx
 
 # Libraries targets
 lib_LTLIBRARIES = libHEXABLOCK.la
@@ -64,7 +64,7 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_DocumentDelegate.cxx \
     HEXABLOCKGUI_DocumentPanel.hxx \
     HEXABLOCKGUI_DocumentPanel.cxx \
-    HEXABLOCKGUI.h \
+    HEXABLOCKGUI.hxx \
     HEXABLOCKGUI.cxx
 
 
@@ -191,30 +191,30 @@ dist_salomeres_DATA = $(QMFILES) ${ICONS}
 
 
 
-# --------------------------------------------
-# *.h --> *_moc.cxx
-# --------------------------------------------
-
-SUFFIXES = .hxx _moc.cxx .qrc _qrc.cxx
-
-.hxx_moc.cxx :
-	$(QT_MOC) -p . -o $@ $<
-
-.qrc_qrc.cxx :
-	$(QT_RCC) -name $(*F)  $< -o $@
-
-#.ui.h :
-#	$(QT_UIC) -o $@ $<
-ui_%.h: %.ui
-	$(QT_UIC) $< -o $@
-
-
-clean-local-qt :
-	rm -f *_moc.cxx *_qrc.cxx ui_*.h
-
-
-clean-local: clean-local-qt
-	rm -f HEXABLOCK_msg_en.qm HEXABLOCK_msg_fr.qm
-
-
-
+# # --------------------------------------------
+# # *.h --> *_moc.cxx
+# # --------------------------------------------
+# 
+# SUFFIXES = .hxx _moc.cxx .qrc _qrc.cxx
+# 
+# .hxx_moc.cxx :
+# 	$(QT_MOC) -p . -o $@ $<
+# 
+# .qrc_qrc.cxx :
+# 	$(QT_RCC) -name $(*F)  $< -o $@
+# 
+# #.ui.h :
+# #	$(QT_UIC) -o $@ $<
+# ui_%.h: %.ui
+# 	$(QT_UIC) $< -o $@
+# 
+# 
+# clean-local-qt :
+# 	rm -f *_moc.cxx *_qrc.cxx ui_*.h
+# 
+# 
+# clean-local: clean-local-qt
+# 	rm -f HEXABLOCK_msg_en.qm HEXABLOCK_msg_fr.qm
+# 
+# 
+# 

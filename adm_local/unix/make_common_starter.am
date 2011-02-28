@@ -53,7 +53,7 @@ docdir             = $(datadir)/doc/salome
 # common rules
 
 # meta object implementation files generation (moc)
-%_moc.cxx: %.h
+%_moc.cxx: %.hxx
 	$(MOC) $< -o $@
 
 # translation (*.qm) files generation (lrelease)
@@ -69,7 +69,7 @@ ui_%.h: %.ui
 	$(UIC) -o $@ $<
 
 # extra distributed files
-EXTRA_DIST = $(MOC_FILES:%_moc.cxx=%.h) $(QRC_FILES:qrc_%.cxx=%.qrc) \
+EXTRA_DIST = $(MOC_FILES:%_moc.cxx=%.hxx) $(QRC_FILES:qrc_%.cxx=%.qrc) \
              $(UIC_FILES:ui_%.h=%.ui) $(nodist_salomeres_DATA:%.qm=%.ts)
 
 # customize clean operation
