@@ -522,6 +522,7 @@ void HEXABLOCKGUI::createActions()
 {
   QMainWindow *aParent = application()->desktop();
 
+  // Document 
   _newAct = createAction( _menuId++, tr("Create a new document"), QIcon("icons:new_document.png"),
                                             tr("New document"),  tr("Create a new document"),
                                             0, aParent, false, this,  SLOT(newDocument()) );
@@ -533,6 +534,7 @@ void HEXABLOCKGUI::createActions()
   _importAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O); // --- QKeySequence::Open ambiguous in SALOME
 
 
+  // Pattern Data creation
   _addVertex = createAction( _menuId++, tr("Create a vertex"), QIcon("icons:add_vertex.png"),
                                             tr("Add vertex"),  tr("Create a new vertex"),
                                             0, aParent, false, this,  SLOT(addVertex()) );
@@ -540,6 +542,26 @@ void HEXABLOCKGUI::createActions()
   _addQuad = createAction( _menuId++, tr("Create a quad"), QIcon("icons:add_quad.png"),
                                             tr("Add quad"),  tr("Create a new quad"),
                                             0, aParent, false, this,  SLOT(addQuad()) );
+
+  _addHexa = createAction( _menuId++, tr("Create an hexa"), QIcon("icons:add_hexa.png"),
+                                            tr("Add hexa"),  tr("Create a new hexa"),
+                                            0, aParent, false, this,  SLOT(addHexa()) );
+
+
+  // Pattern Data edition
+  _mergeVertices = createAction( _menuId++, tr("Merge vertices"), QIcon("icons:merge_vertices.png"),
+                                            tr("Merge vertices"),  tr("Merge vertices"),
+                                            0, aParent, false, this,  SLOT(mergeVertices()) );
+
+  _mergeEdges = createAction( _menuId++, tr("Merge edges"), QIcon("icons:merge_edges.png"),
+                                         tr("Merge edges"),  tr("Merge edges"),
+                                            0, aParent, false, this,  SLOT(mergeEdges()) );
+
+  _cutEdge    = createAction( _menuId++, tr("Cut edge"), QIcon("icons:cut_edge.png"),
+                                         tr("Cut edge"),  tr("Cut edge"),
+                                            0, aParent, false, this,  SLOT(cutEdge()) );
+
+
 
 //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
 
@@ -612,10 +634,10 @@ void HEXABLOCKGUI::createMenus()
 //   _wrapper->createMenu( _hideAllLinksAct, aMenuId );
 //   _wrapper->createMenu( _wrapper->separator(), aMenuId);
 //   _wrapper->createMenu( _whatsThisAct, aMenuId );
-
   aMenuId = createMenu( tr("Pattern"), -1, -1, 30 );
   createMenu( _addVertex, aMenuId );
-  createMenu( _addQuad, aMenuId );
+  createMenu( _addQuad,   aMenuId );
+  createMenu( _addHexa,   aMenuId );
   
 
 //   aMenuId = createMenu( tr("Association"), -1, -1, 30 );
@@ -637,11 +659,24 @@ void HEXABLOCKGUI::createMenus()
 void HEXABLOCKGUI::createTools()
 {
   int aToolId = createTool ( tr( "HEXABLOCK Toolbar" ) );
+
   createTool( _newAct, aToolId );
   createTool( _importAct, aToolId );
+
   createTool( separator(), aToolId );
+
   createTool( _addVertex, aToolId );
   createTool( _addQuad, aToolId );
+  createTool( _addHexa, aToolId );
+
+  createTool( separator(), aToolId );
+
+  createTool( _mergeVertices, aToolId );
+  createTool( _mergeEdges,    aToolId );
+  createTool( _cutEdge,       aToolId );
+
+
+
 //   _wrapper->createTool( _exportSchemaAsAct, aToolId );
 //   _wrapper->createTool( _wrapper->separator(), aToolId);
 //   _wrapper->createTool( _runLoadedSchemaAct, aToolId );
@@ -703,6 +738,16 @@ void HEXABLOCKGUI::showEditionMenus(bool show)
   setToolShown(_addVertex, show);
   setMenuShown(_addQuad, show);
   setToolShown(_addQuad, show);
+  setMenuShown(_addHexa, show);
+  setToolShown(_addHexa, show);
+
+  setMenuShown(_mergeVertices, show);
+  setToolShown(_mergeVertices, show);
+  setMenuShown(_mergeEdges, show);
+  setToolShown(_mergeEdges, show);
+  setMenuShown(_cutEdge, show);
+  setToolShown(_cutEdge, show);
+
 
 //   _wrapper->setMenuShown(_exportSchemaAct, show);
 //   _wrapper->setToolShown(_exportSchemaAct, show);
@@ -1008,11 +1053,28 @@ void HEXABLOCKGUI::newDocument()
 //   QStandardItem *parentItem = _currentModel->invisibleRootItem();
 //   QStandardItem *myItem =  new QStandardItem("MyItem");
 //   parentItem->appendRow(myItem);
-//   // ----------
-//   _patternDataModel->addVertex(0., 0., 0.);
-//   _patternDataModel->addVertex(5., 0., 0.);
-//   _patternDataModel->addVertex(5., 5., 0.);
-//   _patternDataModel->addVertex(0., 5., 0.);
+  // ----------
+//   QModelIndex v0 = _patternDataModel->addVertex(0., 0., 0.);
+//   QModelIndex v1 = _patternDataModel->addVertex(5., 0., 0.);
+//   QModelIndex v2 = _patternDataModel->addVertex(5., 5., 0.);
+//   QModelIndex v3 = _patternDataModel->addVertex(0., 5., 0.);
+//   QModelIndex v4 = _patternDataModel->addVertex(0., 0., 5.);
+//   QModelIndex v5 = _patternDataModel->addVertex(5., 0., 5.);
+//   QModelIndex v6 = _patternDataModel->addVertex(5., 5., 5.);
+//   QModelIndex v7 = _patternDataModel->addVertex(0., 5., 5.);
+// 
+// 
+//   QModelIndex q0 = _patternDataModel->addQuad( v0, v1, v2, v3 );
+//   QModelIndex q1 = _patternDataModel->addQuad( v4, v5, v6, v7 );
+//   QModelIndex q2 = _patternDataModel->addQuad( v0, v3, v7, v4 );
+//   QModelIndex q3 = _patternDataModel->addQuad( v1, v2, v6, v5 );
+//   QModelIndex q4 = _patternDataModel->addQuad( v0, v1, v5, v4 );
+//   QModelIndex q5 = _patternDataModel->addQuad( v3, v2, v6, v7 );
+// 
+// 
+//   QModelIndex h0 = _patternDataModel->addHexaFromQuad( q0, q1, q2, q3, q4, q5 );
+
+
 //   //CS_TEST
 
   _mapViewModel[ _currentGraphicView->get_SUIT_ViewWindow() ] = _currentModel;
@@ -1070,6 +1132,60 @@ void HEXABLOCKGUI::addQuad()
   _dwInputPanel->setWidget(diag);
   //   diag->show();
 }
+
+
+void HEXABLOCKGUI::addHexa()
+{
+  if (!_dwInputPanel) return;
+
+  HexaDialog* diag = new HexaDialog(_dwInputPanel);
+  diag->setModel(_patternDataModel);//_currentModel);
+  diag->setSelectionModel(_currentSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
+}
+
+
+void HEXABLOCKGUI::mergeVertices()
+{
+  if (!_dwInputPanel) return;
+
+  MergeVerticesDialog* diag = new MergeVerticesDialog(_dwInputPanel);
+  diag->setModel(_patternDataModel);//_currentModel);
+  diag->setSelectionModel(_currentSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
+
+
+void HEXABLOCKGUI::mergeEdges()
+{
+  if (!_dwInputPanel) return;
+
+  MergeEdgesDialog* diag = new MergeEdgesDialog(_dwInputPanel);
+  diag->setModel(_patternDataModel);//_currentModel);
+  diag->setSelectionModel(_currentSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
+
+
+void HEXABLOCKGUI::cutEdge()
+{
+  if (!_dwInputPanel) return;
+
+  CutEdgeDialog* diag = new CutEdgeDialog(_dwInputPanel);
+  diag->setModel(_patternDataModel);//_currentModel);
+  diag->setSelectionModel(_currentSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
+
+
+
+
+
+
+
+
+
 
 
 LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()

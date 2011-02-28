@@ -104,10 +104,8 @@ namespace HEXABLOCK
             bool addObject(const QModelIndex& index);
             bool updateObject(const QModelIndex& index);
             static SALOME_Actor* FindActorByEntry(SUIT_ViewWindow *theWindow, const char* theEntry);
-//             SALOME_Actor* CreateActor(const char* theEntry);
             SALOME_Actor* CreateActor(const QString& entry);
-            // @todo :
-            //void RemoveActor( SUIT_ViewWindow *theWnd, SALOME_Actor* theActor);
+            void RemoveActor( SUIT_ViewWindow *theWnd, SALOME_Actor* theActor);
             // end JPL
 
             QModelIndex indexAt(const QPoint &point) const;
@@ -147,9 +145,6 @@ namespace HEXABLOCK
             void _buildActor(SALOME_Actor* actor, HEXA_NS::Quad *v); 
             void _buildActor(SALOME_Actor* actor, HEXA_NS::Hexa *v); 
 
-            // map des actors (clef = entry : cf. modele)
-            QMap<QString, SALOME_Actor*> mapActors;
-            // end JPL
         };
     }
 }

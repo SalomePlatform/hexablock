@@ -191,3 +191,42 @@ void HexaItem::setData ( const QVariant & value, int role )
     }
 }
 
+
+
+
+// ----------------------- ELEMENTS
+ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
+  QStandardItem(),
+  _hexaElements( hexaElements )
+{
+  char pName[12];
+  QString name = _hexaElements->getName(pName);
+  setText(name);
+  setData( HEXA_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<int>(_hexaElements)), HEXA_ENTRY_ROLE );
+}
+
+int ElementsItem::type() const
+{
+  return ELEMENTSITEM;
+}
+
+QVariant ElementsItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaElements );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void ElementsItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaElements = value.value<HEXA_NS::Elements*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+

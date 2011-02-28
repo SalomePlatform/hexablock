@@ -117,8 +117,14 @@ protected:
 private slots:
   void newDocument();
   void importDocument( const QString &path = QString() );
+
   void addVertex();
   void addQuad();
+  void addHexa();
+
+  void mergeVertices();
+  void mergeEdges();
+  void cutEdge();
 
   void printVTK();
 
@@ -145,7 +151,12 @@ private:
   // Pattern
   QAction *_addVertex;
   QAction *_addQuad;
+  QAction *_addHexa;
 
+  // Pattern edition
+  QAction *_mergeVertices;
+  QAction *_mergeEdges;
+  QAction *_cutEdge;
 
   // -------------------------------------------------------------------------------------------------
   //          Model/View implementation  

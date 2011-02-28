@@ -1,5 +1,34 @@
 using namespace std;
 
+
+
+
+
+
+// #include <Basics_Utils.hxx>
+// 
+// #include <TDF_Tool.hxx>
+// #include <TDF_Data.hxx>
+// #include <TDF_Reference.hxx>
+// #include <TDF_LabelSequence.hxx>
+// #include <TDataStd_Integer.hxx>
+// #include <TDataStd_ChildNodeIterator.hxx>
+// #include <TFunction_Driver.hxx>
+// #include <TFunction_DriverTable.hxx>
+// #include <TDataStd_HArray1OfByte.hxx>
+// #include <TDataStd_ByteArray.hxx>
+// #include <TDataStd_UAttribute.hxx>
+// #include <TDF_ChildIterator.hxx>
+// #include <TDataStd_Comment.hxx>
+// #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
+
+////////////
+
+
+
+
+
+
 #include <TCollection_AsciiString.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS.hxx>
@@ -94,6 +123,102 @@ PortableServer::ServantBase_var HEXABLOCK::GetServant( CORBA::Object_ptr theObje
 HEXABLOCK::~HEXABLOCK()
 {
 }
+
+
+
+
+//=============================================================================
+/*!
+ *  DumpPython
+ */
+//=============================================================================
+Engines::TMPFile* HEXABLOCK::DumpPython(CORBA::Object_ptr theStudy, 
+					 CORBA::Boolean isPublished, 
+					 CORBA::Boolean& isValidScript)
+{
+ MESSAGE("DumpPython DumpPython DumpPython DumpPython");
+  std::cout << "DumpPython DumpPython DumpPython DumpPython" << std::endl;
+ return new Engines::TMPFile(0);
+}
+//   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
+//   if(CORBA::is_nil(aStudy))
+//     return new Engines::TMPFile(0);   
+// 
+//   SALOMEDS::SObject_var aSO = aStudy->FindComponent(ComponentDataType());
+//   if(CORBA::is_nil(aSO))
+//     return new Engines::TMPFile(0);  
+// 
+//   TObjectData objData;
+//   std::vector<TObjectData> objectDataVec;
+// 
+//   TVariablesList aVariableMap;
+// 
+//   SALOMEDS::ChildIterator_var Itr = aStudy->NewChildIterator(aSO);
+//   for(Itr->InitEx(true); Itr->More(); Itr->Next()) {
+//     SALOMEDS::SObject_var aValue = Itr->Value();
+//     CORBA::String_var IOR = aValue->GetIOR();
+//     if(strlen(IOR.in()) > 0) {
+//       CORBA::Object_var obj = _orb->string_to_object(IOR);
+//       GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_narrow(obj);
+//       if(!CORBA::is_nil(GO)) {
+//         CORBA::String_var aName       = aValue->GetName();
+//         CORBA::String_var anEntry     = GO->GetEntry();
+//         CORBA::String_var aStudyEntry = aValue->GetID();
+//         objData._name       = aName.in();
+//         objData._entry      = anEntry.in();
+//         objData._studyEntry = aStudyEntry.in();
+// 	objectDataVec.push_back( objData );
+// 
+// 	//Find attribute with list of used notebook variables
+// 	SALOMEDS::GenericAttribute_var anAttr;
+// 	SALOMEDS::AttributeString_var anAttrStr;
+// 	if(aValue->FindAttribute(anAttr,"AttributeString")){
+// 	  anAttrStr = SALOMEDS::AttributeString::_narrow(anAttr);
+// 	  SALOMEDS::ListOfListOfStrings_var aSections = aStudy->ParseVariables(anAttrStr->Value());
+// 	  ObjectStates* aStates = new ObjectStates();
+// 	  for(int i = 0; i < aSections->length(); i++) {
+// 	    TState aState;
+// 	    SALOMEDS::ListOfStrings aListOfVars = aSections[i];
+// 	    for(int j = 0; j < aListOfVars.length(); j++) {
+// 	      bool isVar = aStudy->IsVariable(aListOfVars[j].in());
+// 	      TVariable aVar = TVariable( (char*)aListOfVars[j].in(), isVar );
+// 	      aState.push_back(aVar);
+// 	    }
+// 	    aStates->AddState(aState);
+// 	  }
+// 	  aVariableMap.insert(std::make_pair(TCollection_AsciiString(anEntry),aStates));
+// 	}
+//       }
+//     }
+//   }
+//   
+//   TCollection_AsciiString aScript;
+//   aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isValidScript);
+// 
+//   if (isPublished)
+//   {
+//     //Output the script that sets up the visual parameters.
+//     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
+//     if (script && strlen(script) > 0) {
+//       aScript += "\n\t### Store presentation parameters of displayed objects\n";
+//       aScript += script;
+//       CORBA::string_free(script);
+//     }
+//   }
+// 
+//   aScript += "\n\tpass\n";
+// 
+//   int aLen = aScript.Length(); 
+//   unsigned char* aBuffer = new unsigned char[aLen+1];
+//   strcpy((char*)aBuffer, aScript.ToCString());
+// 
+//   CORBA::Octet* anOctetBuf =  (CORBA::Octet*)aBuffer;
+//   Engines::TMPFile_var aStreamFile = new Engines::TMPFile(aLen+1, aLen+1, anOctetBuf, 1); 
+// 
+//   return aStreamFile._retn(); 
+// }
+
+
 
 
 void HEXABLOCK::test()

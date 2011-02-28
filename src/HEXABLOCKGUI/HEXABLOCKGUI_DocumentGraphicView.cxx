@@ -44,6 +44,7 @@
 #include <SVTK_ViewWindow.h>
 #include <SALOME_Actor.h>
 #include <VTKViewer_Algorithm.h>
+#include <SalomeApp_Study.h>
 
 // VTK includes
 #include <vtkRenderer.h>
@@ -216,8 +217,8 @@ void DocumentGraphicView::dataChanged ( const QModelIndex & topLeft, const QMode
   std::cout << "DocumentGraphicView::dataChanged" << std::endl;
 //   std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
 //   std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
-  QModelIndex newData; // CS_TODO
-  updateObject(newData);
+
+  updateObject(topLeft);
 }
 
 void DocumentGraphicView::editorDestroyed ( QObject * editor )
@@ -277,14 +278,29 @@ LightApp_Displayer* DocumentGraphicView::displayer()
 // end JPL
 
 // ajout JPL
-
-
-bool DocumentGraphicView::updateObject(const QModelIndex& index) 
+bool DocumentGraphicView::updateObject(const QModelIndex& index) //CS_UPDATE
 {
-  std::cout<<"DocumentGraphicView::updateObject DocumentGraphicView::updateObject DocumentGraphicView::updateObject "<<std::endl;
-  return false;
-}
+    std::cout << "updateObject()" << std::endl;
+    
+    const PatternDataModel* smodel = dynamic_cast<const PatternDataModel*>(model());
+    QStandardItem* sitem = NULL;
 
+    if ( smodel != NULL )
+    {
+        sitem = smodel->itemFromIndex(index);
+        if ( sitem != NULL )
+        {
+            QVariant variant = index.model()->data(index, HEXA_ENTRY_ROLE);
+            if ( !variant.isValid() ) return false;
+            QString entry = variant.toString();
+            SALOME_Actor* anActor = FindActorByEntry( _suitView, entry.toStdString().c_str() );
+            RemoveActor(_suitView, anActor);
+            addObject(index);
+            return true;
+        
+        }
+    }
+}
 
 bool DocumentGraphicView::addObject(const QModelIndex& index)
 {
@@ -307,6 +323,34 @@ bool DocumentGraphicView::addObject(const QModelIndex& index)
     }
 }
 
+
+void DocumentGraphicView::RemoveActor(SUIT_ViewWindow *theWnd, SALOME_Actor* theActor)
+{
+    std::cout << "RemoveActor() : 1" << std::endl;
+    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWnd);
+//    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);    
+    if (myViewWindow != NULL)
+    {
+        myViewWindow->RemoveActor(theActor);
+        if(theActor->hasIO())
+        {
+            std::cout << "RemoveActor() : 2" << std::endl;            
+            Handle(SALOME_InteractiveObject) anIO = theActor->getIO();
+            if(anIO->hasEntry())
+            {
+                std::cout << "RemoveActor() : 3" << std::endl;                
+                std::string anEntry = anIO->getEntry();
+                SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myViewWindow->getViewManager()->study() );
+                int aStudyId = aStudy->id();
+//                 TVisualObjCont::key_type aKey(aStudyId,anEntry);
+//                 VISUAL_OBJ_CONT.erase(aKey);
+            }
+        }
+        theActor->Delete();
+        myViewWindow->Repaint();
+        std::cout << "RemoveActor() : 4" << std::endl;        
+    }
+}
 
 SALOME_Actor* DocumentGraphicView::CreateActor(const QString& entry)
 {
@@ -476,6 +520,7 @@ void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Quad *value)
 {
     if (dynamic_cast<HEXA_NS::Quad*>(value) != NULL)
     {
+
         double point1[3];
         point1[0] = value->getVertex(0)->getX();
         point1[1] = value->getVertex(0)->getY();                      
@@ -496,14 +541,38 @@ void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Quad *value)
         point4[1] = value->getVertex(3)->getY();                      
         point4[2] = value->getVertex(3)->getZ();
 
-        MyVTKLinePlotter linePlotter;
-        float scalar = value->getVertex(0)->getScalar();
-        linePlotter.PlotLine(point1, point2, scalar);
-        linePlotter.PlotLine(point2, point3, scalar);
-        linePlotter.PlotLine(point3, point4, scalar);
-        linePlotter.PlotLine(point4, point1, scalar);        
-        linePlotter.CreateActor(actor);
+// methode qui "marche"        
+//         MyVTKLinePlotter linePlotter;
+//         float scalar = value->getVertex(0)->getScalar();
+//         linePlotter.PlotLine(point1, point2, scalar);
+//         linePlotter.PlotLine(point2, point3, scalar);
+//         linePlotter.PlotLine(point3, point4, scalar);
+//         linePlotter.PlotLine(point4, point1, scalar);        
+//         linePlotter.CreateActor(actor);
+// end
 
+        // test :
+        vtkPoints* quadPoints = vtkPoints::New();
+        quadPoints->SetNumberOfPoints(4);
+        quadPoints->InsertPoint(0, point1[0], point1[1], point1[2]);
+        quadPoints->InsertPoint(1, point2[0], point2[1], point2[2]);
+        quadPoints->InsertPoint(2, point3[0], point3[1], point3[2]);
+        quadPoints->InsertPoint(3, point4[0], point4[1], point4[2]);        
+        vtkQuad* aQuad = vtkQuad::New();
+        aQuad->GetPointIds()->SetId(0, 0);
+        aQuad->GetPointIds()->SetId(1, 1);
+        aQuad->GetPointIds()->SetId(2, 2);
+        aQuad->GetPointIds()->SetId(3, 3);        
+        vtkUnstructuredGrid* aQuadGrid = vtkUnstructuredGrid::New();
+        aQuadGrid->Allocate(1, 1);
+        aQuadGrid->InsertNextCell(aQuad->GetCellType(), aQuad->GetPointIds());
+        aQuadGrid->SetPoints(quadPoints);
+        vtkDataSetMapper* aQuadMapper = vtkDataSetMapper::New();
+        aQuadMapper->SetInput(aQuadGrid);
+        actor->SetMapper(aQuadMapper);
+        actor->AddPosition(2, 0, 2);
+        actor->GetProperty()->SetDiffuseColor(.2, 1, 1);     
+        
     }
 }
 
@@ -554,14 +623,25 @@ void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Hexa *value)
 
         MyVTKLinePlotter linePlotter;
         float scalar = value->getVertex(0)->getScalar();        
+        // face du bas (A)
         linePlotter.PlotLine(point1, point2, scalar);
         linePlotter.PlotLine(point2, point3, scalar);
         linePlotter.PlotLine(point3, point4, scalar);
-        linePlotter.PlotLine(point4, point5, scalar);
+        linePlotter.PlotLine(point4, point1, scalar);        
+
+        // face du haut (B)
         linePlotter.PlotLine(point5, point6, scalar);        
         linePlotter.PlotLine(point6, point7, scalar);        
         linePlotter.PlotLine(point7, point8, scalar);        
-        linePlotter.PlotLine(point8, point1, scalar);        
+        linePlotter.PlotLine(point8, point5, scalar);        
+
+        // face gauche (C)
+        linePlotter.PlotLine(point1, point5, scalar);
+        linePlotter.PlotLine(point2, point6, scalar);        
+
+        // face droite (D)
+        linePlotter.PlotLine(point4, point8, scalar);
+        linePlotter.PlotLine(point3, point7, scalar);        
         linePlotter.CreateActor(actor);
 
     }
@@ -594,99 +674,99 @@ SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
     return NULL;
 }
 
-    MyVTKLinePlotter::MyVTKLinePlotter()
-        :m_scalarMin(0.0), m_scalarMax(1.0), 
-        m_lookupTable(NULL), m_curPointID(0), m_allLineWidth(1)
-    {
-        m_points = vtkPoints::New();
-        m_lines = vtkCellArray::New();
-        m_lineScalars = vtkFloatArray::New();
-    }
+MyVTKLinePlotter::MyVTKLinePlotter()
+    :m_scalarMin(0.0), m_scalarMax(1.0), 
+     m_lookupTable(NULL), m_curPointID(0), m_allLineWidth(1)
+{
+    m_points = vtkPoints::New();
+    m_lines = vtkCellArray::New();
+    m_lineScalars = vtkFloatArray::New();
+}
 
-    void MyVTKLinePlotter::SetScalarRange(double minval, double maxval)
-    {
-        m_scalarMin = minval ;
-        m_scalarMax = maxval ;
-    }
+void MyVTKLinePlotter::SetScalarRange(double minval, double maxval)
+{
+    m_scalarMin = minval ;
+    m_scalarMax = maxval ;
+}
 
-    void MyVTKLinePlotter::SetLookupTable(vtkLookupTable* table)
-    {
-        m_lookupTable = table ;
-    }
+void MyVTKLinePlotter::SetLookupTable(vtkLookupTable* table)
+{
+    m_lookupTable = table ;
+}
 
-    void MyVTKLinePlotter::PlotLine(double m[3], double n[3], double scalar)
-    {
+void MyVTKLinePlotter::PlotLine(double m[3], double n[3], double scalar)
+{
 
-        m_lineScalars->SetNumberOfComponents(1);
-        m_points->InsertNextPoint(m);
-        m_lineScalars->InsertNextTuple1(scalar);
-        m_points->InsertNextPoint(n);
-        m_lineScalars->InsertNextTuple1(scalar);
+    m_lineScalars->SetNumberOfComponents(1);
+    m_points->InsertNextPoint(m);
+    m_lineScalars->InsertNextTuple1(scalar);
+    m_points->InsertNextPoint(n);
+    m_lineScalars->InsertNextTuple1(scalar);
 
-        m_lines->InsertNextCell(2);
-        m_lines->InsertCellPoint(m_curPointID);
-        m_lines->InsertCellPoint(m_curPointID+1);
+    m_lines->InsertNextCell(2);
+    m_lines->InsertCellPoint(m_curPointID);
+    m_lines->InsertCellPoint(m_curPointID+1);
 
-        m_curPointID+=2;
-    }
+    m_curPointID+=2;
+}
 
-    void MyVTKLinePlotter::PlotLine(double x, double y, double z,
-                                    double x2, double y2, double z2, double scalar)
-    {
-        double m[3],n[3] ;
-        m[0]=x; m[1]=y; m[2]=z;
-        n[0]=x2; n[1]=y2; n[2]=z2;
-        PlotLine(m,n,scalar);
+void MyVTKLinePlotter::PlotLine(double x, double y, double z,
+                                double x2, double y2, double z2, double scalar)
+{
+    double m[3],n[3] ;
+    m[0]=x; m[1]=y; m[2]=z;
+    n[0]=x2; n[1]=y2; n[2]=z2;
+    PlotLine(m,n,scalar);
 	
-    }
+}
 
 
-    void MyVTKLinePlotter::SetAllLineWidth(int width)
-    {
-        m_allLineWidth = width ;
-    }
+void MyVTKLinePlotter::SetAllLineWidth(int width)
+{
+    m_allLineWidth = width ;
+}
 
-    vtkPolyData* MyVTKLinePlotter::CreatePolyData()
-    {
-        // Create poly data 
-        vtkPolyData* polyData = vtkPolyData::New();
-        polyData->SetPoints(m_points);
-        polyData->SetLines(m_lines);
-        polyData->GetPointData()->SetScalars(m_lineScalars);
+vtkPolyData* MyVTKLinePlotter::CreatePolyData()
+{
+    // Create poly data 
+    vtkPolyData* polyData = vtkPolyData::New();
+    polyData->SetPoints(m_points);
+    polyData->SetLines(m_lines);
+    polyData->GetPointData()->SetScalars(m_lineScalars);
 
-        return polyData;
-    }
+    return polyData;
+}
 
 //vtkActor* MyVTKLinePlotter::CreateActor()
-    bool MyVTKLinePlotter::CreateActor(SALOME_Actor* actor)    
-    {
+bool MyVTKLinePlotter::CreateActor(SALOME_Actor* actor)    
+{
 	
-        // Create poly data
-        vtkPolyData* polyData = CreatePolyData();
+    // Create poly data
+    vtkPolyData* polyData = CreatePolyData();
 
-        // create a color lookup table
-        if (m_lookupTable==NULL)	
-        {
-            m_lookupTable = vtkLookupTable::New();
-        }
+    // create a color lookup table
+    if (m_lookupTable==NULL)	
+    {
+        m_lookupTable = vtkLookupTable::New();
+    }
 		
-        // create mapper
-        vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
-        mapper->SetInput(polyData);
-        mapper->SetLookupTable(m_lookupTable);
+    // create mapper
+    vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
+    mapper->SetInput(polyData);
+    mapper->SetLookupTable(m_lookupTable);
 
-        mapper->SetColorModeToMapScalars();
-        mapper->SetScalarRange(m_scalarMin, m_scalarMax);
-        mapper->SetScalarModeToUsePointData();
+    mapper->SetColorModeToMapScalars();
+    mapper->SetScalarRange(m_scalarMin, m_scalarMax);
+    mapper->SetScalarModeToUsePointData();
 
-        // create actor
+    // create actor
 //	vtkActor actor = vtkActor::New();
-        actor->SetMapper(mapper);
-        actor->GetProperty()->SetLineWidth(m_allLineWidth);
+    actor->SetMapper(mapper);
+    actor->GetProperty()->SetLineWidth(m_allLineWidth);
 
 
 //	return actor ;	
-    }
+}
 
 
 

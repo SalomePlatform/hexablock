@@ -54,6 +54,11 @@ public:
     static SALOME_NamingService* GetNS();
     static HEXABLOCK* GetHEXABLOCKGen() { return _HEXABLOCKGen;}
 
+
+    virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
+				         CORBA::Boolean isPublished,
+				         CORBA::Boolean& isValidScript);
+
 private:
    HEXA_NS::Hex* _engine_cpp;
    GEOM_Client*  _geomClient;

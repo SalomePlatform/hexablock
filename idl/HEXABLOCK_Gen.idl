@@ -59,6 +59,8 @@ module HEXABLOCK_ORB
     Document loadDocument(in string xmlFilename)
         raises (SALOME::SALOME_Exception);
 
+
+
   };
 };
 
