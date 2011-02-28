@@ -203,7 +203,7 @@ ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
   QString name = _hexaElements->getName(pName);
   setText(name);
   setData( HEXA_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<int>(_hexaElements)), HEXA_ENTRY_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaElements)), HEXA_ENTRY_ROLE );
 }
 
 int ElementsItem::type() const
