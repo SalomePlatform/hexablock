@@ -86,7 +86,7 @@
 
 // ajout JPL :
 #include "HEXABLOCKGUI_Displayer.hxx"
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 // end JPL
 

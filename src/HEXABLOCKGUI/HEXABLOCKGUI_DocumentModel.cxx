@@ -22,7 +22,7 @@
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_Trace.hxx"
 
 

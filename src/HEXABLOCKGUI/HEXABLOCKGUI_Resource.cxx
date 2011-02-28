@@ -20,7 +20,7 @@
 
 #include "HEXABLOCKGUI_Resource.hxx"
 #include "Resource.hxx"
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 #include <SUIT_ResourceMgr.h>
 
 

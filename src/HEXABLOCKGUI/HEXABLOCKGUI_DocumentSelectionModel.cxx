@@ -20,7 +20,7 @@
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 // #include "HexVertex.hxx"
 
 

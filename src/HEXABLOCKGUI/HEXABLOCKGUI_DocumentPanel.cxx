@@ -1,7 +1,7 @@
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 
 // #include "SALOME_Selection.h"
 #include <SUIT_MessageBox.h>

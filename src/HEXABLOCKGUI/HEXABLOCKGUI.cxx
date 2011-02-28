@@ -59,7 +59,7 @@
 #include "Resource.hxx"
 // #include "QtGuiContext.hxx"
 
-#include "HEXABLOCKGUI.h"
+#include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_Trace.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
