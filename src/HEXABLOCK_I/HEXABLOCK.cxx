@@ -287,7 +287,7 @@ TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
     _geomClient = getGeomClient();
 
     if(CORBA::is_nil(_geomGen)) {
-      Engines::Component_ptr temp=GetLCC()->FindOrLoad_Component("FactoryServer","GEOM");
+      Engines::EngineComponent_ptr temp=GetLCC()->FindOrLoad_Component("FactoryServer","GEOM");
       _geomGen=GEOM::GEOM_Gen::_narrow(temp);
     }
     if ( _geomClient != NULL  && !_geomGen->_is_nil () )
@@ -535,4 +535,3 @@ extern "C"
 // //=============================================================================
 // // 
 // //=============================================================================
-

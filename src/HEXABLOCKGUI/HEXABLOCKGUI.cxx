@@ -120,7 +120,7 @@ HEXABLOCKGUI::~HEXABLOCKGUI()
 // Gets an reference to the module's engine
 HEXABLOCK_ORB::HEXABLOCK_Gen_ptr HEXABLOCKGUI::InitHEXABLOCKGen( SalomeApp_Application* app )
 {
-  Engines::Component_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HEXABLOCK" );
+  Engines::EngineComponent_var comp = app->lcc()->FindOrLoad_Component( "FactoryServer","HEXABLOCK" );
   HEXABLOCK_ORB::HEXABLOCK_Gen_ptr clr = HEXABLOCK_ORB::HEXABLOCK_Gen::_narrow(comp);
   ASSERT(!CORBA::is_nil(clr));
   return clr;

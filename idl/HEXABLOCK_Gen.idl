@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef __HEXABLOCK_GEN__
 #define __HEXABLOCK_GEN__
 /*!
@@ -38,7 +38,7 @@ module HEXABLOCK_ORB
 {
   /*! \brief Interface of the %HEXABLOCK component
    */
-  interface HEXABLOCK_Gen : Engines::Component
+  interface HEXABLOCK_Gen : Engines::EngineComponent
   {
      /*!
          Donne le nombre de documents ouverts en session.
@@ -66,4 +66,3 @@ module HEXABLOCK_ORB
 
 
 #endif
-
