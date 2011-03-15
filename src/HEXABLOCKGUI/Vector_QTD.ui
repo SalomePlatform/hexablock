@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VertexDialog</class>
- <widget class="QDialog" name="VertexDialog">
+ <class>VectorDialog</class>
+ <widget class="QDialog" name="VectorDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>277</height>
+    <width>372</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Add Vertex</string>
+      <string>Add Vector</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -31,12 +31,12 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>x : </string>
+           <string>dx : </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="x_spb">
+         <widget class="QDoubleSpinBox" name="dx_spb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -58,12 +58,12 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>y : </string>
+           <string>dy : </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="y_spb">
+         <widget class="QDoubleSpinBox" name="dy_spb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -85,12 +85,12 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>z : </string>
+           <string>dz : </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="z_spb">
+         <widget class="QDoubleSpinBox" name="dz_spb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -109,7 +109,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>95</height>
+          <height>118</height>
          </size>
         </property>
        </spacer>
@@ -134,7 +134,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>VertexDialog</receiver>
+   <receiver>VectorDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -150,7 +150,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>VertexDialog</receiver>
+   <receiver>VectorDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

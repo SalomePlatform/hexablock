@@ -194,6 +194,47 @@ void HexaItem::setData ( const QVariant & value, int role )
 
 
 
+
+// ----------------------- VECTOR
+VectorItem::VectorItem( HEXA_NS::Vector* hexaVector ):
+  QStandardItem(),
+  _hexaVector( hexaVector )
+{
+  char pName[12];
+  QString name = _hexaVector->getName(pName);
+  setText(name);
+  setData( VECTOR_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaVector)), HEXA_ENTRY_ROLE );
+}
+
+int VectorItem::type() const
+{
+  return VECTORITEM;
+}
+
+QVariant VectorItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaVector );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void VectorItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaVector = value.value<HEXA_NS::Vector*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
+
+
+
 // ----------------------- ELEMENTS
 ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
   QStandardItem(),
@@ -202,7 +243,7 @@ ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
   char pName[12];
   QString name = _hexaElements->getName(pName);
   setText(name);
-  setData( HEXA_TREE, HEXA_TREE_ROLE );
+  setData( ELEMENTS_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaElements)), HEXA_ENTRY_ROLE );
 }
 

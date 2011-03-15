@@ -28,11 +28,13 @@
 #include <HexHexa.hxx>
 
 #include <HexElements.hxx>
+#include <HexVector.hxx>
 
 Q_DECLARE_METATYPE( HEXA_NS::Vertex* );
 Q_DECLARE_METATYPE( HEXA_NS::Edge* );
 Q_DECLARE_METATYPE( HEXA_NS::Quad* );
 Q_DECLARE_METATYPE( HEXA_NS::Hexa* );
+Q_DECLARE_METATYPE( HEXA_NS::Vector* );
 Q_DECLARE_METATYPE( HEXA_NS::Elements* );
 
 namespace HEXABLOCK
@@ -45,6 +47,7 @@ namespace HEXABLOCK
       QUADITEM,
       HEXAITEM,
 
+      VECTORITEM,
       ELEMENTSITEM
     };
 
@@ -125,6 +128,20 @@ namespace HEXABLOCK
       private:
         HEXA_NS::Hexa* _hexaHexa;
     };
+
+
+    class VectorItem : public QStandardItem
+    {
+      public:
+        VectorItem( HEXA_NS::Vector* hexaVector );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Vector* _hexaVector;
+    };
+
+
 
 
     class ElementsItem : public QStandardItem

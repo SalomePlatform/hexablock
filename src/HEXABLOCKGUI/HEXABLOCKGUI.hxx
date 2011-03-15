@@ -27,6 +27,8 @@
 #include <QModelIndex>
 #include <QDockWidget>
 
+#include "klinkitemselectionmodel.hxx"
+
 #include <OB_Browser.h>
 #include <SalomeApp_Module.h>
 #include <LightApp_SelectionMgr.h>
@@ -44,7 +46,8 @@ namespace HEXABLOCK
     class DocumentGraphicView;
     class DocumentDelegate;
     class DocumentModel;
-    class DocumentSelectionModel;
+    class PatternDataSelectionModel;
+    class PatternBuilderSelectionModel;
     class PatternDataModel;
     class PatternBuilderModel;
   }
@@ -118,10 +121,17 @@ private slots:
   void newDocument();
   void importDocument( const QString &path = QString() );
 
+  // new
   void addVertex();
   void addQuad();
   void addHexa();
 
+  void addVector();
+  void makeCartesian();
+  void makeCylindrical();
+  void makeTranslation();
+
+  // edit
   void mergeVertices();
   void mergeEdges();
   void cutEdge();
@@ -153,6 +163,12 @@ private:
   QAction *_addQuad;
   QAction *_addHexa;
 
+  // Builder
+  QAction *_addVector;
+  QAction *_makeCartesian;
+  QAction *_makeCylindrical;
+  QAction *_makeTranslation;
+
   // Pattern edition
   QAction *_mergeVertices;
   QAction *_mergeEdges;
@@ -182,7 +198,8 @@ private:
   HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree 
 
   //    SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL     SELECTION_MODEL
-  HEXABLOCK::GUI::DocumentSelectionModel *_currentSelectionModel;// 1..n   selection
+  HEXABLOCK::GUI::PatternDataSelectionModel    *_patternDataSelectionModel;   // 1..n   selection
+  HEXABLOCK::GUI::PatternBuilderSelectionModel *_patternBuilderSelectionModel;// 1..n   selection
 
   int _documentCnt;
   bool _isSaved;

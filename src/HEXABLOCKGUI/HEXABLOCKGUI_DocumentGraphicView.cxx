@@ -551,27 +551,27 @@ void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Quad *value)
 //         linePlotter.CreateActor(actor);
 // end
 
-        // test :
-        vtkPoints* quadPoints = vtkPoints::New();
-        quadPoints->SetNumberOfPoints(4);
-        quadPoints->InsertPoint(0, point1[0], point1[1], point1[2]);
-        quadPoints->InsertPoint(1, point2[0], point2[1], point2[2]);
-        quadPoints->InsertPoint(2, point3[0], point3[1], point3[2]);
-        quadPoints->InsertPoint(3, point4[0], point4[1], point4[2]);        
-        vtkQuad* aQuad = vtkQuad::New();
-        aQuad->GetPointIds()->SetId(0, 0);
-        aQuad->GetPointIds()->SetId(1, 1);
-        aQuad->GetPointIds()->SetId(2, 2);
-        aQuad->GetPointIds()->SetId(3, 3);        
-        vtkUnstructuredGrid* aQuadGrid = vtkUnstructuredGrid::New();
-        aQuadGrid->Allocate(1, 1);
-        aQuadGrid->InsertNextCell(aQuad->GetCellType(), aQuad->GetPointIds());
-        aQuadGrid->SetPoints(quadPoints);
-        vtkDataSetMapper* aQuadMapper = vtkDataSetMapper::New();
-        aQuadMapper->SetInput(aQuadGrid);
-        actor->SetMapper(aQuadMapper);
-        actor->AddPosition(2, 0, 2);
-        actor->GetProperty()->SetDiffuseColor(.2, 1, 1);     
+//         // test :
+//         vtkPoints* quadPoints = vtkPoints::New();
+//         quadPoints->SetNumberOfPoints(4);
+//         quadPoints->InsertPoint(0, point1[0], point1[1], point1[2]);
+//         quadPoints->InsertPoint(1, point2[0], point2[1], point2[2]);
+//         quadPoints->InsertPoint(2, point3[0], point3[1], point3[2]);
+//         quadPoints->InsertPoint(3, point4[0], point4[1], point4[2]);        
+//         vtkQuad* aQuad = vtkQuad::New();
+//         aQuad->GetPointIds()->SetId(0, 0);
+//         aQuad->GetPointIds()->SetId(1, 1);
+//         aQuad->GetPointIds()->SetId(2, 2);
+//         aQuad->GetPointIds()->SetId(3, 3);        
+//         vtkUnstructuredGrid* aQuadGrid = vtkUnstructuredGrid::New();
+//         aQuadGrid->Allocate(1, 1);
+//         aQuadGrid->InsertNextCell(aQuad->GetCellType(), aQuad->GetPointIds());
+//         aQuadGrid->SetPoints(quadPoints);
+//         vtkDataSetMapper* aQuadMapper = vtkDataSetMapper::New();
+//         aQuadMapper->SetInput(aQuadGrid);
+//         actor->SetMapper(aQuadMapper);
+//         actor->AddPosition(2, 0, 2);
+//         actor->GetProperty()->SetDiffuseColor(.2, 1, 1);     
         
     }
 }

@@ -24,6 +24,9 @@
 #include <cassert>
 
 
+// #include "klinkitemselectionmodel.h"
+
+
 #include <QInputDialog>
 #include <QIcon>
 
@@ -100,7 +103,8 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
   _meshTreeView(0),
   _currentGraphicView(0),
   _treeViewDelegate(0),
-  _currentSelectionModel(0),
+  _patternDataSelectionModel(0),
+  _patternBuilderSelectionModel(0),
   _documentCnt(0),
   _isSaved( false ),
   _suitVM(0),
@@ -547,6 +551,24 @@ void HEXABLOCKGUI::createActions()
                                             tr("Add hexa"),  tr("Create a new hexa"),
                                             0, aParent, false, this,  SLOT(addHexa()) );
 
+  // Builder Data creation
+  _addVector    = createAction( _menuId++, tr("Create a vector"), QIcon("icons:add_vector.png"),
+                                            tr("Add vector"),  tr("Create a new vector"),
+                                            0, aParent, false, this,  SLOT(addVector()) );
+
+  _makeCartesian = createAction( _menuId++, tr("Make a cartesian grid"), QIcon("icons:make_cartesian.png"),
+                                            tr("Make cartesian"),  tr("Make a cartesian grid"),
+                                            0, aParent, false, this,  SLOT(makeCartesian()) );
+
+  _makeCylindrical = createAction( _menuId++, tr("Make a cylindrical grid"), QIcon("icons:make_cylindrical.png"),
+                                            tr("Make cylindrical"),  tr("Make a cylindrical grid"),
+                                            0, aParent, false, this,  SLOT(makeCylindrical()) );
+
+  _makeTranslation = createAction( _menuId++, tr("Make translation"), QIcon("icons:make_translation.png"),
+                                            tr("Make translation"),  tr("Make translation"),
+                                            0, aParent, false, this,  SLOT(makeTranslation()) );
+
+
 
   // Pattern Data edition
   _mergeVertices = createAction( _menuId++, tr("Merge vertices"), QIcon("icons:merge_vertices.png"),
@@ -669,6 +691,11 @@ void HEXABLOCKGUI::createTools()
   createTool( _addQuad, aToolId );
   createTool( _addHexa, aToolId );
 
+  createTool( _addVector, aToolId );
+  createTool( _makeCartesian, aToolId );
+  createTool( _makeCylindrical, aToolId );
+  createTool( _makeTranslation, aToolId );
+
   createTool( separator(), aToolId );
 
   createTool( _mergeVertices, aToolId );
@@ -740,6 +767,18 @@ void HEXABLOCKGUI::showEditionMenus(bool show)
   setToolShown(_addQuad, show);
   setMenuShown(_addHexa, show);
   setToolShown(_addHexa, show);
+
+
+
+  setMenuShown(_addVector, show);
+  setToolShown(_addVector, show);
+  setMenuShown(_makeCartesian, show);
+  setToolShown(_makeCartesian, show);
+  setMenuShown(_makeCylindrical, show);
+  setToolShown(_makeCylindrical, show);
+  setMenuShown(_makeTranslation, show);
+  setToolShown(_makeTranslation, show);
+
 
   setMenuShown(_mergeVertices, show);
   setToolShown(_mergeVertices, show);
@@ -820,28 +859,31 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
 {
   DEBTRACE("HEXABLOCKGUI::switchModel " << view);
   if ( _mapViewModel.count(view) ){
-
-    // model
-    _currentModel = _mapViewModel[view];
-    _patternDataModel->setSourceModel(_currentModel);
-    _patternBuilderModel->setSourceModel(_currentModel);
-
-    // setting model ( in view )
-    _patternDataTreeView->setModel(_patternDataModel);
-    _patternBuilderTreeView->setModel(_patternBuilderModel);
-//     _associationTreeView->setModel(_currentModel);
-//     _groupsTreeView->setModel(_currentModel);
-//     _meshTreeView->setModel(_currentModel);
-    _currentGraphicView->setModel(_patternDataModel);
-
-    // setting selection ( in view )
-    _patternDataTreeView->setSelectionModel(_currentSelectionModel);
-    //_patternDataTreeView->setSelectionMode( QAbstractItemView::MultiSelection );
-    _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    _patternBuilderTreeView->setSelectionModel(_currentSelectionModel);
-    _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    _currentGraphicView->setSelectionModel(_currentSelectionModel);
-
+    if ( _currentModel != _mapViewModel[view] ){
+      // model
+      _currentModel = _mapViewModel[view];
+      _patternDataModel->setSourceModel(_currentModel);
+      _patternBuilderModel->setSourceModel(_currentModel);
+  
+      // setting model ( in view )
+//       _currentGraphicView->setModel(_patternDataModel);
+      _patternDataTreeView->setModel(_patternDataModel); //_currentModel
+      _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel
+  //     _associationTreeView->setModel(_currentModel);
+  //     _groupsTreeView->setModel(_currentModel);
+  //     _meshTreeView->setModel(_currentModel);
+  
+      // setting selection ( in view )
+      _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
+      _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
+  
+//       _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
+      _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
+      //_patternDataTreeView->setSelectionMode( QAbstractItemView::MultiSelection );
+      _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+      _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
+      _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    }
     showEditionMenus(true);
   } else {
     DEBTRACE("HEXABLOCKGUI::switchModel : no model found, cannot switch");
@@ -1031,21 +1073,25 @@ void HEXABLOCKGUI::newDocument()
   _currentGraphicView  = newGraphicView();
 
   // --- setting model
-  _patternDataTreeView->setModel(_patternDataModel);//_currentModel);
-  _patternBuilderTreeView->setModel(_patternBuilderModel);
+//   _currentGraphicView->setModel(_patternDataModel);
+  _patternDataTreeView->setModel(_patternDataModel);//_currentModel;
+//   _patternDataTreeView->setModel(_currentModel);//;
+  _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel;
   _associationTreeView->setModel(_currentModel);
   _meshTreeView->setModel(_currentModel);
-  _currentGraphicView->setModel(_patternDataModel);
 
   // --- setting selection model
-  if (!_currentSelectionModel)
-     _currentSelectionModel = new DocumentSelectionModel(_patternDataModel); //_currentModel
+  if (!_patternDataSelectionModel)
+     _patternDataSelectionModel = new PatternDataSelectionModel(_patternDataModel); //_currentModel
 
-  _patternDataTreeView->setSelectionModel(_currentSelectionModel);
-//   _patternBuilderTreeView->setSelectionModel(_currentSelectionModel);
-//   _associationTreeView->setSelectionModel(_currentSelectionModel);
-//   _meshTreeView->setSelectionModel(_currentSelectionModel);
-  _currentGraphicView->setSelectionModel(_currentSelectionModel);
+  if (!_patternBuilderSelectionModel)
+    _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
+
+//   _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
+  _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
+  _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
+//   _associationTreeView->setSelectionModel(_patternDataSelectionModel);
+//   _meshTreeView->setSelectionModel(_patternDataSelectionModel);
 
 
 //   //CS_TEST
@@ -1054,7 +1100,7 @@ void HEXABLOCKGUI::newDocument()
 //   QStandardItem *myItem =  new QStandardItem("MyItem");
 //   parentItem->appendRow(myItem);
   // ----------
-//   QModelIndex v0 = _patternDataModel->addVertex(0., 0., 0.);
+  QModelIndex v0 = _currentModel->addVertex(0., 0., 0.);
 //   QModelIndex v1 = _patternDataModel->addVertex(5., 0., 0.);
 //   QModelIndex v2 = _patternDataModel->addVertex(5., 5., 0.);
 //   QModelIndex v3 = _patternDataModel->addVertex(0., 5., 0.);
@@ -1073,7 +1119,9 @@ void HEXABLOCKGUI::newDocument()
 // 
 // 
 //   QModelIndex h0 = _patternDataModel->addHexaFromQuad( q0, q1, q2, q3, q4, q5 );
-
+  QModelIndex vx = _currentModel->addVector(1., 0., 0.);
+  QModelIndex vy = _currentModel->addVector(0., 1., 0.);
+  QModelIndex vz = _currentModel->addVector(0., 0., 1.);
 
 //   //CS_TEST
 
@@ -1116,8 +1164,8 @@ void HEXABLOCKGUI::addVertex()
     if (!_dwInputPanel) return;
 
     VertexDialog* diag = new VertexDialog(_dwInputPanel);
-    diag->setModel(_patternDataModel);//_currentModel);
-    diag->setSelectionModel(_currentSelectionModel);
+    diag->setDocumentModel( _currentModel );
+    diag->setPatternDataSelectionModel(_patternDataSelectionModel);
     _dwInputPanel->setWidget(diag);
     //   diag->show();
 }
@@ -1127,8 +1175,8 @@ void HEXABLOCKGUI::addQuad()
   if (!_dwInputPanel) return;
 
   QuadDialog* diag = new QuadDialog(_dwInputPanel);
-  diag->setModel(_patternDataModel);//_currentModel);
-  diag->setSelectionModel(_currentSelectionModel);
+  diag->setDocumentModel( _currentModel );
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   _dwInputPanel->setWidget(diag);
   //   diag->show();
 }
@@ -1139,11 +1187,63 @@ void HEXABLOCKGUI::addHexa()
   if (!_dwInputPanel) return;
 
   HexaDialog* diag = new HexaDialog(_dwInputPanel);
-  diag->setModel(_patternDataModel);//_currentModel);
-  diag->setSelectionModel(_currentSelectionModel);
+  diag->setDocumentModel( _currentModel );
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   _dwInputPanel->setWidget(diag);
   //   diag->show();
 }
+
+
+void HEXABLOCKGUI::addVector()
+{
+  if (!_dwInputPanel) return;
+
+  VectorDialog* diag = new VectorDialog(_dwInputPanel);
+  diag->setDocumentModel( _currentModel );
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
+}
+
+void HEXABLOCKGUI::makeCartesian()
+{
+  if (!_dwInputPanel) return;
+
+  MakeCartesianDialog* diag = new MakeCartesianDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
+}
+
+void HEXABLOCKGUI::makeCylindrical()
+{
+  if (!_dwInputPanel) return;
+
+  MakeCylindricalDialog* diag = new MakeCylindricalDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
+}
+
+void HEXABLOCKGUI::makeTranslation()
+{
+  if (!_dwInputPanel) return;
+
+  MakeTranslationDialog* diag = new MakeTranslationDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
+}
+
 
 
 void HEXABLOCKGUI::mergeVertices()
@@ -1151,8 +1251,10 @@ void HEXABLOCKGUI::mergeVertices()
   if (!_dwInputPanel) return;
 
   MergeVerticesDialog* diag = new MergeVerticesDialog(_dwInputPanel);
-  diag->setModel(_patternDataModel);//_currentModel);
-  diag->setSelectionModel(_currentSelectionModel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   _dwInputPanel->setWidget(diag);
 }
 
@@ -1162,8 +1264,9 @@ void HEXABLOCKGUI::mergeEdges()
   if (!_dwInputPanel) return;
 
   MergeEdgesDialog* diag = new MergeEdgesDialog(_dwInputPanel);
-  diag->setModel(_patternDataModel);//_currentModel);
-  diag->setSelectionModel(_currentSelectionModel);
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   _dwInputPanel->setWidget(diag);
 }
 
@@ -1173,8 +1276,9 @@ void HEXABLOCKGUI::cutEdge()
   if (!_dwInputPanel) return;
 
   CutEdgeDialog* diag = new CutEdgeDialog(_dwInputPanel);
-  diag->setModel(_patternDataModel);//_currentModel);
-  diag->setSelectionModel(_currentSelectionModel);
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   _dwInputPanel->setWidget(diag);
 }
 

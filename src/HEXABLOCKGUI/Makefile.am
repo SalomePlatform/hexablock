@@ -65,8 +65,11 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_DocumentPanel.hxx \
     HEXABLOCKGUI_DocumentPanel.cxx \
     HEXABLOCKGUI.hxx \
-    HEXABLOCKGUI.cxx
-
+    HEXABLOCKGUI.cxx \
+    kmodelindexproxymapper.hxx \
+    kmodelindexproxymapper.cxx \
+    klinkitemselectionmodel.hxx \
+    klinkitemselectionmodel.cxx
 
 
 UIC_FILES = \
@@ -75,7 +78,11 @@ UIC_FILES = \
 	ui_Hexa_QTD.h \
 	ui_MergeVertices_QTD.h \
 	ui_MergeEdges_QTD.h \
-	ui_CutEdge_QTD.h
+	ui_CutEdge_QTD.h \
+	ui_Vector_QTD.h \
+	ui_MakeCartesian_QTD.h \
+	ui_MakeCylindrical_QTD.h \
+	ui_MakeTranslation_QTD.h
 
 # MOC pre-processing
 MOC_FILES = \
@@ -83,8 +90,9 @@ MOC_FILES = \
     HEXABLOCKGUI_DocumentGraphicView_moc.cxx \
     HEXABLOCKGUI_DocumentPanel_moc.cxx \
     HEXABLOCKGUI_DocumentDelegate_moc.cxx \
-    HEXABLOCKGUI_DocumentSelectionModel_moc.cxx
-
+    HEXABLOCKGUI_DocumentSelectionModel_moc.cxx \
+    kmodelindexproxymapper_moc.cxx \
+    klinkitemselectionmodel_moc.cxx
 
 nodist_libHEXABLOCK_la_SOURCES = $(MOC_FILES) \
 			$(UIC_FILES)

@@ -30,6 +30,8 @@
 
 #include <QItemSelectionModel>
 
+#include "klinkitemselectionmodel.hxx"
+
 #include <LightApp_SelectionMgr.h>
 
 // #include <QItemSelection>
@@ -45,14 +47,25 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class DocumentSelectionModel : public QItemSelectionModel
+    class PatternBuilderSelectionModel: public KLinkItemSelectionModel
+    {
+      public:
+        PatternBuilderSelectionModel( QAbstractItemModel *model, 
+                                      QItemSelectionModel *proxySelector, QObject *parent = 0 ):
+        KLinkItemSelectionModel( model, proxySelector, parent )
+        {
+        }
+    };
+
+//     class DocumentSelectionModel : public QItemSelectionModel
+    class PatternDataSelectionModel : public QItemSelectionModel
     {
       Q_OBJECT
 
       public:
-        DocumentSelectionModel( QAbstractItemModel * model );
-        DocumentSelectionModel( QAbstractItemModel * model, QObject * parent );
-        virtual ~DocumentSelectionModel();
+        PatternDataSelectionModel( QAbstractItemModel * model );
+        PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent );
+        virtual ~PatternDataSelectionModel();
         
 
         //Salome
@@ -72,6 +85,10 @@ namespace HEXABLOCK
         LightApp_SelectionMgr* _salomeSelectionMgr;
         bool                   _salomeSelectionChanged;
     };
+
+
+    
+
 
   }
 }

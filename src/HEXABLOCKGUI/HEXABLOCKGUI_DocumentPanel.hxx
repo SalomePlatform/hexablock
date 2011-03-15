@@ -21,6 +21,12 @@
 #include "ui_CutEdge_QTD.h"
 
 
+#include "ui_Vector_QTD.h"
+#include "ui_MakeCartesian_QTD.h"
+#include "ui_MakeCylindrical_QTD.h"
+#include "ui_MakeTranslation_QTD.h"
+
+
 #include "HexVertex.hxx"
 #include "HexQuad.hxx"
 #include "HexHexa.hxx"
@@ -35,19 +41,29 @@
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 
+
+
+#include "klinkitemselectionmodel.hxx"
+
 namespace HEXABLOCK
 {
   namespace GUI
   {
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog 
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog
     {
+        Q_OBJECT
         public:
-          HexaBaseDialog();
+          HexaBaseDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
           virtual ~HexaBaseDialog();
 
-          virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-          virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
+          //  model
+          virtual void setDocumentModel( DocumentModel* m );
+
+          //  selection
+          virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s );
+          virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
+
 
         protected:
           void _setAllSelection();
@@ -55,16 +71,31 @@ namespace HEXABLOCK
           void _setEdgeSelectionOnly();
           void _setVertexSelectionOnly();
 
+          void _setElementsSelectionOnly();
+          void _setVectorSelectionOnly();
 
-          PatternDataModel       *_model;
-          DocumentSelectionModel *_selectionModel;
+        protected slots:
+          virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+          virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+
+        protected :
+//           HexaBaseModel          *_model;
+//           DocumentSelectionModel *_selectionModel;
+          DocumentModel*       _documentModel;
+          PatternDataModel*    _patternDataModel;
+          PatternBuilderModel* _patternBuilderModel;
+
+
+          PatternDataSelectionModel*    _patternDataSelectionModel;
+          PatternBuilderSelectionModel* _patternBuilderSelectionModel;
+
     };
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexDialog : public QDialog,
-					                   public Ui::VertexDialog,
-                                                           public HexaBaseDialog
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexDialog : public HexaBaseDialog,
+					                   public Ui::VertexDialog
     {
       Q_OBJECT
 
@@ -78,9 +109,6 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
 
-      private slots:
-          void onSelectionChanged(  const QItemSelection& sel,
-                                    const QItemSelection& unsel );
       private:
         HEXA_NS::Vertex     *_value;
     };
@@ -88,9 +116,8 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadDialog : public QDialog,
-					                 public Ui::QuadDialog,
-                                                         public HexaBaseDialog
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadDialog : public HexaBaseDialog,
+					                 public Ui::QuadDialog
     {
       Q_OBJECT
 
@@ -101,9 +128,6 @@ namespace HEXABLOCK
         void setValue(HEXA_NS::Quad* v);
         HEXA_NS::Quad* getValue();
 
-//         virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-        virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
-
       public slots:
         virtual void accept();
         virtual void reject();
@@ -111,9 +135,9 @@ namespace HEXABLOCK
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
 
-      private slots:
-        void onSelectionChanged(  const QItemSelection& sel,
-                                    const QItemSelection& unsel );
+      protected slots:
+        virtual void onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel );
 
       private:
         HEXA_NS::Quad       *_value;
@@ -130,9 +154,8 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaDialog : public QDialog,
-                                                         public Ui::HexaDialog,
-                                                         public HexaBaseDialog
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaDialog : public HexaBaseDialog,
+                                                         public Ui::HexaDialog
     {
       Q_OBJECT
 
@@ -143,9 +166,6 @@ namespace HEXABLOCK
         void setValue(HEXA_NS::Hexa* v);
         HEXA_NS::Hexa* getValue();
 
-//         virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-        virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
-
       public slots:
         virtual void accept();
         virtual void reject();
@@ -153,12 +173,12 @@ namespace HEXABLOCK
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
 
-      private slots:
-          void onSelectionChanged(  const QItemSelection& sel,
-                                    const QItemSelection& unsel );
+      protected slots:
+        virtual void onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel );
 
       private:
-        HEXA_NS::Hexa       *_value;
+        HEXA_NS::Hexa   *_value;
 
         // User selection 
         QModelIndex     _q0Index;
@@ -175,18 +195,14 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeVerticesDialog : public QDialog,
-					                          public Ui::MergeVerticesDialog,
-                                                                  public HexaBaseDialog
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeVerticesDialog : public HexaBaseDialog,
+					                          public Ui::MergeVerticesDialog
     {
       Q_OBJECT
 
       public:
         MergeVerticesDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MergeVerticesDialog();
-
-//         virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-        virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
 
       public slots:
         virtual void accept();
@@ -195,9 +211,10 @@ namespace HEXABLOCK
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
 
-      private slots:
-        void onSelectionChanged(  const QItemSelection& sel,
-                                  const QItemSelection& unsel );
+      protected slots:
+        virtual void onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel );
+
       private:
         // User selection 
         QModelIndex     _v0Index;
@@ -210,18 +227,14 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeEdgesDialog : public QDialog,
-                                                               public Ui::MergeEdgesDialog,
-                                                               public HexaBaseDialog
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeEdgesDialog : public HexaBaseDialog,
+                                                               public Ui::MergeEdgesDialog
     {
       Q_OBJECT
 
       public:
         MergeEdgesDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MergeEdgesDialog();
-
-//         virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-        virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
 
       public slots:
         virtual void accept();
@@ -230,9 +243,9 @@ namespace HEXABLOCK
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
 
-      private slots:
-        void onSelectionChanged(  const QItemSelection& sel,
-                                  const QItemSelection& unsel );
+      protected slots:
+        virtual void onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel );
 
       private:
         // User selection
@@ -247,13 +260,8 @@ namespace HEXABLOCK
 
 
 
-
-
-
-
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CutEdgeDialog : public QDialog,
-					                  public Ui::CutEdgeDialog,
-                                                          public HexaBaseDialog
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CutEdgeDialog : public HexaBaseDialog,
+                                                          public Ui::CutEdgeDialog
   {
       Q_OBJECT
 
@@ -261,22 +269,136 @@ namespace HEXABLOCK
         CutEdgeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~CutEdgeDialog();
 
-//         virtual void setModel(PatternDataModel *m); //(DocumentModel* m);
-        virtual void setSelectionModel(DocumentSelectionModel* s); //QItemSelectionModel* s);
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      protected slots:
+        virtual void onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel );
+      private:
+        // User selection
+        QModelIndex     _eIndex;
+   };
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VectorDialog : public HexaBaseDialog,
+                                                         public Ui::VectorDialog
+  {
+      Q_OBJECT
+
+      public:
+        VectorDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~VectorDialog();
+
+        void setValue(HEXA_NS::Vector* v);
+        HEXA_NS::Vector* getValue();
+
+      public slots:
+        virtual void accept();
+
+      private:
+        HEXA_NS::Vector *_value;
+  };
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCartesianDialog : public HexaBaseDialog,
+                                                                public Ui::MakeCartesianDialog
+  {
+      Q_OBJECT
+
+      public:
+        PatternDataModel* patternDataModel;
+
+        MakeCartesianDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeCartesianDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      private slots:
-        void onSelectionChanged(  const QItemSelection& sel,
-                                  const QItemSelection& unsel );
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+        virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
       private:
         // User selection
-        QModelIndex     _eIndex;
+        QModelIndex     _ptIndex;
+        QModelIndex     _vecXIndex;
+        QModelIndex     _vecYIndex;
+        QModelIndex     _vecZIndex;
 
-   };
+        QModelIndex*    _currentIndex;
+        QLineEdit*      _currentLineEdit;
+  };
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindricalDialog : public HexaBaseDialog,
+                                                                  public Ui::MakeCylindricalDialog
+  {
+      Q_OBJECT
+
+      public:
+        MakeCylindricalDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeCylindricalDialog();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+        virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+      private:
+        // User selection
+        QModelIndex     _ptIndex;
+        QModelIndex     _vecXIndex;
+        QModelIndex     _vecZIndex;
+
+        QModelIndex*    _currentIndex;
+        QLineEdit*      _currentLineEdit;
+  };
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeTranslationDialog : public HexaBaseDialog,
+                                                                  public Ui::MakeTranslationDialog
+  {
+      Q_OBJECT
+
+      public:
+        MakeTranslationDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeTranslationDialog();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+      private:
+        // User selection
+        QModelIndex     _eltIndex;
+        QModelIndex     _vecIndex;
+
+        QModelIndex*    _currentIndex;
+        QLineEdit*      _currentLineEdit;
+
+//         QItemSelectionModel* _selectionModel2;
+  };
+
 
 
   }

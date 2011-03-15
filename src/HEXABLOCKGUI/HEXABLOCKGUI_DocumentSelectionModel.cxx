@@ -47,11 +47,11 @@ using namespace HEXABLOCK::GUI;
 
 
 
-DocumentSelectionModel::DocumentSelectionModel( QAbstractItemModel * model ):
+PatternDataSelectionModel::PatternDataSelectionModel( QAbstractItemModel * model ):
 QItemSelectionModel( model ),
 _salomeSelectionChanged(false)
 {
-  _salomeSelectionMgr = DocumentSelectionModel::selectionMgr();
+  _salomeSelectionMgr = PatternDataSelectionModel::selectionMgr();
 
   connect( _salomeSelectionMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
   connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
@@ -64,11 +64,11 @@ _salomeSelectionChanged(false)
 
 
 
-DocumentSelectionModel::DocumentSelectionModel( QAbstractItemModel * model, QObject * parent ):
+PatternDataSelectionModel::PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent ):
 QItemSelectionModel( model, parent ),
 _salomeSelectionChanged(false)
 {
-  _salomeSelectionMgr = DocumentSelectionModel::selectionMgr();
+  _salomeSelectionMgr = PatternDataSelectionModel::selectionMgr();
 
 connect( _salomeSelectionMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
 connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
@@ -78,11 +78,11 @@ connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSel
 
 }
 
-DocumentSelectionModel::~DocumentSelectionModel()
+PatternDataSelectionModel::~PatternDataSelectionModel()
 {
 }
 
-LightApp_SelectionMgr* DocumentSelectionModel::selectionMgr()
+LightApp_SelectionMgr* PatternDataSelectionModel::selectionMgr()
 {
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   if( anApp )
@@ -92,7 +92,7 @@ LightApp_SelectionMgr* DocumentSelectionModel::selectionMgr()
 }
 
 
-SVTK_ViewWindow* DocumentSelectionModel::GetViewWindow ()
+SVTK_ViewWindow* PatternDataSelectionModel::GetViewWindow ()
 {
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>
         (SUIT_Session::session()->activeApplication());
@@ -117,25 +117,25 @@ SVTK_ViewWindow* DocumentSelectionModel::GetViewWindow ()
 
 
 
-void  DocumentSelectionModel::SetSelectionMode(Selection_Mode theMode)
+void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 {
-  SVTK_ViewWindow* aViewWindow = DocumentSelectionModel::GetViewWindow();
+  SVTK_ViewWindow* aViewWindow = PatternDataSelectionModel::GetViewWindow();
   aViewWindow->SetSelectionMode( theMode );
 }
 
-// void  DocumentSelectionModel::SetSelectionMode(Selection_Mode theMode)
+// void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 // {
 // 
 //   QList<SUIT_Selector*> aSelectors;
 //   _salomeSelectionMgr->selectors( SVTK_Viewer::Type(), aSelectors );
 //   QListIterator<SUIT_Selector*> it( aSelectors );
 //   
-//   std::cout << "DocumentSelectionModel::SetSelectionMode()" << std::endl;
+//   std::cout << "PatternDataSelectionModel::SetSelectionMode()" << std::endl;
 //   while ( it.hasNext() )
 //   {
 //   //   SUIT_Selector* selector = it.next();
 //     SVTK_Selector* selector = dynamic_cast<SVTK_Selector*>( it.next() );
-//     std::cout << "DocumentSelectionModel::SetSelectionMode()" << theMode << std::endl;
+//     std::cout << "PatternDataSelectionModel::SetSelectionMode()" << theMode << std::endl;
 //     selector->SetSelectionMode(theMode);
 //   }
 // }
@@ -143,9 +143,9 @@ void  DocumentSelectionModel::SetSelectionMode(Selection_Mode theMode)
 
 
 
-void DocumentSelectionModel::salomeSelectionChanged()
+void PatternDataSelectionModel::salomeSelectionChanged()
 {
-//   std::cout << "DocumentSelectionModel::salomeSelectionChanged()" << std::endl;
+//   std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
   _salomeSelectionChanged = true;
 
   QModelIndex newIndex;
@@ -185,9 +185,9 @@ void DocumentSelectionModel::salomeSelectionChanged()
   _salomeSelectionChanged = false;
 }
 
-void DocumentSelectionModel::_selectSalome( const QModelIndex & index )
+void PatternDataSelectionModel::_selectSalome( const QModelIndex & index )
 {
-//   std::cout << "DocumentSelectionModel::_selectSalome " << std::endl;
+//   std::cout << "PatternDataSelectionModel::_selectSalome " << std::endl;
 //   std::cout << "Check ->  " << index.model()->data(index).toString().toStdString() << std::endl;
 
   QVariant variant = index.model()->data(index, HEXA_ENTRY_ROLE);
@@ -195,7 +195,7 @@ void DocumentSelectionModel::_selectSalome( const QModelIndex & index )
 
   QString entry = variant.toString();
 //   std::cout << "Found in Salome ->  " << entry.toStdString() << std::endl;
-  SVTK_ViewWindow* aViewWindow = DocumentSelectionModel::GetViewWindow();
+  SVTK_ViewWindow* aViewWindow = PatternDataSelectionModel::GetViewWindow();
   SALOME_Actor* anActor = DocumentGraphicView::FindActorByEntry( aViewWindow, entry.toStdString().c_str() );
 
   if ( anActor ){
@@ -208,17 +208,17 @@ void DocumentSelectionModel::_selectSalome( const QModelIndex & index )
 }
 
 
-void DocumentSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
+void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
 {
-//   std::cout << "DocumentSelectionModel::onCurrentChanged " << std::endl;
+//   std::cout << "PatternDataSelectionModel::onCurrentChanged " << std::endl;
 //   _selectSalome( current, true );
 //   _selectSalome( previous, false );
 }
 
 
-void DocumentSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
+void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  std::cout << "DocumentSelectionModel::onSelectionChanged" << std::endl;
+  std::cout << "PatternDataSelectionModel::onSelectionChanged" << std::endl;
 
   if ( _salomeSelectionChanged ) return;
 

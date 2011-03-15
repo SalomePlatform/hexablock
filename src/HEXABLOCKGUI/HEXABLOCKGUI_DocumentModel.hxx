@@ -37,14 +37,30 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class DocumentModel : public QStandardItemModel 
+    class DocumentModel : public QStandardItemModel
     {
       public:
         DocumentModel( QObject * parent = 0 );
         DocumentModel( int rows, int columns, QObject * parent = 0 );
 
-        void clear();
+        virtual ~DocumentModel();
+
         void load( const QString& xmlFileName );
+        void updateData();
+        void clearAll();
+        void clearData();
+        void clearBuilder();
+        void fillData();
+
+        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+
+        void allowAllSelection();
+        void allowQuadSelectionOnly();
+        void allowEdgeSelectionOnly();
+        void allowVertexSelectionOnly();
+        void allowElementsSelectionOnly();
+        void allowVectorSelectionOnly();
+
 
         //  ************  NEW ************
         QModelIndex addVertex( double x, double y, double z );
@@ -52,6 +68,19 @@ namespace HEXABLOCK
                              const QModelIndex &i_v2, const QModelIndex &i_v3 );
         QModelIndex addHexaFromQuad( const QModelIndex &i_q0, const QModelIndex &i_q1, const QModelIndex &i_q2,
                                      const QModelIndex &i_q3, const QModelIndex &i_q4, const QModelIndex &i_q5 );
+
+
+        QModelIndex addVector( double dx, double dy, double dz );
+        QModelIndex makeCartesian( const QModelIndex& i_pt,
+                                   const QModelIndex& i_vec_x, const QModelIndex& i_vec_y, const QModelIndex& i_vec_z,
+                                   long nx, long ny, long nz);
+        QModelIndex makeCylindrical( const QModelIndex& i_pt,
+                                     const QModelIndex& i_vx, const QModelIndex& i_vz,
+                                     double dr, double da, double dl,
+                                     long nr, long na, long nl,
+                                     bool fill );
+        QModelIndex makeTranslation( const QModelIndex& i_elt, const QModelIndex& i_vec );
+
 
         // ************  EDIT ************
         bool mergeVertices( const QModelIndex &i_v0, const QModelIndex &i_v1 );
@@ -80,35 +109,27 @@ namespace HEXABLOCK
         QStandardItem     *_pipeDirItem;
         QStandardItem     *_elementsDirItem;
         QStandardItem     *_crossElementsDirItem;
+
+
+        Qt::ItemFlags     _vertexItemFlags;
+        Qt::ItemFlags     _edgeItemFlags;
+        Qt::ItemFlags     _quadItemFlags;
+        Qt::ItemFlags     _hexaItemFlags;
+        Qt::ItemFlags     _vectorItemFlags;
+        Qt::ItemFlags     _elementsItemFlags;
+
     };
 
 
 
-    class  PatternDataModel : public QSortFilterProxyModel 
+    class  PatternDataModel : public QSortFilterProxyModel
     {
       public:
         PatternDataModel( QObject * parent = 0 );
         virtual ~PatternDataModel();
 
-        Qt::ItemFlags vertexItemFlags;
-        Qt::ItemFlags edgeItemFlags;
-        Qt::ItemFlags quadItemFlags;
-        Qt::ItemFlags hexaItemFlags;
-
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
         virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-
-        QModelIndex addVertex( double x, double y, double z );
-        QModelIndex addQuad( const QModelIndex &i_v0, const QModelIndex &i_v1,
-                             const QModelIndex &i_v2, const QModelIndex &i_v3 );
-        QModelIndex addHexaFromQuad( const QModelIndex &i_q0, const QModelIndex &i_q1, const QModelIndex &i_q2,
-                                     const QModelIndex &i_q3, const QModelIndex &i_q4, const QModelIndex &i_q5 );
-
-        bool mergeVertices( const QModelIndex &i_v0, const QModelIndex &i_v1 ); //Vertex* v1, Vertex* v2 );
-        bool mergeEdges( const QModelIndex &i_e0, const QModelIndex &i_e1,
-                         const QModelIndex &i_v0, const QModelIndex &i_v1 );
-        QModelIndex cutEdge( const QModelIndex &i_e0, int nbcuts );
-
 
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
 
@@ -119,16 +140,16 @@ namespace HEXABLOCK
     };
 
 
-    class  PatternBuilderModel : public QSortFilterProxyModel 
+    class  PatternBuilderModel : public QSortFilterProxyModel
     {
       public:
         PatternBuilderModel( QObject * parent = 0 );
         virtual ~PatternBuilderModel();
 
+        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
         virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+        QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
      };
-
-
 
   }
 }
