@@ -182,47 +182,10 @@ ICONS =  \
 	resources/ExecHEXABLOCK.png
 
 QMFILES = \
-	resources/HEXABLOCK_msg_en.ts \
-	resources/HEXABLOCK_msg_fr.ts \
-	resources/HEXABLOCK_icons.ts
+	HEXABLOCK_msg_en.qm \
+	HEXABLOCK_msg_fr.qm \
+	HEXABLOCK_icons.qm
 
+dist_salomeres_DATA = ${ICONS} 
 
-dist_salomeres_DATA = $(QMFILES) ${ICONS} 
-
-
-
-
-
-
-
-
-
-
-
-# # --------------------------------------------
-# # *.h --> *_moc.cxx
-# # --------------------------------------------
-# 
-# SUFFIXES = .hxx _moc.cxx .qrc _qrc.cxx
-# 
-# .hxx_moc.cxx :
-# 	$(QT_MOC) -p . -o $@ $<
-# 
-# .qrc_qrc.cxx :
-# 	$(QT_RCC) -name $(*F)  $< -o $@
-# 
-# #.ui.h :
-# #	$(QT_UIC) -o $@ $<
-# ui_%.h: %.ui
-# 	$(QT_UIC) $< -o $@
-# 
-# 
-# clean-local-qt :
-# 	rm -f *_moc.cxx *_qrc.cxx ui_*.h
-# 
-# 
-# clean-local: clean-local-qt
-# 	rm -f HEXABLOCK_msg_en.qm HEXABLOCK_msg_fr.qm
-# 
-# 
-# 
+nodist_salomeres_DATA = $(QMFILES)

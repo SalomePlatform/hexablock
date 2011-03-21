@@ -57,7 +57,7 @@ docdir             = $(datadir)/doc/salome
 	$(MOC) $< -o $@
 
 # translation (*.qm) files generation (lrelease)
-%.qm: %.ts
+%.qm: resources/%.ts
 	$(LRELEASE) $< -qm $@
 
 # resource files generation (qrcc)
@@ -70,7 +70,7 @@ ui_%.h: %.ui
 
 # extra distributed files
 EXTRA_DIST = $(MOC_FILES:%_moc.cxx=%.hxx) $(QRC_FILES:qrc_%.cxx=%.qrc) \
-             $(UIC_FILES:ui_%.h=%.ui) $(nodist_salomeres_DATA:%.qm=%.ts)
+             $(UIC_FILES:ui_%.h=%.ui) $(nodist_salomeres_DATA:%.qm=resources/%.ts)
 
 # customize clean operation
 mostlyclean-local:
