@@ -50,7 +50,7 @@ int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       return HERR;
       }
 
-   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 0);
+   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 1.0);
    return ier;
 }
 
@@ -71,9 +71,9 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
 
    for (int ns = 0 ; ns < nbseg ; ns++)
        {
-       sprintf (cnum, "%d", ns);
        if (mline[ns] == NULL)
           {
+          sprintf (cnum, "%d", ns);
           putError (W_ASSO_LINE5, cnum);
           return HERR;
           }
@@ -167,8 +167,8 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
          }
       }
    
-   int ier=associateCascade (les_edges, &les_orig[0], gstart, gline, pstart, pend, 
-                             closed);
+   int ier = associateCascade (les_edges, &les_orig[0], gstart, gline, pstart, 
+                               pend, closed);
    return ier;
 }
 //

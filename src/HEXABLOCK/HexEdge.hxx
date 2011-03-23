@@ -47,7 +47,8 @@ public:
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
     int   addAssociation (Shape* forme); 
-    const Shapes & getAssociations () { return tab_assoc ; }
+    const Shapes & getAssociations ()       { return tab_assoc ;  }
+    void  clearAssociations ()              { tab_assoc.clear() ; }
 
 private:
     friend class Cloner;
