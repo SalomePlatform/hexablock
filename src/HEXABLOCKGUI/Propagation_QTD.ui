@@ -1,50 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CutEdgeDialog</class>
- <widget class="QDialog" name="CutEdgeDialog">
+ <class>LawDialog</class>
+ <widget class="QDialog" name="LawDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>214</width>
-    <height>199</height>
+    <width>266</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Propagation</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Arguments</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>nb </string>
+         <string>law</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="nb_cut_spb">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="e_le">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="law_le">
         <property name="maximumSize">
          <size>
           <width>127</width>
@@ -53,10 +37,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Edge </string>
+         <string>way</string>
         </property>
        </widget>
       </item>
@@ -80,12 +64,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CutEdgeDialog</receiver>
+   <receiver>LawDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>403</x>
+     <y>725</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -96,12 +80,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CutEdgeDialog</receiver>
+   <receiver>LawDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>403</x>
+     <y>725</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

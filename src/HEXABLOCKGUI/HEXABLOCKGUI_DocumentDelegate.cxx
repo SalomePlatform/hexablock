@@ -38,8 +38,11 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
 
     if ( item ){
       switch ( item->type() ){
-        case VERTEXITEM : editor = new VertexDialog(parent); break;
-        case QUADITEM :   editor = new QuadDialog(parent);   break;
+        case VERTEXITEM : editor = new VertexDialog(parent);   break;
+        case EDGEITEM :   editor = new EdgeDialog(parent);     break;
+        case QUADITEM :   editor = new QuadDialog(parent);     break;
+        case HEXAITEM :   editor = new HexaDialog(parent);     break;
+        case VECTORITEM : editor = new VectorDialog(parent);   break;
       }
       if ( editor ){
         _dw->setWidget(editor);
@@ -78,16 +81,43 @@ void DocumentDelegate::setEditorData( QWidget *editor,
               HEXA_NS::Vertex *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
               VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
               vertexEditor->setValue(value);
-            }
-            break;
+        }
+        break;
+
+
+        case EDGEITEM : {
+//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+              HEXA_NS::Edge *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
+              EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
+              edgeEditor->setValue(value);
+        }
+        break;
 
         case QUADITEM : {
 //               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
               HEXA_NS::Quad *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
               QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
               quadEditor->setValue(value);
-            }
-            break;
+        }
+        break;
+
+        case HEXAITEM : {
+//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+              HEXA_NS::Hexa *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Hexa* >();
+              HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
+              hexaEditor->setValue(value);
+        }
+        break;
+
+        case VECTORITEM : {
+//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+              HEXA_NS::Vector *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vector* >();
+              VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
+              vectorEditor->setValue(value);
+        }
+        break;
+
+
       }
     }
 
@@ -123,13 +153,35 @@ void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
               model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
             }
             break;
-  
+
+        case EDGEITEM : {
+              EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
+              HEXA_NS::Edge *value   = edgeEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+            }
+            break;
+
         case QUADITEM : {
               QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
               HEXA_NS::Quad *value   = quadEditor->getValue();
               model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
             }
             break;
+
+        case HEXAITEM : {
+              HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
+              HEXA_NS::Hexa *value   = hexaEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+            }
+            break;
+
+        case VECTORITEM : {
+              VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
+              HEXA_NS::Vector *value   = vectorEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+            }
+            break;
+
       }
     }
 }

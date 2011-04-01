@@ -283,6 +283,166 @@ void VertexDialog::accept()
 
 
 
+
+
+// ------------------------- EDGE ----------------------------------
+EdgeDialog::EdgeDialog( QWidget* parent, Qt::WindowFlags f ):
+  HexaBaseDialog(parent, f),
+  _value(0)
+{
+  setupUi( this );
+
+  v0_le->installEventFilter(this);
+  v1_le->installEventFilter(this);
+
+  pt_le->installEventFilter(this);
+  vect_le->installEventFilter(this);
+
+  // Default 
+  rb1->click();
+  // select first Vertex
+  _currentIndex    = &_v0Index;
+  _currentLineEdit = v0_le;
+//   _currentVertexLineEdit->setFocus();
+
+}
+
+
+EdgeDialog::~EdgeDialog()
+{
+
+}
+
+bool EdgeDialog::eventFilter(QObject *obj, QEvent *event)
+{
+    if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+        if ( obj == v0_le ) {
+          _setVertexSelectionOnly();
+          _currentIndex     = &_v0Index;
+          _currentLineEdit  = v0_le;
+        } else if ( obj == v1_le ) {
+          _setVertexSelectionOnly();
+          _currentIndex     = &_v1Index;
+          _currentLineEdit  = v1_le;
+        } else if ( obj == pt_le ) {
+          _setVertexSelectionOnly();
+          _currentIndex     = &_ptIndex;
+          _currentLineEdit  = pt_le;
+        } else if ( obj == vect_le ) {
+          _setVectorSelectionOnly();
+          _currentIndex     = &_vecIndex;
+          _currentLineEdit  = vect_le;
+        }
+        return false;
+    } else {
+         // standard event processing
+         return QObject::eventFilter(obj, event);   
+    }
+}
+
+
+void EdgeDialog::setValue(HEXA_NS::Edge* e)
+{
+  char pName[12];
+
+  HEXA_NS::Vertex* v0 = e->getVertex(0);
+  HEXA_NS::Vertex* v1 = e->getVertex(1);
+
+  v0_le->setText( v0->getName(pName) );
+  v1_le->setText( v1->getName(pName) );
+
+  _value = e;
+
+  buttonBox->clear();
+  rb2->hide();
+  v0_le->setReadOnly(true);
+  v1_le->setReadOnly(true);
+}
+
+HEXA_NS::Edge* EdgeDialog::getValue()
+{
+  return _value;
+}
+
+
+void EdgeDialog::onPatternDataSelectionChanged(  const QItemSelection& sel,
+                                                 const QItemSelection& unsel )
+{
+//   if ( _currentVertexIndex == NULL ) return;
+
+  QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
+
+  if ( l.count() > 0 ){ 
+    *_currentIndex = l[0];
+    _currentLineEdit->setText( _currentIndex->data().toString() );
+  }
+}
+
+
+
+void EdgeDialog::onPatternBuilderSelectionChanged(  const QItemSelection& sel, 
+                                                    const QItemSelection& unsel )
+{
+  QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes ();
+
+  if ( l.count() > 0 ){
+    *_currentIndex = l[0];
+    _currentLineEdit->setText( _currentIndex->data().toString() );
+  }
+}
+
+
+void EdgeDialog::accept()
+{
+  SUIT_OverrideCursor wc;
+  //if ( !_documentModel ) return;
+  if ( !_patternDataSelectionModel )    return;
+  if ( !_patternBuilderSelectionModel ) return;
+  const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+  const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+  if ( !patternDataModel ) return;
+  if ( !patternBuilderModel ) return;
+
+
+  QModelIndex newEdgeIndex;
+
+  if ( rb1->isChecked() ){
+    QModelIndex v0Index = patternDataModel->mapToSource( _v0Index );
+    QModelIndex v1Index = patternDataModel->mapToSource( _v1Index );
+    Q_ASSERT(v0Index.isValid());
+    Q_ASSERT(v1Index.isValid());
+    newEdgeIndex = _documentModel->addEdgeVertices( v0Index, v1Index );
+  } else if ( rb2->isChecked() ){
+    QModelIndex ptIndex  = patternDataModel->mapToSource( _ptIndex );
+    QModelIndex vecIndex = patternBuilderModel->mapToSource( _vecIndex );
+    Q_ASSERT(ptIndex.isValid());
+    Q_ASSERT(vecIndex.isValid());
+    newEdgeIndex = _documentModel->addEdgeVector( ptIndex, vecIndex );
+  }
+
+  if ( newEdgeIndex.isValid() ){
+    _setAllSelection();
+    QDialog::accept();
+    newEdgeIndex = patternDataModel->mapFromSource(newEdgeIndex);
+    _patternDataSelectionModel->select( newEdgeIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
+    _patternDataSelectionModel->setCurrentIndex( newEdgeIndex, QItemSelectionModel::Current );
+    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED" ) );
+  } else {
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "EDGE ADDED" ) );
+  }
+}
+
+
+void EdgeDialog::reject()
+{
+  _setAllSelection();
+  QDialog::reject();
+}
+
+
+
+
+
 // ------------------------- QUAD ----------------------------------
 QuadDialog::QuadDialog( QWidget* parent, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
@@ -295,9 +455,16 @@ QuadDialog::QuadDialog( QWidget* parent, Qt::WindowFlags f ):
   v2_le->installEventFilter(this);
   v3_le->installEventFilter(this);
 
-  // Default : select first Vertex
-  _currentVertexIndex    = &_v0Index;
-  _currentVertexLineEdit = v0_le;
+  e0_le->installEventFilter(this);
+  e1_le->installEventFilter(this);
+  e2_le->installEventFilter(this);
+  e3_le->installEventFilter(this);
+
+  // Default 
+  rb1->click();
+  // select first Vertex
+  _currentIndex    = &_v0Index;
+  _currentLineEdit = v0_le;
 //   _currentVertexLineEdit->setFocus();
 }
 
@@ -311,24 +478,40 @@ bool QuadDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
 
-        if ( obj == v0_le or obj == v1_le or obj == v2_le or obj == v3_le ) {
+        if ( obj == v0_le or obj == v1_le or obj == v2_le or obj == v3_le ){
           _setVertexSelectionOnly();
+        } else if ( obj == e0_le or obj == e1_le or obj == e2_le or obj == e3_le ){
+          _setEdgeSelectionOnly();
         }
 
         if ( obj == v0_le ) {
-          _currentVertexIndex     = &_v0Index;
-          _currentVertexLineEdit  = v0_le;
+          _currentIndex     = &_v0Index;
+          _currentLineEdit  = v0_le;
         } else if ( obj == v1_le ) {
-          _currentVertexIndex     = &_v1Index;
-          _currentVertexLineEdit  = v1_le;
+          _currentIndex     = &_v1Index;
+          _currentLineEdit  = v1_le;
         } else if ( obj == v2_le ) {
-          _currentVertexIndex     = &_v2Index;
-          _currentVertexLineEdit  = v2_le;
+          _currentIndex     = &_v2Index;
+          _currentLineEdit  = v2_le;
         } else if ( obj == v3_le ) {
-          _currentVertexIndex     = &_v3Index;
-          _currentVertexLineEdit  = v3_le;
+          _currentIndex     = &_v3Index;
+          _currentLineEdit  = v3_le;
         }
-        
+
+        if ( obj == e0_le ) {
+          _currentIndex     = &_e0Index;
+          _currentLineEdit  = e0_le;
+        } else if ( obj == e1_le ) {
+          _currentIndex     = &_e1Index;
+          _currentLineEdit  = e1_le;
+        } else if ( obj == e2_le ) {
+          _currentIndex     = &_e2Index;
+          _currentLineEdit  = e2_le;
+        } else if ( obj == e3_le ) {
+          _currentIndex     = &_e3Index;
+          _currentLineEdit  = e3_le;
+        }
+
         return false;
     } else {
          // standard event processing
@@ -338,22 +521,52 @@ bool QuadDialog::eventFilter(QObject *obj, QEvent *event)
 }
 
 
-void QuadDialog::setValue(HEXA_NS::Quad* h)
+void QuadDialog::setValue(HEXA_NS::Quad* q)
 {
   char pName[12];
-  HEXA_NS::Vertex* v0 = h->getVertex(0);
-  HEXA_NS::Vertex* v1 = h->getVertex(1);
-  HEXA_NS::Vertex* v2 = h->getVertex(2);
-  HEXA_NS::Vertex* v3 = h->getVertex(3);
+
+  Q_ASSERT( q->countEdge() == 4 );
+  Q_ASSERT( q->countVertex() == 4 );
+
+  //1) Vertices
+  HEXA_NS::Vertex* v0 = q->getVertex(0);
+  HEXA_NS::Vertex* v1 = q->getVertex(1);
+  HEXA_NS::Vertex* v2 = q->getVertex(2);
+  HEXA_NS::Vertex* v3 = q->getVertex(3);
 
   v0_le->setText( v0->getName(pName) );
   v1_le->setText( v1->getName(pName) );
   v2_le->setText( v2->getName(pName) );
   v3_le->setText( v3->getName(pName) );
+  v0_le->setReadOnly(true);
+  v1_le->setReadOnly(true);
+  v2_le->setReadOnly(true);
+  v3_le->setReadOnly(true);
 
-  _value = h;
 
+  //2) Edges
+//   QList<HEXA_NS::Edge*> edges;
+  HEXA_NS::Edge* e0 = q->getEdge(0);
+  HEXA_NS::Edge* e1 = q->getEdge(1);
+  HEXA_NS::Edge* e2 = q->getEdge(2);
+  HEXA_NS::Edge* e3 = q->getEdge(3);
+//   edges << e0;
+//   edges[0]; 
+
+  e0_le->setText( e0->getName(pName) );
+  e1_le->setText( e1->getName(pName) );
+  e2_le->setText( e2->getName(pName) );
+  e3_le->setText( e3->getName(pName) );
+  e0_le->setReadOnly(true);
+  e1_le->setReadOnly(true);
+  e2_le->setReadOnly(true);
+  e3_le->setReadOnly(true);
+
+  rb1->click();
   buttonBox->clear();
+
+  _value = q;
+
 }
 
 HEXA_NS::Quad* QuadDialog::getValue()
@@ -370,10 +583,11 @@ void QuadDialog::onPatternDataSelectionChanged(  const QItemSelection& sel,
   QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
 
   if ( l.count() > 0 ){ 
-    *_currentVertexIndex = l[0];
-    _currentVertexLineEdit->setText( _currentVertexIndex->data().toString() );
+    *_currentIndex = l[0];
+    _currentLineEdit->setText( _currentIndex->data().toString() );
   }
 }
+
 
 
 void QuadDialog::accept()
@@ -384,26 +598,43 @@ void QuadDialog::accept()
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   if ( !patternDataModel ) return;
 
-  QModelIndex v0Index = patternDataModel->mapToSource( _v0Index );
-  QModelIndex v1Index = patternDataModel->mapToSource( _v1Index );
-  QModelIndex v2Index = patternDataModel->mapToSource( _v2Index );
-  QModelIndex v3Index = patternDataModel->mapToSource( _v3Index );
+  QModelIndex newQuadIndex;
 
-  Q_ASSERT(v0Index.isValid());
-  Q_ASSERT(v1Index.isValid());
-  Q_ASSERT(v2Index.isValid());
-  Q_ASSERT(v3Index.isValid());
+  if ( rb1->isChecked() ){ //vertices
+    QModelIndex v0Index = patternDataModel->mapToSource( _v0Index );
+    QModelIndex v1Index = patternDataModel->mapToSource( _v1Index );
+    QModelIndex v2Index = patternDataModel->mapToSource( _v2Index );
+    QModelIndex v3Index = patternDataModel->mapToSource( _v3Index );
 
-  QModelIndex newIndex = _documentModel->addQuad( v0Index, v1Index, v2Index, v3Index );
+    Q_ASSERT(v0Index.isValid());
+    Q_ASSERT(v1Index.isValid());
+    Q_ASSERT(v2Index.isValid());
+    Q_ASSERT(v3Index.isValid());
 
-  if ( newIndex.isValid() ){
-    _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+    newQuadIndex = _documentModel->addQuadVertices( v0Index, v1Index, v2Index, v3Index );
+  } else if ( rb2->isChecked() ){ //edges
+    QModelIndex e0Index = patternDataModel->mapToSource( _e0Index );
+    QModelIndex e1Index = patternDataModel->mapToSource( _e1Index );
+    QModelIndex e2Index = patternDataModel->mapToSource( _e2Index );
+    QModelIndex e3Index = patternDataModel->mapToSource( _e3Index );
+
+    Q_ASSERT(e0Index.isValid());
+    Q_ASSERT(e1Index.isValid());
+    Q_ASSERT(e2Index.isValid());
+    Q_ASSERT(e3Index.isValid());
+
+    newQuadIndex = _documentModel->addQuadEdges( e0Index, e1Index, e2Index, e3Index );
+  }
+
+
+  if ( newQuadIndex.isValid() ){
+    _value = newQuadIndex.model()->data(newQuadIndex, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
     _setAllSelection();
     QDialog::accept();
-    newIndex = patternDataModel->mapFromSource( newIndex );
-    _patternDataSelectionModel->select( newIndex,
+    newQuadIndex = patternDataModel->mapFromSource( newQuadIndex );
+    _patternDataSelectionModel->select( newQuadIndex,
                                         QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
-    _patternDataSelectionModel->setCurrentIndex( newIndex,
+    _patternDataSelectionModel->setCurrentIndex( newQuadIndex,
                                         QItemSelectionModel::Current );
     SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED" ) );
   } else {
@@ -442,11 +673,23 @@ HexaDialog::HexaDialog( QWidget* parent, Qt::WindowFlags f ):
   q4_le->installEventFilter(this);
   q5_le->installEventFilter(this);
 
-  // Default : select first Quad
-  _currentQuadIndex    = &_q0Index;
-  _currentQuadLineEdit = q0_le;
-//   _currentQuadLineEdit->setFocus();
 
+  v0_le->installEventFilter(this);
+  v1_le->installEventFilter(this);
+  v2_le->installEventFilter(this);
+  v3_le->installEventFilter(this);
+  v4_le->installEventFilter(this);
+  v5_le->installEventFilter(this);
+  v6_le->installEventFilter(this);
+  v7_le->installEventFilter(this);
+
+
+  // Default 
+  rb1->click();
+  // select first Quad
+  _currentIndex    = &_q0Index;
+  _currentLineEdit = q0_le;
+//   _currentQuadLineEdit->setFocus();
 
 }
 
@@ -465,26 +708,57 @@ bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
           _setQuadSelectionOnly();
         }
 
-        if ( obj == q0_le ) {
-          _currentQuadIndex    = &_q0Index;
-          _currentQuadLineEdit = q0_le;
-        } else if ( obj == q1_le ) {
-          _currentQuadIndex    = &_q1Index;
-          _currentQuadLineEdit = q1_le;
-        } else if ( obj == q2_le ) {
-          _currentQuadIndex    = &_q2Index;
-          _currentQuadLineEdit = q2_le;
-        } else if ( obj == q3_le ) {
-          _currentQuadIndex    = &_q3Index;
-          _currentQuadLineEdit = q3_le;
-        } else if ( obj == q4_le ) {
-          _currentQuadIndex    = &_q4Index;
-          _currentQuadLineEdit = q4_le;
-        } else if ( obj == q5_le ) {
-          _currentQuadIndex    = &_q5Index;
-          _currentQuadLineEdit = q5_le;
+        if (  obj == v0_le or obj == v1_le or obj == v2_le or obj == v3_le
+           or obj == v4_le or obj == v5_le or obj == v6_le or obj == v7_le ) {
+          _setVertexSelectionOnly();
         }
-        
+
+        if ( obj == q0_le ) {
+          _currentIndex    = &_q0Index;
+          _currentLineEdit = q0_le;
+        } else if ( obj == q1_le ) {
+          _currentIndex    = &_q1Index;
+          _currentLineEdit = q1_le;
+        } else if ( obj == q2_le ) {
+          _currentIndex    = &_q2Index;
+          _currentLineEdit = q2_le;
+        } else if ( obj == q3_le ) {
+          _currentIndex    = &_q3Index;
+          _currentLineEdit = q3_le;
+        } else if ( obj == q4_le ) {
+          _currentIndex    = &_q4Index;
+          _currentLineEdit = q4_le;
+        } else if ( obj == q5_le ) {
+          _currentIndex    = &_q5Index;
+          _currentLineEdit = q5_le;
+        }
+
+        if ( obj == v0_le ) {
+          _currentIndex    = &_v0Index;
+          _currentLineEdit = v0_le;
+        } else if ( obj == v1_le ) {
+          _currentIndex    = &_v1Index;
+          _currentLineEdit = v1_le;
+        } else if ( obj == v2_le ) {
+          _currentIndex    = &_v2Index;
+          _currentLineEdit = v2_le;
+        } else if ( obj == v3_le ) {
+          _currentIndex    = &_v3Index;
+          _currentLineEdit = v3_le;
+        } else if ( obj == v4_le ) {
+          _currentIndex    = &_v4Index;
+          _currentLineEdit = v4_le;
+        } else if ( obj == v5_le ) {
+          _currentIndex    = &_v5Index;
+          _currentLineEdit = v5_le;
+        } else if ( obj == v6_le ) {
+          _currentIndex    = &_v6Index;
+          _currentLineEdit = v6_le;
+        } else if ( obj == v7_le ) {
+          _currentIndex    = &_v7Index;
+          _currentLineEdit = v7_le;
+        }
+
         return false;
     } else {
          // standard event processing
@@ -492,7 +766,7 @@ bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
     }
 }
 
-
+//CS_HERE
 void HexaDialog::setValue(HEXA_NS::Hexa* h)
 {
   char pName[12];
@@ -513,6 +787,13 @@ void HexaDialog::setValue(HEXA_NS::Hexa* h)
   _value = h;
 
   buttonBox->clear();
+  q0_le->setReadOnly(true);
+  q1_le->setReadOnly(true);
+  q2_le->setReadOnly(true);
+  q3_le->setReadOnly(true);
+  q4_le->setReadOnly(true);
+  q5_le->setReadOnly(true);
+
 }
 
 HEXA_NS::Hexa* HexaDialog::getValue()
@@ -526,11 +807,11 @@ void HexaDialog::onPatternDataSelectionChanged(  const QItemSelection& sel,
 {
 //   if ( _currentVertexIndex == NULL ) return;
 
-  QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
+  QModelIndexList l = _patternDataSelectionModel->selectedIndexes();
 
-  if ( l.count() > 0 ){ 
-    *_currentQuadIndex = l[0];
-    _currentQuadLineEdit->setText( _currentQuadIndex->data().toString() );
+  if ( l.count() > 0 ){
+    *_currentIndex = l[0];
+    _currentLineEdit->setText( _currentIndex->data().toString() );
   }
 }
 
@@ -557,7 +838,7 @@ void HexaDialog::accept()
   Q_ASSERT(q4Index.isValid());
   Q_ASSERT(q5Index.isValid());
 
-  QModelIndex newIndex = _documentModel->addHexaFromQuad( q0Index, q1Index, q2Index, q3Index, q4Index, q5Index );
+  QModelIndex newIndex = _documentModel->addHexaQuad( q0Index, q1Index, q2Index, q3Index, q4Index, q5Index );
 
   if ( newIndex.isValid() ){
     _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
@@ -571,10 +852,6 @@ void HexaDialog::accept()
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD HEXA" ) );
   }
 }
-
-
-
-
 
 
 void HexaDialog::reject()
@@ -891,6 +1168,13 @@ void VectorDialog::setValue(HEXA_NS::Vector* v)
   dx_spb->setValue( v->getDx() );
   dy_spb->setValue( v->getDy() );
   dz_spb->setValue( v->getDz() );
+
+
+  buttonBox->clear();
+  dx_spb->setReadOnly(true);
+  dy_spb->setReadOnly(true);
+  dz_spb->setReadOnly(true);
+
 }
 
 HEXA_NS::Vector* VectorDialog::getValue()
@@ -955,53 +1239,382 @@ void VectorDialog::accept()
 
 
 
-// ------------------------- MakeCartesianDialog ----------------------------------
-MakeCartesianDialog::MakeCartesianDialog( QWidget* parent, Qt::WindowFlags f )
+// // ------------------------- MakeCartesianDialog ----------------------------------
+// MakeCartesianDialog::MakeCartesianDialog( QWidget* parent, Qt::WindowFlags f )
+// : HexaBaseDialog(parent, f)
+// {
+//   setupUi( this );
+// 
+// //   _index[vex_le_rb0] = &_ivex_rb0;
+// //   _index[vec_le_rb0] = &_ivec_rb0;
+// // 
+// //   _index[vex_le_rb1]   = &_ivex_rb1;
+// //   _index[vec_x_le_rb1] = &_ivecx_rb1;
+// //   _index[vec_y_le_rb1] = &_ivecy_rb1;
+// //   _index[vec_z_le_rb1] = &_ivecz_rb1;
+// 
+//   vex_le_rb0->installEventFilter(this);
+//   vec_le_rb0->installEventFilter(this);
+// 
+//   vex_le_rb1->installEventFilter(this);
+//   vec_x_le_rb1->installEventFilter(this);
+//   vec_y_le_rb1->installEventFilter(this);
+//   vec_z_le_rb1->installEventFilter(this);
+// 
+//   // Default : select 1st vertex
+//   rb0->click();
+//   _currentObj = vex_le_rb0;
+// //   _currentLineEdit->setFocus();
+// }
+// 
+// 
+// MakeCartesianDialog::~MakeCartesianDialog()
+// {
+// }
+// 
+// 
+// 
+// bool MakeCartesianDialog::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+//         if ( obj == vex_le_rb0 or obj == vex_le_rb1 ){
+//             _setVertexSelectionOnly();
+//         }
+// 
+//         if ( obj == vec_le_rb0 
+//             or obj == vec_x_le_rb1 or obj == vec_y_le_rb1 or obj == vec_z_le_rb1 ){
+//             _setVectorSelectionOnly();
+//         }
+//         _currentObj = obj;
+//         return false;
+//     } else {
+//          // standard event processing
+//          return QObject::eventFilter(obj, event);
+//     }
+// }
+// 
+// 
+// 
+// void MakeCartesianDialog::onPatternDataSelectionChanged( const QItemSelection& sel,
+//                                                   const QItemSelection& unsel )
+// {
+// //   if ( _currentLineEdit == pt_le ){
+//   if ( _currentObj == vex_le_rb0 or _currentObj == vex_le_rb1 ){
+//     QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
+// 
+//     if ( l.count() > 0 ){ 
+//       QModelIndex selected = l[0];
+//       QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+//       if ( currentLineEdit ){
+//         currentLineEdit->setText( selected.data().toString() );
+//       }
+//       _index[_currentObj] = selected;
+//     }
+//   }
+// }
+// 
+// 
+// void MakeCartesianDialog::onPatternBuilderSelectionChanged( const QItemSelection& sel,
+//                                                      const QItemSelection& unsel )
+// {
+//   if ( _currentObj == vec_le_rb0 
+//        or _currentObj == vec_x_le_rb1 or _currentObj == vec_y_le_rb1 or _currentObj == vec_z_le_rb1 ){
+//     QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes ();
+// 
+//     if ( l.count() > 0 ){
+//       QModelIndex selected = l[0];
+//       QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+//       if ( currentLineEdit ){
+//         currentLineEdit->setText( selected.data().toString() );
+//       }
+//       _index[_currentObj] = selected;
+//     }
+//   }
+// }
+// 
+// 
+// 
+// 
+// void MakeCartesianDialog::accept()
+// {
+//   SUIT_OverrideCursor wc;
+//   //if ( !_documentModel ) return;
+//   if ( !_patternDataSelectionModel )    return;
+//   if ( !_patternBuilderSelectionModel ) return;
+//   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+//   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//   if ( !patternDataModel ) return;
+//   if ( !patternBuilderModel ) return;
+// 
+//   QModelIndex newEltsIndex;
+// 
+//   if ( rb0->isChecked() ){
+//     QModelIndex ivex_rb0 = patternDataModel->mapToSource( _index[vex_le_rb0] );
+//     QModelIndex ivec_rb0 = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+//     long nx = nx_spb_rb0->value();
+//     long ny = ny_spb_rb0->value();
+//     long nz = nz_spb_rb0->value();
+// 
+//     Q_ASSERT(ivex_rb0.isValid());
+//     Q_ASSERT(ivec_rb0.isValid());
+//     newEltsIndex = _documentModel->makeCartesian( ivex_rb0,
+//                                                   ivec_rb0,
+//                                                   nx, ny, nz );
+// 
+//   } else if ( rb1->isChecked() ){
+//     QModelIndex ivex_rb1  = patternDataModel->mapToSource( _index[vex_le_rb1] );
+//     QModelIndex ivecx_rb1 = patternBuilderModel->mapToSource( _index[vec_x_le_rb1] );
+//     QModelIndex ivecy_rb1 = patternBuilderModel->mapToSource( _index[vec_y_le_rb1] );
+//     QModelIndex ivecz_rb1 = patternBuilderModel->mapToSource( _index[vec_z_le_rb1] );
+//     long nx = nx_spb_rb1->value();
+//     long ny = ny_spb_rb1->value();
+//     long nz = nz_spb_rb1->value();
+// 
+//     Q_ASSERT(ivex_rb1.isValid());
+//     Q_ASSERT(ivecx_rb1.isValid());
+//     Q_ASSERT(ivecy_rb1.isValid());
+//     Q_ASSERT(ivecz_rb1.isValid());
+//     newEltsIndex = _documentModel->makeCartesian( ivex_rb1,
+//                                                   ivecx_rb1, ivecy_rb1, ivecz_rb1, 
+//                                                   nx, ny, nz );
+//   }
+// 
+//   if ( newEltsIndex.isValid() ){
+//     _setAllSelection();
+//     QDialog::accept();
+//     newEltsIndex = patternBuilderModel->mapFromSource(newEltsIndex);
+//     _patternBuilderSelectionModel->select( newEltsIndex, 
+//                                             QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
+//     _patternBuilderSelectionModel->setCurrentIndex( newEltsIndex,
+//                                             QItemSelectionModel::Current  );
+//     SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CARTESIAN GRID DONE" ) );
+//   } else {
+//     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CARTESIAN GRID" ) );
+//   }
+// }
+// 
+// 
+// 
+// 
+// void MakeCartesianDialog::reject()
+// {
+//   _setAllSelection();
+//   QDialog::reject();
+// }
+// 
+// 
+// 
+// // ------------------------- MakeCylindricalDialog ----------------------------------
+// MakeCylindricalDialog::MakeCylindricalDialog( QWidget* parent, Qt::WindowFlags f )
+// : HexaBaseDialog( parent, f )
+// {
+//   setupUi( this );
+// 
+//   pt_le->installEventFilter(this);
+//   vec_x_le->installEventFilter(this);
+//   vec_z_le->installEventFilter(this);
+// 
+// 
+//   // Default : select pt
+//   _currentIndex    = &_ptIndex;
+//   _currentLineEdit = pt_le;
+// //   _currentLineEdit->setFocus();
+// 
+// 
+// }
+// 
+// 
+// MakeCylindricalDialog::~MakeCylindricalDialog()
+// {
+// }
+// 
+// 
+// 
+// bool MakeCylindricalDialog::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+//         if ( obj == pt_le ) {
+//           _currentIndex     = &_ptIndex;
+//           _currentLineEdit  = pt_le;
+//            _setVertexSelectionOnly();
+//         } else if ( obj == vec_x_le ) {
+//           _currentIndex     = &_vecXIndex;
+//           _currentLineEdit  = vec_x_le;
+//           _setVectorSelectionOnly();
+//         } else if ( obj == vec_z_le ) {
+//           _currentIndex     = &_vecZIndex;
+//           _currentLineEdit  = vec_z_le;
+//           _setVectorSelectionOnly();
+//         }
+//         return false;
+//     } else {
+//          // standard event processing
+//          return QObject::eventFilter(obj, event);
+//     }
+// }
+// 
+// 
+// void MakeCylindricalDialog::onPatternDataSelectionChanged( const QItemSelection& sel,
+//                                                   const QItemSelection& unsel )
+// {
+//   if ( _currentLineEdit == pt_le ){
+//     QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
+// 
+//     if ( l.count() > 0 ){ 
+//       *_currentIndex = l[0];
+//       _currentLineEdit->setText( _currentIndex->data().toString() );
+//     }
+//   }
+// }
+// 
+// 
+// void MakeCylindricalDialog::onPatternBuilderSelectionChanged( const QItemSelection& sel,
+//                                                      const QItemSelection& unsel )
+// {
+//   if (    _currentLineEdit == vec_x_le
+//       or  _currentLineEdit == vec_z_le ){
+//     QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes ();
+// 
+//     if ( l.count() > 0 ){
+//       *_currentIndex = l[0];
+//       _currentLineEdit->setText( _currentIndex->data().toString() );
+//     }
+//   }
+// }
+// 
+// 
+// 
+// void MakeCylindricalDialog::accept()
+// {
+//   SUIT_OverrideCursor wc;
+//   //if ( !_documentModel ) return;
+//   if ( !_patternDataSelectionModel ) return;
+//   if ( !_patternBuilderSelectionModel ) return;
+// 
+//   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+//   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+// 
+//   if ( !patternDataModel ) return;
+//   if ( !patternBuilderModel ) return;
+// 
+//   QModelIndex ptIndex   = patternDataModel->mapToSource( _ptIndex );
+//   QModelIndex vecXIndex = patternBuilderModel->mapToSource( _vecXIndex );
+//   QModelIndex vecZIndex = patternBuilderModel->mapToSource( _vecZIndex );
+// 
+//   Q_ASSERT(ptIndex.isValid());
+//   Q_ASSERT(vecXIndex.isValid());
+//   Q_ASSERT(vecZIndex.isValid());
+// 
+//   double dr = dr_spb->value();
+//   double da = da_spb->value();
+//   double dl = dl_spb->value();
+// 
+//   long nr = nr_spb->value();
+//   long na = na_spb->value();
+//   long nl = nl_spb->value();
+//   
+//   bool fill = fill_cb->isChecked();
+// 
+//   QModelIndex newEltsIndex = _documentModel->makeCylindrical( ptIndex,
+//                                                       vecXIndex, vecZIndex,
+//                                                       dr, da, dl, 
+//                                                       nr, na, nl,
+//                                                       fill );
+//   if ( newEltsIndex.isValid() ){
+//     _setAllSelection();
+//     QDialog::accept();
+//     newEltsIndex = patternBuilderModel->mapFromSource( newEltsIndex );
+//     _patternBuilderSelectionModel->select( newEltsIndex,
+//                                            QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
+//     _patternBuilderSelectionModel->setCurrentIndex( newEltsIndex,
+//                                                     QItemSelectionModel::Current );
+//     SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDRICAL GRID DONE" ) );
+//   } else {
+//     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDRICAL GRID" ) );
+//   }
+// }
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// void MakeCylindricalDialog::reject()
+// {
+//   _setAllSelection();
+//   QDialog::reject();
+// }
+// 
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------- MakeGridDialog ----------------------------------
+//                  ( Cartesian, Cylindrical, Spherical )
+MakeGridDialog::MakeGridDialog( QWidget* parent, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
 
-  pt_le->installEventFilter(this);
-  vec_x_le->installEventFilter(this);
-  vec_y_le->installEventFilter(this);
-  vec_z_le->installEventFilter(this);
+  //cartesian
+  vex_le_rb0->installEventFilter(this);
+  vec_le_rb0->installEventFilter(this);
+
+  //cylindrical
+  vex_le_rb1->installEventFilter(this);
+  vec_x_le_rb1->installEventFilter(this);
+  vec_z_le_rb1->installEventFilter(this);
+
+  //spherical
+  vex_le_rb2->installEventFilter(this);
+  vec_le_rb2->installEventFilter(this);
+  nb_spb_rb2->installEventFilter(this);
+  k_spb_rb2->installEventFilter(this);
 
 
-  // Default : select pt
-  _currentIndex    = &_ptIndex;
-  _currentLineEdit = pt_le;
+  // Default : cartesian, 1st vertex
+  rb0->click();
+  _currentObj = vex_le_rb0;
 //   _currentLineEdit->setFocus();
-
-
 }
 
 
-MakeCartesianDialog::~MakeCartesianDialog()
+MakeGridDialog::~MakeGridDialog()
 {
 }
 
 
 
-bool MakeCartesianDialog::eventFilter(QObject *obj, QEvent *event)
+bool MakeGridDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
-        if ( obj == pt_le ) {
-          _currentIndex     = &_ptIndex;
-          _currentLineEdit  = pt_le;
-           _setVertexSelectionOnly();
-        } else if ( obj == vec_x_le ) {
-          _currentIndex     = &_vecXIndex;
-          _currentLineEdit  = vec_x_le;
-          _setVectorSelectionOnly();
-        } else if ( obj == vec_y_le ) {
-          _currentIndex     = &_vecYIndex;
-          _currentLineEdit  = vec_y_le;
-          _setVectorSelectionOnly();
-        } else if ( obj == vec_z_le ) {
-          _currentIndex     = &_vecZIndex;
-          _currentLineEdit  = vec_z_le;
-          _setVectorSelectionOnly();
+        if (  obj == vex_le_rb0 
+           or obj == vex_le_rb1
+           or obj == vex_le_rb2 ){
+            _setVertexSelectionOnly();
         }
+
+        if ( obj == vec_le_rb0 
+          or obj == vec_x_le_rb1 or obj == vec_z_le_rb1
+          or obj == vec_le_rb2 ){
+            _setVectorSelectionOnly();
+        }
+
+        _currentObj = obj;
+
         return false;
     } else {
          // standard event processing
@@ -1011,38 +1624,51 @@ bool MakeCartesianDialog::eventFilter(QObject *obj, QEvent *event)
 
 
 
-void MakeCartesianDialog::onPatternDataSelectionChanged( const QItemSelection& sel,
-                                                  const QItemSelection& unsel )
+void MakeGridDialog::onPatternDataSelectionChanged( const QItemSelection& sel,
+                                                    const QItemSelection& unsel )
 {
-  if ( _currentLineEdit == pt_le ){
+
+  if ( _currentObj == vex_le_rb0
+    or _currentObj == vex_le_rb1
+    or _currentObj == vex_le_rb2 ){
     QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
 
-    if ( l.count() > 0 ){ 
-      *_currentIndex = l[0];
-      _currentLineEdit->setText( _currentIndex->data().toString() );
-    }
-  }
-}
-
-
-void MakeCartesianDialog::onPatternBuilderSelectionChanged( const QItemSelection& sel,
-                                                     const QItemSelection& unsel )
-{
-  if (    _currentLineEdit == vec_x_le
-      or  _currentLineEdit == vec_y_le 
-      or  _currentLineEdit == vec_z_le ){
-    QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes ();
-
     if ( l.count() > 0 ){
-      *_currentIndex = l[0];
-      _currentLineEdit->setText( _currentIndex->data().toString() );
+      QModelIndex selected = l[0];
+      QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+      if ( currentLineEdit ){
+        currentLineEdit->setText( selected.data().toString() );
+      }
+      _index[_currentObj] = selected;
     }
   }
 }
 
 
-void MakeCartesianDialog::accept()
+void MakeGridDialog::onPatternBuilderSelectionChanged( const QItemSelection& sel,
+                                                       const QItemSelection& unsel )
 {
+  if ( _currentObj == vec_le_rb0 
+    or _currentObj == vec_x_le_rb1 or _currentObj == vec_z_le_rb1
+    or _currentObj == vec_le_rb2 ){
+    QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes();
+    if ( l.count() > 0 ){
+      QModelIndex selected = l[0];
+      QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+      if ( currentLineEdit ){
+        currentLineEdit->setText( selected.data().toString() );
+      }
+      _index[_currentObj] = selected;
+    }
+  }
+}
+
+
+
+
+void MakeGridDialog::accept()
+{
+//   std::cout<<"AAAAAAA"<<std::endl;
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
   if ( !_patternDataSelectionModel )    return;
@@ -1051,194 +1677,69 @@ void MakeCartesianDialog::accept()
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
   if ( !patternDataModel ) return;
   if ( !patternBuilderModel ) return;
-
-
-  QModelIndex ptIndex   = patternDataModel->mapToSource( _ptIndex );
-
-  QModelIndex vecXIndex = patternBuilderModel->mapToSource( _vecXIndex );
-  QModelIndex vecYIndex = patternBuilderModel->mapToSource( _vecYIndex );
-  QModelIndex vecZIndex = patternBuilderModel->mapToSource( _vecZIndex );
-
-  Q_ASSERT(ptIndex.isValid());
-  Q_ASSERT(vecXIndex.isValid());
-  Q_ASSERT(vecYIndex.isValid());
-  Q_ASSERT(vecZIndex.isValid());
-
-  long nx = nx_spb->value();
-  long ny = ny_spb->value();
-  long nz = nz_spb->value();
-
-
-  QModelIndex newEltsIndex = _documentModel->makeCartesian( ptIndex,
-                                                    vecXIndex, vecYIndex, vecZIndex,
-                                                    nx, ny, nz );
-  if ( newEltsIndex.isValid() ){
-    _setAllSelection();
-    QDialog::accept();
-    newEltsIndex = patternBuilderModel->mapFromSource(newEltsIndex);
-    _patternBuilderSelectionModel->select( newEltsIndex, 
-                                            QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
-    _patternBuilderSelectionModel->setCurrentIndex( newEltsIndex,
-                                            QItemSelectionModel::Current  );
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CARTESIAN GRID DONE" ) );
-  } else {
-    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CARTESIAN GRID" ) );
-  }
-}
-
-
-
-
-void MakeCartesianDialog::reject()
-{
-  _setAllSelection();
-  QDialog::reject();
-}
-
-
-
-// ------------------------- MakeCylindricalDialog ----------------------------------
-MakeCylindricalDialog::MakeCylindricalDialog( QWidget* parent, Qt::WindowFlags f )
-: HexaBaseDialog( parent, f )
-{
-  setupUi( this );
-
-  pt_le->installEventFilter(this);
-  vec_x_le->installEventFilter(this);
-  vec_z_le->installEventFilter(this);
-
-
-  // Default : select pt
-  _currentIndex    = &_ptIndex;
-  _currentLineEdit = pt_le;
-//   _currentLineEdit->setFocus();
-
-
-}
-
-
-MakeCylindricalDialog::~MakeCylindricalDialog()
-{
-}
-
-
-
-bool MakeCylindricalDialog::eventFilter(QObject *obj, QEvent *event)
-{
-    if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
-        if ( obj == pt_le ) {
-          _currentIndex     = &_ptIndex;
-          _currentLineEdit  = pt_le;
-           _setVertexSelectionOnly();
-        } else if ( obj == vec_x_le ) {
-          _currentIndex     = &_vecXIndex;
-          _currentLineEdit  = vec_x_le;
-          _setVectorSelectionOnly();
-        } else if ( obj == vec_z_le ) {
-          _currentIndex     = &_vecZIndex;
-          _currentLineEdit  = vec_z_le;
-          _setVectorSelectionOnly();
-        }
-        return false;
-    } else {
-         // standard event processing
-         return QObject::eventFilter(obj, event);
-    }
-}
-
-
-void MakeCylindricalDialog::onPatternDataSelectionChanged( const QItemSelection& sel,
-                                                  const QItemSelection& unsel )
-{
-  if ( _currentLineEdit == pt_le ){
-    QModelIndexList l = _patternDataSelectionModel->selectedIndexes ();
-
-    if ( l.count() > 0 ){ 
-      *_currentIndex = l[0];
-      _currentLineEdit->setText( _currentIndex->data().toString() );
-    }
-  }
-}
-
-
-void MakeCylindricalDialog::onPatternBuilderSelectionChanged( const QItemSelection& sel,
-                                                     const QItemSelection& unsel )
-{
-  if (    _currentLineEdit == vec_x_le
-      or  _currentLineEdit == vec_z_le ){
-    QModelIndexList l = _patternBuilderSelectionModel->selectedIndexes ();
-
-    if ( l.count() > 0 ){
-      *_currentIndex = l[0];
-      _currentLineEdit->setText( _currentIndex->data().toString() );
-    }
-  }
-}
-
-
-
-void MakeCylindricalDialog::accept()
-{
-  SUIT_OverrideCursor wc;
-  //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
-
-  const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
-
-  QModelIndex ptIndex   = patternDataModel->mapToSource( _ptIndex );
-  QModelIndex vecXIndex = patternBuilderModel->mapToSource( _vecXIndex );
-  QModelIndex vecZIndex = patternBuilderModel->mapToSource( _vecZIndex );
-
-  Q_ASSERT(ptIndex.isValid());
-  Q_ASSERT(vecXIndex.isValid());
-  Q_ASSERT(vecZIndex.isValid());
-
-  double dr = dr_spb->value();
-  double da = da_spb->value();
-  double dl = dl_spb->value();
-
-  long nr = nr_spb->value();
-  long na = na_spb->value();
-  long nl = nl_spb->value();
   
-  bool fill = fill_cb->isChecked();
+  QModelIndex iNewElts;
 
-  QModelIndex newEltsIndex = _documentModel->makeCylindrical( ptIndex,
-                                                      vecXIndex, vecZIndex,
-                                                      dr, da, dl, 
-                                                      nr, na, nl,
-                                                      fill );
-  if ( newEltsIndex.isValid() ){
+  if ( rb0->isChecked() ){ //cartesian
+    QModelIndex ivex_rb0 = patternDataModel->mapToSource( _index[vex_le_rb0] );
+    QModelIndex ivec_rb0 = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+    long nx = nx_spb_rb0->value();
+    long ny = ny_spb_rb0->value();
+    long nz = nz_spb_rb0->value();
+
+    Q_ASSERT(ivex_rb0.isValid());
+    Q_ASSERT(ivec_rb0.isValid());
+    iNewElts = _documentModel->makeCartesian( ivex_rb0, ivec_rb0, nx, ny, nz );
+
+  } else if ( rb1->isChecked() ){ //cylindrical
+    QModelIndex ivex_rb1  = patternDataModel->mapToSource( _index[vex_le_rb1] );
+    QModelIndex ivecx_rb1 = patternBuilderModel->mapToSource( _index[vec_x_le_rb1] );
+    QModelIndex ivecz_rb1 = patternBuilderModel->mapToSource( _index[vec_z_le_rb1] );
+
+    double dr = dr_spb_rb1->value();
+    double da = da_spb_rb1->value();
+    double dl = dl_spb_rb1->value();
+    double nr = nr_spb_rb1->value();
+    double na = na_spb_rb1->value();
+    double nl = nl_spb_rb1->value();
+    bool fill = fill_cb_rb1->isChecked();
+
+    Q_ASSERT(ivex_rb1.isValid());
+    Q_ASSERT(ivecx_rb1.isValid());
+    Q_ASSERT(ivecz_rb1.isValid());
+    iNewElts = _documentModel->makeCylindrical( ivex_rb1,
+                                                ivecx_rb1, ivecz_rb1,
+                                                dr, da, dl, nr, na, nl, fill);
+
+  } else if ( rb2->isChecked() ){ //spherical
+    QModelIndex ivex_rb2  = patternDataModel->mapToSource( _index[vex_le_rb2] );
+    QModelIndex ivecx_rb2 = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+    int nb = nb_spb_rb2->value();
+    int k  = k_spb_rb2->value();
+
+    Q_ASSERT(ivex_rb2.isValid());
+    Q_ASSERT(ivecx_rb2.isValid());
+    iNewElts = _documentModel->makeSpherical( ivex_rb2, ivecx_rb2, nb, k );
+  }
+
+
+  if ( iNewElts.isValid() ){
     _setAllSelection();
     QDialog::accept();
-    newEltsIndex = patternBuilderModel->mapFromSource( newEltsIndex );
-    _patternBuilderSelectionModel->select( newEltsIndex,
+    iNewElts = patternBuilderModel->mapFromSource(iNewElts);
+    _patternBuilderSelectionModel->select( iNewElts,
                                            QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
-    _patternBuilderSelectionModel->setCurrentIndex( newEltsIndex,
-                                                    QItemSelectionModel::Current );
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDRICAL GRID DONE" ) );
+    _patternBuilderSelectionModel->setCurrentIndex( iNewElts, QItemSelectionModel::Current  );
+    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE GRID DONE" ) );
   } else {
-    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDRICAL GRID" ) );
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE GRID" ) );
   }
 }
 
 
 
 
-
-
-
-
-
-
-
-
-void MakeCylindricalDialog::reject()
+void MakeGridDialog::reject()
 {
   _setAllSelection();
   QDialog::reject();

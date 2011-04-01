@@ -22,20 +22,43 @@
 
 
 #include <QStandardItem>
+
 #include <HexVertex.hxx>
 #include <HexEdge.hxx>
 #include <HexQuad.hxx>
 #include <HexHexa.hxx>
 
-#include <HexElements.hxx>
-#include <HexVector.hxx>
 
+#include <HexVector.hxx>
+#include <HexCylinder.hxx>
+#include <HexPipe.hxx>
+#include <HexElements.hxx>
+#include <HexCrossElements.hxx>
+
+
+
+#include <HexGroups.hxx>
+#include <HexLaw.hxx>
+#include <HexPropagation.hxx>
+
+
+
+Q_DECLARE_METATYPE( HEXA_NS::EltBase* );
 Q_DECLARE_METATYPE( HEXA_NS::Vertex* );
 Q_DECLARE_METATYPE( HEXA_NS::Edge* );
 Q_DECLARE_METATYPE( HEXA_NS::Quad* );
 Q_DECLARE_METATYPE( HEXA_NS::Hexa* );
+
 Q_DECLARE_METATYPE( HEXA_NS::Vector* );
+Q_DECLARE_METATYPE( HEXA_NS::Cylinder* );
+Q_DECLARE_METATYPE( HEXA_NS::Pipe* );
 Q_DECLARE_METATYPE( HEXA_NS::Elements* );
+Q_DECLARE_METATYPE( HEXA_NS::CrossElements* );
+
+Q_DECLARE_METATYPE( HEXA_NS::Group* );
+Q_DECLARE_METATYPE( HEXA_NS::Law* );
+Q_DECLARE_METATYPE( HEXA_NS::Propagation* );
+
 
 namespace HEXABLOCK
 {
@@ -48,7 +71,15 @@ namespace HEXABLOCK
       HEXAITEM,
 
       VECTORITEM,
-      ELEMENTSITEM
+      CYLINDERITEM,
+      PIPEITEM,
+      ELEMENTSITEM,
+      CROSSELEMENTSITEM,
+
+      GROUPITEM,
+      LAWITEM,
+      PROPAGATIONITEM,
+
     };
 
     enum { 
@@ -63,6 +94,10 @@ namespace HEXABLOCK
       ELEMENTS_TREE,
       CROSSELEMENTS_TREE,
 
+      GROUP_TREE,
+      LAW_TREE,
+      PROPAGATION_TREE,
+
       VERTEX_DIR_TREE,
       EDGE_DIR_TREE,
       QUAD_DIR_TREE,
@@ -72,7 +107,11 @@ namespace HEXABLOCK
       CYLINDER_DIR_TREE,
       PIPE_DIR_TREE,
       ELEMENTS_DIR_TREE,
-      CROSSELEMENTS_DIR_TREE
+      CROSSELEMENTS_DIR_TREE,
+
+      GROUP_DIR_TREE,
+      LAW_DIR_TREE,
+      PROPAGATION_DIR_TREE
 
     }; //HEXA_TREE_ROLE
 
@@ -142,6 +181,28 @@ namespace HEXABLOCK
     };
 
 
+    class CylinderItem : public QStandardItem
+    {
+      public:
+        CylinderItem( HEXA_NS::Cylinder* hexaCyl );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Cylinder* _hexaCylinder;
+    };
+
+
+    class PipeItem : public QStandardItem
+    {
+      public:
+        PipeItem( HEXA_NS::Pipe* hexaPipe );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Pipe* _hexaPipe;
+    };
 
 
     class ElementsItem : public QStandardItem
@@ -155,6 +216,54 @@ namespace HEXABLOCK
         HEXA_NS::Elements* _hexaElements;
     };
 
+    class CrossElementsItem : public QStandardItem
+    {
+      public:
+        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::CrossElements* _hexaCrossElts;
+    };
+
+
+      
+
+    class GroupItem : public QStandardItem
+    {
+      public:
+        GroupItem( HEXA_NS::Group* hexaGroup );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Group* _hexaGroup;
+    };
+
+
+    class LawItem : public QStandardItem
+    {
+      public:
+        LawItem( HEXA_NS::Law* hexaLaw );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Law* _hexaLaw;
+    };
+
+
+    class PropagationItem : public QStandardItem
+    {
+      public:
+        PropagationItem( HEXA_NS::Propagation* hexaPropagation );
+        virtual int type () const;
+        virtual QVariant data ( int role ) const;
+        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+      private:
+        HEXA_NS::Propagation* _hexaPropagation;
+    };
 
   }
 }

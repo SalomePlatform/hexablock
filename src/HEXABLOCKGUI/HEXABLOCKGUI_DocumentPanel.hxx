@@ -14,6 +14,7 @@
 
 #include "ui_Vertex_QTD.h"
 #include "ui_Quad_QTD.h"
+#include "ui_Edge_QTD.h"
 #include "ui_Hexa_QTD.h"
 
 #include "ui_MergeVertices_QTD.h"
@@ -22,12 +23,14 @@
 
 
 #include "ui_Vector_QTD.h"
-#include "ui_MakeCartesian_QTD.h"
-#include "ui_MakeCylindrical_QTD.h"
+#include "ui_MakeGrid_QTD.h"
+// #include "ui_MakeCartesian_QTD.h"
+// #include "ui_MakeCylindrical_QTD.h"
 #include "ui_MakeTranslation_QTD.h"
 
 
 #include "HexVertex.hxx"
+#include "HexEdge.hxx"
 #include "HexQuad.hxx"
 #include "HexHexa.hxx"
 // #include <QItemDelegate>
@@ -114,6 +117,49 @@ namespace HEXABLOCK
     };
 
 
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeDialog : public HexaBaseDialog,
+                                                       public Ui::EdgeDialog
+  {
+      Q_OBJECT
+
+      public:
+        EdgeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~EdgeDialog();
+
+        void setValue(HEXA_NS::Edge* e);
+        HEXA_NS::Edge* getValue();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+        virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+      private:
+        HEXA_NS::Edge *_value;
+
+        // User selection
+        // 1) by 2 vertex
+        QModelIndex    _v0Index;
+        QModelIndex    _v1Index;
+
+        // 2) by 1 vertex, 1 vector
+        QModelIndex    _ptIndex;
+        QModelIndex    _vecIndex;
+
+
+        QModelIndex*   _currentIndex;
+        QLineEdit*     _currentLineEdit;
+  };
+
+
+
+
 
 
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadDialog : public HexaBaseDialog,
@@ -143,13 +189,20 @@ namespace HEXABLOCK
         HEXA_NS::Quad       *_value;
 
         // User selection 
+        // 1) by vertices
         QModelIndex     _v0Index;
         QModelIndex     _v1Index;
         QModelIndex     _v2Index;
         QModelIndex     _v3Index;
 
-        QModelIndex*    _currentVertexIndex;
-        QLineEdit*      _currentVertexLineEdit;
+        // 2) by edges
+        QModelIndex     _e0Index;
+        QModelIndex     _e1Index;
+        QModelIndex     _e2Index;
+        QModelIndex     _e3Index;
+
+        QModelIndex*    _currentIndex;
+        QLineEdit*      _currentLineEdit;
     };
 
 
@@ -181,6 +234,7 @@ namespace HEXABLOCK
         HEXA_NS::Hexa   *_value;
 
         // User selection 
+        //1) quad 
         QModelIndex     _q0Index;
         QModelIndex     _q1Index;
         QModelIndex     _q2Index;
@@ -188,8 +242,18 @@ namespace HEXABLOCK
         QModelIndex     _q4Index;
         QModelIndex     _q5Index;
 
-        QModelIndex*    _currentQuadIndex;
-        QLineEdit*      _currentQuadLineEdit;
+        //2) vertices
+        QModelIndex     _v0Index;
+        QModelIndex     _v1Index;
+        QModelIndex     _v2Index;
+        QModelIndex     _v3Index;
+        QModelIndex     _v4Index;
+        QModelIndex     _v5Index;
+        QModelIndex     _v6Index;
+        QModelIndex     _v7Index;
+
+        QModelIndex*    _currentIndex;
+        QLineEdit*      _currentLineEdit;
     };
 
 
@@ -304,16 +368,73 @@ namespace HEXABLOCK
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCartesianDialog : public HexaBaseDialog,
-                                                                public Ui::MakeCartesianDialog
+//   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCartesianDialog : public HexaBaseDialog,
+//                                                                 public Ui::MakeCartesianDialog
+//   {
+//       Q_OBJECT
+// 
+//       public:
+//         MakeCartesianDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+//         virtual ~MakeCartesianDialog();
+// 
+//       public slots:
+//         virtual void accept();
+//         virtual void reject();
+// 
+//       protected:
+//         bool eventFilter(QObject *obj, QEvent *event);
+// 
+//       protected slots:
+//         virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+//         virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+// 
+//       private:
+//         QMap<QObject*, QModelIndex> _index;
+//         QObject* _currentObj;
+//   };
+// 
+// 
+//   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindricalDialog : public HexaBaseDialog,
+//                                                                   public Ui::MakeCylindricalDialog
+//   {
+//       Q_OBJECT
+// 
+//       public:
+//         MakeCylindricalDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+//         virtual ~MakeCylindricalDialog();
+// 
+//       public slots:
+//         virtual void accept();
+//         virtual void reject();
+// 
+//       protected:
+//         bool eventFilter(QObject *obj, QEvent *event);
+// 
+//       protected slots:
+//         virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+//         virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+// 
+//       private:
+//         // User selection
+//         QModelIndex     _ptIndex;
+//         QModelIndex     _vecXIndex;
+//         QModelIndex     _vecZIndex;
+// 
+//         QModelIndex*    _currentIndex;
+//         QLineEdit*      _currentLineEdit;
+//   };
+
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeGridDialog : public HexaBaseDialog,
+                                                           public Ui::MakeGridDialog
   {
       Q_OBJECT
 
       public:
-        PatternDataModel* patternDataModel;
-
-        MakeCartesianDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeCartesianDialog();
+        MakeGridDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeGridDialog();
 
       public slots:
         virtual void accept();
@@ -327,45 +448,8 @@ namespace HEXABLOCK
         virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
       private:
-        // User selection
-        QModelIndex     _ptIndex;
-        QModelIndex     _vecXIndex;
-        QModelIndex     _vecYIndex;
-        QModelIndex     _vecZIndex;
-
-        QModelIndex*    _currentIndex;
-        QLineEdit*      _currentLineEdit;
-  };
-
-
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindricalDialog : public HexaBaseDialog,
-                                                                  public Ui::MakeCylindricalDialog
-  {
-      Q_OBJECT
-
-      public:
-        MakeCylindricalDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeCylindricalDialog();
-
-      public slots:
-        virtual void accept();
-        virtual void reject();
-
-      protected:
-        bool eventFilter(QObject *obj, QEvent *event);
-
-      protected slots:
-        virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
-        virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
-
-      private:
-        // User selection
-        QModelIndex     _ptIndex;
-        QModelIndex     _vecXIndex;
-        QModelIndex     _vecZIndex;
-
-        QModelIndex*    _currentIndex;
-        QLineEdit*      _currentLineEdit;
+        QMap<QObject*, QModelIndex> _index;
+        QObject* _currentObj;
   };
 
 

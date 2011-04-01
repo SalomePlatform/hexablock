@@ -234,6 +234,82 @@ void VectorItem::setData ( const QVariant & value, int role )
 
 
 
+// ----------------------- CYLINDER
+CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder):
+  QStandardItem(),
+  _hexaCylinder( hexaCylinder )
+{
+  char pName[12];
+  QString name = _hexaCylinder->getName(pName);
+  setText(name);
+  setData( CYLINDER_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaCylinder)), HEXA_ENTRY_ROLE );
+}
+
+int CylinderItem::type() const
+{
+  return CYLINDERITEM;
+}
+
+QVariant CylinderItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaCylinder );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void CylinderItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaCylinder = value.value<HEXA_NS::Cylinder*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
+
+
+// ----------------------- PIPE
+PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe ):
+  QStandardItem(),
+  _hexaPipe( hexaPipe )
+{
+  char pName[12];
+  QString name = _hexaPipe->getName(pName);
+  setText(name);
+  setData( PIPE_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaPipe)), HEXA_ENTRY_ROLE );
+}
+
+int PipeItem::type() const
+{
+  return PIPEITEM;
+}
+
+QVariant PipeItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaPipe );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void PipeItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaPipe = value.value<HEXA_NS::Pipe*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
 
 // ----------------------- ELEMENTS
 ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
@@ -271,3 +347,155 @@ void ElementsItem::setData ( const QVariant & value, int role )
     }
 }
 
+
+
+// ----------------------- CROSSELEMENTS
+CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts ):
+  QStandardItem(),
+  _hexaCrossElts( hexaCrossElts )
+{
+  char pName[12];
+  QString name = _hexaCrossElts->getName(pName);
+  setText(name);
+  setData( CROSSELEMENTS_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaCrossElts)), HEXA_ENTRY_ROLE );
+}
+
+int CrossElementsItem::type() const
+{
+  return CROSSELEMENTSITEM;
+}
+
+QVariant CrossElementsItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaCrossElts );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void CrossElementsItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaCrossElts = value.value<HEXA_NS::CrossElements*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
+
+// ----------------------- GROUP
+GroupItem::GroupItem( HEXA_NS::Group* hexaGroup ):
+  QStandardItem(),
+  _hexaGroup( hexaGroup )
+{
+//   char pName[12];
+  QString name = _hexaGroup->getName();//pName);
+  setText(name);
+  setData( GROUP_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaGroup)), HEXA_ENTRY_ROLE );
+}
+
+int GroupItem::type() const
+{
+  return GROUPITEM;
+}
+
+QVariant GroupItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaGroup );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void GroupItem::setData ( const QVariant& value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaGroup = value.value<HEXA_NS::Group*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
+
+// ----------------------- LAW
+LawItem::LawItem( HEXA_NS::Law* hexaLaw ):
+  QStandardItem(),
+  _hexaLaw( hexaLaw )
+{
+//   char pName[12];
+  QString name = _hexaLaw->getName();//pName);
+  setText(name);
+  setData( LAW_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaLaw)), HEXA_ENTRY_ROLE );
+}
+
+int LawItem::type() const
+{
+  return LAWITEM;
+}
+
+QVariant LawItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaLaw);
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void LawItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaLaw = value.value<HEXA_NS::Law*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}
+
+
+
+// ----------------------- PROPAGATIONITEM
+PropagationItem::PropagationItem( HEXA_NS::Propagation* hexaPropagation ):
+  QStandardItem(),
+  _hexaPropagation( hexaPropagation )
+{
+//   char pName[12];
+//   QString name = _hexaPropagation->getName(pName);
+  QString name = "Propagation";
+  setText(name);
+  setData( PROPAGATION_TREE, HEXA_TREE_ROLE );
+  setData( QString::number(reinterpret_cast<intptr_t>(_hexaPropagation)), HEXA_ENTRY_ROLE );
+}
+
+int PropagationItem::type() const
+{
+  return PROPAGATIONITEM;
+}
+
+QVariant PropagationItem::data( int role ) const 
+{ 
+    if ( role == HEXA_DATA_ROLE ){
+      return QVariant::fromValue( _hexaPropagation );
+    } else {
+      return QStandardItem::data( role );
+    }
+}
+
+void PropagationItem::setData ( const QVariant & value, int role )
+{
+    if ( role == HEXA_DATA_ROLE ){
+      _hexaPropagation = value.value<HEXA_NS::Propagation*>();
+      emitDataChanged ();
+    } else {
+      QStandardItem::setData ( value, role );
+    }
+}

@@ -74,15 +74,17 @@ dist_libHEXABLOCK_la_SOURCES = \
 
 UIC_FILES = \
 	ui_Vertex_QTD.h \
+	ui_Edge_QTD.h \
 	ui_Quad_QTD.h \
 	ui_Hexa_QTD.h \
 	ui_MergeVertices_QTD.h \
 	ui_MergeEdges_QTD.h \
 	ui_CutEdge_QTD.h \
 	ui_Vector_QTD.h \
-	ui_MakeCartesian_QTD.h \
-	ui_MakeCylindrical_QTD.h \
+	ui_MakeGrid_QTD.h \
 	ui_MakeTranslation_QTD.h
+
+	
 
 # MOC pre-processing
 MOC_FILES = \

@@ -46,11 +46,17 @@ namespace HEXABLOCK
     class DocumentGraphicView;
     class DocumentDelegate;
     class DocumentModel;
-    class PatternDataSelectionModel;
-    class PatternBuilderSelectionModel;
     class PatternDataModel;
     class PatternBuilderModel;
+    class AssociationsModel;
+    class GroupsModel;
+    class MeshModel;
+    class PatternDataSelectionModel;
+    class PatternBuilderSelectionModel;
+
   }
+
+
 }
 
 
@@ -89,10 +95,12 @@ public:
   void createTools();
 
   void initialMenus();
-  void showBaseMenus(bool show);
-  void showEditionMenus(bool show);
-  void showExecMenus(bool show);
-  void showCommonMenus(bool show);
+
+//   void showBaseMenus(bool show);
+//   void showEditionMenus(bool show);
+//   void showExecMenus(bool show);
+//   void showCommonMenus(bool show);
+
   void switchModel(SUIT_ViewWindow *view);
   void showDockWidgets(bool isVisible);
 
@@ -101,6 +109,12 @@ public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
   void onDblClick(const QModelIndex& index);
+
+  void showObjectBrowserMenus(bool show);
+  void showPatternMenus(bool show);
+  void showAssociationMenus(bool show);
+  void showGroupsMenus(bool show);
+  void showMeshMenus(bool show);
   
 protected slots:
   void onWindowActivated( SUIT_ViewWindow* svw);
@@ -123,22 +137,41 @@ private slots:
 
   // new
   void addVertex();
+  void addEdge();
   void addQuad();
   void addHexa();
 
   void addVector();
-  void makeCartesian();
-  void makeCylindrical();
-  void makeTranslation();
-
-  // edit
-  void mergeVertices();
-  void mergeEdges();
+//   void makeCartesian();
+//   void makeCylindrical();
+  void makeGrid();
+  void makeCylinder();
+  void makePipe();
+  void makeCylinders();
+  void makePipes();
+  void removeHexa();
+  void prismQuad();
+  void joinQuad();
+//   void mergeVertices();
+//   void mergeEdges();
+  void merge();
+  void disconnect();
   void cutEdge();
+//   void makeTranslation();
+  void makeTransformation();
+  void makeSymmetry();
+  void performTransformation();
+  void performSymmetry();
+
+  void addGroup();
+  void removeGroup (); //CS_TODO
+  void addLaw();
+  void removeLaw();
 
   void printVTK();
 
 private:
+//   bool eventFilter(QObject *obj, QEvent *event);
   QStringList getQuickDirList();
   HEXABLOCK::GUI::DocumentGraphicView* newGraphicView();
 
@@ -158,21 +191,40 @@ private:
   QAction *_newAct;
   QAction *_importAct;
 
-  // Pattern
+  // Pattern Data
   QAction *_addVertex;
+  QAction *_addEdge;
   QAction *_addQuad;
   QAction *_addHexa;
 
-  // Builder
+  // Pattern Builder
   QAction *_addVector;
-  QAction *_makeCartesian;
-  QAction *_makeCylindrical;
-  QAction *_makeTranslation;
+  QAction *_makeGrid; //Cartesian, Cylindrical, Spherical
+  QAction *_makeCylinder;
+  QAction *_makePipe;
+  QAction *_makeCylinders;
+  QAction *_makePipes;
 
-  // Pattern edition
-  QAction *_mergeVertices;
-  QAction *_mergeEdges;
+  // Pattern Data Edition
+  QAction *_removeHexa;
+  QAction *_prismQuad;
+  QAction *_joinQuad;
+  QAction *_merge;//   QAction *_mergeVertices; //   QAction *_mergeEdges;
+  QAction *_disconnect;
   QAction *_cutEdge;
+  QAction *_makeTransformation; //   QAction *_makeTranslation;
+  QAction *_makeSymmetry;
+  QAction *_performTransformation;
+  QAction *_performSymmetry;
+
+  // Group
+  QAction *_addGroup;
+  QAction *_removeGroup ; //CS_TODO
+
+  // Law
+  QAction *_addLaw;
+  QAction *_removeLaw;
+
 
   // -------------------------------------------------------------------------------------------------
   //          Model/View implementation  
@@ -180,8 +232,11 @@ private:
 
   //      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL      MODEL
   HEXABLOCK::GUI::DocumentModel       *_currentModel;//  a model for each document : 1..n  ( multiple document allowed )
-  HEXABLOCK::GUI::PatternDataModel    *_patternDataModel;    // sub-part of DocumentModel
-  HEXABLOCK::GUI::PatternBuilderModel *_patternBuilderModel; // sub-part of DocumentModel
+  HEXABLOCK::GUI::PatternDataModel    *_patternDataModel;     // sub-part of DocumentModel
+  HEXABLOCK::GUI::PatternBuilderModel *_patternBuilderModel;  // sub-part of DocumentModel
+  HEXABLOCK::GUI::AssociationsModel   *_associationsModel;    // sub-part of DocumentModel
+  HEXABLOCK::GUI::GroupsModel         *_groupsModel;    // sub-part of DocumentModel
+  HEXABLOCK::GUI::MeshModel           *_meshModel;      // sub-part of DocumentModel
 
   //      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW
 //   QTreeView                           *_patternTreeView; //  document's pattern : 1 ( only one view )

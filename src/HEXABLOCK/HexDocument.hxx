@@ -46,7 +46,6 @@ public :
    Vector* addVector (double dx=0.0, double dy=0.0, double dz=0.0);
    Vector* addVectorVertices (Vertex* va, Vertex* vb);
 
-
    Elements* makeCartesian   (Vertex* v, Vector* v1, 
                        int px, int py, int pz, int mx=0, int my=0, int mz=0);
    Elements* makeCartesian   (Vertex* v, Vector* v1, Vector* v2, Vector* v3, 

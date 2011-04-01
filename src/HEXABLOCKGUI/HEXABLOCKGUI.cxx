@@ -421,6 +421,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   
   //      Pattern
   _dwPattern = new QDockWidget(aParent);
+//   _dwPattern->installEventFilter(this);
+  connect( _dwPattern, SIGNAL( visibilityChanged(bool) ), this, SLOT( showPatternMenus(bool) ) );
   _dwPattern->setVisible(false);
   _dwPattern->setWindowTitle("Model");
   _dwPattern->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
@@ -449,6 +451,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
   //      Association
   _dwAssociation = new QDockWidget(aParent);
+//   _dwAssociation->installEventFilter(this);
+  connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
   _dwAssociation->setVisible(false);
   _dwAssociation->setWindowTitle("Association");
   _dwAssociation->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
@@ -462,6 +466,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
   //      Groups
   _dwGroups = new QDockWidget(aParent);
+//   _dwGroups->installEventFilter(this);
+  connect( _dwGroups, SIGNAL( visibilityChanged(bool) ), this, SLOT( showGroupsMenus(bool) ) );
   _dwGroups->setVisible(false);
   _dwGroups->setWindowTitle("Groups");
   _dwGroups->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
@@ -474,6 +480,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
   //      Mesh
   _dwMesh = new QDockWidget(aParent);
+//   _dwMesh->installEventFilter(this);
+  connect( _dwMesh, SIGNAL( visibilityChanged(bool) ), this, SLOT( showMeshMenus(bool) ) );
   _dwMesh->setVisible(false);
   _dwMesh->setWindowTitle("Mesh");
   _dwMesh->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
@@ -496,6 +504,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwObjectBrowser = ::qobject_cast<QDockWidget*>( w );
     w = w->parentWidget();
   }
+//   _dwObjectBrowser->installEventFilter(this);
+  connect( _dwObjectBrowser, SIGNAL( visibilityChanged(bool) ), this, SLOT( showObjectBrowserMenus(bool) ) );
   _dwObjectBrowser->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
   _dwObjectBrowser->setWindowTitle("Study");
 
@@ -519,7 +529,10 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 #endif
 
 
+
 }
+
+
 
 
 void HEXABLOCKGUI::createActions()
@@ -543,6 +556,10 @@ void HEXABLOCKGUI::createActions()
                                             tr("Add vertex"),  tr("Create a new vertex"),
                                             0, aParent, false, this,  SLOT(addVertex()) );
 
+  _addEdge = createAction( _menuId++, tr("Create an edge"), QIcon("icons:add_edge.png"),
+                                            tr("Add edge"),  tr("Create a new edge"),
+                                            0, aParent, false, this,  SLOT(addEdge()) );
+
   _addQuad = createAction( _menuId++, tr("Create a quad"), QIcon("icons:add_quad.png"),
                                             tr("Add quad"),  tr("Create a new quad"),
                                             0, aParent, false, this,  SLOT(addQuad()) );
@@ -551,38 +568,91 @@ void HEXABLOCKGUI::createActions()
                                             tr("Add hexa"),  tr("Create a new hexa"),
                                             0, aParent, false, this,  SLOT(addHexa()) );
 
+
+
+
   // Builder Data creation
   _addVector    = createAction( _menuId++, tr("Create a vector"), QIcon("icons:add_vector.png"),
                                             tr("Add vector"),  tr("Create a new vector"),
                                             0, aParent, false, this,  SLOT(addVector()) );
 
-  _makeCartesian = createAction( _menuId++, tr("Make a cartesian grid"), QIcon("icons:make_cartesian.png"),
-                                            tr("Make cartesian"),  tr("Make a cartesian grid"),
-                                            0, aParent, false, this,  SLOT(makeCartesian()) );
+  _makeGrid     = createAction( _menuId++, tr("Make a grid"), QIcon("icons:make_grid.png"),
+                                            tr("Make grid"),  tr("Make a grid"),
+                                            0, aParent, false, this,  SLOT(makeGrid()) );
 
-  _makeCylindrical = createAction( _menuId++, tr("Make a cylindrical grid"), QIcon("icons:make_cylindrical.png"),
-                                            tr("Make cylindrical"),  tr("Make a cylindrical grid"),
-                                            0, aParent, false, this,  SLOT(makeCylindrical()) );
+  _makeCylinder     = createAction( _menuId++, tr("Make a cylinder"), QIcon("icons:make_cylinder.png"),
+                                            tr("Make cylinder"),  tr("Make a cylinder"),
+                                            0, aParent, false, this,  SLOT(makeCylinder()) );
 
-  _makeTranslation = createAction( _menuId++, tr("Make translation"), QIcon("icons:make_translation.png"),
-                                            tr("Make translation"),  tr("Make translation"),
-                                            0, aParent, false, this,  SLOT(makeTranslation()) );
+  _makePipe     = createAction( _menuId++, tr("Make a pipe"), QIcon("icons:make_pipe.png"),
+                                            tr("Make pipe"),  tr("Make a pipe"),
+                                            0, aParent, false, this,  SLOT(makePipe()) );
+
+  _makeCylinders     = createAction( _menuId++, tr("Make cylinders"), QIcon("icons:make_cylinders.png"),
+                                            tr("Make cylinders"),  tr("Make cylinders"),
+                                            0, aParent, false, this,  SLOT(makeCylinders()) );
+
+  _makePipes     = createAction( _menuId++, tr("Make pipes"), QIcon("icons:make_pipes.png"),
+                                            tr("Make pipes"),  tr("Make pipes"),
+                                            0, aParent, false, this,  SLOT(makePipes()) );
 
 
 
   // Pattern Data edition
-  _mergeVertices = createAction( _menuId++, tr("Merge vertices"), QIcon("icons:merge_vertices.png"),
-                                            tr("Merge vertices"),  tr("Merge vertices"),
-                                            0, aParent, false, this,  SLOT(mergeVertices()) );
+  _removeHexa     = createAction( _menuId++, tr("Remove hexa"), QIcon("icons:remove_hexa.png"),
+                                            tr("Remove hexa"),  tr("Remove hexa"),
+                                            0, aParent, false, this,  SLOT(removeHexa()) );
 
-  _mergeEdges = createAction( _menuId++, tr("Merge edges"), QIcon("icons:merge_edges.png"),
-                                         tr("Merge edges"),  tr("Merge edges"),
-                                            0, aParent, false, this,  SLOT(mergeEdges()) );
+  _prismQuad     = createAction( _menuId++, tr("Prism quad"), QIcon("icons:prism_quad.png"),
+                                            tr("Prism quad"),  tr("Prism quad"),
+                                            0, aParent, false, this,  SLOT(prismQuad()) );
 
-  _cutEdge    = createAction( _menuId++, tr("Cut edge"), QIcon("icons:cut_edge.png"),
-                                         tr("Cut edge"),  tr("Cut edge"),
+  _joinQuad     = createAction( _menuId++, tr("join quad"), QIcon("icons:join_quad.png"),
+                                            tr("join quad"),  tr("Join quad"),
+                                            0, aParent, false, this,  SLOT(joinQuad()) );
+
+  _merge     = createAction( _menuId++, tr("Merge"), QIcon("icons:merge.png"),
+                                            tr("Merge"),  tr("Merge"),
+                                            0, aParent, false, this,  SLOT(merge()) );
+
+  _disconnect     = createAction( _menuId++, tr("Disconnect"), QIcon("icons:disconnect.png"),
+                                            tr("Disconnect"),  tr("Disconnect"),
+                                            0, aParent, false, this,  SLOT(makeGrid()) );
+
+  _cutEdge     = createAction( _menuId++, tr("Make a grid"), QIcon("icons:make_grid.png"),
+                                            tr("Make grid"),  tr("Make a grid"),
                                             0, aParent, false, this,  SLOT(cutEdge()) );
 
+
+  _makeTransformation     = createAction( _menuId++, tr("Make transformation"), QIcon("icons:make_transformation.png"),
+                                            tr("Make transformation"),  tr("Make transformation"),
+                                            0, aParent, false, this,  SLOT(makeTransformation()) );
+
+  _makeSymmetry     = createAction( _menuId++, tr("Make symmetry"), QIcon("icons:make_symmetry.png"),
+                                            tr("Make symmetry"),  tr("Make symmetry"),
+                                            0, aParent, false, this,  SLOT(makeSymmetry()) );
+
+  _performTransformation     = createAction( _menuId++, tr("Perform transformation"), QIcon("icons:perform_transformation.png"), tr("Perform transformation"),  tr("Perform transformation"),
+                                            0, aParent, false, this,  SLOT(performTransformation()) );
+
+  _performSymmetry     = createAction( _menuId++, tr("Perform Symmetry"), QIcon("icons:perform_symmetry.png"),
+                                            tr("Perform Symmetry"),  tr("Perform Symmetry"),
+                                            0, aParent, false, this,  SLOT(performSymmetry()) );
+
+  _addGroup     = createAction( _menuId++, tr("Add group"), QIcon("icons:add_group.png"),
+                                            tr("Add group"),  tr("Add group"),
+                                            0, aParent, false, this,  SLOT(addGroup()) );
+  _removeGroup     = createAction( _menuId++, tr("Remove group"), QIcon("icons:remove_group.png"),
+                                            tr("Remove group"),  tr("Remove group"),
+                                            0, aParent, false, this,  SLOT(removeGroup()) );
+
+  _addLaw     = createAction( _menuId++, tr("Add law"), QIcon("icons:add_law.png"),
+                                            tr("Add law"),  tr("Add law"),
+                                            0, aParent, false, this,  SLOT(addLaw()) );
+
+  _removeLaw     = createAction( _menuId++, tr("Remove law"), QIcon("icons:remove_law.png"),
+                                            tr("Remove law"),  tr("Remove law"),
+                                            0, aParent, false, this,  SLOT(removeLaw()) );
 
 
 //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
@@ -656,24 +726,47 @@ void HEXABLOCKGUI::createMenus()
 //   _wrapper->createMenu( _hideAllLinksAct, aMenuId );
 //   _wrapper->createMenu( _wrapper->separator(), aMenuId);
 //   _wrapper->createMenu( _whatsThisAct, aMenuId );
-  aMenuId = createMenu( tr("Pattern"), -1, -1, 30 );
+  aMenuId = createMenu( tr("Model"), -1, -1, 30 );
   createMenu( _addVertex, aMenuId );
+  createMenu( _addEdge,   aMenuId );
   createMenu( _addQuad,   aMenuId );
   createMenu( _addHexa,   aMenuId );
-  
+  createMenu( separator(), aMenuId);
+  // Pattern Builder
+  createMenu( _addVector, aMenuId );
+  createMenu( _makeGrid,  aMenuId ); //Cartesian, Cylindrical, Spherical
+  createMenu( _makeCylinder, aMenuId );
+  createMenu( _makePipe,     aMenuId );
+  createMenu( _makeCylinders,aMenuId );
+  createMenu( _makePipes,    aMenuId );
+  createMenu( separator(), aMenuId);
 
+  // Pattern Data Edition
+  createMenu( _removeHexa, aMenuId );
+  createMenu( _prismQuad,  aMenuId );
+  createMenu( _joinQuad,   aMenuId );
+  createMenu( _merge,      aMenuId );//   createMenu( _mergeVertices,   aMenuId ); //   createMenu( _mergeEdges,   aMenuId );
+  createMenu( _disconnect, aMenuId );
+  createMenu( _cutEdge,    aMenuId );
+  createMenu( _makeTransformation, aMenuId ); //   createMenu( _makeTranslation,   aMenuId );
+  createMenu( _makeSymmetry,       aMenuId );
+  createMenu( _performTransformation,   aMenuId );
+  createMenu( _performSymmetry,         aMenuId );
+
+// // Association
 //   aMenuId = createMenu( tr("Association"), -1, -1, 30 );
 //   createMenu( _newAct, aMenuId );
 //   createMenu( _importAct, aMenuId );
-// 
-//   aMenuId = createMenu( tr("Groups"), -1, -1, 30 );
-//   createMenu( _newAct, aMenuId );
-//   createMenu( _importAct, aMenuId );
-// 
-//   aMenuId = createMenu( tr("Mesh"), -1, -1, 30 );
-//   createMenu( _newAct, aMenuId );
-//   createMenu( _importAct, aMenuId );
 
+  // Group
+  aMenuId = createMenu( tr("Groups"), -1, -1, 30 );
+  createMenu( _addGroup,    aMenuId );
+  createMenu( _removeGroup, aMenuId ); //CS_TODO
+
+  // Law
+  aMenuId = createMenu( tr("Mesh"), -1, -1, 30 );
+  createMenu( _addLaw,    aMenuId );
+  createMenu( _removeLaw, aMenuId );
 
 }
 
@@ -684,23 +777,48 @@ void HEXABLOCKGUI::createTools()
 
   createTool( _newAct, aToolId );
   createTool( _importAct, aToolId );
-
   createTool( separator(), aToolId );
 
+  // Pattern Data
   createTool( _addVertex, aToolId );
+  createTool( _addEdge, aToolId );
   createTool( _addQuad, aToolId );
   createTool( _addHexa, aToolId );
-
-  createTool( _addVector, aToolId );
-  createTool( _makeCartesian, aToolId );
-  createTool( _makeCylindrical, aToolId );
-  createTool( _makeTranslation, aToolId );
-
   createTool( separator(), aToolId );
 
-  createTool( _mergeVertices, aToolId );
-  createTool( _mergeEdges,    aToolId );
-  createTool( _cutEdge,       aToolId );
+  // Pattern Builder
+  createTool( _addVector, aToolId );
+  createTool( _makeGrid,  aToolId );
+  createTool( _makeCylinder, aToolId );
+  createTool( _makePipe,     aToolId );
+  createTool( _makeCylinders,aToolId );
+  createTool( _makePipes,    aToolId );
+  createTool( separator(), aToolId );
+
+  // Pattern Data Edition
+  createTool( _removeHexa, aToolId );
+  createTool( _prismQuad,  aToolId );
+  createTool( _joinQuad,   aToolId );
+  createTool( _merge,      aToolId ); 
+  createTool( _disconnect, aToolId );
+  createTool( _cutEdge,    aToolId );
+  createTool( _makeTransformation, aToolId );
+  createTool( _makeSymmetry,       aToolId );
+  createTool( _performTransformation,   aToolId );
+  createTool( _performSymmetry,         aToolId );
+  createTool( separator(), aToolId );
+
+  // Association
+  createTool( separator(), aToolId );
+
+  // Group
+  createTool( _addGroup,    aToolId );
+  createTool( _removeGroup, aToolId ); //CS_TODO
+  createTool( separator(), aToolId );
+
+  // Law
+  createTool( _addLaw,    aToolId );
+  createTool( _removeLaw, aToolId );
 
 
 
@@ -743,114 +861,177 @@ void HEXABLOCKGUI::createTools()
 
 void HEXABLOCKGUI::initialMenus()
 {
-  showEditionMenus(false);
-  showExecMenus(false);
-  showCommonMenus(false);
-  showBaseMenus(true);
+  showObjectBrowserMenus( true );
+  showPatternMenus( false );
+  showAssociationMenus( false );
+  showGroupsMenus( false );
+  showMeshMenus( false );
 }
 
-void HEXABLOCKGUI::showBaseMenus(bool show)
+// void HEXABLOCKGUI::showBaseMenus(bool show)
+// {
+//   DEBTRACE("HEXABLOCKGUI::showBaseMenus " << show);
+//   setMenuShown(_newAct, show);
+//   setToolShown(_newAct, show);
+//   setMenuShown(_importAct, show);
+//   setToolShown(_importAct, show);
+// }
+// 
+// void HEXABLOCKGUI::showEditionMenus(bool show)
+// {
+//   DEBTRACE("HEXABLOCKGUI::showEditionMenus " << show);
+//   setMenuShown(_addVertex, show);
+//   setToolShown(_addVertex, show);
+//   setMenuShown(_addEdge, show);
+//   setToolShown(_addEdge, show);
+//   setMenuShown(_addQuad, show);
+//   setToolShown(_addQuad, show);
+//   setMenuShown(_addHexa, show);
+//   setToolShown(_addHexa, show);
+// 
+// 
+//   setMenuShown( _addVector, show);
+//   setToolShown( _addVector, show);
+//   setMenuShown( _makeGrid, show); 
+//   setToolShown( _makeGrid, show);
+//   setMenuShown( _makeCylinder, show);
+//   setToolShown( _makeCylinder, show);
+//   setMenuShown( _makePipe, show);
+//   setToolShown( _makePipe, show);
+//   setMenuShown( _makeCylinders, show);
+//   setToolShown( _makeCylinders, show);
+//   setMenuShown( _makePipes, show);
+//   setToolShown( _makePipes, show);
+// 
+//   // Pattern Data Edition
+//   setMenuShown( _removeHexa, show);
+//   setToolShown( _removeHexa, show);
+//   setMenuShown( _prismQuad, show);
+//   setToolShown( _prismQuad, show);
+//   setMenuShown( _joinQuad, show);
+//   setToolShown( _joinQuad, show);
+//   setMenuShown( _merge, show);
+//   setToolShown( _merge, show);
+//   setMenuShown( _disconnect, show);
+//   setToolShown( _disconnect, show);
+//   setMenuShown( _cutEdge, show);
+//   setToolShown( _cutEdge, show);
+//   setMenuShown( _makeTransformation, show);
+//   setToolShown( _makeTransformation, show);
+//   setMenuShown( _makeSymmetry, show);
+//   setToolShown( _makeSymmetry, show);
+//   setMenuShown( _performTransformation, show);
+//   setToolShown( _performTransformation, show);
+//   setMenuShown( _performSymmetry, show);
+//   setToolShown( _performSymmetry, show);
+// 
+//   // Group
+//   setMenuShown( _addGroup, show);
+//   setToolShown( _addGroup, show);
+//   setMenuShown( _removeGroup , show);
+//   setToolShown( _removeGroup , show);  
+// 
+//   // Law
+//   setMenuShown( _addLaw, show);
+//   setToolShown( _addLaw, show);
+//   setMenuShown( _removeLaw, show);
+//   setToolShown( _removeLaw, show);
+// }
+// 
+// void HEXABLOCKGUI::showExecMenus(bool show)
+// {
+//   DEBTRACE("HEXABLOCKGUI::showExecMenus " << show);
+// }
+// 
+// void HEXABLOCKGUI::showCommonMenus(bool show)
+// {
+//   DEBTRACE("HEXABLOCKGUI::showCommonMenus " << show);
+// }
+
+
+void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
 {
-  DEBTRACE("HEXABLOCKGUI::showBaseMenus " << show);
+  DEBTRACE("HEXABLOCKGUI::showObjectBrowserMenus " << show);
   setMenuShown(_newAct, show);
   setToolShown(_newAct, show);
   setMenuShown(_importAct, show);
   setToolShown(_importAct, show);
 }
 
-void HEXABLOCKGUI::showEditionMenus(bool show)
+
+void HEXABLOCKGUI::showPatternMenus(bool show)
 {
-  DEBTRACE("HEXABLOCKGUI::showEditionMenus " << show);
+  DEBTRACE("HEXABLOCKGUI::showPatternMenus " << show);
   setMenuShown(_addVertex, show);
   setToolShown(_addVertex, show);
+  setMenuShown(_addEdge, show);
+  setToolShown(_addEdge, show);
   setMenuShown(_addQuad, show);
   setToolShown(_addQuad, show);
   setMenuShown(_addHexa, show);
   setToolShown(_addHexa, show);
 
 
+  setMenuShown( _addVector, show);
+  setToolShown( _addVector, show);
+  setMenuShown( _makeGrid, show); 
+  setToolShown( _makeGrid, show);
+  setMenuShown( _makeCylinder, show);
+  setToolShown( _makeCylinder, show);
+  setMenuShown( _makePipe, show);
+  setToolShown( _makePipe, show);
+  setMenuShown( _makeCylinders, show);
+  setToolShown( _makeCylinders, show);
+  setMenuShown( _makePipes, show);
+  setToolShown( _makePipes, show);
 
-  setMenuShown(_addVector, show);
-  setToolShown(_addVector, show);
-  setMenuShown(_makeCartesian, show);
-  setToolShown(_makeCartesian, show);
-  setMenuShown(_makeCylindrical, show);
-  setToolShown(_makeCylindrical, show);
-  setMenuShown(_makeTranslation, show);
-  setToolShown(_makeTranslation, show);
-
-
-  setMenuShown(_mergeVertices, show);
-  setToolShown(_mergeVertices, show);
-  setMenuShown(_mergeEdges, show);
-  setToolShown(_mergeEdges, show);
-  setMenuShown(_cutEdge, show);
-  setToolShown(_cutEdge, show);
-
-
-//   _wrapper->setMenuShown(_exportSchemaAct, show);
-//   _wrapper->setToolShown(_exportSchemaAct, show);
-//   _wrapper->setMenuShown(_exportSchemaAsAct, show);
-//   _wrapper->setToolShown(_exportSchemaAsAct, show);
-//   _wrapper->setMenuShown(_runLoadedSchemaAct, show);
-//   _wrapper->setToolShown(_loadRunStateSchemaAct, show);
-//   _wrapper->setMenuShown(_loadRunStateSchemaAct, show);
-//   _wrapper->setToolShown(_runLoadedSchemaAct, show);
-//   _wrapper->setMenuShown(_undoAct, show);
-//   _wrapper->setToolShown(_undoAct, show);
-//   _wrapper->setMenuShown(_redoAct, show);
-//   _wrapper->setToolShown(_redoAct, show);
-//   _wrapper->setMenuShown(_showUndoAct, show);
-//   _wrapper->setMenuShown(_showRedoAct, show);
-//   _wrapper->setMenuShown(_loadBatchAct, show);
-//   _wrapper->setToolShown(_loadBatchAct, show);
-//   _wrapper->setMenuShown(_importCatalogAct, show);
-//   _wrapper->setToolShown(_importCatalogAct, show);
+  // Pattern Data Edition
+  setMenuShown( _removeHexa, show);
+  setToolShown( _removeHexa, show);
+  setMenuShown( _prismQuad, show);
+  setToolShown( _prismQuad, show);
+  setMenuShown( _joinQuad, show);
+  setToolShown( _joinQuad, show);
+  setMenuShown( _merge, show);
+  setToolShown( _merge, show);
+  setMenuShown( _disconnect, show);
+  setToolShown( _disconnect, show);
+  setMenuShown( _cutEdge, show);
+  setToolShown( _cutEdge, show);
+  setMenuShown( _makeTransformation, show);
+  setToolShown( _makeTransformation, show);
+  setMenuShown( _makeSymmetry, show);
+  setToolShown( _makeSymmetry, show);
+  setMenuShown( _performTransformation, show);
+  setToolShown( _performTransformation, show);
+  setMenuShown( _performSymmetry, show);
+  setToolShown( _performSymmetry, show);
 }
 
-void HEXABLOCKGUI::showExecMenus(bool show)
+
+void HEXABLOCKGUI::showAssociationMenus(bool show)
 {
-  DEBTRACE("HEXABLOCKGUI::showExecMenus " << show);
-//   _wrapper->setMenuShown(_startResumeAct, show);
-//   _wrapper->setToolShown(_startResumeAct, show);
-//   _wrapper->setMenuShown(_abortAct, show);
-//   _wrapper->setToolShown(_abortAct, show);
-//   _wrapper->setMenuShown(_pauseAct, show);
-//   _wrapper->setToolShown(_pauseAct, show);
-//   _wrapper->setMenuShown(_resetAct, show);
-//   _wrapper->setToolShown(_resetAct, show);
-//   _wrapper->setMenuShown(_saveRunStateAct, show);
-//   _wrapper->setToolShown(_saveRunStateAct, show);
-//   //_wrapper->setMenuShown(_newEditionAct, show);
-//   //_wrapper->setToolShown(_newEditionAct, show);
-//   _wrapper->setMenuShown(_withoutStopModeAct, show);
-//   _wrapper->setToolShown(_withoutStopModeAct, show);
-//   _wrapper->setMenuShown(_breakpointsModeAct, show);
-//   _wrapper->setToolShown(_breakpointsModeAct, show);
-//   _wrapper->setMenuShown(_stepByStepModeAct, show);
-//   _wrapper->setToolShown(_stepByStepModeAct, show);
-//   _wrapper->setMenuShown(_toggleStopOnErrorAct, show);
-//   _wrapper->setToolShown(_toggleStopOnErrorAct, show);
+  DEBTRACE("HEXABLOCKGUI::showAssociationMenus" << show);
+
+}
+void HEXABLOCKGUI::showGroupsMenus(bool show)
+{
+  DEBTRACE("HEXABLOCKGUI::showGroupsMenus" << show);
+  setMenuShown( _addGroup, show);
+  setToolShown( _addGroup, show);
+  setMenuShown( _removeGroup , show);
+  setToolShown( _removeGroup , show);  
+}
+void HEXABLOCKGUI::showMeshMenus(bool show)
+{
+  DEBTRACE("HEXABLOCKGUI::showMeshMenus" << show);
+  setMenuShown( _addLaw, show);
+  setToolShown( _addLaw, show);
+  setMenuShown( _removeLaw, show);
+  setToolShown( _removeLaw, show);
 }
 
-void HEXABLOCKGUI::showCommonMenus(bool show)
-{
-  DEBTRACE("HEXABLOCKGUI::showCommonMenus " << show);
-//   _wrapper->setMenuShown(_toggleStraightLinksAct, show);
-//   _wrapper->setToolShown(_toggleStraightLinksAct, show);
-//   _wrapper->setMenuShown(_toggleAutomaticComputeLinkAct, show);
-//   _wrapper->setToolShown(_toggleAutomaticComputeLinkAct, show);
-//   _wrapper->setMenuShown(_toggleSimplifyLinkAct, show);
-//   _wrapper->setToolShown(_toggleSimplifyLinkAct, show);
-//   _wrapper->setMenuShown(_toggleForce2NodesLinkAct, show);
-//   //_wrapper->setToolShown(_toggleForce2NodesLinkAct, show);
-//   _wrapper->setMenuShown(_toggleAddRowColsAct, show);
-//   _wrapper->setToolShown(_toggleAddRowColsAct, show);
-//   _wrapper->setMenuShown(_showAllLinksAct, show);
-//   _wrapper->setToolShown(_showAllLinksAct, show);
-//   _wrapper->setMenuShown(_hideAllLinksAct, show);
-//   _wrapper->setToolShown(_hideAllLinksAct, show);
-}
+
 
 
 
@@ -864,15 +1045,18 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
       _currentModel = _mapViewModel[view];
       _patternDataModel->setSourceModel(_currentModel);
       _patternBuilderModel->setSourceModel(_currentModel);
+      _associationsModel->setSourceModel(_currentModel);
+      _groupsModel->setSourceModel(_currentModel);
+      _meshModel->setSourceModel(_currentModel);
   
       // setting model ( in view )
 //       _currentGraphicView->setModel(_patternDataModel);
       _patternDataTreeView->setModel(_patternDataModel); //_currentModel
       _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel
-  //     _associationTreeView->setModel(_currentModel);
-  //     _groupsTreeView->setModel(_currentModel);
-  //     _meshTreeView->setModel(_currentModel);
-  
+      _associationTreeView->setModel(_associationsModel);
+      _groupsTreeView->setModel(_groupsModel);
+      _meshTreeView->setModel(_meshModel);
+
       // setting selection ( in view )
       _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
       _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
@@ -884,7 +1068,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
       _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
       _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
     }
-    showEditionMenus(true);
+//     showEditionMenus(true);
   } else {
     DEBTRACE("HEXABLOCKGUI::switchModel : no model found, cannot switch");
     initialMenus();
@@ -1066,8 +1250,15 @@ void HEXABLOCKGUI::newDocument()
 //   _currentModel->setHeaderData(0, Qt::Vertical, tr("HELLOV0"));
   _patternDataModel    = new PatternDataModel(this);
   _patternBuilderModel = new PatternBuilderModel(this);
+  _associationsModel   = new AssociationsModel(this);
+  _groupsModel     = new GroupsModel(this);
+  _meshModel       = new MeshModel(this);
+
   _patternDataModel->setSourceModel(_currentModel);
   _patternBuilderModel->setSourceModel(_currentModel);
+  _associationsModel->setSourceModel(_currentModel);
+  _groupsModel->setSourceModel(_currentModel);
+  _meshModel->setSourceModel(_currentModel);
 
   // --- new Graphic view ( SVTK )
   _currentGraphicView  = newGraphicView();
@@ -1077,8 +1268,10 @@ void HEXABLOCKGUI::newDocument()
   _patternDataTreeView->setModel(_patternDataModel);//_currentModel;
 //   _patternDataTreeView->setModel(_currentModel);//;
   _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel;
-  _associationTreeView->setModel(_currentModel);
-  _meshTreeView->setModel(_currentModel);
+  _associationTreeView->setModel(_associationsModel);
+  _groupsTreeView->setModel(_groupsModel);
+  _meshTreeView->setModel(_meshModel);
+
 
   // --- setting selection model
   if (!_patternDataSelectionModel)
@@ -1170,6 +1363,19 @@ void HEXABLOCKGUI::addVertex()
     //   diag->show();
 }
 
+void HEXABLOCKGUI::addEdge()
+{
+    if (!_dwInputPanel) return;
+
+    EdgeDialog* diag = new EdgeDialog(_dwInputPanel);
+    diag->setDocumentModel( _currentModel );
+    diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+    diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+    _dwInputPanel->setWidget(diag);
+    //   diag->show();
+}
+
+
 void HEXABLOCKGUI::addQuad()
 {
   if (!_dwInputPanel) return;
@@ -1205,40 +1411,41 @@ void HEXABLOCKGUI::addVector()
   //   diag->show();
 }
 
-void HEXABLOCKGUI::makeCartesian()
-{
-  if (!_dwInputPanel) return;
-
-  MakeCartesianDialog* diag = new MakeCartesianDialog(_dwInputPanel);
-
-  diag->setDocumentModel(_currentModel);
-  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  _dwInputPanel->setWidget(diag);
-  //   diag->show();
-}
-
-void HEXABLOCKGUI::makeCylindrical()
-{
-  if (!_dwInputPanel) return;
-
-  MakeCylindricalDialog* diag = new MakeCylindricalDialog(_dwInputPanel);
-
-  diag->setDocumentModel(_currentModel);
-  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  _dwInputPanel->setWidget(diag);
-  //   diag->show();
-}
-
-void HEXABLOCKGUI::makeTranslation()
-{
-  if (!_dwInputPanel) return;
-
-  MakeTranslationDialog* diag = new MakeTranslationDialog(_dwInputPanel);
-
-  diag->setDocumentModel(_currentModel);
+// void HEXABLOCKGUI::makeCartesian()
+// {
+//   if (!_dwInputPanel) return;
+// 
+//   MakeCartesianDialog* diag = new MakeCartesianDialog(_dwInputPanel);
+// 
+//   diag->setDocumentModel(_currentModel);
 //   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   _dwInputPanel->setWidget(diag);
+//   //   diag->show();
+// }
+// 
+// void HEXABLOCKGUI::makeCylindrical()
+// {
+//   if (!_dwInputPanel) return;
+// 
+//   MakeCylindricalDialog* diag = new MakeCylindricalDialog(_dwInputPanel);
+// 
+//   diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   _dwInputPanel->setWidget(diag);
+//   //   diag->show();
+// }
+
+
+void HEXABLOCKGUI::makeGrid()
+{
+  if (!_dwInputPanel) return;
+
+  MakeGridDialog* diag = new MakeGridDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   _dwInputPanel->setWidget(diag);
   //   diag->show();
@@ -1246,30 +1453,69 @@ void HEXABLOCKGUI::makeTranslation()
 
 
 
-void HEXABLOCKGUI::mergeVertices()
+
+
+
+void HEXABLOCKGUI::makeCylinder()
 {
-  if (!_dwInputPanel) return;
-
-  MergeVerticesDialog* diag = new MergeVerticesDialog(_dwInputPanel);
-
-  diag->setDocumentModel(_currentModel);
-  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  _dwInputPanel->setWidget(diag);
 }
 
-
-void HEXABLOCKGUI::mergeEdges()
+void HEXABLOCKGUI::makePipe()
 {
-  if (!_dwInputPanel) return;
-
-  MergeEdgesDialog* diag = new MergeEdgesDialog(_dwInputPanel);
-  diag->setDocumentModel(_currentModel);
-  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  _dwInputPanel->setWidget(diag);
 }
 
+void HEXABLOCKGUI::makeCylinders()
+{
+}
+
+void HEXABLOCKGUI::makePipes()
+{
+}
+
+void HEXABLOCKGUI::removeHexa()
+{
+}
+
+void HEXABLOCKGUI::prismQuad()
+{
+}
+
+void HEXABLOCKGUI::joinQuad()
+{
+}
+
+// void HEXABLOCKGUI::mergeVertices()
+// {
+//   if (!_dwInputPanel) return;
+// 
+//   MergeVerticesDialog* diag = new MergeVerticesDialog(_dwInputPanel);
+// 
+//   diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+// //   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   _dwInputPanel->setWidget(diag);
+// }
+// 
+// 
+// void HEXABLOCKGUI::mergeEdges()
+// {
+//   if (!_dwInputPanel) return;
+// 
+//   MergeEdgesDialog* diag = new MergeEdgesDialog(_dwInputPanel);
+//   diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+// //   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   _dwInputPanel->setWidget(diag);
+// }
+
+
+void HEXABLOCKGUI::merge()
+{
+}
+
+void HEXABLOCKGUI::disconnect()
+{
+}
 
 void HEXABLOCKGUI::cutEdge()
 {
@@ -1282,14 +1528,52 @@ void HEXABLOCKGUI::cutEdge()
   _dwInputPanel->setWidget(diag);
 }
 
+// void HEXABLOCKGUI::makeTranslation()
+// {
+//   if (!_dwInputPanel) return;
+// 
+//   MakeTranslationDialog* diag = new MakeTranslationDialog(_dwInputPanel);
+// 
+//   diag->setDocumentModel(_currentModel);
+// //   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   _dwInputPanel->setWidget(diag);
+//   //   diag->show();
+// }
+
+void HEXABLOCKGUI::makeTransformation()
+{
+}
 
 
+void HEXABLOCKGUI::makeSymmetry()
+{
+}
+
+void HEXABLOCKGUI::performTransformation()
+{
+}
+
+void HEXABLOCKGUI::performSymmetry()
+{
+}
 
 
+void HEXABLOCKGUI::addGroup()
+{
+}
 
+void HEXABLOCKGUI::removeGroup() //CS_TODO
+{
+}
 
+void HEXABLOCKGUI::addLaw()
+{
+}
 
-
+void HEXABLOCKGUI::removeLaw()
+{
+}
 
 
 LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
@@ -1302,6 +1586,40 @@ LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
 }
 
 
+
+
+
+
+// bool HEXABLOCKGUI::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if ( event->type() == QEvent::Enter ){//QEvent::Show ){ //QEvent::KeyPress) { 
+//         showObjectBrowserMenus( false );
+//         showPatternMenus( false );
+//         showAssociationMenus( false );
+//         showGroupsMenus( false );
+//         showMeshMenus( false );
+//         if ( obj == _dwObjectBrowser ) {
+//           showObjectBrowserMenus( true );
+//         } else if ( obj == _dwPattern  ) {
+//           showPatternMenus( true );
+//         } else if ( obj == _dwAssociation ) {
+//           showAssociationMenus( true );
+//         } else if ( obj == _dwGroups ) {
+//           showGroupsMenus( true );
+//         } else if ( obj == _dwMesh ) {
+// 
+//           showMeshMenus( true );
+//         }
+//         return false;
+//     } else {
+//          // standard event processing
+//          return QObject::eventFilter(obj, event);
+//     }
+// }
+
+
+
+
 QStringList HEXABLOCKGUI::getQuickDirList()
 {
   QStringList dirList;
@@ -1310,6 +1628,7 @@ QStringList HEXABLOCKGUI::getQuickDirList()
     dirList = resMgr->stringValue( "FileDlg", "QuickDirList" ).split( ';', QString::SkipEmptyParts );
   return dirList;
 }
+
 
 
 // --- Export the module
