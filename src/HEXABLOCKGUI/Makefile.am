@@ -77,14 +77,24 @@ UIC_FILES = \
 	ui_Edge_QTD.h \
 	ui_Quad_QTD.h \
 	ui_Hexa_QTD.h \
-	ui_MergeVertices_QTD.h \
-	ui_MergeEdges_QTD.h \
-	ui_CutEdge_QTD.h \
 	ui_Vector_QTD.h \
+	ui_Cylinder_QTD.h \
+	ui_Pipe_QTD.h \
 	ui_MakeGrid_QTD.h \
-	ui_MakeTranslation_QTD.h
-
-	
+	ui_MakeCylinder_QTD.h \
+	ui_MakePipe_QTD.h \
+	ui_MakeCylinders_QTD.h \
+	ui_MakePipes_QTD.h \
+	ui_RemoveHexa_QTD.h \
+	ui_PrismQuad_QTD.h \
+	ui_JoinQuad_QTD.h \
+	ui_Merge_QTD.h \
+	ui_Disconnect_QTD.h \
+	ui_CutEdge_QTD.h \
+	ui_Transformation_QTD.h \
+	ui_Symmetry_QTD.h \
+	ui_Group_QTD.h \
+	ui_Law_QTD.h
 
 # MOC pre-processing
 MOC_FILES = \
@@ -163,15 +173,6 @@ libHEXABLOCK_la_LIBADD  = \
 # 	$(EXPAT_LIBS) $(LIBXML_LIBS) $(GRAPHVIZ_LIBADD)
 
 BUILT_SOURCES = $(UIC_FILES)
-
-
-
-
-
-
-
-
-
 
 
 

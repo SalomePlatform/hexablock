@@ -142,6 +142,8 @@ private slots:
   void addHexa();
 
   void addVector();
+  void addCylinder();
+  void addPipe();
 //   void makeCartesian();
 //   void makeCylindrical();
   void makeGrid();
@@ -155,7 +157,7 @@ private slots:
 //   void mergeVertices();
 //   void mergeEdges();
   void merge();
-  void disconnect();
+  void disconnectElts();
   void cutEdge();
 //   void makeTranslation();
   void makeTransformation();
@@ -199,6 +201,8 @@ private:
 
   // Pattern Builder
   QAction *_addVector;
+  QAction *_addCylinder;
+  QAction *_addPipe;
   QAction *_makeGrid; //Cartesian, Cylindrical, Spherical
   QAction *_makeCylinder;
   QAction *_makePipe;

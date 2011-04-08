@@ -195,7 +195,7 @@
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QFormLayout" name="formLayout_3">
          <item row="0" column="1">
-          <widget class="QLineEdit" name="q0_le_rb3">
+          <widget class="QLineEdit" name="q0_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -205,7 +205,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="q2_le_rb3">
+          <widget class="QLineEdit" name="q1_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -215,7 +215,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="v0_le_rb3">
+          <widget class="QLineEdit" name="v0_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -232,7 +232,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QLineEdit" name="v1_le_rb1_2">
+          <widget class="QLineEdit" name="v1_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -249,7 +249,7 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QLineEdit" name="v2_le_rb3">
+          <widget class="QLineEdit" name="v2_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -266,7 +266,7 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QLineEdit" name="v4_le_rb3">
+          <widget class="QLineEdit" name="v3_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -318,7 +318,7 @@
  <connections>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>show()</slot>
    <hints>
@@ -334,7 +334,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -350,7 +350,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -366,7 +366,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -382,7 +382,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>show()</slot>
    <hints>
@@ -398,7 +398,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -414,7 +414,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>show()</slot>
    <hints>
@@ -430,7 +430,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -446,7 +446,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -457,6 +457,38 @@
     <hint type="destinationlabel">
      <x>250</x>
      <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>MergeDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>526</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>MergeDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>526</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>274</y>
     </hint>
    </hints>
   </connection>

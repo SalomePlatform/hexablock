@@ -230,7 +230,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>show()</slot>
    <hints>
@@ -246,7 +246,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -262,7 +262,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>show()</slot>
    <hints>
@@ -278,7 +278,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>

@@ -27,7 +27,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QRadioButton" name="rb1">
+       <widget class="QRadioButton" name="rb0">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="rb2">
+       <widget class="QRadioButton" name="rb1">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -75,7 +75,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="q0_le">
+          <widget class="QLineEdit" name="q0_le_rb0">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -92,7 +92,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="q1_le">
+          <widget class="QLineEdit" name="q1_le_rb0">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -109,7 +109,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="q2_le">
+          <widget class="QLineEdit" name="q2_le_rb0">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -126,7 +126,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="q3_le">
+          <widget class="QLineEdit" name="q3_le_rb0">
            <property name="minimumSize">
             <size>
              <width>127</width>
@@ -149,7 +149,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QLineEdit" name="q4_le">
+          <widget class="QLineEdit" name="q4_le_rb0">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -166,7 +166,7 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QLineEdit" name="q5_le">
+          <widget class="QLineEdit" name="q5_le_rb0">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -189,7 +189,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="v0_le">
+          <widget class="QLineEdit" name="v0_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -206,7 +206,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="v1_le">
+          <widget class="QLineEdit" name="v1_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -223,7 +223,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLineEdit" name="v2_le">
+          <widget class="QLineEdit" name="v2_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -240,7 +240,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="v3_le">
+          <widget class="QLineEdit" name="v3_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -257,7 +257,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QLineEdit" name="v4_le">
+          <widget class="QLineEdit" name="v4_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -274,7 +274,7 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QLineEdit" name="v5_le">
+          <widget class="QLineEdit" name="v5_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -291,7 +291,7 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QLineEdit" name="v6_le">
+          <widget class="QLineEdit" name="v6_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -308,7 +308,7 @@
           </widget>
          </item>
          <item row="7" column="1">
-          <widget class="QLineEdit" name="v7_le">
+          <widget class="QLineEdit" name="v7_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -370,8 +370,8 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <sender>rb0</sender>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -386,8 +386,8 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <sender>rb1</sender>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>showMaximized()</slot>
    <hints>
@@ -402,8 +402,8 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <sender>rb1</sender>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -418,8 +418,8 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <sender>rb0</sender>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>showMaximized()</slot>
    <hints>

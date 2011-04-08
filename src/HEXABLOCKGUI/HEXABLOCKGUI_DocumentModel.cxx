@@ -7,7 +7,7 @@
 //
 //  This library is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  MERCHANTABILITY or FITNESS FfalloOR A PARTICULAR PURPOSE.  See the GNU
 //  Lesser General Public License for more details.
 //
 //  You should have received a copy of the GNU Lesser General Public
@@ -387,6 +387,29 @@ void DocumentModel::allowAllSelection()
 }
 
 
+
+void DocumentModel::allowDataSelectionOnly()
+{
+  _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+  _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+  _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+  _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+
+  _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+
+  _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+}
+
+
+
+
+
 void DocumentModel::allowVertexSelectionOnly()
 {
     std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
@@ -446,6 +469,25 @@ void DocumentModel::allowQuadSelectionOnly()
 }
 
 
+void DocumentModel::allowHexaSelectionOnly()
+{
+  _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+
+  _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+
+  _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+}
+
+
 void DocumentModel::allowVectorSelectionOnly()
 {
   std::cout << "allowVectorSelectionOnly() allowVectorSelectionOnly() allowVectorSelectionOnly() "<< std::endl;
@@ -484,6 +526,28 @@ void DocumentModel::allowCylinderSelectionOnly()
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
+void DocumentModel::allowPipeSelectionOnly()
+{
+  _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _quadItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+
+  _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEditable );
+  _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+
+  _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+}
+
+
+
+
+/*
 void DocumentModel::allowPipeItemFlags()
 {
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -500,8 +564,7 @@ void DocumentModel::allowPipeItemFlags()
   _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-
-}
+}*/
 
 void DocumentModel::allowElementsSelectionOnly()
 {
@@ -1194,10 +1257,9 @@ bool DocumentModel::removeHexa( const QModelIndex& ihexa )
 {
   bool ret = false;
   HEXA_NS::Hexa* hHexa = data(ihexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa *>();
-  
+
   int r = _hexaDocument->removeHexa( hHexa );
-  
-  if ( r == HOK ){    
+  if ( r == HOK ){
     updateData();
     QString tmp = "/tmp/removeHexa.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
@@ -1450,7 +1512,7 @@ QModelIndex DocumentModel::disconnectVertex( const QModelIndex& ihexa, const QMo
 
   HEXA_NS::Elements* hElts = _hexaDocument->disconnectVertex( hHexa, hVertex );
 
-  if ( hElts->isValid() ){
+  if ( hElts && hElts->isValid() ){
     updateData(); //CS_TO_CHECK
     ElementsItem* elts = new ElementsItem(hElts);
     _elementsDirItem->appendRow(elts);
@@ -1899,12 +1961,24 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
 
 bool DocumentModel::removeGroupElement( const QModelIndex& igrp, int nro )
 { //CS_TODO : remove child?
-  HEXA_NS::Group*   hGroup = data(igrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
+  HEXA_NS::Group* hGroup = data(igrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
 
   if ( hGroup )
     hGroup->removeElement( nro );
 
   QString tmp = "/tmp/removeGroupElement.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+}
+
+
+bool DocumentModel::clearGroupElement( const QModelIndex& igrp )
+{
+  HEXA_NS::Group* hGroup = data(igrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
+
+  if ( hGroup )
+    hGroup->clearElement();
+
+  QString tmp = "/tmp/clearGroupElement.vtk";
   _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
 
@@ -1927,6 +2001,26 @@ QModelIndex DocumentModel::addLaw( const QString& name, int nbnodes )
 }
 
 
+
+
+bool DocumentModel::setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, KindLaw type )
+{
+  bool ret = false;
+
+  HEXA_NS::Law* hLaw = data(ilaw, HEXA_DATA_ROLE).value<HEXA_NS::Law *>();
+
+  if ( hLaw ){
+    int ok;
+    ok = hLaw->setNodes( nbnodes );
+    ( ok == HOK) ? ret = true : ret = false;
+    ok = hLaw->setCoefficient( coeff );
+    hLaw->setKind(type);
+  }
+
+  QString tmp = "/tmp/setLaw.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  return ret;
+}
 
 
 // 

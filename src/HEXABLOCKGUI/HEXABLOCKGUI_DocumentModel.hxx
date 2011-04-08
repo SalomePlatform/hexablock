@@ -44,6 +44,7 @@ namespace HEXABLOCK
         // enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
         //                   HexaNode, QuadNode, EdgeNode, Vertex_Node};
         typedef HEXA_NS::EnumGroup Group;
+        typedef HEXA_NS::KindLaw   KindLaw;
 
         DocumentModel( QObject * parent = 0 );
         DocumentModel( int rows, int columns, QObject * parent = 0 );
@@ -71,6 +72,7 @@ namespace HEXABLOCK
 
         void allowAllSelection();
 
+        void allowDataSelectionOnly();
         void allowVertexSelectionOnly();
         void allowEdgeSelectionOnly();
         void allowQuadSelectionOnly();
@@ -78,7 +80,7 @@ namespace HEXABLOCK
 
         void allowVectorSelectionOnly();
         void allowCylinderSelectionOnly();
-        void allowPipeItemFlags();
+        void allowPipeSelectionOnly();
         void allowElementsSelectionOnly();
         void allowCrossElementsSelectionOnly();
 
@@ -113,7 +115,7 @@ namespace HEXABLOCK
         QModelIndex addCylinder( const QModelIndex &iv, const QModelIndex &ivec, double r,  double h );
         
         //
-        QModelIndex addPipe( const QModelIndex &i_v, const QModelIndex &i_vec, double ri, double re, double h );
+        QModelIndex addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h );
 
 
         // 
@@ -229,6 +231,7 @@ namespace HEXABLOCK
         void setGroupName( const QModelIndex& grp, const QString& name );
         bool addGroupElement( const QModelIndex& grp, const QModelIndex& elt );
         bool removeGroupElement( const QModelIndex& grp, int nro ); //CS_TODO
+        bool clearGroupElement( const QModelIndex& grp );
 
 
         // ************  LAWS  ************
@@ -244,6 +247,8 @@ namespace HEXABLOCK
 // int     setCoefficient (double coeff);
 // void    setKind (KindLaw type);
 // }
+
+        bool setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, KindLaw type );
 
         // 
         bool  removeLaw( const QModelIndex& law );

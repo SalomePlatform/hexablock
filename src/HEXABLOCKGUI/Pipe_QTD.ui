@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Pipe</string>
+      <string>Arguments</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
@@ -28,7 +28,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="v_le">
+       <widget class="QLineEdit" name="vex_le">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -51,7 +51,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="vect_le">
+       <widget class="QLineEdit" name="vec_le">
         <property name="maximumSize">
          <size>
           <width>127</width>
@@ -63,20 +63,20 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>ri</string>
+         <string>internal radius</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="ri_spb"/>
+       <widget class="QDoubleSpinBox" name="ir_spb"/>
       </item>
       <item row="3" column="1">
-       <widget class="QDoubleSpinBox" name="re_spb"/>
+       <widget class="QDoubleSpinBox" name="er_spb"/>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_1">
         <property name="text">
-         <string>re</string>
+         <string>external radius</string>
         </property>
        </widget>
       </item>

@@ -576,6 +576,14 @@ void HEXABLOCKGUI::createActions()
                                             tr("Add vector"),  tr("Create a new vector"),
                                             0, aParent, false, this,  SLOT(addVector()) );
 
+  _addCylinder  = createAction( _menuId++, tr("Create a cylinder"), QIcon("icons:add_cylinder.png"),
+                                            tr("Add cylinder"),  tr("Create a new cylinder"),
+                                            0, aParent, false, this,  SLOT(addCylinder()) );
+
+  _addPipe      = createAction( _menuId++, tr("Create a pipe"), QIcon("icons:add_pipe.png"),
+                                            tr("Add pipe"),  tr("Create a new pipe"),
+                                            0, aParent, false, this,  SLOT(addPipe()) );
+
   _makeGrid     = createAction( _menuId++, tr("Make a grid"), QIcon("icons:make_grid.png"),
                                             tr("Make grid"),  tr("Make a grid"),
                                             0, aParent, false, this,  SLOT(makeGrid()) );
@@ -617,7 +625,7 @@ void HEXABLOCKGUI::createActions()
 
   _disconnect     = createAction( _menuId++, tr("Disconnect"), QIcon("icons:disconnect.png"),
                                             tr("Disconnect"),  tr("Disconnect"),
-                                            0, aParent, false, this,  SLOT(makeGrid()) );
+                                            0, aParent, false, this,  SLOT(disconnectElts()) );
 
   _cutEdge     = createAction( _menuId++, tr("Make a grid"), QIcon("icons:make_grid.png"),
                                             tr("Make grid"),  tr("Make a grid"),
@@ -683,49 +691,6 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _newAct, aMenuId );//, 10
   createMenu( _importAct, aMenuId );
 
-
-//   _wrapper->createMenu( _importSchemaAct, aMenuId );
-//   _wrapper->createMenu( _importSupervSchemaAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _exportSchemaAct, aMenuId );
-//   _wrapper->createMenu( _exportSchemaAsAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _runLoadedSchemaAct, aMenuId );
-//   _wrapper->createMenu( _loadRunStateSchemaAct, aMenuId );
-//   _wrapper->createMenu( _loadAndRunSchemaAct, aMenuId );
-//   _wrapper->createMenu( _loadBatchAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _undoAct, aMenuId );
-//   _wrapper->createMenu( _redoAct, aMenuId );
-//   _wrapper->createMenu( _showUndoAct, aMenuId );
-//   _wrapper->createMenu( _showRedoAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _startResumeAct, aMenuId );
-//   _wrapper->createMenu( _abortAct, aMenuId );
-//   _wrapper->createMenu( _pauseAct, aMenuId );
-//   _wrapper->createMenu( _resetAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _saveRunStateAct, aMenuId );
-//   //_wrapper->createMenu( _newEditionAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _withoutStopModeAct, aMenuId );
-//   _wrapper->createMenu( _breakpointsModeAct, aMenuId );
-//   _wrapper->createMenu( _stepByStepModeAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _toggleStopOnErrorAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _importCatalogAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _toggleStraightLinksAct, aMenuId );
-//   _wrapper->createMenu( _toggleAutomaticComputeLinkAct, aMenuId );
-//   _wrapper->createMenu( _toggleSimplifyLinkAct, aMenuId );
-//   _wrapper->createMenu( _toggleForce2NodesLinkAct, aMenuId );
-//   _wrapper->createMenu( _toggleAddRowColsAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _showAllLinksAct, aMenuId );
-//   _wrapper->createMenu( _hideAllLinksAct, aMenuId );
-//   _wrapper->createMenu( _wrapper->separator(), aMenuId);
-//   _wrapper->createMenu( _whatsThisAct, aMenuId );
   aMenuId = createMenu( tr("Model"), -1, -1, 30 );
   createMenu( _addVertex, aMenuId );
   createMenu( _addEdge,   aMenuId );
@@ -734,6 +699,8 @@ void HEXABLOCKGUI::createMenus()
   createMenu( separator(), aMenuId);
   // Pattern Builder
   createMenu( _addVector, aMenuId );
+  createMenu( _addCylinder, aMenuId );
+  createMenu( _addPipe, aMenuId );
   createMenu( _makeGrid,  aMenuId ); //Cartesian, Cylindrical, Spherical
   createMenu( _makeCylinder, aMenuId );
   createMenu( _makePipe,     aMenuId );
@@ -788,6 +755,8 @@ void HEXABLOCKGUI::createTools()
 
   // Pattern Builder
   createTool( _addVector, aToolId );
+  createTool( _addCylinder, aToolId );
+  createTool( _addPipe, aToolId );
   createTool( _makeGrid,  aToolId );
   createTool( _makeCylinder, aToolId );
   createTool( _makePipe,     aToolId );
@@ -820,43 +789,6 @@ void HEXABLOCKGUI::createTools()
   createTool( _addLaw,    aToolId );
   createTool( _removeLaw, aToolId );
 
-
-
-//   _wrapper->createTool( _exportSchemaAsAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId);
-//   _wrapper->createTool( _runLoadedSchemaAct, aToolId );
-//   _wrapper->createTool( _loadRunStateSchemaAct, aToolId );
-//   _wrapper->createTool( _loadAndRunSchemaAct, aToolId );
-//   _wrapper->createTool( _loadBatchAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _undoAct, aToolId );
-//   _wrapper->createTool( _redoAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _startResumeAct, aToolId );
-//   _wrapper->createTool( _abortAct, aToolId );
-//   _wrapper->createTool( _pauseAct, aToolId );
-//   _wrapper->createTool( _resetAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _saveRunStateAct, aToolId );
-//   //_wrapper->createTool( _newEditionAct, aToolId );
-//   _wrapper->createTool( _withoutStopModeAct, aToolId );
-//   _wrapper->createTool( _breakpointsModeAct, aToolId );
-//   _wrapper->createTool( _stepByStepModeAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _toggleStopOnErrorAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _importCatalogAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _toggleStraightLinksAct, aToolId );
-//   _wrapper->createTool( _toggleAutomaticComputeLinkAct, aToolId );
-//   _wrapper->createTool( _toggleSimplifyLinkAct, aToolId );
-//   //_wrapper->createTool( _toggleForce2NodesLinkAct, aToolId );
-//   _wrapper->createTool( _toggleAddRowColsAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _showAllLinksAct, aToolId );
-//   _wrapper->createTool( _hideAllLinksAct, aToolId );
-//   _wrapper->createTool( _wrapper->separator(), aToolId );
-//   _wrapper->createTool( _whatsThisAct, aToolId );
 }
 
 void HEXABLOCKGUI::initialMenus()
@@ -868,86 +800,6 @@ void HEXABLOCKGUI::initialMenus()
   showMeshMenus( false );
 }
 
-// void HEXABLOCKGUI::showBaseMenus(bool show)
-// {
-//   DEBTRACE("HEXABLOCKGUI::showBaseMenus " << show);
-//   setMenuShown(_newAct, show);
-//   setToolShown(_newAct, show);
-//   setMenuShown(_importAct, show);
-//   setToolShown(_importAct, show);
-// }
-// 
-// void HEXABLOCKGUI::showEditionMenus(bool show)
-// {
-//   DEBTRACE("HEXABLOCKGUI::showEditionMenus " << show);
-//   setMenuShown(_addVertex, show);
-//   setToolShown(_addVertex, show);
-//   setMenuShown(_addEdge, show);
-//   setToolShown(_addEdge, show);
-//   setMenuShown(_addQuad, show);
-//   setToolShown(_addQuad, show);
-//   setMenuShown(_addHexa, show);
-//   setToolShown(_addHexa, show);
-// 
-// 
-//   setMenuShown( _addVector, show);
-//   setToolShown( _addVector, show);
-//   setMenuShown( _makeGrid, show); 
-//   setToolShown( _makeGrid, show);
-//   setMenuShown( _makeCylinder, show);
-//   setToolShown( _makeCylinder, show);
-//   setMenuShown( _makePipe, show);
-//   setToolShown( _makePipe, show);
-//   setMenuShown( _makeCylinders, show);
-//   setToolShown( _makeCylinders, show);
-//   setMenuShown( _makePipes, show);
-//   setToolShown( _makePipes, show);
-// 
-//   // Pattern Data Edition
-//   setMenuShown( _removeHexa, show);
-//   setToolShown( _removeHexa, show);
-//   setMenuShown( _prismQuad, show);
-//   setToolShown( _prismQuad, show);
-//   setMenuShown( _joinQuad, show);
-//   setToolShown( _joinQuad, show);
-//   setMenuShown( _merge, show);
-//   setToolShown( _merge, show);
-//   setMenuShown( _disconnect, show);
-//   setToolShown( _disconnect, show);
-//   setMenuShown( _cutEdge, show);
-//   setToolShown( _cutEdge, show);
-//   setMenuShown( _makeTransformation, show);
-//   setToolShown( _makeTransformation, show);
-//   setMenuShown( _makeSymmetry, show);
-//   setToolShown( _makeSymmetry, show);
-//   setMenuShown( _performTransformation, show);
-//   setToolShown( _performTransformation, show);
-//   setMenuShown( _performSymmetry, show);
-//   setToolShown( _performSymmetry, show);
-// 
-//   // Group
-//   setMenuShown( _addGroup, show);
-//   setToolShown( _addGroup, show);
-//   setMenuShown( _removeGroup , show);
-//   setToolShown( _removeGroup , show);  
-// 
-//   // Law
-//   setMenuShown( _addLaw, show);
-//   setToolShown( _addLaw, show);
-//   setMenuShown( _removeLaw, show);
-//   setToolShown( _removeLaw, show);
-// }
-// 
-// void HEXABLOCKGUI::showExecMenus(bool show)
-// {
-//   DEBTRACE("HEXABLOCKGUI::showExecMenus " << show);
-// }
-// 
-// void HEXABLOCKGUI::showCommonMenus(bool show)
-// {
-//   DEBTRACE("HEXABLOCKGUI::showCommonMenus " << show);
-// }
-
 
 void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
 {
@@ -957,7 +809,6 @@ void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
   setMenuShown(_importAct, show);
   setToolShown(_importAct, show);
 }
-
 
 void HEXABLOCKGUI::showPatternMenus(bool show)
 {
@@ -974,6 +825,10 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
 
   setMenuShown( _addVector, show);
   setToolShown( _addVector, show);
+  setMenuShown( _addCylinder, show);
+  setToolShown( _addCylinder, show);
+  setMenuShown( _addPipe, show);
+  setToolShown( _addPipe, show);
   setMenuShown( _makeGrid, show); 
   setToolShown( _makeGrid, show);
   setMenuShown( _makeCylinder, show);
@@ -1411,31 +1266,25 @@ void HEXABLOCKGUI::addVector()
   //   diag->show();
 }
 
-// void HEXABLOCKGUI::makeCartesian()
-// {
-//   if (!_dwInputPanel) return;
-// 
-//   MakeCartesianDialog* diag = new MakeCartesianDialog(_dwInputPanel);
-// 
-//   diag->setDocumentModel(_currentModel);
-//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-//   _dwInputPanel->setWidget(diag);
-//   //   diag->show();
-// }
-// 
-// void HEXABLOCKGUI::makeCylindrical()
-// {
-//   if (!_dwInputPanel) return;
-// 
-//   MakeCylindricalDialog* diag = new MakeCylindricalDialog(_dwInputPanel);
-// 
-//   diag->setDocumentModel(_currentModel);
-//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-//   _dwInputPanel->setWidget(diag);
-//   //   diag->show();
-// }
+
+void HEXABLOCKGUI::addCylinder()
+{
+  CylinderDialog* diag = new CylinderDialog(_dwInputPanel);
+  diag->setDocumentModel( _currentModel );
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
+
+
+void HEXABLOCKGUI::addPipe()
+{
+  PipeDialog* diag = new PipeDialog(_dwInputPanel);
+  diag->setDocumentModel( _currentModel );
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
 
 
 void HEXABLOCKGUI::makeGrid()
@@ -1451,70 +1300,110 @@ void HEXABLOCKGUI::makeGrid()
   //   diag->show();
 }
 
-
-
-
-
-
 void HEXABLOCKGUI::makeCylinder()
 {
+  if (!_dwInputPanel) return;
+
+  MakeCylinderDialog* diag = new MakeCylinderDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::makePipe()
 {
+  if (!_dwInputPanel) return;
+
+  MakePipeDialog* diag = new MakePipeDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::makeCylinders()
 {
+  if (!_dwInputPanel) return;
+
+  MakeCylindersDialog* diag = new MakeCylindersDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::makePipes()
 {
+  if (!_dwInputPanel) return;
+
+  MakePipesDialog* diag = new MakePipesDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
+
+
 
 void HEXABLOCKGUI::removeHexa()
 {
+  if (!_dwInputPanel) return;
+
+  RemoveHexaDialog* diag = new RemoveHexaDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
 }
 
 void HEXABLOCKGUI::prismQuad()
 {
+ if (!_dwInputPanel) return;
+
+  PrismQuadDialog* diag = new PrismQuadDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::joinQuad()
 {
-}
+  if (!_dwInputPanel) return;
 
-// void HEXABLOCKGUI::mergeVertices()
-// {
-//   if (!_dwInputPanel) return;
-// 
-//   MergeVerticesDialog* diag = new MergeVerticesDialog(_dwInputPanel);
-// 
-//   diag->setDocumentModel(_currentModel);
-//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-// //   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-//   _dwInputPanel->setWidget(diag);
-// }
-// 
-// 
-// void HEXABLOCKGUI::mergeEdges()
-// {
-//   if (!_dwInputPanel) return;
-// 
-//   MergeEdgesDialog* diag = new MergeEdgesDialog(_dwInputPanel);
-//   diag->setDocumentModel(_currentModel);
-//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-// //   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-//   _dwInputPanel->setWidget(diag);
-// }
+  JoinQuadDialog* diag = new JoinQuadDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+}
 
 
 void HEXABLOCKGUI::merge()
 {
+  if (!_dwInputPanel) return;
+
+  MergeDialog* diag = new MergeDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
-void HEXABLOCKGUI::disconnect()
+
+void HEXABLOCKGUI::disconnectElts()
 {
+  if (!_dwInputPanel) return;
+
+  DisconnectDialog* diag = new DisconnectDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::cutEdge()
@@ -1528,51 +1417,130 @@ void HEXABLOCKGUI::cutEdge()
   _dwInputPanel->setWidget(diag);
 }
 
-// void HEXABLOCKGUI::makeTranslation()
-// {
-//   if (!_dwInputPanel) return;
-// 
-//   MakeTranslationDialog* diag = new MakeTranslationDialog(_dwInputPanel);
-// 
-//   diag->setDocumentModel(_currentModel);
-// //   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-//   _dwInputPanel->setWidget(diag);
-//   //   diag->show();
-// }
 
 void HEXABLOCKGUI::makeTransformation()
 {
+  if (!_dwInputPanel) return;
+
+  MakeTransformationDialog* diag = new MakeTransformationDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
+  //   diag->show();
 }
 
 
 void HEXABLOCKGUI::makeSymmetry()
 {
+  if (!_dwInputPanel) return;
+
+  MakeSymmetryDialog* diag = new MakeSymmetryDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::performTransformation()
 {
+  if (!_dwInputPanel) return;
+
+  PerformTransformationDialog* diag = new PerformTransformationDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::performSymmetry()
 {
+  if (!_dwInputPanel) return;
+
+  PerformSymmetryDialog* diag = new PerformSymmetryDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 
 void HEXABLOCKGUI::addGroup()
 {
+  if (!_dwInputPanel) return;
+
+  GroupDialog* diag = new GroupDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  _dwInputPanel->setWidget(diag);
 }
 
-void HEXABLOCKGUI::removeGroup() //CS_TODO
+void HEXABLOCKGUI::removeGroup() 
 {
+  bool removeGroupOK = false;
+
+  QItemSelectionModel *groupsSelectionModel = _groupsTreeView->selectionModel();
+
+  QModelIndexList l = groupsSelectionModel->selectedIndexes();
+  foreach( const QModelIndex& selected, l ){
+    if ( selected.data(HEXA_TREE_ROLE) == GROUP_TREE ){
+      QModelIndex selected = _groupsModel->mapToSource( selected );
+      Q_ASSERT(selected.isValid());
+      bool removed = _currentModel->removeGroup(selected);
+      if ( removed == true )
+        removeGroupOK = true;
+      else
+        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
+    }
+  }
+
+  if ( removeGroupOK == true ){
+    SUIT_MessageBox::information( 0, tr( "HEXA_INFO" ), tr( "GROUP REMOVED" ) );
+  } else {
+    SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE GROUP" ) );
+  }
+
 }
 
 void HEXABLOCKGUI::addLaw()
 {
+  if (!_dwInputPanel) return;
+
+  LawDialog* diag = new LawDialog(_dwInputPanel);
+
+  diag->setDocumentModel(_currentModel);
+  _dwInputPanel->setWidget(diag);
 }
 
 void HEXABLOCKGUI::removeLaw()
 {
+  bool removeLawOK = false;
+
+  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+
+  QModelIndexList l = meshSelectionModel->selectedIndexes();
+  foreach( const QModelIndex& selected, l ){
+    if ( selected.data(HEXA_TREE_ROLE) == LAW_TREE ){
+      QModelIndex selected = _meshModel->mapToSource( selected );
+      Q_ASSERT(selected.isValid());
+      bool removed = _currentModel->removeLaw(selected);
+      if ( removed == true )
+        removeLawOK = true;
+      else
+        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
+    }
+  }
+
+  if ( removeLawOK == true ){
+    SUIT_MessageBox::information( 0, tr( "HEXA_INFO" ), tr( "LAW REMOVED" ) );
+  } else {
+    SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE LAW" ) );
+  }
+
 }
 
 

@@ -174,7 +174,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="q_le_rb3">
+          <widget class="QLineEdit" name="q_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -191,7 +191,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="h_le_rb3">
+          <widget class="QLineEdit" name="h_le_rb2">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -222,7 +222,7 @@
  <connections>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>show()</slot>
    <hints>
@@ -238,7 +238,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -254,7 +254,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -270,7 +270,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -286,7 +286,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>show()</slot>
    <hints>
@@ -302,7 +302,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -318,7 +318,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>show()</slot>
    <hints>
@@ -334,7 +334,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -350,7 +350,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -361,6 +361,38 @@
     <hint type="destinationlabel">
      <x>250</x>
      <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DisconnectDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>362</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DisconnectDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>362</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>192</y>
     </hint>
    </hints>
   </connection>
