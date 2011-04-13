@@ -8,6 +8,11 @@
 #include <QSpinBox>
 
 #include <QDockWidget>
+
+
+#include "HEXABLOCKGUI_DocumentModel.hxx"
+#include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
+
 namespace HEXABLOCK
 {
   namespace GUI
@@ -28,9 +33,28 @@ namespace HEXABLOCK
       
           void updateEditorGeometry(QWidget *editor,
               const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+
+         // can be used by editor
+          void setDocumentModel( DocumentModel* m );
+
+          //  selection
+          void setPatternDataSelectionModel( PatternDataSelectionModel* s );
+          void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
+          void setGroupSelectionModel( QItemSelectionModel* s );
+          void setMeshSelectionModel( QItemSelectionModel* s );
       
       private:
           QDockWidget *_dw;
+
+
+          // can be used by editor
+          DocumentModel*                _documentModel;
+
+          PatternDataSelectionModel*    _patternDataSelectionModel;
+          PatternBuilderSelectionModel* _patternBuilderSelectionModel;
+          QItemSelectionModel*          _groupsSelectionModel;
+          QItemSelectionModel*          _meshSelectionModel;
       };
   }
 }

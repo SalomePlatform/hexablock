@@ -170,6 +170,8 @@ private slots:
   void addLaw();
   void removeLaw();
 
+  void setPropagation();
+
   void printVTK();
 
 private:
@@ -229,6 +231,8 @@ private:
   QAction *_addLaw;
   QAction *_removeLaw;
 
+  // Propagation
+  QAction *_setPropagation;
 
   // -------------------------------------------------------------------------------------------------
   //          Model/View implementation  

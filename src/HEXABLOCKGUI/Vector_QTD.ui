@@ -27,7 +27,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QRadioButton" name="rb1">
+       <widget class="QRadioButton" name="rb0">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="rb2">
+       <widget class="QRadioButton" name="rb1">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -81,7 +81,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="dx_spb">
+          <widget class="QDoubleSpinBox" name="dx_spb_rb0">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -104,7 +104,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="dy_spb">
+          <widget class="QDoubleSpinBox" name="dy_spb_rb0">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="dz_spb">
+          <widget class="QDoubleSpinBox" name="dz_spb_rb0">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -150,7 +150,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="v0_le">
+          <widget class="QLineEdit" name="v0_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -167,7 +167,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="v1_le">
+          <widget class="QLineEdit" name="v1_le_rb1">
            <property name="maximumSize">
             <size>
              <width>127</width>
@@ -188,7 +188,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -229,7 +229,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb1</sender>
+   <sender>rb0</sender>
    <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>show()</slot>
@@ -245,7 +245,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb1</sender>
+   <sender>rb0</sender>
    <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
@@ -261,7 +261,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb2</sender>
+   <sender>rb1</sender>
    <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>show()</slot>
@@ -277,7 +277,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb2</sender>
+   <sender>rb1</sender>
    <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>

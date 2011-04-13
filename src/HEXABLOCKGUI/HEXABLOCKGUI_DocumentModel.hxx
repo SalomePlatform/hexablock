@@ -84,7 +84,7 @@ namespace HEXABLOCK
         void allowElementsSelectionOnly();
         void allowCrossElementsSelectionOnly();
 
-
+        void allowLawSelectionOnly();
 
 
         //  ************  BUILD HEXABLOCK MODEL ************
@@ -260,6 +260,9 @@ namespace HEXABLOCK
 // 9.1 Boite: poser une loi de discrétisation sur une propagation
 // int   setLaw (Law* loi);
 // void  setWay (bool sens);
+        bool setPropagation( const QModelIndex& iPropagation, const QModelIndex& iLaw, bool way );
+
+
 // 
 // 9.1 Boite: éditer 
 // (idem création)

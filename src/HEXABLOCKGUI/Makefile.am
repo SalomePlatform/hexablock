@@ -94,7 +94,9 @@ UIC_FILES = \
 	ui_Transformation_QTD.h \
 	ui_Symmetry_QTD.h \
 	ui_Group_QTD.h \
-	ui_Law_QTD.h
+	ui_Law_QTD.h \
+	ui_Propagation_QTD.h
+
 
 # MOC pre-processing
 MOC_FILES = \

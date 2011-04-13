@@ -39,6 +39,9 @@
 #include "ui_Symmetry_QTD.h"
 #include "ui_Group_QTD.h"
 #include "ui_Law_QTD.h"
+#include "ui_Propagation_QTD.h"
+
+
 
 
 
@@ -82,6 +85,7 @@ namespace HEXABLOCK
           //  selection
           virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s );
           virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
+          virtual void setMeshSelectionModel( QItemSelectionModel* s );
 
 
         protected:
@@ -96,9 +100,12 @@ namespace HEXABLOCK
           void _setCylinderSelectionOnly();
           void _setPipeSelectionOnly();
 
+          void _setLawSelectionOnly();
+
         protected slots:
           virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+          virtual void onMeshSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
 
         protected :
@@ -128,6 +135,8 @@ namespace HEXABLOCK
           QList<QLineEdit*>  _cylinderLineEdits;
           QList<QLineEdit*>  _pipeLineEdits;
           QList<QLineEdit*>  _elementsLineEdits;
+
+          QList<QLineEdit*>  _lawLineEdits;
     };
 
 
@@ -168,6 +177,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
       private:
         HEXA_NS::Edge *_value;
     };
@@ -188,6 +200,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Quad    *_value;
@@ -212,6 +227,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
       private:
         HEXA_NS::Hexa   *_value;
 
@@ -232,6 +250,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual void accept();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Vector *_value;
@@ -255,6 +276,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
       private:
         HEXA_NS::Cylinder   *_value;
     };
@@ -277,6 +301,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
       private:
         HEXA_NS::Pipe   *_value;
 
@@ -296,6 +323,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -314,6 +344,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
   };
 
 
@@ -329,6 +362,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -344,6 +380,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -359,6 +398,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -375,6 +417,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
 
   };
 
@@ -394,6 +439,7 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
+        virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -417,6 +463,7 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
+        virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -439,6 +486,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
    };
 
 
@@ -456,6 +506,9 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
    };
 
 
@@ -472,6 +525,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -487,6 +543,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -502,6 +561,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -519,6 +581,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -534,6 +599,9 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -565,6 +633,9 @@ namespace HEXABLOCK
 //       protected:
 //         virtual bool eventFilter(QObject *obj, QEvent *event);
 
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+
       private slots:
         void addEltBase();
         void removeEltBase();
@@ -594,10 +665,43 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
         virtual void reject();
+
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   
       private:
         HEXA_NS::Law   *_value;
   };
+
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PropagationDialog : public HexaBaseDialog,
+                                                      public Ui::PropagationDialog
+  {
+      Q_OBJECT
+
+      public:
+        PropagationDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~PropagationDialog();
+
+        void setValue(HEXA_NS::Propagation* v);
+        HEXA_NS::Propagation* getValue();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        virtual void showEvent ( QShowEvent * event );
+  
+      private:
+        HEXA_NS::Propagation *_value;
+  };
+
+
+
+
 
 
 

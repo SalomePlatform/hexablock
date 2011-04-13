@@ -10,7 +10,12 @@ using namespace HEXABLOCK::GUI;
 
 DocumentDelegate::DocumentDelegate(QDockWidget *dw, QObject *parent)
     : QItemDelegate(parent),
-      _dw(dw)
+      _dw(dw),
+      _documentModel(0),
+      _patternDataSelectionModel(0),
+      _patternBuilderSelectionModel(0),
+      _groupsSelectionModel(0),
+      _meshSelectionModel(0)
 {
 }
 
@@ -19,7 +24,8 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
     const QModelIndex &index) const
 {
     cout << "CS_BP createEditor createEditor createEditor createEditor"<<endl;
-    QWidget *editor = 0;
+//     QWidget *editor = 0;
+    HexaBaseDialog *editor = 0;
 
     QStandardItem  *item = 0;
     // CS_TODO : simplification?
@@ -43,12 +49,25 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
         case QUADITEM :   editor = new QuadDialog(parent);     break;
         case HEXAITEM :   editor = new HexaDialog(parent);     break;
         case VECTORITEM : editor = new VectorDialog(parent);   break;
+        case CYLINDERITEM : editor = new CylinderDialog(parent);   break;
+        case PIPEITEM :     editor = new PipeDialog(parent);       break;
+//         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
+//         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
+        case GROUPITEM :          editor = new GroupDialog(parent);   break;
+        case LAWITEM :            editor = new LawDialog(parent);     break;
+        case PROPAGATIONITEM :    editor = new PropagationDialog(parent); break;
       }
       if ( editor ){
+        if ( _documentModel ) editor->setDocumentModel( _documentModel );
+        if ( _patternDataSelectionModel ) editor->setPatternDataSelectionModel( _patternDataSelectionModel );
+        if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
+        if ( _meshSelectionModel ) editor->setMeshSelectionModel( _meshSelectionModel);
+//         QItemSelectionModel*          _groupsSelectionModel;
         _dw->setWidget(editor);
       }
     }
 
+//     editor->exec();
 //     editor->show();
     return editor;
 }
@@ -83,41 +102,62 @@ void DocumentDelegate::setEditorData( QWidget *editor,
               vertexEditor->setValue(value);
         }
         break;
-
-
         case EDGEITEM : {
-//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
               HEXA_NS::Edge *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
               EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
               edgeEditor->setValue(value);
         }
         break;
-
         case QUADITEM : {
-//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
               HEXA_NS::Quad *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
               QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
               quadEditor->setValue(value);
         }
         break;
-
         case HEXAITEM : {
-//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
               HEXA_NS::Hexa *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Hexa* >();
               HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
               hexaEditor->setValue(value);
         }
         break;
-
         case VECTORITEM : {
-//               HEXA_NS::Quad *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
               HEXA_NS::Vector *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vector* >();
               VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
               vectorEditor->setValue(value);
         }
         break;
-
-
+        case CYLINDERITEM : {
+              HEXA_NS::Cylinder *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Cylinder* >();
+              CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
+              cylinderEditor->setValue(value);
+        }
+        break;
+        case PIPEITEM : {
+              HEXA_NS::Pipe *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Pipe* >();
+              PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
+              pipeEditor->setValue(value);
+        }
+        break;
+//         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
+//         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
+        case GROUPITEM :{
+              HEXA_NS::Group *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
+              GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
+              groupEditor->setValue(value);
+        }
+        break;
+        case LAWITEM : {
+              HEXA_NS::Law *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Law* >();
+              LawDialog *lawEditor = static_cast<LawDialog*>(editor);
+              lawEditor->setValue(value);
+        }
+        break;
+        case PROPAGATIONITEM : {
+              HEXA_NS::Propagation *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Propagation* >();
+              PropagationDialog *propagationEditor = static_cast<PropagationDialog*>(editor);
+              propagationEditor->setValue(value);
+        }
+        break;
       }
     }
 
@@ -182,6 +222,39 @@ void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
             }
             break;
 
+        case CYLINDERITEM : {
+              CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
+              HEXA_NS::Cylinder *value   = cylinderEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+            }
+        break;
+        case PIPEITEM : {
+              PipeDialog *pipeEditor = static_cast<PipeDialog*>(editor);
+              HEXA_NS::Pipe *value   = pipeEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+            }
+        break;
+//         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
+//         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
+        case GROUPITEM :{
+              GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
+              HEXA_NS::Group *value = groupEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+        }
+        break;
+        case LAWITEM : {
+              LawDialog *lawEditor = static_cast<LawDialog*>(editor);
+              HEXA_NS::Law *value = lawEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+        }
+        break;
+        case PROPAGATIONITEM : {
+              PropagationDialog *propagationEditor = static_cast<PropagationDialog*>(editor);
+              HEXA_NS::Propagation *value = propagationEditor->getValue();
+              model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+        }
+        break;
+
       }
     }
 }
@@ -192,5 +265,34 @@ void DocumentDelegate::updateEditorGeometry(QWidget *editor,
 {
     cout << "CS_BP updateEditorGeometry"<<endl;
     editor->setGeometry(option.rect);
+}
+
+
+
+
+
+void DocumentDelegate::setDocumentModel( DocumentModel* m )
+{
+  _documentModel = m;
+}
+
+void DocumentDelegate::setPatternDataSelectionModel( PatternDataSelectionModel* s )
+{
+  _patternDataSelectionModel = s;
+}
+
+void DocumentDelegate::setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s )
+{
+  _patternBuilderSelectionModel = s;
+}
+
+void DocumentDelegate::setGroupSelectionModel( QItemSelectionModel* s )
+{
+  _groupsSelectionModel = s ;
+}
+
+void DocumentDelegate::setMeshSelectionModel( QItemSelectionModel* s )
+{
+  _meshSelectionModel = s;
 }
 

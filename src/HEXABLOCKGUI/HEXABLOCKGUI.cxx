@@ -663,6 +663,11 @@ void HEXABLOCKGUI::createActions()
                                             0, aParent, false, this,  SLOT(removeLaw()) );
 
 
+  _setPropagation = createAction( _menuId++, tr("Set Propagation"),               QIcon("icons:set_propagation.png"), tr("Set Propagation"),  tr("Set Propagation"),
+                                            0, aParent, false, this,  SLOT(_setPropagation()) );
+
+
+
 //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
 
   //       QAction* createAction(const int id,
@@ -734,6 +739,7 @@ void HEXABLOCKGUI::createMenus()
   aMenuId = createMenu( tr("Mesh"), -1, -1, 30 );
   createMenu( _addLaw,    aMenuId );
   createMenu( _removeLaw, aMenuId );
+  createMenu( _setPropagation, aMenuId );
 
 }
 
@@ -788,6 +794,7 @@ void HEXABLOCKGUI::createTools()
   // Law
   createTool( _addLaw,    aToolId );
   createTool( _removeLaw, aToolId );
+  createTool( _setPropagation, aToolId );
 
 }
 
@@ -813,53 +820,53 @@ void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
 void HEXABLOCKGUI::showPatternMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showPatternMenus " << show);
-  setMenuShown(_addVertex, show);
+  setMenuShown(_addVertex, true );//show);
   setToolShown(_addVertex, show);
-  setMenuShown(_addEdge, show);
+  setMenuShown(_addEdge,  true );//show);
   setToolShown(_addEdge, show);
-  setMenuShown(_addQuad, show);
+  setMenuShown(_addQuad,  true );//show);
   setToolShown(_addQuad, show);
-  setMenuShown(_addHexa, show);
+  setMenuShown(_addHexa,  true );//show);
   setToolShown(_addHexa, show);
 
 
-  setMenuShown( _addVector, show);
+  setMenuShown( _addVector,  true );//show);
   setToolShown( _addVector, show);
-  setMenuShown( _addCylinder, show);
+  setMenuShown( _addCylinder,  true );//show);
   setToolShown( _addCylinder, show);
-  setMenuShown( _addPipe, show);
+  setMenuShown( _addPipe,  true );//show);
   setToolShown( _addPipe, show);
-  setMenuShown( _makeGrid, show); 
+  setMenuShown( _makeGrid,  true );//show);
   setToolShown( _makeGrid, show);
-  setMenuShown( _makeCylinder, show);
+  setMenuShown( _makeCylinder,  true );//show);
   setToolShown( _makeCylinder, show);
-  setMenuShown( _makePipe, show);
+  setMenuShown( _makePipe,  true );//show);
   setToolShown( _makePipe, show);
-  setMenuShown( _makeCylinders, show);
+  setMenuShown( _makeCylinders,  true );//show);
   setToolShown( _makeCylinders, show);
-  setMenuShown( _makePipes, show);
+  setMenuShown( _makePipes,  true );//show);
   setToolShown( _makePipes, show);
 
   // Pattern Data Edition
-  setMenuShown( _removeHexa, show);
+  setMenuShown( _removeHexa,  true );//show);
   setToolShown( _removeHexa, show);
-  setMenuShown( _prismQuad, show);
+  setMenuShown( _prismQuad,  true );//show);
   setToolShown( _prismQuad, show);
-  setMenuShown( _joinQuad, show);
+  setMenuShown( _joinQuad,  true );//show);
   setToolShown( _joinQuad, show);
-  setMenuShown( _merge, show);
+  setMenuShown( _merge,  true );//show);
   setToolShown( _merge, show);
-  setMenuShown( _disconnect, show);
+  setMenuShown( _disconnect,  true );//show);
   setToolShown( _disconnect, show);
-  setMenuShown( _cutEdge, show);
+  setMenuShown( _cutEdge,  true );//show);
   setToolShown( _cutEdge, show);
-  setMenuShown( _makeTransformation, show);
+  setMenuShown( _makeTransformation,  true );//show);
   setToolShown( _makeTransformation, show);
-  setMenuShown( _makeSymmetry, show);
+  setMenuShown( _makeSymmetry,  true );//show);
   setToolShown( _makeSymmetry, show);
-  setMenuShown( _performTransformation, show);
+  setMenuShown( _performTransformation,  true );//show);
   setToolShown( _performTransformation, show);
-  setMenuShown( _performSymmetry, show);
+  setMenuShown( _performSymmetry,  true );//show);
   setToolShown( _performSymmetry, show);
 }
 
@@ -869,21 +876,25 @@ void HEXABLOCKGUI::showAssociationMenus(bool show)
   DEBTRACE("HEXABLOCKGUI::showAssociationMenus" << show);
 
 }
+
 void HEXABLOCKGUI::showGroupsMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showGroupsMenus" << show);
-  setMenuShown( _addGroup, show);
+  setMenuShown( _addGroup,  true );//show);
   setToolShown( _addGroup, show);
-  setMenuShown( _removeGroup , show);
+  setMenuShown( _removeGroup ,  true );//show);
   setToolShown( _removeGroup , show);  
 }
+
 void HEXABLOCKGUI::showMeshMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showMeshMenus" << show);
-  setMenuShown( _addLaw, show);
+  setMenuShown( _addLaw,  true );//show);
   setToolShown( _addLaw, show);
-  setMenuShown( _removeLaw, show);
+  setMenuShown( _removeLaw,  true );//show);
   setToolShown( _removeLaw, show);
+  setMenuShown( _setPropagation,  true );//show);
+  setToolShown( _setPropagation, show);
 }
 
 
@@ -922,6 +933,14 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
       _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
       _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
       _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+
+      _treeViewDelegate->setDocumentModel( _currentModel );
+      _treeViewDelegate->setPatternDataSelectionModel( _patternDataSelectionModel );
+      _treeViewDelegate->setPatternBuilderSelectionModel( _patternBuilderSelectionModel );
+      _treeViewDelegate->setGroupSelectionModel( _groupsTreeView->selectionModel() );
+      _treeViewDelegate->setMeshSelectionModel( _meshTreeView->selectionModel() );
+
     }
 //     showEditionMenus(true);
   } else {
@@ -1142,6 +1161,14 @@ void HEXABLOCKGUI::newDocument()
 //   _meshTreeView->setSelectionModel(_patternDataSelectionModel);
 
 
+
+  _treeViewDelegate->setDocumentModel( _currentModel );
+  _treeViewDelegate->setPatternDataSelectionModel( _patternDataSelectionModel );
+  _treeViewDelegate->setPatternBuilderSelectionModel( _patternBuilderSelectionModel );
+  _treeViewDelegate->setGroupSelectionModel( _groupsTreeView->selectionModel() );
+  _treeViewDelegate->setMeshSelectionModel( _meshTreeView->selectionModel() );
+
+
 //   //CS_TEST
 //   // ----------
 //   QStandardItem *parentItem = _currentModel->invisibleRootItem();
@@ -1227,7 +1254,12 @@ void HEXABLOCKGUI::addEdge()
     diag->setPatternDataSelectionModel(_patternDataSelectionModel);
     diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
     _dwInputPanel->setWidget(diag);
-    //   diag->show();
+//     _patternDataTreeView->setFocusPolicy(Qt::NoFocus);
+//     _patternDataTreeView->setFocusProxy(diag);
+    diag->show();
+//     diag->raise();
+//     diag->activateWindow();
+//     diag->exec();
 }
 
 
@@ -1261,8 +1293,11 @@ void HEXABLOCKGUI::addVector()
 
   VectorDialog* diag = new VectorDialog(_dwInputPanel);
   diag->setDocumentModel( _currentModel );
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   _dwInputPanel->setWidget(diag);
+//   diag->raise();
+//   diag->activateWindow();
   //   diag->show();
 }
 
@@ -1510,9 +1545,12 @@ void HEXABLOCKGUI::addLaw()
 {
   if (!_dwInputPanel) return;
 
+  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+
   LawDialog* diag = new LawDialog(_dwInputPanel);
 
   diag->setDocumentModel(_currentModel);
+  diag->setMeshSelectionModel(meshSelectionModel);
   _dwInputPanel->setWidget(diag);
 }
 
@@ -1542,6 +1580,34 @@ void HEXABLOCKGUI::removeLaw()
   }
 
 }
+
+
+
+void HEXABLOCKGUI::setPropagation()
+{
+  if (!_dwInputPanel) return;
+
+  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+  QModelIndexList l = meshSelectionModel->selectedIndexes();
+  foreach( const QModelIndex& selected, l ){
+    if ( selected.data(HEXA_TREE_ROLE) == PROPAGATION_TREE ){
+      QModelIndex selected = _meshModel->mapToSource( selected );
+      Q_ASSERT(selected.isValid());
+      HEXA_NS::Propagation* p = selected.data(HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
+      PropagationDialog* diag = new PropagationDialog(_dwInputPanel);
+      diag->setDocumentModel(_currentModel);
+      diag->setMeshSelectionModel(meshSelectionModel);
+      diag->setValue(p);
+      _dwInputPanel->setWidget(diag);
+      return;
+    }
+  }
+
+  SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "PLEASE SELECT A PROPAGATION" ) );
+}
+
+
+
 
 
 LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()

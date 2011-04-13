@@ -317,6 +317,7 @@ void DocumentModel::fillMesh()
     p = _hexaDocument->getPropagation(i);
     std::cout<<"getPropagation => "<< i << std::endl;
     pItem = new PropagationItem(p);
+    pItem->setText(QString("Propagation%1").arg(i) );
     _propagationDirItem->appendRow(pItem);
   }
 
@@ -428,6 +429,7 @@ void DocumentModel::allowVertexSelectionOnly()
     _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
+//     emit layoutChanged();
 }
 
 void DocumentModel::allowEdgeSelectionOnly()
@@ -600,6 +602,27 @@ void DocumentModel::allowCrossElementsSelectionOnly()
 
   _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+}
+
+
+
+
+void DocumentModel::allowLawSelectionOnly()
+{
+  _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _quadItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+
+  _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _crossElementsItemFlags = Qt::ItemFlags( Qt::ItemIsEnabled );
+
+  _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+  _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
@@ -2038,7 +2061,37 @@ bool  DocumentModel::removeLaw( const QModelIndex& ilaw )
   } else if ( r == HERR ){
     ret = false;
   }
+
+  return ret;
 }
+
+
+bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QModelIndex& iLaw, bool way )
+{
+  bool ret = false;
+  HEXA_NS::Propagation* hPropagation = data(iPropagation, HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
+  HEXA_NS::Law* hLaw = data(iLaw, HEXA_DATA_ROLE).value<HEXA_NS::Law *>();
+
+  int r = hPropagation->setLaw( hLaw );
+  hPropagation->setWay( way );
+
+  if ( r == HOK ){
+    ret = true;
+    QString tmp = "/tmp/setPropagation.vtk";
+    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  } else if ( r == HERR ){
+    ret = false;
+  }
+  return ret;
+}
+
+
+
+
+
+
+
+
 
 // 8.3 Boite: éditer une loi  CS_TODO
 // (idem création)
