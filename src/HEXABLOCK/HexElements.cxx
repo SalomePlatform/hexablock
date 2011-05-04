@@ -286,7 +286,7 @@ int Elements::addStrate (Quad* i_quad[], Edge* i_edge[], Vertex* i_node[],
 
    for (int nv=0 ; nv<HV_MAXI ; nv++) i_node  [nv] = e_node [nv];
    for (int ns=0 ; ns<HE_MAXI ; ns++) i_edge  [ns] = e_edge [ns];
-   for (int nq=0 ; nq<HE_MAXI ; nq++) i_quad  [nq] = e_quad [nq];
+   for (int nq=0 ; nq<HQ_MAXI ; nq++) i_quad  [nq] = e_quad [nq];
 
    return HOK;
 }

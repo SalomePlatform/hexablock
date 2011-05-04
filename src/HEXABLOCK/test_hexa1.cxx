@@ -578,14 +578,14 @@ int test_asso_line (int nbargs, cpchar tabargs[])
 
    int ier = doc-> associateOpenedLine (m_start, m_line, 
                                         gstart,  pstart, gline, pend);
-   Display (ier);
+   HexDisplay (ier);
    doc->saveVtk ("asso_line.vtk");
 
   m_line.push_back (c1->getEdgeJ (nr, 0, 0));
    Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
    ier = doc-> associateClosedLine (m_first, m_start, m_line, 
                                         gstart,  pstart, gline);
-   Display (ier);
+   HexDisplay (ier);
    // doc->dump ();
 
    return HOK;

@@ -2,9 +2,9 @@
 // CC++ : interface modele/cascade
 //
 
-// #include <sstream>
-// #include <algorithm>
+#include "HexDocument.hxx"
 
+#ifndef NO_CASCADE
 // CasCade includes
 #include <AIS_Shape.hxx>
 
@@ -39,7 +39,6 @@
 //  #include "SMESHDS_Group.hxx"
 
 // HEXABLOCK includes
-#include "HexDocument.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
@@ -353,3 +352,15 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    return HOK;
 }
 END_NAMESPACE_HEXA
+      
+#else    // #ifndef NO_CASCADE
+
+BEGIN_NAMESPACE_HEXA
+int Document::associateCascade (Edges& mline, int msens[], Shape* gstart, 
+                                Shapes& gline, double pstart, double pend, 
+                                bool closed)
+{
+   return HOK;
+}
+END_NAMESPACE_HEXA
+#endif
