@@ -1,0 +1,24 @@
+:tocdepth: 3
+
+.. _guipropag:
+
+===================================
+Discretize on the propagation edges
+===================================
+
+To define a propagation in the **Main Menu** select **Mesh ->
+Propagation**.
+
+**Arguments:** law + direction
+
+The dialogue box for creating a propagation is:
+
+*todo a revoir : copie d'ecran propagation*
+
+.. image:: _static/gui_propagation.png
+   :align: center
+
+.. centered::
+   Propagation
+
+TUI command: :ref:`tuipropag`
