@@ -10,7 +10,7 @@ Contents:
    general.rst
    interactive.rst
    python.rst
-  
+   full_example_bridle.rst
 
 Indices and tables
 ==================
