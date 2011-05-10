@@ -65,20 +65,20 @@ ALLSPHINXOPTS   = -d doctrees $(PAPEROPT_a4) $(SPHINXOPTS) $(SOURCEDIR)
 
 htm:
 	mkdir -p html doctrees
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) html
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b html $(ALLSPHINXOPTS) html
 	@echo
 	@echo "Build finished. The HTML pages are in html."
 
 latex:
 	mkdir -p latex doctrees
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) latex
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b latex $(ALLSPHINXOPTS) latex
 	@echo
 	@echo "Build finished; the LaTeX files are in latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
 
 pdf:
-	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) pdf
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b pdf $(ALLSPHINXOPTS) pdf
 	@echo
 	@echo "Build finished. The pdf documents are in pdf."
 
@@ -176,4 +176,11 @@ uninstall-local:
 	rm -rf $(DESTDIR)$(hexablockdocdir)/*
 
 clean-local:
+	-rm -rf html latex doctrees
 	if test -d "html"; then rm -rf html ; fi
+
+dist-hook:
+	if test -d "html"; then b=; else b="$(srcdir)/"; fi; \
+	if test -d $$b"html"; then cp -rf $$b"html" $(distdir) ; fi; \
+	if test -d "htmldev"; then b=; else b="$(srcdir)/"; fi; \
+	if test -d $$b"htmldev"; then cp -rf $$b"htmldev" $(distdir) ; fi
