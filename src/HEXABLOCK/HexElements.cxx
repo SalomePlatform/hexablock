@@ -12,6 +12,7 @@
 #include "HexGlobale.hxx"
 
 #include <cmath>
+#include <map>
 
 static bool db=false;
 
@@ -476,6 +477,7 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
                // ---------------- Les sommets + les aretes verticales
 #define Put(e) if (e) { printf ( " ... " #e " = ") ; e->printName("\n"); } \
    else printf ( " ... " #e " = 0x0\n")
+// ============================
 #define Putn(e,n) { printf ( " ... " #e "[%d] = ",n) ; if(e[n]) e[n]->printName("\n"); \
    else printf ( "0x0\n")
 
@@ -711,17 +713,28 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
                                        // 2) Memo noeuds
    vector <Quad*> q_amont;
    vector <Quad*> q_aval;
+   map    <Vertex*, Vertex*> vis_a_vis;
 
    int nbnodes = t_edges.size();
    vector <Vertex*> v_amont (nbnodes);
    vector <Vertex*> v_aval  (nbnodes);
 
+   int nbfaces = 0;
    for (int nro=0; nro<nbnodes ; nro++)
        {
        Edge* arete   = t_edges [nro];
        v_amont [nro] = arete->getAmont ();
        v_aval  [nro] = arete->getAval  ();
-       int nbcells = arete->getNbrParents ();
+       if (db) 
+          {
+          printf (" %3d : Edge = (", nro);
+          v_amont[nro]->printName (", ");
+          v_aval [nro]->printName (")\n");
+          }
+
+       vis_a_vis [v_amont[nro]] = v_aval[nro];
+       vis_a_vis [v_aval[nro]] = v_amont[nro];
+       int nbcells   = arete->getNbrParents ();
 
        for (int nq=0 ; nq<nbcells ; nq++)
            {
@@ -743,11 +756,12 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
  
                      if (db)
                         {
-                        printf (" Quad = ");
+                        printf (" %3d : Quad = ", nbfaces);
                         hexa->printName (", ");
                         printf (" Faces = (");
                         hexa->getQuad (namont)->printName (", ");
                         hexa->getQuad (naval )->printName (")\n");
+                        nbfaces ++;
                         }
                      }
                   }
@@ -798,15 +812,14 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
        }
                    // ------------------- Les aretes horizontales
                    // ------------------- Les faces verticales
+   HexDisplay (nbcells);
    int sizelig = nbcells*QUAD4;
    for (int nro=0; nro<nbcells ; nro++)
        {
        Quad* sol  = q_amont [nro];
        Quad* toit = q_aval  [nro];
-       // Display (nro);
        for (int ns=0; ns<QUAD4 ; ns++)
            {
-           // Display (ns);
            Edge* plinthe = sol->getEdge (ns);
            int   nmur  = nro*QUAD4 + ns;
            int   nmur0 = plinthe->getMark();
@@ -816,39 +829,54 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
                   {
                   tab_edge [nc*sizelig + nmur] = tab_edge [nc*sizelig + nmur0];
                   tab_quad [nc*sizelig + nmur] = tab_quad [nc *sizelig + nmur0];
-                  printf (" quad_vertical [%02d] = ", nc*sizelig + nmur);
-                  printf (" quad_vertical [%02d]\n",  nc*sizelig + nmur0);
-                  printf ("\n");
+                  if (db) 
+                     {
+                     printf (" %2d : %d quad_vertical [%02d] =", nro, ns, 
+				                         nc*sizelig + nmur);
+                     printf (" quad_vertical [%02d]\n",  nc*sizelig + nmur0);
+                     }
                   }
               tab_edge [nbinter*sizelig+nmur] = tab_edge[nbinter*sizelig+nmur0];
               }
            else
               {
               plinthe->setMark (nmur);
-              Vertex* v1  = sol->getVertex (ns);
-              Vertex* v2  = sol->getVertex ((ns+1) MODULO QUAD4);
-              int     nd1 = v1->getMark ();
-              int     nd2 = v2->getMark ();
+              Vertex* vs1 = sol->getVertex (ns);
+              Vertex* vs2 = sol->getVertex ((ns+1) MODULO QUAD4);
+              int     nd1 = vs1->getMark ();
+              int     nd2 = vs2->getMark ();
               Edge*   ed0 = tab_edge [nmur] = plinthe;
-              Edge*   edtoit = toit->getEdge (ns);
+              Edge*   ed2 = NULL;
+              Vertex* v1  = NULL;
+              Vertex* v2  = NULL;
               for (int nc=0 ; nc<nbinter ; nc++)
                   {
                   int   nc1 = nc + 1;
-                  Edge* ed2 = edtoit;
                   if (nc<nbcuts)
                      {
-                     v1  = tab_vertex [nc1*nbnodes + nd1];
-                     v2  = tab_vertex [nc1*nbnodes + nd2];
+                     v1 = tab_vertex [nc1*nbnodes + nd1];
+                     v2 = tab_vertex [nc1*nbnodes + nd2];
                      ed2 = newEdge (v1, v2);
                      }
+                  else
+                     {
+                     v1 = vis_a_vis [vs1];
+                     v2 = vis_a_vis [vs2];
+                     ed2 = toit->findEdge (v1, v2); 
+                     }
+
                   tab_edge [nc1*sizelig + nmur] = ed2;
                   tab_quad [nc *sizelig + nmur] = newQuad (ed0,
                             tab_pilier [nc*nbnodes + nd1], ed2,
                             tab_pilier [nc*nbnodes + nd2]);
                   ed0 = ed2;
-                  printf (" quad_vertical [%02d] = ", nc*sizelig + nmur);
-                  PrintName (tab_quad [nc *sizelig + nmur]);
-                  printf ("\n");
+                  if (db) 
+                     {
+                     printf (" %2d : %d quad_vertical [%02d] = ", nro, ns, 
+                                                         nc*sizelig + nmur);
+                     PrintName (tab_quad [nc *sizelig + nmur]);
+                     printf ("\n");
+                     }
                   }
               }
            }

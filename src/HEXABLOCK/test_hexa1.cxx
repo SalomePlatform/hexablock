@@ -207,6 +207,7 @@ int test_joint (int nbargs, cpchar tabargs[])
        if (ny!=my) 
           liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
 
+   doc->saveVtk ("joint1.vtk");
    const int hauteur = 5;
    Hex::Elements* joint = doc->joinQuads(liste, cible, v1,v2,v3,v4, hauteur);
    // for (int nh=0 ; nh<hauteur ; nh++) joint->getHexa(nh)->setScalar (5);
@@ -226,7 +227,7 @@ int test_joint (int nbargs, cpchar tabargs[])
    for (int nh=0 ; nh<=hauteur ; nh++) 
        joint->getVertex(nh*nbr_surf_vertex)->setScalar (3);
 
-   doc->saveVtk ("joint.vtk");
+   doc->saveVtk ("joint2.vtk");
    return HOK;
 }
 // ======================================================== test_prism
@@ -283,7 +284,7 @@ int test_hexa1 (int nbargs, cpchar tabargs[])
    return HOK;
 }
 // ======================================================== test_decoupage
-int test_decoupage ()
+int test_decoupage (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 1;
@@ -424,9 +425,19 @@ int test_relecture (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.loadDocument ("Essai");
 
+   Hex::Vertex* v4 = doc->findVertex (80.0, 0.0,  0.0);
+   Hex::Vertex* v5 = doc->findVertex (80.0, 0.0, 40.0);
+   Hex::Edge*   e4 = doc->findEdge   (v4, v5);
+
+   HexDump (v4);
+   HexDump (v5);
+   HexDump (e4);
+
+   e4->setScalar (5);
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
 
+   Hex::Elements* grid2 = doc->cut (e4, 2);
    return HOK;
 }
 // ======================================================== test_clone

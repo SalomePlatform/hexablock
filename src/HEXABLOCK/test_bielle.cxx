@@ -19,7 +19,7 @@
 #define DumpElt(x) { printf(" ... "#x " = ") ; if (x) x->dump() ; else printf ("0x\n") ; } 
 
 // ======================================================== test_bielle
-int test_bielle ()
+int test_bielle (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -198,7 +198,7 @@ quad_list = [ quad_11 , quad_12 ]
     //=================================================
     // Assemblage des deux grilles cylindriques
     //=================================================
-    doc->dump();
+    // doc->dump();
     // Hex::Elements* model_biell_fin = 
     doc->joinQuads (quad_list, quad_21, x1, y1, x4, y4, 1);
 
@@ -230,7 +230,8 @@ quad_list = [ quad_11 , quad_12 ]
 
 x_mod_h_g = doc->findVertex( -R , -R , h/2 )
 y_mod_h_g = doc->findVertex( -R , 0 , h/2 )
-z_mod_h_g = doc->findVertex( -R , R , h/2 )
+z_mod_h_g = doc->findVertex( -R , R , h/2 )test_bielle.cxx 
+
 
 u_mod_h_g = doc->findVertex( R , -R , h/2 )
 v_mod_h_g = doc->findVertex( R , 0 , h/2 )

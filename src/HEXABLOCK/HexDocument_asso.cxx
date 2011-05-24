@@ -63,6 +63,22 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
 
    bool closed = vfirst != NULL;
 
+   if (db)
+      {
+      PutName (vfirst);
+      mstart->printName (" = (");
+      mstart->getVertex(V_AMONT)->printName (", ");
+      mstart->getVertex(V_AVAL) ->printName (")\n");
+
+      for (int nro=0 ; nro<nbseg ; nro++)
+          {
+          printf (" %2d : ", nro);
+          mline[nro]->printName(" = (");
+          mline[nro]->getVertex(V_AMONT)->printName(", ");
+          mline[nro]->getVertex(V_AVAL )->printName(")\n ");
+          }
+      }
+
    if (mstart == NULL)
       {
       putError (W_ASSO_LINE4);

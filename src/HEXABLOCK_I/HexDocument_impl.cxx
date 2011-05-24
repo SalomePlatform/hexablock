@@ -40,6 +40,10 @@ void Document_impl::purge() throw (SALOME::SALOME_Exception)
 {
   _document_cpp->purge();
 }
+void Document_impl::dump() throw (SALOME::SALOME_Exception)
+{
+  _document_cpp->dump();
+}
 
 HEXA_NS::Document* Document_impl::GetImpl() throw (SALOME::SALOME_Exception)
 {

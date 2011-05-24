@@ -23,6 +23,7 @@ public:
   HEXA_NS::Document* GetImpl() throw (SALOME::SALOME_Exception);
 
   void purge() throw (SALOME::SALOME_Exception);
+  void dump()  throw (SALOME::SALOME_Exception);
 
   ::CORBA::Long saveVtk(const char* fname) throw (SALOME::SALOME_Exception);
 

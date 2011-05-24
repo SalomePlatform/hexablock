@@ -4,12 +4,14 @@
 #include "Hex.hxx"
 
 #include "HexDocument.hxx"
+#include <clocale>
 
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== Constructeur
 Hex::Hex ()
 {
+   setlocale (LC_NUMERIC, "C");
 }
 // ======================================================== Destructeur
 Hex::~Hex ()
