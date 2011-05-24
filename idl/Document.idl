@@ -40,6 +40,9 @@ module HEXABLOCK_ORB
   {
     void purge()
       raises (SALOME::SALOME_Exception);
+
+    void dump()
+      raises (SALOME::SALOME_Exception);
     /*!
     */
     string getFile()
