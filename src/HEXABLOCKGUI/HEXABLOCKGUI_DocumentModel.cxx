@@ -74,6 +74,7 @@ DocumentModel::DocumentModel(QObject * parent):
   _crossElementsItemFlags( Qt::NoItemFlags )
 {
   QStandardItem *parentItem = invisibleRootItem();
+  parentItem->setData( QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ), HEXA_ENTRY_ROLE );
 
   _vertexDirItem->setData( VERTEX_DIR_TREE,           HEXA_TREE_ROLE );
   _edgeDirItem->setData( EDGE_DIR_TREE,               HEXA_TREE_ROLE );
@@ -128,6 +129,11 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   fillGroups();
   fillMesh();
 
+  tmp = "/tmp/load.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+
+  emit patternDataChanged();
+
   // BUILDER, ASSOCIATION, GROUPS, ... CS_TODO _fillBuilderFrom( _hexaDocument );
 }
 
@@ -136,6 +142,9 @@ void DocumentModel::updateData()
   std::cout<<"DocumentModel::updateData()  begin"<<std::endl;
   clearData();
   fillData();
+  QString tmp = "/tmp/load.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  emit patternDataChanged();
   std::cout<<"DocumentModel::updateData()  end"<<std::endl;
 }
 
@@ -146,7 +155,9 @@ void DocumentModel::clearAll()
   clearAssociation();
   clearGroups();
   clearMesh();
+  //dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight )
   //CS_TODO : todo : association, groups, mesh
+
 }
 
 
@@ -315,7 +326,7 @@ void DocumentModel::fillMesh()
   std::cout<<"countPropagation => "<< _hexaDocument->countPropagation() << std::endl;
   for ( int i=0; i<_hexaDocument->countPropagation(); ++i ){
     p = _hexaDocument->getPropagation(i);
-    std::cout<<"getPropagation => "<< i << std::endl;
+//     std::cout<<"getPropagation => "<< i << std::endl;
     pItem = new PropagationItem(p);
     pItem->setText(QString("Propagation%1").arg(i) );
     _propagationDirItem->appendRow(pItem);
@@ -625,124 +636,6 @@ void DocumentModel::allowLawSelectionOnly()
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
-
-
-
-void DocumentModel::updateView(VertexItem* vItem)
-{
-    std::cout << "DocumentModel::updateView()" << std::endl;
-    // mise à jour du vertex
-    HEXA_NS::Vertex* vertex = vItem->data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex*>();
-    vItem->setData(QVariant::fromValue(vertex), HEXA_DATA_ROLE);
-
-    // recherche des edges associes :
-    if (vertex->hasParents())
-    {
-        // ie : le vertex a servi pour la creation
-        // d'un ou plusieurs edges, etc...
-        ostringstream oss;
-        oss << vertex->getNbrParents();
-        std::cout << "nombre de parents : " << oss.str() << std::endl;
-      
-        for (int ne = 0; ne < vertex->getNbrParents(); ne++)
-        {
-            HEXA_NS::Edge* edge = vertex->getParent(ne);
-
-            char pName[12];
-            QString name = edge->getName(pName);
-            std::cout << "nom edge = " << name.toStdString() << std::endl;
-
-            ostringstream oss1;
-            oss1 << _edgeDirItem->rowCount();
-            std::cout << "nombre d'edges trouves : " << oss1.str() << std::endl;
-
-
-            // mise à jour des edges :
-            QStandardItem* item = NULL;
-            bool item_found = false;
-            int ind = 0;
-            while (!item_found && ind <  _edgeDirItem->rowCount())
-            {
-                item = _edgeDirItem->child(ind, 0);
-                if(item->text() == name)
-                {
-                    item_found = true;
-                    item->setData(QVariant::fromValue(edge), HEXA_DATA_ROLE);
-                }
-                else
-                {
-                    ind++;
-                }
-            }
-
-            // recherche des quads associes
-            if (edge->hasParents())
-            {
-                // les parents sont des quads
-                for (int nq = 0; nq < edge->getNbrParents(); nq++)
-                {
-                    HEXA_NS::Quad* quad = edge->getParent(nq);
-
-                    char pName[12];
-                    QString name = quad->getName(pName);
-                    // mise à jour des quads :
-                    QStandardItem* item = NULL;
-                    bool item_found = false;
-                    int ind = 0;
-                    while (!item_found && ind <  _quadDirItem->rowCount())
-                    {
-                        item = _quadDirItem->child(ind, 0);
-                        if(item->text() == name)
-                        {
-                            item_found = true;
-                            item->setData(QVariant::fromValue(quad), HEXA_DATA_ROLE);
-                        }
-                        else
-                        {
-                            ind++;
-                        }
-                    }
-
-                    if (quad->hasParents())
-                    {
-                        // les parents sont des hexas
-                        for (int nh = 0; nh < quad->getNbrParents(); nh++)
-                        {
-                            HEXA_NS::Hexa* hexa = quad->getParent(nh);
-
-                            char pName[12];
-                            QString name = hexa->getName(pName);
-                            // mise à jour des hexas :
-                            QStandardItem* item = NULL;
-                            bool item_found = false;
-                            int ind = 0;
-                            while (!item_found && ind <  _hexaDirItem->rowCount())
-                            {
-                                item = _hexaDirItem->child(ind, 0);
-                                if(item->text() == name)
-                                {
-                                    item_found = true;
-                                    item->setData(QVariant::fromValue(hexa), HEXA_DATA_ROLE);
-                                }
-                                else
-                                {
-                                    ind++;
-                                }
-                            }
-
-                        }
-                        
-                    }
-
-                }
-            }   
-        }
-    }
-}
-
-
-
-
 
 
 QModelIndex DocumentModel::addVertex( double x, double y, double z )
@@ -2089,6 +1982,11 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
 
 
 
+HEXA_NS::Document* DocumentModel::documentImpl()
+{
+  return _hexaDocument;
+}
+
 
 
 
@@ -2116,10 +2014,19 @@ PatternDataModel::PatternDataModel( QObject * parent ) :
   setFilterRegExp ( QRegExp(dataRegExp) );
 }
 
+
 PatternDataModel::~PatternDataModel()
 {
 }
 
+
+HEXA_NS::Document* PatternDataModel::documentImpl()
+{
+  HEXA_NS::Document* doc = NULL;
+  DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+  doc = m->documentImpl();
+  return doc;
+}
 
 
 Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const

@@ -118,19 +118,19 @@ void sourceSelectionChanged(const QItemSelection& selected, const QItemSelection
     
     Q_Q(KLinkItemSelectionModel);
 #ifdef RANGE_FIX_HACK
-    std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! RANGE_FIX_HACK"<<std::endl;
+//     std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! RANGE_FIX_HACK"<<std::endl;
     QItemSelection _selected = klink_removeInvalidRanges(selected);
     QItemSelection _deselected = klink_removeInvalidRanges(deselected);
 #else
-    std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! "<<std::endl;
+//     std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! "<<std::endl;
     QItemSelection _selected = selected;
     QItemSelection _deselected = deselected;
 #endif
     Q_ASSERT(assertSelectionValid(_selected));
     Q_ASSERT(assertSelectionValid(_deselected));
 
-    std::cout << "XXXXXXXXXXXXX  _selected.count() "   << _selected.count() << std::endl;
-    std::cout << "XXXXXXXXXXXXX  _deselected.count() " << _deselected.count() << std::endl;
+//     std::cout << "XXXXXXXXXXXXX  _selected.count() "   << _selected.count() << std::endl;
+//     std::cout << "XXXXXXXXXXXXX  _deselected.count() " << _deselected.count() << std::endl;
 
     const QItemSelection mappedDeselection = m_indexMapper->mapSelectionRightToLeft(_deselected);
     const QItemSelection mappedSelection   = m_indexMapper->mapSelectionRightToLeft(_selected);
@@ -138,8 +138,8 @@ void sourceSelectionChanged(const QItemSelection& selected, const QItemSelection
 //     const QItemSelection mappedDeselection = _deselected;
 //     const QItemSelection mappedSelection   = _selected;
 
-    std::cout << "XXXXXXXXXXXXX  mappedSelection.count() "   << mappedSelection.count() << std::endl;
-    std::cout << "XXXXXXXXXXXXX  mappedDeselection.count() " << mappedDeselection.count() << std::endl;
+//     std::cout << "XXXXXXXXXXXXX  mappedSelection.count() "   << mappedSelection.count() << std::endl;
+//     std::cout << "XXXXXXXXXXXXX  mappedDeselection.count() " << mappedDeselection.count() << std::endl;
 
     q->QItemSelectionModel::select(mappedDeselection, QItemSelectionModel::Deselect);
     q->QItemSelectionModel::select(mappedSelection, QItemSelectionModel::Select);

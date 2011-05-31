@@ -31,7 +31,11 @@
 
 #include <OB_Browser.h>
 #include <SalomeApp_Module.h>
+// #include <LightApp_Module.h>
+
 #include <LightApp_SelectionMgr.h>
+#include <LightApp_DataModel.h>
+
 #include <SALOMEconfig.h>
 
 // #include "Resource.hxx"
@@ -59,13 +63,14 @@ namespace HEXABLOCK
 
 }
 
-
+class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
 
 
 
-class HEXABLOCKGUI : public SalomeApp_Module 
+class HEXABLOCKGUI : public SalomeApp_Module
+// class HEXABLOCKGUI : public LightApp_Module
 {
   Q_OBJECT
 
@@ -75,11 +80,13 @@ public:
   HEXABLOCKGUI();
   virtual ~HEXABLOCKGUI();
 
+  static SalomeApp_Study*         activeStudy();
   static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
   static LightApp_SelectionMgr*   selectionMgr();
 
   void initialize( CAM_Application* app);
   void windows( QMap<int, int>& theMap) const;
+//   virtual LightApp_Displayer* displayer();
   virtual QString  engineIOR() const;
 
   virtual void viewManagers(QStringList& list) const;
@@ -172,7 +179,7 @@ private slots:
 
   void setPropagation();
 
-  void printVTK();
+//   void printVTK();
 
 private:
 //   bool eventFilter(QObject *obj, QEvent *event);

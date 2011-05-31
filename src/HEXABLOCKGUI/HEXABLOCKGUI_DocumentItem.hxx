@@ -119,6 +119,7 @@ namespace HEXABLOCK
       HEXA_DATA_ROLE = Qt::UserRole + 1,
       HEXA_TREE_ROLE,
       HEXA_ENTRY_ROLE,
+      HEXA_DOC_ENTRY_ROLE,
     };
 
 // QVariant::UserType

@@ -167,7 +167,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        EdgeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        EdgeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~EdgeDialog();
 
         void setValue(HEXA_NS::Edge* e);
@@ -177,8 +177,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Edge *_value;
@@ -191,7 +191,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        QuadDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        QuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadDialog();
 
         void setValue(HEXA_NS::Quad* v);
@@ -201,8 +201,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Quad    *_value;
@@ -217,7 +217,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        HexaDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        HexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~HexaDialog();
 
         void setValue(HEXA_NS::Hexa* v);
@@ -227,8 +227,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Hexa   *_value;
@@ -242,7 +242,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        VectorDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        VectorDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~VectorDialog();
 
         void setValue(HEXA_NS::Vector* v);
@@ -251,8 +251,8 @@ namespace HEXABLOCK
       public slots:
         virtual void accept();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Vector *_value;
@@ -266,7 +266,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        CylinderDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        CylinderDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~CylinderDialog();
 
         void setValue( HEXA_NS::Cylinder* v );
@@ -276,8 +276,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Cylinder   *_value;
@@ -291,7 +291,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        PipeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        PipeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PipeDialog();
 
         void setValue( HEXA_NS::Pipe* p );
@@ -301,8 +301,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private:
         HEXA_NS::Pipe   *_value;
@@ -317,15 +317,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakeGridDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakeGridDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeGridDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -337,15 +337,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakeCylinderDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakeCylinderDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeCylinderDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
   };
 
@@ -356,15 +356,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakePipeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakePipeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakePipeDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -374,15 +374,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakeCylindersDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakeCylindersDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeCylindersDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -392,15 +392,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakePipesDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakePipesDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakePipesDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -411,15 +411,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        RemoveHexaDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        RemoveHexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~RemoveHexaDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
   };
 
@@ -430,7 +430,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        PrismQuadDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        PrismQuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PrismQuadDialog();
 
       public slots:
@@ -439,7 +439,7 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-        virtual void showEvent ( QShowEvent * event );
+//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -454,7 +454,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        JoinQuadDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        JoinQuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~JoinQuadDialog();
 
       public slots:
@@ -463,7 +463,7 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-        virtual void showEvent ( QShowEvent * event );
+//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -479,15 +479,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MergeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MergeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MergeDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
    };
 
@@ -499,15 +499,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        DisconnectDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        DisconnectDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~DisconnectDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
    };
 
@@ -519,15 +519,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        CutEdgeDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        CutEdgeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~CutEdgeDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -537,15 +537,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakeTransformationDialog ( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakeTransformationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeTransformationDialog ();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -555,15 +555,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        MakeSymmetryDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        MakeSymmetryDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeSymmetryDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -575,15 +575,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        PerformTransformationDialog ( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        PerformTransformationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PerformTransformationDialog ();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -593,15 +593,15 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        PerformSymmetryDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        PerformSymmetryDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PerformSymmetryDialog();
 
       public slots:
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -620,7 +620,7 @@ namespace HEXABLOCK
       QMap<DocumentModel::Group, QString> strKind;
 
       public:
-        GroupDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        GroupDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~GroupDialog();
 
         void setValue(HEXA_NS::Group* v);
@@ -633,8 +633,8 @@ namespace HEXABLOCK
 //       protected:
 //         virtual bool eventFilter(QObject *obj, QEvent *event);
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addEltBase();
@@ -656,7 +656,7 @@ namespace HEXABLOCK
       QMap<DocumentModel::KindLaw, QString> strKind;
 
       public:
-        LawDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        LawDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~LawDialog();
 
         void setValue(HEXA_NS::Law* v);
@@ -682,7 +682,7 @@ namespace HEXABLOCK
       Q_OBJECT
 
       public:
-        PropagationDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        PropagationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PropagationDialog();
 
         void setValue(HEXA_NS::Propagation* v);
@@ -692,8 +692,8 @@ namespace HEXABLOCK
         virtual void accept();
         virtual void reject();
 
-      protected:
-        virtual void showEvent ( QShowEvent * event );
+//       protected:
+//         virtual void showEvent ( QShowEvent * event );
   
       private:
         HEXA_NS::Propagation *_value;

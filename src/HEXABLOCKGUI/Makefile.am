@@ -48,10 +48,12 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_Trace.cxx \
     HEXABLOCKGUI_Resource.hxx \
     HEXABLOCKGUI_Resource.cxx \
-    HEXABLOCKGUI_Model.hxx \
-    HEXABLOCKGUI_Model.cxx \
-    HEXABLOCKGUI_Displayer.hxx \
-    HEXABLOCKGUI_Displayer.cxx \
+    HEXABLOCKGUI_Data.hxx \
+    HEXABLOCKGUI_Data.cxx \
+    HEXABLOCKGUI_DataObject.hxx \
+    HEXABLOCKGUI_DataObject.cxx \
+    HEXABLOCKGUI_DataModel.hxx \
+    HEXABLOCKGUI_DataModel.cxx \
     HEXABLOCKGUI_DocumentGraphicView.hxx \
     HEXABLOCKGUI_DocumentGraphicView.cxx \
     HEXABLOCKGUI_DocumentModel.hxx \
@@ -105,6 +107,7 @@ MOC_FILES = \
     HEXABLOCKGUI_DocumentPanel_moc.cxx \
     HEXABLOCKGUI_DocumentDelegate_moc.cxx \
     HEXABLOCKGUI_DocumentSelectionModel_moc.cxx \
+    HEXABLOCKGUI_DocumentModel_moc.cxx \
     kmodelindexproxymapper_moc.cxx \
     klinkitemselectionmodel_moc.cxx
 
@@ -129,31 +132,6 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(qsci4_cppflags)
 
 
-# libGenericGui_la_CXXFLAGS  = \
-# 	$(qt4_cppflags) \
-# 	$(qsci4_cppflags) \
-# 	$(THREAD_DEF) \
-# 	$(PYTHON_CPPFLAGS) \
-# 	$(EXPAT_INCLUDES) \
-# 	$(GRAPHVIZ_CPPFLAGS) \
-# 	$(OMNIORB_CXXFLAGS) \
-# 	$(OMNIORB_INCLUDES) \
-# 	$(LIBXML_INCLUDES) \
-# 	$(EXPAT_INCLUDES) \
-# 	-I$(KERNEL_ROOT_DIR)/include/salome \
-# 	-I. \
-# 	-I$(srcdir) \
-# 	-I$(srcdir)/../bases \
-# 	-I$(srcdir)/../engine \
-# 	-I$(srcdir)/../runtime \
-# 	-I$(srcdir)/../yacsloader \
-# 	-I$(srcdir)/../hmi \
-# 	-I$(srcdir)/../salomewrap \
-# 	-I../../idl \
-# 	-I../yacsorb 
-
-
-
 libHEXABLOCK_la_LDFLAGS  = \
 	../../idl/libSalomeIDLHEXABLOCK.la \
 	../HEXABLOCK_I/libHEXABLOCKEngine.la \
@@ -169,15 +147,7 @@ libHEXABLOCK_la_LIBADD  = \
 	$(qt4_libs) $(qsci4_libs) \
 	-lSalomeApp
 
-# libGenericGui_la_LIBADD    = $(qt4_libs) $(qsci4_libs)\
-# 	../salomewrap/libSalomeWrap.la \
-# 	$(KERNEL_LDFLAGS) -lSalomeResourcesManager \
-# 	$(EXPAT_LIBS) $(LIBXML_LIBS) $(GRAPHVIZ_LIBADD)
-
 BUILT_SOURCES = $(UIC_FILES)
-
-
-
 
 # resources files
 ICONS =  \

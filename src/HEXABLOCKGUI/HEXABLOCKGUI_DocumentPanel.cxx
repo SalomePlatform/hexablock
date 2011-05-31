@@ -50,9 +50,9 @@ void HexaBaseDialog::_setAllSelection()
     _documentModel->allowAllSelection();
   }
 
-  if ( _patternDataSelectionModel ){
-    //CS_TODO?
-  }
+//   if ( _patternDataSelectionModel ){
+//     //CS_TODO?
+//   }
 
 }
 
@@ -64,10 +64,15 @@ void HexaBaseDialog::_setHexaSelectionOnly()
     _documentModel->allowHexaSelectionOnly();
   }
 
-//   if ( _patternDataSelectionModel ){ CS_TODO
-//     _patternDataSelectionModel->SetSelectionMode(HexaSelection);
-// const Selection_Mode VolumeSelection = 5; 
-// const Selection_Mode ActorSelection = 6;
+//   if ( _patternDataSelectionModel ){ //CS_TODO
+// //     _patternDataSelectionModel->clearFilters();
+//     std::cout << "_setHexaSelectionOnly "<< std::endl;
+// //     _patternDataSelectionModel->SetSelectionMode(ActorSelection);
+//     _patternDataSelectionModel->SetSelectionMode(VolumeSelection);
+// //     _patternDataSelectionModel->SetSelectionMode(CellSelection);
+// 
+// // const Selection_Mode VolumeSelection = 5; 
+// // const Selection_Mode ActorSelection = 6;
 //   }
 
 }
@@ -83,9 +88,9 @@ void HexaBaseDialog::_setQuadSelectionOnly()
     _documentModel->allowQuadSelectionOnly();
   }
 
-  if ( _patternDataSelectionModel ){
-    _patternDataSelectionModel->SetSelectionMode(FaceSelection);
-  }
+//   if ( _patternDataSelectionModel ){
+//     _patternDataSelectionModel->SetSelectionMode(FaceSelection);
+//   }
 }
 
 void HexaBaseDialog::_setEdgeSelectionOnly()
@@ -96,16 +101,16 @@ void HexaBaseDialog::_setEdgeSelectionOnly()
     _documentModel->allowEdgeSelectionOnly();
   }
 
-  if ( _patternDataSelectionModel ){
-    _patternDataSelectionModel->SetSelectionMode(EdgeSelection);
-//  NodeSelection,
-//  CellSelection,
-//  EdgeOfCellSelection,
-//  EdgeSelection,
-//  FaceSelection,
-//  VolumeSelection,
-//  ActorSelection };
-  }
+//   if ( _patternDataSelectionModel ){
+//     _patternDataSelectionModel->SetSelectionMode(EdgeSelection);
+// //  NodeSelection,
+// //  CellSelection,
+// //  EdgeOfCellSelection,
+// //  EdgeSelection,
+// //  FaceSelection,
+// //  VolumeSelection,
+// //  ActorSelection };
+//   }
 }
 
 
@@ -117,9 +122,9 @@ void HexaBaseDialog::_setVertexSelectionOnly()
     _documentModel->allowVertexSelectionOnly();
   }
 
-  if ( _patternDataSelectionModel ){
-    _patternDataSelectionModel->SetSelectionMode(NodeSelection);
-  }
+//   if ( _patternDataSelectionModel ){
+//     _patternDataSelectionModel->SetSelectionMode(NodeSelection);
+//   }
 }
 
 void HexaBaseDialog::_setElementsSelectionOnly()
@@ -179,7 +184,7 @@ void HexaBaseDialog::_setLawSelectionOnly()
 
 void HexaBaseDialog::setDocumentModel(DocumentModel* m)
 {
-  std::cout << "setDocumentModel() setDocumentModel() setDocumentModel() "<< std::endl;
+//   std::cout << "setDocumentModel() setDocumentModel() setDocumentModel() "<< std::endl;
   _documentModel = m;
 }
 
@@ -291,7 +296,7 @@ void HexaBaseDialog::onMeshSelectionChanged( const QItemSelection& sel, const QI
 
 bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
 {
-    std::cout << "HexaBaseDialog::eventFilter " <<std::endl;
+//     std::cout << "HexaBaseDialog::eventFilter " <<std::endl;
     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
         QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(obj);
         if ( lineEdit ){
@@ -331,7 +336,6 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
   _value(0)
 {
   setupUi( this );
-
 //   installEventFilter();
 }
 
@@ -355,57 +359,6 @@ HEXA_NS::Vertex* VertexDialog::getValue()
   return _value;
 }
 
-
-// void VertexDialog::accept()
-// {
-//     if (_value)
-//     { //EDITION MODE     //CS_BP vérifier que setModelData, getValue appelé
-//       std::cout<<"edit vertex!! edit vertex!! edit vertex!!"<<std::endl;
-//         _value->setX( x_spb->value() );
-//         _value->setY( y_spb->value() );
-//         _value->setZ( z_spb->value() );
-//         // mise a jour de la vue :
-//         // pourquoi on a un pointeur ver le modele (HexVertex)
-//         // et pas vers l'index ??? 
-//         // plantage ici ???
-//         if (_patternDataSelectionModel != NULL)
-//         {
-//             std::cout << "accept() : OK" << std::endl;
-// 
-//             if (_patternDataModel != NULL)
-//             {
-//                 std::cout << "accept() : _model != NULL" << std::endl;
-//                 _patternDataModel->updateVertex( _patternDataSelectionModel->currentIndex() );
-//                 std::cout << "accept() 2 : _model != NULL" << std::endl;
-//             }
-//             else
-//             {
-//                 std::cout << "accept() : _model NULL" << std::endl;
-//             }
-//         }
-//         else
-//         {
-//             std::cout << "accept() : NOT OK" << std::endl;
-// 
-//         }
-//         // ????
-// 
-//     }
-//     else if ( _patternDataModel )
-//     { 
-//       //NEW MODE
-// //     std::cout<<"add vertex!! add vertex!! add vertex!! add vertex!!"<<std::endl;
-//         QModelIndex newIndex = _patternDataModel->addVertex( x_spb->value(), y_spb->value(),  z_spb->value() );
-// 
-//         _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
-//         _patternDataSelectionModel->select( newIndex, 
-//                                             QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
-//         _patternDataSelectionModel->setCurrentIndex ( newIndex, 
-//                                                       QItemSelectionModel::Current  );
-//     }
-// 
-//     QDialog::accept();
-// }
 
 
 void VertexDialog::accept()
@@ -438,7 +391,7 @@ void VertexDialog::accept()
         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VERTEX" ) );
       }
     }
-    
+
 }
 
 
@@ -447,20 +400,33 @@ void VertexDialog::accept()
 
 
 // ------------------------- EDGE ----------------------------------
-EdgeDialog::EdgeDialog( QWidget* parent, Qt::WindowFlags f ):
+EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
+//   _currentObj(0)
 {
   setupUi( this );
 
   _vertexLineEdits << vex_le_rb1 << v0_le_rb0 << v1_le_rb0;
   _vectorLineEdits << vec_le_rb1;
+  
+  if  ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    // select first Vertex
+//     _currentObj = v0_le_rb0;
+    v0_le_rb0->setFocus();
+  } else {
+    buttonBox->clear();
+    rb1->hide();
+    v0_le_rb0->setReadOnly(true);
+    v1_le_rb0->setReadOnly(true);
+  }
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-
+  // Default 
+  rb0->click();
 //   setFocusPolicy(Qt::NoFocus);
 //   setFocusProxy( v0_le_rb0 );
 }
@@ -470,16 +436,15 @@ EdgeDialog::~EdgeDialog()
 {
 }
 
-void EdgeDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  rb0->click();
-  // select first Vertex
-  _currentObj = v0_le_rb0;
-  v0_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
-
+// void EdgeDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   rb0->click();
+//   // select first Vertex
+//   _currentObj = v0_le_rb0;
+//   v0_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 void EdgeDialog::setValue(HEXA_NS::Edge* e)
 {
@@ -491,12 +456,12 @@ void EdgeDialog::setValue(HEXA_NS::Edge* e)
   v0_le_rb0->setText( v0->getName(pName) );
   v1_le_rb0->setText( v1->getName(pName) );
 
-  _value = e;
+//   buttonBox->clear();
+//   rb1->hide();
+//   v0_le_rb0->setReadOnly(true);
+//   v1_le_rb0->setReadOnly(true);
 
-  buttonBox->clear();
-  rb1->hide();
-  v0_le_rb0->setReadOnly(true);
-  v1_le_rb0->setReadOnly(true);
+  _value = e;
 }
 
 
@@ -561,7 +526,7 @@ void EdgeDialog::reject()
 
 
 // ------------------------- QUAD ----------------------------------
-QuadDialog::QuadDialog( QWidget* parent, Qt::WindowFlags f ):
+QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
@@ -570,11 +535,31 @@ QuadDialog::QuadDialog( QWidget* parent, Qt::WindowFlags f ):
   _vertexLineEdits << v0_le_rb0 << v1_le_rb0 << v2_le_rb0 << v3_le_rb0;
   _edgeLineEdits   << e0_le_rb1 << e1_le_rb1 << e2_le_rb1 << e3_le_rb1;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _edgeLineEdits)
-    le->installEventFilter(this);
 
+  if  ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _edgeLineEdits)
+      le->installEventFilter(this);
+    // select first Vertex
+//     _currentObj = v0_le_rb0;
+    v0_le_rb0->setFocus();
+  } else {
+    v0_le_rb0->setReadOnly(true);
+    v1_le_rb0->setReadOnly(true);
+    v2_le_rb0->setReadOnly(true);
+    v3_le_rb0->setReadOnly(true);
+
+    e0_le_rb1->setReadOnly(true);
+    e1_le_rb1->setReadOnly(true);
+    e2_le_rb1->setReadOnly(true);
+    e3_le_rb1->setReadOnly(true);
+
+    buttonBox->clear();
+  }
+
+  // Default 
+  rb0->click();
 }
 
 
@@ -583,15 +568,15 @@ QuadDialog::~QuadDialog()
 }
 
 
-void QuadDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  rb0->click();
-  // select first Vertex
-  _currentObj = v0_le_rb0;
-  v0_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void QuadDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   rb0->click();
+//   // select first Vertex
+//   _currentObj = v0_le_rb0;
+//   v0_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -613,10 +598,10 @@ void QuadDialog::setValue(HEXA_NS::Quad* q)
   v1_le_rb0->setText( v1->getName(pName) );
   v2_le_rb0->setText( v2->getName(pName) );
   v3_le_rb0->setText( v3->getName(pName) );
-  v0_le_rb0->setReadOnly(true);
-  v1_le_rb0->setReadOnly(true);
-  v2_le_rb0->setReadOnly(true);
-  v3_le_rb0->setReadOnly(true);
+//   v0_le_rb0->setReadOnly(true);
+//   v1_le_rb0->setReadOnly(true);
+//   v2_le_rb0->setReadOnly(true);
+//   v3_le_rb0->setReadOnly(true);
 
 
   //2) Edges
@@ -632,13 +617,13 @@ void QuadDialog::setValue(HEXA_NS::Quad* q)
   e1_le_rb1->setText( e1->getName(pName) );
   e2_le_rb1->setText( e2->getName(pName) );
   e3_le_rb1->setText( e3->getName(pName) );
-  e0_le_rb1->setReadOnly(true);
-  e1_le_rb1->setReadOnly(true);
-  e2_le_rb1->setReadOnly(true);
-  e3_le_rb1->setReadOnly(true);
+//   e0_le_rb1->setReadOnly(true);
+//   e1_le_rb1->setReadOnly(true);
+//   e2_le_rb1->setReadOnly(true);
+//   e3_le_rb1->setReadOnly(true);
 
-  rb0->click();
-  buttonBox->clear();
+//   rb0->click();
+//   buttonBox->clear();
 
   _value = q;
 
@@ -714,7 +699,7 @@ void QuadDialog::reject()
 
 
 // ------------------------- HEXA ----------------------------------
-HexaDialog::HexaDialog( QWidget* parent, Qt::WindowFlags f ):
+HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
@@ -725,13 +710,25 @@ HexaDialog::HexaDialog( QWidget* parent, Qt::WindowFlags f ):
   _quadLineEdits << q0_le_rb0 << q1_le_rb0 << q2_le_rb0
                  << q3_le_rb0 << q4_le_rb0 << q5_le_rb0;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _quadLineEdits)
-    le->installEventFilter(this);
+  if  ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _quadLineEdits)
+      le->installEventFilter(this);
+//     _currentObj = q0_le_rb0;
+    q0_le_rb0->setFocus();
+  } else {
+    q0_le_rb0->setReadOnly(true);
+    q1_le_rb0->setReadOnly(true);
+    q2_le_rb0->setReadOnly(true);
+    q3_le_rb0->setReadOnly(true);
+    q4_le_rb0->setReadOnly(true);
+    q5_le_rb0->setReadOnly(true);
+    buttonBox->clear();
+  }
 
- 
-
+  // Default 
+  rb0->click();
 }
 
 
@@ -740,15 +737,15 @@ HexaDialog::~HexaDialog()
 
 }
 
-void HexaDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  rb0->click();
-  // select first quad
-  _currentObj = q0_le_rb0;
-  q0_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void HexaDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   rb0->click();
+//   // select first quad
+//   _currentObj = q0_le_rb0;
+//   q0_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void HexaDialog::setValue(HEXA_NS::Hexa* h)
@@ -768,15 +765,35 @@ void HexaDialog::setValue(HEXA_NS::Hexa* h)
   q4_le_rb0->setText( q4->getName(pName) );
   q5_le_rb0->setText( q5->getName(pName) );
 
+
+  HEXA_NS::Vertex* v0 = h->getVertex(0);
+  HEXA_NS::Vertex* v1 = h->getVertex(1);
+  HEXA_NS::Vertex* v2 = h->getVertex(2);
+  HEXA_NS::Vertex* v3 = h->getVertex(3);
+  HEXA_NS::Vertex* v4 = h->getVertex(4);
+  HEXA_NS::Vertex* v5 = h->getVertex(5);
+  HEXA_NS::Vertex* v6 = h->getVertex(6);
+  HEXA_NS::Vertex* v7 = h->getVertex(7);
+
+
+  v0_le_rb1->setText( v0->getName(pName) ); 
+  v1_le_rb1->setText( v1->getName(pName) ); 
+  v2_le_rb1->setText( v2->getName(pName) ); 
+  v3_le_rb1->setText( v3->getName(pName) ); 
+  v4_le_rb1->setText( v4->getName(pName) ); 
+  v5_le_rb1->setText( v5->getName(pName) ); 
+  v6_le_rb1->setText( v6->getName(pName) ); 
+  v7_le_rb1->setText( v7->getName(pName) ); 
+
   _value = h;
 
-  buttonBox->clear();
-  q0_le_rb0->setReadOnly(true);
-  q1_le_rb0->setReadOnly(true);
-  q2_le_rb0->setReadOnly(true);
-  q3_le_rb0->setReadOnly(true);
-  q4_le_rb0->setReadOnly(true);
-  q5_le_rb0->setReadOnly(true);
+//   buttonBox->clear();
+//   q0_le_rb0->setReadOnly(true);
+//   q1_le_rb0->setReadOnly(true);
+//   q2_le_rb0->setReadOnly(true);
+//   q3_le_rb0->setReadOnly(true);
+//   q4_le_rb0->setReadOnly(true);
+//   q5_le_rb0->setReadOnly(true);
 
 }
 
@@ -832,16 +849,29 @@ void HexaDialog::reject()
 
 
 // ------------------------- VECTOR ----------------------------------
-VectorDialog::VectorDialog( QWidget* parent, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f),
+VectorDialog::VectorDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
+  HexaBaseDialog(parent, f),
   _value(0)
 {
   setupUi( this );
 
   _vertexLineEdits << v0_le_rb1 << v1_le_rb1;
 
-  v0_le_rb1->installEventFilter(this);
-  v1_le_rb1->installEventFilter(this);
+  if ( editMode ){
+    v0_le_rb1->installEventFilter(this);
+    v1_le_rb1->installEventFilter(this);
+//     _currentObj = v0_le_rb1;
+    v0_le_rb1->setFocus();
+  } else {
+    rb1->hide();
+    dx_spb_rb0->setReadOnly(true);
+    dy_spb_rb0->setReadOnly(true);
+    dz_spb_rb0->setReadOnly(true);
+    buttonBox->clear();
+  }
+  // Default 
+  rb0->click();
+
 //   setFocusProxy( rb1 );
 //   setFocusProxy( v0_le );
 }
@@ -851,13 +881,13 @@ VectorDialog::~VectorDialog()
 {
 }
 
-void VectorDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  rb0->click();
-//   v0_le_rb1->setFocus();
-  QDialog::showEvent ( event );
-}
+// void VectorDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   rb0->click();
+// //   v0_le_rb1->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void VectorDialog::setValue(HEXA_NS::Vector* v)
@@ -866,11 +896,11 @@ void VectorDialog::setValue(HEXA_NS::Vector* v)
   dy_spb_rb0->setValue( v->getDy() );
   dz_spb_rb0->setValue( v->getDz() );
 
-  buttonBox->clear();
-  rb1->hide();
-  dx_spb_rb0->setReadOnly(true);
-  dy_spb_rb0->setReadOnly(true);
-  dz_spb_rb0->setReadOnly(true);
+//   buttonBox->clear();
+//   rb1->hide();
+//   dx_spb_rb0->setReadOnly(true);
+//   dy_spb_rb0->setReadOnly(true);
+//   dz_spb_rb0->setReadOnly(true);
 
   _value = v;
 }
@@ -960,7 +990,7 @@ void VectorDialog::accept()
 
 
 
-CylinderDialog::CylinderDialog( QWidget* parent, Qt::WindowFlags f )
+CylinderDialog::CylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(0)
 {
@@ -969,23 +999,31 @@ CylinderDialog::CylinderDialog( QWidget* parent, Qt::WindowFlags f )
   _vertexLineEdits << vex_le;
   _vectorLineEdits << vec_le;
 
-  vex_le->installEventFilter(this);
-  vec_le->installEventFilter(this);
+  if ( editMode ){
+    vex_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
+    vex_le->setFocus();
+  } else {
+    vex_le->setReadOnly(true);
+    vec_le->setReadOnly(true);
+    r_spb->setReadOnly(true);
+    h_spb->setReadOnly(true);
+    buttonBox->clear();
+  }
 
-  
 }
 
 CylinderDialog::~CylinderDialog()
 {
 }
 
-void CylinderDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = vex_le;
-  vex_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void CylinderDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = vex_le;
+//   vex_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
@@ -998,15 +1036,16 @@ void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
   double  h = c->getHeight();
 
   vex_le->setText( base->getName(pName) );
-  vex_le->setReadOnly(true);
   vec_le->setText( direction->getName(pName) );
-  vec_le->setReadOnly(true);
   r_spb->setValue(r);
-  r_spb->setReadOnly(true);
   h_spb->setValue(h);
-  h_spb->setReadOnly(true);
 
-  buttonBox->clear();
+//   vex_le->setReadOnly(true);
+//   vec_le->setReadOnly(true);
+//   r_spb->setReadOnly(true);
+//   h_spb->setReadOnly(true);
+//   buttonBox->clear();
+
   _value = c;
 }
 
@@ -1069,7 +1108,7 @@ void CylinderDialog::reject()
 
 
 
-PipeDialog::PipeDialog( QWidget* parent, Qt::WindowFlags f )
+PipeDialog::PipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(0)
 {
@@ -1078,8 +1117,18 @@ PipeDialog::PipeDialog( QWidget* parent, Qt::WindowFlags f )
   _vertexLineEdits << vex_le;
   _vectorLineEdits << vec_le;
 
-  vex_le->installEventFilter(this);
-  vec_le->installEventFilter(this);
+  if ( editMode ){
+    vex_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
+    vex_le->setFocus();
+  } else {
+    vex_le->setReadOnly(true);
+    vec_le->setReadOnly(true);
+    ir_spb->setReadOnly(true);
+    er_spb->setReadOnly(true);
+    h_spb->setReadOnly(true);
+    buttonBox->clear();
+  }
 
 }
 
@@ -1088,13 +1137,13 @@ PipeDialog::~PipeDialog()
 }
 
 
-void PipeDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = vex_le;
-  vex_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void PipeDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = vex_le;
+//   vex_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void PipeDialog::setValue(HEXA_NS::Pipe* p)
@@ -1108,17 +1157,18 @@ void PipeDialog::setValue(HEXA_NS::Pipe* p)
   double  h  = p->getHeight();
 
   vex_le->setText( base->getName(pName) );
-  vex_le->setReadOnly(true);
   vec_le->setText( direction->getName(pName) );
-  vec_le->setReadOnly(true);
   ir_spb->setValue(ir);
-  ir_spb->setReadOnly(true);
   er_spb->setValue(er);
-  er_spb->setReadOnly(true);
   h_spb->setValue(h);
-  h_spb->setReadOnly(true);
 
-  buttonBox->clear();
+//   vex_le->setReadOnly(true);
+//   vec_le->setReadOnly(true);
+//   ir_spb->setReadOnly(true);
+//   er_spb->setReadOnly(true);
+//   h_spb->setReadOnly(true);
+//   buttonBox->clear();
+
   _value = p;
 }
 
@@ -1180,7 +1230,7 @@ void PipeDialog::reject()
 
 // ------------------------- MakeGridDialog ----------------------------------
 //                  ( Cartesian, Cylindrical, Spherical )
-MakeGridDialog::MakeGridDialog( QWidget* parent, Qt::WindowFlags f )
+MakeGridDialog::MakeGridDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -1188,11 +1238,15 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, Qt::WindowFlags f )
   _vertexLineEdits << vex_le_rb0 << vex_le_rb1 << vex_le_rb2;
   _vectorLineEdits << vec_le_rb0 << vec_x_le_rb1 << vec_z_le_rb1 << vec_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    vex_le_rb0->setFocus();
+  }
+  // Default 
+  rb0->click();
 }
 
 
@@ -1201,14 +1255,14 @@ MakeGridDialog::~MakeGridDialog()
 }
 
 
-void MakeGridDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  rb0->click();
-  _currentObj = vex_le_rb0;
-  vex_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakeGridDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   rb0->click();
+//   _currentObj = vex_le_rb0;
+//   vex_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void MakeGridDialog::accept()
@@ -1298,7 +1352,7 @@ void MakeGridDialog::reject()
 
 
 
-MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, Qt::WindowFlags f )
+MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -1306,9 +1360,11 @@ MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, Qt::WindowFlags f )
   _cylinderLineEdits << cyl_le;
   _vectorLineEdits << vec_le;
 
-  cyl_le->installEventFilter(this);
-  vec_le->installEventFilter(this);
-
+  if ( editMode ){
+    cyl_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
+    cyl_le->setFocus();
+  }
  
 }
 
@@ -1316,13 +1372,13 @@ MakeCylinderDialog::~MakeCylinderDialog()
 {
 }
 
-void MakeCylinderDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = cyl_le;
-  cyl_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakeCylinderDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = cyl_le;
+//   cyl_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -1372,28 +1428,31 @@ void MakeCylinderDialog::reject()
 
 
 
-MakePipeDialog::MakePipeDialog( QWidget* parent, Qt::WindowFlags f )
+MakePipeDialog::MakePipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
   _pipeLineEdits << pipe_le;
   _vectorLineEdits << vec_le;
-  pipe_le->installEventFilter(this);
-  vec_le->installEventFilter(this);
 
+  if ( editMode ){
+    pipe_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
+    pipe_le->setFocus();
+  }
 }
 
 MakePipeDialog::~MakePipeDialog()
 {
 }
 
-void MakePipeDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = pipe_le;
-  pipe_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakePipeDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = pipe_le;
+//   pipe_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -1444,16 +1503,18 @@ void MakePipeDialog::reject()
 
 
 
-MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, Qt::WindowFlags f )
+MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
 
   _cylinderLineEdits << cyl1_le << cyl2_le;
 
-  cyl1_le->installEventFilter(this);
-  cyl2_le->installEventFilter(this);
-
+  if ( editMode ){
+    cyl1_le->installEventFilter(this);
+    cyl2_le->installEventFilter(this);
+    cyl1_le->setFocus();
+  }
 
 }
 
@@ -1461,13 +1522,13 @@ MakeCylindersDialog::~MakeCylindersDialog()
 {
 }
 
-void MakeCylindersDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = cyl1_le;
-  cyl1_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakeCylindersDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = cyl1_le;
+//   cyl1_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -1509,26 +1570,32 @@ void MakeCylindersDialog::reject()
 
 
 
-MakePipesDialog::MakePipesDialog( QWidget* parent, Qt::WindowFlags f )
+MakePipesDialog::MakePipesDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
 
   _pipeLineEdits << pipe1_le << pipe2_le;
- 
+
+  if ( editMode ){
+    pipe1_le->installEventFilter(this);
+    pipe2_le->installEventFilter(this);
+    pipe1_le->setFocus();
+  }
+
 }
 
 MakePipesDialog::~MakePipesDialog()
 {
 }
 
-void MakePipesDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = pipe1_le;
-  pipe1_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakePipesDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = pipe1_le;
+//   pipe1_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void MakePipesDialog::accept()
@@ -1570,13 +1637,17 @@ void MakePipesDialog::reject()
 
 
 
-RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, Qt::WindowFlags f )
+RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
 
   _hexaLineEdits << hexa_le;
-  hexa_le->installEventFilter(this); 
+  if ( editMode ){
+    hexa_le->installEventFilter(this); 
+    hexa_le->setFocus();
+  }
+
 }
 
 
@@ -1584,13 +1655,13 @@ RemoveHexaDialog::~RemoveHexaDialog()
 {
 }
 
-void RemoveHexaDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = hexa_le;
-  hexa_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void RemoveHexaDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = hexa_le;
+//   hexa_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void RemoveHexaDialog::accept()
@@ -1631,16 +1702,19 @@ void RemoveHexaDialog::reject()
 
 
 
-PrismQuadDialog::PrismQuadDialog( QWidget* parent, Qt::WindowFlags f )
+PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
 
   _vectorLineEdits << vec_le;
-  vec_le->installEventFilter(this);
-  quads_lw->installEventFilter(this);
 
-  
+  if ( editMode ){
+    vec_le->installEventFilter(this);
+    quads_lw->installEventFilter(this);
+    quads_lw->setFocus();
+  }
+
 
   connect(add_pb, SIGNAL(clicked()), this, SLOT(addQuad()));
   connect(remove_pb, SIGNAL(clicked()), this, SLOT(removeQuad()));
@@ -1652,13 +1726,13 @@ PrismQuadDialog::~PrismQuadDialog()
 {
 }
 
-void PrismQuadDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  _currentObj = quads_lw;
-  quads_lw->setFocus();
-  QDialog::showEvent ( event );
-}
+// void PrismQuadDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   _currentObj = quads_lw;
+//   quads_lw->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void PrismQuadDialog::addQuad()
@@ -1797,7 +1871,7 @@ void PrismQuadDialog::reject()
 
 
 //JoinQuadDialog
-JoinQuadDialog::JoinQuadDialog( QWidget* parent, Qt::WindowFlags f )
+JoinQuadDialog::JoinQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -1805,14 +1879,17 @@ JoinQuadDialog::JoinQuadDialog( QWidget* parent, Qt::WindowFlags f )
   _vertexLineEdits << vex0_le << vex1_le << vex2_le << vex3_le;
   _quadLineEdits   << quad_dest_le;
 
-  vex0_le->installEventFilter(this);
-  vex1_le->installEventFilter(this); 
-  vex2_le->installEventFilter(this);
-  vex3_le->installEventFilter(this);
-  quad_dest_le->installEventFilter(this);
-  quads_lw->installEventFilter(this);
+  if ( editMode ){
+    vex0_le->installEventFilter(this);
+    vex1_le->installEventFilter(this); 
+    vex2_le->installEventFilter(this);
+    vex3_le->installEventFilter(this);
+    quad_dest_le->installEventFilter(this);
+    quads_lw->installEventFilter(this);
+    quads_lw->setFocus();
+  }
 
-  _currentObj = quads_lw;
+//   _currentObj = quads_lw;
 
   connect(add_pb, SIGNAL(clicked()), this, SLOT(addQuad()));
   connect(remove_pb, SIGNAL(clicked()), this, SLOT(removeQuad()));
@@ -1824,12 +1901,12 @@ JoinQuadDialog::~JoinQuadDialog()
 {
 }
 
-void JoinQuadDialog::showEvent ( QShowEvent * event )
-{
-  // Default 
-  quads_lw->setFocus();
-  QDialog::showEvent ( event );
-}
+// void JoinQuadDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default 
+//   quads_lw->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void JoinQuadDialog::addQuad()
@@ -1957,7 +2034,7 @@ void JoinQuadDialog::reject()
 
 
 // ------------------------- Merge ----------------------------------
-MergeDialog::MergeDialog( QWidget* parent, Qt::WindowFlags f )
+MergeDialog::MergeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -1968,12 +2045,17 @@ MergeDialog::MergeDialog( QWidget* parent, Qt::WindowFlags f )
   _edgeLineEdits << e0_le_rb1 << e1_le_rb1;
   _quadLineEdits << q0_le_rb2 << q1_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _edgeLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _quadLineEdits)
-    le->installEventFilter(this);
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _edgeLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _quadLineEdits)
+      le->installEventFilter(this);
+    v0_le_rb0->setFocus();
+  }
+  // Default 
+  rb0->click();
 
 }
 
@@ -1983,13 +2065,13 @@ MergeDialog::~MergeDialog()
 }
 
 
-void MergeDialog::showEvent ( QShowEvent * event )
-{
-  // Default : vertex, 1st one
-  rb0->click();
-  v0_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MergeDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : vertex, 1st one
+//   rb0->click();
+//   v0_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -2069,7 +2151,7 @@ void MergeDialog::reject()
 
 
 // ------------------------- Disconnect ----------------------------------
-DisconnectDialog::DisconnectDialog( QWidget* parent, Qt::WindowFlags f )
+DisconnectDialog::DisconnectDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -2079,19 +2161,25 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, Qt::WindowFlags f )
   _quadLineEdits   << q_le_rb2;
   _hexaLineEdits   << h_le_rb0 << h_le_rb1 << h_le_rb2;
 
-  //vertex
-  v_le_rb0->installEventFilter(this);
-  h_le_rb0->installEventFilter(this);
+  if ( editMode ){
+    //vertex
+    v_le_rb0->installEventFilter(this);
+    h_le_rb0->installEventFilter(this);
 
-  //edge
-  e_le_rb1->installEventFilter(this);
-  h_le_rb1->installEventFilter(this);
+    //edge
+    e_le_rb1->installEventFilter(this);
+    h_le_rb1->installEventFilter(this);
 
-  //quad
-  q_le_rb2->installEventFilter(this);
-  h_le_rb2->installEventFilter(this);
+    //quad
+    q_le_rb2->installEventFilter(this);
+    h_le_rb2->installEventFilter(this);
 
- 
+    v_le_rb0->setFocus();
+  }
+
+  // Default
+  rb0->click();
+
 }
 
 
@@ -2100,13 +2188,13 @@ DisconnectDialog::~DisconnectDialog()
 }
 
 
-void DisconnectDialog::showEvent ( QShowEvent * event )
-{
-  // Default : vertex, 1st one
-  rb0->click();
-  v_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void DisconnectDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : vertex, 1st one
+//   rb0->click();
+//   v_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -2177,14 +2265,17 @@ void DisconnectDialog::reject()
 
 
 // ------------------------- CutEdgeDialog ----------------------------------
-CutEdgeDialog::CutEdgeDialog( QWidget* parent, Qt::WindowFlags f ):
+CutEdgeDialog::CutEdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f)
 {
   setupUi( this );
-  _edgeLineEdits   << e_le;
+  _edgeLineEdits << e_le;
 
-  e_le->installEventFilter(this);
-  
+  if ( editMode ){
+    e_le->installEventFilter(this);
+    e_le->setFocus();
+  }
+
 }
 
 
@@ -2192,11 +2283,11 @@ CutEdgeDialog::~CutEdgeDialog()
 {
 }
 
-void CutEdgeDialog::showEvent ( QShowEvent * event )
-{
-  e_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void CutEdgeDialog::showEvent ( QShowEvent * event )
+// {
+//   e_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void CutEdgeDialog::accept()
@@ -2240,7 +2331,7 @@ void CutEdgeDialog::reject()
 
 
 // // ------------------------- MakeTransformationDialog ----------------------------------
-MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, Qt::WindowFlags f )
+MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -2250,14 +2341,17 @@ MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, Qt::WindowF
   _vectorLineEdits << vec_le_rb0 << vec_le_rb2;
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _elementsLineEdits)
-    le->installEventFilter(this);
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _elementsLineEdits)
+      le->installEventFilter(this);
+    elts_le_rb0->setFocus();
+  }
 
-
+  rb0->click();
 }
 
 
@@ -2265,13 +2359,13 @@ MakeTransformationDialog::~MakeTransformationDialog()
 {
 }
 
-void MakeTransformationDialog::showEvent ( QShowEvent * event )
-{
-  // Default : Translation, select elements
-  rb0->click();
-  elts_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakeTransformationDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : Translation, select elements
+//   rb0->click();
+//   elts_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -2341,7 +2435,7 @@ void MakeTransformationDialog::reject()
 
 
 // // ------------------------- MakeSymmetryDialog ----------------------------------
-MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, Qt::WindowFlags f )
+MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -2351,14 +2445,16 @@ MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, Qt::WindowFlags f )
   _vectorLineEdits << vec_le_rb1 << vec_le_rb2;
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _elementsLineEdits)
-    le->installEventFilter(this);
-
-  
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _elementsLineEdits)
+      le->installEventFilter(this);
+    elts_le_rb0->setFocus();
+  }
+  rb0->click();
 }
 
 
@@ -2367,13 +2463,13 @@ MakeSymmetryDialog::~MakeSymmetryDialog()
 }
 
 
-void MakeSymmetryDialog::showEvent ( QShowEvent * event )
-{
-  // Default : Point Symmetry, select elements
-  rb0->click();
-  elts_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void MakeSymmetryDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : Point Symmetry, select elements
+//   rb0->click();
+//   elts_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void MakeSymmetryDialog::accept()
@@ -2442,7 +2538,7 @@ void MakeSymmetryDialog::reject()
 
 
 // // ------------------------- PerformTransformationDialog ----------------------------------
-PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, Qt::WindowFlags f )
+PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -2452,14 +2548,17 @@ PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, Qt::W
   _vectorLineEdits << vec_le_rb0 << vec_le_rb2;
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _elementsLineEdits)
-    le->installEventFilter(this);
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _elementsLineEdits)
+      le->installEventFilter(this);
+    elts_le_rb0->setFocus();
+  }
 
-  
+  rb0->click();
 }
 
 
@@ -2468,13 +2567,13 @@ PerformTransformationDialog::~PerformTransformationDialog()
 }
 
 
-void PerformTransformationDialog::showEvent ( QShowEvent * event )
-{
-  // Default : Translation, select elements
-  rb0->click();
-  elts_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void PerformTransformationDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : Translation, select elements
+//   rb0->click();
+//   elts_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void PerformTransformationDialog::accept()
@@ -2536,7 +2635,7 @@ void PerformTransformationDialog::reject()
 
 
 // // ------------------------- PerformSymmetryDialog ----------------------------------
-PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, Qt::WindowFlags f )
+PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
@@ -2546,14 +2645,19 @@ PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, Qt::WindowFlags f
   _vectorLineEdits << vec_le_rb1 << vec_le_rb2;
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
-  foreach(QLineEdit* le,  _vertexLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _vectorLineEdits)
-    le->installEventFilter(this);
-  foreach(QLineEdit* le,  _elementsLineEdits)
-    le->installEventFilter(this);
+  if ( editMode ){
+    foreach(QLineEdit* le,  _vertexLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _vectorLineEdits)
+      le->installEventFilter(this);
+    foreach(QLineEdit* le,  _elementsLineEdits)
+      le->installEventFilter(this);
+    elts_le_rb0->setFocus();
+  }
 
- 
+  // Default
+  rb0->click();
+
 }
 
 
@@ -2561,13 +2665,13 @@ PerformSymmetryDialog::~PerformSymmetryDialog()
 {
 }
 
-void PerformSymmetryDialog::showEvent ( QShowEvent * event )
-{
-  // Default : Point Symmetry, select elements
-  rb0->click();
-  elts_le_rb0->setFocus();
-  QDialog::showEvent ( event );
-}
+// void PerformSymmetryDialog::showEvent ( QShowEvent * event )
+// {
+//   // Default : Point Symmetry, select elements
+//   rb0->click();
+//   elts_le_rb0->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void PerformSymmetryDialog::accept()
@@ -2635,7 +2739,7 @@ void PerformSymmetryDialog::reject()
 
 
 // ------------------------- GROUP ----------------------------------
-GroupDialog::GroupDialog( QWidget* parent, Qt::WindowFlags f )
+GroupDialog::GroupDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(NULL)
 {
@@ -2653,8 +2757,10 @@ GroupDialog::GroupDialog( QWidget* parent, Qt::WindowFlags f )
   for( iKind = strKind.constBegin(); iKind != strKind.constEnd(); ++iKind )
       kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
 
-  eltBase_lw->installEventFilter(this);
- 
+  if ( editMode ){
+    eltBase_lw->installEventFilter(this);
+    eltBase_lw->setFocus();
+  }
 
   connect(kind_cb,  SIGNAL(activated(int)), this, SLOT(onKindChanged(int)) );
   connect(add_pb, SIGNAL(clicked()), this, SLOT(addEltBase()));
@@ -2669,11 +2775,11 @@ GroupDialog::~GroupDialog()
 }
 
 
-void GroupDialog::showEvent ( QShowEvent * event )
-{
-  eltBase_lw->setFocus();
-  QDialog::showEvent ( event );
-}
+// void GroupDialog::showEvent ( QShowEvent * event )
+// {
+//   eltBase_lw->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 
@@ -2836,7 +2942,7 @@ void GroupDialog::reject()
 
 
 // ------------------------- LAW ----------------------------------
-LawDialog::LawDialog( QWidget* parent, Qt::WindowFlags f )
+LawDialog::LawDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(NULL)
 {
@@ -2924,14 +3030,18 @@ void LawDialog::reject()
 
 
 // ------------------------- PROPAGATION ----------------------------------
-PropagationDialog::PropagationDialog( QWidget* parent, Qt::WindowFlags f )
+PropagationDialog::PropagationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(NULL)
 {
   setupUi( this );
   _lawLineEdits << law_le;
 
-  law_le->installEventFilter(this);
+  if ( editMode ){
+    law_le->installEventFilter(this);
+    law_le->setFocus();
+  } else {
+  }
 }
 
 
@@ -2939,11 +3049,11 @@ PropagationDialog::~PropagationDialog()
 {
 }
 
-void PropagationDialog::showEvent ( QShowEvent * event )
-{
-//   law_le->setFocus();
-  QDialog::showEvent ( event );
-}
+// void PropagationDialog::showEvent ( QShowEvent * event )
+// {
+// //   law_le->setFocus();
+//   QDialog::showEvent ( event );
+// }
 
 
 void PropagationDialog::setValue(HEXA_NS::Propagation* p)

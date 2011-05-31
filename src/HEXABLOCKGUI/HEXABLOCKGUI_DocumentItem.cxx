@@ -39,10 +39,17 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
 {
   char pName[12];
   QString name = _hexaVertex->getName(pName);
+//   QString docEntry = model()->invisibleRootItem()->data(HEXA_ENTRY_ROLE).toString();
+
   setText(name);
 //   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
   setData( VERTEX_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaVertex)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex) ), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+
+
+//   setData( QString("0:1:1:1"), HEXA_DOC_ENTRY_ROLE );
 //   setData( QString("toto"), HEXA_ENTRY_ROLE );
 }
 
@@ -82,7 +89,9 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QString name = _hexaEdge->getName(pName);
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaEdge)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 int EdgeItem::type() const
@@ -122,6 +131,8 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   setText(name);
   setData( QUAD_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 
@@ -163,7 +174,9 @@ HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
   QString name = _hexaHexa->getName(pName);
   setText(name);
   setData( HEXA_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 

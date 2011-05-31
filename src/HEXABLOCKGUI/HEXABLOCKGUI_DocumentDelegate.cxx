@@ -23,10 +23,11 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
     const QStyleOptionViewItem &option,
     const QModelIndex &index) const
 {
-    cout << "CS_BP createEditor createEditor createEditor createEditor"<<endl;
+    cout << "*********************** CS_BP DocumentDelegate::createEditor BEGIN"<<endl;
+    cout << "*********************** parent"<< parent << endl;
+    cout << "*********************** _dw "  << _dw    << endl;
 //     QWidget *editor = 0;
     HexaBaseDialog *editor = 0;
-
     QStandardItem  *item = 0;
     // CS_TODO : simplification?
     const QSortFilterProxyModel *pmodel = dynamic_cast<const QSortFilterProxyModel *>( index.model() );
@@ -43,6 +44,7 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
     }
 
     if ( item ){
+      cout << "*********************** item "<< item->type() << endl;
       switch ( item->type() ){
         case VERTEXITEM : editor = new VertexDialog(parent);   break;
         case EDGEITEM :   editor = new EdgeDialog(parent);     break;
@@ -58,17 +60,20 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
         case PROPAGATIONITEM :    editor = new PropagationDialog(parent); break;
       }
       if ( editor ){
+        cout << "*********************** editor "<<endl;
         if ( _documentModel ) editor->setDocumentModel( _documentModel );
         if ( _patternDataSelectionModel ) editor->setPatternDataSelectionModel( _patternDataSelectionModel );
         if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
         if ( _meshSelectionModel ) editor->setMeshSelectionModel( _meshSelectionModel);
 //         QItemSelectionModel*          _groupsSelectionModel;
         _dw->setWidget(editor);
+//         editor->exec();
       }
     }
 
 //     editor->exec();
 //     editor->show();
+    cout << "*********************** CS_BP DocumentDelegate::createEditor END "<<editor<< endl;
     return editor;
 }
 
@@ -77,7 +82,7 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
 void DocumentDelegate::setEditorData( QWidget *editor,
                                       const QModelIndex &index) const
 {
-    cout << "CS_BP setEditorData setEditorData setEditorData setEditorData "<<endl;
+  cout << "*********************** CS_BP DocumentDelegate::setEditorData BEGIN "<< editor << endl;
     QStandardItem  *item = 0;
     // CS_TODO : simplification?
     const QSortFilterProxyModel *pmodel = dynamic_cast<const QSortFilterProxyModel *>( index.model() );
@@ -94,12 +99,14 @@ void DocumentDelegate::setEditorData( QWidget *editor,
     }
 
     if ( item ){
+      cout << "item " << item->type() << endl;
       switch ( item->type() ){
         case VERTEXITEM : {
 //               HEXA_NS::Vertex *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
               HEXA_NS::Vertex *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
               VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
               vertexEditor->setValue(value);
+//               vertexEditor->exec();
         }
         break;
         case EDGEITEM : {
@@ -160,14 +167,16 @@ void DocumentDelegate::setEditorData( QWidget *editor,
         break;
       }
     }
-
+// editor->show();
+//  editor->exec();
+cout << "*********************** CS_BP DocumentDelegate::setEditorData END"<< editor << endl;
 }
 
 
 void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
                                      const QModelIndex &index) const
 {
-    cout << "CS_BP setModelData setModelData setModelData setModelData "<<endl;
+    cout << "*********************** CS_BP DocumentDelegate::setModelData BEGIN "<< editor << endl;
     QStandardItem  *item = 0;
 
     // CS_TODO : simplification?
@@ -186,6 +195,7 @@ void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
 
 
     if ( item ){
+      cout << "item " << item->type() << endl;
       switch ( item->type() ){
         case VERTEXITEM : {
               VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
@@ -257,14 +267,17 @@ void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
 
       }
     }
+  editor->show();
+  cout << "*********************** CS_BP DocumentDelegate::setModelData END "<< editor << endl;
 }
 
 
 void DocumentDelegate::updateEditorGeometry(QWidget *editor,
     const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
-    cout << "CS_BP updateEditorGeometry"<<endl;
-    editor->setGeometry(option.rect);
+    cout << "CS_BP updateEditorGeometry"<<editor<<endl;
+//     editor->show();
+//     editor->setGeometry(option.rect);
 }
 
 

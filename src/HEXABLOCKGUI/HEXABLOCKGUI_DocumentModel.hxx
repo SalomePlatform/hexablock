@@ -39,6 +39,7 @@ namespace HEXABLOCK
 
     class DocumentModel : public QStandardItemModel
     {
+      Q_OBJECT
       public:
 
         // enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
@@ -269,11 +270,10 @@ namespace HEXABLOCK
 
 
 
-        // ajout JPL
-        // mise a jour graphique d'un vertex et de tous les objets
-        // parents associes :
-        void updateView(VertexItem* vItem);
-        // end JPL
+      HEXA_NS::Document* documentImpl();
+
+      signals:
+        void patternDataChanged();
         
       private:
         HEXA_NS::Document *_hexaDocument;
@@ -333,9 +333,12 @@ namespace HEXABLOCK
 
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
 
-        // ajout JPL
-        void updateVertex(const QModelIndex& i_v);
-        // end JPL
+
+        HEXA_NS::Document* documentImpl();
+
+//         // ajout JPL
+//         void updateVertex(const QModelIndex& i_v);
+//         // end JPL
 
     };
 

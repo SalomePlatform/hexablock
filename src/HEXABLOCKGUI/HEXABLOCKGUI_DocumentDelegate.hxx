@@ -1,6 +1,10 @@
 #ifndef __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 #define __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 
+
+// QEvent * event, QAbstractItemModel 
+
+#include <QEvent>
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
@@ -43,6 +47,32 @@ namespace HEXABLOCK
           void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
           void setGroupSelectionModel( QItemSelectionModel* s );
           void setMeshSelectionModel( QItemSelectionModel* s );
+
+
+//CS_TEST
+// virtual bool 	editorEvent ( QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index ){
+//   std::cout << "editorEvent editorEvent " << event->type() << std::endl;
+// //   std::cout << "Type => "<< event->type() << std::endl;
+//   return QItemDelegate::editorEvent ( event, model, option, index );
+// }
+virtual bool 	eventFilter ( QObject * editor, QEvent * event )
+{
+//   std::cout << "eventFilter  eventFilter " << event->type() << std::endl;
+//   std::cout << std::endl;
+
+ if (event->type() == QEvent::FocusOut) {
+//              QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+//              qDebug() << "Ate key press" << keyEvent->key();
+//              return true;
+return false;
+         } else {
+              return QItemDelegate::eventFilter ( editor, event );
+//              return false;
+         }
+
+  
+}
+//CS_TEST
       
       private:
           QDockWidget *_dw;

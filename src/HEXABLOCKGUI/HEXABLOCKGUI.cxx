@@ -52,6 +52,8 @@
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Module.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_DataModel.h>
+
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -66,7 +68,7 @@
 #include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_Trace.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
-#include "HEXABLOCKGUI_Model.hxx"
+#include "HEXABLOCKGUI_DataModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
@@ -121,6 +123,16 @@ HEXABLOCKGUI::~HEXABLOCKGUI()
 }
 
 
+SalomeApp_Study* HEXABLOCKGUI::activeStudy()
+{
+  SUIT_Application* app = SUIT_Session::session()->activeApplication();
+  if( app )
+    return dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  else
+    return NULL;
+}
+
+
 // Gets an reference to the module's engine
 HEXABLOCK_ORB::HEXABLOCK_Gen_ptr HEXABLOCKGUI::InitHEXABLOCKGen( SalomeApp_Application* app )
 {
@@ -134,6 +146,7 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
 {
   DEBTRACE("HEXABLOCKGUI::initialize");
   SalomeApp_Module::initialize( app );
+//   LightApp_Module::initialize( app );
 
   InitHEXABLOCKGen( dynamic_cast<SalomeApp_Application*>( app ) );
 
@@ -171,7 +184,12 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
   createTools();
   studyActivated();
 
-  if (createSComponent()) updateObjBrowser();
+//   if (createSComponent()) updateObjBrowser();
+
+
+//   SalomeApp_Study* activestudy = activeStudy();
+//   activestudy->addComponent( dataModel() );
+ 
 }
 
 void HEXABLOCKGUI::viewManagers( QStringList& list ) const
@@ -185,6 +203,7 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 {
   DEBTRACE("HEXABLOCKGUI::activateModule");
   bool bOk = SalomeApp_Module::activateModule( theStudy );
+//   bool bOk = LightApp_Module::activateModule( theStudy );
 
   setMenuShown( true );
   setToolShown( true );
@@ -222,6 +241,7 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 //   _studyContextMap[theStudy->id()] = context;
 //   DEBTRACE("_studyContextMap[theStudy] " << theStudy << " " << context);
   return SalomeApp_Module::deactivateModule( theStudy );
+//   return LightApp_Module::deactivateModule( theStudy );
 }
 
 // --- Default windows
@@ -231,13 +251,21 @@ void HEXABLOCKGUI::windows( QMap<int, int>& theMap ) const
   DEBTRACE("HEXABLOCKGUI::windows");
   theMap.clear();
   theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
-//   theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::BottomDockWidgetArea );
+  theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::BottomDockWidgetArea );
 }
+
+// LightApp_Displayer* HEXABLOCKGUI::displayer()
+// {
+//   DEBTRACE("HEXABLOCKGUI::displayer");
+//   return _currentGraphicView;
+// }
+
+
 
 QString  HEXABLOCKGUI::engineIOR() const
 {
   DEBTRACE("HEXABLOCKGUI::engineIOR");
-  return getApp()->defaultEngineIOR();
+//   return getApp()->defaultEngineIOR();
 }
 
 void HEXABLOCKGUI::onDblClick(const QModelIndex& index) //CS_TODO
@@ -317,10 +345,10 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 
 CAM_DataModel* HEXABLOCKGUI::createDataModel()
 {
-  return new HEXABLOCKGUI_Model(this);
+  return new HEXABLOCKGUI_DataModel(this);
 }
 
-bool HEXABLOCKGUI::createSComponent()
+bool HEXABLOCKGUI::createSComponent() //addComponent
 {
   DEBTRACE("HEXABLOCKGUI::createSComponent");
   _PTR(Study)            aStudy = (( SalomeApp_Study* )(getApp()->activeStudy()))->studyDS();
@@ -329,7 +357,6 @@ bool HEXABLOCKGUI::createSComponent()
   _PTR(AttributeName)    aName;
 
   // --- Find or create "HEXABLOCK" SComponent in the study
-
   _PTR(SComponent) aComponent = aStudy->FindComponent("HEXABLOCK");
   if ( !aComponent )
     {
@@ -343,7 +370,7 @@ bool HEXABLOCKGUI::createSComponent()
       aPixmap->SetPixMap("share/salome/resources/hexablock/ModuleHexablock.png");
       
       aBuilder->DefineComponentInstance(aComponent, getApp()->defaultEngineIOR().toStdString());
-
+//       SalomeApp_DataModel::synchronize( aComponent, HEXABLOCKGUI::activeStudy() );
       return true;
     }
   return false;
@@ -413,7 +440,10 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 //   _dialogView->setItemDelegate(_treeViewDelegate);
 //   _dwInputPanel->setWidget(_dialogView);
 //   _dialogView->show();
+//   _dwInputPanel->setWidget(new VertexDialog(aParent));
   _dwInputPanel->raise();
+
+  
 
 
   //2) ************* document data ( Pattern, Association, Mesh ) in treeview representation
@@ -426,6 +456,10 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   _dwPattern->setVisible(false);
   _dwPattern->setWindowTitle("Model");
   _dwPattern->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+
+  
+
+
 //     OB_Browser* o = new OB_Browser;
 //   _patternDataTreeView = o->treeView();//new QTreeView(_dwPattern);
 //   _patternDataTreeView = new OB_Browser;
@@ -627,8 +661,8 @@ void HEXABLOCKGUI::createActions()
                                             tr("Disconnect"),  tr("Disconnect"),
                                             0, aParent, false, this,  SLOT(disconnectElts()) );
 
-  _cutEdge     = createAction( _menuId++, tr("Make a grid"), QIcon("icons:make_grid.png"),
-                                            tr("Make grid"),  tr("Make a grid"),
+  _cutEdge     = createAction( _menuId++, tr("Cut edge"), QIcon("icons:cut_edge.png"),
+                                            tr("Cut edge"),  tr("Cut edge"),
                                             0, aParent, false, this,  SLOT(cutEdge()) );
 
 
@@ -892,7 +926,7 @@ void HEXABLOCKGUI::showMeshMenus(bool show)
   setMenuShown( _addLaw,  true );//show);
   setToolShown( _addLaw, show);
   setMenuShown( _removeLaw,  true );//show);
-  setToolShown( _removeLaw, show);
+  setToolShown( _removeLaw, show);;
   setMenuShown( _setPropagation,  true );//show);
   setToolShown( _setPropagation, show);
 }
@@ -916,10 +950,11 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
       _meshModel->setSourceModel(_currentModel);
   
       // setting model ( in view )
-//       _currentGraphicView->setModel(_patternDataModel);
+      _currentGraphicView->setModel(_patternDataModel);
+      connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
       _patternDataTreeView->setModel(_patternDataModel); //_currentModel
       _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel
-      _associationTreeView->setModel(_associationsModel);
+      _associationTreeView->setModel(_associationsModel);;
       _groupsTreeView->setModel(_groupsModel);
       _meshTreeView->setModel(_meshModel);
 
@@ -927,7 +962,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
       _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
       _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
   
-//       _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
+      _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
       _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
       //_patternDataTreeView->setSelectionMode( QAbstractItemView::MultiSelection );
       _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
@@ -1117,6 +1152,18 @@ void HEXABLOCKGUI::newDocument()
   else
     DEBTRACE("No Central Widget");
 
+
+
+
+
+//    HEXABLOCKGUI_DataModel* dm = dynamic_cast<HEXABLOCKGUI_DataModel*>( dataModel() );
+//    if ( dm ) {
+//       dm->createDocument();
+//       getApp()->updateObjectBrowser();
+//    }
+
+
+
   // --- new Doc Model
   _currentModel     = new DocumentModel(this); //CS_TOCHECK this
 //   _currentModel->setHeaderData(0, Qt::Horizontal, tr("HELLOH0"));
@@ -1138,7 +1185,8 @@ void HEXABLOCKGUI::newDocument()
   _currentGraphicView  = newGraphicView();
 
   // --- setting model
-//   _currentGraphicView->setModel(_patternDataModel);
+  _currentGraphicView->setModel(_patternDataModel);
+connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
   _patternDataTreeView->setModel(_patternDataModel);//_currentModel;
 //   _patternDataTreeView->setModel(_currentModel);//;
   _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel;
@@ -1154,7 +1202,7 @@ void HEXABLOCKGUI::newDocument()
   if (!_patternBuilderSelectionModel)
     _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
 
-//   _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
+  _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
   _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
   _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
 //   _associationTreeView->setSelectionModel(_patternDataSelectionModel);
@@ -1202,6 +1250,15 @@ void HEXABLOCKGUI::newDocument()
 
   _mapViewModel[ _currentGraphicView->get_SUIT_ViewWindow() ] = _currentModel;
 
+
+   HEXABLOCKGUI_DataModel* dm = dynamic_cast<HEXABLOCKGUI_DataModel*>( dataModel() );
+   if ( dm ) {
+      dm->createDocument(_currentModel->documentImpl());
+      getApp()->updateObjectBrowser();
+   }
+
+
+
   showDockWidgets(true);
 }
 
@@ -1229,6 +1286,8 @@ void HEXABLOCKGUI::importDocument( const QString &inFile )
   if (! selectedFile.isEmpty()){
     newDocument();
     _currentModel->load(selectedFile);
+//     _currentGraphicView->loadVTK( "/tmp/load.vtk" ); //CS_TEST
+//     _currentGraphicView->loadVTK( "/export/home/bphetsar/V6_main/lorraine.vtk" ); //CS_TEST
   }
 
 }
@@ -1249,7 +1308,7 @@ void HEXABLOCKGUI::addEdge()
 {
     if (!_dwInputPanel) return;
 
-    EdgeDialog* diag = new EdgeDialog(_dwInputPanel);
+    EdgeDialog* diag = new EdgeDialog(_dwInputPanel, true);
     diag->setDocumentModel( _currentModel );
     diag->setPatternDataSelectionModel(_patternDataSelectionModel);
     diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1267,7 +1326,7 @@ void HEXABLOCKGUI::addQuad()
 {
   if (!_dwInputPanel) return;
 
-  QuadDialog* diag = new QuadDialog(_dwInputPanel);
+  QuadDialog* diag = new QuadDialog(_dwInputPanel, true);
   diag->setDocumentModel( _currentModel );
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   _dwInputPanel->setWidget(diag);
@@ -1279,7 +1338,7 @@ void HEXABLOCKGUI::addHexa()
 {
   if (!_dwInputPanel) return;
 
-  HexaDialog* diag = new HexaDialog(_dwInputPanel);
+  HexaDialog* diag = new HexaDialog(_dwInputPanel, true);
   diag->setDocumentModel( _currentModel );
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   _dwInputPanel->setWidget(diag);
@@ -1291,7 +1350,7 @@ void HEXABLOCKGUI::addVector()
 {
   if (!_dwInputPanel) return;
 
-  VectorDialog* diag = new VectorDialog(_dwInputPanel);
+  VectorDialog* diag = new VectorDialog(_dwInputPanel, true);
   diag->setDocumentModel( _currentModel );
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1304,7 +1363,7 @@ void HEXABLOCKGUI::addVector()
 
 void HEXABLOCKGUI::addCylinder()
 {
-  CylinderDialog* diag = new CylinderDialog(_dwInputPanel);
+  CylinderDialog* diag = new CylinderDialog(_dwInputPanel, true);
   diag->setDocumentModel( _currentModel );
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1314,7 +1373,7 @@ void HEXABLOCKGUI::addCylinder()
 
 void HEXABLOCKGUI::addPipe()
 {
-  PipeDialog* diag = new PipeDialog(_dwInputPanel);
+  PipeDialog* diag = new PipeDialog(_dwInputPanel, true);
   diag->setDocumentModel( _currentModel );
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1326,7 +1385,7 @@ void HEXABLOCKGUI::makeGrid()
 {
   if (!_dwInputPanel) return;
 
-  MakeGridDialog* diag = new MakeGridDialog(_dwInputPanel);
+  MakeGridDialog* diag = new MakeGridDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1339,7 +1398,7 @@ void HEXABLOCKGUI::makeCylinder()
 {
   if (!_dwInputPanel) return;
 
-  MakeCylinderDialog* diag = new MakeCylinderDialog(_dwInputPanel);
+  MakeCylinderDialog* diag = new MakeCylinderDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1350,7 +1409,7 @@ void HEXABLOCKGUI::makePipe()
 {
   if (!_dwInputPanel) return;
 
-  MakePipeDialog* diag = new MakePipeDialog(_dwInputPanel);
+  MakePipeDialog* diag = new MakePipeDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1361,7 +1420,7 @@ void HEXABLOCKGUI::makeCylinders()
 {
   if (!_dwInputPanel) return;
 
-  MakeCylindersDialog* diag = new MakeCylindersDialog(_dwInputPanel);
+  MakeCylindersDialog* diag = new MakeCylindersDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1372,7 +1431,7 @@ void HEXABLOCKGUI::makePipes()
 {
   if (!_dwInputPanel) return;
 
-  MakePipesDialog* diag = new MakePipesDialog(_dwInputPanel);
+  MakePipesDialog* diag = new MakePipesDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1385,7 +1444,7 @@ void HEXABLOCKGUI::removeHexa()
 {
   if (!_dwInputPanel) return;
 
-  RemoveHexaDialog* diag = new RemoveHexaDialog(_dwInputPanel);
+  RemoveHexaDialog* diag = new RemoveHexaDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1397,7 +1456,7 @@ void HEXABLOCKGUI::prismQuad()
 {
  if (!_dwInputPanel) return;
 
-  PrismQuadDialog* diag = new PrismQuadDialog(_dwInputPanel);
+  PrismQuadDialog* diag = new PrismQuadDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1409,7 +1468,7 @@ void HEXABLOCKGUI::joinQuad()
 {
   if (!_dwInputPanel) return;
 
-  JoinQuadDialog* diag = new JoinQuadDialog(_dwInputPanel);
+  JoinQuadDialog* diag = new JoinQuadDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1422,7 +1481,7 @@ void HEXABLOCKGUI::merge()
 {
   if (!_dwInputPanel) return;
 
-  MergeDialog* diag = new MergeDialog(_dwInputPanel);
+  MergeDialog* diag = new MergeDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1434,7 +1493,7 @@ void HEXABLOCKGUI::disconnectElts()
 {
   if (!_dwInputPanel) return;
 
-  DisconnectDialog* diag = new DisconnectDialog(_dwInputPanel);
+  DisconnectDialog* diag = new DisconnectDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1445,7 +1504,7 @@ void HEXABLOCKGUI::cutEdge()
 {
   if (!_dwInputPanel) return;
 
-  CutEdgeDialog* diag = new CutEdgeDialog(_dwInputPanel);
+  CutEdgeDialog* diag = new CutEdgeDialog(_dwInputPanel, true);
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
 //   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
@@ -1457,7 +1516,7 @@ void HEXABLOCKGUI::makeTransformation()
 {
   if (!_dwInputPanel) return;
 
-  MakeTransformationDialog* diag = new MakeTransformationDialog(_dwInputPanel);
+  MakeTransformationDialog* diag = new MakeTransformationDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
 //   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1471,7 +1530,7 @@ void HEXABLOCKGUI::makeSymmetry()
 {
   if (!_dwInputPanel) return;
 
-  MakeSymmetryDialog* diag = new MakeSymmetryDialog(_dwInputPanel);
+  MakeSymmetryDialog* diag = new MakeSymmetryDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1483,7 +1542,7 @@ void HEXABLOCKGUI::performTransformation()
 {
   if (!_dwInputPanel) return;
 
-  PerformTransformationDialog* diag = new PerformTransformationDialog(_dwInputPanel);
+  PerformTransformationDialog* diag = new PerformTransformationDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1495,7 +1554,7 @@ void HEXABLOCKGUI::performSymmetry()
 {
   if (!_dwInputPanel) return;
 
-  PerformSymmetryDialog* diag = new PerformSymmetryDialog(_dwInputPanel);
+  PerformSymmetryDialog* diag = new PerformSymmetryDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
@@ -1508,7 +1567,7 @@ void HEXABLOCKGUI::addGroup()
 {
   if (!_dwInputPanel) return;
 
-  GroupDialog* diag = new GroupDialog(_dwInputPanel);
+  GroupDialog* diag = new GroupDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   _dwInputPanel->setWidget(diag);
@@ -1547,7 +1606,7 @@ void HEXABLOCKGUI::addLaw()
 
   QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
 
-  LawDialog* diag = new LawDialog(_dwInputPanel);
+  LawDialog* diag = new LawDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setMeshSelectionModel(meshSelectionModel);
@@ -1594,7 +1653,7 @@ void HEXABLOCKGUI::setPropagation()
       QModelIndex selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
       HEXA_NS::Propagation* p = selected.data(HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
-      PropagationDialog* diag = new PropagationDialog(_dwInputPanel);
+      PropagationDialog* diag = new PropagationDialog(_dwInputPanel, true);
       diag->setDocumentModel(_currentModel);
       diag->setMeshSelectionModel(meshSelectionModel);
       diag->setValue(p);

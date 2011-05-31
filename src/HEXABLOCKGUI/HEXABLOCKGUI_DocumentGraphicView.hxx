@@ -21,8 +21,18 @@
 #define _HEXABLOCKGUI_DOCUMENTGRAPHICVIEW_HXX_
 
 
+// SALOME GUI includes
+#include <LightApp_Displayer.h>
 // #include <SVTK_ViewWindow.h>
 #include <SUIT_ViewWindow.h>
+#include <SALOME_Actor.h>
+
+
+
+
+
+
+
 #include <QAbstractItemView>
 #include <QMap>
 
@@ -34,19 +44,24 @@
 #include <HexQuad.hxx>
 #include <HexEdge.hxx>
 #include <HexHexa.hxx>
+#include <HexDocument.hxx>
 
-// ajout JPL
-class LightApp_Displayer;
-class SalomeApp_Application;
+
+// class LightApp_Displayer;
+// class SalomeApp_Application;
+class LightApp_Application;
 class SALOME_Actor;
 
-class vtkLookupTable ;
-class vtkPoints ;
-class vtkCellArray ;
-class vtkFloatArray ;
-class vtkActor ;
-class vtkPolyData;
-// end JPL
+// class vtkLookupTable ;
+// class vtkPoints ;
+// class vtkCellArray ;
+// class vtkFloatArray ;
+// class vtkActor ;
+// class vtkPolyData;
+
+
+class vtkUnstructuredGrid;
+
 
 namespace HEXABLOCK
 {
@@ -54,35 +69,18 @@ namespace HEXABLOCK
     namespace GUI
     {
 
-        class MyVTKLinePlotter
+        class Document_Actor : public SALOME_Actor
         {
-        public:
+          public:
+            Document_Actor(HEXA_NS::Document* doc);
+            virtual ~Document_Actor();
 
-            MyVTKLinePlotter();
+            static std::map<int,vtkIdType>   vtkElemsId;
+            static std::map<vtkIdType, int>  hexaElemsId;
 
-            void SetScalarRange(double minval=0.0, double maxval=1.0);
-            void SetLookupTable(vtkLookupTable* table = 0);
-
-            void SetAllLineWidth(int width = 1);
-            void PlotLine(double m[3], double n[3], double scalar);
-            void PlotLine(double x, double y, double z,
-                          double x2, double y2, double z2, double scalar);
-	
-//            vtkActor* CreateActor(); // call after all lines are
-//            plotted!
-            bool CreateActor(SALOME_Actor* actor); // call after all lines are plotted!
-            vtkPolyData* CreatePolyData(); // call after all lines are plotted!
-        private:
-
-            double m_scalarMin, m_scalarMax ;
-            vtkLookupTable* m_lookupTable ;
-            int m_curPointID ;
-            int m_allLineWidth ;
-
-            vtkPoints* m_points;
-            vtkCellArray* m_lines;
-            vtkFloatArray* m_lineScalars ;
-	
+            vtkUnstructuredGrid* getUnstructuredGrid();
+          private:
+            HEXA_NS::Document* _doc;
         };
 
 
@@ -94,24 +92,31 @@ namespace HEXABLOCK
             Q_OBJECT
 
             public:
-            DocumentGraphicView(SalomeApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent = 0 );
+            DocumentGraphicView( LightApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent = 0 );
             virtual ~DocumentGraphicView();
 
-            SUIT_ViewWindow* get_SUIT_ViewWindow();
 
-            // ajout JPL :
-            virtual LightApp_Displayer* displayer();
-            bool addObject(const QModelIndex& index);
-            bool updateObject(const QModelIndex& index);
+
+
+
+            SUIT_ViewWindow* get_SUIT_ViewWindow();
             static SALOME_Actor* FindActorByEntry(SUIT_ViewWindow *theWindow, const char* theEntry);
-            SALOME_Actor* CreateActor(const QString& entry);
-            void RemoveActor( SUIT_ViewWindow *theWnd, SALOME_Actor* theActor);
-            // end JPL
+
+//             void loadVTK( const QString&  path );
+            void update();//mise à jours de la vue : reconstruction complète
+
+//             bool eventFilter(QObject *obj, QEvent *event);
+//             virtual void setModel ( QAbstractItemModel * model );
 
             QModelIndex indexAt(const QPoint &point) const;
             void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
             QRect visualRect(const QModelIndex &index) const;
 
+//             public:
+//         virtual bool canBeDisplayed( const QString& /*entry*/, const QString& /*viewer_type*/ ) const;
+
+        public slots:
+          void onPatternDatachanged();
 
         protected slots:
           virtual void 	closeEditor ( QWidget * editor, QAbstractItemDelegate::EndEditHint hint );
@@ -133,18 +138,12 @@ namespace HEXABLOCK
             int verticalOffset() const;
             QRegion visualRegionForSelection(const QItemSelection &selection) const;
 
+//         protected:
+//           virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
+
         private:
             SUIT_ViewWindow *_suitView;
-
-            // ajout JPL :
-            LightApp_Displayer*             myDisplayer;
-            SalomeApp_Application* myApp;
-
-            void _buildActor(SALOME_Actor* actor, HEXA_NS::Vertex *v);
-            void _buildActor(SALOME_Actor* actor, HEXA_NS::Edge *v);
-            void _buildActor(SALOME_Actor* actor, HEXA_NS::Quad *v); 
-            void _buildActor(SALOME_Actor* actor, HEXA_NS::Hexa *v); 
-
+            Document_Actor  *_documentActor;
         };
     }
 }
