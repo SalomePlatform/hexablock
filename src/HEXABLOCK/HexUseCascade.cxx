@@ -31,13 +31,6 @@
 #include <gp_Lin.hxx>
 #include <IntCurvesFace_ShapeIntersector.hxx>
 
-// SMESH includes
-//  #include "SMDS_MeshNode.hxx"
-//  #include "SMDS_MeshVolume.hxx"
-//  #include "SMESH_Gen.hxx"
-//  #include "SMESH_MesherHelper.hxx"
-//  #include "SMESHDS_Group.hxx"
-
 // HEXABLOCK includes
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
@@ -47,9 +40,6 @@
 #include "HexShape.hxx"
 #include "HexGroups.hxx"
 #include "HexDiagnostics.hxx"
-
-//  #include "Basics_Utils.hxx"
-//  #include "utilities.h"
 
 #include <list>
 #include <map>
@@ -82,6 +72,37 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 //  static double HEXA_QUAD_WAY = PI/4.; //3.*PI/8.;
 
 BEGIN_NAMESPACE_HEXA
+
+static bool db = true;
+static int nro_xmgr = 0;
+
+typedef vector<double> Dtable;
+
+// ============================================================== incrementer_xmgr
+inline void incrementer_xmgr (int nro=-1)
+{
+   if (nro>=0) 
+      nro_xmgr = 0;
+   else
+      nro_xmgr ++;
+}
+// ============================================================== save_xmgr
+inline void save_xmgr (Dtable& tx, Dtable& ty, Dtable& tz, cpchar radical)
+{
+   char cnro [16];
+   sprintf (cnro, "_%02d.xmgr", nro_xmgr);
+
+   std::string nom = radical;
+   nom += cnro;
+
+   FILE* fic = fopen (nom.c_str (), "w");
+   int nbre = tx.size();
+   for (int np=0 ; np<nbre ; np++)
+       fprintf (fic, "%g %g %g\n", tx[np],  ty[np],  tz[np]);
+
+   fclose (fic);
+}
+
 // ============================================================== distance
 inline double distance (double vx, double vy, double vz)
 {
@@ -136,6 +157,16 @@ double edge_length (double x1, double y1, double z1,
 {
   double lg = carre (x2-x1) + carre (y2-y1) + carre (z2-z1);
   return sqrt (lg);
+}
+// ============================================================== edge_length
+double edge_length (Edge* ed)
+{
+  Vertex* v1 = ed->getVertex (V_AMONT);
+  Vertex* v2 = ed->getVertex (V_AVAL );
+
+  double longueur = edge_length (v1->getX(), v1->getY(), v1->getZ(), 
+                                 v2->getX(), v2->getY(), v2->getZ());
+  return longueur;
 }
 // ====================================================== meme_points
 inline bool meme_points (gp_Pnt& pnt1, gp_Pnt& pnt2)
@@ -218,7 +249,6 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        GCPnts_AbscissaPoint s1 (*curve, deb, curve->FirstParameter());
        GCPnts_AbscissaPoint s2 (*curve, fin, curve->FirstParameter());
 
-
        double u1 = s1.Parameter ();
        double u2 = s2.Parameter ();
 
@@ -241,25 +271,32 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                tabg_point[2*ns+1].Y(), tabg_point[2*ns+1].Z());
        }
                               //   -------- Controle des points (debug)
-   printf (" --------------- Controle des points\n");
-   int nbr=tabg_point.size();
-   bool   first = true;
-   double px1, py1, pz1;
-   double px0, py0, pz0;
-   for (int n1=0 ; n1<nbr ; n1++)
-       for (int n2=n1+1 ; n2<nbr ; n2++)
-           if (meme_points (tabg_point [n1], tabg_point [n2]) )
-              {
-              printf ("tabg_point [%d] == tabg_point [%d] == (%g,%g,%g)\n", 
-                      n1, n2, tabg_point [n1].X(),  tabg_point [n1].Y(), 
-                              tabg_point [n1].Z());
-              }
+
+/*********************************************************************
+   if (db)
+      {
+      printf (" --------------- Controle des points\n");
+      int nbr=tabg_point.size();
+      for (int n1=0 ; n1<nbr ; n1++)
+          for (int n2=n1+1 ; n2<nbr ; n2++)
+              if (meme_points (tabg_point [n1], tabg_point [n2]) )
+                 {
+                 printf ("tabg_point [%d] == tabg_point [%d] == (%g,%g,%g)\n", 
+                         n1, n2, tabg_point [n1].X(),  tabg_point [n1].Y(), 
+                                 tabg_point [n1].Z());
+                 }
+      }
+ ********************************************************************* */
                                     //   -------- Tri des TopoDS_edges
                                     //   -------- memorisation des longueurs
+   Dtable tgx, tgy, tgz;
+   Dtable tmx, tmy, tmz;
+   Dtable tax, tay, taz;
+ 
    double abscisse = tabg_length [0]; 
    shape_absc  [0] = abscisse/lg_lines;
    shape_posit [0] = 0;
-   tabg_orig   [0] = V_AVAL;
+   tabg_orig   [0] = V_AMONT;
 
    int nedge = 0;
    HexDisplay (lg_lines);
@@ -270,6 +307,10 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
           tabg_point [tabg_orig[nedge]].Y(), 
           tabg_point [tabg_orig[nedge]].Z(), 
           tabg_length [nedge], shape_absc [nedge]);
+
+   tgx.push_back (tabg_point [tabg_orig[nedge]].X());
+   tgy.push_back (tabg_point [tabg_orig[nedge]].Y());
+   tgz.push_back (tabg_point [tabg_orig[nedge]].Z());
 
    for (int ns=1 ; ns<nblines ; ns++)
        {
@@ -295,39 +336,41 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                       tabg_point [2*nro + tabg_orig[nro]].Y(), 
                       tabg_point [2*nro + tabg_orig[nro]].Z(), 
                       tabg_length [nro], shape_absc[nro]);
+
+       tgx.push_back (tabg_point [2*nro + tabg_orig[nro]].X());
+       tgy.push_back (tabg_point [2*nro + tabg_orig[nro]].Y());
+       tgz.push_back (tabg_point [2*nro + tabg_orig[nro]].Z());
        }
+
+   incrementer_xmgr  ();
+   save_xmgr (tgx, tgy, tgz, "pts_geom");
 
    vector <double> mod_absc (nbedges);
    double lg_edges = 0;
 
    for (int ned=0 ; ned<nbedges ; ned++)
        {
-       Vertex* v1 = mline[ned]->getVertex(V_AMONT);
-       Vertex* v2 = mline[ned]->getVertex(V_AVAL );
-
-       double longueur = edge_length (v1->getX(), v1->getY(), v1->getZ(), 
-                                      v2->getX(), v2->getY(), v2->getZ());
-       lg_edges += longueur;
+       lg_edges += edge_length (mline[ned]);
        mod_absc [ned] = lg_edges;
        }
 
    printf (" --------------- Ordonnancement des edges\n");
-   double xmoy = 0, ymoy = 0, zmoy = 0;
    char cc1[8], cc2[8];
    for (int ned=0 ; ned<nbedges ; ned++)
        {
        mod_absc [ned] /= lg_edges;
-       Vertex* v1 = mline[ned]->getVertex(V_AMONT);
-       Vertex* v2 = mline[ned]->getVertex(V_AVAL );
+       Vertex* v1 = mline[ned]->getVertex(msens[ned]);
+       Vertex* v2 = mline[ned]->getVertex(1-msens[ned]);
        printf (" %d : (%g %g %g) = (%s.%s)[%d] s=%g\n", ned, 
                 v1->getX(), v1->getY(), v1->getZ(), 
                 v1->getName(cc1), v2->getName(cc2), msens[ned], mod_absc[ned]);
-       xmoy += v1->getX();
-       ymoy += v1->getY();
-       zmoy += v1->getZ();
+
+       tmx.push_back (v1->getX());
+       tmy.push_back (v1->getY());
+       tmz.push_back (v1->getZ());
        }
-   printf ("  Point moyen =   (%g %g %g)\n", xmoy/nbedges, ymoy/nbedges, 
-                                             zmoy/nbedges);
+
+   save_xmgr (tmx, tmy, tmz, "pts_model");
 
    printf (" --------------- Associations \n");
    HexDisplay (nbedges );
@@ -349,18 +392,16 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
    double sm1=0, sm2 = 0;
 
-
    printf ("  ... asso point m=%d,g=%d %s : (%g %g %g) -> (%g %g %g)\n", 
               msens[0], tabg_orig[0], sommet->getName(cc1), ppx, ppy, ppz,
               sommet->getX(), sommet->getY(), sommet->getZ());
 
-   xmoy = sommet->getX ();
-   ymoy = sommet->getY ();
-   zmoy = sommet->getZ ();
+   tax.push_back (sommet->getX());
+   tay.push_back (sommet->getY());
+   taz.push_back (sommet->getZ());
+
    int    nbm = 1;
 
-   PutName (sommet);
-   fflush (stdout);
    for (int ned=0 ; ned<nbedges ; ned++)
        {
        bool point_libre = true;
@@ -370,9 +411,10 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        if (closed && ned==nbedges-1) 
           point_libre = false;
 
-       edge ->clearAssociations ();
-       sm1 = sm2; 
+       edge->clearAssociations ();
+       sm1 = sm2;
        sm2 = mod_absc [ned];
+       sm2 = (ned+1.0) /nbedges;
        double sg1=0, sg2 = 0;
        printf (" edge=%d =[%s,%s] in [%g, %g]\n", ned, orig->getName(cc1),  
                 sommet->getName(cc2), sm1, sm2);
@@ -382,6 +424,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
            int nro  = shape_posit [ns];
            sg1 = sg2;
            sg2 = shape_absc [nro]; 
+           sg2 = (ns+1.0) / (nblines);
            if (sg1 < sm2 && sg2 > sm1)
               {
               edge ->addAssociation (tabg_shape[nro]);
@@ -391,14 +434,13 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
            if (point_libre && sm2 >= sg1 && sm2 <= sg2+HEXA_EPSILON)
               {
               point_libre  = false;
-              double alpha = (sm2-sg1) / (sg2-sg1);
+              double kk = (sm2-sg1) / (sg2-sg1);
               BRepAdaptor_Curve* curve = tabg_curve [nro];
 
-              if (tabg_orig[nro] == V_AMONT)
-                 alpha = tabg_deb [nro] + alpha*tabg_length [nro];
-              else
-                 alpha = tabg_deb [nro] + (1-alpha)*tabg_length [nro];
+              if (tabg_orig[nro] == V_AVAL)
+                 kk = 1-kk;
 
+              double alpha = tabg_deb [nro] + kk*tabg_length [nro];
               GCPnts_AbscissaPoint s1 (*curve, alpha, curve->FirstParameter());
               double u1 = s1.Parameter ();
 
@@ -412,22 +454,27 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
               sommet->setY (pnt_asso.Y());
               sommet->setZ (pnt_asso.Z());
 
+              tax.push_back (sommet->getX());
+              tay.push_back (sommet->getY());
+              taz.push_back (sommet->getZ());
+
               nbm ++;
-              xmoy += pnt_asso.X();
-              ymoy += pnt_asso.Y();
-              zmoy += pnt_asso.Z();
-printf ("  ... asso point m=%d,g=%d %s, alpha=%g : (%g %g %g) -> (%g %g %g)\n", 
-              ned, nro,  sommet->getName(cc1), alpha, ppx, ppy, ppz,
-              sommet->getX(), sommet->getY(), sommet->getZ());
+              printf ("  ... asso point m=%d,g=%d %s k=%g :", 
+                      ned, nro, sommet->getName(cc1), kk);
+
+              printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
+
+              printf ("  ... asso point : orig=%d, deb=%g, lg=%g, alpha=%g\n", 
+              tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
+
+              printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
+                   ppx, ppy, ppz, sommet->getX(), sommet->getY(), sommet->getZ());
               }
            }
        }
 
-   xmoy /= nbm;
-   ymoy /= nbm;
-   zmoy /= nbm;
+   save_xmgr (tax, tay, taz, "pts_asso");
 
-   printf ("  Point moyen =   (%g %g %g)\n", xmoy, ymoy, zmoy);
    cout << "______________________________________________________"
         << " End associateCascade" << endl;
    return HOK;
