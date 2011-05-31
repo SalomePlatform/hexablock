@@ -5,31 +5,10 @@
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
 
-//  #include "HexEltBase.hxx"
-//  #include "HexVertex.hxx"
-//  #include "HexQuad.hxx"
-//  #include "HexHexa.hxx"
-
-//  #include "HexElements.hxx"
-//  #include "HexCrossElements.hxx"
-
-//  #include "HexVector.hxx"
-//  #include "HexCylinder.hxx"
-//  #include "HexPipe.hxx"
-//  #include "HexMatrix.hxx"
-//  #include "HexCloner.hxx"
-//  #include "HexPropagation.hxx"
-//  #include "HexLaw.hxx"
-
-//  #include "HexXmlWriter.hxx"
-//  #include "HexXmlTree.hxx"
-//  #include "HexGlobale.hxx"
-//  #include "HexGroups.hxx"
-
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
 
@@ -161,11 +140,14 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
        les_orig. push_back (tab_sens [nedge]);
        }
 
-   printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
-   nbseg = gline.size ();
-   for (int ns = 0 ; ns < nbseg ; ns++)
-       {
-       printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
+   if (db)
+      {
+      printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
+      nbseg = gline.size ();
+      for (int ns = 0 ; ns < nbseg ; ns++)
+          {
+          printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
+          }
        }
     
    if (closed)

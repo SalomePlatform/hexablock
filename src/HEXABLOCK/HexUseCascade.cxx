@@ -73,12 +73,12 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
 
-// ============================================================== incrementer_xmgr
+// ========================================================= incrementer_xmgr
 inline void incrementer_xmgr (int nro=-1)
 {
    if (nro>=0) 
@@ -228,7 +228,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    vector <gp_Pnt>             tabg_point  (2*nblines);
 
    vector <int>         shape_posit (nblines);
-   vector <double>      shape_absc  (nblines);
+   //  vector <double>      shape_absc  (nblines);
 
                                     // -------- Memorisation des shapes
    tabg_shape [0] = gstart;
@@ -260,33 +260,19 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        tabg_point  [2*ns+1] = curve->Value (u2);
        lg_lines += tabg_length [ns];
 
-       double lg2 = edge_length(tabg_point[2*ns].X(), tabg_point[2*ns].Y(),
+       if (db) 
+          {
+          double lg2 = edge_length(tabg_point[2*ns].X(), tabg_point[2*ns].Y(),
                                 tabg_point[2*ns].Z(), tabg_point[2*ns+1].X(), 
                                 tabg_point[2*ns+1].Y(),tabg_point[2*ns+1].Z());
 
-       printf (" %d : (%g,%g,%g), lg=%g, deb=%g, fin=%g, lg2=%g\n", ns, 
+          printf (" %d : (%g,%g,%g), lg=%g, deb=%g, fin=%g, lg2=%g\n", ns, 
                tabg_point[2*ns].X(), tabg_point[2*ns].Y(),
                tabg_point[2*ns].Z(), tabg_length [ns], deb, fin, lg2);
-       printf ("     (%g,%g,%g)\n",  tabg_point[2*ns+1].X(),
+          printf ("     (%g,%g,%g)\n",  tabg_point[2*ns+1].X(),
                tabg_point[2*ns+1].Y(), tabg_point[2*ns+1].Z());
+          }
        }
-                              //   -------- Controle des points (debug)
-
-/*********************************************************************
-   if (db)
-      {
-      printf (" --------------- Controle des points\n");
-      int nbr=tabg_point.size();
-      for (int n1=0 ; n1<nbr ; n1++)
-          for (int n2=n1+1 ; n2<nbr ; n2++)
-              if (meme_points (tabg_point [n1], tabg_point [n2]) )
-                 {
-                 printf ("tabg_point [%d] == tabg_point [%d] == (%g,%g,%g)\n", 
-                         n1, n2, tabg_point [n1].X(),  tabg_point [n1].Y(), 
-                                 tabg_point [n1].Z());
-                 }
-      }
- ********************************************************************* */
                                     //   -------- Tri des TopoDS_edges
                                     //   -------- memorisation des longueurs
    Dtable tgx, tgy, tgz;
@@ -294,23 +280,26 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    Dtable tax, tay, taz;
  
    double abscisse = tabg_length [0]; 
-   shape_absc  [0] = abscisse/lg_lines;
+   //  shape_absc  [0] = abscisse/lg_lines;
    shape_posit [0] = 0;
    tabg_orig   [0] = V_AMONT;
 
    int nedge = 0;
    HexDisplay (lg_lines);
-   printf (" --------------- Ordonnancement des lignes\n");
-   printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g, s=%g\n", 
-          nedge, nedge, tabg_orig[nedge],
-          tabg_point [tabg_orig[nedge]].X(), 
-          tabg_point [tabg_orig[nedge]].Y(), 
-          tabg_point [tabg_orig[nedge]].Z(), 
-          tabg_length [nedge], shape_absc [nedge]);
+   if (db)
+      {
+      printf (" --------------- Ordonnancement des lignes\n");
+      printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g\n", 
+             nedge, nedge, tabg_orig[nedge],
+             tabg_point [tabg_orig[nedge]].X(), 
+             tabg_point [tabg_orig[nedge]].Y(), 
+             tabg_point [tabg_orig[nedge]].Z(), 
+             tabg_length [nedge]);
 
-   tgx.push_back (tabg_point [tabg_orig[nedge]].X());
-   tgy.push_back (tabg_point [tabg_orig[nedge]].Y());
-   tgz.push_back (tabg_point [tabg_orig[nedge]].Z());
+      tgx.push_back (tabg_point [tabg_orig[nedge]].X());
+      tgy.push_back (tabg_point [tabg_orig[nedge]].Y());
+      tgz.push_back (tabg_point [tabg_orig[nedge]].Z());
+      }
 
    for (int ns=1 ; ns<nblines ; ns++)
        {
@@ -327,23 +316,26 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
        nedge      = nro;
        abscisse += tabg_length [nro];
-       shape_absc  [nro] = abscisse/lg_lines;
+       //  shape_absc  [nro] = abscisse/lg_lines;
        shape_posit [ns] = nro;
 
-       printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g, s=%g\n", 
+       if (db)
+          {
+          printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g, s=%g\n", 
                       ns, nro, tabg_orig[nro], 
                       tabg_point [2*nro + tabg_orig[nro]].X(), 
                       tabg_point [2*nro + tabg_orig[nro]].Y(), 
                       tabg_point [2*nro + tabg_orig[nro]].Z(), 
-                      tabg_length [nro], shape_absc[nro]);
+                      tabg_length [nro]);
 
-       tgx.push_back (tabg_point [2*nro + tabg_orig[nro]].X());
-       tgy.push_back (tabg_point [2*nro + tabg_orig[nro]].Y());
-       tgz.push_back (tabg_point [2*nro + tabg_orig[nro]].Z());
+          tgx.push_back (tabg_point [2*nro + tabg_orig[nro]].X());
+          tgy.push_back (tabg_point [2*nro + tabg_orig[nro]].Y());
+          tgz.push_back (tabg_point [2*nro + tabg_orig[nro]].Z());
+          }
        }
 
    incrementer_xmgr  ();
-   save_xmgr (tgx, tgy, tgz, "pts_geom");
+   if (db) save_xmgr (tgx, tgy, tgz, "pts_geom");
 
    vector <double> mod_absc (nbedges);
    double lg_edges = 0;
@@ -370,11 +362,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        tmz.push_back (v1->getZ());
        }
 
-   save_xmgr (tmx, tmy, tmz, "pts_model");
-
-   printf (" --------------- Associations \n");
-   HexDisplay (nbedges );
-   HexDisplay (nblines );
+   if (db) save_xmgr (tmx, tmy, tmz, "pts_model");
 
    Vertex* sommet = mline[0] ->getVertex (msens[0]); 
    int npoint = tabg_orig  [0];
@@ -388,20 +376,24 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    sommet->setY (tabg_point[npoint].Y());
    sommet->setZ (tabg_point[npoint].Z());
 
-   int ns = 0;
-
    double sm1=0, sm2 = 0;
 
-   printf ("  ... asso point m=%d,g=%d %s : (%g %g %g) -> (%g %g %g)\n", 
+   if (db) 
+      {
+      HexDisplay (nbedges );
+      HexDisplay (nblines );
+
+      printf (" --------------- Associations \n");
+      printf ("  ... asso point m=%d,g=%d %s : (%g %g %g) -> (%g %g %g)\n", 
               msens[0], tabg_orig[0], sommet->getName(cc1), ppx, ppy, ppz,
               sommet->getX(), sommet->getY(), sommet->getZ());
+      }
 
    tax.push_back (sommet->getX());
    tay.push_back (sommet->getY());
    taz.push_back (sommet->getZ());
 
-   int    nbm = 1;
-
+   int nbm = 1;
    for (int ned=0 ; ned<nbedges ; ned++)
        {
        bool point_libre = true;
@@ -413,22 +405,24 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
        edge->clearAssociations ();
        sm1 = sm2;
-       sm2 = mod_absc [ned];
+       // sm2 = mod_absc [ned];
        sm2 = (ned+1.0) /nbedges;
        double sg1=0, sg2 = 0;
-       printf (" edge=%d =[%s,%s] in [%g, %g]\n", ned, orig->getName(cc1),  
-                sommet->getName(cc2), sm1, sm2);
+       if (db) 
+          printf (" edge=%d =[%s,%s] in [%g, %g]\n", ned, orig->getName(cc1),  
+                   sommet->getName(cc2), sm1, sm2);
         
        for (int ns=0 ; ns<nblines ; ns++)
            {
            int nro  = shape_posit [ns];
            sg1 = sg2;
-           sg2 = shape_absc [nro]; 
+           // sg2 = shape_absc [nro]; 
            sg2 = (ns+1.0) / (nblines);
            if (sg1 < sm2 && sg2 > sm1)
               {
               edge ->addAssociation (tabg_shape[nro]);
-              printf ("  ... asso ligne=%d in [%g, %g]\n", nro, sg1, sg2);
+              if (db) 
+                 printf ("  ... asso ligne=%d in [%g, %g]\n", nro, sg1, sg2);
               }
 
            if (point_libre && sm2 >= sg1 && sm2 <= sg2+HEXA_EPSILON)
@@ -459,21 +453,24 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
               taz.push_back (sommet->getZ());
 
               nbm ++;
-              printf ("  ... asso point m=%d,g=%d %s k=%g :", 
+              if (db)
+                 {
+                 printf ("  ... asso point m=%d,g=%d %s k=%g :", 
                       ned, nro, sommet->getName(cc1), kk);
 
-              printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
+                 printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
 
-              printf ("  ... asso point : orig=%d, deb=%g, lg=%g, alpha=%g\n", 
-              tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
+                 printf ("  ... asso point: orig=%d, deb=%g, lg=%g, alpha=%g\n",
+                 tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
 
-              printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
-                   ppx, ppy, ppz, sommet->getX(), sommet->getY(), sommet->getZ());
+                 printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
+                   ppx,ppy,ppz, sommet->getX(),sommet->getY(),sommet->getZ());
+                 }
               }
            }
        }
 
-   save_xmgr (tax, tay, taz, "pts_asso");
+   if (db) save_xmgr (tax, tay, taz, "pts_asso");
 
    cout << "______________________________________________________"
         << " End associateCascade" << endl;
