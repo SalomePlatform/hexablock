@@ -46,7 +46,7 @@ void Vertex_impl::setY(  CORBA::Double y ) throw(SALOME::SALOME_Exception)
 
 void Vertex_impl::setZ(  CORBA::Double z ) throw(SALOME::SALOME_Exception)
 {
-  _vertex_cpp->setY(z);
+  _vertex_cpp->setZ(z);
 }
 
 
