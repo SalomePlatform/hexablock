@@ -1,4 +1,4 @@
-dnl  Copyright (C) 2006-2010  CEA/DEN, EDF R&D
+dnl  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 dnl
 dnl  This library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@ dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with this library; if not, write to the Free Software
 dnl  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 dnl
-dnl  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+dnl  See http:\\www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 dnl
 
 AC_DEFUN([AC_CHECK_LIBXML],[

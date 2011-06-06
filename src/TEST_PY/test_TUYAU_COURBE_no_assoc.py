@@ -1,4 +1,22 @@
 # -*- coding: latin-1 -*-
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 #===============================================
 # By Karima DEBCHI YATAGHENE Nov 2009 at CS 
@@ -71,11 +89,11 @@ grille_cyl = doc.makeCylindrical(c, dx, dz, dr, da, dl, nr, na, nl, False)
 
 # on obtient une liste qui contient 4 hexaedres eguaux
 
-# 30° = pi/6
-# 60° = pi/3
-# 45° = pi/4
-# 90° = pi/2
-# 180° = pi
+# 30ï¿½ = pi/6
+# 60ï¿½ = pi/3
+# 45ï¿½ = pi/4
+# 90ï¿½ = pi/2
+# 180ï¿½ = pi
 
 
 #=================================================
@@ -430,7 +448,7 @@ for aGroup in allGroups:
 
 
 ## --------------------
-## Maillage hexaédrique
+## Maillage hexaï¿½drique
 ## --------------------
 #mesh = mesh.ExportMED( "tuyau.noassoc.med", 1 )
 #maillages = smesh.CreateMeshesFromMED( "tuyau.noassoc.med" )

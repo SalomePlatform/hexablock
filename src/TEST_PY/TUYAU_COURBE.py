@@ -1,4 +1,22 @@
 # -*- coding: latin-1 -*-
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 #===============================================
 # By Karima DEBCHI YATAGHENE Nov 2009 at CS 
@@ -100,7 +118,7 @@ z_mod_b_t = doc.findVertex( -R , 0 , 0 )
 u_mod_b_t = doc.findVertex( 0 , -R , 0 )
 
 
-# vérifications
+# vï¿½rifications
 assert x_mod_h
 assert y_mod_h
 assert z_mod_h
@@ -171,7 +189,7 @@ Edge_Mod_int_d = doc.findEdge( z_mod_h_t , z_mod_b_t )
 Edge_Mod_ext_d = doc.findEdge( z_mod_h , z_mod_b )
 
 
-# vérifications
+# vï¿½rifications
 assert edge_mod_face_h_1_1
 assert edge_mod_face_h_1_2
 assert edge_mod_face_h_2_1
@@ -302,7 +320,7 @@ edge_t_face_b_2 = All_Edges_Tuy_1[3]
 
 # Joignant les 2 faces
 
-## edges complètes
+## edges complï¿½tes
 Edge_Tuy_ext_h = All_Edges_Tuy_1[6]
 Edge_Tuy_int_h = All_Edges_Tuy_1[7]
 Edge_Tuy_int_b = All_Edges_Tuy_1[8]
@@ -754,7 +772,7 @@ for aGroup in allGroups:
 
 
 ## --------------------
-## Maillage hexaédrique
+## Maillage hexaï¿½drique
 ## --------------------
 #mesh = mesh.ExportMED( "tuyau.med", 1 )
 #maillages = smesh.CreateMeshesFromMED( "tuyau.med" )

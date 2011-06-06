@@ -1,4 +1,4 @@
-//  Copyright (C) 2006-2010  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -1120,13 +1120,23 @@ DocumentGraphicView* HEXABLOCKGUI::newGraphicView()
 
   SUIT_ViewWindow *suitVW  = 0;
 //   SVTK_ViewWindow *suitVW  = 0;
-  if (_suitVM){// --- reuse already created view manager 
+  if ( _suitVM ){// --- reuse already created view manager 
     _suitVM = getApp()->getViewManager(SVTK_Viewer::Type(), true);
-    suitVW = _suitVM->createViewWindow();
+//     suitVW = _suitVM->createViewWindow();
+    DEBTRACE("HEXABLOCKGUI::newGraphicView() getViewManager" );
   } else {
     _suitVM = getApp()->createViewManager(SVTK_Viewer::Type());
-    suitVW = _suitVM->getActiveView();
+    DEBTRACE("HEXABLOCKGUI::newGraphicView() createViewManager" );
+//     suitVW = _suitVM->getActiveView();
   }
+  suitVW = _suitVM->getActiveView();
+  if ( suitVW == NULL ){
+    DEBTRACE("HEXABLOCKGUI::newGraphicView() createViewWindow" );
+    suitVW = _suitVM->createViewWindow();
+  } else {
+    DEBTRACE("HEXABLOCKGUI::newGraphicView() getActiveView" );
+  }
+
   newGView = new DocumentGraphicView(getApp(), suitVW, application()->desktop());
   return newGView;
 }

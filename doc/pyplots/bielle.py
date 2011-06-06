@@ -1,4 +1,22 @@
 # -*- coding: latin-1 -*-
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 import os
 import GEOM
@@ -148,18 +166,18 @@ face_bas = geompy.GetFaceNearPoint(bielle_geom, pt_b)
 edge_haut_droite = geompy.GetEdgesByLength(face_haut, 0.136, 0.137)
 edge_haut_gauche = geompy.GetEdgesByLength(face_haut, 0.131, 0.132)
 
-# Paramètres pour :
-# - récupération des points.
+# Paramï¿½tres pour :
+# - rï¿½cupï¿½ration des points.
 # - et associations.
 
-# JPL le 05/05/2011 : pour x_h_g et z_h_g (resp. w_h_p et u_h_p), on teste en les plaçant à
+# JPL le 05/05/2011 : pour x_h_g et z_h_g (resp. w_h_p et u_h_p), on teste en les plaï¿½ant ï¿½
 # l'intersection des 2 edges :
 ## u_1 = 0.75  # 0.8
 ## u_3 = 0.25  # 0.2
 u_1 = 1.0
 u_3 = 0.0
 
-# dictionnaire des vertices de la géométrie (grande et petite grilles) :
+# dictionnaire des vertices de la gï¿½omï¿½trie (grande et petite grilles) :
 # key = nom, value = indice dans geom_vert_grd (resp. geom_vert_pte)
 # on commence par les vertex externes du haut du grand (resp. petit) cylindre,
 # ensuite :
@@ -182,7 +200,7 @@ geom_vert_grd = []  # liste des vertex du grand cylindre
 
 # 1.1 face du haut :
 # 1.1.1 sommets externes :
-# la création des vertex de la geometrie se fait obligatoirement
+# la crï¿½ation des vertex de la geometrie se fait obligatoirement
 # dans cet ordre :
 geom_vert_grd.append(geompy.MakeVertexOnSurface(face_haut, 1, 0.5))  # y_h_e_g
 edge_haut_grd = geompy.GetEdgeNearPoint(bielle_geom, geom_vert_grd[0])
@@ -192,7 +210,7 @@ geom_vert_grd.insert(2, geompy.MakeVertexOnCurve(edge_haut_droite, 1))  # u_h_e_
 geom_vert_grd.insert(3, geompy.MakeVertexOnCurve(edge_haut_gauche, 0))  # w_h_e_g
 edge_v_grd = geompy.MakeLineTwoPnt(geom_vert_grd[2], geom_vert_grd[3])
 geom_vert_grd.insert(3, geompy.MakeVertexOnCurve(edge_v_grd, 0.5))  # v_h_e_g
-# les vertex sont rangés dans cet ordre :
+# les vertex sont rangï¿½s dans cet ordre :
 # y_h_e_g, x_h_e_g, u_h_e_g, v_h_e_g, w_h_e_g, z_h_e_g
 
 # 1.1.2 sommets internes (trou) :
@@ -202,7 +220,7 @@ for val in [0, 0.8, 0.6, 0.5, 0.4, 0.2]:
     geom_vert_grd.append(geompy.MakeVertexOnCurve(edge_haut_grd_trou, val))
 
 # 1.2 face du bas :
-# pour tous les vertex de la face du bas, on les crée par référence à ceux déjà crées (dans le meme ordre :
+# pour tous les vertex de la face du bas, on les crï¿½e par rï¿½fï¿½rence ï¿½ ceux dï¿½jï¿½ crï¿½es (dans le meme ordre :
 # sommets externes puis internes) :
 geom_vert_grd_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -hauteur) for vertex in geom_vert_grd]
 geom_vert_grd.extend(geom_vert_grd_bas)
@@ -214,14 +232,14 @@ print "nombre vertex grand cylindre geom = ", len(geom_vert_grd)
 
 # 2. petit cylindre :
 # REM : le modele petit cylindre a ete cree par translation / au grand
-# cylindre. Les vertices de la geometrie sont donc ete crées de manière
+# cylindre. Les vertices de la geometrie sont donc ete crï¿½es de maniï¿½re
 # similaire (# d'une symmetrie / miroir)
 geom_vert_pte = []
 
 # 2.1 face du haut :
 # 2.1.1 sommets externes :
 
-# la création des vertex de la geometrie se fait obligatoirement
+# la crï¿½ation des vertex de la geometrie se fait obligatoirement
 # dans cet ordre :
 geom_vert_pte.append(geompy.MakeVertexOnSurface(face_haut, 0, 0.5))  # v_h_e_p
 edge_haut_pte = geompy.GetEdgeNearPoint(bielle_geom, geom_vert_pte[0])
@@ -231,7 +249,7 @@ geom_vert_pte.insert(0, geompy.MakeVertexOnCurve(edge_haut_droite, 0))  # x_h_e_
 geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_haut_gauche, 1))  # z_h_e_p
 edge_v_pte = geompy.MakeLineTwoPnt(geom_vert_pte[0], geom_vert_pte[4])
 geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_v_pte, 0.5))  # y_h_e_p
-# les vertex sont rangés dans cet ordre :
+# les vertex sont rangï¿½s dans cet ordre :
 # y_h_e_p, x_h_e_p, u_h_e_p, v_h_e_p, w_h_e_p, z_h_e_p
 
 
@@ -242,7 +260,7 @@ for val in [0, 0.9, 0.65, 0.5, 0.35, 0.1]:
     geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_haut_pte_trou, val))
 
 # 2.2 face du bas :
-# pour tous les vertex de la face du bas, on les crée par référence à ceux déjà crées (dans le meme ordre :
+# pour tous les vertex de la face du bas, on les crï¿½e par rï¿½fï¿½rence ï¿½ ceux dï¿½jï¿½ crï¿½es (dans le meme ordre :
 # sommets externes puis internes) :
 geom_vert_pte_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -hauteur) for vertex in geom_vert_pte]
 geom_vert_pte.extend(geom_vert_pte_bas)
@@ -254,7 +272,7 @@ print "nombre vertex petit cylindre geom = ", len(geom_vert_pte)
 #=======================
 
 # JPL (le 29/04/2011)
-# pour l'association, il suffit de faire 6 appels à la méthode
+# pour l'association, il suffit de faire 6 appels ï¿½ la mï¿½thode
 # associateClosedLine() :
 # 1 pour la ligne du trou haut du grand cylindre
 # 1 pour la ligne du trou bas du grand cylindre
@@ -267,7 +285,7 @@ all_edges_bielle = geompy.SubShapeAllSorted(bielle_geom, geompy.ShapeType["EDGE"
 
 print "nb edges geom = ", len(all_edges_bielle)
 
-# dictionnaire des edges de la géométrie :
+# dictionnaire des edges de la gï¿½omï¿½trie :
 # key = nom, value = indice dans all_edges_bielle
 dic_edge_names = {"edge_ray_pte_b": 0, "edge_ray_pte_h": 1,
                   "edge_trou_pte_b": 2, "edge_trou_pte_h" :3,
@@ -515,7 +533,7 @@ for j in range(doc.countPropagation()):
     propa.setLaw(law)  # appliquer la loi de discretisation sur tout le modele et generer le maillage
 
 #====================================
-# Générer des maillages
+# Gï¿½nï¿½rer des maillages
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "

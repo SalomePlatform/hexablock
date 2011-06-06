@@ -1,7 +1,4 @@
-dnl  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-dnl
-dnl  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-dnl  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+dnl  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 dnl
 dnl  This library is free software; you can redistribute it and/or
 dnl  modify it under the terms of the GNU Lesser General Public
@@ -17,7 +14,7 @@ dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with this library; if not, write to the Free Software
 dnl  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 dnl
-dnl  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+dnl  See http:\\www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 dnl
 #  Check availability of HEXABLOCK module binary distribution
 #
