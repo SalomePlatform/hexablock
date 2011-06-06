@@ -14,19 +14,9 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-#  PLEASE DO NOT MODIFY configure.in FILE
-#  ALL CHANGES WILL BE DISCARDED BY THE NEXT
-#  build_configure COMMAND
-#  CHANGES MUST BE MADE IN configure.in.base FILE
-# Author : Marc Tajchman (CEA)
-# Date : 28/06/2001
-# Modified by : Patrick GOLDBRONN (CEA)
-# Modified by : Marc Tajchman (CEA)
-# Created from configure.in.base
-#
+
 AC_INIT([Salome6 Project HEXABLOCK module],[6.2.0], [webmaster.salome@opencascade.com], [SalomeHEXABLOCK])
 AC_CONFIG_AUX_DIR(adm_local/unix/config_files)
 AC_CANONICAL_HOST

@@ -14,15 +14,9 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-# -* Makefile *-
-# Author : Patrick GOLDBRONN (CEA)
-# Date : 28/06/2001
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-# $Header:
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 ACLOCAL_AMFLAGS = -I adm_local/unix/config_files \

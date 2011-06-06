@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 #
 #  This library is free software; you can redistribute it and/or
@@ -14,11 +15,9 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-#!/usr/bin/env python
-#
+
 def test(clt):
    """
         Test function that creates an instance of HEXABLOCK component

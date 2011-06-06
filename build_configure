@@ -15,15 +15,9 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-# Tool for updating list of .in file for the SALOME project 
-# and regenerating configure script
-# Author : 
-# Modified by : Alexander BORODIN (OCN) - autotools usage
-# Date : 10/10/2002
-#
+
 ORIG_DIR=`pwd`
 CONF_DIR=`echo $0 | sed -e "s,[^/]*$,,;s,/$,,;s,^$,.,"`
 

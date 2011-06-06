@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,10 +16,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  File   : HEXABLOCK_version.h
-//  Author : Vadim SANDLER
-//  Module : SALOME
-//
+
 #if !defined(__HEXABLOCK_VERSION_H__)
 #define __HEXABLOCK_VERSION_H__
 

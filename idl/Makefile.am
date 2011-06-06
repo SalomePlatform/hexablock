@@ -14,14 +14,14 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http:#www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
+
 # This Makefile is responsible of generating the client and server
 # implementation of IDL interfaces for both C++ and python usage.
 # The building process of the C++ files is in charge of each source
 # package and then is not manage here.
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 BASEIDL_FILES = \
