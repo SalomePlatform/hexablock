@@ -52,7 +52,8 @@ HEXABLOCKGUI_DataObject::~HEXABLOCKGUI_DataObject()
 
 QString HEXABLOCKGUI_DataObject::entry() const
 {
-  QString id = "HEXA";
+  QString id = "HEXA_ENTRY";
+//   QString id = dynamic_cast<LightApp_DataObject*>( parent() )->entry();
 //   if ( myDocument )
 //     id = "0:4:3:1";
   if ( myDocument )

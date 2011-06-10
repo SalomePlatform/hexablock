@@ -21,6 +21,7 @@
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
 // #include <QAbstractItemModel>
+#include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
@@ -154,6 +155,8 @@ namespace HEXABLOCK
 
         // ************  EDIT HEXABLOCK MODEL ************
 
+        bool updateVertex( const QModelIndex& vertex, double x, double y, double z );
+
         //
         bool removeHexa( const QModelIndex& hexa );
         bool removeConnectedHexa( const QModelIndex& hexa );
@@ -276,6 +279,7 @@ namespace HEXABLOCK
         void patternDataChanged();
         
       private:
+        QTemporaryFile    *_hexaFile;
         HEXA_NS::Document *_hexaDocument;
 
         //data

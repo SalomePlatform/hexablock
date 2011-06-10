@@ -381,34 +381,24 @@ void PatternDataSelectionModel::_selectSalome( const QModelIndex & index )
 //   std::cout << "PatternDataSelectionModel::_selectSalome " << std::endl;
   SVTK_ViewWindow* activeViewWindow = GetActiveViewWindow();
 
-  QStandardItem  *item = 0;
-  const QSortFilterProxyModel *pmodel = dynamic_cast<const QSortFilterProxyModel *>( index.model() );
-  if ( pmodel ){
-//       std::cout << "pmodel" << std::endl;
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( pmodel->sourceModel() );
-      if ( model ){
-//         std::cout << "model" << std::endl;
-        item = model->itemFromIndex( pmodel->mapToSource(index) );
-      }
-  } else {
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( index.model() );
-      if ( model ){
-//         std::cout << "model" << std::endl;
-        item = model->itemFromIndex(index);
-      }
-  }
+  QVariant treeVariant = index.data( HEXA_TREE_ROLE );
+  QVariant eltVariant  = index.data( HEXA_ENTRY_ROLE);
+  QVariant docVariant  = index.data( HEXA_DOC_ENTRY_ROLE);
 
-  if ( item ){
-//       std::cout << "item" << std::endl;
-      switch ( item->type() ){
-        case VERTEXITEM : activeViewWindow->SetSelectionMode(NodeSelection);     break;
-        case EDGEITEM :   activeViewWindow->SetSelectionMode(EdgeSelection);     break;
-        case QUADITEM :   activeViewWindow->SetSelectionMode(FaceSelection);     break;
-        case HEXAITEM :   activeViewWindow->SetSelectionMode(VolumeSelection);   break;
-        default: break;
-      }
-  }
+  if ( !treeVariant.isValid() ) return;
 
+  int     treeType = treeVariant.toInt();
+  std::cout<<"treeType  =>" << treeType  << std::endl;
+  switch ( treeType ){
+    case VERTEX_TREE : 
+    case VERTEX_DIR_TREE : activeViewWindow->SetSelectionMode(NodeSelection);     break;
+    case EDGE_TREE :
+    case EDGE_DIR_TREE :   activeViewWindow->SetSelectionMode(EdgeSelection);     break;
+    case QUAD_TREE :
+    case QUAD_DIR_TREE :   activeViewWindow->SetSelectionMode(FaceSelection);     break;
+    case HEXA_TREE :
+    case HEXA_DIR_TREE :   activeViewWindow->SetSelectionMode(VolumeSelection);   break;
+  }
 //  NodeSelection,
 //  CellSelection,
 //  EdgeOfCellSelection,
@@ -417,11 +407,6 @@ void PatternDataSelectionModel::_selectSalome( const QModelIndex & index )
 //  VolumeSelection,
 //  ActorSelection };
 
-
-
-//   std::cout << "Try to select in Salome ->  " << index.model()->data(index).toString().toStdString() << std::endl;
-  QVariant eltVariant = index.model()->data( index, HEXA_ENTRY_ROLE).toString();
-  QVariant docVariant = index.model()->data( index, HEXA_DOC_ENTRY_ROLE).toString();
 
   if ( !eltVariant.isValid() ) return;
   if ( !docVariant.isValid() ) return;
@@ -514,12 +499,12 @@ void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, c
 
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-//   std::cout << "PatternDataSelectionModel::onSelectionChanged" << std::endl;
+  std::cout << "******PatternDataSelectionModel::onSelectionChanged" << std::endl;
   if ( _salomeSelectionChanged ) return;
 
   _salomeSelectionMgr->clearSelected();
   QModelIndexList indexes = selected.indexes();
-//   std::cout << "indexes.count()" << indexes.count() << std::endl;
+  std::cout << "indexes.count()" << indexes.count() << std::endl;
   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index )
     _selectSalome( *i_index );
 

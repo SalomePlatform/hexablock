@@ -91,6 +91,17 @@ return false;
   
 }
 //CS_TEST
+
+      public slots:
+          void onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint)
+          {
+            std::cout << " onCloseEditor onCloseEditor onCloseEditor onCloseEditor" << std::endl;
+          }
+
+          void onCommitData ( QWidget * editor )
+          {
+            std::cout << " onCommitData onCommitData onCommitData onCommitData" << std::endl;
+          }
       
       private:
           QDockWidget *_dw;
@@ -103,6 +114,10 @@ return false;
           PatternBuilderSelectionModel* _patternBuilderSelectionModel;
           QItemSelectionModel*          _groupsSelectionModel;
           QItemSelectionModel*          _meshSelectionModel;
+
+      private slots:
+          void commitEditor();
+
       };
   }
 }

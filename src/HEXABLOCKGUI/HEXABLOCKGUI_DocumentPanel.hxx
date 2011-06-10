@@ -105,6 +105,9 @@ namespace HEXABLOCK
           virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
           virtual void setMeshSelectionModel( QItemSelectionModel* s );
 
+//         signals:
+//           void editingFinished ();
+
 
         protected:
           void _setAllSelection();
@@ -171,11 +174,14 @@ namespace HEXABLOCK
         void setValue(HEXA_NS::Vertex* v);
         HEXA_NS::Vertex* getValue();
 
+        void setIndex(const QModelIndex& i);
+
       public slots:
         virtual void accept();
 
       private:
         HEXA_NS::Vertex     *_value;
+        QModelIndex         _index;
     };
 
 

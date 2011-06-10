@@ -16,7 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
+#
 # UIC_FILES =       \
 #   ui_FormComponent.h 
 # BUILT_SOURCES =       \
@@ -153,9 +153,39 @@ BUILT_SOURCES = $(UIC_FILES)
 # resources files
 ICONS =  \
 	resources/SalomeApp.xml \
+	resources/LightApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
-	resources/ExecHEXABLOCK.png
+	resources/new_document.png \
+	resources/import_document.png \
+	resources/add_vertex.png \
+	resources/add_edge.png \
+	resources/add_quad.png \
+	resources/add_hexa.png \
+	resources/add_vector.png \
+	resources/add_cylinder.png \
+	resources/add_pipe.png \
+	resources/make_grid.png \
+	resources/make_cylinder.png \
+	resources/make_pipe.png \
+	resources/make_cylinders.png \
+	resources/make_pipes.png \
+	resources/remove_hexa.png \
+	resources/prism_quad.png \
+	resources/join_quad.png \
+	resources/merge.png \
+	resources/disconnect.png \
+	resources/cut_edge.png \
+	resources/make_transformation.png \
+	resources/make_symmetry.png \
+	resources/perform_transformation.png \
+	resources/perform_symmetry.png \
+	resources/add_group.png \
+	resources/remove_group.png \
+	resources/add_law.png \
+	resources/remove_law.png \
+	resources/set_propagation.png
+
 
 QMFILES = \
 	HEXABLOCK_msg_en.qm \

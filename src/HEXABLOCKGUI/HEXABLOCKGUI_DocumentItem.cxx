@@ -46,7 +46,7 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
   setData( VERTEX_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex) ), HEXA_ENTRY_ROLE );
 //   setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ), HEXA_DOC_ENTRY_ROLE );
-  setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 
 
 //   setData( QString("0:1:1:1"), HEXA_DOC_ENTRY_ROLE );
@@ -61,6 +61,7 @@ int VertexItem::type() const
 QVariant VertexItem::data( int role ) const
 {
     if ( role == HEXA_DATA_ROLE ){
+      std::cout << " VertexItem::data(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>>>>" << std::endl;
       return QVariant::fromValue( _hexaVertex );
     } else {
       return QStandardItem::data( role );
@@ -70,9 +71,11 @@ QVariant VertexItem::data( int role ) const
 void VertexItem::setData ( const QVariant & value, int role )
 {
     if ( role == HEXA_DATA_ROLE ){
+      std::cout << " VertexItem::setData(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>" << std::endl;
       _hexaVertex = value.value<HEXA_NS::Vertex*>();
       emitDataChanged ();
     } else {
+      std::cout << " VertexItem::setData( " << role << ", "<< value.toString().toStdString() << " )" <<std::endl;
       QStandardItem::setData ( value, role );
     }
 }
@@ -91,7 +94,7 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   setData( EDGE_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
 //   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ), HEXA_DOC_ENTRY_ROLE );
-setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 int EdgeItem::type() const
@@ -132,7 +135,7 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   setData( QUAD_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
 //   setData( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ), HEXA_DOC_ENTRY_ROLE );
-setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 
@@ -176,7 +179,7 @@ HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
   setData( HEXA_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
 //   setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ), HEXA_DOC_ENTRY_ROLE );
-  setData( QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 

@@ -45,7 +45,8 @@ using namespace HEXABLOCK::GUI;
 *****************************************************************/
 DocumentModel::DocumentModel(QObject * parent):
   QStandardItemModel(parent),
-  _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
+  _hexaFile(  new QTemporaryFile() ), 
+//   _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
 
   _vertexDirItem( new QStandardItem("Vertex") ),
   _edgeDirItem(   new QStandardItem("Edge") ),
@@ -73,6 +74,10 @@ DocumentModel::DocumentModel(QObject * parent):
   _elementsItemFlags( Qt::NoItemFlags ),
   _crossElementsItemFlags( Qt::NoItemFlags )
 {
+  if ( _hexaFile->open() ){
+    _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
+  }
+
   QStandardItem *parentItem = invisibleRootItem();
   parentItem->setData( QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ), HEXA_ENTRY_ROLE );
 
@@ -112,6 +117,8 @@ DocumentModel::DocumentModel(QObject * parent):
 
 DocumentModel::~DocumentModel()
 {
+  delete _hexaDocument;
+  delete _hexaFile;
 }
 
 
@@ -204,6 +211,11 @@ void DocumentModel::fillData()
   VertexItem      *vItem = NULL;
   for ( int i=0; i<_hexaDocument->countVertex(); ++i ){
     v = _hexaDocument->getVertex(i);
+
+    char pName[12];
+    std::string name = v->getName(pName);
+    std::cout<<name<<std::endl;
+
     vItem = new VertexItem(v);
     _vertexDirItem->appendRow(vItem);
 //     _vertexDirItem->setEditable( false );//CS_TEST
@@ -648,6 +660,7 @@ QModelIndex DocumentModel::addVertex( double x, double y, double z )
     VertexItem* v = new VertexItem(hv);
     _vertexDirItem->appendRow(v);
     vertexIndex = v->index();
+    emit patternDataChanged();
   } else {
     delete hv;
   }
@@ -669,6 +682,7 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
     EdgeItem* e = new EdgeItem(he);
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVertices.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -690,6 +704,7 @@ QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIn
     EdgeItem* e = new EdgeItem(he);
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVector.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -723,6 +738,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
       QuadItem* q = new QuadItem(hq);
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
+      emit patternDataChanged();
       QString tmp = "/tmp/addQuadVertices.vtk";
       _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
@@ -750,6 +766,7 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
       QuadItem* q = new QuadItem(hq);
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
+      emit patternDataChanged();
       QString tmp = "/tmp/addQuadEdges.vtk";
       _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
@@ -785,6 +802,7 @@ QModelIndex DocumentModel::addHexaVertices(
     HexaItem* h = new HexaItem(hh);
     _hexaDirItem->appendRow(h);
     iHexa = h->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addHexaVertices.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -820,6 +838,7 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
     HexaItem* h = new HexaItem(hh);
     _hexaDirItem->appendRow(h);
     hexaIndex = h->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addHexaQuad.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -1169,6 +1188,31 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
 
 
 // ************  EDIT HEXABLOCK MODEL ************
+
+bool DocumentModel::updateVertex( const QModelIndex& ivertex, double x, double y, double z )
+{
+  bool ret = false;
+
+//   cout << "DocumentModel::updateVertex" << ivertex.data().toString().toStdString() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_TREE_ROLE).toString().toStdString() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_DOC_ENTRY_ROLE).toString().toStdString() << endl;
+
+//   HEXA_NS::Vertex* hVertex = data(ivertex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hVertex = ivertex.data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); //CS_TODO?  pareil pour toutes les autres méthodes du modèle?
+
+  cout << "DocumentModel::updateVertex hVertex = " << hVertex << endl;
+  if ( hVertex ){
+    hVertex->setX ( x );
+    hVertex->setY ( y );
+    hVertex->setZ ( z );
+    emit patternDataChanged();
+    ret = true;
+  }
+
+  return ret;
+}
+
 bool DocumentModel::removeHexa( const QModelIndex& ihexa )
 {
   bool ret = false;

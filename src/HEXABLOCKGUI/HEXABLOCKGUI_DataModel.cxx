@@ -28,12 +28,15 @@
 #include <SalomeApp_Module.h>
 #include <SUIT_Tools.h>
 #include <SUIT_DataObjectIterator.h>
+#include <SUIT_DataBrowser.h>
 
 #include <CAM_Module.h>
 #include <CAM_Application.h>
 
 #include <CAM_Module.h>
 #include <CAM_Application.h>
+
+#include <LightApp_Application.h>
 
 #include <qstring.h>
 #include <qfile.h>
@@ -352,16 +355,17 @@ void HEXABLOCKGUI_DataModel::_createDocument () // full component
 }
 
 /*! Adds a new molecule to the data structure */
-bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc )
+bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc, QWidget* viewWindow )
 {
   HEXABLOCKGUI_Document docModel( doc->getFile(),  reinterpret_cast<intptr_t>(doc) );
-
+  QString docEntry = QString("HEXA_ENTRY:%1").arg( QString::number( docModel.id() ) );
+  myViews[ docEntry ]   = viewWindow;
+  myEntry[ viewWindow ] = docEntry;
 //   // temporary code to add a few atoms to a molecule..
 //   mol.addAtom( "atom_1", 0, 0, 0 );
 //   mol.addAtom( "atom_2", 0, 0, 0 );
 //   mol.addAtom( "atom_3", 0, 0, 0 );
 //   // end of temporary code
-  
   myDocuments.append( docModel );
 //   _createDocument ();
 
@@ -474,4 +478,22 @@ HEXABLOCKGUI_DataObject* HEXABLOCKGUI_DataModel::findDocument( const QString& en
     }
   }
   return 0;
+}
+
+QWidget* HEXABLOCKGUI_DataModel::getViewWindow( const QString& entry )
+{
+  DEBTRACE("HEXABLOCKGUI_DataModel::getViewWindow "<<entry);
+  if ( !myViews.count(entry) ) return 0;
+  DEBTRACE("HEXABLOCKGUI_DataModel::found  "<<entry);
+  return myViews[entry];
+}
+
+void HEXABLOCKGUI_DataModel::setSelected(QWidget* viewWindow)
+{
+  DEBTRACE("HEXABLOCKGUI_DataModel::setSelected"<<viewWindow);
+  if (!myEntry.count(viewWindow)) return;
+  DEBTRACE("HEXABLOCKGUI_DataModel::setSelected found "<<viewWindow);
+  QString entry = myEntry[viewWindow];
+  SUIT_DataObject* item = findDocument(entry);
+  if(item) getModule()->getApp()->objectBrowser()->setSelected(item);
 }

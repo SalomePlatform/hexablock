@@ -115,7 +115,8 @@ public:
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
-  void onDblClick(const QModelIndex& index);
+  void onClick(const QModelIndex& index);
+//   void onDblClick(const QModelIndex& index);
 
   void showObjectBrowserMenus(bool show);
   void showPatternMenus(bool show);

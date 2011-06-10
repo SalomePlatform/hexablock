@@ -65,18 +65,18 @@ private:
 #ifdef RANGE_FIX_HACK
 static QItemSelection klink_removeInvalidRanges(const QItemSelection &selection)
 {
-  std::cout<< " klink_removeInvalidRanges " << std::endl;
+//   std::cout<< " klink_removeInvalidRanges " << std::endl;
   QItemSelection result;
   Q_FOREACH(const QItemSelectionRange &range, selection)
   {
 
     Q_FOREACH(const QModelIndex &i, range.indexes ())
     {
-      std::cout<< " =====> " << i.data().toString().toStdString() << std::endl;
+//       std::cout<< " =====> " << i.data().toString().toStdString() << std::endl;
     }
     if (!range.isValid())
       continue;
-    std::cout<< " is VALID !!"<< std::endl;
+//     std::cout<< " is VALID !!"<< std::endl;
     result << range;
   }
   return result;

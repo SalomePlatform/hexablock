@@ -23,7 +23,9 @@
 #include "HEXABLOCKGUI_Data.hxx"
 // #include <LightApp_DataModel.h>
 #include <SalomeApp_DataModel.h>
-#include <qlist.h>
+#include <QList>
+#include <QMap>
+
 #include "HexDocument.hxx"
 
 class CAM_Module;
@@ -55,7 +57,7 @@ public:
 
   bool                  importFile ( const QString&, CAM_Study* = 0 );
   bool                  exportFile ( const QString& = QString::null );
-  bool                  createDocument (HEXA_NS::Document* doc);
+  bool                  createDocument (HEXA_NS::Document* doc, QWidget* viewWindow = 0);
 //   bool                  addAtom    ( const QString&, const QString&, 
 // 				     const double, const double, const double );
   bool                  renameObj  ( const QString&, const QString& );
@@ -63,15 +65,21 @@ public:
 
   HEXABLOCKGUI_DataObject* findObject   ( const QString& ); 
   HEXABLOCKGUI_DataObject* findDocument ( const QString& ); 
+  QWidget* getViewWindow( const QString& );
+  void setSelected(QWidget* viewWindow);
 
 protected:
   virtual void          build();
 
 private:
   void _createDocument ();
-  QString                              myStudyURL;
+  QString                       myStudyURL;
 //   QList<HEXABLOCKGUI_AtomicMolecule>      myMolecules;
-  QList<HEXABLOCKGUI_Document>      myDocuments;
+  QList<HEXABLOCKGUI_Document>  myDocuments;
+  QMap<QString, QWidget*>       myViews;// ( key, value ) == ( entry,view )
+  QMap<QWidget*, QString>       myEntry;// ( key, value ) == ( view, entry)
+
+
 };
 
 #endif //_HEXABLOCKGUI_DATAMODEL_HXX_

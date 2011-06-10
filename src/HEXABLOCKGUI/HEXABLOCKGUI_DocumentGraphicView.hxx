@@ -144,6 +144,7 @@ namespace HEXABLOCK
         private:
             SUIT_ViewWindow *_suitView;
             Document_Actor  *_documentActor;
+            bool _currentChanged;
         };
     }
 }

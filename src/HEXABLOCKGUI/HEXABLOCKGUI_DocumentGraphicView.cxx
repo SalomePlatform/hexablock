@@ -106,7 +106,7 @@ Document_Actor::Document_Actor( HEXA_NS::Document* doc ):
 {
 
 //   QString entry = QString::number( reinterpret_cast<intptr_t>(_doc) );
-  QString entry = QString("HEXA:%1").arg( QString::number( reinterpret_cast<intptr_t>(_doc) ) );
+  QString entry = QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_doc) ) );
   Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" );//"0:1:1:1", "HEXABLOCK" );//,theName); CS_TODO
   setIO(anIO);
 
@@ -305,7 +305,8 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
 DocumentGraphicView::DocumentGraphicView( LightApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent )
     : QAbstractItemView(parent),
       _suitView( suitView ),
-      _documentActor( 0 )
+      _documentActor( 0 ),
+      _currentChanged( false )
 {
 // _suitView->getViewPort();
 // _suitView->viewport();
@@ -510,14 +511,19 @@ void DocumentGraphicView::commitData ( QWidget * editor )
 void DocumentGraphicView::currentChanged ( const QModelIndex & current, const QModelIndex & previous )
 { 
   std::cout << "DocumentGraphicView::currentChanged" << std::endl; 
+  _currentChanged = true;
 }
 
 void DocumentGraphicView::dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight )
 { 
   std::cout << "DocumentGraphicView::dataChanged" << std::endl;
-//   std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
-//   std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
+  std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  update();
+//   if ( !_currentChanged )
+//     update(); //CS_TEST
 
+  _currentChanged = false;
 //   updateObject(topLeft);
 }
 
