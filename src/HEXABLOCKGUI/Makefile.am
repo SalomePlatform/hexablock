@@ -184,6 +184,7 @@ ICONS =  \
 	resources/SalomeApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
+	resources/ModuleHexaBlock.png \
 	resources/ExecHEXABLOCK.png
 
 QMFILES = \
