@@ -31,6 +31,8 @@
 #include <QFlags>
 
 
+#define VERTEX_COORD_MIN -1000000
+#define VERTEX_COORD_MAX  1000000
 
 
 using namespace std;
@@ -399,6 +401,9 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
   _value(0)
 {
   setupUi( this );
+  x_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+  y_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+  z_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
 //   installEventFilter();
 }
 
