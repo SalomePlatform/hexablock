@@ -68,28 +68,28 @@ namespace HEXABLOCK
 
 
 //CS_TEST
-// virtual bool 	editorEvent ( QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index ){
-//   std::cout << "editorEvent editorEvent " << event->type() << std::endl;
-// //   std::cout << "Type => "<< event->type() << std::endl;
-//   return QItemDelegate::editorEvent ( event, model, option, index );
-// }
-virtual bool 	eventFilter ( QObject * editor, QEvent * event )
-{
-//   std::cout << "eventFilter  eventFilter " << event->type() << std::endl;
-//   std::cout << std::endl;
-
- if (event->type() == QEvent::FocusOut) {
-//              QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-//              qDebug() << "Ate key press" << keyEvent->key();
-//              return true;
-return false;
-         } else {
-              return QItemDelegate::eventFilter ( editor, event );
-//              return false;
-         }
-
-  
+virtual bool 	editorEvent ( QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index ){
+  std::cout << "editorEvent editorEvent " << event->type() << std::endl;
+//   std::cout << "Type => "<< event->type() << std::endl;
+  return QItemDelegate::editorEvent ( event, model, option, index );
 }
+// // virtual bool 	eventFilter ( QObject * editor, QEvent * event )
+// // {
+// // //   std::cout << "eventFilter  eventFilter " << event->type() << std::endl;
+// // //   std::cout << std::endl;
+// // 
+// //  if (event->type() == QEvent::FocusOut) {
+// // //              QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+// // //              qDebug() << "Ate key press" << keyEvent->key();
+// // //              return true;
+// // return false;
+// //          } else {
+// //               return QItemDelegate::eventFilter ( editor, event );
+// // //              return false;
+// //          }
+// // 
+// //   
+// // }
 //CS_TEST
 
       public slots:

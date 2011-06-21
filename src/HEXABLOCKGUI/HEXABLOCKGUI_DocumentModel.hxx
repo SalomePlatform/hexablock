@@ -72,8 +72,12 @@ namespace HEXABLOCK
 
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-        void allowAllSelection();
 
+        void allowEdition();
+        void disallowEdition();
+
+//         void setDefaultSelection();
+//         void allowSelection();
         void allowDataSelectionOnly();
         void allowVertexSelectionOnly();
         void allowEdgeSelectionOnly();
@@ -281,6 +285,7 @@ namespace HEXABLOCK
       private:
         QTemporaryFile    *_hexaFile;
         HEXA_NS::Document *_hexaDocument;
+        bool              _disallowEdition;
 
         //data
         QStandardItem     *_vertexDirItem;

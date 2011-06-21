@@ -61,7 +61,7 @@ int VertexItem::type() const
 QVariant VertexItem::data( int role ) const
 {
     if ( role == HEXA_DATA_ROLE ){
-      std::cout << " VertexItem::data(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>>>>" << std::endl;
+//       std::cout << " VertexItem::data(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>>>>" << std::endl;
       return QVariant::fromValue( _hexaVertex );
     } else {
       return QStandardItem::data( role );
@@ -71,11 +71,11 @@ QVariant VertexItem::data( int role ) const
 void VertexItem::setData ( const QVariant & value, int role )
 {
     if ( role == HEXA_DATA_ROLE ){
-      std::cout << " VertexItem::setData(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>" << std::endl;
+//       std::cout << " VertexItem::setData(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>" << std::endl;
       _hexaVertex = value.value<HEXA_NS::Vertex*>();
       emitDataChanged ();
     } else {
-      std::cout << " VertexItem::setData( " << role << ", "<< value.toString().toStdString() << " )" <<std::endl;
+//       std::cout << " VertexItem::setData( " << role << ", "<< value.toString().toStdString() << " )" <<std::endl;
       QStandardItem::setData ( value, role );
     }
 }

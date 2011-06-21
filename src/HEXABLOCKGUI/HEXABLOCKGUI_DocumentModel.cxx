@@ -72,7 +72,8 @@ DocumentModel::DocumentModel(QObject * parent):
   _cylinderItemFlags( Qt::NoItemFlags ),
   _pipeItemFlags( Qt::NoItemFlags ),
   _elementsItemFlags( Qt::NoItemFlags ),
-  _crossElementsItemFlags( Qt::NoItemFlags )
+  _crossElementsItemFlags( Qt::NoItemFlags ),
+  _disallowEdition( false )
 {
   if ( _hexaFile->open() ){
     _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
@@ -348,6 +349,51 @@ void DocumentModel::fillMesh()
 }
 
 
+// Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
+// {
+//   Qt::ItemFlags flags;
+// 
+//   if (!index.isValid()){
+//       std::cout<<"!index.isValid()"<<std::endl;
+//       return Qt::ItemIsEnabled;
+//   }
+// 
+//   QStandardItem *item = itemFromIndex ( index );
+// 
+//   if ( (item->type() == VERTEXITEM) && (_vertexItemFlags != Qt::NoItemFlags) ){
+//     flags = _vertexItemFlags;
+//   } else if ( (item->type() == EDGEITEM) && (_edgeItemFlags != Qt::NoItemFlags) ){
+//     flags = _edgeItemFlags;
+//   } else if ( (item->type() == QUADITEM) && (_quadItemFlags != Qt::NoItemFlags) ){
+//     flags = _quadItemFlags;
+//   } else if ( (item->type() == HEXAITEM) && (_hexaItemFlags != Qt::NoItemFlags) ){
+//     flags = _hexaItemFlags;
+//   } else if ( (item->type() == VECTORITEM) && (_vectorItemFlags != Qt::NoItemFlags) ){
+//     flags = _vectorItemFlags;
+//   } else if ( (item->type() == CYLINDERITEM) && (_cylinderItemFlags != Qt::NoItemFlags) ){
+//     flags = _cylinderItemFlags;
+//   } else if ( (item->type() == PIPEITEM ) && (_pipeItemFlags != Qt::NoItemFlags) ){
+//     flags = _pipeItemFlags;
+//   } else if ( (item->type() == ELEMENTSITEM) && (_elementsItemFlags != Qt::NoItemFlags) ){
+//     flags = _elementsItemFlags;
+//   } else if ( (item->type() == CROSSELEMENTSITEM) && (_crossElementsItemFlags != Qt::NoItemFlags) ){
+//     flags = _crossElementsItemFlags;
+//   } else if ( (item->type() == GROUPITEM) && (_groupItemFlags != Qt::NoItemFlags) ){
+//     flags = _groupItemFlags;
+//   } else if ( (item->type() == LAWITEM ) && (_lawItemFlags != Qt::NoItemFlags) ){
+//     flags = _lawItemFlags;
+//   } else if ( (item->type() == PROPAGATIONITEM ) && (_propagationItemFlags != Qt::NoItemFlags) ){
+//     flags = _propagationItemFlags;
+//   } else {
+//     flags = item->flags();
+//   }
+// 
+// 
+//   return flags;
+// }
+
+
+
 Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags flags;
@@ -356,59 +402,52 @@ Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
       std::cout<<"!index.isValid()"<<std::endl;
       return Qt::ItemIsEnabled;
   }
-
   QStandardItem *item = itemFromIndex ( index );
-
-  if ( (item->type() == VERTEXITEM) && (_vertexItemFlags != Qt::NoItemFlags) ){
-    flags = _vertexItemFlags;
-  } else if ( (item->type() == EDGEITEM) && (_edgeItemFlags != Qt::NoItemFlags) ){
-    flags = _edgeItemFlags;
-  } else if ( (item->type() == QUADITEM) && (_quadItemFlags != Qt::NoItemFlags) ){
-    flags = _quadItemFlags;
-  } else if ( (item->type() == HEXAITEM) && (_hexaItemFlags != Qt::NoItemFlags) ){
-    flags = _hexaItemFlags;
-  } else if ( (item->type() == VECTORITEM) && (_vectorItemFlags != Qt::NoItemFlags) ){
-    flags = _vectorItemFlags;
-  } else if ( (item->type() == CYLINDERITEM) && (_cylinderItemFlags != Qt::NoItemFlags) ){
-    flags = _cylinderItemFlags;
-  } else if ( (item->type() == PIPEITEM ) && (_pipeItemFlags != Qt::NoItemFlags) ){
-    flags = _pipeItemFlags;
-  } else if ( (item->type() == ELEMENTSITEM) && (_elementsItemFlags != Qt::NoItemFlags) ){
-    flags = _elementsItemFlags;
-  } else if ( (item->type() == CROSSELEMENTSITEM) && (_crossElementsItemFlags != Qt::NoItemFlags) ){
-    flags = _crossElementsItemFlags;
-  } else if ( (item->type() == GROUPITEM) && (_groupItemFlags != Qt::NoItemFlags) ){
-    flags = _groupItemFlags;
-  } else if ( (item->type() == LAWITEM ) && (_lawItemFlags != Qt::NoItemFlags) ){
-    flags = _lawItemFlags;
-  } else if ( (item->type() == PROPAGATIONITEM ) && (_propagationItemFlags != Qt::NoItemFlags) ){
-    flags = _propagationItemFlags;
+  if ( _disallowEdition ){
+    flags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+//     std::cout<<"_disallowEdition"<< std::endl;
   } else {
     flags = item->flags();
+//     flags = Qt::ItemFlags( Qt::ItemIsEditable );
+//     std::cout<<"allowEdition"<< std::endl;
   }
-
+//   std::cout<<"flags"<< flags << std::endl;
 
   return flags;
 }
 
 
-void DocumentModel::allowAllSelection()
+void DocumentModel::allowEdition()
 {
-  _vertexItemFlags = Qt::NoItemFlags;
-  _edgeItemFlags   = Qt::NoItemFlags;
-  _quadItemFlags   = Qt::NoItemFlags;
-  _hexaItemFlags   = Qt::NoItemFlags;
-
-  _vectorItemFlags   = Qt::NoItemFlags;
-  _cylinderItemFlags = Qt::NoItemFlags;
-  _pipeItemFlags     = Qt::NoItemFlags;
-  _elementsItemFlags      = Qt::NoItemFlags;
-  _crossElementsItemFlags = Qt::NoItemFlags;
-
-  _groupItemFlags = Qt::NoItemFlags;
-  _lawItemFlags   = Qt::NoItemFlags;
-  _propagationItemFlags = Qt::NoItemFlags;
+  std::cout<<"allowEdition "<< this << std::endl;
+  _disallowEdition = false;
 }
+
+void DocumentModel::disallowEdition()
+{
+  std::cout<<"disallowEdition "<< this << std::endl;
+  _disallowEdition = true;
+}
+
+
+// disallowEdition
+// void DocumentModel::allowAllSelection()
+// {
+//   _vertexItemFlags = Qt::NoItemFlags;
+//   _edgeItemFlags   = Qt::NoItemFlags;
+//   _quadItemFlags   = Qt::NoItemFlags;
+//   _hexaItemFlags   = Qt::NoItemFlags;
+// 
+//   _vectorItemFlags   = Qt::NoItemFlags;
+//   _cylinderItemFlags = Qt::NoItemFlags;
+//   _pipeItemFlags     = Qt::NoItemFlags;
+//   _elementsItemFlags      = Qt::NoItemFlags;
+//   _crossElementsItemFlags = Qt::NoItemFlags;
+// 
+//   _groupItemFlags = Qt::NoItemFlags;
+//   _lawItemFlags   = Qt::NoItemFlags;
+//   _propagationItemFlags = Qt::NoItemFlags;
+// }
 
 
 
@@ -434,26 +473,52 @@ void DocumentModel::allowDataSelectionOnly()
 
 
 
+// void DocumentModel::allowVertexSelectionOnly()
+// {
+//     std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
+//     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable);
+//     _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+//     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+//     _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+// //     emit layoutChanged();
+// }
+
 void DocumentModel::allowVertexSelectionOnly()
 {
     std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable);
-    _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
-    _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
-    _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
 //     emit layoutChanged();
 }
+
+
+
+
+
 
 void DocumentModel::allowEdgeSelectionOnly()
 {

@@ -66,7 +66,12 @@ namespace HEXABLOCK
         PatternDataSelectionModel( QAbstractItemModel * model );
         PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent );
         virtual ~PatternDataSelectionModel();
-        
+
+        void setVertexSelection();
+        void setEdgeSelection();
+        void setQuadSelection();
+        void setHexaSelection();
+        void setAllSelection();
 
         //Salome
         static LightApp_SelectionMgr* selectionMgr();
@@ -84,6 +89,12 @@ namespace HEXABLOCK
 
         LightApp_SelectionMgr* _salomeSelectionMgr;
         bool                   _salomeSelectionChanged;
+
+        int                    _selectionFilter;
+//         bool _vertexSelectionOnly;
+//         bool _edgeSelectionOnly;
+//         bool _quadSelectionOnly;
+//         bool _hexaSelectionOnly;
     };
 
 

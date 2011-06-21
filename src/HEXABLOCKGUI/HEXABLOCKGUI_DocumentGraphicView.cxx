@@ -95,8 +95,8 @@ using namespace std;
 using namespace HEXABLOCK::GUI;
 
 
-std::map<int,vtkIdType>   Document_Actor::vtkElemsId;
-std::map<vtkIdType, int>  Document_Actor::hexaElemsId;
+// std::map<int,vtkIdType>   Document_Actor::vtkElemsId;
+// std::map<vtkIdType, int>  Document_Actor::hexaElemsId;
 
 
 
@@ -164,6 +164,8 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
     vertexId = reinterpret_cast<intptr_t>(v); //v->getId();
     vtkNodeId [ vertexId ] = i;
     hexaNodeId[ i ] = vertexId ;
+//     vtkNodeId [ vertexId ] = i+1;
+//     hexaNodeId[ i+1 ] = vertexId ;
   }
 
   theGrid->SetPoints( aPoints );
@@ -190,6 +192,7 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
 
   vtkIdList *anIdList = vtkIdList::New();
   vtkIdType iVtkElem = 0;
+//   vtkIdType iVtkElem = 1; //CS_TEST
   int       iHexaElem;
 
   // VERTEX

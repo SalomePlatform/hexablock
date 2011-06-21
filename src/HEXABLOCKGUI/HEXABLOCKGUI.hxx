@@ -139,6 +139,7 @@ protected:
   static int _oldStudyId;
 
 
+  void testDocument();
 private slots:
   void newDocument();
   void importDocument( const QString &path = QString() );

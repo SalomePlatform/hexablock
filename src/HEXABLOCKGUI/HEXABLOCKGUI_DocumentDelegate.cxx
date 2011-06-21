@@ -37,15 +37,19 @@ DocumentDelegate::DocumentDelegate(QDockWidget *dw, QObject *parent)
       _meshSelectionModel(0)
 {
 // void QAbstractItemDelegate::closeEditor ( QWidget * editor, QAbstractItemDelegate::EndEditHint hint = NoHint )
-connect( this, SIGNAL( closeEditor ( QWidget *, QAbstractItemDelegate::EndEditHint) ),
-         this, SLOT( onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint)) );
 
-connect( this, SIGNAL( commitData ( QWidget * ) ),
-         this, SLOT( onCommitData ( QWidget * ) ) );
+connect( this, SIGNAL( closeEditor ( QWidget *, QAbstractItemDelegate::EndEditHint ) ),
+         this, SLOT( onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint ) ) );
+// 
+// connect( this, SIGNAL( commitData ( QWidget * ) ),
+//          this, SLOT( onCommitData ( QWidget * ) ) );
 
 //     emit commitData ( dw );
 
 }
+
+
+
 
 void DocumentDelegate::commitEditor()
 {
@@ -106,6 +110,9 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
         if ( _meshSelectionModel ) editor->setMeshSelectionModel( _meshSelectionModel);
 //         QItemSelectionModel*          _groupsSelectionModel;
         _dw->setWidget(editor);
+
+        cout << "############## TITLE => " << editor->windowTitle().toStdString() << endl;
+        _dw->setWindowTitle( tr("INPUT PANEL : %1").arg(editor->windowTitle()) );
 //         connect ( editor, SIGNAL( editingFinished() ), this, SLOT ( commitEditor() ) );
 //         editor->exec();
       }

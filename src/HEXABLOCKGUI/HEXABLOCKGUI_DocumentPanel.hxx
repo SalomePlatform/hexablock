@@ -110,7 +110,11 @@ namespace HEXABLOCK
 
 
         protected:
-          void _setAllSelection();
+          void _allowSelection();
+          void _disallowSelection();
+
+
+//           void _setAllSelection();
           void _setHexaSelectionOnly();
           void _setQuadSelectionOnly();
           void _setEdgeSelectionOnly();
@@ -124,10 +128,10 @@ namespace HEXABLOCK
           void _setLawSelectionOnly();
 
         protected slots:
+          virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onMeshSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
-
 
         protected :
 //           void installEventFilter();
@@ -147,6 +151,8 @@ namespace HEXABLOCK
           QMap<QObject*, QModelIndex>   _index;
           QObject*                      _currentObj;
 
+          int                           _expectedSelection;
+
           QList<QLineEdit*>  _hexaLineEdits;
           QList<QLineEdit*>  _quadLineEdits;
           QList<QLineEdit*>  _edgeLineEdits;
@@ -158,6 +164,7 @@ namespace HEXABLOCK
           QList<QLineEdit*>  _elementsLineEdits;
 
           QList<QLineEdit*>  _lawLineEdits;
+
     };
 
 
