@@ -19,9 +19,12 @@
 #
 
 import os
+import GEOM
 import geompy
+import smesh
 import hexablock
 import math
+import SALOMEDS
 
 k1 = 1
 
@@ -121,7 +124,7 @@ dl2 = dl1
 
 # JPL (le 09/05/2011)
 # repris de test_bride_abu.cxx (version la plus a jour dans ~/IHMHEXA/Alain/models):
-# et de BRIDE.py (Karima) pour les "vraies" coordonnées :
+# et de BRIDE.py (Karima) pour les "vraies" coordonnï¿½es :
 
 #=================================================
 # Creation des centres des grilles cylindriques
@@ -181,7 +184,7 @@ save_schema(doc)
 # @todo JPL : peut-on fusionner les edges du haut des hexaedres du haut du deuxieme
 # rang ? (cf. GEOM). Si oui revoir aussi l'association
 
-# 2. 2ème grille (demi) :
+# 2. 2ï¿½me grille (demi) :
 #========================
 grille_cyl_demi = doc.makeCylindrical(center2, dx, dz, dr2, da2, dl2,
                                       nr2, na2, nl2, True)
@@ -405,7 +408,3 @@ for ni in range(nr2 + 1):
 # association des vertex communs grille1/grille2
 # REM : cette etape n'est pas necessaire ? En effet, les vertex ayant
 # ete fusionnes, l'association a ete faite avec la grille 2
-
-doc.saveVtk ("bride.vtk") 
-## mesh_hexas = hexablock.mesh("Bride:hexas", doc)
-
