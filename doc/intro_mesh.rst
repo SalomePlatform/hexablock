@@ -27,7 +27,8 @@ The main stages to mesh with HexaBlock are:
 
 
 Define a law of discretization
-=============================
+==============================
+
 A discretization law is defined by four properties:
 
 - the name of the law
