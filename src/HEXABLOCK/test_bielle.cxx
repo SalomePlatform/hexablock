@@ -1,22 +1,21 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 
 // C++ : Test bielle (d'apres Karima D.Y)
 
@@ -38,7 +37,7 @@
 #define DumpElt(x) { printf(" ... "#x " = ") ; if (x) x->dump() ; else printf ("0x\n") ; } 
 
 // ======================================================== test_bielle
-int test_bielle ()
+int test_bielle (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -217,7 +216,7 @@ quad_list = [ quad_11 , quad_12 ]
     //=================================================
     // Assemblage des deux grilles cylindriques
     //=================================================
-    doc->dump();
+    // doc->dump();
     // Hex::Elements* model_biell_fin = 
     doc->joinQuads (quad_list, quad_21, x1, y1, x4, y4, 1);
 
@@ -249,7 +248,8 @@ quad_list = [ quad_11 , quad_12 ]
 
 x_mod_h_g = doc->findVertex( -R , -R , h/2 )
 y_mod_h_g = doc->findVertex( -R , 0 , h/2 )
-z_mod_h_g = doc->findVertex( -R , R , h/2 )
+z_mod_h_g = doc->findVertex( -R , R , h/2 )test_bielle.cxx 
+
 
 u_mod_h_g = doc->findVertex( R , -R , h/2 )
 v_mod_h_g = doc->findVertex( R , 0 , h/2 )

@@ -1,21 +1,22 @@
-# Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Makefile.am for Sphinx documentation of HEXABLOCK component
@@ -62,20 +63,20 @@ ALLSPHINXOPTS   = -d doctrees $(PAPEROPT_a4) $(SPHINXOPTS) $(SOURCEDIR)
 
 htm:
 	mkdir -p html doctrees
-	$(SPHINXBUILD) -c $(top_builddir)/doc  -b html $(ALLSPHINXOPTS) html
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b html $(ALLSPHINXOPTS) html
 	@echo
 	@echo "Build finished. The HTML pages are in html."
 
 latex:
 	mkdir -p latex doctrees
-	$(SPHINXBUILD) -c $(top_builddir)/doc  -b latex $(ALLSPHINXOPTS) latex
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b latex $(ALLSPHINXOPTS) latex
 	@echo
 	@echo "Build finished; the LaTeX files are in latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
 
 pdf:
-	$(SPHINXBUILD) -c $(top_builddir)/doc  -b pdf $(ALLSPHINXOPTS) pdf
+	$(SPHINXBUILD) -c $(top_builddir)/doc -b pdf $(ALLSPHINXOPTS) pdf
 	@echo
 	@echo "Build finished. The pdf documents are in pdf."
 
@@ -86,15 +87,68 @@ htmldev:
 		 mkdir -p $@
 
 RSTFILES= \
-	block_method.rst \
-	general.rst      \
-	gui.rst          \
-	index.rst        \
-	interactive.rst  \
-	intro_python.rst \
-	mesh.rst         \
-	python.rst       \
-	tui.rst
+	annexe.rst                  \
+	block_method.rst            \
+	cad.rst                     \
+	creategrids.rst             \
+	full_example_bridle.rst     \
+	general.rst                 \
+	gui_asso_quad_to_geom.rst   \
+	gui_blocks_for_cyl_pipe.rst \
+	gui_component.rst           \
+	gui_cut_hexa.rst            \
+	gui_cyl.rst                 \
+	gui_disc_elmts.rst          \
+	gui_discret_law.rst         \
+	gui_document.rst            \
+	gui_edge.rst                \
+	gui_groups.rst              \
+	gui_hexahedron.rst          \
+	gui_make_elmts.rst          \
+	gui_merge_elmts.rst         \
+	gui_mesh.rst                \
+	gui_modify_elmts.rst        \
+	gui_pipe.rst                \
+	gui_prism_join_quad.rst     \
+	gui_propag.rst              \
+	gui_quadrangle.rst          \
+	gui_remove.rst              \
+	gui_vector.rst              \
+	gui_vertex.rst              \
+	index.rst                   \
+	interactive.rst             \
+	intro_association.rst       \
+	intro_groups.rst            \
+	intro_mesh.rst              \
+	intro_python.rst            \
+	python.rst                  \
+	tui_asso_quad_to_geom.rst   \
+	tui_blocks_for_cyl_pipe.rst \
+	tui_cartgrid.rst            \
+	tui_component.rst           \
+	tui_cut_hexa.rst            \
+	tui_cylgrid.rst             \
+	tui_cyl.rst                 \
+	tui_disc_elmts.rst          \
+	tui_discret_law.rst         \
+	tui_document.rst            \
+	tui_edge.rst                \
+	tui_groups.rst              \
+	tui_hexahedron.rst          \
+	tui_make_elmts.rst          \
+	tui_merge_elmts.rst         \
+	tui_mesh.rst                \
+	tui_modify_elmts.rst        \
+	tui_pipe.rst                \
+	tui_prism_join_quad.rst     \
+	tui_propag.rst              \
+	tui_quadrangle.rst          \
+	tui_remove.rst              \
+	tui_sphergrid.rst           \
+	tui_vector.rst              \
+	tui_vertex.rst
+
+
 
 EXTRA_DIST+= $(RSTFILES) _static cas_test_python
 

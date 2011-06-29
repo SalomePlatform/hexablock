@@ -1,23 +1,22 @@
 # -*- coding: latin-1 -*-
-# Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 
 #===============================================
 # By Karima DEBCHI YATAGHENE Nov 2009 at CS 
@@ -335,8 +334,8 @@ Face_haut = geompy.GetFaceNearPoint(Bielle_geom, Pt_A)
 Face_bas = geompy.GetFaceNearPoint(Bielle_geom, Pt_B)
 
 
-# Paramï¿½tre pour:
-# -rï¿½cupï¿½ration des points.
+# Paramètre pour:
+# -récupération des points.
 # -et associations.
 u_1 = 0.75#0.8
 u_2 = 0.5
@@ -959,7 +958,7 @@ for j in range(N_Propa):
     Propa.setLaw( Law )# appliquer la loi de discretisation sur tout le modele et generer le maillage
 
 #====================================
-# Gï¿½nï¿½rer des maillages
+# Générer des maillages
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "

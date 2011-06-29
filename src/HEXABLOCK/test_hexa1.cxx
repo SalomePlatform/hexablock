@@ -1,22 +1,21 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 
 // C++ : Test unitaire
 
@@ -226,6 +225,7 @@ int test_joint (int nbargs, cpchar tabargs[])
        if (ny!=my) 
           liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
 
+   doc->saveVtk ("joint1.vtk");
    const int hauteur = 5;
    Hex::Elements* joint = doc->joinQuads(liste, cible, v1,v2,v3,v4, hauteur);
    // for (int nh=0 ; nh<hauteur ; nh++) joint->getHexa(nh)->setScalar (5);
@@ -245,7 +245,7 @@ int test_joint (int nbargs, cpchar tabargs[])
    for (int nh=0 ; nh<=hauteur ; nh++) 
        joint->getVertex(nh*nbr_surf_vertex)->setScalar (3);
 
-   doc->saveVtk ("joint.vtk");
+   doc->saveVtk ("joint2.vtk");
    return HOK;
 }
 // ======================================================== test_prism
@@ -302,7 +302,7 @@ int test_hexa1 (int nbargs, cpchar tabargs[])
    return HOK;
 }
 // ======================================================== test_decoupage
-int test_decoupage ()
+int test_decoupage (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 1;
@@ -443,9 +443,19 @@ int test_relecture (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.loadDocument ("Essai");
 
+   Hex::Vertex* v4 = doc->findVertex (80.0, 0.0,  0.0);
+   Hex::Vertex* v5 = doc->findVertex (80.0, 0.0, 40.0);
+   Hex::Edge*   e4 = doc->findEdge   (v4, v5);
+
+   HexDump (v4);
+   HexDump (v5);
+   HexDump (e4);
+
+   e4->setScalar (5);
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
 
+   Hex::Elements* grid2 = doc->cut (e4, 2);
    return HOK;
 }
 // ======================================================== test_clone
@@ -597,14 +607,14 @@ int test_asso_line (int nbargs, cpchar tabargs[])
 
    int ier = doc-> associateOpenedLine (m_start, m_line, 
                                         gstart,  pstart, gline, pend);
-   Display (ier);
+   HexDisplay (ier);
    doc->saveVtk ("asso_line.vtk");
 
   m_line.push_back (c1->getEdgeJ (nr, 0, 0));
    Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
    ier = doc-> associateClosedLine (m_first, m_start, m_line, 
                                         gstart,  pstart, gline);
-   Display (ier);
+   HexDisplay (ier);
    // doc->dump ();
 
    return HOK;

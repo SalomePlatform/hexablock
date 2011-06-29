@@ -1,20 +1,20 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include "HEXABLOCKGUI_DocumentItem.hxx"
@@ -39,10 +39,17 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
 {
   char pName[12];
   QString name = _hexaVertex->getName(pName);
+//   QString docEntry = model()->invisibleRootItem()->data(HEXA_ENTRY_ROLE).toString();
+
   setText(name);
 //   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
   setData( VERTEX_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaVertex)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex) ), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaVertex->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
+
+
+//   setData( QString("0:1:1:1"), HEXA_DOC_ENTRY_ROLE );
 //   setData( QString("toto"), HEXA_ENTRY_ROLE );
 }
 
@@ -54,6 +61,7 @@ int VertexItem::type() const
 QVariant VertexItem::data( int role ) const
 {
     if ( role == HEXA_DATA_ROLE ){
+//       std::cout << " VertexItem::data(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>>>>" << std::endl;
       return QVariant::fromValue( _hexaVertex );
     } else {
       return QStandardItem::data( role );
@@ -63,9 +71,11 @@ QVariant VertexItem::data( int role ) const
 void VertexItem::setData ( const QVariant & value, int role )
 {
     if ( role == HEXA_DATA_ROLE ){
+//       std::cout << " VertexItem::setData(HEXA_DATA_ROLE) >>>>>>>>>>>>>>>>>>" << std::endl;
       _hexaVertex = value.value<HEXA_NS::Vertex*>();
       emitDataChanged ();
     } else {
+//       std::cout << " VertexItem::setData( " << role << ", "<< value.toString().toStdString() << " )" <<std::endl;
       QStandardItem::setData ( value, role );
     }
 }
@@ -82,7 +92,9 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QString name = _hexaEdge->getName(pName);
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaEdge)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaEdge->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 int EdgeItem::type() const
@@ -122,6 +134,8 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   setText(name);
   setData( QUAD_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ), HEXA_DOC_ENTRY_ROLE );
+setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaQuad->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 
@@ -163,7 +177,9 @@ HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
   QString name = _hexaHexa->getName(pName);
   setText(name);
   setData( HEXA_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
+  setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
+//   setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ), HEXA_DOC_ENTRY_ROLE );
+  setData( QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_hexaHexa->dad()) ) ), HEXA_DOC_ENTRY_ROLE );
 }
 
 

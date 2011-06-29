@@ -1,20 +1,20 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _HEXABLOCKGUI_HXX_
@@ -31,7 +31,11 @@
 
 #include <OB_Browser.h>
 #include <SalomeApp_Module.h>
+// #include <LightApp_Module.h>
+
 #include <LightApp_SelectionMgr.h>
+#include <LightApp_DataModel.h>
+
 #include <SALOMEconfig.h>
 
 // #include "Resource.hxx"
@@ -59,13 +63,14 @@ namespace HEXABLOCK
 
 }
 
-
+class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
 
 
 
-class HEXABLOCKGUI : public SalomeApp_Module 
+class HEXABLOCKGUI : public SalomeApp_Module
+// class HEXABLOCKGUI : public LightApp_Module
 {
   Q_OBJECT
 
@@ -75,11 +80,13 @@ public:
   HEXABLOCKGUI();
   virtual ~HEXABLOCKGUI();
 
+  static SalomeApp_Study*         activeStudy();
   static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
   static LightApp_SelectionMgr*   selectionMgr();
 
   void initialize( CAM_Application* app);
   void windows( QMap<int, int>& theMap) const;
+//   virtual LightApp_Displayer* displayer();
   virtual QString  engineIOR() const;
 
   virtual void viewManagers(QStringList& list) const;
@@ -108,7 +115,8 @@ public:
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
-  void onDblClick(const QModelIndex& index);
+  void onClick(const QModelIndex& index);
+//   void onDblClick(const QModelIndex& index);
 
   void showObjectBrowserMenus(bool show);
   void showPatternMenus(bool show);
@@ -131,6 +139,7 @@ protected:
   static int _oldStudyId;
 
 
+  void testDocument();
 private slots:
   void newDocument();
   void importDocument( const QString &path = QString() );
@@ -172,7 +181,7 @@ private slots:
 
   void setPropagation();
 
-  void printVTK();
+//   void printVTK();
 
 private:
 //   bool eventFilter(QObject *obj, QEvent *event);

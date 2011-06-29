@@ -1,22 +1,21 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 
 // C++ : La clase principale de Hexa
 
@@ -24,31 +23,10 @@
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
 
-//  #include "HexEltBase.hxx"
-//  #include "HexVertex.hxx"
-//  #include "HexQuad.hxx"
-//  #include "HexHexa.hxx"
-
-//  #include "HexElements.hxx"
-//  #include "HexCrossElements.hxx"
-
-//  #include "HexVector.hxx"
-//  #include "HexCylinder.hxx"
-//  #include "HexPipe.hxx"
-//  #include "HexMatrix.hxx"
-//  #include "HexCloner.hxx"
-//  #include "HexPropagation.hxx"
-//  #include "HexLaw.hxx"
-
-//  #include "HexXmlWriter.hxx"
-//  #include "HexXmlTree.hxx"
-//  #include "HexGlobale.hxx"
-//  #include "HexGroups.hxx"
-
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
 
@@ -81,6 +59,22 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
    int  nbseg = mline.size ();
 
    bool closed = vfirst != NULL;
+
+   if (db)
+      {
+      PutName (vfirst);
+      mstart->printName (" = (");
+      mstart->getVertex(V_AMONT)->printName (", ");
+      mstart->getVertex(V_AVAL) ->printName (")\n");
+
+      for (int nro=0 ; nro<nbseg ; nro++)
+          {
+          printf (" %2d : ", nro);
+          mline[nro]->printName(" = (");
+          mline[nro]->getVertex(V_AMONT)->printName(", ");
+          mline[nro]->getVertex(V_AVAL )->printName(")\n ");
+          }
+      }
 
    if (mstart == NULL)
       {
@@ -164,11 +158,14 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
        les_orig. push_back (tab_sens [nedge]);
        }
 
-   printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
-   nbseg = gline.size ();
-   for (int ns = 0 ; ns < nbseg ; ns++)
-       {
-       printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
+   if (db)
+      {
+      printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
+      nbseg = gline.size ();
+      for (int ns = 0 ; ns < nbseg ; ns++)
+          {
+          printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
+          }
        }
     
    if (closed)

@@ -1,29 +1,22 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-/*#include <cmath>
-#include <QMenu>
-#include <QGraphicView>
-#include <QWheelEvent>
-
-#include <cmath>
-*/
 //#define _DEVDEBUG_
 
 #include <sstream>
@@ -33,15 +26,15 @@
 #include <math.h>
 #include <QtGui>
 
-// ajout JPL :
-//#include <LightApp_SelectionMgr.h>
-//#include <LightApp_Displayer.h>
-#include <SalomeApp_Application.h>
+
+#include <LightApp_Application.h>
+
 #include <SUIT_ViewManager.h>
 #include <SUIT_ViewWindow.h>
 #include <SVTK_ViewManager.h>
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
+#include <SVTK_Prs.h>
 #include <SALOME_Actor.h>
 #include <VTKViewer_Algorithm.h>
 #include <SalomeApp_Study.h>
@@ -79,16 +72,14 @@
 #include "vtkProperty.h"
 
 
+// #include "vtkStructuredGridReader.h"
+#include "vtkUnstructuredGridReader.h"
+
+
 #include <VTKViewer_CellLocationsArray.h>
 
 
-// end JPL
 
-// ajout JPL :
-#include "HEXABLOCKGUI_Displayer.hxx"
-#include "HEXABLOCKGUI.hxx"
-#include "HEXABLOCKGUI_DocumentItem.hxx"
-// end JPL
 
 
 #ifndef M_PI
@@ -98,24 +89,337 @@
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 
+
+
 using namespace std;
 using namespace HEXABLOCK::GUI;
 
-DocumentGraphicView::DocumentGraphicView(SalomeApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent)
-    : QAbstractItemView(parent),
-      _suitView( suitView )
-{
-// ajout JPL :
-    myApp = app;
-    myDisplayer = 0;
-// end JPL
 
+// std::map<int,vtkIdType>   Document_Actor::vtkElemsId;
+// std::map<vtkIdType, int>  Document_Actor::hexaElemsId;
+
+
+
+Document_Actor::Document_Actor( HEXA_NS::Document* doc ):
+  SALOME_Actor(),
+  _doc( doc )
+{
+
+//   QString entry = QString::number( reinterpret_cast<intptr_t>(_doc) );
+  QString entry = QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_doc) ) );
+  Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" );//"0:1:1:1", "HEXABLOCK" );//,theName); CS_TODO
+  setIO(anIO);
+
+  vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
+  std::cout << "Document_Actor aGrid->GetNumberOfCells() =>"<< aGrid->GetNumberOfCells();
+
+  vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
+  aMapper->SetInput(aGrid);
+  aGrid->Delete();
+
+
+  SetVisibility( true );//VisibilityOff();
+  SetPickable( true ); //PickableOff();//
+  SetMapper( aMapper );
+  aMapper->Delete();
+
+  vtkProperty* aProp = vtkProperty::New();
+//   aProp->SetRepresentationToSurface();
+  aProp->SetRepresentationToWireframe();
+//   aProp->SetRepresentationToPoints();
+  aProp->EdgeVisibilityOn ();
+  aProp->SetPointSize(5);
+  SetProperty( aProp );
+  aProp->Delete();
+//   SetPointRepresentation(true);
+
+}
+
+Document_Actor::~Document_Actor()
+{
+
+}
+
+
+vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
+{
+  vtkUnstructuredGrid* theGrid = vtkUnstructuredGrid::New();
+
+  std::map<int,vtkIdType>   vtkNodeId;
+  std::map<vtkIdType, int>  hexaNodeId;
+
+//   std::map<int,vtkIdType>   vtkElemsId;
+//   std::map<vtkIdType, int>  hexaElemsId;
+
+  // Create points
+  vtkPoints* aPoints = vtkPoints::New();
+  int nbVertex = _doc->countVertex();
+  aPoints->SetNumberOfPoints( nbVertex );
+
+  HEXA_NS::Vertex* v = NULL;
+  int vertexId;
+  for ( int i=0; i <nbVertex; ++i ){
+    v = _doc->getVertex(i);
+    aPoints->SetPoint( i, v->getX(), v->getY(), v->getZ() );
+    vertexId = reinterpret_cast<intptr_t>(v); //v->getId();
+    vtkNodeId [ vertexId ] = i;
+    hexaNodeId[ i ] = vertexId ;
+//     vtkNodeId [ vertexId ] = i+1;
+//     hexaNodeId[ i+1 ] = vertexId ;
+  }
+
+  theGrid->SetPoints( aPoints );
+  aPoints->Delete();
+//   theGrid->SetCells( 0, 0, 0, 0, 0 );
+
+
+  // Calculate cells size
+  int nb0DElement = _doc->countVertex();
+  int nbEdge      = _doc->countEdge();
+  int nbFace      = _doc->countQuad();
+  int nbVolume    = _doc->countHexa();
+
+  vtkIdType aCellsSize =  2*nb0DElement + 3*nbEdge + ( 4 + 1 )*nbFace + ( 8 + 1 )*nbVolume;
+  vtkIdType aNbCells   =  nb0DElement + nbEdge + nbFace + nbVolume;
+
+  // Create cells
+  vtkCellArray* aConnectivity = vtkCellArray::New();
+  aConnectivity->Allocate( aCellsSize, 0 );
+
+  vtkUnsignedCharArray* aCellTypesArray = vtkUnsignedCharArray::New();
+  aCellTypesArray->SetNumberOfComponents( 1 );
+  aCellTypesArray->Allocate( aNbCells * aCellTypesArray->GetNumberOfComponents() );
+
+  vtkIdList *anIdList = vtkIdList::New();
+  vtkIdType iVtkElem = 0;
+//   vtkIdType iVtkElem = 1; //CS_TEST
+  int       iHexaElem;
+
+  // VERTEX
+  for ( int i=0; i<nb0DElement; ++i ){
+    anIdList->SetNumberOfIds( 1 );
+    v = _doc->getVertex(i);
+    iHexaElem = reinterpret_cast<intptr_t>(v);//v->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+    anIdList->SetId(0, vtkNodeId[iHexaElem]);
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_VERTEX );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // EDGE
+  HEXA_NS::Edge* e = NULL;
+  HEXA_NS::Vertex* vertexElem = NULL;
+  for ( int i=0; i<nbEdge; ++i ){
+    anIdList->SetNumberOfIds( 2 );
+    e = _doc->getEdge(i);
+    iHexaElem = reinterpret_cast<intptr_t>(e); //e->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 2; ++j ){ //j< e->countVertex(); ++j ){
+      vertexElem = e->getVertex( j );
+      anIdList->SetId( j, vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ] );//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_LINE );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // QUAD
+  HEXA_NS::Quad* q = NULL;
+  HEXA_NS::Quad* quadElem = NULL;
+  for ( int i=0; i<nbFace; ++i ){
+    anIdList->SetNumberOfIds( 4 );
+    q = _doc->getQuad(i);
+    iHexaElem = reinterpret_cast<intptr_t>(q); //q->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 4; ++j ){
+      vertexElem = q->getVertex( j );
+      anIdList->SetId( j, vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ] );//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_QUAD );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // HEXA
+  HEXA_NS::Hexa* h = NULL;
+  HEXA_NS::Hexa* hexaElem = NULL;
+  std::map<int, int> connectivity;
+  connectivity[0] = 0;
+  connectivity[1] = 1;
+  connectivity[2] = 3;
+  connectivity[3] = 2;
+  connectivity[4] = 4;
+  connectivity[5] = 5;
+  connectivity[6] = 7;
+  connectivity[7] = 6;
+  for ( int i=0; i<nbVolume; ++i ){
+    anIdList->SetNumberOfIds( 8 );
+    h = _doc->getHexa(i);
+    iHexaElem = reinterpret_cast<intptr_t>(h); //q->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 8; ++j ){
+      vertexElem = h->getVertex( j );// );
+      anIdList->SetId( connectivity[j], vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ]);//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_HEXAHEDRON );
+    ++iVtkElem;
+  }
+
+
+// 0        1      2     3        4     5      6      7
+// V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
+// 
+// 0        1     3      2        4    5      7      6
+
+  // Insert cells in grid
+  VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
+  aCellLocationsArray->SetNumberOfComponents( 1 );
+  aCellLocationsArray->SetNumberOfTuples( aNbCells );
+//   std::cout << "aNbCells =>" << aNbCells << std::endl;
+
+  aConnectivity->InitTraversal();
+  for( vtkIdType idType = 0, *pts, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
+    aCellLocationsArray->SetValue( idType, aConnectivity->GetTraversalLocation( npts ) );
+  }
+  theGrid->SetCells( aCellTypesArray, aCellLocationsArray,aConnectivity );
+
+  aCellLocationsArray->Delete();
+  aCellTypesArray->Delete();
+  aConnectivity->Delete();
+  anIdList->Delete();
+  std::cout << "theGrid->GetNumberOfCells()" << theGrid->GetNumberOfCells() << std::endl;
+
+  return theGrid;
+}
+
+
+
+
+// DocumentGraphicView::DocumentGraphicView(SalomeApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent)
+DocumentGraphicView::DocumentGraphicView( LightApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent )
+    : QAbstractItemView(parent),
+      _suitView( suitView ),
+      _documentActor( 0 ),
+      _currentChanged( false )
+{
+// _suitView->getViewPort();
+// _suitView->viewport();
+// _suitView->installEventFilter(this);
 }
 
 DocumentGraphicView::~DocumentGraphicView()
 {
 }
 
+
+void DocumentGraphicView::onPatternDatachanged()
+{
+  std::cout << "DocumentGraphicView::onPatternDatachanged " <<std::endl;
+  update();
+}
+
+// void DocumentGraphicView::loadVTK( const QString&  path ) //CS_TEST
+// {
+//   std::cout << "DocumentGraphicView::loadVTK=>"<<std::endl;
+//   QFile file(path);
+//   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+//     return;
+// //   QByteArray vtkData = file.readAll ();
+//   QString vtkData = file.readAll ();
+//   vtkData.replace(",",".");
+// 
+// 
+//   SVTK_ViewWindow* myVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
+// 
+//   // vtkStructuredGridReader
+//   vtkUnstructuredGridReader* r = vtkUnstructuredGridReader::New();
+// //   r->SetFileName( path.toLocal8Bit().constData() );
+//   r->SetInputString( vtkData.toLocal8Bit().constData() );
+//   r->SetReadFromInputString( true );
+//   r->Update();
+// 
+//   vtkUnstructuredGrid* myGrid = r->GetOutput();//vtkUnstructuredGrid::New();
+//   std::cout << "GetNumberOfCells =>"<< myGrid->GetNumberOfCells();
+//   // Create and display actor
+// 
+//   vtkDataSetMapper* myMapper = vtkDataSetMapper::New();
+//   myMapper->SetInput(myGrid);
+// 
+// //   if ( myPreviewActor ){
+// //     myVTKViewWindow->RemoveActor(myPreviewActor);
+// //     myPreviewActor->Delete();
+// //   }
+// 
+//   SALOME_Actor* myPreviewActor = SALOME_Actor::New();
+//   myPreviewActor = SALOME_Actor::New();
+//   Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject(QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ),"HEXABLOCK");//,theName);
+//   myPreviewActor->setIO(anIO);
+// 
+// //   myPreviewActor->PickableOff();
+//   myPreviewActor->SetVisibility( true );//VisibilityOff();
+//   myPreviewActor->SetPickable( true );
+//   myPreviewActor->SetMapper(myMapper);
+// 
+//   vtkProperty* aProp = vtkProperty::New();
+// //   aProp->SetRepresentationToWireframe();
+//   aProp->SetRepresentationToSurface();
+//   aProp->EdgeVisibilityOn ();
+// 
+// //   aProp->SetColor(10, 10, 250); 
+//   aProp->SetPointSize(5);
+//   myPreviewActor->SetProperty(aProp);
+//   aProp->Delete();
+// 
+//   /*vtkProperty* myBackProp = vtkProperty::New();
+//   GetColor( "SMESH", "backface_color", aBackRGB[0], aBackRGB[1], aBackRGB[2], QColor( 0, 0, 255 ) );
+//   myBackProp->SetColor( aBackRGB[0], aBackRGB[1], aBackRGB[2] );
+//   myPreviewActor->SetBackfaceProperty( myBackProp );
+//   myBackProp->Delete()*/;
+//   myVTKViewWindow->AddActor(myPreviewActor);
+//   myVTKViewWindow->getRenderer()->Render();
+//   myVTKViewWindow->Repaint();
+//   myVTKViewWindow->onFitAll();
+// 
+//   myVTKViewWindow->SetSelectionMode( ActorSelection );
+// // myVTKViewWindow->SetSelectionMode( NodeSelection );
+// // myVTKViewWindow->SetSelectionMode( EdgeSelection );
+// // myVTKViewWindow->SetSelectionMode( FaceSelection );
+// }
+
+
+
+void DocumentGraphicView::update()
+{
+  std::cout << "DocumentGraphicView::update()" << std::endl;
+  SVTK_ViewWindow*    theVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
+  PatternDataModel*   theModel         = dynamic_cast<PatternDataModel *>( model() );
+  HEXA_NS::Document*  theDocumentImpl  = theModel->documentImpl();
+
+  if ( _documentActor ){
+    theVTKViewWindow->RemoveActor( _documentActor );
+    _documentActor->Delete();
+    std::cout << "DocumentGraphicView::update() REMOVE PREVIOUS ACTOR" << std::endl;
+  }
+  _documentActor = new Document_Actor( theDocumentImpl );
+
+  // display HEXABLOCK document model
+  theVTKViewWindow->AddActor( _documentActor );
+  theVTKViewWindow->getRenderer()->Render();
+  theVTKViewWindow->Repaint();
+  theVTKViewWindow->onFitAll();
+  // myVTKViewWindow->SetSelectionMode( ActorSelection );
+//   theVTKViewWindow->SetSelectionMode( NodeSelection );
+  // myVTKViewWindow->SetSelectionMode( FaceSelection );
+}
 
 
 /********************************************************************************
@@ -210,15 +514,20 @@ void DocumentGraphicView::commitData ( QWidget * editor )
 void DocumentGraphicView::currentChanged ( const QModelIndex & current, const QModelIndex & previous )
 { 
   std::cout << "DocumentGraphicView::currentChanged" << std::endl; 
+  _currentChanged = true;
 }
 
 void DocumentGraphicView::dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight )
 { 
   std::cout << "DocumentGraphicView::dataChanged" << std::endl;
-//   std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
-//   std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
+  std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  update();
+//   if ( !_currentChanged )
+//     update(); //CS_TEST
 
-  updateObject(topLeft);
+  _currentChanged = false;
+//   updateObject(topLeft);
 }
 
 void DocumentGraphicView::editorDestroyed ( QObject * editor )
@@ -231,34 +540,44 @@ void DocumentGraphicView::rowsAboutToBeRemoved ( const QModelIndex & parent, int
   std::cout << "DocumentGraphicView::rowsAboutToBeRemoved" << std::endl; 
 }
 
+
 void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
 { 
-  QModelIndex newRow;
-  for ( int i = start; i<= end; ++i ){
-    newRow = parent.child(i,0);
-    addObject(newRow);
-  }
+
+//   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
+
 }
+
+// void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
+// { 
+// 
+// //   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
+//   QModelIndex newRow;
+// 
+//   SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
+//   SUIT_ViewManager* vman = myViewWindow->getViewManager();
+//   SUIT_ViewModel* vmodel = vman->getViewModel();
+// 
+//   for ( int i = start; i<= end; ++i ){
+//     newRow = parent.child(i,0);
+// //     std::cout << "newRow.data().toString() =>" << newRow.data().toString().toStdString() << std::endl; 
+//     QString entry = newRow.data(HEXA_ENTRY_ROLE).toString();//.toStdString();
+//     Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
+//     UpdateViewer();
+//         
+// //     addObject(newRow);
+//   }
+// }
 
 void DocumentGraphicView::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
 { 
-  std::cout << "DocumentGraphicView::selectionChanged" << std::endl; 
+//   std::cout << "DocumentGraphicView::selectionChanged" << std::endl; 
 }
 
 void DocumentGraphicView::updateGeometries ()
 { 
-  std::cout << "DocumentGraphicView::updateGeometries " << std::endl; 
+//   std::cout << "DocumentGraphicView::updateGeometries " << std::endl; 
 }
-
-
-
-
-
-
-
-
-
-
 
 
 SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
@@ -268,388 +587,146 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 
 
 
-// ajout JPL
-LightApp_Displayer* DocumentGraphicView::displayer()
-{
-    if( !myDisplayer )
-        myDisplayer = new HEXABLOCKGUI_Displayer(myApp, this);
-    return myDisplayer;
-}
-// end JPL
-
-// ajout JPL
-bool DocumentGraphicView::updateObject(const QModelIndex& index) //CS_UPDATE
-{
-    std::cout << "updateObject()" << std::endl;
-    
-    const PatternDataModel* smodel = dynamic_cast<const PatternDataModel*>(model());
-    QStandardItem* sitem = NULL;
-
-    if ( smodel != NULL )
-    {
-        sitem = smodel->itemFromIndex(index);
-        if ( sitem != NULL )
-        {
-            QVariant variant = index.model()->data(index, HEXA_ENTRY_ROLE);
-            if ( !variant.isValid() ) return false;
-            QString entry = variant.toString();
-            SALOME_Actor* anActor = FindActorByEntry( _suitView, entry.toStdString().c_str() );
-            RemoveActor(_suitView, anActor);
-            addObject(index);
-            return true;
-        
-        }
-    }
-}
-
-bool DocumentGraphicView::addObject(const QModelIndex& index)
-{
-    QString entry = index.data(HEXA_ENTRY_ROLE).toString();
-    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
-    if (myViewWindow != NULL)
-    {
-        // affichage :
-        SUIT_ViewManager* vman = myViewWindow->getViewManager();
-        SUIT_ViewModel* vmodel = vman->getViewModel();
-        displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
-        displayer()->UpdateViewer();
-        // end JPL
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 
-void DocumentGraphicView::RemoveActor(SUIT_ViewWindow *theWnd, SALOME_Actor* theActor)
-{
-    std::cout << "RemoveActor() : 1" << std::endl;
-    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWnd);
-//    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);    
-    if (myViewWindow != NULL)
-    {
-        myViewWindow->RemoveActor(theActor);
-        if(theActor->hasIO())
-        {
-            std::cout << "RemoveActor() : 2" << std::endl;            
-            Handle(SALOME_InteractiveObject) anIO = theActor->getIO();
-            if(anIO->hasEntry())
-            {
-                std::cout << "RemoveActor() : 3" << std::endl;                
-                std::string anEntry = anIO->getEntry();
-                SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myViewWindow->getViewManager()->study() );
-                int aStudyId = aStudy->id();
-//                 TVisualObjCont::key_type aKey(aStudyId,anEntry);
-//                 VISUAL_OBJ_CONT.erase(aKey);
-            }
-        }
-        theActor->Delete();
-        myViewWindow->Repaint();
-        std::cout << "RemoveActor() : 4" << std::endl;        
-    }
-}
 
-SALOME_Actor* DocumentGraphicView::CreateActor(const QString& entry)
-{
-    SALOME_Actor* actor = NULL;
 
-    const PatternDataModel* smodel = dynamic_cast<const PatternDataModel*>(model());
-    QStandardItem*  sitem = NULL;
 
-    if ( smodel != NULL ){
-        QModelIndexList indexes = smodel->match( smodel->index(0, 0),
-                                            HEXA_ENTRY_ROLE,
-                                            entry,
-                                            1,
-                                            Qt::MatchRecursive );
-        if ( indexes.count() > 0 ) {
-            sitem = smodel->itemFromIndex(indexes[0]);
-            if ( sitem != NULL ) {
-                actor = SALOME_Actor::New();
-                actor->setIO( new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" ) );
-                switch ( sitem->type() )
-                {
-                    case VERTEXITEM: // Créer vertex
-                    {
-                        HEXA_NS::Vertex* value = sitem->data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex*>();
-                        if (value != NULL)
-                          _buildActor(actor, value);
-//                         else
-//                         {
-//                             // @todo message d'erreur : problème dans la
-//                             // récupération du modèle
-//                         }
-                        break;
-                    }
-                    case EDGEITEM: // créer edge
-                    {
-                        HEXA_NS::Edge* value = sitem->data(HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
-                        if (value != NULL)
-                          _buildActor(actor, value);
-//                         else
-//                         {
-//                             // @todo message d'erreur : problème dans la
-//                             // récupération du modèle
-//                         }
-                        break;
-                    }
-                    case QUADITEM: // Créer quad
-                    {
-                        HEXA_NS::Quad* value = sitem->data(HEXA_DATA_ROLE).value<HEXA_NS::Quad*>();
-                        if (value != NULL)
-                          _buildActor(actor, value);
-//                         else
-//                         {
-//                             // @todo message d'erreur : problème dans la
-//                             // récupération du modèle
-//                         }
-                        break;
-                    }
-                    case HEXAITEM: // creer Hexa
-                    {
-                        HEXA_NS::Hexa* value = sitem->data(HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
-                        if (value != NULL)
-                          _buildActor(actor, value);
-//                         else
-//                         {
-//                             // @todo message d'erreur : problème dans la
-//                             // récupération du modèle
-//                         }
-                        break;
-                    }
-                    default:
-                    {
-                        // @todo message d'erreur : 
-                        break;
-                    }
-                } // end switch
-            }//if ( sitem != NULL ) {
-        } //if ( indexes.count() > 0 ) {
-    } //if ( smodel != NULL ){
 
-    return actor;
-}
 
-void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Vertex *value)
-{
-    if (dynamic_cast<HEXA_NS::Vertex*>(value) != NULL)
-    {
-        vtkUnstructuredGrid* aGrid = vtkUnstructuredGrid::New();
-                      
-        vtkPoints* aPoints = vtkPoints::New();
-        aPoints->SetNumberOfPoints(1);
-        aPoints->SetPoint(0, value->getX(), value->getY(), value->getZ());
-                      
-        // Create cells
-                      
-        vtkIdList *anIdList = vtkIdList::New();
-        anIdList->SetNumberOfIds(1);
-                      
-        vtkCellArray *aCells = vtkCellArray::New();
-        aCells->Allocate(2, 0);
-                      
-        vtkUnsignedCharArray* aCellTypesArray = vtkUnsignedCharArray::New();
-        aCellTypesArray->SetNumberOfComponents(1);
-        aCellTypesArray->Allocate(1);
-                      
-        anIdList->SetId(0, 0);
-        aCells->InsertNextCell(anIdList);
-        aCellTypesArray->InsertNextValue(VTK_VERTEX);
-        anIdList->Delete();
-                      
-        VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
-        aCellLocationsArray->SetNumberOfComponents(1);
-        aCellLocationsArray->SetNumberOfTuples(1);
-                      
-        aCells->InitTraversal();
-        vtkIdType npts;
-        aCellLocationsArray->SetValue(0, aCells->GetTraversalLocation(npts));
-                      
-        aGrid->SetPoints(aPoints);
-        aPoints->Delete();
-                      
-        aGrid->SetCells(aCellTypesArray,aCellLocationsArray,aCells);
-        aCellLocationsArray->Delete();
-        aCellTypesArray->Delete();
-        aCells->Delete();
-                      
-        // Create and display actor
-        vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-        aMapper->SetInput(aGrid);
-        aGrid->Delete();
-                      
-                      
-        //actor->PickableOff();
-        actor->SetMapper(aMapper);
-        aMapper->Delete();
-                      
-        vtkProperty* aProp = vtkProperty::New();
-        aProp->SetRepresentationToWireframe();
-        aProp->SetColor(10, 10, 250); // @todo a revoir
-        aProp->SetPointSize(5);
-        actor->SetProperty(aProp);
-        aProp->Delete();
-    }
-}
 
-void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Edge *value)
-{
-    if (dynamic_cast<HEXA_NS::Edge*>(value) != NULL)
-    {
-        double point1[3];
-        point1[0] = value->getVertex(0)->getX();
-        point1[1] = value->getVertex(0)->getY();                      
-        point1[2] = value->getVertex(0)->getZ();
+// bool DocumentGraphicView::canBeDisplayed( const QString& entry, const QString& viewer_type ) const //CS_TODO
+// {
+//   bool result = false;
+// 
+//   result = (viewer_type==SVTK_Viewer::Type());
+// //   QStringList es = entry.split( "_" );22
+// //   bool result = ( es.count() == 3 && es[ 0 ] == "ATOMSOLVGUI" && viewer_type == SVTK_Viewer::Type() ); 
+// //   //  printf ( " canBeDisplayed : entry = %s, count = %d, res = %d \n", entry.latin1(), es.count(), result );
+//   std::cout << "canBeDisplayed => "<< result << std::endl;
+//   return result; // entry of an atom for sure
+// }
 
-        double point2[3];
-        point2[0] = value->getVertex(1)->getX();
-        point2[1] = value->getVertex(1)->getY();                      
-        point2[2] = value->getVertex(1)->getZ();
-                      
-        MyVTKLinePlotter linePlotter;
-        float scalar = value->getVertex(0)->getScalar();
-        linePlotter.PlotLine(point1, point2, scalar);
-        linePlotter.CreateActor(actor);
-    }
-}
 
-void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Quad *value)
-{
-    if (dynamic_cast<HEXA_NS::Quad*>(value) != NULL)
-    {
 
-        double point1[3];
-        point1[0] = value->getVertex(0)->getX();
-        point1[1] = value->getVertex(0)->getY();                      
-        point1[2] = value->getVertex(0)->getZ();
 
-        double point2[3];
-        point2[0] = value->getVertex(1)->getX();
-        point2[1] = value->getVertex(1)->getY();                      
-        point2[2] = value->getVertex(1)->getZ();
+// SALOME_Prs* HEXABLOCKGUI_Displayer::buildPresentation( const QString& entry, SALOME_View* theViewFrame)
+// {
+//     SALOME_Prs* prs = 0;
+// 
+//     SALOME_View* aViewFrame = theViewFrame ? theViewFrame : GetActiveView();
+// 
+//     if ( aViewFrame )
+//     {
+//         SVTK_Viewer* vtk_viewer = dynamic_cast<SVTK_Viewer*>( aViewFrame );
+//         if (vtk_viewer)
+//         {
+//             SUIT_ViewWindow* wnd = vtk_viewer->getViewManager()->getActiveView();
+//             SALOME_Actor* anActor = myGraphicView->FindActorByEntry( wnd, entry.toLatin1().data() );
+//             if (!anActor)
+//             {
+// //                anActor = myGraphicView->CreateActor( study()->studyDS(), entry.toLatin1().data(), true );
+//                 anActor = myGraphicView->CreateActor(entry.toLatin1().data());
+//             }
+//             if (anActor)
+//             {
+//                 // Display actor :
+//                 SVTK_ViewWindow* vtkWnd = dynamic_cast<SVTK_ViewWindow*> (wnd);
+//                 if (vtkWnd != NULL)
+//                 {
+//                     vtkWnd->AddActor(anActor);
+//                     vtkWnd->Repaint();
+//                     prs = LightApp_Displayer::buildPresentation(entry.toLatin1().data(), aViewFrame);
+//                 }
+//             }
+//             if (prs)
+//             {
+//                 UpdatePrs(prs);
+//             }
+//             else if (anActor)
+//             {
+//                 //SMESH::RemoveActor( vtk_viewer->getViewManager()->getActiveView(), anActor );
+//                 std::cout << "Remove Actor" << std::endl;
+//             }
+//         }
+//     }
+// 
+//     return prs;
+// }
 
-        double point3[3];
-        point3[0] = value->getVertex(2)->getX();
-        point3[1] = value->getVertex(2)->getY();                      
-        point3[2] = value->getVertex(2)->getZ();
 
-        double point4[3];
-        point4[0] = value->getVertex(3)->getX();
-        point4[1] = value->getVertex(3)->getY();                      
-        point4[2] = value->getVertex(3)->getZ();
 
-// methode qui "marche"        
-//         MyVTKLinePlotter linePlotter;
-//         float scalar = value->getVertex(0)->getScalar();
-//         linePlotter.PlotLine(point1, point2, scalar);
-//         linePlotter.PlotLine(point2, point3, scalar);
-//         linePlotter.PlotLine(point3, point4, scalar);
-//         linePlotter.PlotLine(point4, point1, scalar);        
-//         linePlotter.CreateActor(actor);
-// end
+// SALOME_Prs* SMESHGUI_Displayer::buildPresentation( const QString& entry, SALOME_View* theViewFrame )
+// {
+//   SALOME_Prs* prs = 0;
+// 
+//   SALOME_View* aViewFrame = theViewFrame ? theViewFrame : GetActiveView();
+// 
+//   if ( aViewFrame )
+//   {
+//     SVTK_Viewer* vtk_viewer = dynamic_cast<SVTK_Viewer*>( aViewFrame );
+//     if( vtk_viewer )
+//     {
+//       SUIT_ViewWindow* wnd = vtk_viewer->getViewManager()->getActiveView();
+//       SMESH_Actor* anActor = SMESH::FindActorByEntry( wnd, entry.toLatin1().data() );
+//       if( !anActor )
+//         anActor = SMESH::CreateActor( study()->studyDS(), entry.toLatin1().data(), true );
+//       if( anActor )
+//       {
+//         SMESH::DisplayActor( wnd, anActor );
+//         prs = LightApp_Displayer::buildPresentation( entry.toLatin1().data(), aViewFrame );
+//       }
+//       if( prs )
+//         UpdatePrs( prs );
+//       else if( anActor )
+//         SMESH::RemoveActor( vtk_viewer->getViewManager()->getActiveView(), anActor );
+//     }
+//   }
+// 
+//   return prs;
+// }
 
-//         // test :
-//         vtkPoints* quadPoints = vtkPoints::New();
-//         quadPoints->SetNumberOfPoints(4);
-//         quadPoints->InsertPoint(0, point1[0], point1[1], point1[2]);
-//         quadPoints->InsertPoint(1, point2[0], point2[1], point2[2]);
-//         quadPoints->InsertPoint(2, point3[0], point3[1], point3[2]);
-//         quadPoints->InsertPoint(3, point4[0], point4[1], point4[2]);        
-//         vtkQuad* aQuad = vtkQuad::New();
-//         aQuad->GetPointIds()->SetId(0, 0);
-//         aQuad->GetPointIds()->SetId(1, 1);
-//         aQuad->GetPointIds()->SetId(2, 2);
-//         aQuad->GetPointIds()->SetId(3, 3);        
-//         vtkUnstructuredGrid* aQuadGrid = vtkUnstructuredGrid::New();
-//         aQuadGrid->Allocate(1, 1);
-//         aQuadGrid->InsertNextCell(aQuad->GetCellType(), aQuad->GetPointIds());
-//         aQuadGrid->SetPoints(quadPoints);
-//         vtkDataSetMapper* aQuadMapper = vtkDataSetMapper::New();
-//         aQuadMapper->SetInput(aQuadGrid);
-//         actor->SetMapper(aQuadMapper);
-//         actor->AddPosition(2, 0, 2);
-//         actor->GetProperty()->SetDiffuseColor(.2, 1, 1);     
-        
-    }
-}
 
-void DocumentGraphicView::_buildActor(SALOME_Actor* actor, HEXA_NS::Hexa *value)
-{
-    if (dynamic_cast<HEXA_NS::Hexa*>(value) != NULL)
-    {
-        double point1[3];
-        point1[0] = value->getVertex(0)->getX();
-        point1[1] = value->getVertex(0)->getY();                      
-        point1[2] = value->getVertex(0)->getZ();
 
-        double point2[3];
-        point2[0] = value->getVertex(1)->getX();
-        point2[1] = value->getVertex(1)->getY();                      
-        point2[2] = value->getVertex(1)->getZ();
 
-        double point3[3];
-        point3[0] = value->getVertex(2)->getX();
-        point3[1] = value->getVertex(2)->getY();                      
-        point3[2] = value->getVertex(2)->getZ();
 
-        double point4[3];
-        point4[0] = value->getVertex(3)->getX();
-        point4[1] = value->getVertex(3)->getY();                      
-        point4[2] = value->getVertex(3)->getZ();
+// 
+// void DocumentGraphicView::RemoveActor(SUIT_ViewWindow *theWnd, SALOME_Actor* theActor)
+// {
+//     std::cout << "RemoveActor() : 1" << std::endl;
+//     SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWnd);
+// //    SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);    
+//     if (myViewWindow != NULL)
+//     {
+//         myViewWindow->RemoveActor(theActor);
+//         if(theActor->hasIO())
+//         {
+//             std::cout << "RemoveActor() : 2" << std::endl;            
+//             Handle(SALOME_InteractiveObject) anIO = theActor->getIO();
+//             if(anIO->hasEntry())
+//             {
+//                 std::cout << "RemoveActor() : 3" << std::endl;                
+//                 std::string anEntry = anIO->getEntry();
+//                 SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( myViewWindow->getViewManager()->study() );
+//                 int aStudyId = aStudy->id();
+// //                 TVisualObjCont::key_type aKey(aStudyId,anEntry);
+// //                 VISUAL_OBJ_CONT.erase(aKey);
+//             }
+//         }
+//         theActor->Delete();
+//         myViewWindow->Repaint();
+//         std::cout << "RemoveActor() : 4" << std::endl;        
+//     }
+// }
 
-        double point5[3];
-        point5[0] = value->getVertex(4)->getX();
-        point5[1] = value->getVertex(4)->getY();                      
-        point5[2] = value->getVertex(4)->getZ();
 
-        double point6[3];
-        point6[0] = value->getVertex(5)->getX();
-        point6[1] = value->getVertex(5)->getY();                      
-        point6[2] = value->getVertex(5)->getZ();
 
-        double point7[3];
-        point7[0] = value->getVertex(6)->getX();
-        point7[1] = value->getVertex(6)->getY();                      
-        point7[2] = value->getVertex(6)->getZ();
 
-        double point8[3];
-        point8[0] = value->getVertex(7)->getX();
-        point8[1] = value->getVertex(7)->getY();                      
-        point8[2] = value->getVertex(7)->getZ();
-                      
 
-        MyVTKLinePlotter linePlotter;
-        float scalar = value->getVertex(0)->getScalar();        
-        // face du bas (A)
-        linePlotter.PlotLine(point1, point2, scalar);
-        linePlotter.PlotLine(point2, point3, scalar);
-        linePlotter.PlotLine(point3, point4, scalar);
-        linePlotter.PlotLine(point4, point1, scalar);        
-
-        // face du haut (B)
-        linePlotter.PlotLine(point5, point6, scalar);        
-        linePlotter.PlotLine(point6, point7, scalar);        
-        linePlotter.PlotLine(point7, point8, scalar);        
-        linePlotter.PlotLine(point8, point5, scalar);        
-
-        // face gauche (C)
-        linePlotter.PlotLine(point1, point5, scalar);
-        linePlotter.PlotLine(point2, point6, scalar);        
-
-        // face droite (D)
-        linePlotter.PlotLine(point4, point8, scalar);
-        linePlotter.PlotLine(point3, point7, scalar);        
-        linePlotter.CreateActor(actor);
-
-    }
-}
 
 // code repris de SMESHGUI_VTKUtils :
 SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
-                                                    const char* theEntry)
+                                                    const char* theEntry) //CS_TODO : move in HEXABLOCKGUI
 {
     SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWindow);
     vtkRenderer *aRenderer = aViewWindow->getRenderer();
@@ -674,102 +751,29 @@ SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
     return NULL;
 }
 
-MyVTKLinePlotter::MyVTKLinePlotter()
-    :m_scalarMin(0.0), m_scalarMax(1.0), 
-     m_lookupTable(NULL), m_curPointID(0), m_allLineWidth(1)
-{
-    m_points = vtkPoints::New();
-    m_lines = vtkCellArray::New();
-    m_lineScalars = vtkFloatArray::New();
-}
-
-void MyVTKLinePlotter::SetScalarRange(double minval, double maxval)
-{
-    m_scalarMin = minval ;
-    m_scalarMax = maxval ;
-}
-
-void MyVTKLinePlotter::SetLookupTable(vtkLookupTable* table)
-{
-    m_lookupTable = table ;
-}
-
-void MyVTKLinePlotter::PlotLine(double m[3], double n[3], double scalar)
-{
-
-    m_lineScalars->SetNumberOfComponents(1);
-    m_points->InsertNextPoint(m);
-    m_lineScalars->InsertNextTuple1(scalar);
-    m_points->InsertNextPoint(n);
-    m_lineScalars->InsertNextTuple1(scalar);
-
-    m_lines->InsertNextCell(2);
-    m_lines->InsertCellPoint(m_curPointID);
-    m_lines->InsertCellPoint(m_curPointID+1);
-
-    m_curPointID+=2;
-}
-
-void MyVTKLinePlotter::PlotLine(double x, double y, double z,
-                                double x2, double y2, double z2, double scalar)
-{
-    double m[3],n[3] ;
-    m[0]=x; m[1]=y; m[2]=z;
-    n[0]=x2; n[1]=y2; n[2]=z2;
-    PlotLine(m,n,scalar);
-	
-}
-
-
-void MyVTKLinePlotter::SetAllLineWidth(int width)
-{
-    m_allLineWidth = width ;
-}
-
-vtkPolyData* MyVTKLinePlotter::CreatePolyData()
-{
-    // Create poly data 
-    vtkPolyData* polyData = vtkPolyData::New();
-    polyData->SetPoints(m_points);
-    polyData->SetLines(m_lines);
-    polyData->GetPointData()->SetScalars(m_lineScalars);
-
-    return polyData;
-}
-
-//vtkActor* MyVTKLinePlotter::CreateActor()
-bool MyVTKLinePlotter::CreateActor(SALOME_Actor* actor)    
-{
-	
-    // Create poly data
-    vtkPolyData* polyData = CreatePolyData();
-
-    // create a color lookup table
-    if (m_lookupTable==NULL)	
-    {
-        m_lookupTable = vtkLookupTable::New();
-    }
-		
-    // create mapper
-    vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
-    mapper->SetInput(polyData);
-    mapper->SetLookupTable(m_lookupTable);
-
-    mapper->SetColorModeToMapScalars();
-    mapper->SetScalarRange(m_scalarMin, m_scalarMax);
-    mapper->SetScalarModeToUsePointData();
-
-    // create actor
-//	vtkActor actor = vtkActor::New();
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetLineWidth(m_allLineWidth);
-
-
-//	return actor ;	
-}
 
 
 
-
-
-// end JPL
+// bool DocumentGraphicView::eventFilter(QObject *obj, QEvent *event)
+// {
+//     std::cout << event->type() << std::endl;
+// //     if ( event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+// //         return false;
+// //     } else {
+// //          // standard event processing
+// // //          return QObject::eventFilter(obj, event);
+// 
+//     if ( event->type() == QEvent::Paint ) { //QEvent::FocusIn ){ 
+//       std::cout << "PAINTTTTTTTTTT"<< std::endl;
+// //       loadVTK( "/tmp/load.vtk"); //CS_TEST
+//     }
+//     return _suitView->event(event);
+// //     }
+// }
+// 
+// 
+// // void DocumentGraphicView::setModel ( QAbstractItemModel * model )
+// // {
+// //   QAbstractItemView::setModel( model );
+// //   connect( model, SIGNAL(patternDataChanged() ), this,  SLOT ( slotTEST() ) );
+// // }

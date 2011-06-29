@@ -1,20 +1,20 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 //CS_TODO: relever les fonctions qui nécessitent updateData().
@@ -45,7 +45,8 @@ using namespace HEXABLOCK::GUI;
 *****************************************************************/
 DocumentModel::DocumentModel(QObject * parent):
   QStandardItemModel(parent),
-  _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
+  _hexaFile(  new QTemporaryFile() ), 
+//   _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
 
   _vertexDirItem( new QStandardItem("Vertex") ),
   _edgeDirItem(   new QStandardItem("Edge") ),
@@ -71,9 +72,15 @@ DocumentModel::DocumentModel(QObject * parent):
   _cylinderItemFlags( Qt::NoItemFlags ),
   _pipeItemFlags( Qt::NoItemFlags ),
   _elementsItemFlags( Qt::NoItemFlags ),
-  _crossElementsItemFlags( Qt::NoItemFlags )
+  _crossElementsItemFlags( Qt::NoItemFlags ),
+  _disallowEdition( false )
 {
+  if ( _hexaFile->open() ){
+    _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
+  }
+
   QStandardItem *parentItem = invisibleRootItem();
+  parentItem->setData( QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ), HEXA_ENTRY_ROLE );
 
   _vertexDirItem->setData( VERTEX_DIR_TREE,           HEXA_TREE_ROLE );
   _edgeDirItem->setData( EDGE_DIR_TREE,               HEXA_TREE_ROLE );
@@ -111,6 +118,8 @@ DocumentModel::DocumentModel(QObject * parent):
 
 DocumentModel::~DocumentModel()
 {
+  delete _hexaDocument;
+  delete _hexaFile;
 }
 
 
@@ -128,6 +137,11 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   fillGroups();
   fillMesh();
 
+  tmp = "/tmp/load.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+
+  emit patternDataChanged();
+
   // BUILDER, ASSOCIATION, GROUPS, ... CS_TODO _fillBuilderFrom( _hexaDocument );
 }
 
@@ -136,6 +150,9 @@ void DocumentModel::updateData()
   std::cout<<"DocumentModel::updateData()  begin"<<std::endl;
   clearData();
   fillData();
+  QString tmp = "/tmp/load.vtk";
+  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  emit patternDataChanged();
   std::cout<<"DocumentModel::updateData()  end"<<std::endl;
 }
 
@@ -146,7 +163,9 @@ void DocumentModel::clearAll()
   clearAssociation();
   clearGroups();
   clearMesh();
+  //dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight )
   //CS_TODO : todo : association, groups, mesh
+
 }
 
 
@@ -193,6 +212,11 @@ void DocumentModel::fillData()
   VertexItem      *vItem = NULL;
   for ( int i=0; i<_hexaDocument->countVertex(); ++i ){
     v = _hexaDocument->getVertex(i);
+
+    char pName[12];
+    std::string name = v->getName(pName);
+    std::cout<<name<<std::endl;
+
     vItem = new VertexItem(v);
     _vertexDirItem->appendRow(vItem);
 //     _vertexDirItem->setEditable( false );//CS_TEST
@@ -315,7 +339,7 @@ void DocumentModel::fillMesh()
   std::cout<<"countPropagation => "<< _hexaDocument->countPropagation() << std::endl;
   for ( int i=0; i<_hexaDocument->countPropagation(); ++i ){
     p = _hexaDocument->getPropagation(i);
-    std::cout<<"getPropagation => "<< i << std::endl;
+//     std::cout<<"getPropagation => "<< i << std::endl;
     pItem = new PropagationItem(p);
     pItem->setText(QString("Propagation%1").arg(i) );
     _propagationDirItem->appendRow(pItem);
@@ -323,6 +347,51 @@ void DocumentModel::fillMesh()
 
 
 }
+
+
+// Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
+// {
+//   Qt::ItemFlags flags;
+// 
+//   if (!index.isValid()){
+//       std::cout<<"!index.isValid()"<<std::endl;
+//       return Qt::ItemIsEnabled;
+//   }
+// 
+//   QStandardItem *item = itemFromIndex ( index );
+// 
+//   if ( (item->type() == VERTEXITEM) && (_vertexItemFlags != Qt::NoItemFlags) ){
+//     flags = _vertexItemFlags;
+//   } else if ( (item->type() == EDGEITEM) && (_edgeItemFlags != Qt::NoItemFlags) ){
+//     flags = _edgeItemFlags;
+//   } else if ( (item->type() == QUADITEM) && (_quadItemFlags != Qt::NoItemFlags) ){
+//     flags = _quadItemFlags;
+//   } else if ( (item->type() == HEXAITEM) && (_hexaItemFlags != Qt::NoItemFlags) ){
+//     flags = _hexaItemFlags;
+//   } else if ( (item->type() == VECTORITEM) && (_vectorItemFlags != Qt::NoItemFlags) ){
+//     flags = _vectorItemFlags;
+//   } else if ( (item->type() == CYLINDERITEM) && (_cylinderItemFlags != Qt::NoItemFlags) ){
+//     flags = _cylinderItemFlags;
+//   } else if ( (item->type() == PIPEITEM ) && (_pipeItemFlags != Qt::NoItemFlags) ){
+//     flags = _pipeItemFlags;
+//   } else if ( (item->type() == ELEMENTSITEM) && (_elementsItemFlags != Qt::NoItemFlags) ){
+//     flags = _elementsItemFlags;
+//   } else if ( (item->type() == CROSSELEMENTSITEM) && (_crossElementsItemFlags != Qt::NoItemFlags) ){
+//     flags = _crossElementsItemFlags;
+//   } else if ( (item->type() == GROUPITEM) && (_groupItemFlags != Qt::NoItemFlags) ){
+//     flags = _groupItemFlags;
+//   } else if ( (item->type() == LAWITEM ) && (_lawItemFlags != Qt::NoItemFlags) ){
+//     flags = _lawItemFlags;
+//   } else if ( (item->type() == PROPAGATIONITEM ) && (_propagationItemFlags != Qt::NoItemFlags) ){
+//     flags = _propagationItemFlags;
+//   } else {
+//     flags = item->flags();
+//   }
+// 
+// 
+//   return flags;
+// }
+
 
 
 Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
@@ -333,59 +402,52 @@ Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
       std::cout<<"!index.isValid()"<<std::endl;
       return Qt::ItemIsEnabled;
   }
-
   QStandardItem *item = itemFromIndex ( index );
-
-  if ( (item->type() == VERTEXITEM) && (_vertexItemFlags != Qt::NoItemFlags) ){
-    flags = _vertexItemFlags;
-  } else if ( (item->type() == EDGEITEM) && (_edgeItemFlags != Qt::NoItemFlags) ){
-    flags = _edgeItemFlags;
-  } else if ( (item->type() == QUADITEM) && (_quadItemFlags != Qt::NoItemFlags) ){
-    flags = _quadItemFlags;
-  } else if ( (item->type() == HEXAITEM) && (_hexaItemFlags != Qt::NoItemFlags) ){
-    flags = _hexaItemFlags;
-  } else if ( (item->type() == VECTORITEM) && (_vectorItemFlags != Qt::NoItemFlags) ){
-    flags = _vectorItemFlags;
-  } else if ( (item->type() == CYLINDERITEM) && (_cylinderItemFlags != Qt::NoItemFlags) ){
-    flags = _cylinderItemFlags;
-  } else if ( (item->type() == PIPEITEM ) && (_pipeItemFlags != Qt::NoItemFlags) ){
-    flags = _pipeItemFlags;
-  } else if ( (item->type() == ELEMENTSITEM) && (_elementsItemFlags != Qt::NoItemFlags) ){
-    flags = _elementsItemFlags;
-  } else if ( (item->type() == CROSSELEMENTSITEM) && (_crossElementsItemFlags != Qt::NoItemFlags) ){
-    flags = _crossElementsItemFlags;
-  } else if ( (item->type() == GROUPITEM) && (_groupItemFlags != Qt::NoItemFlags) ){
-    flags = _groupItemFlags;
-  } else if ( (item->type() == LAWITEM ) && (_lawItemFlags != Qt::NoItemFlags) ){
-    flags = _lawItemFlags;
-  } else if ( (item->type() == PROPAGATIONITEM ) && (_propagationItemFlags != Qt::NoItemFlags) ){
-    flags = _propagationItemFlags;
+  if ( _disallowEdition ){
+    flags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+//     std::cout<<"_disallowEdition"<< std::endl;
   } else {
     flags = item->flags();
+//     flags = Qt::ItemFlags( Qt::ItemIsEditable );
+//     std::cout<<"allowEdition"<< std::endl;
   }
-
+//   std::cout<<"flags"<< flags << std::endl;
 
   return flags;
 }
 
 
-void DocumentModel::allowAllSelection()
+void DocumentModel::allowEdition()
 {
-  _vertexItemFlags = Qt::NoItemFlags;
-  _edgeItemFlags   = Qt::NoItemFlags;
-  _quadItemFlags   = Qt::NoItemFlags;
-  _hexaItemFlags   = Qt::NoItemFlags;
-
-  _vectorItemFlags   = Qt::NoItemFlags;
-  _cylinderItemFlags = Qt::NoItemFlags;
-  _pipeItemFlags     = Qt::NoItemFlags;
-  _elementsItemFlags      = Qt::NoItemFlags;
-  _crossElementsItemFlags = Qt::NoItemFlags;
-
-  _groupItemFlags = Qt::NoItemFlags;
-  _lawItemFlags   = Qt::NoItemFlags;
-  _propagationItemFlags = Qt::NoItemFlags;
+  std::cout<<"allowEdition "<< this << std::endl;
+  _disallowEdition = false;
 }
+
+void DocumentModel::disallowEdition()
+{
+  std::cout<<"disallowEdition "<< this << std::endl;
+  _disallowEdition = true;
+}
+
+
+// disallowEdition
+// void DocumentModel::allowAllSelection()
+// {
+//   _vertexItemFlags = Qt::NoItemFlags;
+//   _edgeItemFlags   = Qt::NoItemFlags;
+//   _quadItemFlags   = Qt::NoItemFlags;
+//   _hexaItemFlags   = Qt::NoItemFlags;
+// 
+//   _vectorItemFlags   = Qt::NoItemFlags;
+//   _cylinderItemFlags = Qt::NoItemFlags;
+//   _pipeItemFlags     = Qt::NoItemFlags;
+//   _elementsItemFlags      = Qt::NoItemFlags;
+//   _crossElementsItemFlags = Qt::NoItemFlags;
+// 
+//   _groupItemFlags = Qt::NoItemFlags;
+//   _lawItemFlags   = Qt::NoItemFlags;
+//   _propagationItemFlags = Qt::NoItemFlags;
+// }
 
 
 
@@ -411,26 +473,52 @@ void DocumentModel::allowDataSelectionOnly()
 
 
 
+// void DocumentModel::allowVertexSelectionOnly()
+// {
+//     std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
+//     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable);
+//     _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+//     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+//     _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+//     _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+// 
+// //     emit layoutChanged();
+// }
+
 void DocumentModel::allowVertexSelectionOnly()
 {
     std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable);
-    _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
-    _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
-    _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
+    _groupItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
+    _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
 //     emit layoutChanged();
 }
+
+
+
+
+
 
 void DocumentModel::allowEdgeSelectionOnly()
 {
@@ -627,124 +715,6 @@ void DocumentModel::allowLawSelectionOnly()
 }
 
 
-
-void DocumentModel::updateView(VertexItem* vItem)
-{
-    std::cout << "DocumentModel::updateView()" << std::endl;
-    // mise à jour du vertex
-    HEXA_NS::Vertex* vertex = vItem->data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex*>();
-    vItem->setData(QVariant::fromValue(vertex), HEXA_DATA_ROLE);
-
-    // recherche des edges associes :
-    if (vertex->hasParents())
-    {
-        // ie : le vertex a servi pour la creation
-        // d'un ou plusieurs edges, etc...
-        ostringstream oss;
-        oss << vertex->getNbrParents();
-        std::cout << "nombre de parents : " << oss.str() << std::endl;
-      
-        for (int ne = 0; ne < vertex->getNbrParents(); ne++)
-        {
-            HEXA_NS::Edge* edge = vertex->getParent(ne);
-
-            char pName[12];
-            QString name = edge->getName(pName);
-            std::cout << "nom edge = " << name.toStdString() << std::endl;
-
-            ostringstream oss1;
-            oss1 << _edgeDirItem->rowCount();
-            std::cout << "nombre d'edges trouves : " << oss1.str() << std::endl;
-
-
-            // mise à jour des edges :
-            QStandardItem* item = NULL;
-            bool item_found = false;
-            int ind = 0;
-            while (!item_found && ind <  _edgeDirItem->rowCount())
-            {
-                item = _edgeDirItem->child(ind, 0);
-                if(item->text() == name)
-                {
-                    item_found = true;
-                    item->setData(QVariant::fromValue(edge), HEXA_DATA_ROLE);
-                }
-                else
-                {
-                    ind++;
-                }
-            }
-
-            // recherche des quads associes
-            if (edge->hasParents())
-            {
-                // les parents sont des quads
-                for (int nq = 0; nq < edge->getNbrParents(); nq++)
-                {
-                    HEXA_NS::Quad* quad = edge->getParent(nq);
-
-                    char pName[12];
-                    QString name = quad->getName(pName);
-                    // mise à jour des quads :
-                    QStandardItem* item = NULL;
-                    bool item_found = false;
-                    int ind = 0;
-                    while (!item_found && ind <  _quadDirItem->rowCount())
-                    {
-                        item = _quadDirItem->child(ind, 0);
-                        if(item->text() == name)
-                        {
-                            item_found = true;
-                            item->setData(QVariant::fromValue(quad), HEXA_DATA_ROLE);
-                        }
-                        else
-                        {
-                            ind++;
-                        }
-                    }
-
-                    if (quad->hasParents())
-                    {
-                        // les parents sont des hexas
-                        for (int nh = 0; nh < quad->getNbrParents(); nh++)
-                        {
-                            HEXA_NS::Hexa* hexa = quad->getParent(nh);
-
-                            char pName[12];
-                            QString name = hexa->getName(pName);
-                            // mise à jour des hexas :
-                            QStandardItem* item = NULL;
-                            bool item_found = false;
-                            int ind = 0;
-                            while (!item_found && ind <  _hexaDirItem->rowCount())
-                            {
-                                item = _hexaDirItem->child(ind, 0);
-                                if(item->text() == name)
-                                {
-                                    item_found = true;
-                                    item->setData(QVariant::fromValue(hexa), HEXA_DATA_ROLE);
-                                }
-                                else
-                                {
-                                    ind++;
-                                }
-                            }
-
-                        }
-                        
-                    }
-
-                }
-            }   
-        }
-    }
-}
-
-
-
-
-
-
 QModelIndex DocumentModel::addVertex( double x, double y, double z )
 {
   QModelIndex vertexIndex;
@@ -755,6 +725,7 @@ QModelIndex DocumentModel::addVertex( double x, double y, double z )
     VertexItem* v = new VertexItem(hv);
     _vertexDirItem->appendRow(v);
     vertexIndex = v->index();
+    emit patternDataChanged();
   } else {
     delete hv;
   }
@@ -776,6 +747,7 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
     EdgeItem* e = new EdgeItem(he);
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVertices.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -797,6 +769,7 @@ QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIn
     EdgeItem* e = new EdgeItem(he);
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVector.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -830,6 +803,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
       QuadItem* q = new QuadItem(hq);
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
+      emit patternDataChanged();
       QString tmp = "/tmp/addQuadVertices.vtk";
       _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
@@ -857,6 +831,7 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
       QuadItem* q = new QuadItem(hq);
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
+      emit patternDataChanged();
       QString tmp = "/tmp/addQuadEdges.vtk";
       _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
@@ -892,6 +867,7 @@ QModelIndex DocumentModel::addHexaVertices(
     HexaItem* h = new HexaItem(hh);
     _hexaDirItem->appendRow(h);
     iHexa = h->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addHexaVertices.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -927,6 +903,7 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
     HexaItem* h = new HexaItem(hh);
     _hexaDirItem->appendRow(h);
     hexaIndex = h->index();
+    emit patternDataChanged();
     QString tmp = "/tmp/addHexaQuad.vtk";
     _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
@@ -1276,6 +1253,31 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
 
 
 // ************  EDIT HEXABLOCK MODEL ************
+
+bool DocumentModel::updateVertex( const QModelIndex& ivertex, double x, double y, double z )
+{
+  bool ret = false;
+
+//   cout << "DocumentModel::updateVertex" << ivertex.data().toString().toStdString() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_TREE_ROLE).toString().toStdString() << endl;
+//   cout << "DocumentModel::updateVertex" << ivertex.data(HEXA_DOC_ENTRY_ROLE).toString().toStdString() << endl;
+
+//   HEXA_NS::Vertex* hVertex = data(ivertex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hVertex = ivertex.data(HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); //CS_TODO?  pareil pour toutes les autres méthodes du modèle?
+
+  cout << "DocumentModel::updateVertex hVertex = " << hVertex << endl;
+  if ( hVertex ){
+    hVertex->setX ( x );
+    hVertex->setY ( y );
+    hVertex->setZ ( z );
+    emit patternDataChanged();
+    ret = true;
+  }
+
+  return ret;
+}
+
 bool DocumentModel::removeHexa( const QModelIndex& ihexa )
 {
   bool ret = false;
@@ -2089,6 +2091,11 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
 
 
 
+HEXA_NS::Document* DocumentModel::documentImpl()
+{
+  return _hexaDocument;
+}
+
 
 
 
@@ -2116,10 +2123,19 @@ PatternDataModel::PatternDataModel( QObject * parent ) :
   setFilterRegExp ( QRegExp(dataRegExp) );
 }
 
+
 PatternDataModel::~PatternDataModel()
 {
 }
 
+
+HEXA_NS::Document* PatternDataModel::documentImpl()
+{
+  HEXA_NS::Document* doc = NULL;
+  DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+  doc = m->documentImpl();
+  return doc;
+}
 
 
 Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const

@@ -1,26 +1,27 @@
-// Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifndef _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
 // #include <QAbstractItemModel>
+#include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
@@ -39,6 +40,7 @@ namespace HEXABLOCK
 
     class DocumentModel : public QStandardItemModel
     {
+      Q_OBJECT
       public:
 
         // enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
@@ -70,8 +72,12 @@ namespace HEXABLOCK
 
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
-        void allowAllSelection();
 
+        void allowEdition();
+        void disallowEdition();
+
+//         void setDefaultSelection();
+//         void allowSelection();
         void allowDataSelectionOnly();
         void allowVertexSelectionOnly();
         void allowEdgeSelectionOnly();
@@ -152,6 +158,8 @@ namespace HEXABLOCK
 
 
         // ************  EDIT HEXABLOCK MODEL ************
+
+        bool updateVertex( const QModelIndex& vertex, double x, double y, double z );
 
         //
         bool removeHexa( const QModelIndex& hexa );
@@ -269,14 +277,15 @@ namespace HEXABLOCK
 
 
 
-        // ajout JPL
-        // mise a jour graphique d'un vertex et de tous les objets
-        // parents associes :
-        void updateView(VertexItem* vItem);
-        // end JPL
+      HEXA_NS::Document* documentImpl();
+
+      signals:
+        void patternDataChanged();
         
       private:
+        QTemporaryFile    *_hexaFile;
         HEXA_NS::Document *_hexaDocument;
+        bool              _disallowEdition;
 
         //data
         QStandardItem     *_vertexDirItem;
@@ -333,9 +342,12 @@ namespace HEXABLOCK
 
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
 
-        // ajout JPL
-        void updateVertex(const QModelIndex& i_v);
-        // end JPL
+
+        HEXA_NS::Document* documentImpl();
+
+//         // ajout JPL
+//         void updateVertex(const QModelIndex& i_v);
+//         // end JPL
 
     };
 

@@ -1,22 +1,22 @@
-# Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
+#
 # UIC_FILES =       \
 #   ui_FormComponent.h 
 # BUILT_SOURCES =       \
@@ -27,6 +27,7 @@
 #   FormContainer.ui  \
 # salomeresdir = $(prefix)/share/salome/resources/@MODULE_NAME@
 # include $(top_srcdir)/adm/unix/make_begin.am
+
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # salomeresdir = $(prefix)/share/salome/resources/@MODULE_NAME@
@@ -48,10 +49,12 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_Trace.cxx \
     HEXABLOCKGUI_Resource.hxx \
     HEXABLOCKGUI_Resource.cxx \
-    HEXABLOCKGUI_Model.hxx \
-    HEXABLOCKGUI_Model.cxx \
-    HEXABLOCKGUI_Displayer.hxx \
-    HEXABLOCKGUI_Displayer.cxx \
+    HEXABLOCKGUI_Data.hxx \
+    HEXABLOCKGUI_Data.cxx \
+    HEXABLOCKGUI_DataObject.hxx \
+    HEXABLOCKGUI_DataObject.cxx \
+    HEXABLOCKGUI_DataModel.hxx \
+    HEXABLOCKGUI_DataModel.cxx \
     HEXABLOCKGUI_DocumentGraphicView.hxx \
     HEXABLOCKGUI_DocumentGraphicView.cxx \
     HEXABLOCKGUI_DocumentModel.hxx \
@@ -105,6 +108,7 @@ MOC_FILES = \
     HEXABLOCKGUI_DocumentPanel_moc.cxx \
     HEXABLOCKGUI_DocumentDelegate_moc.cxx \
     HEXABLOCKGUI_DocumentSelectionModel_moc.cxx \
+    HEXABLOCKGUI_DocumentModel_moc.cxx \
     kmodelindexproxymapper_moc.cxx \
     klinkitemselectionmodel_moc.cxx
 
@@ -129,31 +133,6 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(qsci4_cppflags)
 
 
-# libGenericGui_la_CXXFLAGS  = \
-# 	$(qt4_cppflags) \
-# 	$(qsci4_cppflags) \
-# 	$(THREAD_DEF) \
-# 	$(PYTHON_CPPFLAGS) \
-# 	$(EXPAT_INCLUDES) \
-# 	$(GRAPHVIZ_CPPFLAGS) \
-# 	$(OMNIORB_CXXFLAGS) \
-# 	$(OMNIORB_INCLUDES) \
-# 	$(LIBXML_INCLUDES) \
-# 	$(EXPAT_INCLUDES) \
-# 	-I$(KERNEL_ROOT_DIR)/include/salome \
-# 	-I. \
-# 	-I$(srcdir) \
-# 	-I$(srcdir)/../bases \
-# 	-I$(srcdir)/../engine \
-# 	-I$(srcdir)/../runtime \
-# 	-I$(srcdir)/../yacsloader \
-# 	-I$(srcdir)/../hmi \
-# 	-I$(srcdir)/../salomewrap \
-# 	-I../../idl \
-# 	-I../yacsorb 
-
-
-
 libHEXABLOCK_la_LDFLAGS  = \
 	../../idl/libSalomeIDLHEXABLOCK.la \
 	../HEXABLOCK_I/libHEXABLOCKEngine.la \
@@ -169,23 +148,44 @@ libHEXABLOCK_la_LIBADD  = \
 	$(qt4_libs) $(qsci4_libs) \
 	-lSalomeApp
 
-# libGenericGui_la_LIBADD    = $(qt4_libs) $(qsci4_libs)\
-# 	../salomewrap/libSalomeWrap.la \
-# 	$(KERNEL_LDFLAGS) -lSalomeResourcesManager \
-# 	$(EXPAT_LIBS) $(LIBXML_LIBS) $(GRAPHVIZ_LIBADD)
-
 BUILT_SOURCES = $(UIC_FILES)
-
-
-
 
 # resources files
 ICONS =  \
 	resources/SalomeApp.xml \
+	resources/LightApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
-	resources/ModuleHexaBlock.png \
-	resources/ExecHEXABLOCK.png
+	resources/new_document.png \
+	resources/import_document.png \
+	resources/add_vertex.png \
+	resources/add_edge.png \
+	resources/add_quad.png \
+	resources/add_hexa.png \
+	resources/add_vector.png \
+	resources/add_cylinder.png \
+	resources/add_pipe.png \
+	resources/make_grid.png \
+	resources/make_cylinder.png \
+	resources/make_pipe.png \
+	resources/make_cylinders.png \
+	resources/make_pipes.png \
+	resources/remove_hexa.png \
+	resources/prism_quad.png \
+	resources/join_quad.png \
+	resources/merge.png \
+	resources/disconnect.png \
+	resources/cut_edge.png \
+	resources/make_transformation.png \
+	resources/make_symmetry.png \
+	resources/perform_transformation.png \
+	resources/perform_symmetry.png \
+	resources/add_group.png \
+	resources/remove_group.png \
+	resources/add_law.png \
+	resources/remove_law.png \
+	resources/set_propagation.png
+
 
 QMFILES = \
 	HEXABLOCK_msg_en.qm \
