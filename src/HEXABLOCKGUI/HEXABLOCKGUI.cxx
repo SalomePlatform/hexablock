@@ -910,53 +910,53 @@ void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
 void HEXABLOCKGUI::showPatternMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showPatternMenus " << show);
-  setMenuShown(_addVertex, true );//show);
+  setMenuShown(_addVertex, show );//true);
   setToolShown(_addVertex, show);
-  setMenuShown(_addEdge,  true );//show);
+  setMenuShown(_addEdge,  show );//true);
   setToolShown(_addEdge, show);
-  setMenuShown(_addQuad,  true );//show);
+  setMenuShown(_addQuad,  show );//true);
   setToolShown(_addQuad, show);
-  setMenuShown(_addHexa,  true );//show);
+  setMenuShown(_addHexa,  show );//true);
   setToolShown(_addHexa, show);
 
 
-  setMenuShown( _addVector,  true );//show);
+  setMenuShown( _addVector,  show );//true);
   setToolShown( _addVector, show);
-  setMenuShown( _addCylinder,  true );//show);
+  setMenuShown( _addCylinder,  show );//true);
   setToolShown( _addCylinder, show);
-  setMenuShown( _addPipe,  true );//show);
+  setMenuShown( _addPipe,  show );//true);
   setToolShown( _addPipe, show);
-  setMenuShown( _makeGrid,  true );//show);
+  setMenuShown( _makeGrid,  show );//true);
   setToolShown( _makeGrid, show);
-  setMenuShown( _makeCylinder,  true );//show);
+  setMenuShown( _makeCylinder,  show );//true);
   setToolShown( _makeCylinder, show);
-  setMenuShown( _makePipe,  true );//show);
+  setMenuShown( _makePipe,  show );//true);
   setToolShown( _makePipe, show);
-  setMenuShown( _makeCylinders,  true );//show);
+  setMenuShown( _makeCylinders,  show );//true);
   setToolShown( _makeCylinders, show);
-  setMenuShown( _makePipes,  true );//show);
+  setMenuShown( _makePipes,  show );//true);
   setToolShown( _makePipes, show);
 
   // Pattern Data Edition
-  setMenuShown( _removeHexa,  true );//show);
+  setMenuShown( _removeHexa,  show );//true);
   setToolShown( _removeHexa, show);
-  setMenuShown( _prismQuad,  true );//show);
+  setMenuShown( _prismQuad,  show );//true);
   setToolShown( _prismQuad, show);
-  setMenuShown( _joinQuad,  true );//show);
+  setMenuShown( _joinQuad,  show );//true);
   setToolShown( _joinQuad, show);
-  setMenuShown( _merge,  true );//show);
+  setMenuShown( _merge,  show );//true);
   setToolShown( _merge, show);
-  setMenuShown( _disconnect,  true );//show);
+  setMenuShown( _disconnect,  show );//true);
   setToolShown( _disconnect, show);
-  setMenuShown( _cutEdge,  true );//show);
+  setMenuShown( _cutEdge,  show );//true);
   setToolShown( _cutEdge, show);
-  setMenuShown( _makeTransformation,  true );//show);
+  setMenuShown( _makeTransformation,  show );//true);
   setToolShown( _makeTransformation, show);
-  setMenuShown( _makeSymmetry,  true );//show);
+  setMenuShown( _makeSymmetry,  show );//true);
   setToolShown( _makeSymmetry, show);
-  setMenuShown( _performTransformation,  true );//show);
+  setMenuShown( _performTransformation,  show );//true);
   setToolShown( _performTransformation, show);
-  setMenuShown( _performSymmetry,  true );//show);
+  setMenuShown( _performSymmetry,  show );//true);
   setToolShown( _performSymmetry, show);
 }
 
@@ -970,20 +970,20 @@ void HEXABLOCKGUI::showAssociationMenus(bool show)
 void HEXABLOCKGUI::showGroupsMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showGroupsMenus" << show);
-  setMenuShown( _addGroup,  true );//show);
+  setMenuShown( _addGroup,  show );//true);
   setToolShown( _addGroup, show);
-  setMenuShown( _removeGroup ,  true );//show);
+  setMenuShown( _removeGroup ,  show );//true);
   setToolShown( _removeGroup , show);  
 }
 
 void HEXABLOCKGUI::showMeshMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showMeshMenus" << show);
-  setMenuShown( _addLaw,  true );//show);
+  setMenuShown( _addLaw,  show );//true);
   setToolShown( _addLaw, show);
-  setMenuShown( _removeLaw,  true );//show);
+  setMenuShown( _removeLaw,  show );//true);
   setToolShown( _removeLaw, show);;
-  setMenuShown( _setPropagation,  true );//show);
+  setMenuShown( _setPropagation,  show );//true);
   setToolShown( _setPropagation, show);
 }
 
