@@ -72,11 +72,9 @@ namespace HEXABLOCK
         class Document_Actor : public SALOME_Actor
         {
           public:
-            Document_Actor(HEXA_NS::Document* doc);
+            Document_Actor(HEXA_NS::Document* doc, const QString& entry);
             virtual ~Document_Actor();
 
-//             static std::map<int,vtkIdType>   vtkElemsId;
-//             static std::map<vtkIdType, int>  hexaElemsId;
             std::map<int,vtkIdType>   vtkElemsId;
             std::map<vtkIdType, int>  hexaElemsId;
 

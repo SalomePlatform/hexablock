@@ -57,7 +57,10 @@ module HEXABLOCK_ORB
     Document loadDocument(in string xmlFilename)
         raises (SALOME::SALOME_Exception);
 
-
+    /*!
+      Set the current study
+     */
+    void SetCurrentStudy( in SALOMEDS::Study theStudy );
 
   };
 };

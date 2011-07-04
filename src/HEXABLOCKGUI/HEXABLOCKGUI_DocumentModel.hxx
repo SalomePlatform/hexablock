@@ -48,7 +48,7 @@ namespace HEXABLOCK
         typedef HEXA_NS::EnumGroup Group;
         typedef HEXA_NS::KindLaw   KindLaw;
 
-        DocumentModel( QObject * parent = 0 );
+        DocumentModel( HEXA_NS::Document* doc, const QString& entry, QObject * parent = 0 );
         DocumentModel( int rows, int columns, QObject * parent = 0 );
 
         virtual ~DocumentModel();
@@ -278,6 +278,8 @@ namespace HEXABLOCK
 
 
       HEXA_NS::Document* documentImpl();
+      QString            documentEntry();
+      
 
       signals:
         void patternDataChanged();
@@ -285,6 +287,7 @@ namespace HEXABLOCK
       private:
         QTemporaryFile    *_hexaFile;
         HEXA_NS::Document *_hexaDocument;
+        QString            _entry;
         bool              _disallowEdition;
 
         //data
@@ -344,6 +347,7 @@ namespace HEXABLOCK
 
 
         HEXA_NS::Document* documentImpl();
+        QString            documentEntry();
 
 //         // ajout JPL
 //         void updateVertex(const QModelIndex& i_v);

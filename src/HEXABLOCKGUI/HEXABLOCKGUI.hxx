@@ -42,6 +42,9 @@
 #include "HEXABLOCKGUI_Resource.hxx"
 
 #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)
+// #include CORBA_CLIENT_HEADER(GEOM_Gen)
+// #include CORBA_CLIENT_HEADER(SMESH_Gen)
+
 
 namespace HEXABLOCK
 {
@@ -57,20 +60,24 @@ namespace HEXABLOCK
     class MeshModel;
     class PatternDataSelectionModel;
     class PatternBuilderSelectionModel;
-
   }
-
-
 }
+
+
 
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
 
+// // SALOME KERNEL includes
+// #include <SALOMEDS_Study.hxx>
+// #include <SALOMEDSClient_StudyBuilder.hxx>
+// #include <SALOMEDSClient_SComponent.hxx>
+// #include <SALOMEDSClient_ClientFactory.hxx>
+// #include <SALOMEDSClient_IParameters.hxx>
 
 
 class HEXABLOCKGUI : public SalomeApp_Module
-// class HEXABLOCKGUI : public LightApp_Module
 {
   Q_OBJECT
 
@@ -81,11 +88,15 @@ public:
   virtual ~HEXABLOCKGUI();
 
   static SalomeApp_Study*         activeStudy();
+
   static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
+//   static SMESH::SMESH_Gen_ptr             InitSMESHGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
+//   static GEOM::GEOM_Gen_ptr               InitGEOMGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
+
   static LightApp_SelectionMgr*   selectionMgr();
 
-  void initialize( CAM_Application* app);
-  void windows( QMap<int, int>& theMap) const;
+  virtual void initialize( CAM_Application* app);
+  virtual void windows( QMap<int, int>& theMap) const;
 //   virtual LightApp_Displayer* displayer();
   virtual QString  engineIOR() const;
 
@@ -115,8 +126,7 @@ public:
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
-  void onClick(const QModelIndex& index);
-//   void onDblClick(const QModelIndex& index);
+  void onObjectBrowserClick(const QModelIndex& index);
 
   void showObjectBrowserMenus(bool show);
   void showPatternMenus(bool show);
@@ -130,16 +140,17 @@ protected slots:
 //   void onTryClose(bool &isClosed, QxScene_ViewWindow* window);
 
 protected:
-  virtual  CAM_DataModel* createDataModel();
+//   virtual  CAM_DataModel* createDataModel();
   bool createSComponent();
+//   virtual bool isSelectionCompatible();
 
-  bool _selectFromTree;
+
+//   bool _selectFromTree;
   HEXABLOCKGUI_Resource* _myresource;
-//   std::map<int, HEXABLOCK::HMI::QtGuiContext*> _studyContextMap;
   static int _oldStudyId;
-
-
-  void testDocument();
+  static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;
+//   static SMESH::SMESH_Gen_var             _smeshEngine;
+//   static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
   void newDocument();
   void importDocument( const QString &path = QString() );
@@ -178,15 +189,12 @@ private slots:
   void removeGroup (); //CS_TODO
   void addLaw();
   void removeLaw();
-
   void setPropagation();
 
-//   void printVTK();
-
 private:
-//   bool eventFilter(QObject *obj, QEvent *event);
   QStringList getQuickDirList();
   HEXABLOCK::GUI::DocumentGraphicView* newGraphicView();
+
 
   // -------------------------------------------------------------------------------------------------
   //          MainWindow presentation
@@ -256,9 +264,6 @@ private:
   HEXABLOCK::GUI::MeshModel           *_meshModel;      // sub-part of DocumentModel
 
   //      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW
-//   QTreeView                           *_patternTreeView; //  document's pattern : 1 ( only one view )
-//   QtxTreeView                         *_patternTreeView; //  document's pattern : 1 (
-//   OB_Browser  *_patternTreeView; //  document's pattern : 1 
   QTreeView                           *_patternDataTreeView;    //  document's pattern : 1 ( only one view )
   QTreeView                           *_patternBuilderTreeView; //  document's pattern : 1 ( only one view )
   QTreeView                           *_associationTreeView;    //  document's association : 1 ( only one view )
@@ -273,14 +278,20 @@ private:
   HEXABLOCK::GUI::PatternDataSelectionModel    *_patternDataSelectionModel;   // 1..n   selection
   HEXABLOCK::GUI::PatternBuilderSelectionModel *_patternBuilderSelectionModel;// 1..n   selection
 
-  int _documentCnt;
+  //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
+  SUIT_ViewManager *_suitVM;
+  std::map<QString, SUIT_ViewWindow*>  _salomeViewWindows; //  key = entry
+
+  // SALOME/QT    SALOME/QT  SALOME/QT    SALOME/QT   SALOME/QT    SALOME/QT  
+  std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentModel*>       _documentModels;
+  std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentGraphicView*> _documentView;
+
+
+//   int _documentCnt;
   bool _isSaved;
 
 
-  //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
-  SUIT_ViewManager *_suitVM;
-  std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentModel*> _mapViewModel; // switch view -> switch (model/document)
-
+  void testDocument();
 };
 
 #endif

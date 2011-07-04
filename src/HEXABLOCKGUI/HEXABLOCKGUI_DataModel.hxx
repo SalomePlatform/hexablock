@@ -37,8 +37,8 @@ class HEXABLOCKGUI_DataObject;
  * Class       : HEXABLOCKGUI_DataModel
  * Description : Data Model of HEXABLOCK component
  */
-class HEXABLOCKGUI_DataModel : public LightApp_DataModel
-// class HEXABLOCKGUI_DataModel : public SalomeApp_DataModel
+// class HEXABLOCKGUI_DataModel : public LightApp_DataModel
+class HEXABLOCKGUI_DataModel : public SalomeApp_DataModel
 {
 //   Q_OBJECT
 
@@ -57,7 +57,7 @@ public:
 
   bool                  importFile ( const QString&, CAM_Study* = 0 );
   bool                  exportFile ( const QString& = QString::null );
-  bool                  createDocument (HEXA_NS::Document* doc, QWidget* viewWindow = 0);
+  bool                  createDocument (HEXA_NS::Document* doc, QWidget* viewWindow, QString docIOR);
 //   bool                  addAtom    ( const QString&, const QString&, 
 // 				     const double, const double, const double );
   bool                  renameObj  ( const QString&, const QString& );

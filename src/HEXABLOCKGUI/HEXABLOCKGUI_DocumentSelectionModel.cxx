@@ -270,12 +270,21 @@ void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 
 void PatternDataSelectionModel::salomeSelectionChanged()
 {
-//   std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
+  std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
   SVTK_ViewWindow* activeViewWindow = GetActiveViewWindow();
 
   SALOME_ListIO salomeSelected; 
-  _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );
-  std::cout << " salomeSelected.Extent() => " << salomeSelected.Extent();
+//   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );
+  _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false );
+  
+
+  std::cout << " salomeSelected.Extent() => " << salomeSelected.Extent()<< std::endl;
+
+
+  if (salomeSelected.IsEmpty()) return;
+  std::cout << " ! salomeSelected.IsEmpty()" << std::endl;
+
+
 
   QString anEntry;
   QString aText = "";
@@ -288,6 +297,7 @@ void PatternDataSelectionModel::salomeSelectionChanged()
 
   for( ; it.More(); it.Next()) {
     anIObject = it.Value(); //anIObject->getName()
+    std::cout << "0) anIObject => "<< anIObject << std::endl;    
     if ( anIObject->hasEntry() ){
       anEntry = anIObject->getEntry();
       std::cout << "1) entry => "<< anEntry.toStdString() << std::endl;
@@ -386,7 +396,7 @@ void PatternDataSelectionModel::salomeSelectionChanged()
 
 void PatternDataSelectionModel::_selectSalome( const QModelIndex & index )
 {
-//   std::cout << "PatternDataSelectionModel::_selectSalome " << std::endl;
+  std::cout << "PatternDataSelectionModel::_selectSalome " << std::endl;
   SVTK_ViewWindow* activeViewWindow = GetActiveViewWindow();
 
   QVariant treeVariant = index.data( HEXA_TREE_ROLE );

@@ -31,7 +31,7 @@ import math
 #import SALOMEDS
 
 
-BREP_PATH = os.path.expandvars("$HEXA_ROOT_DIR/bin/salome/tuyau.brep")
+BREP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/tuyau.brep")
 
 #=============================
 # CREATION DOCUMENT

@@ -71,7 +71,7 @@ void Vertex_impl::setZ(  CORBA::Double z ) throw(SALOME::SALOME_Exception)
 void Vertex_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex)
   throw (SALOME::SALOME_Exception)
 {
-  TopoDS_Shape shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(geom_object_vertex);
+  TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(geom_object_vertex);
 //   HEXABLOCK::HEXABLOCK* gen = HEXABLOCK::GetHEXABLOCKGen();
 //   TopoDS_Shape shape = gen->geomObjectToShape(geom_object_vertex);
   string strBrep = shape2string( shape );
@@ -97,7 +97,7 @@ GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
   if (s != NULL){
     string strBrep = s->getBrep();
     TopoDS_Shape shape = string2shape( strBrep );
-    result = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject(shape);
+    result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
   }
 
 // //   _vertex_cpp->getAssociation()->_topo;

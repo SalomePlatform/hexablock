@@ -86,6 +86,7 @@
 #define M_PI 3.1415927
 #endif
 
+#include "HEXABLOCKGUI_Trace.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 
@@ -95,28 +96,50 @@ using namespace std;
 using namespace HEXABLOCK::GUI;
 
 
-// std::map<int,vtkIdType>   Document_Actor::vtkElemsId;
-// std::map<vtkIdType, int>  Document_Actor::hexaElemsId;
+
+// static method
+SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
+                                                    const char* theEntry) //CS_TODO : move in HEXABLOCKGUI
+{
+    SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWindow);
+    vtkRenderer *aRenderer = aViewWindow->getRenderer();
+    VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
+    vtkActorCollection *aCollection = aCopy.GetActors();
+    aCollection->InitTraversal();
+    while(vtkActor *anAct = aCollection->GetNextActor())
+    {
+        if(SALOME_Actor *anActor = dynamic_cast<SALOME_Actor*>(anAct))
+        {
+            if(anActor->hasIO())
+            {
+                Handle(SALOME_InteractiveObject) anIO = anActor->getIO();
+                if(anIO->hasEntry() && strcmp(anIO->getEntry(), theEntry) == 0)
+                {
+                    return anActor;
+                }
+            }
+        }
+    }
+
+    return NULL;
+}
 
 
 
-Document_Actor::Document_Actor( HEXA_NS::Document* doc ):
+
+
+Document_Actor::Document_Actor( HEXA_NS::Document* doc, const QString& entry ):
   SALOME_Actor(),
   _doc( doc )
 {
-
-//   QString entry = QString::number( reinterpret_cast<intptr_t>(_doc) );
-  QString entry = QString("HEXA_ENTRY:%1").arg( QString::number( reinterpret_cast<intptr_t>(_doc) ) );
-  Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" );//"0:1:1:1", "HEXABLOCK" );//,theName); CS_TODO
+  DEBTRACE("Document_Actor::Document_Actor " << entry.toLatin1() );
+  Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" );//,theName); CS_TODO
   setIO(anIO);
-
   vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
-  std::cout << "Document_Actor aGrid->GetNumberOfCells() =>"<< aGrid->GetNumberOfCells();
-
+//   std::cout << "Document_Actor aGrid->GetNumberOfCells() =>"<< aGrid->GetNumberOfCells();
   vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
   aMapper->SetInput(aGrid);
   aGrid->Delete();
-
 
   SetVisibility( true );//VisibilityOff();
   SetPickable( true ); //PickableOff();//
@@ -147,9 +170,6 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
 
   std::map<int,vtkIdType>   vtkNodeId;
   std::map<vtkIdType, int>  hexaNodeId;
-
-//   std::map<int,vtkIdType>   vtkElemsId;
-//   std::map<vtkIdType, int>  hexaElemsId;
 
   // Create points
   vtkPoints* aPoints = vtkPoints::New();
@@ -320,81 +340,11 @@ DocumentGraphicView::~DocumentGraphicView()
 {
 }
 
-
 void DocumentGraphicView::onPatternDatachanged()
 {
   std::cout << "DocumentGraphicView::onPatternDatachanged " <<std::endl;
   update();
 }
-
-// void DocumentGraphicView::loadVTK( const QString&  path ) //CS_TEST
-// {
-//   std::cout << "DocumentGraphicView::loadVTK=>"<<std::endl;
-//   QFile file(path);
-//   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-//     return;
-// //   QByteArray vtkData = file.readAll ();
-//   QString vtkData = file.readAll ();
-//   vtkData.replace(",",".");
-// 
-// 
-//   SVTK_ViewWindow* myVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
-// 
-//   // vtkStructuredGridReader
-//   vtkUnstructuredGridReader* r = vtkUnstructuredGridReader::New();
-// //   r->SetFileName( path.toLocal8Bit().constData() );
-//   r->SetInputString( vtkData.toLocal8Bit().constData() );
-//   r->SetReadFromInputString( true );
-//   r->Update();
-// 
-//   vtkUnstructuredGrid* myGrid = r->GetOutput();//vtkUnstructuredGrid::New();
-//   std::cout << "GetNumberOfCells =>"<< myGrid->GetNumberOfCells();
-//   // Create and display actor
-// 
-//   vtkDataSetMapper* myMapper = vtkDataSetMapper::New();
-//   myMapper->SetInput(myGrid);
-// 
-// //   if ( myPreviewActor ){
-// //     myVTKViewWindow->RemoveActor(myPreviewActor);
-// //     myPreviewActor->Delete();
-// //   }
-// 
-//   SALOME_Actor* myPreviewActor = SALOME_Actor::New();
-//   myPreviewActor = SALOME_Actor::New();
-//   Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject(QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ),"HEXABLOCK");//,theName);
-//   myPreviewActor->setIO(anIO);
-// 
-// //   myPreviewActor->PickableOff();
-//   myPreviewActor->SetVisibility( true );//VisibilityOff();
-//   myPreviewActor->SetPickable( true );
-//   myPreviewActor->SetMapper(myMapper);
-// 
-//   vtkProperty* aProp = vtkProperty::New();
-// //   aProp->SetRepresentationToWireframe();
-//   aProp->SetRepresentationToSurface();
-//   aProp->EdgeVisibilityOn ();
-// 
-// //   aProp->SetColor(10, 10, 250); 
-//   aProp->SetPointSize(5);
-//   myPreviewActor->SetProperty(aProp);
-//   aProp->Delete();
-// 
-//   /*vtkProperty* myBackProp = vtkProperty::New();
-//   GetColor( "SMESH", "backface_color", aBackRGB[0], aBackRGB[1], aBackRGB[2], QColor( 0, 0, 255 ) );
-//   myBackProp->SetColor( aBackRGB[0], aBackRGB[1], aBackRGB[2] );
-//   myPreviewActor->SetBackfaceProperty( myBackProp );
-//   myBackProp->Delete()*/;
-//   myVTKViewWindow->AddActor(myPreviewActor);
-//   myVTKViewWindow->getRenderer()->Render();
-//   myVTKViewWindow->Repaint();
-//   myVTKViewWindow->onFitAll();
-// 
-//   myVTKViewWindow->SetSelectionMode( ActorSelection );
-// // myVTKViewWindow->SetSelectionMode( NodeSelection );
-// // myVTKViewWindow->SetSelectionMode( EdgeSelection );
-// // myVTKViewWindow->SetSelectionMode( FaceSelection );
-// }
-
 
 
 void DocumentGraphicView::update()
@@ -403,21 +353,23 @@ void DocumentGraphicView::update()
   SVTK_ViewWindow*    theVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
   PatternDataModel*   theModel         = dynamic_cast<PatternDataModel *>( model() );
   HEXA_NS::Document*  theDocumentImpl  = theModel->documentImpl();
+  QString             theDocumentEntry = theModel->documentEntry();
 
   if ( _documentActor ){
     theVTKViewWindow->RemoveActor( _documentActor );
     _documentActor->Delete();
+    delete _documentActor;
     std::cout << "DocumentGraphicView::update() REMOVE PREVIOUS ACTOR" << std::endl;
   }
-  _documentActor = new Document_Actor( theDocumentImpl );
 
+  _documentActor = new Document_Actor( theDocumentImpl, theDocumentEntry );
   // display HEXABLOCK document model
   theVTKViewWindow->AddActor( _documentActor );
   theVTKViewWindow->getRenderer()->Render();
   theVTKViewWindow->Repaint();
   theVTKViewWindow->onFitAll();
   // myVTKViewWindow->SetSelectionMode( ActorSelection );
-//   theVTKViewWindow->SetSelectionMode( NodeSelection );
+  // theVTKViewWindow->SetSelectionMode( NodeSelection );
   // myVTKViewWindow->SetSelectionMode( FaceSelection );
 }
 
@@ -540,34 +492,10 @@ void DocumentGraphicView::rowsAboutToBeRemoved ( const QModelIndex & parent, int
   std::cout << "DocumentGraphicView::rowsAboutToBeRemoved" << std::endl; 
 }
 
-
 void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
 { 
-
 //   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
-
 }
-
-// void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
-// { 
-// 
-// //   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
-//   QModelIndex newRow;
-// 
-//   SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
-//   SUIT_ViewManager* vman = myViewWindow->getViewManager();
-//   SUIT_ViewModel* vmodel = vman->getViewModel();
-// 
-//   for ( int i = start; i<= end; ++i ){
-//     newRow = parent.child(i,0);
-// //     std::cout << "newRow.data().toString() =>" << newRow.data().toString().toStdString() << std::endl; 
-//     QString entry = newRow.data(HEXA_ENTRY_ROLE).toString();//.toStdString();
-//     Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
-//     UpdateViewer();
-//         
-// //     addObject(newRow);
-//   }
-// }
 
 void DocumentGraphicView::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
 { 
@@ -724,32 +652,7 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 
 
 
-// code repris de SMESHGUI_VTKUtils :
-SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
-                                                    const char* theEntry) //CS_TODO : move in HEXABLOCKGUI
-{
-    SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWindow);
-    vtkRenderer *aRenderer = aViewWindow->getRenderer();
-    VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
-    vtkActorCollection *aCollection = aCopy.GetActors();
-    aCollection->InitTraversal();
-    while(vtkActor *anAct = aCollection->GetNextActor())
-    {
-        if(SALOME_Actor *anActor = dynamic_cast<SALOME_Actor*>(anAct))
-        {
-            if(anActor->hasIO())
-            {
-                Handle(SALOME_InteractiveObject) anIO = anActor->getIO();
-                if(anIO->hasEntry() && strcmp(anIO->getEntry(), theEntry) == 0)
-                {
-                    return anActor;
-                }
-            }
-        }
-    }
 
-    return NULL;
-}
 
 
 
@@ -777,3 +680,92 @@ SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
 // //   QAbstractItemView::setModel( model );
 // //   connect( model, SIGNAL(patternDataChanged() ), this,  SLOT ( slotTEST() ) );
 // // }
+
+// void DocumentGraphicView::loadVTK( const QString&  path ) //CS_TEST
+// {
+//   std::cout << "DocumentGraphicView::loadVTK=>"<<std::endl;
+//   QFile file(path);
+//   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+//     return;
+// //   QByteArray vtkData = file.readAll ();
+//   QString vtkData = file.readAll ();
+//   vtkData.replace(",",".");
+// 
+// 
+//   SVTK_ViewWindow* myVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
+// 
+//   // vtkStructuredGridReader
+//   vtkUnstructuredGridReader* r = vtkUnstructuredGridReader::New();
+// //   r->SetFileName( path.toLocal8Bit().constData() );
+//   r->SetInputString( vtkData.toLocal8Bit().constData() );
+//   r->SetReadFromInputString( true );
+//   r->Update();
+// 
+//   vtkUnstructuredGrid* myGrid = r->GetOutput();//vtkUnstructuredGrid::New();
+//   std::cout << "GetNumberOfCells =>"<< myGrid->GetNumberOfCells();
+//   // Create and display actor
+// 
+//   vtkDataSetMapper* myMapper = vtkDataSetMapper::New();
+//   myMapper->SetInput(myGrid);
+// 
+// //   if ( myPreviewActor ){
+// //     myVTKViewWindow->RemoveActor(myPreviewActor);
+// //     myPreviewActor->Delete();
+// //   }
+// 
+//   SALOME_Actor* myPreviewActor = SALOME_Actor::New();
+//   myPreviewActor = SALOME_Actor::New();
+//   Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject(QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ),"HEXABLOCK");//,theName);
+//   myPreviewActor->setIO(anIO);
+// 
+// //   myPreviewActor->PickableOff();
+//   myPreviewActor->SetVisibility( true );//VisibilityOff();
+//   myPreviewActor->SetPickable( true );
+//   myPreviewActor->SetMapper(myMapper);
+// 
+//   vtkProperty* aProp = vtkProperty::New();
+// //   aProp->SetRepresentationToWireframe();
+//   aProp->SetRepresentationToSurface();
+//   aProp->EdgeVisibilityOn ();
+// 
+// //   aProp->SetColor(10, 10, 250); 
+//   aProp->SetPointSize(5);
+//   myPreviewActor->SetProperty(aProp);
+//   aProp->Delete();
+// 
+//   /*vtkProperty* myBackProp = vtkProperty::New();
+//   GetColor( "SMESH", "backface_color", aBackRGB[0], aBackRGB[1], aBackRGB[2], QColor( 0, 0, 255 ) );
+//   myBackProp->SetColor( aBackRGB[0], aBackRGB[1], aBackRGB[2] );
+//   myPreviewActor->SetBackfaceProperty( myBackProp );
+//   myBackProp->Delete()*/;
+//   myVTKViewWindow->AddActor(myPreviewActor);
+//   myVTKViewWindow->getRenderer()->Render();
+//   myVTKViewWindow->Repaint();
+//   myVTKViewWindow->onFitAll();
+// 
+//   myVTKViewWindow->SetSelectionMode( ActorSelection );
+// // myVTKViewWindow->SetSelectionMode( NodeSelection );
+// // myVTKViewWindow->SetSelectionMode( EdgeSelection );
+// // myVTKViewWindow->SetSelectionMode( FaceSelection );
+// }
+
+// void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
+// { 
+// 
+// //   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
+//   QModelIndex newRow;
+// 
+//   SVTK_ViewWindow* myViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
+//   SUIT_ViewManager* vman = myViewWindow->getViewManager();
+//   SUIT_ViewModel* vmodel = vman->getViewModel();
+// 
+//   for ( int i = start; i<= end; ++i ){
+//     newRow = parent.child(i,0);
+// //     std::cout << "newRow.data().toString() =>" << newRow.data().toString().toStdString() << std::endl; 
+//     QString entry = newRow.data(HEXA_ENTRY_ROLE).toString();//.toStdString();
+//     Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
+//     UpdateViewer();
+//         
+// //     addObject(newRow);
+//   }
+// }

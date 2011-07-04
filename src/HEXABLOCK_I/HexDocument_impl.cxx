@@ -45,9 +45,17 @@ using namespace std;
 
 using namespace HEXABLOCK_ORB;
 
-Document_impl::Document_impl(HEXA_NS::Document *ptrCpp):_document_cpp(ptrCpp)
+
+Document_impl::Document_impl( PortableServer::POA_ptr thePOA, HEXA_NS::Document *ptrCpp):
+SALOME::GenericObj_i( thePOA ),
+_document_cpp(ptrCpp)
 {
 }
+
+
+// Document_impl::Document_impl(HEXA_NS::Document *ptrCpp):_document_cpp(ptrCpp)
+// {
+// }
 
 ::CORBA::Long Document_impl::saveVtk(const char* fname) throw (SALOME::SALOME_Exception)
 {
@@ -1495,14 +1503,14 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
        md_line.push_back (un_edge);
        }
 
-   TopoDS_Shape shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gstart);
+   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gstart);
    string       b_rep = shape2string( shape );
    HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
 
    std::vector <HEXA_NS::Shape*> gg_line;
    for (int i = 0; i < gline.length(); i++) 
        {
-       shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
+       shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
        b_rep = shape2string( shape );
        HEXA_NS::Shape* gg_edge = new HEXA_NS::Shape( b_rep );
        gg_line.push_back (gg_edge);
@@ -1535,14 +1543,14 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
        md_line.push_back (un_edge);
        }
 
-   TopoDS_Shape shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gstart);
+   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gstart);
    string       b_rep = shape2string( shape );
    HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
 
    std::vector <HEXA_NS::Shape*> gg_line;
    for (int i = 0; i < gline.length(); i++) 
        {
-       shape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
+       shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
        b_rep = shape2string( shape );
        HEXA_NS::Shape* gg_edge = new HEXA_NS::Shape( b_rep );
        gg_line.push_back (gg_edge);

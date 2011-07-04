@@ -66,7 +66,7 @@ using namespace std;
 #include "SALOME_NamingService.hxx"
 #include "SALOME_LifeCycleCORBA.hxx"
 #include "Utils_SINGLETON.hxx"
-
+#include "Utils_ExceptHandlers.hxx"
 #include "HexElements_grid.cxx"
 
 
@@ -80,13 +80,13 @@ using namespace HEXABLOCK_ORB;
 
 
 // Static variables definition
-PortableServer::POA_var HEXABLOCK::_poa;
-HEXABLOCK*                   HEXABLOCK::_HEXABLOCKGen = NULL;
-SALOME_LifeCycleCORBA*  HEXABLOCK::_lcc = NULL;
-GEOM::GEOM_Gen_var      HEXABLOCK::_geomGen = GEOM::GEOM_Gen::_nil();
-// GEOM_Client*            HEXABLOCK::_geomClient = NULL;
-CORBA::ORB_var          HEXABLOCK::_orb;
-SALOME_NamingService*   HEXABLOCK::_ns = NULL;
+PortableServer::POA_var HEXABLOCK_Gen_i::_poa;
+HEXABLOCK_Gen_i*        HEXABLOCK_Gen_i::_HEXABLOCKGen = NULL;
+SALOME_LifeCycleCORBA*  HEXABLOCK_Gen_i::_lcc = NULL;
+GEOM::GEOM_Gen_var      HEXABLOCK_Gen_i::_geomGen = GEOM::GEOM_Gen::_nil();
+// GEOM_Client*            HEXABLOCK_Gen_i::_geomClient = NULL;
+CORBA::ORB_var          HEXABLOCK_Gen_i::_orb;
+SALOME_NamingService*   HEXABLOCK_Gen_i::_ns = NULL;
 
 //=============================================================================
 /*!
@@ -94,7 +94,7 @@ SALOME_NamingService*   HEXABLOCK::_ns = NULL;
  */
 //=============================================================================
 
-HEXABLOCK::HEXABLOCK(CORBA::ORB_ptr orb,
+HEXABLOCK_Gen_i::HEXABLOCK_Gen_i(CORBA::ORB_ptr orb,
 	PortableServer::POA_ptr poa,
 	PortableServer::ObjectId * contId, 
 	const char *instanceName, 
@@ -120,7 +120,7 @@ HEXABLOCK::HEXABLOCK(CORBA::ORB_ptr orb,
  */
 //=============================================================================
 
-PortableServer::ServantBase_var HEXABLOCK::GetServant( CORBA::Object_ptr theObject )
+PortableServer::ServantBase_var HEXABLOCK_Gen_i::GetServant( CORBA::Object_ptr theObject )
 {
   if( CORBA::is_nil( theObject ) || CORBA::is_nil( GetPOA() ) )
     return NULL;
@@ -139,7 +139,7 @@ PortableServer::ServantBase_var HEXABLOCK::GetServant( CORBA::Object_ptr theObje
 //=============================================================================
 //  destructor
 //=============================================================================
-HEXABLOCK::~HEXABLOCK()
+HEXABLOCK_Gen_i::~HEXABLOCK_Gen_i()
 {
 }
 
@@ -151,7 +151,7 @@ HEXABLOCK::~HEXABLOCK()
  *  DumpPython
  */
 //=============================================================================
-Engines::TMPFile* HEXABLOCK::DumpPython(CORBA::Object_ptr theStudy, 
+Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
 					 CORBA::Boolean isPublished, 
 					 CORBA::Boolean& isValidScript)
 {
@@ -240,26 +240,27 @@ Engines::TMPFile* HEXABLOCK::DumpPython(CORBA::Object_ptr theStudy,
 
 
 
-void HEXABLOCK::test()
+void HEXABLOCK_Gen_i::test()
 {
   MESSAGE("HEEEEEEEEEEEEEEYYYYYYYYYYY");
 }
 
-CORBA::Long HEXABLOCK::countDocument()
+CORBA::Long HEXABLOCK_Gen_i::countDocument()
 {
     CORBA::Long nbDocument = _engine_cpp->countDocument();
 //     CORBA::Long nbDocument = 333;
     return nbDocument;
 }
 
-Document_ptr HEXABLOCK::getDocument(CORBA::Long i)
+Document_ptr HEXABLOCK_Gen_i::getDocument(CORBA::Long i)
 {
     HEXA_NS::Document *doc=_engine_cpp->getDocument(i);
-    Document_impl *servantCorba=new Document_impl(doc);
+    if ( doc == NULL ) return Document::_nil();
+    Document_impl *servantCorba = new Document_impl( GetPOA(), doc );
     return servantCorba->_this();
 }
 
-void HEXABLOCK::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
+void HEXABLOCK_Gen_i::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
 {
   Document_impl* docServant = ::DownCast<Document_impl*>( docIn );
   ASSERT( docServant );
@@ -270,26 +271,28 @@ void HEXABLOCK::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
 }
 
 
-Document_ptr HEXABLOCK::addDocument()
+Document_ptr HEXABLOCK_Gen_i::addDocument()
 {
-    MESSAGE("ADD1");
-    HEXA_NS::Document *doc=_engine_cpp->addDocument();
-    MESSAGE("ADD2");
-    Document_impl *servantCorba=new Document_impl(doc);
-    MESSAGE("ADD3");
-    return servantCorba->_this();
+//     MESSAGE("ADD1");
+//     HEXA_NS::Document *doc=_engine_cpp->addDocument();
+//     MESSAGE("ADD2");
+//     Document_impl *servantCorba=new Document_impl( GetPOA(), doc);
+//     MESSAGE("ADD3");
+//     return servantCorba->_this();
+
+    return createDocInStudy();
 }
 
 
 
-Document_ptr HEXABLOCK::loadDocument(const char* xmlFilename)
+Document_ptr HEXABLOCK_Gen_i::loadDocument(const char* xmlFilename)
 {
     HEXA_NS::Document *doc=_engine_cpp->loadDocument(xmlFilename);
-    Document_impl *servantCorba=new Document_impl(doc);
+    Document_impl *servantCorba=new Document_impl( GetPOA(), doc );
     return servantCorba->_this();
 }
 
-GEOM_Client* HEXABLOCK::getGeomClient()
+GEOM_Client* HEXABLOCK_Gen_i::getGeomClient()
 {
   // create shape reader if necessary
   if ( _geomClient == NULL ) 
@@ -299,7 +302,7 @@ GEOM_Client* HEXABLOCK::getGeomClient()
 }
 
 
-TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
+TopoDS_Shape HEXABLOCK_Gen_i::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
 {
   TopoDS_Shape S;
   if ( !theGeomObject->_is_nil() ){
@@ -319,7 +322,7 @@ TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
 
 
 
-// HEXABLOCK_ORB::GEOM_Object_ptr HEXABLOCK::shapeToGeomObject (const TopoDS_Shape& theShape )
+// HEXABLOCK_ORB::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )
 // {
 //   HEXABLOCK_ORB::GEOM_Object_var aShapeObj;
 //   if ( !theShape.IsNull() ) {
@@ -336,7 +339,7 @@ TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
 
 
 
-// GEOM::GEOM_Object_ptr HEXABLOCK::_makeFace( const TopoDS_Shape& theShape )
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeFace( const TopoDS_Shape& theShape )
 // {
 //   ASSERT ( theShape.ShapeType() == TopAbs_FACE );
 // 
@@ -348,7 +351,7 @@ TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
 //   return result._retn();
 // }
 
-// GEOM::GEOM_Object_ptr HEXABLOCK::_makeEdge( const TopoDS_Shape& theShape )
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeEdge( const TopoDS_Shape& theShape )
 // {
 //   ASSERT ( theShape.ShapeType() == TopAbs_EDGE );
 //   int theStudyID = 0;
@@ -378,7 +381,7 @@ TopoDS_Shape HEXABLOCK::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject)
 //   return result._retn();
 // }
 
-GEOM::GEOM_Object_ptr HEXABLOCK::_makeVertex( const TopoDS_Shape& theShape )
+GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeVertex( const TopoDS_Shape& theShape )
 {
   ASSERT ( theShape.ShapeType() == TopAbs_VERTEX );
 
@@ -399,7 +402,7 @@ GEOM::GEOM_Object_ptr HEXABLOCK::_makeVertex( const TopoDS_Shape& theShape )
 }
 
 
-GEOM::GEOM_Object_ptr HEXABLOCK::shapeToGeomObject (const TopoDS_Shape& theShape )
+GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )
 {
   GEOM::GEOM_Object_var aShapeObj;
   if ( !theShape.IsNull() ) {
@@ -414,7 +417,7 @@ GEOM::GEOM_Object_ptr HEXABLOCK::shapeToGeomObject (const TopoDS_Shape& theShape
 }
 
 
-// GEOM::GEOM_Object_ptr HEXABLOCK::shapeToGeomObject (const TopoDS_Shape& theShape )
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )
 // {
 //   GEOM::GEOM_Object_var aShapeObj;
 //   std::cout<<"shapeToGeomObject "<<std::endl;
@@ -433,20 +436,117 @@ GEOM::GEOM_Object_ptr HEXABLOCK::shapeToGeomObject (const TopoDS_Shape& theShape
 // }
 
 
+StudyContext* HEXABLOCK_Gen_i::GetCurrentStudyContext()
+{
+  if ( !CORBA::is_nil( myCurrentStudy ) &&
+      myStudyContextMap.find( GetCurrentStudyID() ) != myStudyContextMap.end() )
+    return myStudyContextMap[ myCurrentStudy->StudyId() ];
+  else
+    return 0;
+}
+
+int HEXABLOCK_Gen_i::RegisterObject(CORBA::Object_ptr theObject)
+{
+  StudyContext* myStudyContext = GetCurrentStudyContext();
+  if ( myStudyContext && !CORBA::is_nil( theObject )) {
+    CORBA::String_var iorString = GetORB()->object_to_string( theObject );
+    return myStudyContext->addObject( string( iorString.in() ) );
+  }
+  return 0;
+}
+
+
+// SMESH::SMESH_Mesh_ptr SMESH_Gen_i::createMesh()
+//      throw ( SALOME::SALOME_Exception )
+
+
+char* HEXABLOCK_Gen_i::ComponentDataType()
+{
+//   if(MYDEBUG) MESSAGE( "HEXABLOCK_Gen_i::ComponentDataType" );
+  return CORBA::string_dup( "HEXABLOCK" );
+}
+
+
+
+// SMESH_Mesh* SMESH_Gen::CreateMesh(int theStudyId, bool theIsEmbeddedMode)
+//   throw(SALOME_Exception)
+// {
+//   Unexpect aCatch(SalomeException);
+//   MESSAGE("SMESH_Gen::CreateMesh");
+// 
+//   // Get studyContext, create it if it does'nt exist, with a SMESHDS_Document
+//   StudyContextStruct *aStudyContext = GetStudyContext(theStudyId);
+// 
+//   // create a new SMESH_mesh object
+//   SMESH_Mesh *aMesh = new SMESH_Mesh(_localId++,
+//                                      theStudyId,
+//                                      this,
+//                                      theIsEmbeddedMode,
+//                                      aStudyContext->myDocument);
+//   aStudyContext->mapMesh[_localId] = aMesh;
+// 
+//   return aMesh;
+// }
 
 
 
 
+Document_ptr HEXABLOCK_Gen_i::createDoc() throw ( SALOME::SALOME_Exception )
+{
+  Unexpect aCatch(SALOME_SalomeException);
+//   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::createMesh" );
+
+  // Get or create the GEOM_Client instance
+  try {
+    HEXA_NS::Document *d      = _engine_cpp->addDocument();
+    Document_impl *docImpl = new Document_impl( GetPOA(), d );
+
+    // activate the CORBA servant of Mesh
+    Document_var docServant = Document::_narrow( docImpl->_this() );
+    int nextId = RegisterObject( docServant );
+//     if(MYDEBUG) MESSAGE( "Add mesh to map with id = "<< nextId);
+    return docServant._retn();
+  }
+  catch (SALOME_Exception& S_ex) {
+//     THROW_SALOME_CORBA_EXCEPTION( S_ex.what(), SALOME::BAD_PARAM );
+  }
+  return Document::_nil();
+}
+
+Document_ptr HEXABLOCK_Gen_i::createDocInStudy()
+     throw ( SALOME::SALOME_Exception )
+{
+  Unexpect aCatch(SALOME_SalomeException);
+//   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::CreateMesh" );
+  // create mesh
+  Document_var doc = this->createDoc();
+
+  // publish mesh in the study
+  if ( CanPublishInStudy( doc ) ) {
+    SALOMEDS::StudyBuilder_var aStudyBuilder = myCurrentStudy->NewBuilder();
+    aStudyBuilder->NewCommand();  // There is a transaction
+    SALOMEDS::SObject_var aSO = PublishDoc( myCurrentStudy, doc.in() );
+    aStudyBuilder->CommitCommand();
+//     if ( !aSO->_is_nil() ) {
+//       // Update Python script
+//       TPythonDump() << aSO << " = " << this << ".CreateEmptyMesh()";
+//     }
+  }
+
+  return doc._retn();
+}
 
 
-SALOME_LifeCycleCORBA*  HEXABLOCK::GetLCC() {
+
+
+SALOME_LifeCycleCORBA*  HEXABLOCK_Gen_i::GetLCC() {
   if ( _lcc == NULL ) {
     _lcc = new SALOME_LifeCycleCORBA( GetNS() );
   }
   return _lcc;
 }
 
-SALOME_NamingService* HEXABLOCK::GetNS()
+SALOME_NamingService* HEXABLOCK_Gen_i::GetNS()
 {
   if ( _ns == NULL ) {
     _ns = SINGLETON_<SALOME_NamingService>::Instance();
@@ -455,6 +555,53 @@ SALOME_NamingService* HEXABLOCK::GetNS()
   }
   return _ns;
 }
+
+
+
+int HEXABLOCK_Gen_i::GetCurrentStudyID()
+{
+  return myCurrentStudy->_is_nil() || myCurrentStudy->_non_existent() ? -1 : myCurrentStudy->StudyId();
+}
+
+
+void HEXABLOCK_Gen_i::SetCurrentStudy( SALOMEDS::Study_ptr theStudy )
+{
+  int curStudyId = GetCurrentStudyID();
+  myCurrentStudy = SALOMEDS::Study::_duplicate( theStudy );
+  // create study context, if it doesn't exist and set current study
+  int studyId = GetCurrentStudyID();
+  if ( myStudyContextMap.find( studyId ) == myStudyContextMap.end() ) {
+    myStudyContextMap[ studyId ] = new StudyContext;
+  }
+
+//   // myCurrentStudy may be nil
+//   if ( !CORBA::is_nil( myCurrentStudy ) ) {
+//     SALOMEDS::StudyBuilder_var aStudyBuilder = myCurrentStudy->NewBuilder();
+//     if( !myCurrentStudy->FindComponent( "GEOM" )->_is_nil() )
+//       aStudyBuilder->LoadWith( myCurrentStudy->FindComponent( "GEOM" ), GetGeomEngine() );
+// 
+//     // NPAL16168, issue 0020210
+//     // Let meshes update their data depending on GEOM groups that could change
+//     if ( curStudyId != studyId )
+//     {
+//       //SALOMEDS::SComponent_var me =  PublishComponent( myCurrentStudy );
+//       SALOMEDS::SComponent_var me = SALOMEDS::SComponent::_narrow
+//         ( myCurrentStudy->FindComponent( ComponentDataType() ) );
+//       if ( !me->_is_nil() ) {
+//         SALOMEDS::ChildIterator_var anIter = myCurrentStudy->NewChildIterator( me );
+//         for ( ; anIter->More(); anIter->Next() ) {
+//           SALOMEDS::SObject_var so = anIter->Value();
+//           CORBA::Object_var    ior = SObjectToObject( so );
+//           if ( SMESH_Mesh_i*  mesh = SMESH::DownCast<SMESH_Mesh_i*>( ior ))
+//             mesh->CheckGeomGroupModif();
+//         }
+//       }
+//     }
+//   }
+}
+
+
+
 
 
 
@@ -508,8 +655,8 @@ extern "C"
   {
     MESSAGE("PortableServer::ObjectId * HEXABLOCKEngine_factory()");
     SCRUTE(interfaceName);
-    HEXABLOCK * myHEXABLOCK 
-      = new HEXABLOCK(orb, poa, contId, instanceName, interfaceName);
+    HEXABLOCK_Gen_i *myHEXABLOCK 
+      = new HEXABLOCK_Gen_i(orb, poa, contId, instanceName, interfaceName);
     return myHEXABLOCK->getId() ;
   }
 
@@ -523,7 +670,7 @@ extern "C"
 // 
 // #include "Vertex_impl.hxx"
 // #include "Edge_impl.hh"
-// char* HEXABLOCK::makeBanner(const char* name)
+// char* HEXABLOCK_Gen_i::makeBanner(const char* name)
 // {
 //     string banner="Pourquoi?, ";
 //     banner+=name;
@@ -534,7 +681,7 @@ extern "C"
 // //  makeVertex: construit un sommet
 // //=============================================================================
 // 
-// HEXABLOCK_ORB::Vertex_ptr HEXABLOCK::makeVertex(CORBA::Double x, CORBA::Double y, CORBA::Double z)
+// HEXABLOCK_ORB::Vertex_ptr HEXABLOCK_Gen_i::makeVertex(CORBA::Double x, CORBA::Double y, CORBA::Double z)
 // {
 //   Vertex *vert=_engine_cpp->makeVertex(x,y,z);
 //   Vertex_impl *servantCorba=new Vertex_impl(vert);
@@ -545,7 +692,7 @@ extern "C"
 // //  makeEdge: construit une arrête
 // //=============================================================================
 // 
-// HEXABLOCK_ORB::Edge_ptr HEXABLOCK::makeEdge(HEXABLOCK_ORB::Vertex_ptr va, HEXABLOCK_ORB::Vertex_ptr vb)
+// HEXABLOCK_ORB::Edge_ptr HEXABLOCK_Gen_i::makeEdge(HEXABLOCK_ORB::Vertex_ptr va, HEXABLOCK_ORB::Vertex_ptr vb)
 // {
 //   Edge *edg=_engine_cpp->makeEdge(va,vb);
 //   Edge_impl *servantCorba=new Edge_impl(edg);

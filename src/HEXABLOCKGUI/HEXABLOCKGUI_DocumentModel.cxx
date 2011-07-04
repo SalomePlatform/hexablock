@@ -43,9 +43,12 @@ using namespace HEXABLOCK::GUI;
 /*****************************************************************
                       DocumentModel
 *****************************************************************/
-DocumentModel::DocumentModel(QObject * parent):
+// DocumentModel::DocumentModel(QObject * parent):
+DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, QObject * parent):
   QStandardItemModel(parent),
-  _hexaFile(  new QTemporaryFile() ), 
+  _hexaFile( new QTemporaryFile() ),
+  _hexaDocument( docIn ),
+  _entry( entryIn ),
 //   _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
 
   _vertexDirItem( new QStandardItem("Vertex") ),
@@ -75,12 +78,13 @@ DocumentModel::DocumentModel(QObject * parent):
   _crossElementsItemFlags( Qt::NoItemFlags ),
   _disallowEdition( false )
 {
-  if ( _hexaFile->open() ){
+  if ( !_hexaDocument && _hexaFile->open() ){
     _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
   }
 
   QStandardItem *parentItem = invisibleRootItem();
-  parentItem->setData( QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ), HEXA_ENTRY_ROLE );
+//   parentItem->setData( QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ), HEXA_ENTRY_ROLE );
+  parentItem->setData( _entry, HEXA_ENTRY_ROLE );
 
   _vertexDirItem->setData( VERTEX_DIR_TREE,           HEXA_TREE_ROLE );
   _edgeDirItem->setData( EDGE_DIR_TREE,               HEXA_TREE_ROLE );
@@ -218,6 +222,7 @@ void DocumentModel::fillData()
     std::cout<<name<<std::endl;
 
     vItem = new VertexItem(v);
+    vItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _vertexDirItem->appendRow(vItem);
 //     _vertexDirItem->setEditable( false );//CS_TEST
   }
@@ -227,6 +232,7 @@ void DocumentModel::fillData()
   for ( int i=0; i<_hexaDocument->countEdge(); ++i ){
     e = _hexaDocument->getEdge(i);
     eItem = new EdgeItem(e);
+    eItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _edgeDirItem->appendRow(eItem);
   }
 
@@ -235,6 +241,7 @@ void DocumentModel::fillData()
   for ( int i=0; i<_hexaDocument->countQuad(); ++i ){
     q = _hexaDocument->getQuad(i);
     qItem = new QuadItem(q);
+    qItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _quadDirItem->appendRow(qItem);
   }
 
@@ -243,6 +250,7 @@ void DocumentModel::fillData()
   for ( int i=0; i<_hexaDocument->countHexa(); ++i ){
     h = _hexaDocument->getHexa(i);
     hItem = new HexaItem(h);
+    hItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _hexaDirItem->appendRow(hItem);
   }
   std::cout<<"DocumentModel::fillData()  end"<<std::endl;
@@ -2097,6 +2105,12 @@ HEXA_NS::Document* DocumentModel::documentImpl()
 }
 
 
+QString DocumentModel::documentEntry()
+{
+  return _entry;
+}
+
+
 
 
 
@@ -2133,10 +2147,17 @@ HEXA_NS::Document* PatternDataModel::documentImpl()
 {
   HEXA_NS::Document* doc = NULL;
   DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
-  doc = m->documentImpl();
+  if (m) doc = m->documentImpl();
   return doc;
 }
 
+QString PatternDataModel::documentEntry()
+{
+  QString entry;
+  DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+  if (m) entry = m->documentEntry();
+  return entry;
+}
 
 Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const
 {

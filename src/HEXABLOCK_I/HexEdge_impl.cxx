@@ -90,7 +90,7 @@ void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
   throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ok;
-  TopoDS_Shape aShape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape( geom_object_1D );
+  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_1D );
   string strBrep = shape2string( aShape );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
   s->debut = debut;
@@ -156,7 +156,7 @@ EdgeAssociations* Edge_impl::getAssociations ()
 
 //       assoc.geomObj = GEOM::GEOM_Object::_duplicate( (*iter).geomObj );
       std::cout <<"AAAAAA"<<std::endl;
-      assoc.geomObj = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
+      assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
       assoc.debut = (*iter)->debut;
       assoc.fin   = (*iter)->fin;
       (*result)[ i++ ] = assoc;

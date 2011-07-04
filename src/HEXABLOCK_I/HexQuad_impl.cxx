@@ -72,7 +72,7 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
   throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ok;
-  TopoDS_Shape aShape = HEXABLOCK::GetHEXABLOCKGen()->geomObjectToShape( geom_object_2D );
+  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_2D );
 
   string strBrep = shape2string( aShape );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
@@ -112,7 +112,7 @@ GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
 	iter != shapes.end();
         ++iter ){
       aShape = string2shape( (*iter)->getBrep());
-      (*result)[ i++ ] = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
+      (*result)[ i++ ] = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
   }
 
   return result;

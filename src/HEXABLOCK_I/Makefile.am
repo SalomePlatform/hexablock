@@ -67,7 +67,9 @@ dist_libHEXABLOCKEngine_la_SOURCES = \
 	HexLaw_impl.cxx \
 	HexGroup_impl.cxx \
 	HexDocument_impl.cxx \
-	HEXABLOCK.cxx
+	HEXABLOCK.cxx \
+	HEXABLOCK_1.cxx
+
 
 
 libHEXABLOCKEngine_la_CPPFLAGS = \

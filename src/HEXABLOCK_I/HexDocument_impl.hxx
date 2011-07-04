@@ -36,7 +36,8 @@ class Document_impl:
 {
 
 public:
-  Document_impl(HEXA_NS::Document *ptrCpp);
+//   Document_impl(HEXA_NS::Document *ptrCpp);
+  Document_impl( PortableServer::POA_ptr thePOA, HEXA_NS::Document *ptrCpp);
 
   HEXA_NS::Document* GetImpl() throw (SALOME::SALOME_Exception);
 

@@ -41,22 +41,106 @@ class SALOME_LifeCycleCORBA;
 class SALOME_NamingService;
 
 
-class HEXABLOCK:
+
+
+
+// ===========================================================
+// Study context - stores study-connected objects references
+// ==========================================================
+class StudyContext
+{
+public:
+  // constructor
+  StudyContext() {}
+  // destructor
+  ~StudyContext()
+  {
+    mapIdToIOR.clear();
+    mapIdToId.clear();
+  }
+  // register object in the internal map and return its id
+  int addObject( string theIOR )
+  {
+    int nextId = getNextId();
+    mapIdToIOR[ nextId ]  = theIOR;
+    return nextId;
+  }
+  // find the object id in the internal map by the IOR
+  int findId( string theIOR )
+  {
+    map<int, string>::iterator imap;
+    for ( imap = mapIdToIOR.begin(); imap != mapIdToIOR.end(); ++imap ) {
+      if ( imap->second == theIOR )
+        return imap->first;
+    }
+    return 0;
+  }
+  // get object's IOR by id
+  string getIORbyId( const int theId )
+  {
+    if ( mapIdToIOR.find( theId ) != mapIdToIOR.end() )
+      return mapIdToIOR[ theId ];
+    return string( "" );
+  }
+  // get object's IOR by old id
+  string getIORbyOldId( const int theOldId )
+  {
+    if ( mapIdToId.find( theOldId ) != mapIdToId.end() )
+      return getIORbyId( mapIdToId[ theOldId ] );
+    return string( "" );
+  }
+  // maps old object id to the new one (used when restoring data)
+  void mapOldToNew( const int oldId, const int newId ) {
+    mapIdToId[ oldId ] = newId;
+  }
+  // get old id by a new one
+  int getOldId( const int newId ) {
+    map<int, int>::iterator imap;
+    for ( imap = mapIdToId.begin(); imap != mapIdToId.end(); ++imap ) {
+      if ( imap->second == newId )
+        return imap->first;
+    }
+    return 0;
+  }
+
+private:
+  // get next free object identifier
+  int getNextId()
+  {
+    int id = 1;
+    while( mapIdToIOR.find( id ) != mapIdToIOR.end() )
+      id++;
+    return id;
+  }
+
+  map<int, string> mapIdToIOR;      // persistent-to-transient map
+  map<int, int>    mapIdToId;       // used to translate object from persistent to transient form
+};
+
+
+
+
+
+
+
+
+class HEXABLOCK_Gen_i:
   public POA_HEXABLOCK_ORB::HEXABLOCK_Gen,
   public Engines_Component_i 
 {
 
 public:
-    HEXABLOCK( CORBA::ORB_ptr orb,
+    HEXABLOCK_Gen_i( CORBA::ORB_ptr orb,
 	    PortableServer::POA_ptr poa,
 	    PortableServer::ObjectId * contId, 
 	    const char *instanceName, 
 	    const char *interfaceName);
   // Get object of the CORBA reference
+    static CORBA::ORB_var GetORB() { return _orb;}
     static PortableServer::POA_var GetPOA() { return _poa;}
     static PortableServer::ServantBase_var GetServant( CORBA::Object_ptr theObject );
 
-    virtual ~HEXABLOCK();
+    virtual ~HEXABLOCK_Gen_i();
 
     void test();
     ::CORBA::Long countDocument();
@@ -70,12 +154,40 @@ public:
     GEOM::GEOM_Object_ptr shapeToGeomObject(const TopoDS_Shape& theShape );
     static SALOME_LifeCycleCORBA*  GetLCC();
     static SALOME_NamingService* GetNS();
-    static HEXABLOCK* GetHEXABLOCKGen() { return _HEXABLOCKGen;}
+    static HEXABLOCK_Gen_i* GetHEXABLOCKGen() { return _HEXABLOCKGen;}
 
 
     virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
 				         CORBA::Boolean isPublished,
 				         CORBA::Boolean& isValidScript);
+
+
+
+
+  void SetCurrentStudy( SALOMEDS::Study_ptr theStudy );
+  int GetCurrentStudyID();
+  StudyContext* GetCurrentStudyContext();
+  void SetName( SALOMEDS::SObject_ptr theSObject,
+                const char*           theName,
+                const char*           theDefaultName );
+  int   RegisterObject(CORBA::Object_ptr theObject);
+//   SMESH::SMESH_Mesh_ptr SMESH_Gen_i::createMesh() throw ( SALOME::SALOME_Exception )
+  char* ComponentDataType();
+  
+
+  bool CanPublishInStudy(CORBA::Object_ptr theIOR);
+  SALOMEDS::SComponent_ptr PublishComponent(SALOMEDS::Study_ptr theStudy);
+  static SALOMEDS::SObject_ptr ObjectToSObject(SALOMEDS::Study_ptr theStudy, CORBA::Object_ptr   theObject);
+  
+  SALOMEDS::SObject_ptr PublishDoc( SALOMEDS::Study_ptr   theStudy,
+                                    Document_ptr          theDoc,
+                                    const char*           theName = 0);
+
+
+
+  Document_ptr createDoc() throw ( SALOME::SALOME_Exception );
+  Document_ptr createDocInStudy() throw ( SALOME::SALOME_Exception );
+
 
 private:
    HEXA_NS::Hex* _engine_cpp;
@@ -87,9 +199,13 @@ private:
   static SALOME_LifeCycleCORBA*  _lcc;
   static CORBA::ORB_var          _orb;
   static SALOME_NamingService*   _ns;
-  static HEXABLOCK*                   _HEXABLOCKGen;
+  static HEXABLOCK_Gen_i*        _HEXABLOCKGen;
+
 
   GEOM::GEOM_Object_ptr _makeVertex( const TopoDS_Shape& theShape );
+
+  map<int, StudyContext*>   myStudyContextMap;  // Map of study context objects
+  SALOMEDS::Study_var       myCurrentStudy;     // Current study
 
 };
 
@@ -107,7 +223,7 @@ template<class T>
   T
   DownCast(CORBA::Object_ptr theArg)
   {
-    return dynamic_cast<T>(HEXABLOCK::GetServant(theArg).in());
+    return dynamic_cast<T>(HEXABLOCK_Gen_i::GetServant(theArg).in());
   }
 
 

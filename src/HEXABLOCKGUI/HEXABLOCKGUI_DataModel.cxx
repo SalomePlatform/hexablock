@@ -36,7 +36,8 @@
 #include <CAM_Module.h>
 #include <CAM_Application.h>
 
-#include <LightApp_Application.h>
+// #include <LightApp_Application.h>
+#include <SalomeApp_Application.h>
 
 #include <qstring.h>
 #include <qfile.h>
@@ -58,8 +59,8 @@
 
 /*! Constructor */
 HEXABLOCKGUI_DataModel::HEXABLOCKGUI_DataModel( CAM_Module* module )
-  : LightApp_DataModel( module ),
-//   : SalomeApp_DataModel( module ),
+//   : LightApp_DataModel( module ),
+  : SalomeApp_DataModel( module ),
     myStudyURL( "" )
 {
 }
@@ -67,6 +68,88 @@ HEXABLOCKGUI_DataModel::HEXABLOCKGUI_DataModel( CAM_Module* module )
 /*! Destructor */
 HEXABLOCKGUI_DataModel::~HEXABLOCKGUI_DataModel()
 {
+}
+
+
+// bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc, QWidget* viewWindow )
+// {
+//   HEXABLOCKGUI_Document docModel( doc->getFile(),  reinterpret_cast<intptr_t>(doc) );
+//   QString docEntry = QString("HEXA_ENTRY:%1").arg( QString::number( docModel.id() ) );
+//   myViews[ docEntry ]   = viewWindow;
+//   myEntry[ viewWindow ] = docEntry;
+// //   // temporary code to add a few atoms to a molecule..
+// //   mol.addAtom( "atom_1", 0, 0, 0 );
+// //   mol.addAtom( "atom_2", 0, 0, 0 );
+// //   mol.addAtom( "atom_3", 0, 0, 0 );
+// //   // end of temporary code
+//   myDocuments.append( docModel );
+// //   _createDocument ();
+// 
+//   update();
+// 
+//   return true;
+// }
+
+
+bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc, QWidget* viewWindow , QString docIOR )
+{
+  DEBTRACE("HEXABLOCKGUI_DataModel::createDocument : docIOR =>" << docIOR );
+  SalomeApp_ModuleObject* aRoot = dynamic_cast<SalomeApp_ModuleObject*>(root());
+  if (!aRoot)
+  {
+      DEBTRACE("SalomeApp_ModuleObject* aRoot =0");
+      return false;
+  }
+  DEBTRACE("aRoot OK");
+  _PTR(SComponent)         aSComp(aRoot->object());
+  _PTR(Study)              aStudy = getStudy()->studyDS();
+  _PTR(StudyBuilder)       aBuilder(aStudy->NewBuilder());
+  _PTR(GenericAttribute)   anAttr;
+  _PTR(AttributeName)      aName;
+  _PTR(AttributePixMap)    aPixmap;
+  _PTR(AttributeParameter) aType;
+  _PTR(AttributeIOR)       aIOR;
+
+  // --- create a new document SObject
+  _PTR(SObject) aSObj;
+  aSObj = aBuilder->NewObject(aSComp);
+
+  anAttr =  aBuilder->FindOrCreateAttribute(aSObj, "AttributeName");
+  aName = _PTR(AttributeName)(anAttr);
+//   aName->SetValue(QFileInfo(schemaName).baseName().toStdString());
+  aName->SetValue("totoooo");
+
+//   anAttr = aBuilder->FindOrCreateAttribute(aSObj, "AttributePixMap");
+//   aPixmap = _PTR(AttributePixMap)(anAttr);
+//   aPixmap->SetPixMap("schema.png");
+
+
+  anAttr = aBuilder->FindOrCreateAttribute(aSObj, "AttributeIOR");
+  aIOR = _PTR(AttributeIOR)(anAttr);
+  aIOR->SetValue(docIOR.toStdString());
+
+//     CORBA::String_var objStr = HEXABLOCK_Gen_i::GetORB()->object_to_string( theIOR );
+  
+
+//   anAttr = aBuilder->FindOrCreateAttribute(aSObj, "AttributeParameter");
+//   aType = _PTR(AttributeParameter)(anAttr);
+//   aType->SetInt("ObjectType", SchemaObject);
+//   string filePath = schemaName.toStdString();
+//   aType->SetString("FilePath", filePath.c_str());
+//   DEBTRACE("DataModel : FilePath = " << filePath);
+
+//   _viewEntryMap[viewWindow] = aSObj->GetID();
+//   DEBTRACE(viewWindow);
+//   _entryViewMap[aSObj->GetID()] = viewWindow;
+//   DEBTRACE("--- " << viewWindow << " "<< aSObj->GetID());
+  SalomeApp_Module *mod = dynamic_cast<SalomeApp_Module*>(module());
+  if (mod) mod->updateObjBrowser();
+
+//   QxScene_ViewWindow *swv = dynamic_cast<QxScene_ViewWindow*>(viewWindow);
+//   if (!swv) return;
+//   QString tabName = QFileInfo(schemaName).baseName();
+//   swv->getViewManager()->setTitle(tabName);
+  return true;
 }
 
 /*! Open Data Model.  Build data structure from the given list of files. */
@@ -155,39 +238,39 @@ bool HEXABLOCKGUI_DataModel::isSaved() const
 /*! Called on update of the structure of Data Objects */
 void HEXABLOCKGUI_DataModel::build()
 {
-  HEXABLOCKGUI_ModuleObject* modelRoot = dynamic_cast<HEXABLOCKGUI_ModuleObject*>( root() );
-  if( !modelRoot )  {  // root is not set yet
-//     modelRoot = new HEXABLOCKGUI_ModuleObject( 0 );//this, 0 );
-    modelRoot = new HEXABLOCKGUI_ModuleObject( this, 0 );
-//     modelRoot->setDataModel( this );
-    setRoot( modelRoot );
-  }
-
 //   HEXABLOCKGUI_ModuleObject* modelRoot = dynamic_cast<HEXABLOCKGUI_ModuleObject*>( root() );
 //   if( !modelRoot )  {  // root is not set yet
-//   HEXABLOCKGUI_ModuleObject*  modelRoot = new HEXABLOCKGUI_ModuleObject( this, root()  );
-//     modelRoot->setDataModel( this );
+// //     modelRoot = new HEXABLOCKGUI_ModuleObject( 0 );//this, 0 );
+//     modelRoot = new HEXABLOCKGUI_ModuleObject( this, 0 );
+// //     modelRoot->setDataModel( this );
 //     setRoot( modelRoot );
 //   }
-
-//   LightApp_RootObject* r = dynamic_cast<LightApp_RootObject*>( root() );
-//   r->setStudy( (LightApp_Study*) module()->application()->activeStudy());
-
-//   create 'molecule' objects under model root object and 'atom' objects under 'molecule'-s
-  for ( int i = 0; i < myDocuments.count(); i++ ){
-    std::cout << " myDocuments => " << i <<std::endl;
-    HEXABLOCKGUI_DataObject* molObj = new HEXABLOCKGUI_DataObject( modelRoot, &myDocuments[i] );
-//     for ( int j = 0; j < myDocuments[ i ].count(); j++ ) {
-//       /*HEXABLOCKGUI_DataObject* atomObj = */new HEXABLOCKGUI_DataObject ( molObj, &myDocuments[i], j );
-//     }
-  }
-//   if ( myDocuments.count()> 0 )
-//     modelRoot->appendChild( new HEXABLOCKGUI_DataObject ( modelRoot, &myDocuments[0] ) );
-
-// if ( modelRoot )
-//       txt.trimmed().isEmpty() ? new LIGHTGUI_DataObject( generateId(), txt, modelRoot ) : 
-
-  root()->dump();
+// 
+// //   HEXABLOCKGUI_ModuleObject* modelRoot = dynamic_cast<HEXABLOCKGUI_ModuleObject*>( root() );
+// //   if( !modelRoot )  {  // root is not set yet
+// //   HEXABLOCKGUI_ModuleObject*  modelRoot = new HEXABLOCKGUI_ModuleObject( this, root()  );
+// //     modelRoot->setDataModel( this );
+// //     setRoot( modelRoot );
+// //   }
+// 
+// //   LightApp_RootObject* r = dynamic_cast<LightApp_RootObject*>( root() );
+// //   r->setStudy( (LightApp_Study*) module()->application()->activeStudy());
+// 
+// //   create 'molecule' objects under model root object and 'atom' objects under 'molecule'-s
+//   for ( int i = 0; i < myDocuments.count(); i++ ){
+//     std::cout << " myDocuments => " << i <<std::endl;
+//     HEXABLOCKGUI_DataObject* molObj = new HEXABLOCKGUI_DataObject( modelRoot, &myDocuments[i] );
+// //     for ( int j = 0; j < myDocuments[ i ].count(); j++ ) {
+// //       /*HEXABLOCKGUI_DataObject* atomObj = */new HEXABLOCKGUI_DataObject ( molObj, &myDocuments[i], j );
+// //     }
+//   }
+// //   if ( myDocuments.count()> 0 )
+// //     modelRoot->appendChild( new HEXABLOCKGUI_DataObject ( modelRoot, &myDocuments[0] ) );
+// 
+// // if ( modelRoot )
+// //       txt.trimmed().isEmpty() ? new LIGHTGUI_DataObject( generateId(), txt, modelRoot ) : 
+// 
+//   root()->dump();
 
 }
 
@@ -355,24 +438,24 @@ void HEXABLOCKGUI_DataModel::_createDocument () // full component
 }
 
 /*! Adds a new molecule to the data structure */
-bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc, QWidget* viewWindow )
-{
-  HEXABLOCKGUI_Document docModel( doc->getFile(),  reinterpret_cast<intptr_t>(doc) );
-  QString docEntry = QString("HEXA_ENTRY:%1").arg( QString::number( docModel.id() ) );
-  myViews[ docEntry ]   = viewWindow;
-  myEntry[ viewWindow ] = docEntry;
-//   // temporary code to add a few atoms to a molecule..
-//   mol.addAtom( "atom_1", 0, 0, 0 );
-//   mol.addAtom( "atom_2", 0, 0, 0 );
-//   mol.addAtom( "atom_3", 0, 0, 0 );
-//   // end of temporary code
-  myDocuments.append( docModel );
-//   _createDocument ();
-
-  update();
-
-  return true;
-}
+// bool HEXABLOCKGUI_DataModel::createDocument( HEXA_NS::Document* doc, QWidget* viewWindow )
+// {
+//   HEXABLOCKGUI_Document docModel( doc->getFile(),  reinterpret_cast<intptr_t>(doc) );
+//   QString docEntry = QString("HEXA_ENTRY:%1").arg( QString::number( docModel.id() ) );
+//   myViews[ docEntry ]   = viewWindow;
+//   myEntry[ viewWindow ] = docEntry;
+// //   // temporary code to add a few atoms to a molecule..
+// //   mol.addAtom( "atom_1", 0, 0, 0 );
+// //   mol.addAtom( "atom_2", 0, 0, 0 );
+// //   mol.addAtom( "atom_3", 0, 0, 0 );
+// //   // end of temporary code
+//   myDocuments.append( docModel );
+// //   _createDocument ();
+// 
+//   update();
+// 
+//   return true;
+// }
 
 
 /*! Adds a new atom to the given molecule */
