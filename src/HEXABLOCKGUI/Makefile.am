@@ -128,6 +128,7 @@ libHEXABLOCK_la_CXXFLAGS = \
 	-I$(GUI_ROOT_DIR)/include/salome \
 	-I$(GEOM_ROOT_DIR)/include/salome \
 	-I$(srcdir)/../HEXABLOCK \
+	-I$(srcdir)/../HEXABLOCK_I \
 	-I../../idl \
 	$(qt4_cppflags) \
 	$(qsci4_cppflags)
