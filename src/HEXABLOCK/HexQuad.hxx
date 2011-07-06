@@ -90,6 +90,7 @@ public:
 
     int   addAssociation (Shape* forme); 
     const Shapes& getAssociations () { return tab_assoc ; }
+    void  inverser ();
 
 private:
     friend class Cloner;
@@ -205,6 +206,18 @@ inline void Quad::setScalar  (double val)
 {
    for (int n1=0 ; n1< QUAD4 ; n1++)
        q_vertex[n1] -> setScalar (val);
+}
+
+// =============================================================== inverser
+inline void Quad::inverser ()
+{
+   Vertex*   vx = q_vertex [1]; 
+   q_vertex [1] = q_vertex [3]; 
+   q_vertex [3] = vx;
+
+   Edge*   ex = q_edge [1]; 
+   q_edge [1] = q_edge [3]; 
+   q_edge [3] = ex;
 }
 
 END_NAMESPACE_HEXA

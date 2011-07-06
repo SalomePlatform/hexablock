@@ -1,3 +1,6 @@
+
+// Class : Gestion des sommets 
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -15,10 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-// Class : Gestion des sommets 
-//
 #ifndef __VERTEX_H_
 #define __VERTEX_H_
 
@@ -46,6 +46,7 @@ public :
 
    void   setScalar (double val)             { v_scalar = val ; }
    double getScalar ()                       { return v_scalar ; }
+   void   getPoint (double point[]);
 
    void setCoord  (double x, double y, double z);
    bool isin      (double xmin, double xmax, double ymin, double ymax, 
@@ -101,6 +102,13 @@ inline bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax,
                && v_y >= ymin && v_y <= ymax
                && v_z >= zmin && v_z <= zmax;
    return rep;
+}
+// ========================================================= getPoint
+inline void Vertex::getPoint (double point[])
+{
+   point [dir_x] = v_x;
+   point [dir_y] = v_y;
+   point [dir_z] = v_z;
 }
 END_NAMESPACE_HEXA
 #endif

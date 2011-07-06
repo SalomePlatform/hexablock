@@ -1,3 +1,6 @@
+
+// class : Document
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,8 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// class : Document
 
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
@@ -190,6 +191,7 @@ public:
     void  majReferences  ();                  // M.A.J relation "utilise par"
     void  update ()            { if (maj_connection) majReferences (); }
     bool  debug (int niv=0)    { return doc_db > niv ; }
+    void  reorderFaces ();
 
 public:
    Globale* glob;

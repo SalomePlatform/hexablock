@@ -455,7 +455,10 @@ int test_relecture (int nbargs, cpchar tabargs[])
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
 
-   Hex::Elements* grid2 = doc->cut (e4, 2);
+   doc ->reorderFaces ();
+   doc ->saveVtk ("restore2.vtk");
+
+   // Hex::Elements* grid2 = doc->cut (e4, 2);
    return HOK;
 }
 // ======================================================== test_clone

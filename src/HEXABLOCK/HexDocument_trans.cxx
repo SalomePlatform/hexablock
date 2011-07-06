@@ -218,4 +218,61 @@ void Document::dumpPropagation ()
            }
        }
 }
+// ----------------------------------------------------------------------
+// ------------ reorderFaces
+// ----------------------------------------------------------------------
+// ========================================================= def_vecteur
+void def_vecteur (double pa[], double pb[], double vect[])
+{
+   for (int nc=0 ; nc<DIM3 ; nc++) 
+        vect [nc] = pb [nc] - pa [nc];
+}
+// ========================================================= produit_mixte
+double produit_mixte (double vi[], double vj[], double vk[])
+{
+   double pmixte = 0;
+
+   for (int nc=0 ; nc<DIM3 ; nc++) 
+       {
+       int nc1 = (nc + 1) MODULO DIM3;
+       int nc2 = (nc + 2) MODULO DIM3;
+       pmixte +=  vk[nc] * (vi [nc1] * vj [nc2] - vj [nc1] * vi [nc2]);
+       }
+
+   return pmixte;
+}
+// ========================================================= reorderFaces
+// ==== Ordonner les faces externes
+void Document::reorderFaces ()
+{
+   majReferences ();
+   // markAll (NO_USED, EL_QUAD);
+   double cg [DIM3], orig[DIM3], pi[DIM3], pj [DIM3];
+   double vi[DIM3], vj[DIM3], vk[DIM3];
+
+   for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Quad* quad = static_cast <Quad*> (elt);
+       if (quad!=NULL && quad->isHere() && quad->getNbrParents()==1) 
+          {
+          Hexa* hexa = quad->getParent(0);
+          hexa->getCenter (cg);
+          quad->getVertex (0) -> getPoint (orig);
+          quad->getVertex (1) -> getPoint (pi);
+          quad->getVertex (3) -> getPoint (pj);
+
+          def_vecteur (orig, pi, vi);
+          def_vecteur (orig, pj, vj);
+          def_vecteur (orig, cg, vk);
+
+          double pmixte = produit_mixte (vi, vj, vk);
+          if (pmixte < ZEROR) 
+             quad->inverser ();
+          
+          HexDisplay (pmixte); 
+          }
+       }
+
+}
 END_NAMESPACE_HEXA

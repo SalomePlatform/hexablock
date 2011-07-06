@@ -99,6 +99,7 @@ public:
     void replaceVertex (Vertex* old, Vertex* nouveau);
     void removeConnected ();
     void markElements (int marque);
+    void getCenter    (double centre[]);
 
 private:
     friend class Cloner;
@@ -152,6 +153,22 @@ inline Vertex* Hexa::getVertex (int nro)
       elt = h_vertex [nro]; 
 
    return elt;
+}
+// ============================================================  getCenter
+inline void Hexa::getCenter (double centre[])
+{
+   centre [dir_x] = centre [dir_y] = centre [dir_z] = 0;
+
+   for (int nv=0 ; nv<HV_MAXI ; nv++)
+       {
+       centre [dir_x] += h_vertex[nv]->getX ();
+       centre [dir_y] += h_vertex[nv]->getY ();
+       centre [dir_z] += h_vertex[nv]->getZ ();
+       }
+
+   centre [dir_x] /= HV_MAXI;
+   centre [dir_y] /= HV_MAXI;
+   centre [dir_z] /= HV_MAXI;
 }
 // =============================================================== definedBy
 inline bool Hexa::definedBy  (Vertex* v1, Vertex* v2)
