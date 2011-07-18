@@ -16,9 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-# Author : Guillaume Boulant (CSSI)
-# Module : COMPONENT
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 dist_salomescript_SCRIPTS = \

@@ -16,12 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  File   : Makefile.in
-#  Author : (CEA)
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
-# 	
-# TEST_CPP
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 DIST_SUBDIRS = HEXABLOCK \

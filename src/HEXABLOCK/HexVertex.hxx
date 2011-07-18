@@ -1,6 +1,3 @@
-
-// Class : Gestion des sommets 
-
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,6 +16,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
+// Class : Gestion des sommets 
+//
 #ifndef __VERTEX_H_
 #define __VERTEX_H_
 

@@ -150,8 +150,6 @@ RSTFILES= \
 
 
 
-EXTRA_DIST+= conf.py $(RSTFILES) _static cas_test_python html
-
 EXTRA_DIST+= \
 	cas_test_python/BIELLE.py
 

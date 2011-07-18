@@ -1,6 +1,3 @@
-
-// C++ : Gestion des noeuds
-
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or

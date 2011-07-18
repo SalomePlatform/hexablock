@@ -334,8 +334,8 @@ Face_haut = geompy.GetFaceNearPoint(Bielle_geom, Pt_A)
 Face_bas = geompy.GetFaceNearPoint(Bielle_geom, Pt_B)
 
 
-# Paramï¿½tre pour:
-# -rï¿½cupï¿½ration des points.
+# Paramètre pour:
+# -récupération des points.
 # -et associations.
 u_1 = 0.75#0.8
 u_2 = 0.5
@@ -958,7 +958,7 @@ for j in range(N_Propa):
     Propa.setLaw( Law )# appliquer la loi de discretisation sur tout le modele et generer le maillage
 
 #====================================
-# Gï¿½nï¿½rer des maillages
+# Générer des maillages
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "

@@ -1,6 +1,3 @@
-
-// class : Document
-
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,6 +16,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
+// class : Document
 
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
