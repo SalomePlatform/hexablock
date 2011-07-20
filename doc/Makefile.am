@@ -93,6 +93,7 @@ RSTFILES= \
 	creategrids.rst             \
 	full_example_bridle.rst     \
 	general.rst                 \
+	gui.rst                     \
 	gui_asso_quad_to_geom.rst   \
 	gui_blocks_for_cyl_pipe.rst \
 	gui_component.rst           \
@@ -102,12 +103,15 @@ RSTFILES= \
 	gui_discret_law.rst         \
 	gui_document.rst            \
 	gui_edge.rst                \
+	gui_elements.rst            \
 	gui_groups.rst              \
 	gui_hexahedron.rst          \
 	gui_make_elmts.rst          \
+	gui_make_symmetry.rst       \
 	gui_merge_elmts.rst         \
 	gui_mesh.rst                \
 	gui_modify_elmts.rst        \
+	gui_modify_symmetry.rst     \
 	gui_pipe.rst                \
 	gui_prism_join_quad.rst     \
 	gui_propag.rst              \
@@ -121,7 +125,9 @@ RSTFILES= \
 	intro_groups.rst            \
 	intro_mesh.rst              \
 	intro_python.rst            \
+	mesh.rst                    \
 	python.rst                  \
+	tui.rst                     \
 	tui_asso_quad_to_geom.rst   \
 	tui_blocks_for_cyl_pipe.rst \
 	tui_cartgrid.rst            \
@@ -133,6 +139,7 @@ RSTFILES= \
 	tui_discret_law.rst         \
 	tui_document.rst            \
 	tui_edge.rst                \
+	tui_elements.rst            \
 	tui_groups.rst              \
 	tui_hexahedron.rst          \
 	tui_make_elmts.rst          \
