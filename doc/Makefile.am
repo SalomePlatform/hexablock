@@ -50,7 +50,7 @@ help:
 
 DOXFILES=
 
-EXTRA_DIST+= htmldev $(DOXFILES)
+EXTRA_DIST+= $(DOXFILES)
 
 hexablockdocdir=$(docdir)/gui/HEXABLOCK
 hexablockdevdocdir=$(docdir)/gui/HEXABLOCK/dev
@@ -150,8 +150,7 @@ RSTFILES= \
 
 
 
-EXTRA_DIST+= \
-	cas_test_python/BIELLE.py
+EXTRA_DIST+= $(RSTFILES) _static cas_test_python pyplots
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(hexablockdocdir)
