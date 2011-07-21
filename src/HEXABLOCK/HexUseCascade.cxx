@@ -1,3 +1,6 @@
+//
+// CC++ : interface modele/cascade
+//
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -15,11 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//
-// CC++ : interface modele/cascade
-//
-
+//--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 #include "HexDocument.hxx"
 
 #ifndef NO_CASCADE
@@ -87,11 +86,14 @@ static int MYDEBUG = 1;
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
 static double HEXA_EPSILON  = 1E-6; //1E-3; 
-//  static double HEXA_QUAD_WAY = PI/4.; //3.*PI/8.;
+//  static double HEXA_QUAD_WAY = PI/4.; //3.*PI/8.;;
+    double fin;
+
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
+//static bool db = false;
+static bool db = true;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
@@ -139,16 +141,38 @@ TopoDS_Shape string2shape (const string& brep)
    return shape;
 }
 // ============================================================== asso2edge
+// === Conversion d'une forme associee en une ligne de Geom
 TopoDS_Edge asso2edge (Shape* asso)
 {
    string brep = asso->getBrep();
 
-   istringstream streamBrep(brep);
+   istringstream streamBrep (brep);
    BRep_Builder  aBuilder;
    TopoDS_Shape  shape;
 
    BRepTools::Read(shape, streamBrep, aBuilder);
    return TopoDS::Edge(shape);
+}
+// ============================================================ add_association
+void add_association (Edge* edge, Shape* assold, double deb, double fin)
+{
+   string brep   = assold->getBrep();
+   Shape* assnew = new Shape (brep);
+
+   assnew->debut = std::min (deb, fin);
+   assnew->fin   = std::max (deb, fin);
+   edge->addAssociation (assnew);
+
+   if (NOT db) return;
+
+   char cc1[12], cc2 [12];
+   Vertex* v1 = edge->getVertex (V_AMONT);
+   Vertex* v2 = edge->getVertex (V_AVAL );
+
+   printf (" Asso edge %s", edge->getName(cc1));
+   printf (" =(%s,%s)", v1->getName(cc1), v2->getName(cc2));
+   printf (" : deb=%g, fin=%g\n", assnew->debut, assnew->fin);
+   printf (" brep=%s\n", brep.c_str());
 }
 // ============================================================== edge_length
 double edge_length (const TopoDS_Edge& edge )
@@ -193,6 +217,9 @@ inline bool meme_points (gp_Pnt& pnt1, gp_Pnt& pnt2)
 
    double d2 = carre (pnt2.X()-pnt1.X()) + carre (pnt2.Y()-pnt1.Y()) 
                                          + carre (pnt2.Z()-pnt1.Z());
+//    std::cout << "pnt1 : " << pnt1.X() << " " << pnt1.Y() << " " << pnt1.Z() << std::endl;
+//    std::cout << "pnt2 : " << pnt2.X() << " " << pnt2.Y() << " " << pnt2.Z() << std::endl;   
+//    HexDisplay(d2);
    return d2 < Epsil2;
 }
 
@@ -206,15 +233,20 @@ int vertexInLine (int nedge, int nblines, vector<int> &torig,
 
    for (int nro = 0 ; nro<nblines ; nro++)
        {
+
+//           std::cout << "nro = " << nro << " : " << std::endl;
        if (torig [nro] == NOTHING)
           {
+//              std::cout << " NOTHING : kpnt = " << kpnt << std::endl ;
           if (meme_points (textrem [kpnt], textrem [2*nro]))
              {
+//                 std::cout << kpnt << " " << 2*nro << std::endl;
              torig [nro] = V_AMONT;
              return nro;
              }
           else if (meme_points (textrem [kpnt], textrem [2*nro+1]))
              {
+//                 std::cout << kpnt << " " << 2*nro+1 << std::endl;                 
              torig [nro] = V_AVAL;
              return nro;
              }
@@ -229,7 +261,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                                 Shapes& gline, double pstart, double pend, 
                                 bool closed)
 {
-   cout << "______________________________________________________"
+   cout << "____________________________________________"
         << " Document::associateCascade" << endl;
 
    int nbedges  = mline.size ();
@@ -261,9 +293,22 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        BRepAdaptor_Curve* curve = new BRepAdaptor_Curve (tabg_line [ns]);
        double lg  = edge_length(tabg_line[ns]);
 
-
-       double deb = ns==0        ? pstart*lg : 0.0;
-       double fin = ns==nbshapes && NOT closed ? pend*lg   : lg;
+       // correction Alain le 07/07/2011 :
+//        double deb = ns==0        ? pstart*lg : 0.0;
+//        double fin = ns==nbshapes && NOT closed ? pend*lg   : lg;
+       double deb = 0;
+       double fin = lg;
+       if (ns==0)
+       {
+           deb = pstart*lg;
+           fin = lg - deb;
+       }
+       else if (ns==nbshapes && NOT closed)
+       {
+           fin = pend*lg;
+           deb = lg - fin;
+       }
+       
        GCPnts_AbscissaPoint s1 (*curve, deb, curve->FirstParameter());
        GCPnts_AbscissaPoint s2 (*curve, fin, curve->FirstParameter());
 
@@ -300,8 +345,9 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    double abscisse = tabg_length [0]; 
    //  shape_absc  [0] = abscisse/lg_lines;
    shape_posit [0] = 0;
-   tabg_orig   [0] = V_AMONT;
 
+   tabg_orig   [0] = V_AMONT;
+   
    int nedge = 0;
    HexDisplay (lg_lines);
    if (db)
@@ -321,8 +367,21 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
    for (int ns=1 ; ns<nblines ; ns++)
        {
-       int nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
 
+           int nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
+
+       // JPL le 12/07/2011 : si c'est la premiere ligne de la
+       // geometrie, on teste les 2 points :
+       // => dans ce cas, quel interet de mettre pstart en argument ?
+       // REM : il faudrait faire la meme chose pour la derniere ligne ?
+       
+       if (nro == NOTHING && not closed && nedge == 0)
+       {
+           tabg_orig[0] = V_AVAL;
+           nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
+       }
+
+       
        if (nro == NOTHING)
           {
           char cnum1 [8], cnum2[8];
@@ -438,51 +497,57 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
            sg2 = (ns+1.0) / (nblines);
            if (sg1 < sm2 && sg2 > sm1)
               {
-              edge ->addAssociation (tabg_shape[nro]);
-              if (db) 
-                 printf ("  ... asso ligne=%d in [%g, %g]\n", nro, sg1, sg2);
-              }
-
-           if (point_libre && sm2 >= sg1 && sm2 <= sg2+HEXA_EPSILON)
-              {
-              point_libre  = false;
-              double kk = (sm2-sg1) / (sg2-sg1);
-              BRepAdaptor_Curve* curve = tabg_curve [nro];
+              double dg = (sg2-sg1);
+              double paradeb = sg1 < sm1 ? (sm1-sg1)/dg : 0.0;
+              double parafin = sg2 > sm2 ? (sm2-sg1)/dg : 1.0;
 
               if (tabg_orig[nro] == V_AVAL)
-                 kk = 1-kk;
-
-              double alpha = tabg_deb [nro] + kk*tabg_length [nro];
-              GCPnts_AbscissaPoint s1 (*curve, alpha, curve->FirstParameter());
-              double u1 = s1.Parameter ();
-
-              gp_Pnt pnt_asso = curve->Value (u1);
-              ppx = sommet->getX ();
-              ppy = sommet->getY ();
-              ppz = sommet->getZ ();
-
-              sommet->setAssociation (NULL);
-              sommet->setX (pnt_asso.X());
-              sommet->setY (pnt_asso.Y());
-              sommet->setZ (pnt_asso.Z());
-
-              tax.push_back (sommet->getX());
-              tay.push_back (sommet->getY());
-              taz.push_back (sommet->getZ());
-
-              nbm ++;
-              if (db)
                  {
-                 printf ("  ... asso point m=%d,g=%d %s k=%g :", 
-                      ned, nro, sommet->getName(cc1), kk);
+                 double  extrem = paradeb;
+                 paradeb = parafin;
+                 parafin = extrem;
+                 }
 
-                 printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
+              // edge ->addAssociation (tabg_shape[nro]);
+              add_association (edge, tabg_shape[nro], paradeb, parafin);
 
-                 printf ("  ... asso point: orig=%d, deb=%g, lg=%g, alpha=%g\n",
-                 tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
+              if (db) 
+                 printf ("  ... asso ligne=%d in [%g, %g]\n", nro, sg1, sg2);
 
-                 printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
-                   ppx,ppy,ppz, sommet->getX(),sommet->getY(),sommet->getZ());
+              if (point_libre && sm2 >= sg1 && sm2 <= sg2+HEXA_EPSILON)
+                 {
+                 point_libre  = false;
+                 BRepAdaptor_Curve* curve = tabg_curve [nro];
+
+                 double alpha = tabg_deb [nro] + parafin*tabg_length [nro];
+                 GCPnts_AbscissaPoint s1 (*curve,alpha, curve->FirstParameter());
+                 double u1 = s1.Parameter ();
+
+                 gp_Pnt pnt_asso = curve->Value (u1);
+                 ppx = sommet->getX ();
+                 ppy = sommet->getY ();
+                 ppz = sommet->getZ ();
+
+                 sommet->setAssociation (NULL);
+                 sommet->setX (pnt_asso.X());
+                 sommet->setY (pnt_asso.Y());
+                 sommet->setZ (pnt_asso.Z());
+
+                 tax.push_back (sommet->getX());
+                 tay.push_back (sommet->getY());
+                 taz.push_back (sommet->getZ());
+
+                 nbm ++;
+                 if (db)
+                    {
+                    printf ("  ... asso point m=%d,g=%d %s k=%g :", 
+                         ned, nro, sommet->getName(cc1), parafin);
+                    printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
+                    printf ("  ... asso point: orig=%d,deb=%g,lg=%g, alpha=%g\n",
+                    tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
+                    printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
+                      ppx,ppy,ppz, sommet->getX(),sommet->getY(),sommet->getZ());
+                    }
                  }
               }
            }

@@ -35,20 +35,13 @@ public :
     string getBrep ()  { return b_rep; }
 
 public :
-    double debut;   
-    double fin;   
-
-public :
-    // char* getName (char* buffer);
+    double debut;
+    double fin;
+    string ident;
 
 private :
-    // int nro_shape;
-    // static int nbr_shapes;
     std::string b_rep;
 };
-
-// typedef Shape* TopoDS_Shape;
-
 END_NAMESPACE_HEXA
 #endif
 // #endif

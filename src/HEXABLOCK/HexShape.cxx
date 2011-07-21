@@ -29,8 +29,9 @@ BEGIN_NAMESPACE_HEXA
 Shape::Shape  (string brep)
 {
    b_rep = brep;
-   debut = 0;
-   fin   = 1;
+   debut  = 0;
+   fin    = 1;
+   ident  = "";
 
    // nbr_shapes++;
    // nro_shape = nbr_shapes;

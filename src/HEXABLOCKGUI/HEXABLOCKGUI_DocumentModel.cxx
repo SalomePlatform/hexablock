@@ -80,6 +80,7 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
 {
   if ( !_hexaDocument && _hexaFile->open() ){
     _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
+    _hexaDocument->reorderFaces();
   }
 
   QStandardItem *parentItem = invisibleRootItem();
