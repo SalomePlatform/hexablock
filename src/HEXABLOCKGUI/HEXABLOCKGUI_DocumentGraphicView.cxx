@@ -358,7 +358,7 @@ void DocumentGraphicView::update()
   if ( _documentActor ){
     theVTKViewWindow->RemoveActor( _documentActor );
     _documentActor->Delete();
-    delete _documentActor;
+//     delete _documentActor;
     std::cout << "DocumentGraphicView::update() REMOVE PREVIOUS ACTOR" << std::endl;
   }
 
