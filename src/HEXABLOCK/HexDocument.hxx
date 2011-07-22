@@ -50,6 +50,7 @@ public :
    int countVertex ()   { return countElement (EL_VERTEX); }
 
                                    // Creation d'elements
+
    Vertex* addVertex (double x=0.0, double y=0.0, double z=0.0);
    Edge*   addEdge   (Vertex* va, Vertex* vb);
    Edge*   addEdge   (Vertex* va, Vector* vec);
@@ -165,6 +166,9 @@ public :
    int  associateCascade (Edges& mline, int msens[], Shape* gstart, 
 		          Shapes& gline, double pstart, double pend, bool clos);
 
+   void   setShape (Shape* forme)           { doc_shape = forme ; }
+   Shape* getShape ()                       { return doc_shape  ; }
+
 public:
     Document (cpchar filename);
    ~Document ();
@@ -241,6 +245,7 @@ private :
    std::vector <Cylinder*>    doc_cylinder;
    std::vector <Pipe*>        doc_pipe;
    XmlWriter*                 doc_xml; 
+   Shape*                     doc_shape;
 };
 // ========================================================= saveVtk (avec nro)
 inline int Document::saveVtk  (cpchar radical, int &nro)

@@ -183,6 +183,11 @@ public:
                             const Shapes&           gline)
                       throw (SALOME::SALOME_Exception);
 
+void setShape (GEOM::GEOM_Object_ptr geom_object)
+                      throw (SALOME::SALOME_Exception);
+GEOM::GEOM_Object_ptr getShape ()
+                      throw (SALOME::SALOME_Exception);
+
 private:
   HEXA_NS::Document *_document_cpp;
 

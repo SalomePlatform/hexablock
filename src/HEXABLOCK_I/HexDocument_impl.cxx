@@ -1572,6 +1572,40 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   return ier;
 }
 
+// ===================================================== setShape
+void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
+  throw(SALOME::SALOME_Exception)
+{
+  TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()
+                       ->geomObjectToShape(geom_object);
+
+  string strBrep = shape2string( shape );
+  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
+
+  _document_cpp->setShape (s);
+}
+// ===================================================== getShape
+GEOM::GEOM_Object_ptr Document_impl::getShape ()
+  throw (SALOME::SALOME_Exception)
+{
+  GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
+
+  HEXA_NS::Shape* s = _document_cpp->getShape();
+
+  std::cout << "getShape ->" << s << std::endl;
+
+  if (s != NULL)
+     {
+     string strBrep = s->getBrep();
+     TopoDS_Shape shape = string2shape( strBrep );
+     result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
+     }
+
+  return result._retn();
+}
+
+
+// ___________________________________________________________ ini
 
 
 

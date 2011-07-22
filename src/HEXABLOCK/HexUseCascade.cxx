@@ -92,8 +92,8 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 
 BEGIN_NAMESPACE_HEXA
 
-//static bool db = false;
-static bool db = true;
+static bool db = false;
+// static bool db = true;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
@@ -172,7 +172,6 @@ void add_association (Edge* edge, Shape* assold, double deb, double fin)
    printf (" Asso edge %s", edge->getName(cc1));
    printf (" =(%s,%s)", v1->getName(cc1), v2->getName(cc2));
    printf (" : deb=%g, fin=%g\n", assnew->debut, assnew->fin);
-   printf (" brep=%s\n", brep.c_str());
 }
 // ============================================================== edge_length
 double edge_length (const TopoDS_Edge& edge )

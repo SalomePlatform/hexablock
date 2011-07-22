@@ -497,6 +497,13 @@ module HEXABLOCK_ORB
                             in Shape  gstart, in double pstart, in Shapes gline)
         raises (SALOME::SALOME_Exception);
 
+   void setShape (in GEOM::GEOM_Object geom_object_vertex )
+            raises (SALOME::SALOME_Exception);
+
+   GEOM::GEOM_Object getShape ()
+            raises (SALOME::SALOME_Exception);
+// 
+
 
   };
 };
