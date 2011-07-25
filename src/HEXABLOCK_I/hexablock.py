@@ -39,13 +39,15 @@ del k
 
 def mesh(name, doc, dim=3, container="FactoryServer"):
     geompy = smesh.geompy
-    #fkl: shape  = doc.getShape()
-    shape  = geompy.MakeBox(0, 0, 0,  1, 1, 1)
-    geompy.addToStudy(shape, name)
+
+    if type(doc) == type(""):
+        doc = geompy.myStudy.FindObjectByPath(doc)
 
     component = salome.lcc.FindOrLoadComponent(container, "SMESH")
     component.init_smesh(salome.myStudy, geompy.geom)
-    mesh = component.Mesh(shape)
+    shape = doc.getShape()
+    shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
+    mesh  = component.Mesh(shape)
 
     so = "libHexaBlockEngine.so"
 

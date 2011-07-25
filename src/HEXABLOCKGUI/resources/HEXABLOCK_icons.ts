@@ -141,5 +141,9 @@
             <source>ICON_SET_PROPAGATION</source>
             <translation>set_propagation.png</translation>
         </message>
+        <message>
+            <source>ICON_COMPUTE_MESH</source>
+            <translation>compute_mesh.png</translation>
+        </message>
     </context>
 </TS>

@@ -190,6 +190,7 @@ private slots:
   void addLaw();
   void removeLaw();
   void setPropagation();
+  void computeMesh();
 
 private:
   QStringList getQuickDirList();
@@ -250,6 +251,9 @@ private:
 
   // Propagation
   QAction *_setPropagation;
+
+  // Meshing
+  QAction *_computeMesh;
 
   // -------------------------------------------------------------------------------------------------
   //          Model/View implementation  

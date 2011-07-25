@@ -185,7 +185,8 @@ ICONS =  \
 	resources/remove_group.png \
 	resources/add_law.png \
 	resources/remove_law.png \
-	resources/set_propagation.png
+	resources/set_propagation.png \
+	resources/compute_mesh.png
 
 
 QMFILES = \

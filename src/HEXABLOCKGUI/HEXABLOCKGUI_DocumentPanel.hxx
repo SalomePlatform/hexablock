@@ -731,6 +731,27 @@ namespace HEXABLOCK
   };
 
 
+    // Define the compute mesh dialog box
+    // ----------------------------------
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ComputeMeshDialog : public HexaBaseDialog
+  {
+      Q_OBJECT
+
+      public:
+        ComputeMeshDialog( QWidget* parent = 0, bool editMode = false, Qt::WindowFlags f = Qt::SubWindow );
+        virtual ~ComputeMeshDialog();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+
+      private:
+	QLineEdit* _name;
+	QSpinBox*  _dim;
+	QLineEdit* _fact;
+  };
+
 
 
 

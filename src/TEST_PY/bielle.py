@@ -139,6 +139,7 @@ model_biell_fin = doc.joinQuads([quad_11, quad_12], quad_21, x1, y1, x4, y4, 1)
 # t = hole (trou)
 
 bielle_geom = geompy.ImportFile(STEP_PATH, "STEP")
+doc.setShape(bielle_geom)
 
 geompy.addToStudy(bielle_geom, "bielle_geom")
 
@@ -622,7 +623,7 @@ for j in range(doc.countPropagation()):
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
-mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
+#mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
 
 ## print "Nombre d hexaedres:", mesh_hexas.NbHexas()
 ## print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()

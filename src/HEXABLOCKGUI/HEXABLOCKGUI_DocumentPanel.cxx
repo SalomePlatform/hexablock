@@ -26,6 +26,10 @@
 #include <SUIT_MessageBox.h>
 #include "SVTK_Selection.h"
 
+#include <SUIT_Session.h>
+#include "SalomeApp_Application.h"
+#include <PyConsole_Console.h>
+
 #include <iostream>
 #include <QtGui>
 #include <QFlags>
@@ -3294,4 +3298,74 @@ void PropagationDialog::reject()
   QDialog::reject();
 }
 
+// ------------------------- COMPUTE MESH ----------------------------------
 
+ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+        : HexaBaseDialog(parent, f) {
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    setLayout(layout);
+
+    QHBoxLayout* up   = new QHBoxLayout;
+    QHBoxLayout* down = new QHBoxLayout;
+
+    layout->addLayout(up);
+    layout->addLayout(down);
+
+    QVBoxLayout* vlg = new QVBoxLayout;
+    QVBoxLayout* vld = new QVBoxLayout;
+
+    up->addLayout(vlg);
+    up->addLayout(vld);
+
+    vlg->addWidget(new QLabel("Name"));
+    vlg->addWidget(new QLabel("Dimension"));
+    vlg->addWidget(new QLabel("Container"));
+
+    _name = new QLineEdit("aMesh");
+    _dim  = new QSpinBox();
+    _fact = new QLineEdit("FactoryServer");
+
+    vld->addWidget(_name);
+    vld->addWidget(_dim);
+    vld->addWidget(_fact);
+
+    _dim->setRange(1, 3);
+    _dim->setValue(3);
+
+    QPushButton* ok     = new QPushButton("OK");
+    QPushButton* cancel = new QPushButton("Cancel");
+    QPushButton* help   = new QPushButton("Help");
+
+    down->addWidget(ok);
+    down->addWidget(cancel);
+    down->addWidget(help);
+
+    connect(ok    , SIGNAL( clicked() ), this, SLOT( accept() ));
+    connect(cancel, SIGNAL( clicked() ), this, SLOT( reject() ));
+}
+
+ComputeMeshDialog::~ComputeMeshDialog() {
+}
+
+void ComputeMeshDialog::accept() {
+    _disallowSelection();
+    QDialog::accept();
+
+    QString command = QString("import hexablock ; hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
+      .arg( _name->text() )
+      .arg( _documentModel->documentEntry() )
+      .arg( _dim->value() )
+      .arg( _fact->text() );
+    std::cout << "command: " << command.toStdString() << std::endl;
+
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+    PyConsole_Console* pyConsole = app->pythonConsole();
+
+    if ( pyConsole ) pyConsole->exec( command );
+}
+
+void ComputeMeshDialog::reject() {
+    _disallowSelection();
+    QDialog::reject();
+}

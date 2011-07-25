@@ -749,6 +749,13 @@ void HEXABLOCKGUI::createActions()
   _setPropagation = createAction( _menuId++, tr("Set Propagation"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SET_PROPAGATION" ) ),tr("Set Propagation"),  tr("Set Propagation"),
                                             0, aParent, false, this,  SLOT(_setPropagation()) );
 
+  _computeMesh    = createAction( _menuId++,
+                                  tr("Compute mesh"),
+                                  resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_COMPUTE_MESH" ) ),
+                                  tr("Compute mesh"),
+                                  tr("Compute mesh"),
+                                  0, aParent, false, this,  SLOT(computeMesh()) );
+
 
   //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
   //       QAction* createAction(const int id,
@@ -822,6 +829,7 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _addLaw,    aMenuId );
   createMenu( _removeLaw, aMenuId );
   createMenu( _setPropagation, aMenuId );
+  createMenu( _computeMesh, aMenuId );
 
 }
 
@@ -877,6 +885,7 @@ void HEXABLOCKGUI::createTools()
   createTool( _addLaw,    aToolId );
   createTool( _removeLaw, aToolId );
   createTool( _setPropagation, aToolId );
+  createTool( _computeMesh, aToolId );
 
 }
 
@@ -983,6 +992,8 @@ void HEXABLOCKGUI::showMeshMenus(bool show)
   setToolShown( _removeLaw, show);;
   setMenuShown( _setPropagation,  show );//true);
   setToolShown( _setPropagation, show);
+  setMenuShown( _computeMesh, show); //true);
+  setToolShown( _computeMesh, show);
 }
 
 
@@ -1702,9 +1713,23 @@ void HEXABLOCKGUI::setPropagation()
   SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "PLEASE SELECT A PROPAGATION" ) );
 }
 
+// Dialog box to compute a mesh from a document
+// --------------------------------------------
 
+void HEXABLOCKGUI::computeMesh() {
+  if (!_dwInputPanel) return;
 
+  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
 
+  ComputeMeshDialog* diag = new ComputeMeshDialog(_dwInputPanel, true);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setMeshSelectionModel(meshSelectionModel);
+  diag->setFocus();
+
+  _dwInputPanel->setWidget(diag);
+  _dwInputPanel->setWindowTitle( tr("Compute Mesh") );
+}
 
 LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
 {
