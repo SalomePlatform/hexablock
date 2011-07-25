@@ -47,9 +47,11 @@ def mesh(name, doc, dim=3, container="FactoryServer"):
         obj = salome.orb.string_to_object(ior.Value())
         doc = obj._narrow(Document)
 
-    shape = doc.getShape()
+    #shape = doc.getShape()
+    shape = None
     if shape == None:
         shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
+        geompy.addToStudy(shape, name)
 
     component = salome.lcc.FindOrLoadComponent(container, "SMESH")
     component.init_smesh(study, geompy.geom)
