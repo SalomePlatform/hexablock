@@ -623,7 +623,7 @@ for j in range(doc.countPropagation()):
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
-#mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
+mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
 
 ## print "Nombre d hexaedres:", mesh_hexas.NbHexas()
 ## print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
