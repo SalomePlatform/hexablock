@@ -3352,7 +3352,7 @@ void ComputeMeshDialog::accept() {
     _disallowSelection();
     QDialog::accept();
 
-    QString command = QString("import hexablock ; hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
+    QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
       .arg( _name->text() )
       .arg( _documentModel->documentEntry() )
       .arg( _dim->value() )

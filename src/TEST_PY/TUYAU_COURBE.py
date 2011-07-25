@@ -244,7 +244,7 @@ Quad_mod_3 = model_tuyau_fin.getQuadJK( 1 , 3 , 0 )
 #
 #===================================================================
 Tuyau_geom = geompy.Import(BREP_PATH, "BREP")
-
+doc.setShape(Tuyau_geom)
 
 #=========================
 #       SOMMETS

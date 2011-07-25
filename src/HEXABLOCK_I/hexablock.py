@@ -23,11 +23,11 @@
 
 import salome
 import smesh
-import HEXABLOCK_ORB
+from HEXABLOCK_ORB import *
 import HEXABLOCKPlugin
 
 component = salome.lcc.FindOrLoadComponent("FactoryServer", "HEXABLOCK")
-component = component._narrow(HEXABLOCK_ORB.HEXABLOCK_Gen)
+component = component._narrow(HEXABLOCK_Gen)
 
 for k in dir(component):
     if k[0] == '_':
@@ -45,12 +45,15 @@ def mesh(name, doc, dim=3, container="FactoryServer"):
         builder = study.NewBuilder()
         ok, ior = builder.FindAttribute(sobject, "AttributeIOR")
         obj = salome.orb.string_to_object(ior.Value())
-        doc = obj._narrow(HEXABLOCK_ORB.Document)
+        doc = obj._narrow(Document)
+
+    shape = doc.getShape()
+    if shape == None:
+        shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
 
     component = salome.lcc.FindOrLoadComponent(container, "SMESH")
     component.init_smesh(study, geompy.geom)
-    shape = doc.getShape()
-    meshexa  = component.Mesh(shape)
+    meshexa = component.Mesh(shape)
 
     so = "libHexaBlockEngine.so"
 
