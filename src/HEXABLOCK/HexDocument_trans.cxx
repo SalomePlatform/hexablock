@@ -267,7 +267,7 @@ void Document::reorderFaces ()
           def_vecteur (orig, cg, vk);
 
           double pmixte = produit_mixte (vi, vj, vk);
-          if (pmixte < ZEROR) 
+          if (pmixte > ZEROR)  
              quad->inverser ();
           
           HexDisplay (pmixte); 
