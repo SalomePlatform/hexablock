@@ -244,11 +244,11 @@ QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int rol
   QModelIndex elt; // element (vertex, edge, quad) of model
   const QAbstractItemModel* theModel = model();
   QModelIndex         theStart = theModel->index(0, 0);
-  QString exactMatch = anEntry + ";";
+//   QString exactMatch = anEntry + ";";
   
   QModelIndexList     theIndexes = theModel->match( theStart,
                                           role,
-                                          exactMatch, //anEntry,
+                                          anEntry, //exactMatch,
                                           1,
                                           Qt::MatchRecursive | Qt::MatchContains );//Qt::MatchFixedString );
 // Qt::MatchContains  );
@@ -434,7 +434,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
         std::cout << "geom selected => "<< aGeomObjEntry.toStdString()  << std::endl;
         std::cout << "geom selected => "<< aGeomObjStudyEntry.toStdString() << std::endl;
 //         eltIndex = _eltIndexOf( aGeomObjStudyEntry );//aGeomObjEntry );
-        eltIndex = _indexOf( aGeomObjStudyEntry, HEXA_ASSOC_ENTRY_ROLE );//aGeomObjEntry );
+        eltIndex = _indexOf( aGeomObjStudyEntry + ";", HEXA_ASSOC_ENTRY_ROLE );//aGeomObjEntry );
 
         if ( !_theModelSelectionChanged && eltIndex.isValid() ){ // select in model
           _theGeomSelectionChanged = true;

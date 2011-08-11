@@ -56,7 +56,6 @@
 #include "ui_Transformation_QTD.h"
 #include "ui_Symmetry_QTD.h"
 
-#include "ui_VertexAssoc_QTD.h"
 #include "ui_EdgeAssoc_QTD.h"
 #include "ui_QuadAssoc_QTD.h"
 

@@ -100,6 +100,7 @@ UIC_FILES = \
 	ui_Symmetry_QTD.h \
 	ui_Group_QTD.h \
 	ui_Law_QTD.h \
+	ui_Propagation_QTD.h \
 	ui_QuadAssoc_QTD.h \
 	ui_EdgeAssoc_QTD.h
 

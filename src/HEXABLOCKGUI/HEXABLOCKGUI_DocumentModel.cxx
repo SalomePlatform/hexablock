@@ -2047,6 +2047,118 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
   return res;
 }
 
+
+//         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
+//                              double pstart, Shapes& gline, double pend);
+//         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
+//                              Shape*  gstart, double pstart, Shapes& gline);
+bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
+                                         const GeomObjList&     assocs )
+{
+    bool ret = false;
+    HEXA_NS::Edge*  mstart = NULL;
+    HEXA_NS::Edges  mline;
+    HEXA_NS::Shape* gstart = NULL;
+    double pstart;
+    HEXA_NS::Shapes gline;
+    double pend;
+
+    HEXA_NS::Edge* hedge = NULL;
+    foreach( const QModelIndex& iedge, iedges ){
+        hedge = data( iedge, HEXA_DATA_ROLE ).value<HEXA_NS::Edge *>();
+        if ( mstart == NULL ){
+            mstart = hedge;
+        } else {
+            mline.push_back( hedge );
+        }
+    }
+
+    HEXA_NS::Shape* hshape = NULL;
+    foreach( const GeomObj& anAssoc, assocs ){
+        hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
+        hshape->debut = 0.;
+        hshape->fin   = 1.;
+        hshape->ident = anAssoc.entry.toStdString();
+
+        if ( gstart == NULL ){
+            gstart = hshape; // CS_TODO :gstart.debut = pstart ??
+            pstart = anAssoc.start;
+        } else {
+            gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
+        }
+    }
+    pend = assocs.last().end;
+
+    int r = _hexaDocument->associateOpenedLine( mstart, mline, 
+                                                gstart, pstart, gline, pend );
+    if ( r == HOK ){
+        updateData();
+        std::cout << "DocumentModel:: associateOpenedLine => OK " << std::endl;
+        ret = true;
+    } else if ( r == HERR ){
+        std::cout << "DocumentModel:: associateOpenedLine => ERR " << std::endl;
+        ret = false;
+    }
+    delete gstart; //CS_TODO : delete gline?
+    return ret;
+}
+
+bool DocumentModel::associateClosedLine( const QModelIndex& ivertex,
+                                         const QModelIndexList& iedges,
+                                         const GeomObjList&     assocs )
+{
+    bool ret = false;
+    HEXA_NS::Vertex* mfirst = data( ivertex, HEXA_DATA_ROLE ).value<HEXA_NS::Vertex *>();
+    HEXA_NS::Edge*   mstart = NULL;
+    HEXA_NS::Edges   mline;
+    HEXA_NS::Shape*  gstart = NULL;
+    double  pstart;
+    HEXA_NS::Shapes  gline;
+
+
+    HEXA_NS::Edge* hedge = NULL;
+    foreach( const QModelIndex& iedge, iedges ){
+        hedge = data( iedge, HEXA_DATA_ROLE ).value<HEXA_NS::Edge *>();
+        if ( mstart == NULL ){
+            mstart = hedge;
+        } else {
+            mline.push_back( hedge );
+        }
+    }
+
+    HEXA_NS::Shape* hshape = NULL;
+    foreach( const GeomObj& anAssoc, assocs ){
+        hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
+        hshape->debut = 0.;
+        hshape->fin   = 1.;
+        hshape->ident = anAssoc.entry.toStdString();
+
+        if ( gstart == NULL ){
+            gstart = hshape; // CS_TODO :gstart.debut = pstart ??
+            pstart = anAssoc.start;
+        } else {
+            gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
+        }
+    }
+
+
+    int r = _hexaDocument->associateClosedLine( mfirst, mstart, mline,
+                                                gstart, pstart, gline );
+    if ( r == HOK ){
+        updateData();
+        std::cout << "DocumentModel:: associateClosedLine => OK " << std::endl;
+        ret = true;
+    } else if ( r == HERR ){
+        std::cout << "DocumentModel:: associateClosedLine => ERR " << std::endl;
+        ret = false;
+    }
+    return ret;
+}
+
+
+
+
+
 // ************  GROUPS  ************
 //
 QModelIndex DocumentModel::addGroup( const QString& name, Group kind )

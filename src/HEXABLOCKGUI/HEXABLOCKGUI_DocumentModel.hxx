@@ -57,6 +57,8 @@ namespace HEXABLOCK
           double  end;
         };
 
+        typedef QList<GeomObj> GeomObjList;
+
         DocumentModel( HEXA_NS::Document* doc, const QString& entry, QObject * parent = 0 );
         DocumentModel( int rows, int columns, QObject * parent = 0 );
 
@@ -247,6 +249,16 @@ namespace HEXABLOCK
 
         void addAssociation( const QModelIndex& elt, const GeomObj& assoc );
         QList<GeomObj> getAssociations( const QModelIndex& elt );
+
+//         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
+//                              double pstart, Shapes& gline, double pend);
+//         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
+//                              Shape*  gstart, double pstart, Shapes& gline);
+        bool associateOpenedLine( const QModelIndexList& edges,
+                                  const GeomObjList&     assocs );
+        bool associateClosedLine( const QModelIndex& vertex, 
+                                  const QModelIndexList& edges,
+                                  const GeomObjList&     assocs );
 
 
         // ************  GROUPS  ************
