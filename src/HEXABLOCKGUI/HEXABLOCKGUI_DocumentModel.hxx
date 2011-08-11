@@ -48,6 +48,15 @@ namespace HEXABLOCK
         typedef HEXA_NS::EnumGroup Group;
         typedef HEXA_NS::KindLaw   KindLaw;
 
+        struct GeomObj
+        {
+          QString name;
+          QString entry;
+          QString brep;
+          double  start;
+          double  end;
+        };
+
         DocumentModel( HEXA_NS::Document* doc, const QString& entry, QObject * parent = 0 );
         DocumentModel( int rows, int columns, QObject * parent = 0 );
 
@@ -227,6 +236,19 @@ namespace HEXABLOCK
         bool performSymmetryPlane( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
 
 
+        // ************  ASSOCIATION ************
+//         void setVertexAssociation( const QModelIndex& vertex, const GeomObj& assoc );
+//         void addEdgeAssociation( const QModelIndex& edge, const GeomObj& assoc );
+//         void addQuadAssociation( const QModelIndex& quad, const GeomObj& assoc );
+
+//         GeomObj getVertexAssociation( const QModelIndex& vertex );
+//         QList<GeomObj> getEdgeAssociations( const QModelIndex& edge );
+//         QList<GeomObj> getQuadAssociations( const QModelIndex& quad );
+
+        void addAssociation( const QModelIndex& elt, const GeomObj& assoc );
+        QList<GeomObj> getAssociations( const QModelIndex& elt );
+
+
         // ************  GROUPS  ************
 
         //
@@ -288,6 +310,8 @@ namespace HEXABLOCK
         QTemporaryFile    *_hexaFile;
         HEXA_NS::Document *_hexaDocument;
         QString            _entry;
+
+        QMap<QString, QString> _assocName; // clé: id; valeur: nom
         bool              _disallowEdition;
 
         //data
@@ -349,9 +373,6 @@ namespace HEXABLOCK
         HEXA_NS::Document* documentImpl();
         QString            documentEntry();
 
-//         // ajout JPL
-//         void updateVertex(const QModelIndex& i_v);
-//         // end JPL
 
     };
 

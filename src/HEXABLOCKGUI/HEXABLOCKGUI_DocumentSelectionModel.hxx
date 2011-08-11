@@ -24,6 +24,8 @@
 // #include <QStandardItemModel>
 // #include <QSortFilterProxyModel>
 
+// #include <SALOME_LifeCycleCORBA.hxx>
+
 
 #include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
@@ -46,6 +48,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
+    class MyGEOMBase_Helper;
 
     class PatternBuilderSelectionModel: public KLinkItemSelectionModel
     {
@@ -64,7 +67,7 @@ namespace HEXABLOCK
 
       public:
         PatternDataSelectionModel( QAbstractItemModel * model );
-        PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent );
+//         PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent );
         virtual ~PatternDataSelectionModel();
 
         void setVertexSelection();
@@ -74,9 +77,12 @@ namespace HEXABLOCK
         void setAllSelection();
 
         //Salome
-        static LightApp_SelectionMgr* selectionMgr();
-        static SVTK_ViewWindow* GetViewWindow ();
+        void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
+//         static LightApp_SelectionMgr* selectionMgr();
         void SetSelectionMode(Selection_Mode theMode);
+//         static SVTK_ViewWindow* GetViewWindow ();
+
+
 
       protected slots:
         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
@@ -85,20 +91,29 @@ namespace HEXABLOCK
         void salomeSelectionChanged(); // Salome to Qt
 
       private:
-        void _selectSalome( const QModelIndex & index ); // Qt to Salome
+        SVTK_ViewWindow* _getVTKViewWindow();
+
+        QModelIndex _indexOf( const QString& anIOEntry, int role );
+//         QModelIndex _eltIndexOf( const QString& assocEntry );
+
+        void _setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow );
+
+        void _selectGEOM( const QModelIndex & index );
+        void _selectVTK( const QModelIndex & index );
+
+        QModelIndex _geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+        QModelIndex _vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+
 
         LightApp_SelectionMgr* _salomeSelectionMgr;
-        bool                   _salomeSelectionChanged;
-
         int                    _selectionFilter;
-//         bool _vertexSelectionOnly;
-//         bool _edgeSelectionOnly;
-//         bool _quadSelectionOnly;
-//         bool _hexaSelectionOnly;
+
+        bool _theModelSelectionChanged;
+        bool _theVtkSelectionChanged;
+        bool _theGeomSelectionChanged;
+
+        MyGEOMBase_Helper* _geomHelper;
     };
-
-
-    
 
 
   }

@@ -55,6 +55,11 @@
 #include "ui_CutEdge_QTD.h"
 #include "ui_Transformation_QTD.h"
 #include "ui_Symmetry_QTD.h"
+
+#include "ui_VertexAssoc_QTD.h"
+#include "ui_EdgeAssoc_QTD.h"
+#include "ui_QuadAssoc_QTD.h"
+
 #include "ui_Group_QTD.h"
 #include "ui_Law_QTD.h"
 #include "ui_Propagation_QTD.h"
@@ -77,11 +82,14 @@
 
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
+#include "HEXABLOCKGUI_SalomeTools.hxx"
 
 #include "klinkitemselectionmodel.hxx"
 
+#include <GEOMBase_Helper.h>
 
 Q_DECLARE_METATYPE(QModelIndex); 
+
 
 namespace HEXABLOCK
 {
@@ -108,11 +116,9 @@ namespace HEXABLOCK
 //         signals:
 //           void editingFinished ();
 
-
         protected:
           void _allowSelection();
           void _disallowSelection();
-
 
 //           void _setAllSelection();
           void _setHexaSelectionOnly();
@@ -619,7 +625,7 @@ namespace HEXABLOCK
 
 
   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
-                                                          public Ui::SymmetryDialog
+                                                        public Ui::SymmetryDialog
   {
       Q_OBJECT
 
@@ -637,6 +643,76 @@ namespace HEXABLOCK
 
 
 
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexAssocDialog : public QDialog,
+                                                              public GEOMBase_Helper
+  {
+      Q_OBJECT
+
+      public:
+        VertexAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );
+        virtual ~VertexAssocDialog();
+
+        void setDocumentModel(DocumentModel* m);
+        void setPatternDataSelectionModel(PatternDataSelectionModel* s);
+
+      public slots:
+        void onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel );
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      private:
+        DocumentModel*              _documentModel;
+        PatternDataSelectionModel*  _patternDataSelectionModel;
+
+      // the dialog box contains : 1)vertex selection from HEXABLOCK 2)point construction in GEOM
+        QLineEdit*            _vertex_le;
+        QModelIndex*          _ivertex;
+        MyBasicGUI_PointDlg*  _nested;
+  };
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
+                                                            public Ui::EdgeAssocDialog
+  {
+      Q_OBJECT
+
+      public:
+        EdgeAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~EdgeAssocDialog();
+
+      public slots:
+        virtual void accept();
+        virtual void reject();
+  };
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadAssocDialog : public HexaBaseDialog,
+                                                            public Ui::QuadAssocDialog,
+                                                            public GEOMBase_Helper
+  {
+      Q_OBJECT
+
+      public:
+        QuadAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~QuadAssocDialog();
+
+      public slots:
+        void addFace();
+
+        virtual void accept();
+        virtual void reject();
+
+      protected:
+        virtual bool eventFilter(QObject *obj, QEvent *event);
+
+      private:
+        QList<DocumentModel::GeomObj> _assocs;
+        LightApp_SelectionMgr*        _mgr;
+  };
 
 
 
@@ -731,6 +807,7 @@ namespace HEXABLOCK
   };
 
 
+
     // Define the compute mesh dialog box
     // ----------------------------------
 
@@ -752,12 +829,10 @@ namespace HEXABLOCK
 	QLineEdit* _fact;
   };
 
-
-
-
-
-
   }
+
 }
+
+
 
 #endif

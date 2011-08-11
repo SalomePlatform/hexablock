@@ -67,6 +67,8 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_DocumentDelegate.cxx \
     HEXABLOCKGUI_DocumentPanel.hxx \
     HEXABLOCKGUI_DocumentPanel.cxx \
+    HEXABLOCKGUI_SalomeTools.hxx \
+    HEXABLOCKGUI_SalomeTools.cxx \
     HEXABLOCKGUI.hxx \
     HEXABLOCKGUI.cxx \
     kmodelindexproxymapper.hxx \
@@ -98,7 +100,9 @@ UIC_FILES = \
 	ui_Symmetry_QTD.h \
 	ui_Group_QTD.h \
 	ui_Law_QTD.h \
-	ui_Propagation_QTD.h
+	ui_QuadAssoc_QTD.h \
+	ui_EdgeAssoc_QTD.h
+
 
 
 # MOC pre-processing
@@ -124,9 +128,9 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(BOOST_CPPFLAGS) \
 	$(CAS_CPPFLAGS) \
 	$(VTK_INCLUDES) \
-	-I$(KERNEL_ROOT_DIR)/include/salome \
-	-I$(GUI_ROOT_DIR)/include/salome \
-	-I$(GEOM_ROOT_DIR)/include/salome \
+	$(KERNEL_CXXFLAGS) \
+	$(GUI_CXXFLAGS) \
+	$(GEOM_CXXFLAGS) \
 	-I$(srcdir)/../HEXABLOCK \
 	-I$(srcdir)/../HEXABLOCK_I \
 	-I../../idl \
@@ -142,6 +146,7 @@ libHEXABLOCK_la_LDFLAGS  = \
 	 $(qt4_ldflags) $(qsci4_ldflags) \
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA \
 	$(GUI_LDFLAGS) \
+	$(GEOM_LDFLAGS) -lSalomeIDLGEOM -lGEOMBase -lBasicGUI \
 	-lSalomeApp
 
 
@@ -181,6 +186,9 @@ ICONS =  \
 	resources/make_symmetry.png \
 	resources/perform_transformation.png \
 	resources/perform_symmetry.png \
+	resources/assoc_vertex.png \
+        resources/assoc_edge.png \
+	resources/assoc_quad.png \
 	resources/add_group.png \
 	resources/remove_group.png \
 	resources/add_law.png \

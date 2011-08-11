@@ -97,33 +97,6 @@ using namespace HEXABLOCK::GUI;
 
 
 
-// static method
-SALOME_Actor* DocumentGraphicView::FindActorByEntry(SUIT_ViewWindow *theWindow,
-                                                    const char* theEntry) //CS_TODO : move in HEXABLOCKGUI
-{
-    SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWindow);
-    vtkRenderer *aRenderer = aViewWindow->getRenderer();
-    VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
-    vtkActorCollection *aCollection = aCopy.GetActors();
-    aCollection->InitTraversal();
-    while(vtkActor *anAct = aCollection->GetNextActor())
-    {
-        if(SALOME_Actor *anActor = dynamic_cast<SALOME_Actor*>(anAct))
-        {
-            if(anActor->hasIO())
-            {
-                Handle(SALOME_InteractiveObject) anIO = anActor->getIO();
-                if(anIO->hasEntry() && strcmp(anIO->getEntry(), theEntry) == 0)
-                {
-                    return anActor;
-                }
-            }
-        }
-    }
-
-    return NULL;
-}
-
 
 
 
@@ -167,6 +140,8 @@ Document_Actor::~Document_Actor()
 vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
 {
   vtkUnstructuredGrid* theGrid = vtkUnstructuredGrid::New();
+
+  _doc->reorderFaces(); //CS_TEST
 
   std::map<int,vtkIdType>   vtkNodeId;
   std::map<vtkIdType, int>  hexaNodeId;

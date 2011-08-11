@@ -100,7 +100,7 @@ namespace HEXABLOCK
 
 
             SUIT_ViewWindow* get_SUIT_ViewWindow();
-            static SALOME_Actor* FindActorByEntry(SUIT_ViewWindow *theWindow, const char* theEntry);
+//             static SALOME_Actor* FindActorByEntry(SUIT_ViewWindow *theWindow, const char* theEntry);
 
 //             void loadVTK( const QString&  path );
             void update();//mise à jours de la vue : reconstruction complète

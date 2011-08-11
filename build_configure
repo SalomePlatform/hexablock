@@ -38,6 +38,14 @@ if test ! -d "${GUI_ROOT_DIR}"; then
     exit
 fi
 
+
+########################################################################
+# Test if the GEOM_ROOT_DIR is set correctly
+if test ! -d "${GEOM_ROOT_DIR}"; then
+    echo "failed : GEOM_ROOT_DIR variable is not correct !"
+    exit
+fi
+
 cd ${CONF_DIR}
 ABS_CONF_DIR=`pwd`
 

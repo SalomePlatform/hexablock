@@ -122,6 +122,7 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
 //     editor->show();
 //     cout << "*********************** CS_BP DocumentDelegate::createEditor END "<<editor<< endl;
     return editor;
+//     return new QLineEdit( parent );
 }
 
 

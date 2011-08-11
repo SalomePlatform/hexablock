@@ -17,7 +17,10 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+
 #include "HEXABLOCKGUI_DocumentItem.hxx"
+#include "HexShape.hxx"
+
 #include <inttypes.h>
 
 /*
@@ -44,6 +47,12 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
 //   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
   setData( VERTEX_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex) ), HEXA_ENTRY_ROLE ); //_hexaVertex->dad()
+
+  HEXA_NS::Shape* assoc = hexaVertex->getAssociation();
+  if ( assoc ){
+    QString entry = QString(assoc->ident.c_str());
+    setData( entry + ";" , HEXA_ASSOC_ENTRY_ROLE );
+  }
 }
 
 int VertexItem::type() const
@@ -74,7 +83,6 @@ void VertexItem::setData ( const QVariant & value, int role )
 
 
 // ----------------------- EDGE
-
 EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QStandardItem(),
   _hexaEdge( hexaEdge )
@@ -84,6 +92,15 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
+
+  QString entries, entry;
+  const HEXA_NS::Shapes& assocs = hexaEdge->getAssociations();
+  for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
+    entry = (*anAssoc)->ident.c_str();
+    entries += entry + ";";
+  }
+  if ( !entries.isEmpty() )
+    setData( entries, HEXA_ASSOC_ENTRY_ROLE );
 }
 
 
@@ -124,6 +141,15 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   setText(name);
   setData( QUAD_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
+
+  QString entries, entry;
+  const HEXA_NS::Shapes& assocs = hexaQuad->getAssociations();
+  for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
+    entry = (*anAssoc)->ident.c_str();
+    entries += entry + ";";
+  }
+  if ( !entries.isEmpty() )
+    setData( entries, HEXA_ASSOC_ENTRY_ROLE );
 }
 
 

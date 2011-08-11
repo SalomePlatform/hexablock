@@ -76,6 +76,9 @@ void Vertex_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex)
 //   TopoDS_Shape shape = gen->geomObjectToShape(geom_object_vertex);
   string strBrep = shape2string( shape );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
+//   std::cout<< "geom_object_vertex->GetStudyEntry() " << geom_object_vertex->GetStudyEntry()<<std::endl;
+//   std::cout<< "geom_object_vertex->GetEntry() " << geom_object_vertex->GetEntry()<<std::endl;
+  s->ident = geom_object_vertex->GetStudyEntry();
   _vertex_cpp->setAssociation(s);
 
 //   _association = GEOM::GEOM_Object::_duplicate( geom_object_vertex );

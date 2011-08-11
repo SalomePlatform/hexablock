@@ -122,6 +122,18 @@
             <translation>perform_symmetry.png</translation>
         </message>
         <message>
+            <source>ICON_VERTEX_ASSOCIATION</source>
+            <translation>assoc_vertex.png</translation>
+        </message>
+        <message>
+            <source>ICON_EDGE_ASSOCIATION</source>
+            <translation>assoc_edge.png</translation>
+        </message>
+        <message>
+            <source>ICON_QUAD_ASSOCIATION</source>
+            <translation>assoc_quad.png</translation>
+        </message>
+        <message>
             <source>ICON_ADD_GROUP</source>
             <translation>add_group.png</translation>
         </message>

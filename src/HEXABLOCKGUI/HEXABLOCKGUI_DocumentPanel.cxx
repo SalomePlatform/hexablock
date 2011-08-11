@@ -18,12 +18,22 @@
 //
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
+#include "HEXABLOCKGUI_SalomeTools.hxx"
 
 #include "HEXABLOCKGUI.hxx"
 
+// #include <DlgRef.h>
+// #include <GEOMImpl_Types.hxx>
+// #include <GeometryGUI.h>
+#include <GEOMBase.h>
+
 // #include "SALOME_Selection.h"
+#include <SUIT_Desktop.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_MessageBox.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+
 #include "SVTK_Selection.h"
 
 #include <SUIT_Session.h>
@@ -33,6 +43,9 @@
 #include <iostream>
 #include <QtGui>
 #include <QFlags>
+
+#include <GEOMImpl_Types.hxx>
+#include <BasicGUI_PointDlg.h>
 
 
 #define VERTEX_COORD_MIN -1000000
@@ -48,7 +61,7 @@ using namespace HEXABLOCK::GUI;
 HexaBaseDialog::HexaBaseDialog( QWidget * parent, Qt::WindowFlags f ):
 //   _model(0),
 //   _selectionModel(0),
-  QDialog( parent, f),
+  QDialog(parent, f),
   _documentModel(0),
 //   _patternDataModel(0),
 //   _patternBuilderModel(0),
@@ -2482,6 +2495,7 @@ void CutEdgeDialog::reject()
 MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+//   std::cout<<"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPp"<< std::endl;
   setupUi( this );
   setWindowTitle( tr("MAKE TRANSFORMATION") );
 
@@ -2523,6 +2537,7 @@ MakeTransformationDialog::~MakeTransformationDialog()
 
 void MakeTransformationDialog::accept()
 {
+//   std::cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<< std::endl;
   SUIT_OverrideCursor wc;
   if ( !_patternDataSelectionModel )    return;
   if ( !_patternBuilderSelectionModel ) return;
@@ -2897,6 +2912,617 @@ void PerformSymmetryDialog::reject()
   QDialog::reject();
   _disallowSelection();
 }
+
+
+
+// QLayout* layout = centralWidget()->layout();
+//   QLayoutItem *child;
+//   while ((child = layout->takeAt(0)) != 0) {
+//      delete child;
+//   }
+
+
+
+
+
+
+VertexAssocDialog::VertexAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
+GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent)  ),
+_documentModel( NULL ),
+_patternDataSelectionModel( NULL ),
+// _vertex_le( new QLineEdit(centralWidget()) ),
+_ivertex  ( new QModelIndex() )
+{
+
+  QVBoxLayout* layout = new QVBoxLayout;
+  setLayout( layout );
+
+  QHBoxLayout* up   = new QHBoxLayout;
+  QHBoxLayout* down = new QHBoxLayout;
+
+  layout->addLayout(up);
+  layout->addLayout(down);
+
+  QWidget* d = SUIT_Session::session()->activeApplication()->desktop() ;
+  _nested = new MyBasicGUI_PointDlg( NULL, d);
+
+
+        QGroupBox *GroupBoxName = new QGroupBox();//DlgRef_Skeleton_QTD);
+        GroupBoxName->setObjectName(QString::fromUtf8("GroupBoxName"));
+//         sizePolicy.setHeightForWidth(GroupBoxName->sizePolicy().hasHeightForWidth());
+//         GroupBoxName->setSizePolicy(sizePolicy);
+        GroupBoxName->setTitle("Vertex");
+        QHBoxLayout *hboxLayout1 = new QHBoxLayout(GroupBoxName);
+        hboxLayout1->setSpacing(6);
+        hboxLayout1->setContentsMargins(9, 9, 9, 9);
+        hboxLayout1->setObjectName(QString::fromUtf8("hboxLayout1"));
+        QLabel *NameLabel = new QLabel(GroupBoxName);
+        NameLabel->setObjectName(QString::fromUtf8("NameLabel"));
+        NameLabel->setWordWrap(false);
+        NameLabel->setText("Name : ");
+        hboxLayout1->addWidget(NameLabel);
+        _vertex_le = new QLineEdit(GroupBoxName);
+        _vertex_le->setObjectName(QString::fromUtf8("_vertex_le"));
+        hboxLayout1->addWidget(_vertex_le);
+
+
+
+  up->addWidget( GroupBoxName);
+  down->addWidget( _nested );
+
+  _vertex_le->installEventFilter(this);
+  setFocusProxy( _vertex_le );
+
+  connect(_nested->buttonOk(),     SIGNAL(clicked()), this, SLOT(accept()));
+  connect(_nested->buttonApply(),  SIGNAL(clicked()), this, SLOT(accept()));
+  connect(_nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()));
+
+ 
+}
+
+
+
+void VertexAssocDialog::setDocumentModel(DocumentModel* m)
+{
+  _documentModel = m;
+}
+
+void VertexAssocDialog::setPatternDataSelectionModel(PatternDataSelectionModel* s)
+{
+  _patternDataSelectionModel = s;
+  _patternDataSelectionModel->clearSelection();
+  connect( _patternDataSelectionModel,
+           SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
+           this,
+           SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+}
+
+
+void VertexAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
+{
+  QModelIndexList l = sel.indexes();
+
+  if ( l.count() > 0 ){
+    QModelIndex selected = l[0];
+    int hexaType = selected.data(HEXA_TREE_ROLE).toInt();
+    if ( hexaType != VERTEX_TREE){
+      std::cout << "BAD SELECTION!"<< std::endl;
+      return;
+    }
+    _vertex_le ->setText( selected.data().toString() );
+    *_ivertex = selected;
+  }
+}
+
+
+
+void VertexAssocDialog::accept()
+{
+  std::cout << "VertexAssocDialog::accept"<< std::endl;
+  SUIT_OverrideCursor wc;
+
+  if ( !_documentModel ) return;
+  if ( !_patternDataSelectionModel ) return;
+  const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+  if ( !patternDataModel ) return;
+
+  QModelIndex iVertex = patternDataModel->mapToSource( *_ivertex );
+  if ( !iVertex.isValid() ) return;
+
+  GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX);
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
+    DocumentModel::GeomObj aPoint;
+
+    aPoint.name  = GEOMBase::GetName( aSelectedObject.get() );
+    aPoint.entry = aSelectedObject->GetStudyEntry();
+    aPoint.brep  = shape2string( aShape ).c_str();
+
+    _documentModel->addAssociation( iVertex, aPoint );
+    _documentModel->allowEdition();
+    _patternDataSelectionModel->setAllSelection();
+
+
+    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
+    _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
+    _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Select );
+    QDialog::accept();
+  }
+
+}
+
+
+void VertexAssocDialog::reject()
+{
+  std::cout << "VertexAssocDialog::reject"<< std::endl;
+  if ( _documentModel ){
+    _documentModel->allowEdition();
+  }
+  if ( _patternDataSelectionModel ){
+    _patternDataSelectionModel->setAllSelection();
+  }
+  QDialog::reject();
+}
+
+
+
+
+
+bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
+{
+    if ( obj == _vertex_le and event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+      _documentModel->disallowEdition();
+      _patternDataSelectionModel->setVertexSelection();
+      return false;
+    } else {
+         // standard event processing
+      return QObject::eventFilter(obj, event);
+    }
+}
+
+
+
+// // ------------------------- VertexAssocDialog ----------------------------------
+// 
+// VertexAssocDialog::VertexAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+//         : HexaBaseDialog(parent, f) {
+// 
+// //     QVBoxLayout* layout = new QVBoxLayout;
+// //     setLayout(layout);
+// // 
+// //     QHBoxLayout* up   = new QHBoxLayout;
+// //     QHBoxLayout* down = new QHBoxLayout;
+// // 
+// //     layout->addLayout(up);
+// //     layout->addLayout(down);
+// // 
+// //     QVBoxLayout* vlg = new QVBoxLayout;
+// //     QVBoxLayout* vld = new QVBoxLayout;
+// // 
+// //     up->addLayout(vlg);
+// //     up->addLayout(vld);
+// 
+// 
+// 
+//     BasicGUI_PointDlg* aDlg = new BasicGUI_PointDlg( NULL, SUIT_Session::session()->activeApplication()->desktop() );//parent );
+// 
+// //   aDlg->show();
+//    verticalLayout->addWidget(aDlg);
+// //     vlg->addWidget(new QLabel("Name"));
+// //     vlg->addWidget(new QLabel("Dimension"));
+// //     vlg->addWidget(new QLabel("Container"));
+// // 
+// //     _name = new QLineEdit("aMesh");
+// //     _dim  = new QSpinBox();
+// //     _fact = new QLineEdit("FactoryServer");
+// // 
+// //     vld->addWidget(_name);
+// //     vld->addWidget(_dim);
+// //     vld->addWidget(_fact);
+// // 
+// //     _dim->setRange(1, 3);
+// //     _dim->setValue(3);
+// 
+// //     QPushButton* ok     = new QPushButton("OK");
+// //     QPushButton* cancel = new QPushButton("Cancel");
+// //     QPushButton* help   =new QPushButton("Help");
+// // 
+// //     down->addWidget(ok);
+// //     down->addWidget(cancel);
+// //     down->addWidget(help);
+// // 
+// //     connect(ok    , SIGNAL( clicked() ), this, SLOT( accept() ));
+// //     connect(cancel, SIGNAL( clicked() ), this, SLOT( reject() ));
+// }
+// 
+VertexAssocDialog::~VertexAssocDialog() 
+{
+}
+// 
+// void VertexAssocDialog::accept() {
+//     _disallowSelection();
+//     QDialog::accept();
+// 
+// //     QString command = QString("import hexablock ; hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
+// //       .arg( _name->text() )
+// //       .arg( _documentModel->documentEntry() )
+// //       .arg( _dim->value() )
+// //       .arg( _fact->text() );
+// //     std::cout << "command: " << command.toStdString() << std::endl;
+// // 
+// //     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+// //     PyConsole_Console* pyConsole = app->pythonConsole();
+// // 
+// //     if ( pyConsole ) pyConsole->exec( command );
+// }
+// 
+// void VertexAssocDialog::reject() {
+//     _disallowSelection();
+//     QDialog::reject();
+// }
+
+
+
+
+
+
+
+
+// VertexAssocDialog::VertexAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+// : HexaBaseDialog(parent, f)
+// {
+//   setupUi( this );
+//   setWindowTitle( tr("MAKE VERTEX ASSOCIATION") );
+// 
+// //   _vertexLineEdits << vex_le_rb0 << vex_le_rb1 << vex_le_rb2;
+// //   _vectorLineEdits << vec_le_rb1 << vec_le_rb2;
+// //   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
+// // 
+// //   if ( editMode ){
+// //     foreach(QLineEdit* le,  _vertexLineEdits)
+// //       le->installEventFilter(this);
+// //     foreach(QLineEdit* le,  _vectorLineEdits)
+// //       le->installEventFilter(this);
+// //     foreach(QLineEdit* le,  _elementsLineEdits)
+// //       le->installEventFilter(this);
+// // 
+// //     rb0->setFocusProxy( elts_le_rb0 );
+// //     rb1->setFocusProxy( elts_le_rb1 );
+// //     rb2->setFocusProxy( elts_le_rb2 );
+// //     setFocusProxy( rb0 );
+// //   }
+// // 
+// //   // Default
+// //   rb0->click();
+// }
+// 
+// 
+// VertexAssocDialog::~VertexAssocDialog()
+// {
+// }
+// 
+// void VertexAssocDialog::accept()
+// {
+// }
+// 
+// void VertexAssocDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
+
+
+
+
+// // ------------------------- EdgeAssocDialog ----------------------------------
+EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+: HexaBaseDialog(parent, f)
+{
+  setupUi( this );
+  setWindowTitle( tr("MAKE EDGE ASSOCIATION") );
+
+//   _vertexLineEdits << vex_le_rb0 << vex_le_rb1 << vex_le_rb2;
+//   _vectorLineEdits << vec_le_rb1 << vec_le_rb2;
+//   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
+// 
+//   if ( editMode ){
+//     foreach(QLineEdit* le,  _vertexLineEdits)
+//       le->installEventFilter(this);
+//     foreach(QLineEdit* le,  _vectorLineEdits)
+//       le->installEventFilter(this);
+//     foreach(QLineEdit* le,  _elementsLineEdits)
+//       le->installEventFilter(this);
+// 
+//     rb0->setFocusProxy( elts_le_rb0 );
+//     rb1->setFocusProxy( elts_le_rb1 );
+//     rb2->setFocusProxy( elts_le_rb2 );
+//     setFocusProxy( rb0 );
+//   }
+// 
+//   // Default
+//   rb0->click();
+}
+
+
+EdgeAssocDialog::~EdgeAssocDialog()
+{
+}
+
+void EdgeAssocDialog::accept()
+{
+}
+
+void EdgeAssocDialog::reject()
+{
+  QDialog::reject();
+  _disallowSelection();
+}
+
+
+
+
+// // ------------------------- QuadAssocDialog ----------------------------------
+QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+  : HexaBaseDialog(parent, f),
+//   GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop()) //
+  GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent)  ) //
+{
+  setupUi( this );
+  setWindowTitle( tr("MAKE QUAD ASSOCIATION") );
+
+  _quadLineEdits << quad_le;
+  quad_le->installEventFilter(this);
+  faces_lw->installEventFilter(this);
+
+  setFocusProxy( quad_le );
+
+//   _geomHelper = new MyGEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() );// = new
+
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+  _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+
+// 
+//   connect( add_pb, SIGNAL(clicked()), this, SLOT(addFace()) );
+  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+
+//   _vertexLineEdits << vex_le_rb0 << vex_le_rb1 << vex_le_rb2;
+//   _vectorLineEdits << vec_le_rb1 << vec_le_rb2;
+//   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
+// 
+//   if ( editMode ){
+//     foreach(QLineEdit* le,  _vertexLineEdits)
+//       le->installEventFilter(this);
+//     foreach(QLineEdit* le,  _vectorLineEdits)
+//       le->installEventFilter(this);
+//     foreach(QLineEdit* le,  _elementsLineEdits)
+//       le->installEventFilter(this);
+// 
+//     rb0->setFocusProxy( elts_le_rb0 );
+//     rb1->setFocusProxy( elts_le_rb1 );
+//     rb2->setFocusProxy( elts_le_rb2 );
+//     setFocusProxy( rb0 );
+//   }
+// 
+//   // Default
+//   rb0->click();
+}
+
+
+// void BasicGUI_PointDlg::SetEditCurrentArgument()
+// {
+//   QPushButton* send = (QPushButton*)sender();
+// 
+//   if (send == GroupRefPoint->PushButton1) {
+//     GroupRefPoint->LineEdit1->setFocus();
+//     myEditCurrentArgument = GroupRefPoint->LineEdit1;
+//     globalSelection(); // close local contexts, if any
+//     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+//   }
+// 
+// SetEditCurrentArgument
+// SelectionIntoArgument
+
+QuadAssocDialog::~QuadAssocDialog()
+{
+//   delete _geomHelper;
+}
+
+
+//=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection as changed (for constructors not using local context)
+//=================================================================================
+// void BasicGUI_PointDlg::SelectionIntoArgument()
+// {
+//   erasePreview();
+//   const int id = getConstructorId();
+// 
+//   if ((id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF)
+//        && myEditCurrentArgument != 0)
+//   {
+//     myEditCurrentArgument->setText("");
+//     myX->setText("");
+//     myY->setText("");
+//     myZ->setText("");
+//     myFace.nullify();
+//     if (myEditCurrentArgument == GroupOnCurve->LineEdit1)
+//       myEdge.nullify();
+//     else if (myEditCurrentArgument == GroupOnCurve->LineEdit2)
+//       myRefPoint.nullify();
+//   }
+//   else if (id == GEOM_POINT_INTINT) {
+//     myEditCurrentArgument->setText("");
+//     if (myEditCurrentArgument == GroupLineIntersection->LineEdit1)
+//       myLine1.nullify();
+//     else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2)
+//       myLine2.nullify();
+//   }
+// 
+//   GEOM::GeomObjPtr aSelectedObject = getSelected(myNeedType);
+//   TopoDS_Shape aShape;
+//   if (aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull()) {
+//     QString aName = GEOMBase::GetName(aSelectedObject.get());
+//     myBusy = true;
+//     if (id == GEOM_POINT_XYZ) {
+//       gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(aShape));
+//       GroupXYZ->SpinBox_DX->setValue(aPnt.X());
+//       GroupXYZ->SpinBox_DY->setValue(aPnt.Y());
+//       GroupXYZ->SpinBox_DZ->setValue(aPnt.Z());
+//     }
+//     else if (id == GEOM_POINT_REF) {
+//       myRefPoint = aSelectedObject;
+//       GroupRefPoint->LineEdit1->setText(aName);
+//     }
+//     else if (id == GEOM_POINT_EDGE) {
+//       myEditCurrentArgument->setText(aName);
+//       if (myEditCurrentArgument == GroupOnCurve->LineEdit1) {
+//         myEdge = aSelectedObject;
+//         if (myEdge && !myRefPoint) {
+//           GroupOnCurve->PushButton2->click();
+//         }
+//       }
+//       else if (myEditCurrentArgument == GroupOnCurve->LineEdit2) {
+//         myRefPoint = aSelectedObject;
+//         if (myRefPoint && !myEdge) {
+//           GroupOnCurve->PushButton1->click();
+//         }
+//       }
+//     }
+//     else if (id == GEOM_POINT_INTINT) {
+//       myEditCurrentArgument->setText(aName);
+//       if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
+//         myLine1 = aSelectedObject;
+//         if (myLine1 && !myLine2) {
+//           GroupLineIntersection->PushButton2->setMenu(0);
+//           GroupLineIntersection->PushButton2->click();
+//           GroupLineIntersection->PushButton2->setDown(true);
+//           GroupLineIntersection->PushButton2->setMenu(myBtnPopup);
+//         }
+//       }
+//       else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
+//         myLine2 = aSelectedObject;
+//         if (myLine2 && !myLine1) {
+//           GroupLineIntersection->PushButton1->setMenu(0);
+//           GroupLineIntersection->PushButton1->click();
+//           GroupLineIntersection->PushButton1->setDown(true);
+//           GroupLineIntersection->PushButton1->setMenu(myBtnPopup);
+//         }
+//       }
+//     }
+//     else if (id == GEOM_POINT_SURF) {
+//       myFace = aSelectedObject;
+//       GroupOnSurface->LineEdit1->setText(aName);
+//     }
+//     myBusy = false;
+//   }
+// 
+//   displayPreview(true);
+// }
+
+bool QuadAssocDialog::eventFilter(QObject *obj, QEvent *event)
+{
+
+  if ( ( obj == faces_lw ) and  ( event->type() == QEvent::FocusIn ) ){
+//     _setQuadSelectionOnly();
+    std::cout << "obj == faces_lw XXXXXXXXXXXXXXX "<< std::endl;
+    /*_geomHelper->*/globalSelection(); // close local contexts, if any
+    /*_geomHelper->*/localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    _currentObj = obj;
+    return false;
+  } else {
+    return HexaBaseDialog::eventFilter(obj, event);
+  }
+}
+
+
+void QuadAssocDialog::addFace()
+{
+//   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
+// 
+//   QListWidgetItem* item = NULL;
+// 
+//   foreach( const QModelIndex& isel, iselections ){
+//     item = new QListWidgetItem( isel.data().toString() );
+//     item->setData(  Qt::UserRole + 20, QVariant::fromValue<QModelIndex>(isel) );
+//     quads_lw->addItem(item);
+//     int r = quads_lw->count() - 1;
+//     quads_lw->setCurrentRow(r);
+//   }
+
+  std::cout << "addFace() addFace() addFace() addFace()" << std::endl;
+  GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_FACE);
+  std::cout << "addFace() aSelectedObject" << aSelectedObject << std::endl;
+  TopoDS_Shape aShape;
+
+  if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
+    DocumentModel::GeomObj aFace;
+    QListWidgetItem* item = NULL;
+
+    aFace.name  = GEOMBase::GetName( aSelectedObject.get() );
+    aFace.entry = aSelectedObject->GetStudyEntry();
+    aFace.brep  = shape2string( aShape ).c_str();
+
+    std::cout << "addFace() aFace.name"  << aFace.name.toStdString()  << std::endl;
+    std::cout << "addFace() aFace.entry" << aFace.entry.toStdString() << std::endl;
+    std::cout << "addFace() aFace.brep"  << aFace.brep.toStdString()  << std::endl;
+
+
+    item  = new QListWidgetItem( aFace.name );
+    faces_lw->addItem(item);
+    faces_lw->setCurrentRow(faces_lw->count() - 1);
+
+    _assocs << aFace;
+  }
+
+}
+
+
+void QuadAssocDialog::accept()
+{
+  SUIT_OverrideCursor wc;
+  //if ( !_documentModel ) return;
+  if ( !_patternDataSelectionModel ) return;
+//   if ( !_patternBuilderSelectionModel ) return;
+  const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+//   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+  if ( !patternDataModel ) return;
+//   if ( !patternBuilderModel ) return;
+
+/////
+//   QModelIndexList iquads;
+  QModelIndex iQuad = patternDataModel->mapToSource( _index[quad_le] );
+  DocumentModel::GeomObj aFace;
+  TopoDS_Shape aShape;
+
+  foreach( DocumentModel::GeomObj aFace, _assocs)
+    _documentModel->addAssociation( iQuad, aFace );
+
+  QDialog::accept();
+  _disallowSelection();
+  SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD ASSOCIATION OK : %1" ).arg(iQuad.data().toString()) );
+  iQuad = patternDataModel->mapFromSource( iQuad );
+  _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
+  _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
+
+  disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+
+//   SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ASSOCIATE QUAD" ) );
+}
+
+void QuadAssocDialog::reject()
+{
+  QDialog::reject();
+  _disallowSelection();
+
+  disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+}
+
+
+
+
+
+
+
 
 
 

@@ -59,6 +59,7 @@ Q_DECLARE_METATYPE( HEXA_NS::Group* );
 Q_DECLARE_METATYPE( HEXA_NS::Law* );
 Q_DECLARE_METATYPE( HEXA_NS::Propagation* );
 
+// Q_DECLARE_METATYPE( QList<HEXA_NS::Shape*> ); // association
 
 namespace HEXABLOCK
 {
@@ -117,9 +118,11 @@ namespace HEXABLOCK
 
     enum {
       HEXA_DATA_ROLE = Qt::UserRole + 1,
+      HEXA_DATA_ASSOC,
       HEXA_TREE_ROLE,
       HEXA_ENTRY_ROLE,
       HEXA_DOC_ENTRY_ROLE,
+      HEXA_ASSOC_ENTRY_ROLE,
     };
 
 // QVariant::UserType

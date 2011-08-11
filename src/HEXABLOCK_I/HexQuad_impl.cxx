@@ -76,8 +76,10 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
 
   string strBrep = shape2string( aShape );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
+//   std::cout<< "geom_object_2D->GetStudyEntry() " << geom_object_2D->GetStudyEntry()<<std::endl;
+//   std::cout<< "geom_object_2D->GetEntry() " << geom_object_2D->GetEntry()<<std::endl;
+  s->ident = geom_object_2D->GetStudyEntry();
   ok = _quad_cpp->addAssociation( s );
-
 //   _associations.push_back(GEOM::GEOM_Object::_duplicate( geom_object_2D ));
 
   return ok;

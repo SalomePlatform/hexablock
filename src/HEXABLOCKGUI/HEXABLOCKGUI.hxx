@@ -68,6 +68,7 @@ namespace HEXABLOCK
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
+class SVTK_ViewWindow;
 
 // // SALOME KERNEL includes
 // #include <SALOMEDS_Study.hxx>
@@ -94,6 +95,13 @@ public:
 //   static GEOM::GEOM_Gen_ptr               InitGEOMGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
 
   static LightApp_SelectionMgr*   selectionMgr();
+
+
+  static SVTK_ViewWindow* currentVtkView;
+
+//   static SVTK_ViewWindow* currentVtkView();
+
+ //HEXABLOCK::GUI::DocumentModel*
 
   virtual void initialize( CAM_Application* app);
   virtual void windows( QMap<int, int>& theMap) const;
@@ -152,6 +160,8 @@ protected:
 //   static SMESH::SMESH_Gen_var             _smeshEngine;
 //   static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
+  void test_association();
+
   void newDocument();
   void importDocument( const QString &path = QString() );
 
@@ -185,6 +195,10 @@ private slots:
   void performTransformation();
   void performSymmetry();
 
+  void assocVertex();
+  void assocEdge();
+  void assocQuad();
+
   void addGroup();
   void removeGroup (); //CS_TODO
   void addLaw();
@@ -212,6 +226,7 @@ private:
   // Object Browser
   QAction *_newAct;
   QAction *_importAct;
+  QAction *_testAct;
 
   // Pattern Data
   QAction *_addVertex;
@@ -240,6 +255,11 @@ private:
   QAction *_makeSymmetry;
   QAction *_performTransformation;
   QAction *_performSymmetry;
+
+  // Pattern Data Association
+  QAction *_assocVertex;
+  QAction *_assocEdge;
+  QAction *_assocQuad;
 
   // Group
   QAction *_addGroup;
@@ -290,12 +310,17 @@ private:
   std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentModel*>       _documentModels;
   std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentGraphicView*> _documentView;
 
+//   static std::map<HEXABLOCK::GUI::DocumentModel*,  SUIT_ViewWindow*> _salomeViews;
 
 //   int _documentCnt;
   bool _isSaved;
 
 
   void testDocument();
+  void test_make_cart_grid();
+  void test_make_elmts_transform();
+  
+
 };
 
 #endif

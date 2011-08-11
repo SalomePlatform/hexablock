@@ -29,6 +29,7 @@
 
 #include "HexVertex.hxx"
 
+#include "HexShape.hxx"
 
 //#define _DEVDEBUG_
 
@@ -78,6 +79,7 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
   _crossElementsItemFlags( Qt::NoItemFlags ),
   _disallowEdition( false )
 {
+//   setColumnCount( 4 ); //CS_TEST
   if ( !_hexaDocument && _hexaFile->open() ){
     _hexaDocument =  new HEXA_NS::Document( _hexaFile->fileName().toLatin1() );
     _hexaDocument->reorderFaces();
@@ -224,7 +226,20 @@ void DocumentModel::fillData()
 
     vItem = new VertexItem(v);
     vItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
-    _vertexDirItem->appendRow(vItem);
+
+    //CS_TEST
+//     HEXA_NS::Shape* s = v->getAssociation();
+//     std::cout<<"assoc->"<<s<<std::endl;
+//     if (s){
+//       QList<QStandardItem *>  assocItems;
+//       assocItems << new QStandardItem(s->ident.c_str()); 
+//       std::cout<<"assoc id =>"<<s->ident<<std::endl;
+//       vItem->appendColumn(assocItems);
+//     }
+// 
+//     _vertexDirItem->appendRow(vItem);
+    //CS_TEST
+
 //     _vertexDirItem->setEditable( false );//CS_TEST
   }
 
@@ -732,7 +747,12 @@ QModelIndex DocumentModel::addVertex( double x, double y, double z )
 
   if ( hv->isValid() ){
     VertexItem* v = new VertexItem(hv);
+    v->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _vertexDirItem->appendRow(v);
+//     v->appendRow( new QStandardItem("titi") );
+//     QList<QStandardItem*> l;
+//     l << new QStandardItem("toto");
+//     v->appendColumn( l );
     vertexIndex = v->index();
     emit patternDataChanged();
   } else {
@@ -754,6 +774,7 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
 
   if ( he->isValid() ){
     EdgeItem* e = new EdgeItem(he);
+    e->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
     emit patternDataChanged();
@@ -776,6 +797,7 @@ QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIn
 
   if ( he->isValid() ){
     EdgeItem* e = new EdgeItem(he);
+    e->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
     emit patternDataChanged();
@@ -810,6 +832,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
     HEXA_NS::Quad* hq = _hexaDocument->addQuadVertices( hv0, hv1, hv2, hv3 );
     if ( hq->isValid() ){
       QuadItem* q = new QuadItem(hq);
+      q->setData( _entry, HEXA_DOC_ENTRY_ROLE );
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
       emit patternDataChanged();
@@ -835,9 +858,10 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
   HEXA_NS::Edge* he3 = data(e3, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
 
   if ( he0 and he1 and he2 and he3 ){
-    HEXA_NS::Quad* hq = _hexaDocument->addQuad( he0, he1, he2, he3 );
+    HEXA_NS::Quad* hq = _hexaDocument->addQuad( he0, he1, he2, he3 );    
     if ( hq->isValid() ){
       QuadItem* q = new QuadItem(hq);
+      q->setData( _entry, HEXA_DOC_ENTRY_ROLE );
       _quadDirItem->appendRow(q);
       quadIndex = q->index();
       emit patternDataChanged();
@@ -874,6 +898,7 @@ QModelIndex DocumentModel::addHexaVertices(
 
   if ( hh->isValid() ){
     HexaItem* h = new HexaItem(hh);
+    h->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _hexaDirItem->appendRow(h);
     iHexa = h->index();
     emit patternDataChanged();
@@ -910,6 +935,7 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
 
   if ( hh->isValid() ){
     HexaItem* h = new HexaItem(hh);
+    h->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _hexaDirItem->appendRow(h);
     hexaIndex = h->index();
     emit patternDataChanged();
@@ -1921,6 +1947,105 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
   return ret;
 }
 
+// ************  ADD ASSOCIATION ************
+//
+void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel::GeomObj& assocIn )
+{
+//   assocIn.name;
+  HEXA_NS::Shape assoc( assocIn.brep.toStdString() );
+  assoc.debut =  assocIn.start;
+  assoc.fin   =  assocIn.end;
+  assoc.ident =  assocIn.entry.toStdString();
+  _assocName[ assocIn.entry ] = assocIn.name; // for getAssociations()
+
+  QString currentAssoc, newAssoc;
+
+  if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
+    HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+    hVex->setAssociation( &assoc );
+  } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
+    HEXA_NS::Edge*   hEdge = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
+    hEdge->addAssociation( &assoc );
+  } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
+    HEXA_NS::Quad*   hQuad  = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+    hQuad->addAssociation( &assoc );
+  }
+
+  currentAssoc = data( iElt, HEXA_ASSOC_ENTRY_ROLE ).toString();
+  if ( !currentAssoc.isEmpty() ){
+    newAssoc = currentAssoc +  assocIn.entry + ";" ;
+  } else {
+    newAssoc = assocIn.entry + ";" ;
+  }
+  std::cout << "addAssociation() newAssoc =>"  << newAssoc.toStdString()  << std::endl;
+  setData( iElt, QVariant::fromValue(newAssoc), HEXA_ASSOC_ENTRY_ROLE );
+
+  QList<QStandardItem *>  assocItems;
+  QStandardItem *aAssocItem = NULL;
+
+  QStandardItem *item = NULL;
+//   std::cout << "addAssociation name = " << assocIn.name.toStdString() << std::endl;
+//     std::cout << "addAssociation model " << std::endl;
+  aAssocItem = new QStandardItem(assocIn.name);
+  aAssocItem->setData( assocIn.entry , HEXA_ENTRY_ROLE );
+//   std::cout << "addAssociation() assocIn.entry "  << assocIn.entry.toStdString()  << std::endl;
+
+  assocItems << aAssocItem;
+  item = itemFromIndex(iElt);
+  item->appendColumn(assocItems);
+//     appendColumn(assocItems);
+//     item->appendRow( assocItems );
+//     item->appendRow( new QStandardItem(assocIn.name) );
+  if ( item->columnCount() > columnCount() )
+    setColumnCount( columnCount()+1 );
+
+
+}
+
+
+QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex& iElt )
+{
+  QList<DocumentModel::GeomObj> res;
+  DocumentModel::GeomObj        assoc;
+
+  if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
+    HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+    HEXA_NS::Shape* hShape = hVex->getAssociation();
+
+    assoc.entry = hShape->ident.c_str();
+    assoc.name  = _assocName[assoc.entry];
+    assoc.brep  = hShape->getBrep().c_str();
+    assoc.start = hShape->debut;
+    assoc.end   = hShape->fin;
+    res << assoc;
+
+  } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
+    HEXA_NS::Edge*   hEdge = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
+    HEXA_NS::Shapes  hShapes = hEdge->getAssociations();
+    for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
+      assoc.entry = (*it)->ident.c_str();
+      assoc.name  = _assocName[assoc.entry];
+      assoc.brep  = (*it)->getBrep().c_str();
+      assoc.start = (*it)->debut;
+      assoc.end   = (*it)->fin;
+      res << assoc;
+    }
+  } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
+    HEXA_NS::Quad*   hQuad  = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+    HEXA_NS::Shapes  hShapes = hQuad->getAssociations();
+    for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
+      assoc.entry = (*it)->ident.c_str();
+      assoc.name  = _assocName[assoc.entry];
+      assoc.brep  = (*it)->getBrep().c_str();
+      assoc.start = (*it)->debut;
+      assoc.end   = (*it)->fin;
+      res << assoc;
+    }
+  }
+
+
+  return res;
+}
 
 // ************  GROUPS  ************
 //
@@ -2097,9 +2222,6 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
 }
 
 
-
-
-
 HEXA_NS::Document* DocumentModel::documentImpl()
 {
   return _hexaDocument;
@@ -2110,8 +2232,6 @@ QString DocumentModel::documentEntry()
 {
   return _entry;
 }
-
-
 
 
 
@@ -2134,6 +2254,7 @@ PatternDataModel::PatternDataModel( QObject * parent ) :
   QString dataRegExp = QString("(%1|%2|%3|%4|%5|%6|%7|%8)").
   arg(VERTEX_TREE).arg(EDGE_TREE).arg(QUAD_TREE).arg(HEXA_TREE).                     arg(VERTEX_DIR_TREE).arg(EDGE_DIR_TREE).arg(QUAD_DIR_TREE).arg(HEXA_DIR_TREE);
 
+  
   setFilterRole(HEXA_TREE_ROLE);
   setFilterRegExp ( QRegExp(dataRegExp) );
 }
