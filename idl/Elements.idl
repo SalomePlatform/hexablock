@@ -36,7 +36,19 @@ module HEXABLOCK_ORB
 {
 
 //   enum EnumCoord { dir_x, dir_y, dir_z, DIM3 };
-  enum EnumCoord { DIR_X, DIR_Y, DIR_Z, DIM3 };
+  enum EnumCoord  { DIR_X, DIR_Y, DIR_Z, DIM3 };
+  enum EnumVertex { V_AMONT, V_AVAL, V_TWO };
+  enum EnumQuad   { E_A, E_B, E_C, E_D, QUAD4 };
+
+            //      z=0   z=1   y=0   y=1   x=0  x=1
+  enum EnumHQuad   {Q_A,  Q_B,  Q_C,  Q_D,  Q_E, Q_F,  HQ_MAXI};
+
+  enum EnumHEdge   {E_AC, E_AD, E_BC, E_BD, 
+                    E_AE, E_AF, E_BE, E_BF,
+                    E_CE, E_CF, E_DE, E_DF,  HE_MAXI };
+
+  enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
+                    HV_MAXI };
 
   interface Elements : Element
   {
