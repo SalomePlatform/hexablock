@@ -1,3 +1,6 @@
+
+// C++ : La clase principale de Hexa
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : La clase principale de Hexa
-
 #include "HexDocument.hxx"
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
@@ -26,7 +26,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
+static bool db = true;
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
 
@@ -50,14 +50,12 @@ int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
    int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 1.0);
    return ier;
 }
-
 // ====================================================== associateClosedLine
 int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline, 
                     Shape*  gstart, double pstart, Shapes& gline, double pend)
 {
    char buffer [16], cnum [8];
-   int  nbseg = mline.size ();
-
+   int  nbseg  = mline.size ();
    bool closed = vfirst != NULL;
 
    if (db)
@@ -93,11 +91,15 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
        }
 
    vector <int> tab_sens (nbseg, V_TWO);
-   Vertex* pnode = NULL;
    int     sens  = V_AMONT;
    int     nedge = NOTHING;
+   Vertex* pnode = mstart->getVertex (sens);
 
-   if (NOT closed)
+   if (nbseg==0)
+      {
+      nedge = 0;
+      }
+   else if (NOT closed)
       {
       pnode = mstart->getVertex (sens);
       nedge = vertexInLine (pnode, mline, tab_sens);
@@ -123,6 +125,8 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       nedge = vertexInLine (pnode, mline, tab_sens);
       }
 
+   HexDisplay (nbseg);
+
    if (nedge == NOTHING) 
       {
       putError (W_ASSO_LINE, mstart->getName (buffer));
@@ -133,13 +137,20 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
    vector <int> les_orig; 
    les_edges.push_back (mstart);
    les_orig .push_back (1-sens);
-   les_edges.push_back (mline[nedge]);
-   les_orig. push_back (tab_sens[nedge]);
+   HexDisplay (nedge);
+   cout << " ........................................ Marque 1" << endl;
+   if (nbseg>0) 
+      {
+      les_edges.push_back (mline[nedge]);
+      les_orig. push_back (tab_sens[nedge]);
+      }
 
+   cout << " ........................................ Marque 2" << endl;
    if (db) 
       printf (" mstart  [%d] = mline[%d][%d] = %s\n", sens, nedge, 
                                   tab_sens [nedge], pnode->getName(buffer));
 
+   cout << " ........................................ Marque 2" << endl;
    for (int ns = 1 ; ns < nbseg ; ns++)
        {
        Vertex* pnode = mline[nedge]->getVertex (1-tab_sens [nedge]);

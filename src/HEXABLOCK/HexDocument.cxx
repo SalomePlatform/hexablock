@@ -53,6 +53,7 @@ Document::Document (cpchar filename)
    doc_db        = 0;
    nbr_errors    = 0;
    doc_modified  = true;
+   doc_saved     = false;
    doc_name      = filename;
    doc_tolerance = 1e-6;
    nbr_laws      = 0;
@@ -61,6 +62,8 @@ Document::Document (cpchar filename)
    doc_xml          = NULL;
 
    addLaw ("DefaultLaw", 0);
+   
+   nbr_used_hexas = nbr_used_quads = nbr_used_edges = nbr_used_vertex = 0;
 
    for (EnumElt type = EL_NONE ; type < EL_MAXI ; type=(EnumElt) (type+1))
        {
@@ -106,7 +109,6 @@ Vector* Document::addVectorVertices (Vertex* va, Vertex* vb)
 Vertex* Document::addVertex (double x, double y, double z)
 {
    Vertex* pv   = new Vertex (this, x, y, z);
-   doc_modified = true;
    return pv;
 }
 // ======================================================== addEdge
@@ -116,13 +118,11 @@ Edge* Document::addEdge (Vertex* va, Vertex* vb)
       return NULL;
 
    Edge* arete  = new Edge (va, vb);
-   doc_modified = true;
    return arete;
 }
 // ======================================================== addEdge (bis)
 Edge* Document::addEdge (Vertex* va, Vector* vec)
 {
-   doc_modified = true;
    Vertex* vb   = addVertex (va->getX () + vec->getDx(), 
                              va->getY () + vec->getDy(), 
                              va->getZ () + vec->getDz());
@@ -133,37 +133,32 @@ Edge* Document::addEdge (Vertex* va, Vector* vec)
 // ======================================================== addQuadVertices
 Quad* Document::addQuadVertices (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
 {
-   Quad* face   = new Quad (va, vb, vc, vd);
-   doc_modified = true;
+   Quad*  face   = new Quad (va, vb, vc, vd);
    return face;
 }
 // ======================================================== addQuad
 Quad* Document::addQuad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
 {
-   Quad* face   = new Quad (ea, eb, ec, ed);
-   doc_modified = true;
+   Quad*  face   = new Quad (ea, eb, ec, ed);
    return face;
 }
 // ======================================================== addHexaVertices
 Hexa* Document::addHexaVertices (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
                                  Vertex* ve, Vertex* vf, Vertex* vg, Vertex* vh)
 {
-   Hexa* pave   = new Hexa (va, vb, vc, vd, ve, vf, vg, vh);
-   doc_modified = true;
+   Hexa*  pave   = new Hexa (va, vb, vc, vd, ve, vf, vg, vh);
    return pave;
 }
 // ======================================================== addHexa
 Hexa* Document::addHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, 
                          Quad* qf)
 {
-   Hexa* pave   = new Hexa (qa, qb, qc, qd, qe, qf);
-   doc_modified = true;
+   Hexa*  pave   = new Hexa (qa, qb, qc, qd, qe, qf);
    return pave;
 }
 // ======================================================== addCylinder
 Cylinder* Document::addCylinder (Vertex* b, Vector* d, double r,  double h)
 {
-   doc_modified  = true;
    Cylinder* cyl = new  Cylinder (b, d, r, h);
    doc_cylinder.push_back (cyl);
    return    cyl;
@@ -171,7 +166,6 @@ Cylinder* Document::addCylinder (Vertex* b, Vector* d, double r,  double h)
 // ======================================================== addPipe
 Pipe* Document::addPipe (Vertex* b, Vector* d, double ri, double re, double h)
 {
-   doc_modified = true;
    Pipe*  tuyau = new  Pipe (b, d, ri, re, h);
    doc_pipe.push_back (tuyau);
    return tuyau;
@@ -278,37 +272,48 @@ int index_tv (Vertex* table[], Vertex* elt)
    return NOTHING;
 }
 // ======================================================== mergeQuads
-int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2, 
+int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2, 
                                                 Vertex* v3, Vertex* v4)
 {
    update ();
 
-   if (   par==NULL || par->isDeleted() || old==NULL || old->isDeleted() 
-       || v1 ==NULL || v1 ->isDeleted() || v2 ==NULL || v2 ->isDeleted() 
-       || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted()) 
+   if (dest==orig)
+      {
+      printf (" *** Quads identiques dans mergeQuads\n");
       return HERR;
+      }
+   else if (dest==NULL || dest->isDeleted())
+      {
+      printf (" *** Quad nro 1 incorrect dans mergeQuads \n");
+      return HERR;
+      }
+   else if (orig==NULL || orig->isDeleted() )
+      {
+      printf (" *** Quad nro 2 incorrect dans mergeQuads \n");
+      return HERR;
+      }
 
    int nbcomm = 0;
    for (int nro=0 ; nro<QUAD4 ; nro++) 
        {
-       int nold = old->indexVertex (par->getVertex(nro));
-       if (nold != NOTHING)
+       int norig = orig->indexVertex (dest->getVertex(nro));
+       if (norig != NOTHING)
           {
-          Vertex* uv = par->getVertex(nro);
+          Vertex* uv = dest->getVertex(nro);
           char nom[12];
           nbcomm ++;
           if (nbcomm==1)
              {
              printf ("  +++ Sommets communs dans mergeQuads");
-             printf (" (%s,",  par->getName (nom));
-             printf (" %s)\n", old->getName (nom));
+             printf (" (%s,",  dest->getName (nom));
+             printf (" %s)\n", orig->getName (nom));
              v1 = v2 = uv;
              }
           else
              {
              v3 = v4 = uv;
              }
-          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  nold, 
+          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig, 
                                                         uv->getName (nom));
           }
        }
@@ -316,6 +321,8 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
    if (nbcomm == 2)
       {
       printf ("  +++ Les vertex passes en arguments sont ignores\n");
+      int ier = closeQuads (dest, orig);
+      return ier;
       }
    else if (nbcomm != 0)
       {
@@ -323,11 +330,16 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
       return HERR;
       }
 
+   if (   v1 ==NULL || v1 ->isDeleted() || v2 ==NULL || v2 ->isDeleted() 
+       || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted()) 
+      return HERR;
+
+
    if (debug())
       {
       printf ("  ----------------- mergeQuads : \n");
-      HexDump (old);
-      HexDump (par);
+      HexDump (orig);
+      HexDump (dest);
       HexDump (v1);
       HexDump (v2);
       HexDump (v3);
@@ -337,14 +349,14 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
    Vertex *tv1 [QUAD4], *tv2 [QUAD4];
    Edge   *te1 [QUAD4], *te2 [QUAD4];
 
-   int ier1 = par->ordoVertex (v1, v3, tv1);
-   int ier2 = old->ordoVertex (v2, v4, tv2);
+   int ier1 = dest->ordoVertex (v1, v3, tv1);
+   int ier2 = orig->ordoVertex (v2, v4, tv2);
    if (ier1 != HOK)      return ier1;
    else if (ier2 != HOK) return ier2;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
-       te1 [nro] = par->getEdge(nro);
+       te1 [nro] = dest->getEdge(nro);
        Vertex* va1 = te1[nro]->getVertex(V_AMONT);
        Vertex* vb1 = te1[nro]->getVertex(V_AVAL);
        int na = index_tv  (tv1, va1);
@@ -352,7 +364,7 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
        if (na==NOTHING || nb==NOTHING)
           return HERR;
 
-       te2 [nro] = old->findEdge (tv2[na], tv2[nb]);
+       te2 [nro] = orig->findEdge (tv2[na], tv2[nb]);
        if (te2[nro]==NULL)
           return HERR;
        }
@@ -378,7 +390,7 @@ int Document::mergeQuads (Quad* par, Quad* old, Vertex* v1, Vertex* v2,
           }
       }
 
-   replaceQuad (old, par);
+   replaceQuad (orig, dest);
    for (int nro=0 ; nro<QUAD4 ; nro++) 
        replaceEdge   (te2[nro], te1[nro]);
    for (int nro=0 ; nro<QUAD4 ; nro++) 
@@ -666,6 +678,11 @@ EltBase* Document::getElement (EnumElt type, int nro)
 Law* Document::addLaw (const char* name, int nbnodes)
 { 
    Law* loi = new Law (name, nbnodes);
+   return addLaw (loi);
+}
+// ========================================================= addLaw
+Law* Document::addLaw (Law* loi)
+{ 
    doc_laws.push_back (loi);
    nbr_laws ++;
    return loi;

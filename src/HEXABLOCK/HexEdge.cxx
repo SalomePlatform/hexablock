@@ -41,6 +41,7 @@ Edge::Edge (Vertex* va, Vertex* vb)
    e_propag = NOTHING;
    e_way    = true;
    e_law    = NULL;
+   e_clone  = NULL;
 
    majReferences ();
 }
@@ -53,6 +54,7 @@ Edge::Edge (Edge* other)
    e_propag = NOTHING;
    e_way    = true;
    e_law    = NULL;
+   e_clone  = NULL;
 }
 // ======================================================== majReferences
 void Edge::majReferences ()

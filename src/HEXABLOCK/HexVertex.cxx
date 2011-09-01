@@ -30,10 +30,12 @@ BEGIN_NAMESPACE_HEXA
 Vertex::Vertex  (Document* doc, double x, double y, double z)
       : EltBase (doc, EL_VERTEX)
 {
-   v_x = x;
-   v_y = y;
-   v_z = z;
+   gc_x = v_x = x;
+   gc_y = v_y = y;
+   gc_z = v_z = z;
+
    v_scalar = 0;
+   v_clone  = NULL;
 }
 // ========================================================= getParent 
 Edge* Vertex::getParent  (int nro)

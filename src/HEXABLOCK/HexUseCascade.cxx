@@ -92,8 +92,7 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
-// static bool db = true;
+static bool db = true;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
@@ -161,6 +160,7 @@ void add_association (Edge* edge, Shape* assold, double deb, double fin)
 
    assnew->debut = std::min (deb, fin);
    assnew->fin   = std::max (deb, fin);
+   assnew->ident = assold->ident;
    edge->addAssociation (assnew);
 
    if (NOT db) return;

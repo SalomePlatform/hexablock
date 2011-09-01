@@ -1,3 +1,6 @@
+
+// C++ : Element de base 
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des noeuds
-
 #include "HexEltBase.hxx"
 #include "HexDocument.hxx"
 #include "HexDiagnostics.hxx"

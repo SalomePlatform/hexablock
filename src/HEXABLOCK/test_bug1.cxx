@@ -1,3 +1,6 @@
+
+// C++ : Construction de la bride
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,8 +20,6 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// C++ : Construction de la bride
-
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
@@ -32,142 +33,175 @@ static const int k1 = 1;
 static const int OPT_INV_EDGE = 1;
 static const int OPT_QUAD_IK = 2;
 
-// ======================================================== sauver_schema
-bool is_here (int masque, int option)
-{
-   bool   rep = (masque IAND option) > 0;
-   return rep;
-}
-// ======================================================== sauver_schema
-void sauver_schema (Hex::Document* doc)
-{
-   static int numero = 0;
-   char nomfic [32];
-   sprintf (nomfic, "essai%d.vtk", numero);
-   numero++;
-
-   doc->saveVtk (nomfic);
-}
-// ======================================================== merge_quads
-void merge_quads (Hex::Document* doc, Hex::Elements* quart, Hex::Elements* demi,
-                  int ni1, int nj1, int ni2, int nj2, int mask=0)
-{
-   int  inv     = is_here (mask, OPT_INV_EDGE);
-   bool quad_ik = is_here (mask, OPT_QUAD_IK);
-   int  iq1     = 0;
-   int  iq3     = 1;
-
-   if (quad_ik || inv) 
-      {
-      iq1 = 1;
-      iq3 = 0;
-      }
-
-   Hex::Quad* orig  = quad_ik ? quart->getQuadIK (ni1, nj1, k0)
-                              : quart->getQuadJK (ni1, nj1, k0);
-   Hex::Quad* dest  = demi->getQuadJK  (ni2, nj2, k0);
-
-   if (quad_ik) orig->dumpPlus();
-
-   Hex::Vertex* v1  = dest->getVertex (iq1);
-   Hex::Vertex* v3  = dest->getVertex (iq3);
-
-   Hex::Vertex* v2  = orig->getVertex (0);
-   Hex::Vertex* v4  = orig->getVertex (1);
-
-   doc->mergeQuads (dest, orig, v1, v2, v3, v4);
-   sauver_schema (doc);
-}
-// ======================================================== test_bug0
-int test_bug0 ()
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
-   Hex::Vertex* orig2 = doc->addVertex (7,0,0);
-
-   Hex::Vector* dz = doc->addVector (0,0,1);
-   Hex::Vector* dx = doc->addVector (1,0,0);
-
-   const int dim_z  = 1;
-   double drd = 0.5;
-   double drq = 2*drd;
-   double dl  = 1;
-   int    nrq = 10;
-   int    nrd = 5;
-   int    naq = 4;
-   int    nad = 10;
-                               // Les grilles initiales
-
-   Hex::Elements* quart = doc->makeCylindrical (orig1,dx,dz,drq, 45, 
-                                                dl,nrq,naq,dim_z);
-
-   Hex::Elements* demi  = doc->makeCylindrical (orig2,dx,dz,drd, 180, 
-                                                dl,nrd,nad, dim_z);
-   sauver_schema (doc);
-                               // Creuser les fondations de demi dans quart
-   int jmax= nrq-1;
-   for (int nj= 0; nj<2 ; nj++)
-       {
-       for (int ni=3; ni<jmax-nj ; ni++)
-           {
-           Hex::Hexa* cell = quart->getHexaIJK (ni, nj, k0);
-           cell->remove ();
-           }
-   }
-   sauver_schema (doc);
-   // doc->setLevel (1);
-   // doc->dump ();
-                               // On fusionne les bords
-   merge_quads (doc, quart, demi, 9, 0,   nrd, 0);
-   merge_quads (doc, quart, demi, 8, 1,   nrd, 1, OPT_QUAD_IK);
-   // doc->dump ();
-   doc->countPropagation ();
-   merge_quads (doc, quart, demi, 6, 2,   nrd, 4, OPT_QUAD_IK);
-   //  doc->countPropagation ();
-   merge_quads (doc, quart, demi, 8, 1,   nrd, 2);
-   merge_quads (doc, quart, demi, 7, 2,   nrd, 3, OPT_QUAD_IK);
-   merge_quads (doc, quart, demi, 6, 2,   nrd, 4, OPT_QUAD_IK);
-
-   merge_quads (doc, quart, demi, 5, 2,   nrd, 5, OPT_QUAD_IK);
-   merge_quads (doc, quart, demi, 4, 2,   nrd, 6, OPT_QUAD_IK);
-   merge_quads (doc, quart, demi, 3, 2,   nrd, 7, OPT_QUAD_IK);
-   merge_quads (doc, quart, demi, 3, 1,   nrd, 8, OPT_INV_EDGE);
-   merge_quads (doc, quart, demi, 3, 0,   nrd, 9, OPT_INV_EDGE);
-
-   return HOK;
-}
 // ======================================================== test_bug1
-int test_bug1 ()
+int test_bug1 (int nbargs, cpchar tabargs[])
 {
+   int nvtk = 0;
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
+   Hex::Vertex* centre = doc->addVertex (0,0,0);
 
-   Hex::Vector* vx = doc->addVector (1,0,0);
-   Hex::Vector* vy = doc->addVector (0,1,0);
-   Hex::Vector* vz = doc->addVector (0,0,1);
+   Hex::Vector* vecteur_px = doc->addVector (1,0,0);
+   Hex::Vector* vecteur_pz = doc->addVector (0,0,1);
 
-   Hex::Elements* grid = doc->makeCartesian (orig1, vx,vy,vz, 4,3,2);
-   Hex::Edge*     edge = grid->getEdgeI (0,0,0);
+   int nr = 5;
+   int na = 5;
+   int nl = 5;
+   Hex::Elements* grid = doc->makeCylindrical (centre, vecteur_px, 
+                        vecteur_pz, 1, 180, 1, nr, na, nl, true);
+   doc->saveVtk ("bug_bride", nvtk);
 
-   doc->saveVtk ("bug1.vtk");
-   Hex::Elements* cut  = doc->cut (edge, 1);
+                     // Elagage trou
+   for (int j=0; j<na ; j++)
+       for (int k=0; k<na ; k++)
+           doc->removeHexa (grid->getHexaIJK (1, j, k));
 
-   doc->saveVtk ("bug2.vtk");
-   grid->saveVtk ("bug3.vtk");
+   doc->saveVtk ("bug_bride", nvtk);
+                 // elagage des parties inferieures et superieures :
+   for (int j=0; j<na ; j++)
+       for (int i=1; i<nr ; i++)
+           for (int k=0; k<2 ; k++)
+               doc->removeHexa (grid->getHexaIJK (i, j, 4*k));
 
-   int nro=0;
-   cut->saveVtk ("cut.vtk", nro);
-   int nbre = cut->countHexa ();
-   for (int nc=0 ; nc<nbre ; nc++)
+   doc->saveVtk ("bug_bride", nvtk);
+
+                 // Escalier
+   for (int j=0; j<na ; j++)
        {
-       cut->getHexa(nc)->remove ();
-       cut->saveVtk ("cut.vtk", nro);
+       doc->removeHexa (grid->getHexaIJK (4, j, 2));
+       for (int i=3; i<=4 ; i++)
+           doc->removeHexa (grid->getHexaIJK (i, j, 3));
        }
 
+   doc->removeHexa (grid->getHexaIJK (4, 3, 1));
+   doc->saveVtk ("bug_bride", nvtk);
+
+   Hex::Vector* vecteur_a = doc->addVector (-1, 2, 0);
+   Hex::Quads   quads (2);
+   quads [0] = grid->getQuadIK (4, 4, 1);
+   quads [1] = grid->getQuadJK (5, 4, 1);
+
+         // JPL (le 28/07/2011) : la 2e partie du prisme est vraiment utile ?
+   Hex::Elements* prisme_a = doc->prismQuads (quads, vecteur_a, 3);
+   doc->saveVtk ("bug_bride", nvtk);
+
+   doc->removeHexa (prisme_a->getHexa (2));
+   doc->saveVtk ("bug_bride", nvtk);
+
+   Hex::Vector* vecteur_mz = doc->addVector (0, 0, -1);
+   Hex::Hexa*   cheminee   = prisme_a->getHexa (5);
+   Hex::Quad*   quad_b1    = cheminee->getQuad (2);
+   Hex::Quad*   quad_b2    = cheminee->getQuad (3);
+
+   Hex::Elements* prisme_b1 = doc->prismQuad (quad_b1, vecteur_mz, 1);
+   doc->saveVtk ("bug_bride", nvtk);
+                 // Au dessus
+   Hex::Elements* prisme_b2 = doc->prismQuad (quad_b2, vecteur_pz, 1);
+   doc->saveVtk ("bug_bride", nvtk);
+                 // Au dessus
+
+   Hex::Hexa* hexa_ca = prisme_a->getHexa(0);
+   Hex::Hexa* hexa_cb = prisme_a->getHexa(1);
+
+   Hex::Quad* quad_ca = hexa_ca->getQuad(5);
+   Hex::Quad* quad_cb = hexa_cb->getQuad(5);
+
+   Hex::Vertex* point_cb = quad_ca->getVertex(0);
+   Hex::Vertex* point_cc = quad_cb->getVertex(0);
+
+   Hex::Quad*   quad_c1  = grid->getQuadJK(4, 3, 1);
+// Hex::Quad*   quad_c2  = grid->getQuadIK(3, 3, 1);
+   Hex::Quad*   quad_c2  = grid->getQuadIK(4, 3, 1);
+
+   Hex::Vertex* point_c1 = grid->getVertexIJK(4, 4, 1);
+   Hex::Vertex* point_c2 = grid->getVertexIJK(4, 3, 1);
+   Hex::Vertex* point_c3 = grid->getVertexIJK(5, 3, 1);
+
+//  # JPL : cette ligne fait planter Salome (probleme connu du moteur Hexablock)
+   //         quad_ca->setScalar (1);
+   //         doc->saveVtk ("bug_bride", nvtk);
+   //         quad_c1->setScalar (2);
+
+   char c1[10];
+   Hex::Vertex* point_cx = quad_c1->getVertex(3);
+   HexDisplay (point_cx->getName(c1));
+   // point_cx->setScalar (2);
+   // doc->saveVtk ("bug_bride", nvtk);
+
+   Hex::Quad*  quad_c1x = grid->getQuadJK  (4, 3, 2);
+   Hex::Hexa*  hexa_c1x = grid->getHexaIJK (3, 2, 2);
+   HexDisplay (quad_c2->getName(c1));
+   quad_c2->setScalar (5);
+   doc->saveVtk ("bug_bride", nvtk);
+
+   // hexa_c1x->setScalar (5);
+   // doc->saveVtk ("bug_bride", nvtk);
+
+   // hexa_c1x->disconnectVertex (point_cx);
+   // doc->saveVtk ("bug_bride", nvtk);
+   // quad_c1x->setScalar (5);
+
+   // doc->mergeQuads(quad_c1, quad_ca,  point_c1, point_c1,  point_c2, point_cb);
+   doc->closeQuads(quad_c1, quad_ca);
+   doc->saveVtk ("bug_bride", nvtk);
+
+   doc->setLevel (9);
+   int ier = doc->mergeQuads(quad_c2, quad_cb,  
+                             point_c2, point_cb, point_c3, point_cc);
+   /// doc->closeQuads(quad_c2, quad_cb);
+   HexDisplay (ier);
+   doc->saveVtk ("bug_bride", nvtk);
 
    return HOK;
 }
+
+#if _pipo_
+
+# Fusionner la semelle à la grille
+# --------------------------------
+
+hexa_ca = prisme_a.getHexa(0)
+hexa_cb = prisme_a.getHexa(1)
+
+quad_ca = hexa_ca.getQuad(5)
+quad_cb = hexa_cb.getQuad(5)
+
+point_cb = quad_ca.getVertex(0)
+point_cc = quad_cb.getVertex(0)
+
+quad_c1 = grid.getQuadJK(4, 3, 1)
+quad_c2 = grid.getQuadIK(3, 3, 1)
+
+point_c1 = grid.getVertexIJK(4, 4, 1)
+point_c2 = grid.getVertexIJK(4, 3, 1)
+point_c3 = grid.getVertexIJK(5, 3, 1)
+
+# JPL : cette ligne fait planter Salome (probleme connu du moteur Hexablock)
+doc.mergeQuads(quad_ca, quad_c1,  point_c1, point_c1,  point_cb, point_c2)
+
+## # TEST : point_ca au lieu de point_c1 (confondus normalement)
+## point_ca = quad_ca.getVertex(1)
+## doc.mergeQuads(quad_ca, quad_c1, point_ca, point_c1, point_cb, point_c2)
+## # end TEST
+
+doc.mergeQuads(quad_cb, quad_c2, point_cb, point_c2, point_cc, point_c3)
+
+# temporaire : sauvegarde du modele de blocs :
+save_schema(doc)
+# fin temporaire
+
+
+# geometrie :
+# ===========
+
+bride_geom = geompy.ImportFile(BREP_PATH, "BREP")
+geompy.addToStudy(bride_geom, "bride_geom")
+all_edges_bride = geompy.SubShapeAllSorted(bride_geom, geompy.ShapeType["EDGE"])
+
+# => 92 edges au total dans la geometrie
+
+for i, edge in enumerate(all_edges_bride):
+    geompy.addToStudy(edge, "edge_" + str(i))
+
+#endif

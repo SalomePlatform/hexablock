@@ -292,12 +292,23 @@ int test_hexa1 (int nbargs, cpchar tabargs[])
 
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-   //  Hex::Elements*  grid = 
-   doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
-   doc ->dump ();
+   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
+   Hex::Vector* vx    = doc->addVector (1,0,0);
+   Hex::Vector* vz    = doc->addVector (0,0,1);
+
+   double dr = 1;
+   double dl = 1;
+   int    nr = 2;
+   int    nl = 3;
+
+   Hex::Elements *c1, *c2, *c3, *c4, *c5, *c6;
+
+   c1 = doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, 10, nl, false);
+
+   HexDisplay (doc->countVertex ());
+   HexDisplay (doc->countUsedVertex ());
+   doc ->saveVtk ("hexa1.vtk");
 
    return HOK;
 }
@@ -443,6 +454,7 @@ int test_relecture (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.loadDocument ("Essai");
 
+/*********************
    Hex::Vertex* v4 = doc->findVertex (80.0, 0.0,  0.0);
    Hex::Vertex* v5 = doc->findVertex (80.0, 0.0, 40.0);
    Hex::Edge*   e4 = doc->findEdge   (v4, v5);
@@ -452,11 +464,13 @@ int test_relecture (int nbargs, cpchar tabargs[])
    HexDump (e4);
 
    e4->setScalar (5);
+***********************/
+
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
 
-   doc ->reorderFaces ();
-   doc ->saveVtk ("restore2.vtk");
+   // doc ->reorderFaces ();
+   // doc ->dump ();
 
    // Hex::Elements* grid2 = doc->cut (e4, 2);
    return HOK;
@@ -844,6 +858,51 @@ int test_disconnect (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
+   Hex::Vertex*   orig2 = doc->addVertex (4,0,0);
+   Hex::Vector*   dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid2 = doc->makeCartesian (orig2, dir, size_x,size_y,size_z);
+
+   int nvtk = 0;
+   doc->setLevel (1);
+   Hex::Matrix  matrice;
+   Hex::Vector* ecart  = doc->addVector (0.5,0.5,0);
+   matrice.defTranslation (ecart);
+
+   Hex::Hexa* hexa2 = grid2->getHexaIJK (1,1,0);
+   Hex::Edge* edge  = grid2->getEdgeK   (1,2,0);
+
+   edge->setScalar   (5);
+
+   doc->saveVtk ("test_disco", nvtk);
+
+
+   Hex::Elements* disco_edges =  doc->disconnectEdge (hexa2, edge);
+   HexDisplay (disco_edges->countVertex());
+   HexDisplay (disco_edges->countEdge());
+   HexDisplay (disco_edges->countQuad());
+   HexDisplay (disco_edges->countHexa());
+
+   // hexa2->transform (&matrice);
+   for (int ns=0; ns<disco_edges->countVertex(); ns++)
+       {
+       Hex::Vertex* sommet = disco_edges->getVertex(ns);
+       sommet->setX (sommet->getX()+0.5);
+       sommet->setY (sommet->getY()+0.5);
+       }
+
+   doc->saveVtk ("test_disco", nvtk);
+   return HOK;
+}
+// ======================================================== test_disconnect0
+int test_disconnect0 (int nbargs, cpchar tabargs[])
+{
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 1;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
    Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
    Hex::Vertex*   orig2 = doc->addVertex (4,0,0);
    Hex::Vertex*   orig3 = doc->addVertex (8,0,0);
@@ -861,7 +920,7 @@ int test_disconnect (int nbargs, cpchar tabargs[])
 
    Hex::Hexa* hexa1 = grid1->getHexaIJK (1,1,0);
    Hex::Hexa* hexa2 = grid2->getHexaIJK (1,1,0);
-   Hex::Hexa* hexa3 = grid3->getHexaIJK   (1,1,0);
+   Hex::Hexa* hexa3 = grid3->getHexaIJK (1,1,0);
 
    Hex::Quad* quad  = grid1->getQuadJK  (1,1,0);
    Hex::Edge* edge  = grid2->getEdgeK   (1,2,0);
@@ -873,21 +932,18 @@ int test_disconnect (int nbargs, cpchar tabargs[])
 
    doc->saveVtk ("test_disco", nvtk);
    doc->disconnectQuad (hexa1, quad);
-
    hexa1 ->transform (&matrice);
    doc->saveVtk ("test_disco", nvtk);
 
    doc->disconnectEdge (hexa2, edge);
-
    hexa2->transform (&matrice);
    doc->saveVtk ("test_disco", nvtk);
 
    doc->disconnectVertex (hexa3, vertex);
-
    hexa3->transform (&matrice);
    doc->saveVtk ("test_disco", nvtk);
 
-   doc->dumpPropagation ();
+   // doc->dumpPropagation ();
    // doc->dump  ();
 
    return HOK;
@@ -1070,6 +1126,18 @@ int test_transfo ()
 
    grid9->getHexa(0)->removeConnected ();
    doc ->saveVtk (fic_vtk, nvtk);
+
+   return HOK;
+}
+// ======================================================== test_copy_document
+int test_copy_document (int nbargs, cpchar tabargs[])
+{
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.loadDocument ("Essai");
+   doc ->saveVtk ("restore1.vtk");
+
+   Hex::Document* clone = doc->copyDocument();
+   clone->saveVtk ("restore2.vtk");
 
    return HOK;
 }

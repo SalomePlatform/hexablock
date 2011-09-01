@@ -1,3 +1,6 @@
+
+// class : Les hexaedres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,27 +20,24 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// class : Les hexaedres
 /* -----------------------------------------------------
 
                 // ---- Numerotation des faces (%x) 
-
                    
-              +----bf-----+
+       6=bed  +----bd-----+ bdf=7
              /|          /|
-           bc |   B    bd |
+           be |   B    bf |
            /  |        /  |
-          +----be-----+   |   
-          |  cf     F |   df
-          | C |       | D |             z
-         ce   | E     de  |             ^
-          |   +----af-|---+             |   y
+    4=bce +----bc-----+...|...bcf=5
+          |  de     D |   df
+          | E |       | F |             z
+         ce   | C     cf  |             ^
+  2=ade...|...+----ad-|---+ adf=3       |   y
           |  /        |  /              |  /
-          | ac    A   | ad              | /
+          | ae    A   | af              | /
           |/          |/                |/
-          +----ae-----+                 +----->  x
-                
-
+    0=ace +----ac-----+ acf=1           +----->  x
+  
  * ----------------------------------------------------- */
 #ifndef __HEX_HEXA_H_
 #define __HEX_HEXA_H_
@@ -101,6 +101,9 @@ public:
     void markElements (int marque);
     void getCenter    (double centre[]);
 
+    virtual void   duplicate ();
+    Hexa* getClone ()               {  return h_clone ; }
+
 private:
     friend class Cloner;
     void  OrdonnerAretes ();    // obsolete ?
@@ -125,6 +128,7 @@ private:
     Quad*   h_quad   [HQ_MAXI];
     Edge*   h_edge   [HE_MAXI];
     Vertex* h_vertex [HV_MAXI];
+    Hexa*   h_clone;
 };
 // ------------------------------------------------------------  inlining
 // ============================================================  getQuad
@@ -205,6 +209,16 @@ inline void Hexa::markElements  (int marque)
    for (int nc=0 ; nc< HE_MAXI ; nc++) h_edge  [nc] -> setMark (marque);
    for (int nc=0 ; nc< HV_MAXI ; nc++) h_vertex[nc] -> setMark (marque);
 }
-
+// =============================================================== duplicate
+inline void Hexa::duplicate  ()
+{
+   h_clone = new Hexa (GetClone (h_quad [Q_A]), 
+                       GetClone (h_quad [Q_B]), 
+                       GetClone (h_quad [Q_C]), 
+                       GetClone (h_quad [Q_D]), 
+                       GetClone (h_quad [Q_E]), 
+                       GetClone (h_quad [Q_F]));
+}
 END_NAMESPACE_HEXA
 #endif
+

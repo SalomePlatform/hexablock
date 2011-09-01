@@ -1,3 +1,6 @@
+
+// C++ : Gestion des Hexaedres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des Hexaedres
-
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
 
@@ -41,14 +41,16 @@ Hexa::Hexa (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
     : EltBase (va->dad(), EL_HEXA)
 {
    h_vertex [V_ACE] = va;
-   h_vertex [V_ACF] = vb;
-   h_vertex [V_ADF] = vc;
-   h_vertex [V_ADE] = vd;
+   h_vertex [V_ACF] = vb;   // = vc ; Modif Abu 30/08/2011
+   h_vertex [V_ADE] = vc;   // = vb ; Modif Abu 30/08/2011
+   h_vertex [V_ADF] = vd;
 
-   h_vertex [V_BCE] = ve;
-   h_vertex [V_BCF] = vf;
-   h_vertex [V_BDF] = vg;
-   h_vertex [V_BDE] = vh;
+   h_vertex [V_BCE] = ve;  
+   h_vertex [V_BCF] = vf;   // = vg ; Modif Abu 30/08/2011
+   h_vertex [V_BDE] = vg;   // = vf ; Modif Abu 30/08/2011
+   h_vertex [V_BDF] = vh;
+
+   h_clone          = NULL;
 
    controlerSommets ();
 
@@ -81,6 +83,7 @@ Hexa::Hexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf)
    h_quad [Q_D] = qd;
    h_quad [Q_E] = qe;
    h_quad [Q_F] = qf;
+   h_clone      = NULL;
 
    for (int nb=0 ; nb<HE_MAXI ; nb++) h_edge   [nb] = NULL;
    for (int nb=0 ; nb<HV_MAXI ; nb++) h_vertex [nb] = NULL;

@@ -1,3 +1,6 @@
+
+// C++ : Gestion des Quadrangles
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des Quadrangles
-
 #include "HexQuad.hxx"
 
 #include "HexDocument.hxx"
@@ -38,6 +38,7 @@ Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
    q_vertex [E_B] = vb;
    q_vertex [E_C] = vc;
    q_vertex [E_D] = vd;
+   q_clone        = NULL;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
@@ -55,6 +56,7 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
    q_edge [E_B] = eb;
    q_edge [E_C] = ec;
    q_edge [E_D] = ed;
+   q_clone      = NULL;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {

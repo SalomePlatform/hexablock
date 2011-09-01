@@ -1,3 +1,6 @@
+
+// class : Document
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,8 +20,6 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// class : Document
-
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
 
@@ -32,7 +33,7 @@ class Document
 public :
                                    // Fonctions globales
    const char* getFile ()              { return doc_name.c_str() ; }
-   bool        isSaved ()              { return NOT doc_modified ; } 
+   bool        isSaved ()              { return doc_saved ; } 
    int setFile (const char* filename)  { doc_name = filename ; return HOK ; }
    int saveFile ();
 
@@ -50,7 +51,6 @@ public :
    int countVertex ()   { return countElement (EL_VERTEX); }
 
                                    // Creation d'elements
-
    Vertex* addVertex (double x=0.0, double y=0.0, double z=0.0);
    Edge*   addEdge   (Vertex* va, Vertex* vb);
    Edge*   addEdge   (Vertex* va, Vector* vec);
@@ -138,6 +138,7 @@ public :
    // ---------------------------------------------------
 
    Law* addLaw    (const char* name, int nbnodes);
+   Law* addLaw    (Law* law); // lo-add-lololo
    int  countLaw  ()                            { return nbr_laws ; }
    Law* getLaw    (int nro);
    Law* findLaw   (const char* name);
@@ -163,11 +164,22 @@ public :
    int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
                              Shape*  gstart, double pstart, Shapes& gline);
 
-   int  associateCascade (Edges& mline, int msens[], Shape* gstart, 
-		          Shapes& gline, double pstart, double pend, bool clos);
-
    void   setShape (Shape* forme)           { doc_shape = forme ; }
    Shape* getShape ()                       { return doc_shape  ; }
+
+   Document* copyDocument ();
+
+   // ---------------------------------------------------
+
+   int countUsedHexa   ();
+   int countUsedQuad   ();
+   int countUsedEdge   ();
+   int countUsedVertex ();
+
+   Hexa*   getUsedHexa   (int nro);
+   Quad*   getUsedQuad   (int nro);
+   Edge*   getUsedEdge   (int nro);
+   Vertex* getUsedVertex (int nro);
 
 public:
     Document (cpchar filename);
@@ -179,7 +191,6 @@ public:
 
     EltBase* getFirstEltBase (EnumElt type) { return doc_first_elt [type]; }
     EltBase* getLastEltBase  (EnumElt type) { return doc_last_elt  [type]; }
-    void     setModified ()                 { doc_modified = true; }
     void     setDeprecated (int level=1);
 
     void dump ();
@@ -214,13 +225,15 @@ private :
    void  renumeroter ();
 
    Elements* clonerElements (Elements* table, Matrix* matrice);
+   int associateCascade (Edges& mline, int msens[], Shape* gstart, 
+                         Shapes& gline, double pstart, double pend, bool clos);
    int associateLine (Vertex* mfirst, Edge*  mstart, Edges& mline, 
                    Shape*  gstart, double pstart, Shapes& gline, double pend);
-
 private :
    friend class EltBase;
 
    bool doc_modified; 
+   bool doc_saved; 
    bool maj_connection;
    bool purge_elements;
    int  doc_db;
@@ -245,7 +258,20 @@ private :
    std::vector <Cylinder*>    doc_cylinder;
    std::vector <Pipe*>        doc_pipe;
    XmlWriter*                 doc_xml; 
+
    Shape*                     doc_shape;
+
+   // ---------------------------------------------------
+
+   std::vector <Hexa*>   doc_used_hexas;
+   std::vector <Quad*>   doc_used_quads;
+   std::vector <Edge*>   doc_used_edges;
+   std::vector <Vertex*> doc_used_vertex;
+
+   int nbr_used_hexas;
+   int nbr_used_quads;
+   int nbr_used_edges;
+   int nbr_used_vertex;
 };
 // ========================================================= saveVtk (avec nro)
 inline int Document::saveVtk  (cpchar radical, int &nro)
@@ -273,7 +299,6 @@ inline void Document::setDeprecated (int level)
                          // Par defaut : 
           default: doc_modified    = true;
           }
-
 }
 
 END_NAMESPACE_HEXA

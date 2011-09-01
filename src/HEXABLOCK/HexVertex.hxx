@@ -1,3 +1,6 @@
+
+// Class : Gestion des sommets 
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,8 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-// Class : Gestion des sommets 
-//
 #ifndef __VERTEX_H_
 #define __VERTEX_H_
 
@@ -35,9 +36,12 @@ public :
    void setX (double v)   { v_x = v ; }
    void setY (double v)   { v_y = v ; }
    void setZ (double v)   { v_z = v ; }
+ 
+   void assoCoord (double x, double y, double z);
 
 public :
    Vertex (Document* prev, double x=0.0, double y=0.0, double z=0.0); 
+   Vertex (Document* cible, Vertex* other);
    Vertex (Vertex* other);
    virtual ~Vertex () {}
    virtual void dump () ;
@@ -55,6 +59,9 @@ public :
    void    translate (Vector* vecteur, double fact=1.0);
    void    replace   (Vertex* old);
 
+   Vertex* getClone ()              {  return v_clone ; }
+   void    duplicate (Document* doc);
+
    static Vertex* createMiddle (Vertex* left, Vertex* right);
 
 private :
@@ -62,16 +69,31 @@ private :
     double v_y;
     double v_z;
 
-    double v_scalar;
+    double  v_scalar;
+    Vertex* v_clone;
+    double  gc_x, gc_y, gc_z;
+    bool    gc_ass;
 };
 // ========================================================= Constructeur bis 
 inline Vertex::Vertex (Vertex* other)
       : EltBase (other->dad(), EL_VERTEX)
 {
-   v_x = other->v_x;
-   v_y = other->v_y;
-   v_z = other->v_z;
-   v_scalar = 0;
+   if (other!= NULL)
+      {
+      v_x = other->v_x;
+      v_y = other->v_y;
+      v_z = other->v_z;
+      gc_ass = other->gc_ass;
+      gc_x   = other->gc_x;
+      gc_y   = other->gc_y;
+      gc_z   = other->gc_z;
+      }
+   else 
+      {
+      v_x  = v_y  = v_z  = 0;
+      gc_x = gc_y = gc_z = 0;
+      gc_ass = false;
+      }
 }
 // ========================================================= dump 
 inline void Vertex::dump ()
@@ -93,6 +115,14 @@ inline void Vertex::setCoord (double x, double y, double z)
    v_y = y;
    v_z = z;
 }
+// ========================================================= assoCoord 
+inline void Vertex::assoCoord (double x, double y, double z)
+{
+   gc_ass = true;
+   gc_x = x;
+   gc_y = y;
+   gc_z = z;
+}
 // ========================================================= isin 
 inline bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax, 
                                              double zmin, double zmax)
@@ -108,6 +138,12 @@ inline void Vertex::getPoint (double point[])
    point [dir_x] = v_x;
    point [dir_y] = v_y;
    point [dir_z] = v_z;
+}
+// ========================================================= duplicate 
+inline void Vertex::duplicate (Document* cible)
+{
+   v_clone = new Vertex (cible, v_x, v_y, v_z);
+   v_clone->v_scalar = v_scalar;
 }
 END_NAMESPACE_HEXA
 #endif

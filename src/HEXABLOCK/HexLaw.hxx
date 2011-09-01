@@ -1,3 +1,6 @@
+
+// class : Au nom de la loi
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,11 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// class : Au nom de la loi
-
-#ifndef __LAW_H
-#define __LAW_H
+//
+#ifndef __LAW_H_
+#define __LAW_H_
 
 #include "HexXmlWriter.hxx"
 
@@ -41,6 +42,7 @@ public:
 
 public:
     Law (cpchar name, int nbnodes);
+    Law (Law* other);
     void saveXml (XmlWriter* xml);
 
 private:
@@ -56,6 +58,14 @@ inline Law::Law (cpchar name, int nbnodes)
    law_name  = name;
    law_type  = Uniform;
    law_coefficient = 0.0;
+}
+// ================================================== Constructeur 2
+inline Law::Law (Law* other)
+{
+   nbr_nodes       = other->nbr_nodes;
+   law_name        = other->law_name ;
+   law_type        = other->law_type ;
+   law_coefficient = other->law_coefficient;
 }
 // ================================================== setNodes
 inline int Law::setNodes (int  nbre)

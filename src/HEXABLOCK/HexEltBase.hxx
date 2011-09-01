@@ -1,3 +1,6 @@
+
+// Class : Element de base des Vertex/Edge/Quad, etc... 
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,8 +20,6 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// Class : EltBase de base des Vertex/Edge/Quad, etc... 
-
 #ifndef __ELT_BASE_H
 #define __ELT_BASE_H
 
@@ -30,6 +31,7 @@
 #define PrintName(x) if (x) x->printName(); else printf ("NULL, ")
 #define PutName(x) { printf(#x " = "); if (x) x->printName("\n"); else printf("NULL\n"); }
 
+#define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
 BEGIN_NAMESPACE_HEXA
 
 class EltBase 
@@ -50,6 +52,7 @@ public :
 
    virtual void    setAssociation (Shape* forme)  { el_assoc = forme ; }
    virtual void    removeAssociation ()           { el_assoc = NULL  ; }
+   virtual void    duplicate ()                   {}
    virtual Shape*  getAssociation ()              { return el_assoc  ; }
 
    void copyAssociation    (EltBase* orig);

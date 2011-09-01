@@ -28,21 +28,22 @@
 
                 // ---- Numerotation des faces (%x) 
                    
-              +----bf-----+
+       6=bed  +----bd-----+ bdf=7
              /|          /|
-           bc |   B    bd |
+           be |   B    bf |
            /  |        /  |
-          +----be-----+   |   
-          |  cf     F |   df
-          | C |       | D |             z
-         ce   | E     de  |             ^
-          |   +----af-|---+             |   y
+    4=bce +----bc-----+...|...bcf=5
+          |  de     D |   df
+          | E |       | F |             z
+         ce   | C     cf  |             ^
+  2=ade...|...+----ad-|---+ adf=3       |   y
           |  /        |  /              |  /
-          | ac    A   | ad              | /
+          | ae    A   | af              | /
           |/          |/                |/
-          +----ae-----+                 +----->  x
+    0=ace +----ac-----+ acf=1           +----->  x
                 
  * ----------------------------------------------------- */
+
 
 BEGIN_NAMESPACE_HEXA
 

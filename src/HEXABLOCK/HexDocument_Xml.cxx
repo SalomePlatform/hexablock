@@ -1,3 +1,6 @@
+
+// C++ : Classe Document : methodes internes
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Classe Document : methodes internes
-
 #include "HexDocument.hxx"
 
 #include "HexEltBase.hxx"
@@ -94,6 +94,8 @@ int Document::setXml (cpchar flux)
    xml.parseFlow (flux);
 
    int    ier = parseXml (xml);
+   if (ier==HOK) 
+      doc_saved = true;
    return ier;
 }
 // ======================================================== parseXml
@@ -165,20 +167,13 @@ int Document::parseXml (XmlTree& xml)
 
    return HOK;
 }
-// ======================================================== renumeroter
-void Document::renumeroter ()
-{
-   doc_modified = true;
-                                       // -- 1) Raz numerotation precedente
-   markAll (NO_COUNTED);
-}
 // ======================================================== saveFile
 int Document::saveFile ()
 {
    int    ier = genXml (doc_name.c_str ());
    return ier;
 }
-// ======================================================== saveFile
+// ======================================================== getXml
 cpchar Document::getXml ()
 {
    int ier = genXml (NULL);
@@ -191,11 +186,9 @@ cpchar Document::getXml ()
 int Document::genXml (cpchar filename)
 {
                                        // -- 1) Raz numerotation precedente
-   renumeroter ();
+   markAll (NO_COUNTED);
    if (maj_propagation)
        majPropagation ();
-
-   doc_modified = false;
 
    if (doc_xml==NULL)
        doc_xml = new XmlWriter ();
@@ -232,6 +225,7 @@ int Document::genXml (cpchar filename)
 
    doc_xml->closeMark ();
    doc_xml->closeXml  ();
+   doc_saved = true;
    return  HOK;
 }
 // ======================================================== markAll
@@ -438,5 +432,183 @@ void Document::hputError (cpchar mess, EltBase* e1, EltBase* e2)
 
    putError (mess, name1, name2);
 }
+// ======================================================== copyDocument
+Document* Document::copyDocument ()
+{
+   string nom = "CopyOf_";
+   nom += doc_name;
+ 
+   Document* clone = new Document (nom.c_str());
 
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt !=NULL && elt->isHere())
+          {
+          Vertex* node = static_cast <Vertex*> (elt);
+          node->duplicate (clone);
+          }
+       }
+
+   for (int type=EL_EDGE ; type <= EL_HEXA ; type++)
+       {
+       for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           if (elt !=NULL && elt->isHere())
+              elt->duplicate ();
+           }
+       }
+
+   for (int nro=0 ; nro<nbr_laws ; nro++)
+       {
+       Law* law = new Law (doc_laws [nro]);
+       clone->doc_laws.push_back (law);
+       }
+
+   return clone;
+}
+// ----------------------------------------------------------------------------
+// ======================================================== countUsedHexa
+int Document::countUsedHexa ()
+{
+   if (doc_modified)
+       renumeroter ();
+
+   return nbr_used_hexas;
+}
+// ======================================================== countUsedQuad
+int Document::countUsedQuad ()
+{
+   if (doc_modified)
+       renumeroter ();
+
+   return nbr_used_quads;
+}
+// ======================================================== countUsedEdge
+int Document::countUsedEdge ()
+{
+   if (doc_modified)
+       renumeroter ();
+
+   return nbr_used_edges;
+}
+// ======================================================== countUsedVertex
+int Document::countUsedVertex ()
+{
+   if (doc_modified)
+       renumeroter ();
+
+   return nbr_used_vertex;
+}
+
+// ======================================================== getUsedHexa
+Hexa* Document::getUsedHexa (int nro)
+{
+   if (doc_modified)
+       renumeroter ();
+
+   if (nro<0 || nro >= nbr_used_hexas)
+      return NULL;
+
+   return doc_used_hexas [nro];
+}
+// ======================================================== getUsedQuad
+Quad* Document::getUsedQuad (int nro)
+{
+   if (doc_modified)
+       renumeroter ();
+
+   if (nro<0 || nro >= nbr_used_quads)
+      return NULL;
+
+   return doc_used_quads [nro];
+}
+// ======================================================== getUsedEdge
+Edge* Document::getUsedEdge (int nro)
+{
+   if (doc_modified)
+       renumeroter ();
+
+   if (nro<0 || nro >= nbr_used_edges)
+      return NULL;
+
+   return doc_used_edges [nro];
+}
+// ======================================================== getUsedVertex
+Vertex* Document::getUsedVertex (int nro)
+{
+   if (doc_modified)
+       renumeroter ();
+
+   if (nro<0 || nro >= nbr_used_vertex)
+      return NULL;
+
+   return doc_used_vertex [nro];
+}
+// ======================================================== renumeroter
+void Document::renumeroter ()
+{
+   doc_modified = false;
+                                       // -- 1) Raz numerotation precedente
+   markAll (NO_COUNTED);
+
+   doc_used_hexas .clear ();
+   doc_used_quads .clear ();
+   doc_used_edges .clear ();
+   doc_used_vertex.clear ();
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt!=NULL && elt->isHere())
+          {
+          Hexa* cell = static_cast <Hexa*> (elt);
+          doc_used_hexas.push_back (cell);
+          for (int nb=0 ; nb<HQ_MAXI ; nb++)
+              cell->getQuad (nb)->setMark (IS_USED);
+
+          for (int nb=0 ; nb<HE_MAXI ; nb++)
+              cell->getEdge (nb)->setMark (IS_USED);
+
+          for (int nb=0 ; nb<HV_MAXI ; nb++)
+              cell->getVertex (nb)->setMark (IS_USED);
+          }
+       }
+
+   for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
+          {
+          Quad* cell = static_cast <Quad*> (elt);
+          doc_used_quads.push_back (cell);
+          }
+       }
+
+   for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
+          {
+          Edge* cell = static_cast <Edge*> (elt);
+          doc_used_edges.push_back (cell);
+          }
+       }
+
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
+          {
+          Vertex* cell = static_cast <Vertex*> (elt);
+          doc_used_vertex.push_back (cell);
+          }
+       }
+
+   nbr_used_hexas  = doc_used_hexas .size ();
+   nbr_used_quads  = doc_used_quads .size ();
+   nbr_used_edges  = doc_used_edges .size ();
+   nbr_used_vertex = doc_used_vertex .size ();
+}
 END_NAMESPACE_HEXA

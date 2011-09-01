@@ -92,6 +92,9 @@ public:
     const Shapes& getAssociations () { return tab_assoc ; }
     void  inverser ();
 
+    virtual void duplicate ();
+    Quad* getClone ()               {  return q_clone ; }
+
 private:
     friend class Cloner;
     Quad* getBrother (StrOrient* orient);
@@ -99,6 +102,7 @@ private:
 private:
     Edge*   q_edge   [QUAD4];
     Vertex* q_vertex [QUAD4];
+    Quad*   q_clone;
 
     Shapes tab_assoc;
 };
@@ -219,6 +223,15 @@ inline void Quad::inverser ()
    q_edge [1] = q_edge [3]; 
    q_edge [3] = ex;
 }
-
+// =============================================================== duplicate
+inline void Quad::duplicate  ()
+{
+   q_clone = new Quad (GetClone (q_edge [E_A]), 
+                       GetClone (q_edge [E_B]), 
+                       GetClone (q_edge [E_C]), 
+                       GetClone (q_edge [E_D]));
+   q_clone->tab_assoc = tab_assoc;
+}
 END_NAMESPACE_HEXA
 #endif
+

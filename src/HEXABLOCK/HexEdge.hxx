@@ -68,9 +68,13 @@ public:
     const Shapes & getAssociations ()       { return tab_assoc ;  }
     void  clearAssociations ()              { tab_assoc.clear() ; }
 
+    virtual void duplicate ();
+    Edge*   getClone ()                      {  return e_clone ; }
+
 private:
     friend class Cloner;
     Vertex* e_vertex [V_TWO];
+    Edge*   e_clone;
     int     e_propag;
     bool    e_way;     // Sens de propagation
     Law*    e_law;     // Le soleil brille, brille, brille
@@ -141,6 +145,14 @@ inline void Edge::setScalar  (double val)
 {
    e_vertex [V_AMONT]->setScalar (val);
    e_vertex [V_AVAL ]->setScalar (val);
+}
+// =============================================================== duplicate
+inline void Edge::duplicate  ()
+{
+   e_clone = new Edge (GetClone (e_vertex [V_AMONT]), 
+                       GetClone (e_vertex [V_AVAL ]));
+
+   e_clone->tab_assoc = tab_assoc;
 }
 END_NAMESPACE_HEXA
 #endif
