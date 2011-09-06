@@ -60,14 +60,14 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
-       int ns = (nro+1) MODULO QUAD4; 
+       int prec = (nro+1) MODULO QUAD4; 
        Vertex* node = NULL;
-       int nc  = q_edge[nro] -> inter (q_edge[ns]);
+       int nc  = q_edge[nro] -> inter (q_edge[prec]);
        if (nc>=0)
           node = q_edge[nro]->getVertex (nc);
        else  
           el_status = 888;
-       q_vertex [ns] = node;
+       q_vertex [prec] = node;
        }
 
    if (el_status != HOK)
@@ -311,6 +311,14 @@ int Quad::coupler (Quad* other, StrOrient* orient, Elements* table)
            }
        }
    return HOK;
+}
+// ======================================================== getOpposVertex
+Vertex* Quad::getOpposVertex (Vertex* start)
+{
+   int  na = indexVertex (start);
+   if (na==NOTHING)
+      return NULL;
+   return  q_vertex [(na+2) MODULO QUAD4];
 }
 // ======================================================== getOpposEdge
 Edge* Quad::getOpposEdge (Edge* start, int& sens)

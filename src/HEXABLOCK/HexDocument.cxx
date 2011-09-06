@@ -307,11 +307,6 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
              printf ("  +++ Sommets communs dans mergeQuads");
              printf (" (%s,",  dest->getName (nom));
              printf (" %s)\n", orig->getName (nom));
-             v1 = v2 = uv;
-             }
-          else
-             {
-             v3 = v4 = uv;
              }
           printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig, 
                                                         uv->getName (nom));
@@ -327,12 +322,17 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
    else if (nbcomm != 0)
       {
       printf ("  *** _____________________ mergeQuads refuse: \n");
+      printf (" il y a %d sommet(s) sont commun(s)\n", nbcomm);
       return HERR;
       }
 
    if (   v1 ==NULL || v1 ->isDeleted() || v2 ==NULL || v2 ->isDeleted() 
        || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted()) 
+      {
+      printf ("  *** _____________________ mergeQuads refuse: \n");
+      printf (" un sommet est incorrect\n");
       return HERR;
+      }
 
 
    if (debug())

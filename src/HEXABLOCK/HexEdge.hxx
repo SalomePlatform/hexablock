@@ -50,10 +50,12 @@ public:
     virtual void saveXml (XmlWriter* xml);
     virtual void majReferences();
 
-    int  inter (Edge* other, int& na);
+    int  inter (Edge* other, int& nother);
     int  inter (Edge* other);
     int  index (Vertex* node);
-    Vertex* commonVertex (Edge* other);
+    Vertex* commonVertex  (Edge* other);
+    Vertex* opposedVertex (Vertex* sommet);
+    double* commonPoint   (Edge* other, double point[]);
 
     Vertex* getAmont ()       { return e_vertex [NOT e_way] ; } 
     Vertex* getAval  ()       { return e_vertex [e_way] ; } 
@@ -69,7 +71,8 @@ public:
     void  clearAssociations ()              { tab_assoc.clear() ; }
 
     virtual void duplicate ();
-    Edge*   getClone ()                      {  return e_clone ; }
+    Edge*   getClone ()                     {  return e_clone ;   }
+    double* getVector (double vecteur[]);
 
 private:
     friend class Cloner;
@@ -106,12 +109,30 @@ inline int Edge::index (Vertex* node)
          : node == e_vertex[V_AMONT] ? V_AMONT
          : node == e_vertex[V_AVAL ] ? V_AVAL : NOTHING; 
 }
+// ============================================================= opposedVertex
+inline Vertex* Edge::opposedVertex (Vertex* sommet)
+{
+   int nro = index (sommet);
+   return nro<0 ? NULL : e_vertex[1-nro];
+}
 // ============================================================= commonVertex
 inline Vertex* Edge::commonVertex (Edge* other)
 {
-   int n1;
-   int nro = inter (other, n1);
+   int nro = inter (other);
    return nro<0 ? NULL : e_vertex[nro];
+}
+// ============================================================= commonPoint
+inline double* Edge::commonPoint (Edge* other, double point[])
+{
+   Vertex* commun = commonVertex (other);
+   if (commun==NULL)
+      {
+      point[dir_x] = point[dir_y] = point[dir_z] =  0;
+      return NULL;
+      }
+
+   commun->getPoint (point);
+   return point;
 }
 // =============================================================== inter
 inline int Edge::inter (Edge* other)
@@ -120,18 +141,18 @@ inline int Edge::inter (Edge* other)
    return inter (other, nro);
 }
 // =============================================================== inter
-inline int Edge::inter (Edge* other, int& nro)
+inline int Edge::inter (Edge* other, int& nother)
 {
    for (int ni=0 ; ni<V_TWO ; ni++) 
         for (int nj=0 ; nj<V_TWO ; nj++) 
             if (e_vertex[ni] == other->e_vertex[nj])
                {
-               nro =  nj;
+               nother =  nj;
                return ni;
                }
  
-   nro =  NOTHING;
-   return NOTHING;
+   nother = NOTHING;
+   return   NOTHING;
 }
 // =============================================================== definedBy
 inline bool Edge::definedBy  (Vertex* v1, Vertex* v2)
@@ -153,6 +174,22 @@ inline void Edge::duplicate  ()
                        GetClone (e_vertex [V_AVAL ]));
 
    e_clone->tab_assoc = tab_assoc;
+}
+// =============================================================== getVector
+inline double* Edge::getVector (double vecteur[])
+{
+
+   if (e_vertex[V_AMONT]==NULL ||  e_vertex[V_AVAL]==NULL)
+      {
+      vecteur [dir_x] = vecteur [dir_y] = vecteur [dir_z] = 0;
+      return NULL;
+      }
+
+   vecteur[dir_x] = e_vertex[V_AVAL]->getX() - e_vertex[V_AMONT]->getX();
+   vecteur[dir_y] = e_vertex[V_AVAL]->getY() - e_vertex[V_AMONT]->getY();
+   vecteur[dir_z] = e_vertex[V_AVAL]->getZ() - e_vertex[V_AMONT]->getZ();
+
+   return vecteur;
 }
 END_NAMESPACE_HEXA
 #endif

@@ -167,9 +167,9 @@ public :
    void   setShape (Shape* forme)           { doc_shape = forme ; }
    Shape* getShape ()                       { return doc_shape  ; }
 
-   Document* copyDocument ();
+   // --------------------------------------------------- HexaBlock v3
 
-   // ---------------------------------------------------
+   Document* copyDocument ();
 
    int countUsedHexa   ();
    int countUsedQuad   ();
@@ -180,6 +180,11 @@ public :
    Quad*   getUsedQuad   (int nro);
    Edge*   getUsedEdge   (int nro);
    Vertex* getUsedVertex (int nro);
+
+   Hexa* addHexa2Quads (Quad* q1, Quad* q2);
+   Hexa* addHexa3Quads (Quad* q1, Quad* q2, Quad* q3);
+   Hexa* addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4);
+   Hexa* addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5);
 
 public:
     Document (cpchar filename);
@@ -229,6 +234,15 @@ private :
                          Shapes& gline, double pstart, double pend, bool clos);
    int associateLine (Vertex* mfirst, Edge*  mstart, Edges& mline, 
                    Shape*  gstart, double pstart, Shapes& gline, double pend);
+
+   // --------------------------------------------------- HexaBlock v3
+   Hexa* addHexaQuadsAB   (AnaQuads& strquads);
+   Hexa* addHexaQuadsAC   (AnaQuads& strquads);
+   Hexa* addHexaQuadsACE  (AnaQuads& strquads);
+   Hexa* addHexaQuadsACD  (AnaQuads& strquads);
+   Hexa* addHexaQuadsABCD (AnaQuads& strquads);
+   Hexa* addHexaQuadsACDE (AnaQuads& strquads);
+
 private :
    friend class EltBase;
 
@@ -259,9 +273,9 @@ private :
    std::vector <Pipe*>        doc_pipe;
    XmlWriter*                 doc_xml; 
 
-   Shape*                     doc_shape;
+   // --------------------------------------------------- HexaBlock v3
 
-   // ---------------------------------------------------
+   Shape*                     doc_shape;
 
    std::vector <Hexa*>   doc_used_hexas;
    std::vector <Quad*>   doc_used_quads;

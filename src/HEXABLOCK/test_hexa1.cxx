@@ -1,3 +1,6 @@
+
+// C++ : Tests unitaires
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Test unitaire
-
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
@@ -33,6 +33,7 @@
 #include "HexShape.hxx"
 #include "HexLaw.hxx"
 #include "HexMatrix.hxx"
+#include "HexCramer.hxx"
 
 // ======================================================== print_propagations
 void print_propagations (Hex::Document* doc)
@@ -283,13 +284,9 @@ int test_prism ()
 
    return HOK;
 }
-// ======================================================== test_hexa1
-int test_hexa1 (int nbargs, cpchar tabargs[])
+// ======================================================== test_count
+int test_count (int nbargs, cpchar tabargs[])
 {
-   const int size_x = 1;
-   const int size_y = 1;
-   const int size_z = 1;
-
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
@@ -302,7 +299,7 @@ int test_hexa1 (int nbargs, cpchar tabargs[])
    int    nr = 2;
    int    nl = 3;
 
-   Hex::Elements *c1, *c2, *c3, *c4, *c5, *c6;
+   Hex::Elements* c1;
 
    c1 = doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, 10, nl, false);
 
@@ -1140,4 +1137,10 @@ int test_copy_document (int nbargs, cpchar tabargs[])
    clone->saveVtk ("restore2.vtk");
 
    return HOK;
+}
+int test_quads (int nbargs, cpchar tabargs[]);
+// ======================================================== test_hexa1
+int test_hexa1 (int nbargs, cpchar tabargs[])
+{
+   return test_quads(nbargs, tabargs);
 }

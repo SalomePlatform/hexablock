@@ -55,13 +55,14 @@ typedef FILE*       pfile;
 #define EOS 0
 #define CHVIDE ""
                       // Calculs reels en 3D
-typedef double Real;
 #define ZEROR 0.0
 #define UNR   1.0
 #define DEMI  0.5
 #define DIM2  2
 
 // enum EnumCoord { dir_x, dir_y, dir_z, DIM3 };
+// typedef double Real;
+// typedef double Real3 [DIM3];
 
 #ifndef PI
 #define PI    3.1415926535898
@@ -174,9 +175,14 @@ class   Propagation;
 class   Law;
 class   Group;
 
+class   AnaQuads;
+
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;
+
+typedef double Real;
+typedef double Real3 [DIM3];
 
 END_NAMESPACE_HEXA
 

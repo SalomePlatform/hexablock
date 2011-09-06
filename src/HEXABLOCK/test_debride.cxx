@@ -79,7 +79,7 @@ void merge_quads (Hex::Document* doc, Hex::Elements* quart, Hex::Elements* demi,
    sauver_schema (doc);
 }
 // ======================================================== test_debride
-int test_debride ()
+int test_debride (int nbargs, cpchar tabargs [])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();

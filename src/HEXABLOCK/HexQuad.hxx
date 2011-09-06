@@ -76,7 +76,8 @@ public:
     int   accoupler (Quad* other, StrOrient* orient);
     int   coupler (Quad* other, StrOrient* orient, Elements* table);
 
-    Edge* getOpposEdge (Edge* arete, int &sens);
+    Edge*   getOpposEdge   (Edge* arete, int &sens);
+    Vertex* getOpposVertex (Vertex* sommet);
 
     virtual void majReferences();            // M.A.J relation "utilise par"
     virtual void dump ();
@@ -143,17 +144,17 @@ inline Edge* Quad::commonEdge (Quad* other)
 }
 
 // ======================================================== Inter
-inline int Quad::inter (Quad* other, int& nro)
+inline int Quad::inter (Quad* other, int& nother)
 {
    for (int ne1=0 ; ne1<QUAD4 ; ne1++) 
        for (int ne2=0 ; ne2<QUAD4 ; ne2++) 
            if (q_edge [ne1] == other->q_edge [ne2])
               {
-              nro  = ne2;
-              return ne1;
+              nother = ne2;
+              return  ne1;
               }
 
-   nro  = NOTHING;
+   nother = NOTHING;
    return NOTHING;
 }
 // ============================================================ definedBy (v)
