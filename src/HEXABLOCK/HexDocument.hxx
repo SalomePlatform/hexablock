@@ -92,7 +92,9 @@ public :
    CrossElements* makePipes (Pipe* pipe1, Pipe* pipe2);
 
    int     removeHexa (Hexa* maille);
+   int     removeQuad (Quad* maille);
    int     removeConnectedHexa (Hexa* maille);
+   int     removeElements  (Elements* bloc);
 
    Vertex* findVertex (double  vx, double  vy, double vz);
    Edge*   findEdge   (Vertex* va, Vertex* vb);

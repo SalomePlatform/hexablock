@@ -49,7 +49,9 @@ salomeinclude_HEADERS = \
 	HexPipe.hxx \
 	HexShape.hxx \
 	HexXmlTree.hxx \
-	HexCrossElements.hxx
+	HexCrossElements.hxx \
+	HexAnaQuads.hxx \
+	HexCramer.hxx
 
 
 # Libraries targets
@@ -75,14 +77,15 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexPipe.cxx \
 	HexShape.cxx \
 	HexDocument_trans.cxx \
-	HexDocument_asso.cxx \
 	HexDocument_Xml.cxx \
 	HexDocument.cxx \
 	HexXmlTree.cxx \
 	HexXmlWriter.cxx \
 	HexCrossElements.cxx \
-	HexUseCascade.cxx \
-	Hex.cxx
+	Hex.cxx              \
+	HexDocument_asso.cxx \
+	HexUseCascade.cxx     \
+	HexDocument_quads.cxx
 
 # libHEXABLOCKimpl_la_CPPFLAGS = \
 # 	-I$(top_builddir)/salome_adm/unix

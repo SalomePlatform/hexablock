@@ -178,7 +178,25 @@ int Document::removeHexa (Hexa* cell)
    cell->remove ();
    return  HOK;
 }
-// ========================================================= removeHexa
+// ========================================================= removeQuad
+int Document::removeQuad (Quad* cell)
+{
+   if (cell==NULL)
+      return HERR;
+
+   cell->remove ();
+   return  HOK;
+}
+// ========================================================= removeElements
+int Document::removeElements (Elements* bloc)
+{
+   if (bloc==NULL)
+      return HERR;
+
+   bloc->remove ();
+   return  HOK;
+}
+// ====================================================== removeConnectedHexa
 int Document::removeConnectedHexa (Hexa* cell)
 {
    if (cell==NULL)
