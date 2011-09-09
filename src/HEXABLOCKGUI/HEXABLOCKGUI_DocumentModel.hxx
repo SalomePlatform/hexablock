@@ -65,6 +65,7 @@ namespace HEXABLOCK
         virtual ~DocumentModel();
 
         void load( const QString& xmlFileName );
+        void save( const QString& xmlFileName );
 
         void updateData();
 
@@ -255,10 +256,14 @@ namespace HEXABLOCK
 //         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
 //                              Shape*  gstart, double pstart, Shapes& gline);
         bool associateOpenedLine( const QModelIndexList& edges,
-                                  const GeomObjList&     assocs );
+                                  const GeomObjList&     assocs,
+                                  double pstart,
+                                  double pend );
+
         bool associateClosedLine( const QModelIndex& vertex, 
                                   const QModelIndexList& edges,
-                                  const GeomObjList&     assocs );
+                                  const GeomObjList&     assocs,
+                                  double pstart );
 
 
         // ************  GROUPS  ************

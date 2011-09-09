@@ -69,6 +69,7 @@ class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
 class SVTK_ViewWindow;
+class OCCViewer_ViewWindow;
 
 // // SALOME KERNEL includes
 // #include <SALOMEDS_Study.hxx>
@@ -92,14 +93,13 @@ public:
 
   static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
 //   static SMESH::SMESH_Gen_ptr             InitSMESHGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
-//   static GEOM::GEOM_Gen_ptr               InitGEOMGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
+  static GEOM::GEOM_Gen_ptr InitGEOMGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
 
   static LightApp_SelectionMgr*   selectionMgr();
 
 
-  static SVTK_ViewWindow* currentVtkView;
-
-//   static SVTK_ViewWindow* currentVtkView();
+  static SVTK_ViewWindow*      currentVtkView;
+  static OCCViewer_ViewWindow* currentOccView;
 
  //HEXABLOCK::GUI::DocumentModel*
 
@@ -158,12 +158,13 @@ protected:
   static int _oldStudyId;
   static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;
 //   static SMESH::SMESH_Gen_var             _smeshEngine;
-//   static GEOM::GEOM_Gen_var               _geomEngine;
+  static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
   void test_association();
 
   void newDocument();
   void importDocument( const QString &path = QString() );
+  void saveDocument();
 
   // new
   void addVertex();
@@ -226,6 +227,7 @@ private:
   // Object Browser
   QAction *_newAct;
   QAction *_importAct;
+  QAction *_saveAct;
   QAction *_testAct;
 
   // Pattern Data

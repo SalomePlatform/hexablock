@@ -40,7 +40,7 @@
 #include <SUIT_ViewWindow.h>
 #include <SUIT_DataObject.h>
 #include <SUIT_DataBrowser.h>
-
+#include <SUIT_FileDlg.h>
 
 // #include <QxScene_ViewManager.h>
 #include <SVTK_ViewManager.h>
@@ -51,6 +51,7 @@
 
 #include <SOCC_ViewModel.h>
 #include <SOCC_ViewWindow.h>
+#include <OCCViewer_ViewWindow.h>
 
 
 
@@ -86,7 +87,7 @@
 #include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_Trace.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
-#include "HEXABLOCKGUI_DataModel.hxx"
+// #include "HEXABLOCKGUI_DataModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
@@ -110,15 +111,15 @@ int  HEXABLOCKGUI::_oldStudyId = -1;
 
 HEXABLOCK_ORB::HEXABLOCK_Gen_var HEXABLOCKGUI::_hexaEngine  = HEXABLOCK_ORB::HEXABLOCK_Gen::_nil();
 // SMESH::SMESH_Gen_var             HEXABLOCKGUI::_smeshEngine = SMESH::SMESH_Gen::_nil();
-// GEOM::GEOM_Gen_var               HEXABLOCKGUI::_geomEngine  = GEOM::GEOM_Gen::_nil();
+GEOM::GEOM_Gen_var               HEXABLOCKGUI::_geomEngine  = GEOM::GEOM_Gen::_nil();
 
 // std::map<HEXABLOCK::GUI::DocumentModel*,  SVTK_ViewWindow*> HEXABLOCKGUI::svtkViews;
 // std::map<const QAbstractItemModel*,  SVTK_ViewWindow*> HEXABLOCKGUI::svtkViews;
 // std::map<const QAbstractItemModel*,  SUIT_ViewWindow*> HEXABLOCKGUI::salomeViews;
 // HEXABLOCK::GUI::DocumentModel       *HEXABLOCKGUI::_currentModel = NULL;
 
-SVTK_ViewWindow* HEXABLOCKGUI::currentVtkView = NULL;
-
+SVTK_ViewWindow*      HEXABLOCKGUI::currentVtkView = NULL;
+OCCViewer_ViewWindow* HEXABLOCKGUI::currentOccView = NULL;
 
 HEXABLOCKGUI::HEXABLOCKGUI() :
   SalomeApp_Module( "HEXABLOCK" ), // default name
@@ -130,7 +131,7 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
   _dwMesh(0),
   _dwObjectBrowser(0),
   _dwInputPanel(0),
-//   _currentModel(0),
+  _currentModel(0),
   _patternDataModel(0),
   _patternBuilderModel(0),
   _patternDataTreeView(0),
@@ -188,14 +189,14 @@ HEXABLOCK_ORB::HEXABLOCK_Gen_ptr HEXABLOCKGUI::InitHEXABLOCKGen( SalomeApp_Appli
 // }
 // 
 // // Gets an reference to GEOM's engine CS_TO_DELETE
-// GEOM::GEOM_Gen_ptr HEXABLOCKGUI::InitGEOMGen( SalomeApp_Application* app,
-//                                               const std::string& container )
-// {
-//   Engines::EngineComponent_var comp = app->lcc()->FindOrLoad_Component( container.c_str(), "GEOM" );
-//   GEOM::GEOM_Gen_ptr            clr = GEOM::GEOM_Gen::_narrow(comp);
-//   ASSERT(!CORBA::is_nil(clr));
-//   return clr;
-// }
+GEOM::GEOM_Gen_ptr HEXABLOCKGUI::InitGEOMGen( SalomeApp_Application* app,
+                                              const std::string& container )
+{
+  Engines::EngineComponent_var comp = app->lcc()->FindOrLoad_Component( container.c_str(), "GEOM" );
+  GEOM::GEOM_Gen_ptr            clr = GEOM::GEOM_Gen::_narrow(comp);
+  ASSERT(!CORBA::is_nil(clr));
+  return clr;
+}
 
 
 void HEXABLOCKGUI::initialize( CAM_Application* app )
@@ -204,6 +205,7 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
   SalomeApp_Module::initialize( app );
 
   _hexaEngine = InitHEXABLOCKGen( dynamic_cast<SalomeApp_Application*>( app ) );
+  _geomEngine = InitGEOMGen( dynamic_cast<SalomeApp_Application*>( app ) );
 
   QWidget* aParent = application()->desktop();
   DEBTRACE(app << "  " << application() << " " << application()->desktop() << " " << aParent);
@@ -314,14 +316,14 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
   
 
-  if ( _patternDataSelectionModel ){
-    delete _patternDataSelectionModel;
-    _patternDataSelectionModel = NULL;
-  }
-  if ( _patternBuilderSelectionModel ){
-    delete _patternBuilderSelectionModel;
-    _patternBuilderSelectionModel = NULL;
-  }
+//   if ( _patternDataSelectionModel ){
+//     delete _patternDataSelectionModel;
+//     _patternDataSelectionModel = NULL;
+//   }
+//   if ( _patternBuilderSelectionModel ){
+//     delete _patternBuilderSelectionModel;
+//     _patternBuilderSelectionModel = NULL;
+//   }
 
   return SalomeApp_Module::deactivateModule( theStudy );
 }
@@ -398,17 +400,20 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 void HEXABLOCKGUI::onWindowActivated( SUIT_ViewWindow* svw)
 {
   DEBTRACE("HEXABLOCKGUI::onWindowActivated");
-  // we want to switch automatically to the right model
+  OCCViewer_ViewWindow* anOccVw = dynamic_cast<OCCViewer_ViewWindow*>(svw);
 
+  if ( anOccVw != NULL )
+    currentOccView = dynamic_cast<OCCViewer_ViewWindow*>(svw);
+//   OCCViewer_Viewer*     aModel = dynamic_cast<OCCViewer_Viewer*>(svw);
+
+  // we want to switch automatically to the right model
   // only VTK view
   SVTK_ViewWindow* viewWindow = dynamic_cast<SVTK_ViewWindow*>(svw);
   if (!viewWindow) return;
-
   if (getApp()->activeModule() && getApp()->activeModule()->moduleName().compare("HEXABLOCK") != 0) //CS_TODO?
     getApp()->activateModule("HEXABLOCK");
 
   switchModel( viewWindow );
-//   if (_selectFromTree) return;
 }
 
 
@@ -671,9 +676,13 @@ void HEXABLOCKGUI::createActions()
   _importAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O); // --- QKeySequence::Open ambiguous in SALOME
 
 
+  _saveAct = createAction( _menuId++, tr("Save a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SAVE_DOCUMENT" ) ), tr("Save document"), tr("Save a document"), 0, aParent, false, this,  SLOT(saveDocument()) );
+
+
   _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
                                      tr("Test"),  tr("New test"),
-                                     0, aParent, false, this,  SLOT(test_association()) );
+                                     0, aParent, false, this, SLOT(test_association()) );
+// SLOT(()) );
 
 
   // Pattern Data creation
@@ -831,12 +840,14 @@ void HEXABLOCKGUI::createMenus()
   aMenuId = createMenu( "HEXABLOCK" , aMenuId, -1, 10 );
   createMenu( _newAct, aMenuId );
   createMenu( _importAct, aMenuId );
+  createMenu( _saveAct, aMenuId );
   createMenu( _testAct, aMenuId );
 
 //   aMenuId = createMenu( tr( "HEXABLOCK" ), -1, -1, 30 );
   aMenuId = createMenu( tr( "Object Browser" ), -1, -1, 30 );
   createMenu( _newAct, aMenuId );//, 10
   createMenu( _importAct, aMenuId );
+  createMenu( _saveAct, aMenuId );
   createMenu( _testAct, aMenuId );
 
   aMenuId = createMenu( tr("Model"), -1, -1, 30 );
@@ -898,6 +909,7 @@ void HEXABLOCKGUI::createTools()
 
   createTool( _newAct, aToolId );
   createTool( _importAct, aToolId );
+  createTool( _saveAct, aToolId );
   createTool( _testAct, aToolId );
   createTool( separator(), aToolId );
 
@@ -974,6 +986,8 @@ void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
   setToolShown(_newAct, show);
   setMenuShown(_importAct, show);
   setToolShown(_importAct, show);
+  setMenuShown(_saveAct, show);
+  setToolShown(_saveAct, show);
   setMenuShown(_testAct, show);
   setToolShown(_testAct, show);
 }
@@ -1116,6 +1130,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
     _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
     _patternDataSelectionModel->setSalomeSelectionMgr( selectionMgr() );
+//     _patternDataSelectionModel->setGeomEngine( _geomEngine );
   
     _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
     _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
@@ -1224,29 +1239,31 @@ void HEXABLOCKGUI::testDocument()
 //   QModelIndex vy = _currentModel->addVector(0., 1., 0.);
 //   QModelIndex vz = _currentModel->addVector(0., 0., 1.);
 // 
-  QModelIndex orig1 = _currentModel->addVertex (0, 0,0);
-  QModelIndex orig2 = _currentModel->addVertex (50,0,0);
-  QModelIndex vz    = _currentModel->addVector (0,0,1);
-  QModelIndex vx    = _currentModel->addVector (1,0,0);
 
-  int nr  = 4;
-  int nri = 3;
-  int nre = nr;
-  int na = 9;
-  int nl = 5;
 
-  QModelIndex  cyl  = _currentModel->addCylinder   (orig1, vz, nr, nl);
-  QModelIndex  pipe = _currentModel->addPipe       (orig2, vz, nri, nre, nl);
 
-  _currentModel->makeCylinder (cyl,  vx, nr, na, nl);
-  _currentModel->makePipe(pipe, vx, nr, na, nl);
+// //   QModelIndex orig1 = _currentModel->addVertex (0, 0,0);
+// //   QModelIndex orig2 = _currentModel->addVertex (50,0,0);
+// //   QModelIndex vz    = _currentModel->addVector (0,0,1);
+// //   QModelIndex vx    = _currentModel->addVector (1,0,0);
+// // 
+// //   int nr  = 4;
+// //   int nri = 3;
+// //   int nre = nr;
+// //   int na = 9;
+// //   int nl = 5;
+// // 
+// //   QModelIndex  cyl  = _currentModel->addCylinder   (orig1, vz, nr, nl);
+// //   QModelIndex  pipe = _currentModel->addPipe       (orig2, vz, nri, nre, nl);
+// // 
+// //   _currentModel->makeCylinder (cyl,  vx, nr, na, nl);
+// //   _currentModel->makePipe(pipe, vx, nr, na, nl);
+
+
 
 //   newMesh( "toto", 3, "FactoryServer");
 // newMesh
 }
-
-
-
 
 void HEXABLOCKGUI::test_make_cart_grid()
 {
@@ -1443,10 +1460,7 @@ void HEXABLOCKGUI::test_association()
 
 
   DEBTRACE("HEXABLOCKGUI::test_association fin");
-
 }
-
-
 
 
 void HEXABLOCKGUI::newDocument()
@@ -1534,6 +1548,7 @@ void HEXABLOCKGUI::newDocument()
   _patternDataSelectionModel    = new PatternDataSelectionModel(_patternDataModel); //_currentModel
   _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
   _patternDataSelectionModel->setSalomeSelectionMgr( selectionMgr() );
+//   _patternDataSelectionModel->setGeomEngine( _geomEngine );
 
   _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
   _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
@@ -1592,7 +1607,31 @@ void HEXABLOCKGUI::importDocument( const QString &inFile )
     _currentModel->load(selectedFile);
   }
 }
+void HEXABLOCKGUI::saveDocument()
+{
+  QMainWindow *aParent = application()->desktop();
+  QString anInitialPath = "";
+  if ( SUIT_FileDlg::getLastVisitedPath().isEmpty() )
+    anInitialPath = QDir::currentPath();
+//   QString aMeshName = anIO->getName();
 
+  QString aDocName = "zedocument";
+  QStringList filter;
+  filter.append( QObject::tr( "XML_FILES_FILTER" ) + " (*.xml)" );
+  filter.append( QObject::tr( "ALL_FILES_FILTER" ) + " (*)" );
+  QString aFilename =  anInitialPath + QString("/") + aDocName;
+  aFilename = SUIT_FileDlg::getFileName( aParent,
+                                         aFilename,
+                                         filter,
+                                         tr( "HEXABLOCK_SAVE_XML" ),
+                                         false );
+  std::cout<<"HEXABLOCKGUI::saveDocument()"<<std::endl;
+  if ( !aFilename.isEmpty() ) {
+    std::cout<<"!aFilename.isEmpty()"<<std::endl;
+    _currentModel->save( aFilename );
+  }
+  //CS_TODO save doc
+}
 
 void HEXABLOCKGUI::addVertex()
 {
@@ -1617,11 +1656,6 @@ void HEXABLOCKGUI::addEdge()
     diag->setFocus();
     _dwInputPanel->setWidget(diag);
     _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
-//     diag->show();
-//     diag->setFocus();
-//     diag->raise();
-//     diag->activateWindow();
-//     diag->exec();
 }
 
 
@@ -1924,6 +1958,7 @@ void HEXABLOCKGUI::assocEdge()
 {
   EdgeAssocDialog* diag = new EdgeAssocDialog(_dwInputPanel, true);
 
+  diag->setGeomEngine( _geomEngine );
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setFocus();
@@ -2080,18 +2115,6 @@ LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
   else
     return 0;
 }
-
-// SVTK_ViewWindow* HEXABLOCKGUI::currentVtkView()
-// {
-//   SVTK_ViewWindow* v = NULL;
-// //   if ( _currentModel && _salomeViews.count(_currentModel) )
-// //     v = _salomeViews[ _currentModel ];
-//   if (_currentGraphicView)
-//     v = dynamic_cast<SVTK_ViewWindow*>(_currentGraphicView->get_SUIT_ViewWindow());
-// 
-//   return v;
-// }
-
 
 QStringList HEXABLOCKGUI::getQuickDirList()
 {

@@ -20,19 +20,36 @@
 #include <set>
 
 
+
+
+#include <QtxWorkstack.h>
+#include <STD_TabDesktop.h>
+#include <STD_MDIDesktop.h>
+#include <STD_SDIDesktop.h>
+
+#include <SalomeApp_Tools.h>
+
+#include "SOCC_ViewModel.h"
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
+
+#include <SUIT_OverrideCursor.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>
 #include <SUIT_Selector.h>
 #include <SUIT_Desktop.h>
+#include <SUIT_ViewManager.h>
 
 
 #include "HEXABLOCKGUI_SalomeTools.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
+#include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI.hxx"
-#include "HEXABLOCKGUI_DataModel.hxx"
-#include "HEXABLOCKGUI_DataObject.hxx"
+// #include "HEXABLOCKGUI_DataModel.hxx"
+// #include "HEXABLOCKGUI_DataObject.hxx"
 
 
 #include <SVTK_Selector.h>
@@ -47,7 +64,30 @@
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
+
+
+#include "GEOMBase.h"
 #include "GEOMBase_Helper.h"
+
+
+
+
+
+
+
+#include <OCCViewer_ViewModel.h>
+#include <SVTK_ViewModel.h>
+#include <SalomeApp_Study.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+
 
 //#define _DEVDEBUG_
 using namespace std;
@@ -57,12 +97,12 @@ using namespace HEXABLOCK::GUI;
 
 PatternDataSelectionModel::PatternDataSelectionModel( QAbstractItemModel * model ):
 QItemSelectionModel( model ),
+GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
 _theModelSelectionChanged(false),
 _theVtkSelectionChanged(false),
 _theGeomSelectionChanged(false),
 _selectionFilter(-1),
-_salomeSelectionMgr(0),
-_geomHelper( 0 )
+_salomeSelectionMgr(0)
 {
   connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
            this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
@@ -70,20 +110,6 @@ _geomHelper( 0 )
            this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
 
 }
-
-// PatternDataSelectionModel::PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent ):
-// QItemSelectionModel( model, parent ),
-// _salomeSelectionChanged(false)
-// {
-//   _salomeSelectionMgr = PatternDataSelectionModel::selectionMgr();
-// 
-//   connect( _salomeSelectionMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
-//   connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
-//           this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
-//   connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
-//           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
-// }
-
 
 
 PatternDataSelectionModel::~PatternDataSelectionModel()
@@ -186,11 +212,14 @@ void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selec
   if ( _salomeSelectionMgr == NULL ) return;
   _salomeSelectionMgr->clearSelected();
 
+  erasePreview(true);
+
   QModelIndexList indexes = selected.indexes();
   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
     std::cout << "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() << std::endl;
-    if ( !_theGeomSelectionChanged ) _selectGEOM( *i_index );
     if ( !_theVtkSelectionChanged )  _selectVTK( *i_index );
+    if ( !_theGeomSelectionChanged ) _highlightGEOM( *i_index );
+    
   }
 
   _theModelSelectionChanged = false;
@@ -245,7 +274,7 @@ QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int rol
   const QAbstractItemModel* theModel = model();
   QModelIndex         theStart = theModel->index(0, 0);
 //   QString exactMatch = anEntry + ";";
-  
+
   QModelIndexList     theIndexes = theModel->match( theStart,
                                           role,
                                           anEntry, //exactMatch,
@@ -290,65 +319,58 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 }
 
 
-
 // 1 vertex -> 1 point
 // 1 edge   -> n lines + points(deb,fin)
 // 1 quad   -> n faces
-void PatternDataSelectionModel::_selectGEOM( const QModelIndex & anEltIndex )
+void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 {
-  std::cout << "PatternDataSelectionModel::_selectGEOM" << std::endl;
-//CS_TODO : selection des associations + cas highlight edge
-  QString               assocEntry;
-//   ObjectList            assocList;
-  GEOM::GEOM_Object_var assoc;
-  QModelIndex childIndex;
+  std::cout << "PatternDataSelectionModel::_highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
+  if ( HEXABLOCKGUI::currentOccView == NULL ) return;
 
-  if ( _geomHelper == NULL )
-    _geomHelper = new MyGEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() );
-  _geomHelper->erasePreview(true);
+  // getting association(s) from model
+  QList<DocumentModel::GeomObj> assocList;
+  DocumentModel               *docModel = NULL;
+  const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
+  if ( pModel ){
+    docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() ); 
+    if ( docModel ){
+      assocList = docModel->getAssociations( pModel->mapToSource(anEltIndex) );
+    }
+  }
 
-
+  // highlight it(them)
   _PTR(Study)   aStudy = GetActiveStudyDocument();
   _PTR(SObject) aSChild;
   CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-  const QAbstractItemModel* theModel = model();
-  std::cout << "PatternDataSelectionModel::_selectGEOM go find ASSOCIATION for " << anEltIndex.data().toString().toStdString()  << std::endl;
+  GEOM::GEOM_Object_var assoc;
 
-  QVariant assocEntriesVariant = anEltIndex.data( HEXA_ASSOC_ENTRY_ROLE );
-  if ( !assocEntriesVariant.isValid() ) { std::cout<<"NOT FOUND"<< std::endl; return;}
-  QString assocEntries = assocEntriesVariant.toString();
-
-  std::cout << "assocEntries => " << assocEntries.toStdString()<< std::endl;
-//   if ( !theModel->hasChildren( anEltIndex ) ) return;
-
-  QStringList entries = assocEntries.split( ";", QString::SkipEmptyParts );
-  
-  foreach( const QString& entry, entries ){
-    std::cout << "FOUND=> " << entry.toStdString() << std::endl;
-    aSChild =  aStudy->FindObjectID( entry.toStdString() );
-    aCorbaObj = corbaObj(aSChild);
-    assoc = GEOM::GEOM_Object::_narrow(aCorbaObj);
-//     SALOMEDS::Color aColor;
-//     aColor.R = 15;
-//     aColor.G = 1;
-//     aColor.B = 1;
-//     assoc->SetColor( aColor);//Quantity_NOC_RED );
-    if ( !CORBA::is_nil(assoc) ){
-      std::cout << "geom selected =>" << assoc->GetName() << std::endl;
-//       assocList.push_back(assoc);
-      _geomHelper->displayPreview( assoc,
-                          true, //false, //append,
-                          true, //activate,
-                          true,//update,
-                          4,//lineWidth,
-                          1,//-1,//displayMode,
-                          Quantity_NOC_RED) ;
-//       _geomHelper->display( assocList );
-    } else {
-      std::cout << "not a geom =>" << assoc->GetName() << std::endl;
-    }
+  foreach( const DocumentModel::GeomObj& anAssoc, assocList ){
+      std::cout << "FOUND=> " << anAssoc.entry.toStdString() << std::endl;
+      aSChild   = aStudy->FindObjectID( anAssoc.entry.toStdString() );
+      aCorbaObj = corbaObj( aSChild );
+      assoc = GEOM::GEOM_Object::_narrow( aCorbaObj );
+      if ( !CORBA::is_nil(assoc) ){
+        QString objIOR = GEOMBase::GetIORFromObject(assoc._retn());
+        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape( objIOR);//, true );
+        if ( !aSh.IsNull() ){
+          OCCViewer_Viewer* occViewer=(OCCViewer_Viewer*)HEXABLOCKGUI::currentOccView->getViewManager()->getViewModel();
+          SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+          if (soccViewer){
+            std::cout << "aSh->getIO() => " << aSh->getIO() << std::endl;
+            getDisplayer()->SetDisplayMode(0);
+            soccViewer->setColor( aSh->getIO(), QColor( Qt::red ), true );
+            soccViewer->switchRepresentation( aSh->getIO(), 2 );
+            soccViewer->highlight( aSh->getIO(), true, true );
+          }
+        }
+      }
   }
+
 }
+
+
+
+
 
 
 void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
@@ -504,6 +526,76 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 
 
 
+
+
+// //=================================================================================
+// // function : activateSelection
+// // purpose  : Activate selection in accordance with myEditCurrentArgument
+// //=================================================================================
+// void PatternDataSelectionModel::activateSelection()
+// {
+//   erasePreview(false);
+// 
+//   // local selection
+//   if (!myObject->_is_nil() && !isAllSubShapes())
+//   {
+//     GEOM_Displayer* aDisplayer = getDisplayer();
+//     SALOME_View* view = GEOM_Displayer::GetActiveView();
+//     if (view) {
+//       CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+//       Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+//       if (view->isVisible(io)) {
+//         aDisplayer->Erase(myObject, false, false);
+//         myIsHiddenMain = true;
+//       }
+//     }
+// 
+//     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
+// 
+//     SUIT_ViewWindow* aViewWindow = 0;
+//     SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+//     if (activeStudy)
+//       aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+//     if (aViewWindow == 0) return;
+// 
+//     SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+//     if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
+//         aViewManager->getType() != SVTK_Viewer::Type())
+//       return;
+// 
+//     SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+//     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+//     if (aView == 0) return;
+// 
+//     //TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myObject);
+// 
+//     TopTools_IndexedMapOfShape aSubShapesMap;
+//     TopExp::MapShapes(myShape, aSubShapesMap);
+//     CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+//     QString anEntryBase = aMainEntry.in();
+// 
+//     TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
+//     for (; anExp.More(); anExp.Next())
+//     {
+//       TopoDS_Shape aSubShape = anExp.Current();
+//       int index = aSubShapesMap.FindIndex(aSubShape);
+//       QString anEntry = anEntryBase + QString("_%1").arg(index);
+// 
+//       SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+//       if (aPrs) {
+//         displayPreview(aPrs, true, false); // append, do not update
+//       }
+//     }
+//     aDisplayer->UpdateViewer();
+//     aDisplayer->SetDisplayMode(prevDisplayMode);
+//   }
+// 
+//   globalSelection(GEOM_ALLSHAPES);
+// }
+
+
+
+
 // SUIT_DataOwnerPtrList aList;
 //   ObjectList::iterator anIter;
 //   for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
@@ -621,6 +713,49 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 //   reset();
 // }
 
+
+/*
+
+void PatternDataSelectionModel::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
+{gaumont parnasse
+  _geomEngine = geomEngine;
+}
+
+GEOM::GEOM_IOperations_ptr PatternDataSelectionModel::createOperation()
+{
+//   return myGeomGUI->GetGeomGen()->GetIBasicOperations(getStudyId());
+  return _geomEngine->GetIBasicOperations(getStudyId());
+}
+
+bool PatternDataSelectionModel::execute(ObjectList& objects)
+{
+  bool res = false;
+
+  _PTR(Study)   aStudy = GetActiveStudyDocument();
+  _PTR(SObject) aSChild;
+  CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
+  GEOM::GEOM_Object_var assoc;
+
+  foreach( const DocumentModel::GeomObj& anAssoc, _assocList ){
+    std::cout << "FOUND=> " << anAssoc.entry.toStdString() << std::endl;
+    aSChild = aStudy->FindObjectID( anAssoc.entry.toStdString() );
+    aCorbaObj = corbaObj(aSChild);
+    assoc = GEOM::GEOM_Object::_narrow(aCorbaObj);
+
+    if ( !CORBA::is_nil(assoc) ){
+      std::cout << "geom to highlight =>" << anAssoc.name.toStdString() << std::endl;
+      objects.push_back( assoc._retn() );
+      res = true;
+    } else {
+      std::cout << "not a geom =>" << anAssoc.name.toStdString()<< std::endl;
+    }
+  }
+
+  return res;
+}
+*/
+
+
 // SVTK_ViewWindow* PatternDataSelectionModel::GetViewWindow()
 // {
 //     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>
@@ -681,3 +816,99 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 // aOList.append( anOwher );
 // _salomeSelectionMgr->setSelected( aOList, false );
 // //CS_TEST
+
+// void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
+// {
+//   std::cout << "PatternDataSelectionModel::_highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
+// // HEXABLOCKGUI::currentVtkView
+// 
+//   QList<DocumentModel::GeomObj> assocList;
+// 
+//   DocumentModel               *docModel = NULL;
+//   const QSortFilterProxyModel *pModel   = NULL;
+// //   const QStandardItemModel    *smodel
+// //   const QAbstractItemModel    *theModel = NULL;
+// 
+//   pModel = dynamic_cast<const QSortFilterProxyModel *>( model() );
+// 
+//   std::cout << "pModel "<< pModel << std::endl;
+//   if ( pModel ){
+//     std::cout << "if ( pModel ){"<< std::endl;
+//     docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() ); 
+//     if ( docModel ){
+//       std::cout << "if ( docModel ){"<< std::endl;
+//       assocList = docModel->getAssociations( pModel->mapToSource(anEltIndex) );
+//     }
+//   }
+// 
+// 
+//   _PTR(Study)   aStudy = GetActiveStudyDocument();
+//   _PTR(SObject) aSChild;
+//   CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
+//   GEOM::GEOM_Object_var assoc;
+// //   foreach( const QString& entry, geomEntries ){
+// // struct GeomObj
+// //         {
+// //           QString name;
+// //           QString entry;
+// //           QString brep;
+// //           double  start;
+// //           double  end;
+// //         };
+// 
+//   QVariant treeVariant = pModel->mapToSource(anEltIndex).data( HEXA_TREE_ROLE );
+//   int eltType;
+//   if ( !treeVariant.isValid() ) return;
+//   eltType = treeVariant.toInt();
+// 
+// //   GEOM::GeomObjPtr
+// //   GEOM::GEOM_Object_ptr firstLine;  //firstLine.nullify();//
+//   GEOM::GEOM_Object_var firstLine = GEOM::GEOM_Object::_nil();  //GEOM::GeomObjPtr
+//   GEOM::GEOM_Object_var lastLine  = GEOM::GEOM_Object::_nil();
+//   double firstParameter = 0.2; //CS_TODO
+//   double lastParameter  = 0.4; //CS_TODO
+// 
+//   foreach( const DocumentModel::GeomObj& anAssoc, assocList ){
+//     std::cout << "FOUND=> " << anAssoc.entry.toStdString() << std::endl;
+//     aSChild = aStudy->FindObjectID( anAssoc.entry.toStdString() );
+//     aCorbaObj = corbaObj(aSChild);
+//     assoc = GEOM::GEOM_Object::_narrow(aCorbaObj);
+// 
+//     if ( !CORBA::is_nil(assoc) ){
+//       std::cout << "geom to highlight =>" << anAssoc.name.toStdString() << std::endl;
+// //       objects.push_back(assoc._retn());
+// //       if ( eltType == EDGE_TREE ){
+// //           if ( CORBA::is_nil(firstLine) ){
+// //             firstLine = GEOM::GEOM_Object::_duplicate( assoc._retn() );
+// //           }
+// //           lastLine = GEOM::GEOM_Object::_duplicate( assoc._retn() );
+// //       }
+//       displayPreview( assoc._retn(),
+//                       true, //false, //append,
+//                       false,//true, //false, //activate,
+//                       false,//true,//update,
+//                       4,//lineWidth,
+//                       1,//-1,//displayMode,
+//                       Quantity_NOC_RED );
+//     } else {
+//       std::cout << "not a geom =>" << anAssoc.name.toStdString()<< std::endl;
+//     }
+//   }
+// //     std::cout << "CORBA::is_nil(firstLine) =>" << CORBA::is_nil(firstLine) << std::endl;
+// //     std::cout << "CORBA::is_nil(lastLine) =>"  << CORBA::is_nil(lastLine) << std::endl;
+// //     std::cout << "test" << ( !( CORBA::is_nil(firstLine) and !CORBA::is_nil(lastLine) ) ) << std::endl;
+//  /*
+//   if ( !( CORBA::is_nil(firstLine) and !CORBA::is_nil(lastLine) ) ){
+//     GEOM::GEOM_IBasicOperations_var anOper = _geomEngine->GetIBasicOperations( getStudyId() );
+//     GEOM::GEOM_Object_var firstPoint = anOper->MakePointOnCurve( firstLine, firstParameter );
+//     GEOM::GEOM_Object_var lastPoint  = anOper->MakePointOnCurve( lastLine, lastParameter );
+// 
+// //     std::cout << "firstPoint->_is_nil() =>" << firstPoint->_is_nil() << std::endl;
+//     std::cout << "lastPoint->_is_nil() =>"  << lastPoint->_is_nil() << std::endl;
+//     if ( !( CORBA::is_nil(firstPoint) ) )// !firstPoint->_is_nil() )
+//         displayPreview( firstPoint._retn(), true );
+//     if ( !( CORBA::is_nil(lastPoint) ) )//if ( !lastPoint->_is_nil() )
+//         displayPreview( lastPoint._retn(), true );
+//   }*/
+// }
+// 

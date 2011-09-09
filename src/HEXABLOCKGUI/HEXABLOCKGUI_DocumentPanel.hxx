@@ -81,11 +81,12 @@
 
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
-#include "HEXABLOCKGUI_SalomeTools.hxx"
+// #include "HEXABLOCKGUI_SalomeTools.hxx"
 
 #include "klinkitemselectionmodel.hxx"
 
 #include <GEOMBase_Helper.h>
+#include "BasicGUI_PointDlg.h"
 
 Q_DECLARE_METATYPE(QModelIndex); 
 
@@ -101,6 +102,11 @@ namespace HEXABLOCK
     {
         Q_OBJECT
         public:
+
+          enum {
+            LW_QMODELINDEX_ROLE = Qt::UserRole + 1
+          };
+
           HexaBaseDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
           virtual ~HexaBaseDialog();
 
@@ -642,6 +648,19 @@ namespace HEXABLOCK
 
 
 
+
+  class MyBasicGUI_PointDlg : public BasicGUI_PointDlg
+  {
+    public:
+      MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w = 0, bool b= false, Qt::WindowFlags f= 0 );
+      virtual ~MyBasicGUI_PointDlg();
+  
+      QPushButton* buttonCancel() const;
+      QPushButton* buttonOk() const;
+      QPushButton* buttonApply() const;
+  };
+
+
   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexAssocDialog : public QDialog,
                                                               public GEOMBase_Helper
   {
@@ -675,7 +694,8 @@ namespace HEXABLOCK
 
 
   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
-                                                            public Ui::EdgeAssocDialog
+                                                            public Ui::EdgeAssocDialog,
+                                                            public GEOMBase_Helper
   {
       Q_OBJECT
 
@@ -683,9 +703,44 @@ namespace HEXABLOCK
         EdgeAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~EdgeAssocDialog();
 
+
+        void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
+
       public slots:
         virtual void accept();
         virtual void reject();
+
+      protected:
+        virtual bool eventFilter(QObject *obj, QEvent *event);
+        virtual void hideEvent ( QHideEvent * event );
+        virtual void showEvent ( QShowEvent * event );
+
+
+        virtual GEOM::GEOM_IOperations_ptr createOperation();
+        virtual bool execute( ObjectList& );
+
+      protected slots:
+        virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+//       private slots:
+//         void addEdge();
+
+        void addLine();
+        void pstartChanged( double val );
+        void pendChanged( double val );
+
+      private:
+        QList<DocumentModel::GeomObj> _assocs;
+        LightApp_SelectionMgr*        _mgr;
+
+
+        // Preview in GEOM
+        GEOM::GeomObjPtr    _firstLine;
+        GEOM::GeomObjPtr    _lastLine;
+        GEOM::GeomObjPtr    _currentLine;
+        double              _currentParameter;
+        GEOM::GEOM_Gen_var  _geomEngine ;
+
   };
 
 
@@ -707,6 +762,8 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
+        virtual void hideEvent ( QHideEvent * event );
+        virtual void showEvent ( QShowEvent * event );
 
       private:
         QList<DocumentModel::GeomObj> _assocs;
@@ -720,9 +777,9 @@ namespace HEXABLOCK
   {
       Q_OBJECT
 
-      enum {
-        LW_QMODELINDEX_ROLE = Qt::UserRole + 1
-      };
+//       enum {
+//         LW_QMODELINDEX_ROLE = Qt::UserRole + 1
+//       };
       QMap<DocumentModel::Group, QString> strKind;
 
       public:

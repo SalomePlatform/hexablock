@@ -144,12 +144,27 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   fillGroups();
   fillMesh();
 
-  tmp = "/tmp/load.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+//   tmp = "/tmp/load.vtk";
+//   //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 
   emit patternDataChanged();
 
   // BUILDER, ASSOCIATION, GROUPS, ... CS_TODO _fillBuilderFrom( _hexaDocument );
+}
+
+
+void DocumentModel::save( const QString& xmlFileName )
+{
+//   std::cout << "DocumentModel::save ->" << xmlFileName.toStdString() << std::endl;
+
+  std::cout << "DocumentModel::save _hexaDocument->" << _hexaDocument << std::endl;
+
+
+  QString noSuffix = xmlFileName.section('.', 0, 0);
+  std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
+  _hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );
+  _hexaDocument->saveFile();
+
 }
 
 void DocumentModel::updateData()
@@ -158,7 +173,7 @@ void DocumentModel::updateData()
   clearData();
   fillData();
   QString tmp = "/tmp/load.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  ////_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   emit patternDataChanged();
   std::cout<<"DocumentModel::updateData()  end"<<std::endl;
 }
@@ -214,18 +229,30 @@ void DocumentModel::clearMesh()
 void DocumentModel::fillData()
 {
   std::cout<<"DocumentModel::fillData()  begin"<<std::endl;
+
+  std::cout << "DocumentModel::fillData() _hexaDocument->" << _hexaDocument << std::endl;
+
   // DATA
   HEXA_NS::Vertex *v     = NULL;
   VertexItem      *vItem = NULL;
   for ( int i=0; i<_hexaDocument->countVertex(); ++i ){
-    v = _hexaDocument->getVertex(i);
+    char pName[12]; std::string name;
+//     HEXA_NS::Shape *aShape = NULL;
+//     QString         shapeIDs;
 
-    char pName[12];
-    std::string name = v->getName(pName);
-    std::cout<<name<<std::endl;
+    v = _hexaDocument->getVertex(i);
+    name   = v->getName(pName);
+//     aShape = v->getAssociation();
 
     vItem = new VertexItem(v);
     vItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
+//     if ( aShape ){
+//       shapeIDs = aShape->ident.c_str();
+//       shapeIDs += ";";
+//       vItem->setData( QVariant::fromValue(shapeIDs), HEXA_ASSOC_ENTRY_ROLE );
+//     }
+    _vertexDirItem->appendRow(vItem);
+//     std::cout<<name<<":"<< shapeIDs.toStdString() <<std::endl;
 
     //CS_TEST
 //     HEXA_NS::Shape* s = v->getAssociation();
@@ -237,28 +264,63 @@ void DocumentModel::fillData()
 //       vItem->appendColumn(assocItems);
 //     }
 // 
-//     _vertexDirItem->appendRow(vItem);
     //CS_TEST
-
 //     _vertexDirItem->setEditable( false );//CS_TEST
   }
 
   HEXA_NS::Edge *e     = NULL;
   EdgeItem      *eItem = NULL;
   for ( int i=0; i<_hexaDocument->countEdge(); ++i ){
+    char pName[12]; std::string name;
+//     HEXA_NS::Shapes shapeList;
+//     QString         shapeIDs;
+
     e = _hexaDocument->getEdge(i);
+//     name      = e->getName(pName);
+//     shapeList = e->getAssociations();
+
     eItem = new EdgeItem(e);
     eItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
+
+//     std::cout << "shapeList.size() => " << shapeList.size() << std::endl;
+// 
+//     if ( !shapeList.empty() ){
+//       for ( HEXA_NS::Shapes::const_iterator aShape = shapeList.begin();
+//             aShape != shapeList.end();
+//             ++aShape ){
+//         shapeIDs += (*aShape)->ident.c_str();
+//         shapeIDs += ";";
+//       }
+//       eItem->setData( QVariant::fromValue(shapeIDs), HEXA_ASSOC_ENTRY_ROLE );
+//     }
     _edgeDirItem->appendRow(eItem);
+//     std::cout<<name<<":"<< shapeIDs.toStdString() <<std::endl;
   }
 
   HEXA_NS::Quad *q     = NULL;
   QuadItem      *qItem = NULL;
   for ( int i=0; i<_hexaDocument->countQuad(); ++i ){
+    char pName[12]; std::string name;
+//     HEXA_NS::Shapes shapeList;
+//     QString         shapeIDs;
+
     q = _hexaDocument->getQuad(i);
+    name      = q->getName(pName);
+//     shapeList = q->getAssociations();
+
     qItem = new QuadItem(q);
     qItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
+//     if ( !shapeList.empty() ){
+//       for ( HEXA_NS::Shapes::const_iterator aShape = shapeList.begin();
+//             aShape != shapeList.end();
+//             ++aShape ){
+//         shapeIDs += (*aShape)->ident.c_str();
+//         shapeIDs += ";";
+//       }
+//       eItem->setData( QVariant::fromValue(shapeIDs), HEXA_ASSOC_ENTRY_ROLE );
+//     }
     _quadDirItem->appendRow(qItem);
+//     std::cout<<name<<":"<< shapeIDs.toStdString() <<std::endl;
   }
 
   HEXA_NS::Hexa *h     = NULL;
@@ -269,6 +331,7 @@ void DocumentModel::fillData()
     hItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _hexaDirItem->appendRow(hItem);
   }
+
   std::cout<<"DocumentModel::fillData()  end"<<std::endl;
 }
 
@@ -741,6 +804,7 @@ void DocumentModel::allowLawSelectionOnly()
 
 QModelIndex DocumentModel::addVertex( double x, double y, double z )
 {
+  std::cout << "DocumentModel::addVertex() _hexaDocument->" << _hexaDocument << std::endl;
   QModelIndex vertexIndex;
 
   HEXA_NS::Vertex* hv = _hexaDocument->addVertex(x, y, z);
@@ -779,7 +843,7 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
     edgeIndex = e->index();
     emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVertices.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete he;
   }
@@ -802,7 +866,7 @@ QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIn
     edgeIndex = e->index();
     emit patternDataChanged();
     QString tmp = "/tmp/addEdgeVector.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete he;
   }
@@ -837,7 +901,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
       quadIndex = q->index();
       emit patternDataChanged();
       QString tmp = "/tmp/addQuadVertices.vtk";
-      _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+      //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
       delete hq;
     }
@@ -866,7 +930,7 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
       quadIndex = q->index();
       emit patternDataChanged();
       QString tmp = "/tmp/addQuadEdges.vtk";
-      _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+      //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     } else {
       delete hq;
     }
@@ -903,7 +967,7 @@ QModelIndex DocumentModel::addHexaVertices(
     iHexa = h->index();
     emit patternDataChanged();
     QString tmp = "/tmp/addHexaVertices.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hh;
   }
@@ -940,7 +1004,7 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
     hexaIndex = h->index();
     emit patternDataChanged();
     QString tmp = "/tmp/addHexaQuad.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hh;
   }
@@ -969,7 +1033,7 @@ QModelIndex DocumentModel::addVector( double dx, double dy, double dz )
 //     std::cout << "after" << std::endl;
 //     vectorIndex = toto->index();
     QString tmp = "/tmp/addVector.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 
   } else {
     std::cout << "delete hv" << std::endl;
@@ -994,7 +1058,7 @@ QModelIndex DocumentModel::addVectorVertices( const QModelIndex &iv0, const QMod
     _vectorDirItem->appendRow(vec);
     iVec = vec->index();
     QString tmp = "/tmp/addVectorVertices.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hvec;
   }
@@ -1017,7 +1081,7 @@ QModelIndex DocumentModel::addCylinder( const QModelIndex &iv, const QModelIndex
     _cylinderDirItem->appendRow(cyl);
     iCyl = cyl->index();
     QString tmp = "/tmp/addCylinder.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hcyl;
   }
@@ -1042,7 +1106,7 @@ QModelIndex DocumentModel::addPipe( const QModelIndex &iv, const QModelIndex &iv
     _pipeDirItem->appendRow(pipe);
     iPipe = pipe->index();
     QString tmp = "/tmp/addPipe.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hPipe;
   }
@@ -1084,7 +1148,7 @@ QModelIndex DocumentModel::makeCartesian( const QModelIndex& i_pt,
     _elementsDirItem->appendRow(eltsItem);
     eltsIndex = eltsItem->index();
     QString tmp = "/tmp/makeCartesian1.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     std::cout<<"makeCartesian KO!!!"<<std::endl; 
     delete new_helts;
@@ -1114,7 +1178,7 @@ QModelIndex DocumentModel::makeCartesian( const QModelIndex& ivex,
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/makeCartesian2.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1152,7 +1216,7 @@ QModelIndex DocumentModel::makeCylindrical( const QModelIndex& i_pt,
     _elementsDirItem->appendRow(eltsItem);
     eltsIndex = eltsItem->index();
     QString tmp = "/tmp/makeCylindrical.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete new_helts;
   }
@@ -1176,7 +1240,7 @@ QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelInd
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/makeSpherical.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1200,7 +1264,7 @@ QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIn
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/makeCylinder.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1226,7 +1290,7 @@ QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/makePipe.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1251,7 +1315,7 @@ QModelIndex DocumentModel::makeCylinders(const QModelIndex& icyl1, const QModelI
     _crossElementsDirItem->appendRow(crossElts);
     iCrossElts = crossElts->index();    
     QString tmp = "/tmp/makeCylinders.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hCrossElts;
   }
@@ -1275,7 +1339,7 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
     _crossElementsDirItem->appendRow(crossElts);
     iCrossElts = crossElts->index();
     QString tmp = "/tmp/makePipes.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hCrossElts;
   }
@@ -1322,7 +1386,7 @@ bool DocumentModel::removeHexa( const QModelIndex& ihexa )
   if ( r == HOK ){
     updateData();
     QString tmp = "/tmp/removeHexa.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     ret = true;
   } else if ( r == HERR ){    
     ret = false;
@@ -1343,7 +1407,7 @@ bool DocumentModel::removeConnectedHexa( const QModelIndex& ihexa )
   if ( r == HOK ){    
     updateData();
     QString tmp = "/tmp/removeConnectedHexa.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     ret = true;
   } else if ( r == HERR ){    
     ret = false;
@@ -1368,7 +1432,7 @@ QModelIndex DocumentModel::prismQuad( const QModelIndex& iquad, const QModelInde
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/prismQuad.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1396,7 +1460,7 @@ QModelIndex DocumentModel::prismQuads( const QModelIndexList& iquads, const QMod
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/prismQuads.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1430,7 +1494,7 @@ QModelIndex DocumentModel::joinQuad(
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/joinQuad.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1472,7 +1536,7 @@ QModelIndex DocumentModel::joinQuads(
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/joinQuads.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1496,7 +1560,7 @@ bool DocumentModel::mergeVertices( const QModelIndex &iv0, const QModelIndex &iv
     updateData(); //CS_TODO more or less?
     std::cout << "DocumentModel:: mergeVertices => OK " << std::endl;
     QString tmp = "/tmp/mergeVertices.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     ret = true;
   } else if ( r == HERR ){
     std::cout << "DocumentModel:: mergeVertices => KO " << std::endl;
@@ -1524,7 +1588,7 @@ bool DocumentModel::mergeEdges( const QModelIndex &ie0, const QModelIndex &ie1,
     updateData();
     ret = true;
     QString tmp = "/tmp/mergeEdges.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1552,7 +1616,7 @@ bool DocumentModel::mergeQuads( const QModelIndex& iquad0, const QModelIndex& iq
     updateData();
     ret = true;
     QString tmp = "/tmp/mergeQuads.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1578,7 +1642,7 @@ QModelIndex DocumentModel::disconnectVertex( const QModelIndex& ihexa, const QMo
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/disconnectVertex.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1603,7 +1667,7 @@ QModelIndex DocumentModel::disconnectEdge( const QModelIndex& ihexa, const QMode
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/disconnectEdge.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1626,7 +1690,7 @@ QModelIndex DocumentModel::disconnectQuad( const QModelIndex& ihexa, const QMode
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/disconnectQuad.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hElts;
   }
@@ -1649,7 +1713,7 @@ QModelIndex DocumentModel::cutEdge( const QModelIndex &i_e0, int nbcuts )
     _elementsDirItem->appendRow(elts);
     iElts = elts->index();
     QString tmp = "/tmp/cutEdge.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete helts;
   }
@@ -1677,7 +1741,7 @@ QModelIndex DocumentModel::makeTranslation( const QModelIndex& ielts, const QMod
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeTranslation.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1702,7 +1766,7 @@ QModelIndex DocumentModel::makeScale( const QModelIndex& ielts, const QModelInde
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeScale.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1730,7 +1794,7 @@ QModelIndex DocumentModel::makeRotation( const QModelIndex& ielts,
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeRotation.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1754,7 +1818,7 @@ QModelIndex DocumentModel::makeSymmetryPoint( const QModelIndex& ielts, const QM
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeSymmetryPoint.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1781,7 +1845,7 @@ QModelIndex DocumentModel::makeSymmetryLine( const QModelIndex& ielts,
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeSymmetryLine.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1806,7 +1870,7 @@ QModelIndex DocumentModel::makeSymmetryPlane( const QModelIndex& ielts, const QM
     _elementsDirItem->appendRow(eltsItem);
     iElts = eltsItem->index();
     QString tmp = "/tmp/makeSymmetryPlane.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hNewElts;
   }
@@ -1827,7 +1891,7 @@ bool DocumentModel::performTranslation( const QModelIndex& ielts, const QModelIn
     updateData();
     ret = true;
     QString tmp = "/tmp/performTranslation.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1849,7 +1913,7 @@ bool DocumentModel::performScale( const QModelIndex& ielts, const QModelIndex& i
     updateData();
     ret = true;
     QString tmp = "/tmp/performScale.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1871,7 +1935,7 @@ bool DocumentModel::performRotation( const QModelIndex& ielts, const QModelIndex
     updateData();
     ret = true;
     QString tmp = "/tmp/performRotation.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1893,7 +1957,7 @@ bool DocumentModel::performSymmetryPoint( const QModelIndex& ielts, const QModel
     updateData();
     ret = true;
     QString tmp = "/tmp/performSymmetryPoint.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1915,7 +1979,7 @@ bool DocumentModel::performSymmetryLine( const QModelIndex& ielts, const QModelI
     updateData();
     ret = true;
     QString tmp = "/tmp/performSymmetryLine.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1939,7 +2003,7 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
     updateData();
     ret = true;
     QString tmp = "/tmp/performSymmetryPlane.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -1952,23 +2016,23 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
 void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel::GeomObj& assocIn )
 {
 //   assocIn.name;
-  HEXA_NS::Shape assoc( assocIn.brep.toStdString() );
-  assoc.debut =  assocIn.start;
-  assoc.fin   =  assocIn.end;
-  assoc.ident =  assocIn.entry.toStdString();
+  HEXA_NS::Shape* assoc = new HEXA_NS::Shape( assocIn.brep.toStdString() );//CS_TODO : delete assoc
+  assoc->debut =  assocIn.start;
+  assoc->fin   =  assocIn.end;
+  assoc->ident =  assocIn.entry.toStdString();
   _assocName[ assocIn.entry ] = assocIn.name; // for getAssociations()
 
   QString currentAssoc, newAssoc;
 
   if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
     HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
-    hVex->setAssociation( &assoc );
+    hVex->setAssociation( assoc );
   } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
     HEXA_NS::Edge*   hEdge = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
-    hEdge->addAssociation( &assoc );
+    hEdge->addAssociation( assoc );
   } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
     HEXA_NS::Quad*   hQuad  = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
-    hQuad->addAssociation( &assoc );
+    hQuad->addAssociation( assoc );
   }
 
   currentAssoc = data( iElt, HEXA_ASSOC_ENTRY_ROLE ).toString();
@@ -2012,12 +2076,14 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
     HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
     HEXA_NS::Shape* hShape = hVex->getAssociation();
 
-    assoc.entry = hShape->ident.c_str();
-    assoc.name  = _assocName[assoc.entry];
-    assoc.brep  = hShape->getBrep().c_str();
-    assoc.start = hShape->debut;
-    assoc.end   = hShape->fin;
-    res << assoc;
+    if ( hShape != NULL ){
+      assoc.entry = hShape->ident.c_str();
+      assoc.name  = _assocName[assoc.entry];
+      assoc.brep  = hShape->getBrep().c_str();
+      assoc.start = hShape->debut;
+      assoc.end   = hShape->fin;
+      res << assoc;
+    }
 
   } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
     HEXA_NS::Edge*   hEdge = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
@@ -2036,6 +2102,7 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
     for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
       assoc.entry = (*it)->ident.c_str();
       assoc.name  = _assocName[assoc.entry];
+//       std::cout << "(*it)->getBrep() =>"  << (*it)->getBrep()<< std::endl;
       assoc.brep  = (*it)->getBrep().c_str();
       assoc.start = (*it)->debut;
       assoc.end   = (*it)->fin;
@@ -2053,44 +2120,70 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
 //         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
 //                              Shape*  gstart, double pstart, Shapes& gline);
 bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
-                                         const GeomObjList&     assocs )
+                                         const GeomObjList&     assocs,
+                                         double pstart,
+                                         double pend )
 {
     bool ret = false;
     HEXA_NS::Edge*  mstart = NULL;
     HEXA_NS::Edges  mline;
     HEXA_NS::Shape* gstart = NULL;
-    double pstart;
+//     double pstart;
     HEXA_NS::Shapes gline;
-    double pend;
+//     double pend;
 
+    std::cout << "**********************************************"<< std::endl;
     HEXA_NS::Edge* hedge = NULL;
     foreach( const QModelIndex& iedge, iedges ){
         hedge = data( iedge, HEXA_DATA_ROLE ).value<HEXA_NS::Edge *>();
         if ( mstart == NULL ){
             mstart = hedge;
+            std::cout << "mstart" << mstart << std::endl;
         } else {
             mline.push_back( hedge );
+            std::cout << "mline << " << hedge << std::endl;
         }
     }
 
     HEXA_NS::Shape* hshape = NULL;
     foreach( const GeomObj& anAssoc, assocs ){
         hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
-        hshape->debut = 0.;
-        hshape->fin   = 1.;
+        hshape->debut = anAssoc.start; //0.;
+        hshape->fin   = anAssoc.end; //1.;
         hshape->ident = anAssoc.entry.toStdString();
 
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
-            pstart = anAssoc.start;
+            std::cout << "gstart->debut" << gstart->debut << std::endl;
+            std::cout << "gstart->fin"   << gstart->fin<< std::endl;
+            std::cout << "gstart->ident" << gstart->ident << std::endl;
+            std::cout << "gstart->getBrep()" << gstart->getBrep()<< std::endl;
+//             pstart = anAssoc.start;
         } else {
             gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
+            std::cout << "gline->debut" << hshape->debut << std::endl;
+            std::cout << "gline->fin"   << hshape->fin<< std::endl;
+            std::cout << "gline->ident" << hshape->ident << std::endl;
+            std::cout << "gline->getBrep()" << hshape->getBrep()<< std::endl;
         }
     }
-    pend = assocs.last().end;
+//     pend = assocs.last().end;
+    std::cout << "pstart" << pstart << std::endl;
+    std::cout << "pend"   << pend   << std::endl;
+    std::cout << "**********************************************"<< std::endl;
 
-    int r = _hexaDocument->associateOpenedLine( mstart, mline, 
+    int r = _hexaDocument->associateOpenedLine( mstart, mline,
                                                 gstart, pstart, gline, pend );
+//     HEXA_NS::Edge *e0     = _hexaDocument->getEdge(0);
+//     HEXA_NS::Edge *e1     = _hexaDocument->getEdge(1);
+//     HEXA_NS::Shapes  mstartAssoc = e0->getAssociations();
+//     HEXA_NS::Shapes  mlineAssoc  = e1->getAssociations();
+//     HEXA_NS::Shapes  mstartAssoc = mstart->getAssociations();
+//     HEXA_NS::Shapes  mlineAssoc= mline[0]->getAssociations();
+//     std::cout << "DocumentModel:: associateOpenedLine : mstartAssoc.size() => " << mstartAssoc.size() << std::endl;
+// std::cout << "DocumentModel:: associateOpenedLine : mstartAssoc[0]->ident=> " << mstartAssoc[0]->ident << std::endl;
+//     std::cout << "DocumentModel:: associateOpenedLine : mlineAssoc[0]->ident => " << mlineAssoc[0]->ident << std::endl;
+
     if ( r == HOK ){
         updateData();
         std::cout << "DocumentModel:: associateOpenedLine => OK " << std::endl;
@@ -2103,16 +2196,17 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
     return ret;
 }
 
-bool DocumentModel::associateClosedLine( const QModelIndex& ivertex,
-                                         const QModelIndexList& iedges,
-                                         const GeomObjList&     assocs )
+bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
+                                         const  QModelIndexList& iedges,
+                                         const  GeomObjList&     assocs,
+                                         double pstart )
 {
     bool ret = false;
     HEXA_NS::Vertex* mfirst = data( ivertex, HEXA_DATA_ROLE ).value<HEXA_NS::Vertex *>();
     HEXA_NS::Edge*   mstart = NULL;
     HEXA_NS::Edges   mline;
     HEXA_NS::Shape*  gstart = NULL;
-    double  pstart;
+//     double  pstart;
     HEXA_NS::Shapes  gline;
 
 
@@ -2129,13 +2223,13 @@ bool DocumentModel::associateClosedLine( const QModelIndex& ivertex,
     HEXA_NS::Shape* hshape = NULL;
     foreach( const GeomObj& anAssoc, assocs ){
         hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
-        hshape->debut = 0.;
-        hshape->fin   = 1.;
+        hshape->debut = anAssoc.start; //0.;
+        hshape->fin   = anAssoc.end; //1.;
         hshape->ident = anAssoc.entry.toStdString();
 
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
-            pstart = anAssoc.start;
+//             pstart = anAssoc.start;
         } else {
             gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
         }
@@ -2171,7 +2265,7 @@ QModelIndex DocumentModel::addGroup( const QString& name, Group kind )
   _groupDirItem->appendRow(groupItem);
   iGroup = groupItem->index();
   QString tmp = "/tmp/addGroup.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 
   return iGroup;
 }
@@ -2191,7 +2285,7 @@ bool DocumentModel::removeGroup( const QModelIndex& igrp )
     removeRow( igrp.row(), igrp.parent());
     ret = true;
     QString tmp = "/tmp/removeGroup.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -2211,7 +2305,7 @@ void DocumentModel::setGroupName( const QModelIndex& igrp, const QString& name )
 
 
   QString tmp = "/tmp/setGroupName.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
 
 
@@ -2226,7 +2320,7 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
     hGroup->addElement( hElt );
 
   QString tmp = "/tmp/addGroupElement.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
 
 
@@ -2238,7 +2332,7 @@ bool DocumentModel::removeGroupElement( const QModelIndex& igrp, int nro )
     hGroup->removeElement( nro );
 
   QString tmp = "/tmp/removeGroupElement.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
 
 
@@ -2250,7 +2344,7 @@ bool DocumentModel::clearGroupElement( const QModelIndex& igrp )
     hGroup->clearElement();
 
   QString tmp = "/tmp/clearGroupElement.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
 
 // ************  LAWS  ************
@@ -2266,7 +2360,7 @@ QModelIndex DocumentModel::addLaw( const QString& name, int nbnodes )
   _lawDirItem->appendRow(lawItem);
   iLaw = lawItem->index();
   QString tmp = "/tmp/addLaw.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 
   return iLaw;
 }
@@ -2289,7 +2383,7 @@ bool DocumentModel::setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, 
   }
 
   QString tmp = "/tmp/setLaw.vtk";
-  _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   return ret;
 }
 
@@ -2305,7 +2399,7 @@ bool  DocumentModel::removeLaw( const QModelIndex& ilaw )
     removeRow( ilaw.row(),  ilaw.parent());
     ret = true;
     QString tmp = "/tmp/removeLaw.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }
@@ -2326,7 +2420,7 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
   if ( r == HOK ){
     ret = true;
     QString tmp = "/tmp/setPropagation.vtk";
-    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else if ( r == HERR ){
     ret = false;
   }

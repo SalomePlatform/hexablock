@@ -34,6 +34,10 @@
             <translation>import_document.png</translation>
         </message>
         <message>
+            <source>ICON_SAVE_DOCUMENT</source>
+            <translation>save_document.png</translation>
+        </message>
+        <message>
             <source>ICON_ADD_VERTEX</source>
             <translation>add_vertex.png</translation>
         </message>

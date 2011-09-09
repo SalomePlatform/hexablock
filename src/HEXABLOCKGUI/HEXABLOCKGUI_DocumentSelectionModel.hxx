@@ -26,6 +26,7 @@
 
 // #include <SALOME_LifeCycleCORBA.hxx>
 
+#include <GEOMBase_Helper.h>
 
 #include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
@@ -41,6 +42,7 @@
 // #include <list>
 
 // #include "HEXABLOCKGUI_DocumentItem.hxx"
+#include "HEXABLOCKGUI_DocumentModel.hxx"
 // 
 // #include "HexDocument.hxx"
 
@@ -61,7 +63,8 @@ namespace HEXABLOCK
     };
 
 //     class DocumentSelectionModel : public QItemSelectionModel
-    class PatternDataSelectionModel : public QItemSelectionModel
+    class PatternDataSelectionModel : public QItemSelectionModel,
+                                      public GEOMBase_Helper
     {
       Q_OBJECT
 
@@ -80,7 +83,7 @@ namespace HEXABLOCK
         void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
 //         static LightApp_SelectionMgr* selectionMgr();
         void SetSelectionMode(Selection_Mode theMode);
-//         static SVTK_ViewWindow* GetViewWindow ();
+//         void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
 
 
 
@@ -94,16 +97,13 @@ namespace HEXABLOCK
         SVTK_ViewWindow* _getVTKViewWindow();
 
         QModelIndex _indexOf( const QString& anIOEntry, int role );
-//         QModelIndex _eltIndexOf( const QString& assocEntry );
 
         void _setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow );
-
-        void _selectGEOM( const QModelIndex & index );
+        void _highlightGEOM( const QModelIndex & index );
         void _selectVTK( const QModelIndex & index );
 
         QModelIndex _geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
         QModelIndex _vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
-
 
         LightApp_SelectionMgr* _salomeSelectionMgr;
         int                    _selectionFilter;
@@ -112,7 +112,6 @@ namespace HEXABLOCK
         bool _theVtkSelectionChanged;
         bool _theGeomSelectionChanged;
 
-        MyGEOMBase_Helper* _geomHelper;
     };
 
 
@@ -120,3 +119,15 @@ namespace HEXABLOCK
 }
 
 #endif
+
+
+//       protected:
+//         virtual GEOM::GEOM_IOperations_ptr createOperation();
+//         virtual bool execute( ObjectList& );
+//         virtual void displayPreview ( const bool   display,
+// 				const bool   activate = false, 
+//                                 const bool   update = true,
+//                                 const bool   toRemoveFromEngine = true,
+//                                 const double lineWidth = -1, 
+//                                 const int    displayMode = -1,
+//                                 const int    color  = -1 );
