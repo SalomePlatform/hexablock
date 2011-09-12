@@ -982,18 +982,28 @@ Elements_ptr Document_impl::joinQuads(const Quads& qdsIn, Quad_ptr qbIn, Vertex_
 
   ASSERT( qaServant );
   ASSERT( qbServant );
-  ASSERT( va1Servant );
-  ASSERT( vb1Servant );
-  ASSERT( va2Servant );
-  ASSERT( vb2Servant );
+  //   ASSERT( va1Servant ); Controle supprime Abu 
+  //   ASSERT( vb1Servant );
+  //   ASSERT( va2Servant );
+  //   ASSERT( vb2Servant );
 
-  if ( qaServant && qbServant && va1Servant && vb1Servant && va2Servant && vb2Servant ){
+  if ( qaServant && qbServant)
+     {
+     HEXA_NS::Vertex* va1 = NULL;
+     HEXA_NS::Vertex* vb1 = NULL;
+     HEXA_NS::Vertex* va2 = NULL;
+     HEXA_NS::Vertex* vb2 = NULL;
+
+     if (va1Servant && vb1Servant && va2Servant && vb2Servant )
+        {
+        va1 = va1Servant->GetImpl();
+        vb1 = vb1Servant->GetImpl();
+        va2 = va2Servant->GetImpl();
+        vb2 = vb2Servant->GetImpl();
+        }
+
     HEXA_NS::Quad* qa = qaServant->GetImpl();
     HEXA_NS::Quad* qb = qbServant->GetImpl();
-    HEXA_NS::Vertex* va1 = va1Servant->GetImpl();
-    HEXA_NS::Vertex* vb1 = vb1Servant->GetImpl();
-    HEXA_NS::Vertex* va2 = va2Servant->GetImpl();
-    HEXA_NS::Vertex* vb2 = vb2Servant->GetImpl();
 
     return _document_cpp->mergeQuads(qa, qb, va1, vb1, va2, vb2);
 //     HEXA_NS::Elements* l = _document_cpp->mergeQuads(qa, qb, va1, vb1, va2, vb2);
@@ -1571,7 +1581,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   HexDisplay (ier);
   return ier;
 }
-
+// ---------------------------------------------- Ajouts Abu Sept 2011
 // ===================================================== setShape
 void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
   throw(SALOME::SALOME_Exception)
@@ -1588,6 +1598,8 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
 GEOM::GEOM_Object_ptr Document_impl::getShape ()
   throw (SALOME::SALOME_Exception)
 {
+  // std::cout << "getShape --------------------------------" << std::endl;
+
   GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
 
   HEXA_NS::Shape* s = _document_cpp->getShape();
@@ -1602,6 +1614,245 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
      }
 
   return result._retn();
+}
+// ===================================================== countUsedVertex
+::CORBA::Long Document_impl::countUsedVertex() 
+         throw (SALOME::SALOME_Exception)
+{
+  return  _document_cpp->countUsedVertex();
+}
+// ===================================================== getUsedVertex
+Vertex_ptr Document_impl::getUsedVertex(::CORBA::Long i) 
+        throw (SALOME::SALOME_Exception)
+{
+  Vertex_ptr result   = Vertex::_nil();
+
+  HEXA_NS::Vertex* v = _document_cpp->getUsedVertex(i);
+  if ( v != NULL )
+     {
+     Vertex_impl* servantCorba = new Vertex_impl(v);
+     result = servantCorba->_this();
+     }
+  return result;
+}
+// ===================================================== countUsedEdge
+::CORBA::Long Document_impl::countUsedEdge() 
+         throw (SALOME::SALOME_Exception)
+{
+  return  _document_cpp->countUsedEdge();
+}
+// ===================================================== getUsedEdge
+Edge_ptr Document_impl::getUsedEdge(::CORBA::Long i) 
+        throw (SALOME::SALOME_Exception)
+{
+  Edge_ptr result   = Edge::_nil();
+
+  HEXA_NS::Edge* v = _document_cpp->getUsedEdge(i);
+  if ( v != NULL )
+     {
+     Edge_impl* servantCorba = new Edge_impl(v);
+     result = servantCorba->_this();
+     }
+  return result;
+}
+// ===================================================== countUsedQuad
+::CORBA::Long Document_impl::countUsedQuad() 
+         throw (SALOME::SALOME_Exception)
+{
+  return  _document_cpp->countUsedQuad();
+}
+// ===================================================== getUsedQuad
+Quad_ptr Document_impl::getUsedQuad(::CORBA::Long i) 
+        throw (SALOME::SALOME_Exception)
+{
+  Quad_ptr result   = Quad::_nil();
+
+  HEXA_NS::Quad* v = _document_cpp->getUsedQuad(i);
+  if ( v != NULL )
+     {
+     Quad_impl* servantCorba = new Quad_impl(v);
+     result = servantCorba->_this();
+     }
+  return result;
+}
+// ===================================================== countUsedHexa
+::CORBA::Long Document_impl::countUsedHexa() 
+         throw (SALOME::SALOME_Exception)
+{
+  return  _document_cpp->countUsedHexa();
+}
+// ===================================================== getUsedHexa
+Hexa_ptr Document_impl::getUsedHexa(::CORBA::Long i) 
+        throw (SALOME::SALOME_Exception)
+{
+  Hexa_ptr result   = Hexa::_nil();
+
+  HEXA_NS::Hexa* v = _document_cpp->getUsedHexa(i);
+  if ( v != NULL )
+     {
+     Hexa_impl* servantCorba = new Hexa_impl(v);
+     result = servantCorba->_this();
+     }
+  return result;
+}
+// ===================================================== addHexa5Quads
+Hexa_ptr Document_impl::addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, 
+                                       Quad_ptr q4, Quad_ptr q5)
+                        throw (SALOME::SALOME_Exception)
+{
+  Hexa_ptr result = Hexa::_nil();
+
+  Quad_impl* q1InServant = ::DownCast<Quad_impl*>( q1 );
+  Quad_impl* q2InServant = ::DownCast<Quad_impl*>( q2 );
+  Quad_impl* q3InServant = ::DownCast<Quad_impl*>( q3 );
+  Quad_impl* q4InServant = ::DownCast<Quad_impl*>( q4 );
+  Quad_impl* q5InServant = ::DownCast<Quad_impl*>( q5 );
+
+  ASSERT( q1InServant );
+  ASSERT( q2InServant );
+  ASSERT( q3InServant );
+  ASSERT( q4InServant );
+  ASSERT( q5InServant );
+
+  if (q1InServant && q2InServant && q3InServant && q4InServant && q5InServant)
+     {
+     HEXA_NS::Quad* q1 = q1InServant->GetImpl();
+     HEXA_NS::Quad* q2 = q2InServant->GetImpl();
+     HEXA_NS::Quad* q3 = q3InServant->GetImpl();
+     HEXA_NS::Quad* q4 = q4InServant->GetImpl();
+     HEXA_NS::Quad* q5 = q5InServant->GetImpl();
+     HEXA_NS::Hexa* h = _document_cpp->addHexa5Quads (q1, q2, q3, q4, q5);
+
+     if ( h != NULL )
+        {
+        Hexa_impl* servantCorba = new Hexa_impl(h);
+        result = servantCorba->_this();
+        }
+     }
+  return result;
+}
+// ===================================================== addHexa4Quads
+Hexa_ptr Document_impl::addHexa4Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, 
+                                       Quad_ptr q4)
+                        throw (SALOME::SALOME_Exception)
+{
+  Hexa_ptr result = Hexa::_nil();
+
+  Quad_impl* q1InServant = ::DownCast<Quad_impl*>( q1 );
+  Quad_impl* q2InServant = ::DownCast<Quad_impl*>( q2 );
+  Quad_impl* q3InServant = ::DownCast<Quad_impl*>( q3 );
+  Quad_impl* q4InServant = ::DownCast<Quad_impl*>( q4 );
+
+  ASSERT( q1InServant );
+  ASSERT( q2InServant );
+  ASSERT( q3InServant );
+  ASSERT( q4InServant );
+
+  if (q1InServant && q2InServant && q3InServant && q4InServant)
+     {
+     HEXA_NS::Quad* q1 = q1InServant->GetImpl();
+     HEXA_NS::Quad* q2 = q2InServant->GetImpl();
+     HEXA_NS::Quad* q3 = q3InServant->GetImpl();
+     HEXA_NS::Quad* q4 = q4InServant->GetImpl();
+     HEXA_NS::Hexa* h = _document_cpp->addHexa4Quads (q1, q2, q3, q4);
+
+     if ( h != NULL )
+        {
+        Hexa_impl* servantCorba = new Hexa_impl(h);
+        result = servantCorba->_this();
+        }
+     }
+  return result;
+}
+// ===================================================== addHexa3Quads
+Hexa_ptr Document_impl::addHexa3Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3)
+                        throw (SALOME::SALOME_Exception)
+{
+  Hexa_ptr result = Hexa::_nil();
+
+  Quad_impl* q1InServant = ::DownCast<Quad_impl*>( q1 );
+  Quad_impl* q2InServant = ::DownCast<Quad_impl*>( q2 );
+  Quad_impl* q3InServant = ::DownCast<Quad_impl*>( q3 );
+
+  ASSERT( q1InServant );
+  ASSERT( q2InServant );
+  ASSERT( q3InServant );
+
+  if (q1InServant && q2InServant && q3InServant)
+     {
+     HEXA_NS::Quad* q1 = q1InServant->GetImpl();
+     HEXA_NS::Quad* q2 = q2InServant->GetImpl();
+     HEXA_NS::Quad* q3 = q3InServant->GetImpl();
+     HEXA_NS::Hexa* h = _document_cpp->addHexa3Quads (q1, q2, q3);
+
+     if ( h != NULL )
+        {
+        Hexa_impl* servantCorba = new Hexa_impl(h);
+        result = servantCorba->_this();
+        }
+     }
+
+  return result;
+}
+// ===================================================== addHexa2Quads
+Hexa_ptr Document_impl::addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
+                        throw (SALOME::SALOME_Exception)
+{
+  Hexa_ptr result = Hexa::_nil();
+
+  Quad_impl* q1InServant = ::DownCast<Quad_impl*>( q1 );
+  Quad_impl* q2InServant = ::DownCast<Quad_impl*>( q2 );
+
+  ASSERT( q1InServant );
+  ASSERT( q2InServant );
+
+  if (q1InServant && q2InServant)
+     {
+     HEXA_NS::Quad* q1 = q1InServant->GetImpl();
+     HEXA_NS::Quad* q2 = q2InServant->GetImpl();
+     HEXA_NS::Hexa* h = _document_cpp->addHexa2Quads (q1, q2);
+
+     if ( h != NULL )
+        {
+        Hexa_impl* servantCorba = new Hexa_impl(h);
+        result = servantCorba->_this();
+        }
+     }
+
+  return result;
+}
+
+// ===================================================== removeQuad
+::CORBA::Boolean Document_impl::removeQuad(Quad_ptr quad) 
+                 throw (SALOME::SALOME_Exception)
+{
+  Quad_impl* hServant = ::DownCast<Quad_impl*>( quad );
+  ASSERT( hServant );
+
+  if ( hServant ) {
+    HEXA_NS::Quad* q = hServant->GetImpl();
+    int ok = _document_cpp->removeQuad(q);
+    if ( ok == HOK )
+      return true;
+    else
+      return false;
+  }
+}
+// ===================================================== removeElements
+::CORBA::Boolean Document_impl::removeElements(Elements_ptr bloc) 
+                 throw (SALOME::SALOME_Exception)
+{
+  Elements_impl* hServant = ::DownCast<Elements_impl*>( bloc );
+  ASSERT( hServant );
+
+  if ( hServant ) {
+    HEXA_NS::Elements* q = hServant->GetImpl();
+    int ok = _document_cpp->removeElements(q);
+    if ( ok == HOK )
+      return true;
+    else
+      return false;
+  }
 }
 
 
@@ -1626,7 +1877,8 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
 // // 
 // //   HEXA_NS::Vertex* tmpVertex = _document_cpp->vertex( v->x(), v->y(), v->z() );
 // // //   HEXA_NS::Vertex* tmpVertex = new HEXA_NS::Vertex(_document_cpp, v->x(), v->y(), v->z() );
-// //   std::cout<<"tmpVertex OK"<<std::endl;
+// //   std::cout<<"tmpVertex OK"<<std::endl;../saved/mains/
+
 // // 
 // // 
 // //   HEXA_NS::Vector* tmpVector = _document_cpp->vector( v1->dx(), v1->dy(), v1->dz() );
@@ -1637,7 +1889,8 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
 // //   std::cout<<"px->"<<px<<std::endl;
 // //   std::cout<<"py->"<<py<<std::endl;
 // //   std::cout<<"pz->"<<pz<<std::endl;
-// // 
+// // ../saved/mains/
+
 // //   HEXA_NS::HEXA_ORB::Hexas* grid = _document_cpp->cartesian( tmpVertex, tmpVector, px, py, pz);
 // //   std::cout<<"grid OK"<<std::endl;
 // //   tmpVertex->remove();
@@ -1653,7 +1906,8 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
 // //   Hexa_impl *servantHexa = new Hexa_impl( oneHexa );
 // //   (*servantGrid)[ 0 ] = servantHexa->_this();
 // // 
-// // // 
+// // // ../saved/mains/
+
 // // //   CORBA::ULong i = 0;
 // // //   for (int nz=0; nz<pz ; nz++){
 // // //     for (int ny=nz+1; ny<py-nz-1 ; ny++){

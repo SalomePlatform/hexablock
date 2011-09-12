@@ -188,6 +188,32 @@ void setShape (GEOM::GEOM_Object_ptr geom_object)
 GEOM::GEOM_Object_ptr getShape ()
                       throw (SALOME::SALOME_Exception);
 
+          // Evols 05/09/2011
+	  //
+  ::CORBA::Long countUsedVertex () throw (SALOME::SALOME_Exception);
+  ::CORBA::Long countUsedEdge   () throw (SALOME::SALOME_Exception);
+  ::CORBA::Long countUsedQuad   () throw (SALOME::SALOME_Exception);
+  ::CORBA::Long countUsedHexa   () throw (SALOME::SALOME_Exception);
+
+  Vertex_ptr getUsedVertex (::CORBA::Long i) throw (SALOME::SALOME_Exception);
+  Edge_ptr    getUsedEdge   (::CORBA::Long i) throw (SALOME::SALOME_Exception);
+  Quad_ptr    getUsedQuad   (::CORBA::Long i) throw (SALOME::SALOME_Exception);
+  Hexa_ptr    getUsedHexa   (::CORBA::Long i) throw (SALOME::SALOME_Exception);
+
+  Hexa_ptr addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, Quad_ptr q4, Quad_ptr q5)
+           throw (SALOME::SALOME_Exception);
+  Hexa_ptr addHexa4Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, Quad_ptr q4)
+           throw (SALOME::SALOME_Exception);
+  Hexa_ptr addHexa3Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3)
+           throw (SALOME::SALOME_Exception);
+  Hexa_ptr addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
+           throw (SALOME::SALOME_Exception);
+
+  ::CORBA::Boolean removeQuad (Quad_ptr quad) 
+           throw (SALOME::SALOME_Exception);
+  ::CORBA::Boolean removeElements (Elements_ptr bloc) 
+           throw (SALOME::SALOME_Exception);
+
 private:
   HEXA_NS::Document *_document_cpp;
 

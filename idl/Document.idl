@@ -502,8 +502,40 @@ module HEXABLOCK_ORB
 
    GEOM::GEOM_Object getShape ()
             raises (SALOME::SALOME_Exception);
-// 
 
+//       Ajouts 05/09/20011
+
+    long countUsedVertex()
+        raises (SALOME::SALOME_Exception);
+    long countUsedEdge()
+        raises (SALOME::SALOME_Exception);
+    long countUsedQuad()
+        raises (SALOME::SALOME_Exception);
+    long countUsedHexa()
+        raises (SALOME::SALOME_Exception);
+
+    Vertex getUsedVertex( in long i )
+        raises (SALOME::SALOME_Exception);
+    Edge getUsedEdge( in long i )
+        raises (SALOME::SALOME_Exception);
+    Quad getUsedQuad( in long i )
+        raises (SALOME::SALOME_Exception);
+    Hexa getUsedHexa( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Hexa addHexa5Quads (in Quad q1, in Quad q2, in Quad q3, in Quad q4, 
+                        in Quad q5) raises (SALOME::SALOME_Exception);
+    Hexa addHexa4Quads ( in Quad q1, in Quad q2, in Quad q3, in Quad q4)
+         raises (SALOME::SALOME_Exception);
+    Hexa addHexa3Quads ( in Quad q1, in Quad q2, in Quad q3)
+         raises (SALOME::SALOME_Exception);
+    Hexa addHexa2Quads ( in Quad q1, in Quad q2)
+         raises (SALOME::SALOME_Exception);
+
+    boolean removeQuad( in Quad q )
+        raises (SALOME::SALOME_Exception);
+    boolean removeElements( in Elements b )
+        raises (SALOME::SALOME_Exception);
 
   };
 };
