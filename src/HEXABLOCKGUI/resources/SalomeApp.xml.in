@@ -24,6 +24,7 @@
     <!-- Major module parameters -->
     <parameter name="name" value="HexaBlock"/>
     <parameter name="icon" value="ModuleHexablock.png"/>
+    <parameter name="HEXABLOCK_VERSION" value="@VERSION@"/>	
   </section>
   <section name="resources">
     <!-- Module resources -->

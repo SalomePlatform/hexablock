@@ -94,6 +94,8 @@
 #include "HEXABLOCKGUI_DocumentDelegate.hxx"
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 
+#include <HEXABLOCK_version.h>
+
 
 // #include CORBA_CLIENT_HEADER(HEXABLOCKPlugin_Algorithm)
 
@@ -2134,6 +2136,11 @@ extern "C"
   HEXABLOCKGUI_EXPORT CAM_Module* createModule()
   {
     return new HEXABLOCKGUI();
+  }
+  
+  HEXABLOCKGUI_EXPORT char* getModuleVersion()
+  {
+    return HEXABLOCK_VERSION_STR;
   }
 }
 

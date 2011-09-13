@@ -351,6 +351,7 @@ AC_OUTPUT([ \
   src/Makefile \
   src/HEXABLOCKGUI/Makefile \
   src/HEXABLOCKGUI/resources/HEXABLOCKCatalog.xml \
+  src/HEXABLOCKGUI/resources/SalomeApp.xml \
   src/HEXABLOCK/Makefile \
   src/HEXABLOCK_I/Makefile \
   src/TEST_CPP/Makefile \

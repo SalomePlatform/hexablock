@@ -130,6 +130,7 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(GEOM_CXXFLAGS) \
 	-I$(srcdir)/../HEXABLOCK \
 	-I$(srcdir)/../HEXABLOCK_I \
+	-I$(top_builddir) \
 	-I../../idl \
 	$(qt4_cppflags) \
 	$(qsci4_cppflags)
@@ -155,7 +156,7 @@ BUILT_SOURCES = $(UIC_FILES)
 
 # resources files
 ICONS =  \
-	resources/SalomeApp.xml \
+	$(top_builddir)/src/HEXABLOCKGUI/resources/SalomeApp.xml \
 	resources/LightApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
