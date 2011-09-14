@@ -50,7 +50,8 @@ module HEXABLOCK_ORB
   interface Group;
   interface Propagation;
 
-  typedef sequence<Quad>  Quads;
+  typedef sequence<Quad>    Quads;
+  typedef sequence<double>  RealVector;
   typedef GEOM::GEOM_Object  Shape;
   typedef sequence<GEOM::GEOM_Object>  Shapes;
 
@@ -286,6 +287,10 @@ module HEXABLOCK_ORB
     Elements prismQuads( in Quads qds, in Vector v, in long nb )
         raises (SALOME::SALOME_Exception); //CS_NEW
 
+    Elements revolutionQuads( in Quads qds, in Vertex ori, in Vector dir, 
+                              in RealVector angles)
+        raises (SALOME::SALOME_Exception); //CS_NEW
+
     Elements joinQuad( in Quad qa, in Quad qb,
                        in Vertex va1, in Vertex vb1,
                        in Vertex va2, in Vertex vb2,
@@ -501,6 +506,8 @@ module HEXABLOCK_ORB
             raises (SALOME::SALOME_Exception);
 
    GEOM::GEOM_Object getShape ()
+            raises (SALOME::SALOME_Exception);
+   string getBrep ()
             raises (SALOME::SALOME_Exception);
 
 //       Ajouts 05/09/20011

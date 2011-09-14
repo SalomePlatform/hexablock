@@ -278,9 +278,79 @@ int test_prism ()
        if (ny!=my) 
           liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
 
-   Hex::Elements* prisme = doc->prismQuads  (liste, dir, 5);
-   // doc->saveVtk ("prisme.vtk");
-   prisme->saveVtk ("prisme.vtk");
+   doc->saveVtk ("prisme1.vtk");
+   /* Hex::Elements* prisme = */ doc->prismQuads  (liste, dir, 5);
+   doc->saveVtk ("prisme2.vtk");
+
+   return HOK;
+}
+// ======================================================== test_revolution
+int test_revolution ()
+{
+   const int dimx = 11;
+   const int dimy = 11;
+   const int dimz = 2;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
+   Hex::Vector* dir   = doc->addVector (1,1,1);
+
+   Hex::Elements* grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
+
+   int mx = dimx/2;
+   int my = dimy/2;
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
+   Hex::Quads liste;
+
+   liste.push_back (prems);
+   prems -> setScalar (5);
+   for (int nx=0; nx<dimx; nx++)
+       if (nx!=mx) 
+          {
+          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz); 
+          liste.push_back (cell);
+          cell -> setScalar (5);
+          }
+
+   for (int ny=0; ny<dimy; ny++)
+       if (ny!=my) 
+          {
+          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz); 
+          liste.push_back (cell);
+          cell -> setScalar (5);
+          }
+
+
+   Hex::Vertex* center = doc->addVertex (0, -10, 0);
+   Hex::Vector* axis   = doc->addVector (1, 0, 0);
+   Hex::RealVector  angles;
+
+   Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);
+   Hex::Elements* grid2 = doc->makeCartesian (center, dir1, 1,1,1);
+   Hex::Hexa*     cell  = grid2->getHexaIJK (0,0,0);
+   cell->setScalar (5);
+
+   doc->saveVtk ("revolution1.vtk");
+
+   double alpha = 5;
+   int niter    = 5;
+   double coeff = 1.5;
+   for (int na=0 ; na<niter ; na++)
+       {
+       angles.push_back (alpha);
+       alpha *= coeff;
+       }
+   for (int na=1 ; na<niter ; na++)
+       {
+       alpha /= coeff;
+       angles.push_back (alpha);
+       }
+
+
+   Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
+   doc->saveVtk ("revolution2.vtk");
 
    return HOK;
 }
@@ -1138,9 +1208,10 @@ int test_copy_document (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
+
 int test_quads (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa1
 int test_hexa1 (int nbargs, cpchar tabargs[])
 {
-   return test_quads(nbargs, tabargs);
+   return test_revolution ();
 }

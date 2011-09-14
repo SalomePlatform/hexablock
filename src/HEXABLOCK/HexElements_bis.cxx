@@ -190,14 +190,14 @@ void Elements::remove ()
            tab_hexa[nh]->remove();
 }
 // ====================================================== prismQuads
-int Elements::prismQuads (Quads& tstart, Vector* dir, int hauteur)
+int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
 {
    el_root->markAll (NO_USED);
    int nbcells   = tstart.size ();
    nbr_vertex    = 0;
    nbr_edges     = 0;
 
-   nbr_hexas = nbcells*hauteur;
+   nbr_hexas = nbcells*nbiter;
 
    tab_hexa.resize (nbr_hexas);
    tab_quad.clear ();          // verticaux
@@ -205,16 +205,50 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int hauteur)
    tab_pilier.clear ();
    tab_vertex.clear ();
 
+   revo_lution = false;
+   revo_matrix.defTranslation (dir);
+
    for (int nro=0 ; nro<nbcells ; nro++)
        {
-       pushHexas (nro, tstart[nro], dir->getDx(), dir->getDy(), dir->getDz(), 
-                  hauteur);
+       pushHexas (nro, tstart[nro], nbiter);
+       }
+   return HOK;
+}
+// ======================================================== revolutionQuads
+int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
+                               RealVector &angles)
+{
+   int nbiter = angles.size();
+   if (center==NULL  || axis==NULL || nbiter==0)
+      return HERR;
+
+   el_root->markAll (NO_USED);
+   int nbcells   = start.size ();
+   nbr_vertex    = 0;
+   nbr_edges     = 0;
+
+   nbr_hexas   = nbcells*nbiter;
+
+   tab_hexa.resize (nbr_hexas);
+   tab_quad.clear ();          // verticaux
+   tab_edge.clear ();
+   tab_pilier.clear ();
+   tab_vertex.clear ();
+
+   revo_lution = true;
+   revo_axis   = axis;
+   revo_center = center;
+   revo_angle  = angles;
+
+
+   for (int nro=0 ; nro<nbcells ; nro++)
+       {
+       pushHexas (nro, start[nro], nbiter);
        }
    return HOK;
 }
 // ====================================================== pushHexas
-int  Elements::pushHexas (int nro, Quad* qbase, double dx, double dy, 
-                          double dz, int hauteur, Quad* toit, int tcorr[])
+int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
 {
    int ind_node [QUAD4];
 
@@ -231,8 +265,11 @@ int  Elements::pushHexas (int nro, Quad* qbase, double dx, double dy,
           Vertex* nd1 = NULL;
           for (int nh=0 ; nh<hauteur ; nh++)
               {
-              nd1 = el_root->addVertex (nd0->getX() + dx, nd0->getY() + dy,
-                                        nd0->getZ() + dz);
+              nd1 = el_root->addVertex (nd0->getX(), nd0->getY(), nd0->getZ());
+              if (revo_lution)
+                  revo_matrix.defRotation (revo_center, revo_axis, 
+                                           revo_angle[nh]);
+              revo_matrix.perform  (nd1);
               tab_vertex.push_back (nd1);
               tab_pilier.push_back (newEdge (nd0, nd1));
               nd0 = nd1;
@@ -290,91 +327,6 @@ int  Elements::pushHexas (int nro, Quad* qbase, double dx, double dy,
 // *** tab_hexa [nh*hauteur + nro] = newHexa (qa, qb, qc, qd, qe, qf); Abu 
        tab_hexa [nro*hauteur + nh] = newHexa (qa, qb, qc, qd, qe, qf);
        qa = qb;
-       }
-   return HOK;
-}
-// ====================================================== cutHexas
-int Elements::cutHexas0 (const Edges& t_edges, int nbcuts)
-{
-                                       // 1) marquage des hexas
-   el_root->markAll (NO_USED);
-                                       // 2) Memo noeuds
-   vector <Quad*> q_amont;
-   vector <Quad*> q_aval;
-
-   int nbnodes = t_edges.size();
-   vector <Vertex*> v_amont (nbnodes);
-   vector <Vertex*> v_aval  (nbnodes);
-
-   std::map <Vertex*, Vertex*> vertex_aval;
-
-   for (int nro=0; nro<nbnodes ; nro++)
-       {
-       Edge*   arete = t_edges [nro];
-       Vertex* amont = arete->getAmont ();
-       v_amont [nro] = amont;
-       vertex_aval [amont] = arete->getAval  ();
-       int nbcells   = arete->getNbrParents ();
-
-       for (int nq=0 ; nq<nbcells ; nq++)
-           {
-           Quad* quad = arete->getParent (nq);
-           if (quad->getMark () != IS_USED)
-              {
-              quad->setMark (IS_USED);
-              int nbcubes = quad->getNbrParents ();
-              for (int nh=0 ; nh<nbcubes ; nh++)
-                  {
-                  Hexa* hexa = quad->getParent (nh);
-                  if (hexa->getMark () != IS_USED)  
-                     {
-                     hexa->setMark (IS_USED);
-                     int namont = hexa->getBase (v_amont[nro], arete);
-                     int naval  = glob->getOpposedQuad (namont);
-                     q_amont.push_back (hexa->getQuad  (namont));
-                     q_aval .push_back (hexa->getQuad  (naval ));
- 
-                     if (db)
-                        {
-                        printf (" Quad = ");
-                        hexa->printName (", ");
-                        printf (" Faces = (");
-                        hexa->getQuad (namont)->printName (", ");
-                        hexa->getQuad (naval )->printName (")\n");
-                        }
-                     }
-                  }
-              }
-           }
-       }
-                   // ------------------- Dimensionnement
-   int hauteur = nbcuts + 1;
-   int nbcells = q_amont.size ();
-   nbr_hexas   = nbcells * hauteur;
-
-   tab_hexa.resize   (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   for (int ned=0; ned<nbnodes ; ned++)
-       t_edges [ned]->remove ();
-
-
-   for (int nro=0; nro<nbcells ; nro++)
-       {
-       int tcorr [QUAD4];
-       Quad* sol  = q_amont[nro];
-       Quad* toit = q_aval [nro];
-
-       for (int nv=0; nv<QUAD4 ; nv++)
-           {
-           Vertex* dest = vertex_aval [sol->getVertex(nv)];
-           tcorr [nv] = toit->indexVertex (dest);
-           }
-
-       pushHexas (nro, sol, 0,0,0, hauteur, toit, tcorr);
        }
    return HOK;
 }

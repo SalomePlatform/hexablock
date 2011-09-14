@@ -24,6 +24,7 @@
 
 #include "HexEltBase.hxx"
 #include "HexHexa.hxx"
+#include "HexMatrix.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -90,7 +91,6 @@ public:
 
    int  prismQuads (Quads& start, Vector* dv, int nb);
    int  cutHexas   (const Edges& edges, int nbcuts);
-   int  cutHexas0  (const Edges& edges, int nbcuts);
 
    void setVertex (Vertex* node, int nx, int ny, int nz);
 
@@ -103,17 +103,20 @@ public:
 
    int nroVertex (int nsommet,  int nquad, int nh);
 
+              // Version 3 de 2011
+
+   int revolutionQuads (Quads& start, Vertex* center, Vector* axis, 
+                        RealVector &angles);
+
 protected :
  
    int   fillGrid ();
-
    void  fillCenter    ();
    void  fillCenter4   ();
    void  fillCenter6   ();
    void  fillCenterOdd ();
 
-   int  pushHexas (int nro, Quad* sol, double dx, double dy, double dz, 
-                   int hauteur, Quad* toit=NULL, int* decal=NULL);
+   int  pushHexas (int nro, Quad* sol, int hauteur);
 
    void setVertex (int nx, int ny, int nz, double px, double py, double pz);
    void setEdge   (Edge*   edge, EnumCoord dir, int nx, int ny, int nz);
@@ -175,6 +178,12 @@ protected :
     bool     cyl_closed;         // Cyl
     bool     cyl_fill;           // Cyl
     EnumCyl  cyl_dispo;          // Cyl
+
+    bool           revo_lution;  // Number 9 ...
+    Vertex*        revo_center;
+    Vector*        revo_axis;
+    vector<double> revo_angle;
+    Matrix         revo_matrix;
 };
 // =================================================== getStrate
 inline Hexa* Elements::getStrate (int couche, EnumHQuad nroface)

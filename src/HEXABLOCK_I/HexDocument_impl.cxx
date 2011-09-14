@@ -1590,6 +1590,8 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
                        ->geomObjectToShape(geom_object);
 
   string strBrep = shape2string( shape );
+  std::cout << "setShape ---------> len(strBrep)"
+            << strBrep.size() << std::endl;
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
 
   _document_cpp->setShape (s);
@@ -1598,8 +1600,10 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
 GEOM::GEOM_Object_ptr Document_impl::getShape ()
   throw (SALOME::SALOME_Exception)
 {
-  // std::cout << "getShape --------------------------------" << std::endl;
-
+   GEOM::GEOM_Object_var result;
+   return result._retn();
+}
+/* ***********************************************************
   GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
 
   HEXA_NS::Shape* s = _document_cpp->getShape();
@@ -1609,11 +1613,28 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
   if (s != NULL)
      {
      string strBrep = s->getBrep();
+     std::cout << "getShape -->len (getBrep) = " 
+               << strBrep.size() << std::endl;
      TopoDS_Shape shape = string2shape( strBrep );
+     std::cout << "getShape -->string2shape->" << std::endl;
      result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
+     std::cout << "getShape -->GetHEXABLOCKGen--" << std::endl;
      }
 
   return result._retn();
+  **************************************************************** */
+// ===================================================== getBrep
+char* Document_impl::getBrep () throw (SALOME::SALOME_Exception)
+{
+   const char* brep = NULL;
+
+   HEXA_NS::Shape* shape = _document_cpp->getShape();
+   if (shape != NULL)
+       brep = shape->getBrep().c_str();
+     
+  if (brep == NULL)
+      brep = "";
+  return CORBA::string_dup (brep);
 }
 // ===================================================== countUsedVertex
 ::CORBA::Long Document_impl::countUsedVertex() 
@@ -1853,6 +1874,51 @@ Hexa_ptr Document_impl::addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
     else
       return false;
   }
+}
+// ===================================================== revolutionQuads
+Elements_ptr Document_impl::revolutionQuads (const Quads& start, 
+                                    Vertex_ptr center, Vector_ptr axis, 
+                                    const RealVector &angles)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+
+   Vector_impl* v_axis   = ::DownCast<Vector_impl*> (axis);
+   Vertex_impl* v_center = ::DownCast<Vertex_impl*> (center);
+
+   ASSERT (v_axis);
+   ASSERT (v_center);
+
+   if (v_axis==NULL || v_center==NULL)
+      return result;
+
+   HEXA_NS::Quads t_start;
+   for ( int nq = 0; nq < start.length(); nq++) 
+       {
+       Quad_impl* v_quad = ::DownCast<Quad_impl*> (start[nq]);
+       ASSERT( v_quad );
+       HEXA_NS::Quad* i_quad = v_quad->GetImpl();
+       t_start.push_back(i_quad);
+       }
+
+   std::vector <CORBA::Double> t_angles;
+   for ( int na = 0; na < angles.length(); na++) 
+       {
+       CORBA::Double alpha = angles[na];
+       t_angles.push_back (alpha);
+       }
+
+   HEXA_NS::Vector*   i_axis   = v_axis  ->GetImpl();
+   HEXA_NS::Vertex*   i_center = v_center->GetImpl();
+   HEXA_NS::Elements* i_elts   = _document_cpp->revolutionQuads (t_start, 
+                                 i_center, i_axis, t_angles);
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
 }
 
 

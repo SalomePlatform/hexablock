@@ -188,6 +188,9 @@ public :
    Hexa* addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4);
    Hexa* addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5);
 
+   Elements* revolutionQuads (Quads& start, Vertex* center, Vector* axis, 
+                              RealVector &angles);
+
 public:
     Document (cpchar filename);
    ~Document ();

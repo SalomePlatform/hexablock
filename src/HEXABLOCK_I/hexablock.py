@@ -47,12 +47,17 @@ def mesh(name, doc, dim=3, container="FactoryServer"):
         obj = salome.orb.string_to_object(ior.Value())
         doc = obj._narrow(Document)
 
-    #shape = doc.getShape()
-    shape = None
-    if shape == None:
+    brep = doc.getBrep()
+    if brep == "":
         shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
-        geompy.addToStudy(shape, name)
+    else:
+        tmpfile = "/tmp/hexablock.brep"
+        fic = file(tmpfile, 'w')
+        fic.write(brep)
+        fic.close()
+        shape = geompy.ImportBREP(tmpfile)
 
+    geompy.addToStudy(shape, name)
     component = salome.lcc.FindOrLoadComponent(container, "SMESH")
     component.init_smesh(study, geompy.geom)
     meshexa = component.Mesh(shape)

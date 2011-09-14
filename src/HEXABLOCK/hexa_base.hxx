@@ -180,9 +180,11 @@ class   AnaQuads;
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;
+typedef std::vector <double> RealVector;
 
 typedef double Real;
 typedef double Real3 [DIM3];
+
 
 END_NAMESPACE_HEXA
 

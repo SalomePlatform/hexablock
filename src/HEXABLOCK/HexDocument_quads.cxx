@@ -371,10 +371,10 @@ Hexa* Document::addHexaQuadsAC (AnaQuads& strquads)
    Quad* q_a = strquads.tab_quads[0];
    Quad* q_c = strquads.tab_quads[1];
 
-   Edge*   aedge [V_TWO];
-   Edge*   cedge [V_TWO];
-   Quad*   tcote [V_TWO];
-   Vertex* tvert [V_TWO];
+   Vertex* tv_bdx [V_TWO];   // x = e ou f
+   Edge*   te_dX  [V_TWO];
+   Edge*   te_bX  [V_TWO];
+   Quad*   tq_ef  [V_TWO];
 
    int neda0  = strquads.inter_edge [0] [1];
 
@@ -397,25 +397,25 @@ Hexa* Document::addHexaQuadsAC (AnaQuads& strquads)
        double dx  = (vxa->getX() - vx1->getX()) + (vxc->getX() - vx1->getX());
        double dy  = (vxa->getY() - vx1->getY()) + (vxc->getY() - vx1->getY());
        double dz  = (vxa->getZ() - vx1->getZ()) + (vxc->getZ() - vx1->getZ());
-       tvert [ns] = new Vertex (this, vx1->getX()+dx, vx1->getY()+dy,  
+       tv_bdx [ns] = new Vertex (this, vx1->getX()+dx, vx1->getY()+dy,  
                                                       vx1->getZ()+dz);
        Edge* edga = q_a->findEdge (vx1, vxa);
        Edge* edgc = q_c->findEdge (vx1, vxc);
 
-       aedge [ns] = new Edge (vxa, tvert[ns]);
-       cedge [ns] = new Edge (vxc, tvert[ns]);
-       tcote [ns] = new Quad (edga, aedge[ns], cedge[ns], edgc); 
+       te_dX [ns] = new Edge (vxa, tv_bdx[ns]);
+       te_bX [ns] = new Edge (vxc, tv_bdx[ns]);
+       tq_ef [ns] = new Quad (edga, te_dX[ns], te_bX[ns], edgc); 
        }
 
    int ff = 0;
-   Edge* e_bd = new Edge (tvert[V_AMONT], tvert[V_AVAL]);
+   Edge* e_bd = new Edge (tv_bdx[V_AMONT], tv_bdx[V_AVAL]);
    Edge* e_ad = q_a->getOpposEdge (e_ac, ff); 
    Edge* e_bc = q_c->getOpposEdge (e_ac, ff); 
    
-   Quad* q_d = new Quad (e_bd, aedge[V_AMONT], e_ad, aedge[V_AVAL]);
-   Quad* q_b = new Quad (e_bd, cedge[V_AMONT], e_bc, cedge[V_AVAL]);
+   Quad* q_d = new Quad (e_bd, te_dX[V_AMONT], e_ad, te_dX[V_AVAL]);
+   Quad* q_b = new Quad (e_bd, te_bX[V_AMONT], e_bc, te_bX[V_AVAL]);
 
-   Hexa*  hexa  = new Hexa (q_a, q_b, q_c, q_d, tcote[V_AMONT], tcote[V_AVAL]);
+   Hexa*  hexa  = new Hexa (q_a, q_b, q_c, q_d, tq_ef[V_AMONT], tq_ef[V_AVAL]);
    return hexa;
 }
 // ========================================================= addHexaquadsACE
@@ -546,15 +546,16 @@ Hexa* Document::addHexaQuadsACD (AnaQuads& strquads)
    int   nc_ac = strquads.inter_edge[pos_c][pos_a]; // Nro dans  q_c de e_ac
    int   nd_ad = strquads.inter_edge[pos_d][pos_a]; // Nro dans  q_d de e_ad
 
-   Edge* e_ae  = q_a->getEdge ((na_ac + 1) MODULO QUAD4);
-   Edge* e_af  = q_a->getEdge ((na_ac + 3) MODULO QUAD4);
+   Edge* e_ae  = q_a->getEdge ((na_ac + 1) MODULO QUAD4); // Arbitraire
+   Edge* e_af  = q_a->getEdge ((na_ac + 3) MODULO QUAD4); // Arbitraire
+
+   Edge* e_bc  = q_c->getEdge ((nc_ac + 2) MODULO QUAD4); 
+   Edge* e_bd  = q_d->getEdge ((nd_ad + 2) MODULO QUAD4);
 
    Edge* e_ce  = q_c->getEdge ((nc_ac + 1) MODULO QUAD4);
-   Edge* e_bc  = q_c->getEdge ((nc_ac + 2) MODULO QUAD4);
    Edge* e_cf  = q_c->getEdge ((nc_ac + 3) MODULO QUAD4);
 
    Edge* e_de  = q_d->getEdge ((nd_ad + 1) MODULO QUAD4);
-   Edge* e_bd  = q_d->getEdge ((nd_ad + 2) MODULO QUAD4);
    Edge* e_df  = q_d->getEdge ((nd_ad + 3) MODULO QUAD4);
 
    Vertex* v_ace = e_ae->commonVertex (e_ce);
