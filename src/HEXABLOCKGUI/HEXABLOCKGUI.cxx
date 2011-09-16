@@ -2140,7 +2140,7 @@ extern "C"
   
   HEXABLOCKGUI_EXPORT char* getModuleVersion()
   {
-    return HEXABLOCK_VERSION_STR;
+    return (char*)HEXABLOCK_VERSION_STR;
   }
 }
 

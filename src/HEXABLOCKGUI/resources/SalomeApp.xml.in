@@ -24,10 +24,10 @@
     <!-- Major module parameters -->
     <parameter name="name" value="HexaBlock"/>
     <parameter name="icon" value="ModuleHexablock.png"/>
-    <parameter name="HEXABLOCK_VERSION" value="@VERSION@"/>	
+    <parameter name="version" value="@VERSION@"/>	
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="HEXABLOCK" value="${HEXABLOCK_ROOT_DIR}/share/salome/resources/hexablock"/>
+    <parameter name="HEXABLOCK" value="%HEXABLOCK_ROOT_DIR%/share/salome/resources/hexablock"/>
   </section>
 </document>
