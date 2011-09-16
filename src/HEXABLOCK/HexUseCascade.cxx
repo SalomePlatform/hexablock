@@ -17,7 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
+//
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 #include "HexDocument.hxx"
 
@@ -47,6 +49,7 @@
 #include <gp_Dir.hxx>
 #include <gp_Lin.hxx>
 #include <IntCurvesFace_ShapeIntersector.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 
 // HEXABLOCK includes
 #include "HexVertex.hxx"
@@ -92,7 +95,7 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
@@ -152,6 +155,21 @@ TopoDS_Edge asso2edge (Shape* asso)
    BRepTools::Read(shape, streamBrep, aBuilder);
    return TopoDS::Edge(shape);
 }
+// ============================================================ set_association
+void set_association (Vertex* node, gp_Pnt& pnt_asso)
+{
+   BRepBuilderAPI_MakeVertex mkVertex (pnt_asso);
+   ostringstream             streamShape;
+
+   TopoDS_Shape  aShape = mkVertex.Shape();
+   BRepTools::Write(aShape, streamShape);
+
+   string        brep   = streamShape.str();
+   Hex::Shape*   hshape = new Shape (brep); 
+
+   node->setAssociation (hshape);
+}
+
 // ============================================================ add_association
 void add_association (Edge* edge, Shape* assold, double deb, double fin)
 {
@@ -447,10 +465,11 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    double ppy = sommet->getY ();
    double ppz = sommet->getZ ();
 
-   sommet->setAssociation (NULL);
-   sommet->setX (tabg_point[npoint].X());
-   sommet->setY (tabg_point[npoint].Y());
-   sommet->setZ (tabg_point[npoint].Z());
+   set_association (sommet, tabg_point[npoint]);
+   // sommet->setAssociation (NULL);
+   // sommet->setX (tabg_point[npoint].X());
+   // sommet->setY (tabg_point[npoint].Y());
+   // sommet->setZ (tabg_point[npoint].Z());
 
    double sm1=0, sm2 = 0;
 
@@ -527,14 +546,15 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                  ppy = sommet->getY ();
                  ppz = sommet->getZ ();
 
-                 sommet->setAssociation (NULL);
-                 sommet->setX (pnt_asso.X());
-                 sommet->setY (pnt_asso.Y());
-                 sommet->setZ (pnt_asso.Z());
+                 set_association (sommet, pnt_asso);
+                 //  sommet->setAssociation (NULL);
+                 //  sommet->setX (pnt_asso.X());
+                 //  sommet->setY (pnt_asso.Y());
+                 //  sommet->setZ (pnt_asso.Z());
 
-                 tax.push_back (sommet->getX());
-                 tay.push_back (sommet->getY());
-                 taz.push_back (sommet->getZ());
+                 tax.push_back (pnt_asso.X());
+                 tay.push_back (pnt_asso.Y());
+                 taz.push_back (pnt_asso.Z());
 
                  nbm ++;
                  if (db)
