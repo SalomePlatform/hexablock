@@ -43,6 +43,5 @@ dist_salomescript_PYTHON = \
 dist_salomescript_DATA = \
 	tees.brep \
 	tuyau.brep \
-	bride.brep \
 	crank.stp
 
