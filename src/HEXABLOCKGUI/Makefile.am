@@ -156,7 +156,6 @@ BUILT_SOURCES = $(UIC_FILES)
 
 # resources files
 ICONS =  \
-	$(top_builddir)/src/HEXABLOCKGUI/resources/SalomeApp.xml \
 	resources/LightApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
@@ -203,4 +202,4 @@ QMFILES = \
 
 dist_salomeres_DATA = ${ICONS} 
 
-nodist_salomeres_DATA = $(QMFILES)
+nodist_salomeres_DATA = $(QMFILES) resources/SalomeApp.xml
