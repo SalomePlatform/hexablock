@@ -155,8 +155,8 @@ TopoDS_Edge asso2edge (Shape* asso)
    BRepTools::Read(shape, streamBrep, aBuilder);
    return TopoDS::Edge(shape);
 }
-// ============================================================ set_association
-void set_association (Vertex* node, gp_Pnt& pnt_asso)
+// ============================================================ asso2vertex
+void asso2vertex (Vertex* node, gp_Pnt& pnt_asso)
 {
    BRepBuilderAPI_MakeVertex mkVertex (pnt_asso);
    ostringstream             streamShape;
@@ -168,10 +168,16 @@ void set_association (Vertex* node, gp_Pnt& pnt_asso)
    Hex::Shape*   hshape = new Shape (brep); 
 
    node->setAssociation (hshape);
+   if (NOT db) return;
+
+   char cc1[12];
+
+   printf (" asso2vertex %s -> ", node->getName(cc1));
+   printf (" =(%g,%g,%g)\n", pnt_asso.X(), pnt_asso.Y(), pnt_asso.Z());
 }
 
-// ============================================================ add_association
-void add_association (Edge* edge, Shape* assold, double deb, double fin)
+// ============================================================ asso2edge
+void asso2edge (Edge* edge, Shape* assold, double deb, double fin)
 {
    string brep   = assold->getBrep();
    Shape* assnew = new Shape (brep);
@@ -465,7 +471,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    double ppy = sommet->getY ();
    double ppz = sommet->getZ ();
 
-   set_association (sommet, tabg_point[npoint]);
+   asso2vertex (sommet, tabg_point[npoint]);
    // sommet->setAssociation (NULL);
    // sommet->setX (tabg_point[npoint].X());
    // sommet->setY (tabg_point[npoint].Y());
@@ -481,12 +487,13 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
       printf (" --------------- Associations \n");
       printf ("  ... asso point m=%d,g=%d %s : (%g %g %g) -> (%g %g %g)\n", 
               msens[0], tabg_orig[0], sommet->getName(cc1), ppx, ppy, ppz,
-              sommet->getX(), sommet->getY(), sommet->getZ());
+              tabg_point[npoint].X(), tabg_point[npoint].Y(),
+              tabg_point[npoint].Z());
       }
 
-   tax.push_back (sommet->getX());
-   tay.push_back (sommet->getY());
-   taz.push_back (sommet->getZ());
+   tax.push_back (tabg_point[npoint].X());
+   tay.push_back (tabg_point[npoint].Y());
+   taz.push_back (tabg_point[npoint].Z());
 
    int nbm = 1;
    for (int ned=0 ; ned<nbedges ; ned++)
@@ -526,8 +533,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                  parafin = extrem;
                  }
 
-              // edge ->addAssociation (tabg_shape[nro]);
-              add_association (edge, tabg_shape[nro], paradeb, parafin);
+              asso2edge (edge, tabg_shape[nro], paradeb, parafin);
 
               if (db) 
                  printf ("  ... asso ligne=%d in [%g, %g]\n", nro, sg1, sg2);
@@ -546,11 +552,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                  ppy = sommet->getY ();
                  ppz = sommet->getZ ();
 
-                 set_association (sommet, pnt_asso);
-                 //  sommet->setAssociation (NULL);
-                 //  sommet->setX (pnt_asso.X());
-                 //  sommet->setY (pnt_asso.Y());
-                 //  sommet->setZ (pnt_asso.Z());
+                 asso2vertex (sommet, pnt_asso);
 
                  tax.push_back (pnt_asso.X());
                  tay.push_back (pnt_asso.Y());
@@ -565,7 +567,8 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                     printf ("  ... asso point: orig=%d,deb=%g,lg=%g, alpha=%g\n",
                     tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
                     printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
-                      ppx,ppy,ppz, sommet->getX(),sommet->getY(),sommet->getZ());
+                            sommet->getX(),sommet->getY(),sommet->getZ(),
+                            pnt_asso.X(), pnt_asso.Y(), pnt_asso.Z());
                     }
                  }
               }

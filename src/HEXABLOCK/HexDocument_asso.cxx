@@ -26,7 +26,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
 
@@ -58,9 +58,25 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
    int  nbseg  = mline.size ();
    bool closed = vfirst != NULL;
 
+   if (mstart == NULL)
+      {
+      putError (W_ASSO_LINE4);
+      return HERR;
+      }
+
+                // Contour ferme : 
+                // Le vertex de depart n'appartient pas a l'edge de depart
+   int istart = mstart->index (vfirst);
+   if (closed && istart == NOTHING) 
+      {
+      putError (W_ASSO_LINE2, vfirst->getName (buffer));
+      return HERR;
+      }
+
    if (db)
       {
       PutName (vfirst);
+      printf ("  . : ");
       mstart->printName (" = (");
       mstart->getVertex(V_AMONT)->printName (", ");
       mstart->getVertex(V_AVAL) ->printName (")\n");
@@ -70,15 +86,10 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
           printf (" %2d : ", nro);
           mline[nro]->printName(" = (");
           mline[nro]->getVertex(V_AMONT)->printName(", ");
-          mline[nro]->getVertex(V_AVAL )->printName(")\n ");
+          mline[nro]->getVertex(V_AVAL )->printName(")\n");
           }
       }
 
-   if (mstart == NULL)
-      {
-      putError (W_ASSO_LINE4);
-      return HERR;
-      }
 
    for (int ns = 0 ; ns < nbseg ; ns++)
        {
@@ -110,17 +121,10 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
          nedge = vertexInLine (pnode, mline, tab_sens);
          }
       }
+        // Closed : on recherche ou se trouve le 2e vertex de mstart
    else
       {
-      sens = mstart->index (vfirst);
-      if (sens == NOTHING) 
-         {
-         putError (W_ASSO_LINE2, vfirst->getName (buffer));
-         return HERR;
-         pnode = mstart->getVertex (sens);
-         nedge = vertexInLine (pnode, mline, tab_sens);
-         }
-      sens  = 1-sens;
+      sens  = 1-istart;
       pnode = mstart->getVertex (sens);
       nedge = vertexInLine (pnode, mline, tab_sens);
       }
@@ -150,7 +154,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       printf (" mstart  [%d] = mline[%d][%d] = %s\n", sens, nedge, 
                                   tab_sens [nedge], pnode->getName(buffer));
 
-   cout << " ........................................ Marque 2" << endl;
+   cout << " ........................................ Marque 3" << endl;
    for (int ns = 1 ; ns < nbseg ; ns++)
        {
        Vertex* pnode = mline[nedge]->getVertex (1-tab_sens [nedge]);
@@ -172,8 +176,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
    if (db)
       {
       printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
-      nbseg = gline.size ();
-      for (int ns = 0 ; ns < nbseg ; ns++)
+      for (int ns = 0 ; ns < gline.size() ; ns++)
           {
           printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
           }
