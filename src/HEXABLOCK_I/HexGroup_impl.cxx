@@ -45,7 +45,7 @@ HEXA_NS::Group* Group_impl::GetImpl() throw (SALOME::SALOME_Exception)
 
 char* Group_impl::getName() throw (SALOME::SALOME_Exception)
 {
-  _group_cpp->getName();
+   return CORBA::string_dup (_group_cpp->getName());
 }
 
 void Group_impl::setName(const char* name) throw (SALOME::SALOME_Exception)

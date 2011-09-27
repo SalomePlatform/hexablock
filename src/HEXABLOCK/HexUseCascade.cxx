@@ -81,15 +81,15 @@
 #endif
 
 #ifdef _DEBUG_
-static int MYDEBUG = 1;
+// static int MYDEBUG = 1;
 #else
-static int MYDEBUG = 1;
+// static int MYDEBUG = 0;
 #endif
 #define MESSAGE(m) cout << m << endl
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
 static double HEXA_EPSILON  = 1E-6; //1E-3; 
-//  static double HEXA_QUAD_WAY = PI/4.; //3.*PI/8.;;
+//  static double HEXA_QUAD_WAY = PI/4.; //3.*PI/8.;
     double fin;
 
 
@@ -99,6 +99,7 @@ static bool db = false;
 static int nro_xmgr = 0;
 
 typedef vector<double> Dtable;
+double edge_length (const TopoDS_Edge& edge );
 
 // ========================================================= incrementer_xmgr
 inline void incrementer_xmgr (int nro=-1)
@@ -196,6 +197,33 @@ void asso2edge (Edge* edge, Shape* assold, double deb, double fin)
    printf (" Asso edge %s", edge->getName(cc1));
    printf (" =(%s,%s)", v1->getName(cc1), v2->getName(cc2));
    printf (" : deb=%g, fin=%g\n", assnew->debut, assnew->fin);
+
+   TopoDS_Shape  theShape = string2shape( brep );
+   TopoDS_Edge   theEdge  = TopoDS::Edge( theShape );
+   double        theCurve_length = edge_length( theEdge );
+
+
+   BRepAdaptor_Curve* theCurve         = NULL;
+   gp_Pnt  theCurve_start, theCurve_end;
+   theCurve = new BRepAdaptor_Curve( theEdge );
+
+   GCPnts_AbscissaPoint discret_start (*theCurve, 
+                                       theCurve_length * assnew->debut, 
+                                       theCurve->FirstParameter() );
+  GCPnts_AbscissaPoint discret_end   (*theCurve, 
+                                       theCurve_length * assnew->fin, 
+                                       theCurve->FirstParameter() );
+
+   double u_start = discret_start.Parameter();
+   double u_end   = discret_end.Parameter();
+
+   theCurve_start  = theCurve->Value( u_start);
+   theCurve_end    = theCurve->Value( u_end );
+   printf ("   Start= (%g, %g, %g)\n", theCurve_start.X(), 
+                                       theCurve_start.Y(), theCurve_start.Z());
+   printf ("   End  = (%g, %g, %g)\n", theCurve_end.X(), 
+                                       theCurve_end.Y(), theCurve_end.Z());
+   delete theCurve;
 }
 // ============================================================== edge_length
 double edge_length (const TopoDS_Edge& edge )
@@ -366,32 +394,14 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    Dtable tax, tay, taz;
  
    double abscisse = tabg_length [0]; 
-   //  shape_absc  [0] = abscisse/lg_lines;
    shape_posit [0] = 0;
 
    tabg_orig   [0] = V_AMONT;
    
    int nedge = 0;
-   HexDisplay (lg_lines);
-   if (db)
-      {
-      printf (" --------------- Ordonnancement des lignes\n");
-      printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g\n", 
-             nedge, nedge, tabg_orig[nedge],
-             tabg_point [tabg_orig[nedge]].X(), 
-             tabg_point [tabg_orig[nedge]].Y(), 
-             tabg_point [tabg_orig[nedge]].Z(), 
-             tabg_length [nedge]);
-
-      tgx.push_back (tabg_point [tabg_orig[nedge]].X());
-      tgy.push_back (tabg_point [tabg_orig[nedge]].Y());
-      tgz.push_back (tabg_point [tabg_orig[nedge]].Z());
-      }
-
    for (int ns=1 ; ns<nblines ; ns++)
        {
-
-           int nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
+       int nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
 
        // JPL le 12/07/2011 : si c'est la premiere ligne de la
        // geometrie, on teste les 2 points :
@@ -399,12 +409,11 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        // REM : il faudrait faire la meme chose pour la derniere ligne ?
        
        if (nro == NOTHING && not closed && nedge == 0)
-       {
-           tabg_orig[0] = V_AVAL;
-           nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
-       }
-
-       
+          {
+          tabg_orig[0] = V_AVAL;
+          if (db) printf (" . :  Origine = V_AVAL\n");
+          nro = vertexInLine (nedge, nblines, tabg_orig, tabg_point);
+          }
        if (nro == NOTHING)
           {
           char cnum1 [8], cnum2[8];
@@ -416,11 +425,16 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
        nedge      = nro;
        abscisse += tabg_length [nro];
-       //  shape_absc  [nro] = abscisse/lg_lines;
        shape_posit [ns] = nro;
+       }
 
-       if (db)
+   if (db)
+      {
+      printf (" --------------- Ordonnancement des lignes\n");
+
+      for (int ns=0 ; ns<nblines ; ns++)
           {
+          int nro = shape_posit [ns];
           printf (" %d : tabg_line[%d](%d), orig=(%g,%g,%g), lg=%g, s=%g\n", 
                       ns, nro, tabg_orig[nro], 
                       tabg_point [2*nro + tabg_orig[nro]].X(), 
@@ -446,20 +460,24 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        mod_absc [ned] = lg_edges;
        }
 
-   printf (" --------------- Ordonnancement des edges\n");
+   if (db) 
+      printf (" --------------- Ordonnancement des edges\n");
    char cc1[8], cc2[8];
    for (int ned=0 ; ned<nbedges ; ned++)
        {
        mod_absc [ned] /= lg_edges;
-       Vertex* v1 = mline[ned]->getVertex(msens[ned]);
-       Vertex* v2 = mline[ned]->getVertex(1-msens[ned]);
-       printf (" %d : (%g %g %g) = (%s.%s)[%d] s=%g\n", ned, 
-                v1->getX(), v1->getY(), v1->getZ(), 
+       if (db) 
+       {
+          Vertex* v1 = mline[ned]->getVertex(msens[ned]);
+          Vertex* v2 = mline[ned]->getVertex(1-msens[ned]);
+          printf (" %d : (%g %g %g) = (%s.%s)[%d] s=%g\n", ned, 
+                   v1->getX(), v1->getY(), v1->getZ(), 
                 v1->getName(cc1), v2->getName(cc2), msens[ned], mod_absc[ned]);
 
-       tmx.push_back (v1->getX());
-       tmy.push_back (v1->getY());
-       tmz.push_back (v1->getZ());
+          tmx.push_back (v1->getX());
+          tmy.push_back (v1->getY());
+          tmz.push_back (v1->getZ());
+          }
        }
 
    if (db) save_xmgr (tmx, tmy, tmz, "pts_model");
@@ -472,10 +490,6 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
    double ppz = sommet->getZ ();
 
    asso2vertex (sommet, tabg_point[npoint]);
-   // sommet->setAssociation (NULL);
-   // sommet->setX (tabg_point[npoint].X());
-   // sommet->setY (tabg_point[npoint].Y());
-   // sommet->setZ (tabg_point[npoint].Z());
 
    double sm1=0, sm2 = 0;
 
@@ -528,9 +542,9 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
 
               if (tabg_orig[nro] == V_AVAL)
                  {
-                 double  extrem = paradeb;
-                 paradeb = parafin;
-                 parafin = extrem;
+                 Echo ( "On inverse paradeb et parafin");
+                 paradeb = 1 - paradeb;
+                 parafin = 1 - parafin;
                  }
 
               asso2edge (edge, tabg_shape[nro], paradeb, parafin);
@@ -564,8 +578,8 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
                     printf ("  ... asso point m=%d,g=%d %s k=%g :", 
                          ned, nro, sommet->getName(cc1), parafin);
                     printf (" sm2=%g in (%g,%g)\n", sm2, sg1, sg2);
-                    printf ("  ... asso point: orig=%d,deb=%g,lg=%g, alpha=%g\n",
-                    tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
+                    printf ("  ... asso point: orig=%d,deb=%g,lg=%g,alpha=%g\n",
+                      tabg_orig[nro], tabg_deb [nro], tabg_length [nro], alpha);
                     printf ("  ... asso point : (%g %g %g) -> (%g %g %g)\n", 
                             sommet->getX(),sommet->getY(),sommet->getZ(),
                             pnt_asso.X(), pnt_asso.Y(), pnt_asso.Z());
