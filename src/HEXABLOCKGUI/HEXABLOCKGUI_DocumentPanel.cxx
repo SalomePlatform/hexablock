@@ -29,16 +29,35 @@
 #include <SalomeApp_Application.h>
 #include <PyConsole_Console.h>
 
+
+#include <Standard_GUID.hxx>
+#include <TDF_Label.hxx>
+
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewModel.h>
+// #include <OCCViewer_ViewWindow.h>
+
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+
+
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_Session.h>
 #include "SVTK_Selection.h"
+#include <SVTK_ViewModel.h>
 
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 #include <BasicGUI_PointDlg.h>
+
+
 
 
 #define VERTEX_COORD_MIN -1000000
@@ -1788,7 +1807,6 @@ RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFl
     hexa_le->installEventFilter(this); 
     setFocusProxy( hexa_le );
   }
-
 }
 
 
@@ -1857,7 +1875,6 @@ PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlag
     quads_lw->installEventFilter(this);
     setFocusProxy( quads_lw );
   }
-
 
   connect(add_pb, SIGNAL(clicked()), this, SLOT(addQuad()));
   connect(remove_pb, SIGNAL(clicked()), this, SLOT(removeQuad()));
@@ -2973,15 +2990,13 @@ _ivertex  ( new QModelIndex() )
         QLabel *NameLabel = new QLabel(GroupBoxName);
         NameLabel->setObjectName(QString::fromUtf8("NameLabel"));
         NameLabel->setWordWrap(false);
-        NameLabel->setText("Name : ");
-        hboxLayout1->addWidget(NameLabel);
-        _vertex_le = new QLineEdit(GroupBoxName);
+        NameLabel->setText( "Name : " );
+        hboxLayout1->addWidget( NameLabel );
+        _vertex_le = new QLineEdit( GroupBoxName );
         _vertex_le->setObjectName(QString::fromUtf8("_vertex_le"));
         hboxLayout1->addWidget(_vertex_le);
 
-
-
-  up->addWidget( GroupBoxName);
+  up->addWidget( GroupBoxName );
   down->addWidget( _nested );
 
   _vertex_le->installEventFilter(this);
@@ -3045,7 +3060,6 @@ void VertexAssocDialog::accept()
   TopoDS_Shape aShape;
   if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
     DocumentModel::GeomObj aPoint;
-
     aPoint.name  = GEOMBase::GetName( aSelectedObject.get() );
     aPoint.entry = aSelectedObject->GetStudyEntry();
     aPoint.brep  = shape2string( aShape ).c_str();
@@ -3053,7 +3067,6 @@ void VertexAssocDialog::accept()
     _documentModel->addAssociation( iVertex, aPoint );
     _documentModel->allowEdition();
     _patternDataSelectionModel->setAllSelection();
-
 
     SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
     _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
@@ -3114,6 +3127,12 @@ EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   lines_lw->installEventFilter(this);
   setFocusProxy( edges_lw );
 
+  QShortcut* _delEdgeShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), edges_lw);
+  connect(_delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()));
+
+  QShortcut* _delLineShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), lines_lw);
+  connect(_delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()));
+
   // for geom selection :
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
@@ -3127,22 +3146,40 @@ EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
 
 EdgeAssocDialog::~EdgeAssocDialog()
 {
+  disconnect( _delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
+  disconnect( _delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()) );
+
   disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addLine()) );
   disconnect( pstart_spb, SIGNAL(valueChanged(double)), this, SLOT( pstartChanged(double)) );
   disconnect( pend_spb,   SIGNAL(valueChanged(double)), this, SLOT( pendChanged(double)) );
+
+  delete _delEdgeShortcut;
+  delete _delLineShortcut;
 }
 
 
-void EdgeAssocDialog::hideEvent( QHideEvent *event )
+// void EdgeAssocDialog::hideEvent( QHideEvent *event )
+// {
+//   disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
+//   HexaBaseDialog::hideEvent( event );
+// }
+// 
+// void EdgeAssocDialog::showEvent( QShowEvent *event )
+// {
+//   connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
+//   HexaBaseDialog::showEvent( event );
+// }
+
+void EdgeAssocDialog::deleteEdgeItem()
 {
-  disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
-  HexaBaseDialog::hideEvent( event );
+  std::cout << "EdgeAssocDialog::deleteEdgeItem() "<< std::endl;
+  delete edges_lw->currentItem();
 }
 
-void EdgeAssocDialog::showEvent( QShowEvent *event )
+void EdgeAssocDialog::deleteLineItem()
 {
-  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
-  HexaBaseDialog::showEvent( event );
+  std::cout << "EdgeAssocDialog::deleteLineItem() "<< std::endl;
+  delete lines_lw->currentItem();
 }
 
 
@@ -3153,14 +3190,15 @@ void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
 
 bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
+  std::cout << "EdgeAssocDialog::eventFilter"<< std::endl;
   if ( ( obj == lines_lw ) and  ( event->type() == QEvent::FocusIn ) ){
-//     std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
+    std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
     globalSelection(); // close local contexts, if any
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
     _currentObj = obj;
     return false;
   } else if ( ( obj == edges_lw ) and  ( event->type() == QEvent::FocusIn ) ){
-//     std::cout << "obj == edges_lw XXXXXXXXXXXXXXX "<< std::endl;
+    std::cout << "obj == edges_lw XXXXXXXXXXXXXXX "<< std::endl;
     _setEdgeSelectionOnly();
     _currentObj = obj;
     return false;
@@ -3238,34 +3276,60 @@ void EdgeAssocDialog::pendChanged( double val )
   displayPreview(true);
 }
 
+
 void EdgeAssocDialog::addLine()
 {
 //   std::cout << "EdgeAssocDialog::addLine()"<< std::endl;
+  if ( !isVisible() ) return;
+
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_EDGE);
-  TopoDS_Shape     aShape;
+  TopoDS_Shape aShape;
+
+  std::cout << "aSelectedObject =>" << aSelectedObject << std::endl;
+  std::cout << "GEOMBase::GetShape(aSelectedObject.get(), aShape) =>" << GEOMBase::GetShape(aSelectedObject.get(), aShape) << std::endl;
+  std::cout << "!aShape.IsNull() => " << !aShape.IsNull() << std::endl;
 
   if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
     DocumentModel::GeomObj aLine;
     QListWidgetItem* item = NULL;
+    QString mainShapeEntry;
+    int     subId = -1;
+    QString brep;
 
+    if ( aSelectedObject->IsMainShape() ){
+      mainShapeEntry = aSelectedObject->GetStudyEntry();
+      brep =  shape2string( aShape ).c_str();
+    } else {
+      TopoDS_Shape shape;
+      TopoDS_Shape subshape;
+      GEOM::GEOM_Object_var mainShape = aSelectedObject->GetMainShape();
+      mainShapeEntry = mainShape->GetStudyEntry();
+      // CS_TODO : à optimiser
+      bool okShape = GEOMBase::GetShape( mainShape , shape);//,const TopAbs_ShapeEnum type = TopAbs_SHAPE );
+      bool oksubShape = GEOMBase::GetShape( aSelectedObject.get(), subshape );//,const TopAbs_ShapeEnum type = TopAbs_SHAPE );
+      if ( okShape && oksubShape ){
+        brep =  shape2string( subshape ).c_str();
+        subId = GEOMBase::GetIndex( subshape, shape );
+      }
+    }
     aLine.name  = GEOMBase::GetName( aSelectedObject.get() );
-    aLine.entry = aSelectedObject->GetStudyEntry();
-    aLine.brep  = shape2string( aShape ).c_str();
+    aLine.entry = mainShapeEntry;
+    aLine.subid = QString::number(subId);
+    aLine.brep  = brep;
     aLine.start = 0.;
     aLine.end   = 1.;
-//     std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
-//     std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
-//     std::cout << "aLine.brep"  << aLine.brep.toStdString()  << std::endl;
+    std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
+    std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
+    std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
+
     item  = new QListWidgetItem( aLine.name );
-    lines_lw->addItem( item );
+    item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
+    lines_lw->addItem(item);
     lines_lw->setCurrentRow( lines_lw->count() - 1 );
-    _assocs << aLine;
-
-    if ( _firstLine->_is_nil() ) _firstLine = aSelectedObject;
-    _lastLine = aSelectedObject;
+//     _assocs << aFace;
   }
-
 }
+
 
 
 void EdgeAssocDialog::accept()
@@ -3277,22 +3341,32 @@ void EdgeAssocDialog::accept()
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   if ( !patternDataModel ) return;
 
+  QListWidgetItem* item = NULL;
   // edges
   QModelIndex     iEdge;
   QModelIndexList iEdges;
-  QListWidgetItem* item = NULL;
   for ( int r = 0; r < edges_lw->count(); ++r){
     item = edges_lw->item(r);
     iEdge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-    if ( iEdge.isValid() ) 
+    if ( iEdge.isValid() )
       iEdges << iEdge;
+  }
+
+  // lines
+  QList<DocumentModel::GeomObj> assocs;
+  DocumentModel::GeomObj aLine;
+  for ( int r = 0; r < lines_lw->count(); ++r){
+    item = lines_lw->item(r);
+    aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+    std::cout << " line added : " << aLine.name.toStdString() << std::endl;
+    assocs << aLine;
   }
 
   if ( close_cb->isChecked() ){
     QModelIndex iFirstVertex = patternDataModel->mapToSource( _index[first_vex_le] );
-    assocOk = _documentModel->associateClosedLine( iFirstVertex, iEdges, _assocs, pstart_spb->value() );
+    assocOk = _documentModel->associateClosedLine( iFirstVertex, iEdges, assocs, pstart_spb->value() );
   } else {
-    assocOk = _documentModel->associateOpenedLine( iEdges, _assocs, pstart_spb->value(), pend_spb->value() );
+    assocOk = _documentModel->associateOpenedLine( iEdges, assocs, pstart_spb->value(), pend_spb->value() );
   }
 
   if ( assocOk ){
@@ -3302,8 +3376,9 @@ void EdgeAssocDialog::accept()
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
   }
-
 }
+
+
 
 void EdgeAssocDialog::reject()
 {
@@ -3331,63 +3406,111 @@ QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
 
+  _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_Delete), faces_lw );
+  connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
+
+//   connect(_mgr, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
 }
 
 
 QuadAssocDialog::~QuadAssocDialog()
 {
+  disconnect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
   disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+  delete _delFaceShortcut;
 }
 
 
 bool QuadAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
+  std::cout << "QuadAssocDialog::eventFilter "<< std::endl;
   if ( (obj == faces_lw) and  (event->type() == QEvent::FocusIn) ){
-//     std::cout << "obj == faces_lw XXXXXXXXXXXXXXX "<< std::endl;
+    std::cout << "obj == faces_lw XXXXXXXXXXXXXXX "<< std::endl;
     globalSelection(); // close local contexts, if any
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+//     activate( TopAbs_FACE );
     _currentObj = obj;
-    return false;
+    return true;
   } else {
     return HexaBaseDialog::eventFilter(obj, event);
   }
 }
 
 
-void QuadAssocDialog::hideEvent ( QHideEvent * event )
+// void QuadAssocDialog::hideEvent ( QHideEvent * event )
+// {
+//   disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+//   HexaBaseDialog::hideEvent ( event );
+// }
+
+// void QuadAssocDialog::showEvent ( QShowEvent * event )
+// {
+//   connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+//   HexaBaseDialog::showEvent ( event );
+// }
+
+
+
+// bool QuadAssocDialog::isAllSubShapes() const
+// {
+//   return false;
+// }
+void QuadAssocDialog::deleteFaceItem()
 {
-  disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
-  HexaBaseDialog::hideEvent ( event );
+  std::cout << "deleteFaceItem" << std::endl;
+  delete faces_lw->currentItem();
 }
 
-void QuadAssocDialog::showEvent ( QShowEvent * event )
-{
-  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
-  HexaBaseDialog::showEvent ( event );
-}
 
 void QuadAssocDialog::addFace()
 {
-//   std::cout << "addFace() addFace() addFace() addFace()" << std::endl;
+  if ( !isVisible() ) return;
+
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_FACE);
   TopoDS_Shape aShape;
+
   if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
     DocumentModel::GeomObj aFace;
     QListWidgetItem* item = NULL;
+    QString mainShapeEntry;
+    int     subId = -1;
+    QString brep;
+//     std::cout << "aSelectedObject->GetStudyEntry() =>" << aSelectedObject->GetStudyEntry()<< std::endl;
+//     std::cout << "aSelectedObject->GetEntry =>" << aSelectedObject->GetEntry() << std::endl;
+//     std::cout << "aSelectedObject->IsMainShape()=>" << aSelectedObject->IsMainShape() << std::endl;
 
+    if ( aSelectedObject->IsMainShape() ){
+      mainShapeEntry = aSelectedObject->GetStudyEntry();
+      brep =  shape2string( aShape ).c_str();
+    } else {
+      TopoDS_Shape shape;
+      TopoDS_Shape subshape;
+      GEOM::GEOM_Object_var mainShape = aSelectedObject->GetMainShape();
+      mainShapeEntry = mainShape->GetStudyEntry();
+      // CS_TODO : à optimiser
+      bool okShape = GEOMBase::GetShape( mainShape , shape);//,const TopAbs_ShapeEnum type = TopAbs_SHAPE );
+      bool oksubShape = GEOMBase::GetShape( aSelectedObject.get(), subshape );//,const TopAbs_ShapeEnum type = TopAbs_SHAPE );
+      if ( okShape && oksubShape ){
+        brep =  shape2string( subshape ).c_str();
+        subId = GEOMBase::GetIndex( subshape, shape );
+      }
+    }
     aFace.name  = GEOMBase::GetName( aSelectedObject.get() );
-    aFace.entry = aSelectedObject->GetStudyEntry();
-    aFace.brep  = shape2string( aShape ).c_str();
+    aFace.entry = mainShapeEntry;
+    aFace.subid = QString::number(subId);
+    aFace.brep  = brep;
     aFace.start = 0.;
     aFace.end   = 1.;
-//     std::cout << "aFace.name"  << aFace.name.toStdString()  << std::endl;
-//     std::cout << "aFace.entry" << aFace.entry.toStdString() << std::endl;
-//     std::cout << "aFace.brep"  << aFace.brep.toStdString()  << std::endl;
+    std::cout << "aFace.name"  << aFace.name.toStdString()  << std::endl;
+    std::cout << "aFace.entry" << aFace.entry.toStdString() << std::endl;
+    std::cout << "aFace.subid" << aFace.subid.toStdString() << std::endl;
+
     item  = new QListWidgetItem( aFace.name );
+    item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aFace) );
     faces_lw->addItem(item);
-    faces_lw->setCurrentRow(faces_lw->count() - 1);
-    _assocs << aFace;
+    faces_lw->setCurrentRow( faces_lw->count() - 1 );
+//     _assocs << aFace;
   }
 }
 
@@ -3400,12 +3523,20 @@ void QuadAssocDialog::accept()
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   if ( !patternDataModel ) return;
 
+  // quad
   QModelIndex iQuad = patternDataModel->mapToSource( _index[quad_le] );
-  DocumentModel::GeomObj aFace;
-  TopoDS_Shape aShape;
 
-  foreach( DocumentModel::GeomObj aFace, _assocs)
+  // faces
+  QListWidgetItem* item = NULL;
+  DocumentModel::GeomObj aFace;
+  for ( int r = 0; r < faces_lw->count(); ++r ){
+    item = faces_lw->item(r);
+    aFace = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+    std::cout << " aFace added : " << aFace.name.toStdString() << std::endl;
+    std::cout << " entry : " << aFace.entry.toStdString() << std::endl;
+    std::cout << " subid : " << aFace.subid.toStdString() << std::endl;
     _documentModel->addAssociation( iQuad, aFace );
+  }
 
   QDialog::accept();
   _disallowSelection();

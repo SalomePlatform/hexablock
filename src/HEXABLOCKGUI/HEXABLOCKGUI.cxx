@@ -77,6 +77,9 @@
 
 #include <SALOME_LifeCycleCORBA.hxx>
 
+#include <OCCViewer_ViewManager.h>
+
+
 
 // #include <BasicGUI_PointDlg.h>
 
@@ -286,7 +289,32 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
     connect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
               this, SLOT( onObjectBrowserClick(const QModelIndex&) ) );
 //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
-  
+
+
+
+
+  LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+
+  SUIT_ViewManager* vm;
+  ViewManagerList OCCViewManagers;
+
+  application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
+  QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
+  while ( itOCC.hasNext() && (vm = itOCC.next()) )
+    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+
+//   //NPAL 19674
+//   SALOME_ListIO selected;
+//   sm->selectedObjects( selected );
+//   sm->clearSelected();
+
+  // disable OCC selectors
+  getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+  QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+  while ( itOCCSel.hasNext() )
+    if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+      sr->setEnabled(true);
+
 
 
   _hexaEngine->SetCurrentStudy(SALOMEDS::Study::_nil());
@@ -423,6 +451,43 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 {
   DEBTRACE("HEXABLOCKGUI::onWindowClosed");
 }
+
+
+
+
+void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
+{
+  if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+  {
+    qDebug( "connect" );
+//     connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
+//              this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
+//     connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+//              this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+//     connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
+//              this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
+
+    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+
+    // disable OCC selectors
+    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+    while ( itOCCSel.hasNext() )
+      if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+        sr->setEnabled(true);
+  }
+
+
+
+}
+
+void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* )
+{
+
+}
+
+
 
 // void HEXABLOCKGUI::onTryClose(bool &isClosed, QxScene_ViewWindow* window) //CS_TODO
 // {

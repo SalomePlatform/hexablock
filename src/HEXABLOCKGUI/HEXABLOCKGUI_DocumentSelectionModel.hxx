@@ -20,31 +20,18 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
-// #include <QAbstractItemModel>
-// #include <QStandardItemModel>
-// #include <QSortFilterProxyModel>
+#include <QItemSelectionModel>
 
-// #include <SALOME_LifeCycleCORBA.hxx>
-
-#include <GEOMBase_Helper.h>
+#include <LightApp_SelectionMgr.h>
 
 #include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
 
-#include <QItemSelectionModel>
+#include <GEOMBase_Helper.h>
 
 #include "klinkitemselectionmodel.hxx"
-
-#include <LightApp_SelectionMgr.h>
-
-// #include <QItemSelection>
-// #include <QBrush>
-// #include <list>
-
-// #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
-// 
-// #include "HexDocument.hxx"
+
 
 namespace HEXABLOCK
 {
@@ -85,8 +72,6 @@ namespace HEXABLOCK
         void SetSelectionMode(Selection_Mode theMode);
 //         void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
 
-
-
       protected slots:
         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
         void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
@@ -113,8 +98,6 @@ namespace HEXABLOCK
         bool _theGeomSelectionChanged;
 
     };
-
-
   }
 }
 

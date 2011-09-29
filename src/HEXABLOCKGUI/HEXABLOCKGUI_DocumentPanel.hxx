@@ -30,14 +30,14 @@
 #  define HEXABLOCKGUI_DOCUMENTPANEL_EXPORT
 #endif
 
+
+
+#include <QShortcut>
+
 #include "ui_Vertex_QTD.h"
 #include "ui_Quad_QTD.h"
 #include "ui_Edge_QTD.h"
 #include "ui_Hexa_QTD.h"
-
-
-
-
 
 #include "ui_Vector_QTD.h"
 #include "ui_Cylinder_QTD.h"
@@ -89,7 +89,7 @@
 #include "BasicGUI_PointDlg.h"
 
 Q_DECLARE_METATYPE(QModelIndex); 
-
+Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
 
 namespace HEXABLOCK
 {
@@ -104,7 +104,8 @@ namespace HEXABLOCK
         public:
 
           enum {
-            LW_QMODELINDEX_ROLE = Qt::UserRole + 1
+            LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
+            LW_ASSOC_ROLE
           };
 
           HexaBaseDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
@@ -712,10 +713,8 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-        virtual void hideEvent ( QHideEvent * event );
-        virtual void showEvent ( QShowEvent * event );
-
-
+//         virtual void hideEvent ( QHideEvent * event );
+//         virtual void showEvent ( QShowEvent * event );
         virtual GEOM::GEOM_IOperations_ptr createOperation();
         virtual bool execute( ObjectList& );
 
@@ -724,14 +723,19 @@ namespace HEXABLOCK
 
 //       private slots:
 //         void addEdge();
+        void deleteEdgeItem();
+        void deleteLineItem();
 
         void addLine();
         void pstartChanged( double val );
         void pendChanged( double val );
 
       private:
-        QList<DocumentModel::GeomObj> _assocs;
+//         QList<DocumentModel::GeomObj> _assocs;
         LightApp_SelectionMgr*        _mgr;
+
+        QShortcut* _delEdgeShortcut;
+        QShortcut* _delLineShortcut;
 
 
         // Preview in GEOM
@@ -755,19 +759,35 @@ namespace HEXABLOCK
         virtual ~QuadAssocDialog();
 
       public slots:
-        void addFace();
-
         virtual void accept();
         virtual void reject();
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-        virtual void hideEvent ( QHideEvent * event );
-        virtual void showEvent ( QShowEvent * event );
+//         virtual void hideEvent ( QHideEvent * event );
+//         virtual void showEvent ( QShowEvent * event );
+
+      protected slots:
+        void addFace();
+        void deleteFaceItem();
 
       private:
         QList<DocumentModel::GeomObj> _assocs;
         LightApp_SelectionMgr*        _mgr;
+        QShortcut*                    _delFaceShortcut;
+
+
+//       private:
+//         bool  isAllSubShapes() const;
+//         int   shapeType() const;
+// 
+//         
+
+//         TopoDS_Shape                        myShape;
+//         GEOM::GEOM_Object_var               myObject;
+//         bool                                myWithShape;
+//         bool                                myIsHiddenMain;
+
   };
 
 

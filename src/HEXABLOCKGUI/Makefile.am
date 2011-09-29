@@ -49,8 +49,6 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_Trace.cxx \
     HEXABLOCKGUI_Resource.hxx \
     HEXABLOCKGUI_Resource.cxx \
-    HEXABLOCKGUI_Data.hxx \
-    HEXABLOCKGUI_Data.cxx \
     HEXABLOCKGUI_DocumentGraphicView.hxx \
     HEXABLOCKGUI_DocumentGraphicView.cxx \
     HEXABLOCKGUI_DocumentModel.hxx \

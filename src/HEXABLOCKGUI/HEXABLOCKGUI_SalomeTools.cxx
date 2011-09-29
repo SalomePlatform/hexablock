@@ -40,6 +40,7 @@
 
 
 
+#include <OCCViewer_ViewWindow.h>
 
 
 // #include <SALOMEconfig.h>
@@ -55,7 +56,13 @@
 #include <VTKViewer_Algorithm.h>
 
 
+#include "GeometryGUI.h"
+#include CORBA_CLIENT_HEADER(GEOM_Gen)
+
+
+#include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
+
 
 
 //#define _DEVDEBUG_
@@ -289,6 +296,70 @@ string shape2string( const TopoDS_Shape& aShape )
 
   return streamShape.str();
 }
+
+
+
+
+
+// SALOME_View* LightApp_Displayer::GetActiveView()
+// {
+//   SUIT_Session* session = SUIT_Session::session();
+//   if (  SUIT_Application* app = session->activeApplication() ) {
+//     if ( LightApp_Application* sApp = dynamic_cast<LightApp_Application*>( app ) ) {
+//       if( SUIT_ViewManager* vman = sApp->activeViewManager() ) {
+//         if ( SUIT_ViewModel* vmod = vman->getViewModel() )
+//           return dynamic_cast<SALOME_View*>( vmod );
+//       }
+//     }
+//   }
+//   return 0;
+// }
+
+
+
+MyGEOM_Displayer::MyGEOM_Displayer( SalomeApp_Study* app ):
+GEOM_Displayer( app )
+{
+}
+
+MyGEOM_Displayer::~MyGEOM_Displayer()
+{
+}
+
+SALOME_Prs* MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
+{
+  std::cout << "MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )" << std::endl;
+  if ( theObj->_is_nil() )
+    return 0;
+
+  SALOME_View*      view = NULL;
+  SUIT_ViewManager* vman = HEXABLOCKGUI::currentOccView->getViewManager();
+  SUIT_ViewModel* vmodel = NULL;
+  if ( vman )
+    vmodel = vman->getViewModel();
+  if ( vmodel )
+    view = dynamic_cast<SALOME_View*>(vmodel);
+
+  myViewFrame = view ;//GetActiveView();
+  if ( myViewFrame == 0 )
+    return 0;
+
+  SALOME_Prs* aPrs = myViewFrame->CreatePrs();
+  if ( aPrs == 0 )
+    return 0;
+
+  internalReset();
+  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
+  myType = theObj->GetType();
+
+  // Update presentation
+  UpdatePrs( aPrs );
+
+  return aPrs;
+}
+
+
+
 
 
 

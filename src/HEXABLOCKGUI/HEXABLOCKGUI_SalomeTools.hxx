@@ -27,7 +27,11 @@
 #include <SALOME_ListIteratorOfListIO.hxx>
 
 
+#include "GEOM_Client.hxx"
 #include "GEOMBase_Helper.h"
+#include "GEOM_Displayer.h"
+
+
 
 #include <TopoDS_Shape.hxx>
 #include <SALOME_Actor.h>
@@ -48,6 +52,32 @@ namespace HEXABLOCK
                                  const Handle(SALOME_InteractiveObject)& theIO,
                                  QString& theName );
   std::string shape2string( const TopoDS_Shape& aShape );
+
+
+  
+  class MyGEOM_Displayer : public GEOM_Displayer
+  {
+    public:
+      MyGEOM_Displayer( SalomeApp_Study* app );
+      virtual ~MyGEOM_Displayer();
+
+
+    SALOME_Prs* BuildPrs( GEOM::GEOM_Object_ptr theObj );
+
+//   int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
+//   getDisplayer()->SetToActivate( activate );
+//   getDisplayer()->SetName( objStr.in() );
+//   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
+
+
+
+
+  };
+
+
+
+
+
 
   }
 }

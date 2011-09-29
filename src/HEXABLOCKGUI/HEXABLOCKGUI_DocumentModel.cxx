@@ -20,6 +20,9 @@
 //CS_TODO: relever les fonctions qui nécessitent updateData().
 //        addGroupElement à tester
 
+#include <algorithm>
+#include <string>
+
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 
@@ -36,6 +39,7 @@
 
 using namespace std;
 using namespace HEXABLOCK::GUI;
+
 
 
 
@@ -2019,7 +2023,7 @@ void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel
   HEXA_NS::Shape* assoc = new HEXA_NS::Shape( assocIn.brep.toStdString() );//CS_TODO : delete assoc
   assoc->debut =  assocIn.start;
   assoc->fin   =  assocIn.end;
-  assoc->ident =  assocIn.entry.toStdString();
+  assoc->ident =  ( assocIn.entry + "," + assocIn.subid ).toStdString();
   _assocName[ assocIn.entry ] = assocIn.name; // for getAssociations()
 
   QString currentAssoc, newAssoc;
@@ -2037,22 +2041,24 @@ void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel
 
   currentAssoc = data( iElt, HEXA_ASSOC_ENTRY_ROLE ).toString();
   if ( !currentAssoc.isEmpty() ){
-    newAssoc = currentAssoc +  assocIn.entry + ";" ;
+    newAssoc = currentAssoc + assocIn.entry + "," + assocIn.subid + ";";
   } else {
-    newAssoc = assocIn.entry + ";" ;
+    newAssoc = assocIn.entry + "," + assocIn.subid + ";";
   }
+
   std::cout << "addAssociation() newAssoc =>"  << newAssoc.toStdString()  << std::endl;
   setData( iElt, QVariant::fromValue(newAssoc), HEXA_ASSOC_ENTRY_ROLE );
 
+  // tree view : 
+/*
   QList<QStandardItem *>  assocItems;
   QStandardItem *aAssocItem = NULL;
 
   QStandardItem *item = NULL;
-//   std::cout << "addAssociation name = " << assocIn.name.toStdString() << std::endl;
-//     std::cout << "addAssociation model " << std::endl;
+
   aAssocItem = new QStandardItem(assocIn.name);
-  aAssocItem->setData( assocIn.entry , HEXA_ENTRY_ROLE );
-//   std::cout << "addAssociation() assocIn.entry "  << assocIn.entry.toStdString()  << std::endl;
+  aAssocItem->setData( assocIn.entry + "," + assocIn.subid, HEXA_ENTRY_ROLE );
+
 
   assocItems << aAssocItem;
   item = itemFromIndex(iElt);
@@ -2062,8 +2068,7 @@ void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel
 //     item->appendRow( new QStandardItem(assocIn.name) );
   if ( item->columnCount() > columnCount() )
     setColumnCount( columnCount()+1 );
-
-
+*/
 }
 
 
@@ -2072,45 +2077,62 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
   QList<DocumentModel::GeomObj> res;
   DocumentModel::GeomObj        assoc;
 
+  std::cout << "getAssociations() start"  << std::endl;
   if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
     HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
     HEXA_NS::Shape* hShape = hVex->getAssociation();
-
+    QStringList shapeID;
     if ( hShape != NULL ){
-      assoc.entry = hShape->ident.c_str();
+      shapeID = QString( hShape->ident.c_str() ).split(",");
+      assoc.entry = shapeID[0];
+      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
       assoc.name  = _assocName[assoc.entry];
       assoc.brep  = hShape->getBrep().c_str();
       assoc.start = hShape->debut;
       assoc.end   = hShape->fin;
+      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+      std::cout << "-----------"  << std::endl;
       res << assoc;
     }
-
   } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
     HEXA_NS::Edge*   hEdge = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>();
     HEXA_NS::Shapes  hShapes = hEdge->getAssociations();
+    QStringList shapeID;
     for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
-      assoc.entry = (*it)->ident.c_str();
+      shapeID = QString( (*it)->ident.c_str() ).split(",");
+      assoc.entry = shapeID[0];
+      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
       assoc.name  = _assocName[assoc.entry];
       assoc.brep  = (*it)->getBrep().c_str();
       assoc.start = (*it)->debut;
       assoc.end   = (*it)->fin;
+      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+      std::cout << "-----------"  << std::endl;
       res << assoc;
     }
   } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
     HEXA_NS::Quad*   hQuad  = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
     HEXA_NS::Shapes  hShapes = hQuad->getAssociations();
+    QStringList shapeID;
     for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
-      assoc.entry = (*it)->ident.c_str();
+      shapeID = QString( (*it)->ident.c_str() ).split(",");
+      assoc.entry = shapeID[0];
+      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
       assoc.name  = _assocName[assoc.entry];
 //       std::cout << "(*it)->getBrep() =>"  << (*it)->getBrep()<< std::endl;
       assoc.brep  = (*it)->getBrep().c_str();
       assoc.start = (*it)->debut;
       assoc.end   = (*it)->fin;
+      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+      std::cout << "-----------"  << std::endl;
       res << assoc;
     }
   }
 
-
+  std::cout << "getAssociations() end"  << std::endl;
   return res;
 }
 
@@ -2150,7 +2172,7 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
         hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
         hshape->debut = anAssoc.start; //0.;
         hshape->fin   = anAssoc.end; //1.;
-        hshape->ident = anAssoc.entry.toStdString();
+        hshape->ident = ( anAssoc.entry + "," + anAssoc.subid ).toStdString(); //anAssoc.entry.toStdString();
 
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
@@ -2225,7 +2247,7 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
         hshape = new HEXA_NS::Shape( anAssoc.brep.toStdString() );
         hshape->debut = anAssoc.start; //0.;
         hshape->fin   = anAssoc.end; //1.;
-        hshape->ident = anAssoc.entry.toStdString();
+        hshape->ident = ( anAssoc.entry + "," + anAssoc.subid ).toStdString();//anAssoc.entry.toStdString();
 
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??

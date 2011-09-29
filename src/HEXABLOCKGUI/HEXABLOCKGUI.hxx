@@ -41,6 +41,9 @@
 // #include "Resource.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
 
+#include "GEOMGUI_OCCSelector.h"
+
+
 #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)
 // #include CORBA_CLIENT_HEADER(GEOM_Gen)
 // #include CORBA_CLIENT_HEADER(SMESH_Gen)
@@ -145,6 +148,9 @@ public slots:
 protected slots:
   void onWindowActivated( SUIT_ViewWindow* svw);
   void onWindowClosed( SUIT_ViewWindow* svw);
+
+  virtual void                        onViewManagerAdded( SUIT_ViewManager* );
+  virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
 //   void onTryClose(bool &isClosed, QxScene_ViewWindow* window);
 
 protected:
@@ -208,6 +214,10 @@ private slots:
   void computeMesh();
 
 private:
+
+  QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
+
+
   QStringList getQuickDirList();
   HEXABLOCK::GUI::DocumentGraphicView* newGraphicView();
 

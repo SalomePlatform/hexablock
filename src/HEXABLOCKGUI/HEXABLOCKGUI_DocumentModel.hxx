@@ -20,17 +20,12 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
-// #include <QAbstractItemModel>
+
 #include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
-// #include <QItemSelection>
-// #include <QBrush>
-// #include <list>
-
 #include "HEXABLOCKGUI_DocumentItem.hxx"
-
 #include "HexDocument.hxx"
 
 namespace HEXABLOCK
@@ -52,6 +47,7 @@ namespace HEXABLOCK
         {
           QString name;
           QString entry;
+          QString subid; // sub-shape id
           QString brep;
           double  start;
           double  end;
@@ -240,21 +236,10 @@ namespace HEXABLOCK
 
 
         // ************  ASSOCIATION ************
-//         void setVertexAssociation( const QModelIndex& vertex, const GeomObj& assoc );
-//         void addEdgeAssociation( const QModelIndex& edge, const GeomObj& assoc );
-//         void addQuadAssociation( const QModelIndex& quad, const GeomObj& assoc );
-
-//         GeomObj getVertexAssociation( const QModelIndex& vertex );
-//         QList<GeomObj> getEdgeAssociations( const QModelIndex& edge );
-//         QList<GeomObj> getQuadAssociations( const QModelIndex& quad );
-
+        // elt is Vertex, Edge, Quad
         void addAssociation( const QModelIndex& elt, const GeomObj& assoc );
         QList<GeomObj> getAssociations( const QModelIndex& elt );
 
-//         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
-//                              double pstart, Shapes& gline, double pend);
-//         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
-//                              Shape*  gstart, double pstart, Shapes& gline);
         bool associateOpenedLine( const QModelIndexList& edges,
                                   const GeomObjList&     assocs,
                                   double pstart,
