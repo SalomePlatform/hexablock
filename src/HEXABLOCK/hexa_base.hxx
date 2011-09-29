@@ -1,3 +1,6 @@
+
+// Incl : Common definitions for HEXA-BLOCK
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// Incl : Common definitions for HEXA-BLOCK
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #ifndef _HEXA_BASE_H_
 #define _HEXA_BASE_H_
@@ -29,7 +30,6 @@
 typedef char*       pchar;
 typedef const char* cpchar;
 typedef FILE*       pfile;
-
 
 #define Cestegal(c1,c2)      !strcmp(c1,c2)
 #define Cestdifferent(c1,c2)  strcmp(c1,c2)
@@ -121,7 +121,8 @@ enum EnumGroup  { HexaCell, QuadCell, EdgeCell,
                 //  Modes de remplissage des grilles cylindriques
 enum EnumCyl   { CYL_NOFILL, CYL_CL4, CYL_CL6, CYL_CLOSED, CYL_PEER, CYL_ODD};
 enum EnumGrid   { GR_NONE, GR_CARTESIAN, GR_CYLINDRIC, GR_SPHERIC, GR_JOINT, 
-                  GR_BICYL, GR_BIPIPE };
+                  GR_BICYL, GR_BIPIPE, 
+                  GR_HEMISPHERIC, GR_RIND, GR_PART_SPHERIC, GR_PART_RIND };
                 //  Sommets de la decomposition canonique du bicylindre
                 // 0    1     2    3     4    5     6    7     8
 enum EnumVCyl   { S_E, S_NE, S_N, S_NW, S_W, S_SW, S_S, S_SE, S_MAXI };

@@ -72,6 +72,8 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexVector.cxx \
  	HexElements.cxx \
 	HexElements_bis.cxx \
+	HexElements_ter.cxx \
+	HexElements_asso.cxx \
 	HexElements_grid.cxx \
 	HexCylinder.cxx \
 	HexPipe.cxx \

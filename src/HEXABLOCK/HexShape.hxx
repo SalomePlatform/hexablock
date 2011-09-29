@@ -34,6 +34,11 @@ public :
     Shape (string brep);
     string getBrep ()  { return b_rep; }
 
+    void  setBrep   (string brep)         { b_rep = brep; }
+    void  setBounds (int pdeb, int pfin)  { debut = pdeb ; fin = pfin; }
+    void  setStart  (int val)             { debut = val ; }
+    void  setEnd    (int val)             { fin   = val ; }
+
 public :
     double debut;
     double fin;

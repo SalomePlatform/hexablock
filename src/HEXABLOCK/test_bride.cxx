@@ -137,7 +137,8 @@ int test_bride ()
 
 // deconnexion des quads
 //
-   Hex::Elements* nouveaux = doc->disconnectQuad( hexa_A_g2 , quad_AB_g2 );
+   //  Hex::Elements* nouveaux =
+   doc->disconnectQuad( hexa_A_g2 , quad_AB_g2 );
    //  quad_A_g2 = doc->disconnectQuad( hexa_A_g2 , quad_AB_g2 );
    HexDump (quad_A_g2);
    HexDump (quad_AB_g2);
@@ -297,7 +298,8 @@ int test_bride ()
 
    Hex::Quad* quad_C_prime_g1 = doc->findQuad( X_C_h_g1 , X_C_b_g2 );
 
-   Hex::Hexa* hexa_g2_g1 = doc->addHexa( quad_b , quad_h , quad_f , quad_B_prime_g2 , quad_C_prime_g1 , quad_C_prime_g2 );
+   // Hex::Hexa* hexa_g2_g1 = 
+   doc->addHexa( quad_b , quad_h , quad_f , quad_B_prime_g2 , quad_C_prime_g1 , quad_C_prime_g2 );
 
 
 // rajouter trois hexa qui servent au remplissage de la partie centrale de la 2eme grille

@@ -1,3 +1,6 @@
+
+// C++ : Table d'hexaedres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// C++ : Table d'hexaedres
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #include "HexElements.hxx"
 
@@ -32,8 +33,6 @@
 
 #include <map>
 
-static bool db=false;
-
 BEGIN_NAMESPACE_HEXA
 
 // ====================================================== getHexaIJK
@@ -41,7 +40,7 @@ Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_hx ||  ny<0 || ny>=size_hy || nz<0 || nz>=size_hz)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_hx*ny + size_hx*size_hy*nz; 
@@ -53,7 +52,7 @@ Quad* Elements::getQuadIJ (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz 
@@ -65,7 +64,7 @@ Quad* Elements::getQuadJK (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz; // + dir_x*...
@@ -77,7 +76,7 @@ Quad* Elements::getQuadIK (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz + size_qx*size_qy*size_qz;
@@ -89,7 +88,7 @@ Edge* Elements::getEdgeI (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz;
@@ -101,7 +100,7 @@ Edge* Elements::getEdgeJ (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz + size_ex*size_ey*size_ez;
@@ -113,7 +112,7 @@ Edge* Elements::getEdgeK (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz 
@@ -125,7 +124,7 @@ Vertex* Elements::getVertexIJK (int nx, int ny, int nz)
 {
    if (nx<0 || nx>=size_vx ||  ny<0 || ny>=size_vy || nz<0 || nz>=size_vz)
       return NULL;
-   else if (grid_type != GR_CARTESIAN && grid_type != GR_CYLINDRIC)
+   else if (grid_nocart)
       return NULL;
 
    int nro = nx + size_vx*ny + size_vx*size_vy*nz; 
@@ -211,39 +210,6 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
    for (int nro=0 ; nro<nbcells ; nro++)
        {
        pushHexas (nro, tstart[nro], nbiter);
-       }
-   return HOK;
-}
-// ======================================================== revolutionQuads
-int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                               RealVector &angles)
-{
-   int nbiter = angles.size();
-   if (center==NULL  || axis==NULL || nbiter==0)
-      return HERR;
-
-   el_root->markAll (NO_USED);
-   int nbcells   = start.size ();
-   nbr_vertex    = 0;
-   nbr_edges     = 0;
-
-   nbr_hexas   = nbcells*nbiter;
-
-   tab_hexa.resize (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   revo_lution = true;
-   revo_axis   = axis;
-   revo_center = center;
-   revo_angle  = angles;
-
-
-   for (int nro=0 ; nro<nbcells ; nro++)
-       {
-       pushHexas (nro, start[nro], nbiter);
        }
    return HOK;
 }

@@ -1,3 +1,6 @@
+
+// Incl : Diagnostics
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// Incl : Diagnostics
-
 #ifndef _HEX_DIAGNOSTICS_H
 #define _HEX_DIAGNOSTICS_H
 
@@ -32,7 +33,6 @@
 #define W_REPL_ASSOC "mergeXXXX : Les elements fusionnes %s et %s sont associes"
 #define W_DISCO_ASSOC "disconnextXXXX : L'element deconnecte %s etait associe"
 
-
 #define W_ASSO_LINE  "associateLine : l'edge de depart (%s) est isole"
 #define W_ASSO_LINE2 "associateLine : l'edge nro %s (%s) est isole"
 #define W_ASSO_LINE1 "associateLine : le vertex de depart (%s) est isole"
@@ -41,5 +41,8 @@
 #define W_ASSO_LINE4 "associateLine : l'edge de depart est incorrect"
 #define W_ASSO_LINE5 "associateLine : l'edge nro %s est incorrect"
 #define W_ASSO_LINE6 "associateLine : Le contour n'est pas ferme"
+
+#define W_ASSO_CUT1 "cut : L'ancienne association est incoherente"
+
 
 #endif

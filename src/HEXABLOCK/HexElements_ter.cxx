@@ -31,7 +31,7 @@
 #include "HexGlobale.hxx"
 #include "HexCylinder.hxx"
 
-#include <map>
+#include <cmath>
 
 // static bool db=false;
 
@@ -69,50 +69,135 @@ int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
        }
    return HOK;
 }
-// ====================================================== makeHemiSpherical 
-int Elements::makeHemiSpherical (int type, Vertex* center, double rayext, 
-                                 double rayint, Vertex* plorig, Vector* plnorm,
-                                 Cylinder* hole, Vector* vstart, double angle,
-                                 int nr, int na, int nl)
+// ====================================================== makeRind
+int Elements::makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz, 
+                        double radext, double radint, double radhole, 
+		        Vertex* plorig, double angle, int nr, int na, int nl)
 {
-/* ***********************************************
-   Vertex* orig = cyl->getBase ();
-   Vector* dir  = cyl->getDirection ();
-   double  ray  = cyl->getRadius ();
-   double  haut = cyl->getHeight ();
-   
-   resize (type, nr, na, nl);
-   cyl_closed = false;
-   makeCylindricalNodes (orig, vx, dir, ray, angle, haut, nr, na, nl, false);
-   fillGrid ();
-************************************************* */
+   double phi1;
+   int ier = controlRind (center, vx, vz, radext, radint, radhole,
+                          plorig, angle, nr, na, nl, cyl_phi0, phi1);
+   if (ier!=HOK)
+      return ier;
 
+   resize (type, nr, na, nl);
+
+   cyl_radext  = radext;
+   cyl_radint  = radint;
+   cyl_radhole = radhole;
+   cyl_closed  = type==GR_HEMISPHERIC || type==GR_RIND;
+
+   double theta  = cyl_closed ? 2*M_PI : M_PI*angle/180;
+   cyl_dphi      = (phi1-cyl_phi0)/ size_hz;
+   cyl_dtheta    = theta / size_hy;
+
+   int nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
+
+   for (int ny=0 ; ny<nb_secteurs ; ny++)
+       for (int nx=0 ; nx<size_vx ; nx++)
+           for (int nz=0 ; nz<size_vz ; nz++)
+               {
+               double px, py, pz;
+               getCylPoint (nx, ny, nz, px, py, pz);
+               Vertex* node = el_root->addVertex (px, py, pz);
+               setVertex (node, nx, ny, nz);
+               }
+   if (cyl_closed) 
+      for (int nx=0 ; nx<size_vx ; nx++)
+          for (int nz=0 ; nz<size_vz ; nz++)
+              {
+              Vertex* node = getVertexIJK (nx, 0, nz);
+              setVertex (node, nx, size_vy-1, nz);
+              }
+
+   transfoVertices (center, vx, vz);
+   fillGrid ();
    return HOK;
 }
 // ====================================================== getCylPoint 
 int Elements::getCylPoint (int nr, int na, int nh, double& px, double& py,  
                            double& pz)
 {
-   double sinphi = sin (nh*cyl_dphi);
-   double cosphi = cos (nh*cyl_dphi);
-
-   double hmax = cyl_radext*cosphi;
-   double hmin = cyl_radmin*hmax/cyl_radext;
-
-   double rmax = cyl_radext*sinphi;
-   double rmin = cyl_radmin;
- 
-   if (grid_type == GR_HALF_SHELL || grid_type == GR_8_SHELL)
+   if (grid_type == GR_CYLINDRIC)
       {
-      rmin = std::max (cyl_radint*sinphi, cyl_radmin);
-      hmin = cyl_radint*cosphi;
+      px = cyl_radext * cos (na*cyl_dtheta);
+      py = cyl_radext * sin (na*cyl_dtheta);
+      pz = cyl_length * nh;
+      return HOK;
       }
 
-   double rayon = rmin + nr*(rmax-rmin)/size_hx;
-   
-   px = rayon * cos (cyl_alpha + na*cyl_beta);
-   py = rayon * sin (cyl_alpha + na*cyl_beta);
-   py = rayon * cosphi;
+   bool   rind   = (grid_type == GR_RIND || grid_type == GR_PART_RIND);
+   double sinphi = sin (cyl_phi0 + nh*cyl_dphi);
+   double cosphi = cos (cyl_phi0 + nh*cyl_dphi);
+
+   double rayon = 0;
+   if (rind)
+      {
+      rayon = cyl_radint + nr*(cyl_radext-cyl_radint)/size_hx;
+      pz    = rayon*sinphi;
+      rayon = rayon*cosphi;
+      }
+   else
+      {
+      pz    = cyl_radext*sinphi;
+      rayon = cyl_radhole + nr*(cyl_radext*cosphi - cyl_radhole)/size_hx;
+      rayon = std::max (cyl_radhole, rayon);
+      }
+
+   px = rayon * cos (na*cyl_dtheta);
+   py = rayon * sin (na*cyl_dtheta);
+
    return HOK;
 }
+// ====================================================== getCylPoint 
+int Elements::controlRind (Vertex* cx, Vector* vx, Vector* vz, 
+                           double rext, double rint, double rhole,
+                           Vertex* px, double angle, 
+                           int nrad, int nang, int nhaut, 
+                           double &phi0, double &phi1)
+{
+   const double Epsil1 = 1e-6;
+   phi0  = phi1 = 0;
+
+   if (cx == NULL || vx == NULL || vz == NULL) 
+      return HERR;
+
+   if (nrad<=0 || nang<=0 || nhaut<=0)
+      return HERR;
+
+   if (rext <= 0.0) 
+      return HERR;
+
+   if (rint >= rext) 
+      return HERR;
+
+   if (rhole > rint) 
+      return HERR;
+
+   double nvx = vx->norme();
+   double nvz = vz->norme();
+
+   if (nvx<Epsil1 || nvz <  Epsil1) 
+      return HERR;
+
+   double alpha = asin (rhole/rext);
+   double beta  = -M_PI*DEMI;
+
+   if (px!=NULL) 
+      {
+          // oh = oa.n/|n|
+      double oh = ((px->getX() - cx->getX()) * vz->getDx()
+                +  (px->getY() - cx->getY()) * vz->getDy()
+                +  (px->getZ() - cx->getZ()) * vz->getDz()) / nvz;
+      if (oh > rext) 
+         return HERR;
+      else if (oh > -rext) 
+         beta  = asin (oh/rext);
+      }
+
+   phi0 = std::max (alpha - M_PI*DEMI, beta);
+   phi1 = M_PI*DEMI - alpha;
+   return HOK; 
+}
+
 END_NAMESPACE_HEXA

@@ -350,7 +350,8 @@ int test_revolution ()
 
 
    Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
-   doc->saveVtk ("revolution2.vtk");
+   if (bloc != NULL)
+       doc->saveVtk ("revolution2.vtk");
 
    return HOK;
 }
@@ -395,12 +396,13 @@ int test_decoupage (int nbargs, cpchar tabargs[])
    Hex::Elements* grid  = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
    Hex::Edge*     arete = grid->getEdgeK (0, 0, 0);
 
-   doc ->dump ();
-   doc ->saveVtk ("no_decoupe.vtk");
+   //  doc ->dump ();
+   int nvtk=0;
+   doc ->saveVtk ("decoupe", nvtk);
 /* Hex::Elements* grid2 = */  doc->cut (arete, 1);
 
-   doc ->dump ();
-   doc ->saveVtk ("decoupe.vtk");
+   ///  doc ->dump ();
+   doc ->saveVtk ("decoupe", nvtk);
    // doc ->saveFile ();
 
    return HOK;
@@ -1210,8 +1212,9 @@ int test_copy_document (int nbargs, cpchar tabargs[])
 }
 
 int test_quads (int nbargs, cpchar tabargs[]);
+int test_hemispheres (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa1
 int test_hexa1 (int nbargs, cpchar tabargs[])
 {
-   return test_revolution ();
+   return test_hemispheres (nbargs, tabargs);
 }

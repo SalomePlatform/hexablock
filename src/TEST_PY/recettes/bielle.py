@@ -1,12 +1,29 @@
 # -*- coding: latin-1 -*-
 
+#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
 import os
 import geompy
 import hexablock
 import math
 
 STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
-
 
 #=============================
 # CREATION DOCUMENT
@@ -25,7 +42,6 @@ doc = hexablock.addDocument()
 # PARAMETRES
 #=============================
 
-#R = 40.0
 R = 0.095168291790720005
 
 r_pte = R
@@ -43,17 +59,6 @@ dl_pte = hauteur
 nr_pte = 1
 na_pte = 6
 nl_pte = 1
-
-# TESTS : sauvegarde
-f_mod_apres = open(os.path.join(os.environ['TMP'],
-                                "bielle_model_apres.txt"), 'w')
-
-# end TESTS
-
-
-# @todo JPL le 08/07/2011 :
-# refaire le modèle de blocs avec des pentagones pour les grilles
-# cylindriques, et 1 hexaedre reliant ces 2 grilles.
 
 #=============================
 # Vectors Creation 
@@ -83,11 +88,6 @@ grille_cyl_pte = doc.makeCylindrical(c_pte, dx, dz, dr_pte, da_pte, dl_pte, nr_p
 
 grille_cyl_grd = doc.makeTranslation(grille_cyl_pte, dx_prime)
 
-# TEST :
-file_name = os.path.join(os.environ['TMP'], 'bielle0.vtk')
-doc.saveVtk(file_name)
-
-
 #==================================
 # Joining the two cylindrical grids
 #==================================
@@ -109,35 +109,9 @@ quad_22 = doc.findQuad(mod_y1, mod_y3)
 
 model_biell_fin = doc.joinQuads([quad_11, quad_12], quad_21, mod_x1, mod_y1, mod_x4, mod_y4, 1)
 
-# TEST :
-file_name = os.path.join(os.environ['TMP'], 'bielle1.vtk')
-doc.saveVtk(file_name)
-
-
 #=======================
 # CREATION ASSOCIATION
 #=======================
-
-# JPL le 08/07/2011 :
-# la première solution :
-# 1. 4 associations par ligne fermee pour les trous
-# 2. 2 associations par ligne fermee pour les contours
-# => pose problème car les points associés par cette méthode sont
-# uniformément répartis sur le contour => ça dépend de la longueur
-# entre les 2 grilles cylindriques.
-# REM : a retester après la correction d'Alain pour voir ce que ça
-# donne
-
-# deuxième solution :
-# 1. 4 associations par ligne fermee pour les trous
-# => pour chaque association, 6 edges du modele <-> 1 ligne de la geometrie
-# 2. 4 associations par lignes ouvertes pour les contours externes des
-# grilles cylindriques
-# => pour chaque association, 4 edges du modele <-> 3 lignes de la geometrie
-# 3. 4 associations de points restants (mod_x1, mod_x4, mod_y1, mod_y4)
-
-# => cette solution pose problème (à cause de l'association par ligne
-# ouverte)
 
 bielle_geom = geompy.ImportFile(STEP_PATH, "STEP")
 doc.setShape(bielle_geom)
@@ -174,36 +148,15 @@ dic_face_names = {"face_ray_pte": 0, "face_trou_pte": 1, "face_pte_g": 2,
 
 # la clef correspond a la geometrie, la valeur a l'indice en z dans le
 # modele de bloc (grille cylindrique)
-# NOTE : les dictionnaires ordonnés ne sont pas encore introduits dans
-# la version 2.6.6 de python (Salome 6.2). On ne connait donc pas
-# l'ordre de bouclage (haut/bas ou bas/haut) mais ça n'a pas
-# d'importance :
 dico_haut_bas = {"h": 1, "b": 0}
 
 # 1. lignes internes (trou) haut/bas du petit cylindre
 # ====================================================
 for z in dico_haut_bas.iteritems():
 
-    # REM : la direction de la ligne geometrique est dans le sens anti-trigonometrique
-    # => on parcourt le modele en sens inverse
-
-##     # modele de blocs :
-##     mod_start = grille_cyl_pte.getEdgeJ(0, 5, z[1])
-##     mod_first = mod_start.getVertex(1)
-##     # table des edges :
-##     mod_line = [grille_cyl_pte.getEdgeJ(0, j, z[1]) for j in range(4, -1, -1)]
-
-    # modele de blocs :
-    ###  mod_start = grille_cyl_pte.getEdgeJ(0, 0, z[1])   Abu 27/09
-    ###  mod_first = mod_start.getVertex(0)   Abu 27/09
-    # table des edges :
-    ###  mod_line = [grille_cyl_pte.getEdgeJ(0, j, z[1]) for j in range(1, 6)] Abu 
-
-    ## Abu 27/09/2011 : Pb du sens de parcours de la ligne fermee
     mod_line = [grille_cyl_pte.getEdgeJ(0, j, z[1]) for j in range(5)]
     mod_start = grille_cyl_pte.getEdgeJ(0, 5, z[1])
     mod_first = mod_start.getVertex(1)
-
 
     # geometrie : 1 seule ligne
     edge_hole_in = all_edges_bielle[dic_edge_names["edge_trou_pte_"+z[0]]]
@@ -220,21 +173,6 @@ for z in dico_haut_bas.iteritems():
 # =====================================================
 for z in dico_haut_bas.iteritems():
 
-    # REM : la direction de la ligne geometrique est dans le sens anti-trigonometrique
-    # => on parcourt le modele en sens inverse
-
-##     # modele de blocs :
-##     mod_start = grille_cyl_grd.getEdgeJ(0, 5, z[1])
-##     mod_first = mod_start.getVertex(1)
-##     # table des edges :
-##     mod_line = [grille_cyl_grd.getEdgeJ(0, j, z[1]) for j in range(4, -1, -1)]
-
-    mod_start = grille_cyl_grd.getEdgeJ(0, 0, z[1])
-    mod_first = mod_start.getVertex(1)
-    # table des edges :
-    mod_line = [grille_cyl_grd.getEdgeJ(0, j, z[1]) for j in range(1, 6)]
-
-    ## Abu 27/09/2011 : Pb du sens de parcours de la ligne fermee
     mod_start = grille_cyl_grd.getEdgeJ(0, 5, z[1])
     mod_first = mod_start.getVertex(1)
     mod_line = [grille_cyl_grd.getEdgeJ(0, j, z[1]) for j in range (5)]
@@ -253,11 +191,6 @@ for z in dico_haut_bas.iteritems():
 # 3. lignes externes haut/bas du petit cylindre
 # =============================================
 for z in dico_haut_bas.iteritems():
-
-    # JPL le 08/07/2011 : on utilise ici l'association par ligne
-    # ouverte. Avec le nouvelle version, les points sont répartis de
-    # manière équidistance sur la ligne geometrique formée par la
-    # concaténation des lignes fournies en entrée.
 
     # modele de blocs :
     mod_start = grille_cyl_pte.getEdgeJ(1, 1, z[1])
@@ -287,11 +220,6 @@ for z in dico_haut_bas.iteritems():
 ## # =============================================
 for z in dico_haut_bas.iteritems():
 
-    # JPL le 08/07/2011 : on utilise ici l'association par ligne
-    # ouverte. Avec le nouvelle version, les points sont répartis de
-    # manière équidistance sur la ligne geometrique formée par la
-    # concaténation des lignes fournies en entrée.
-
     # modele de blocs :
     mod_start = grille_cyl_grd.getEdgeJ(1, 4, z[1])
     # table des edges :
@@ -315,9 +243,6 @@ for z in dico_haut_bas.iteritems():
     ier = doc.associateOpenedLine(mod_start, mod_line,
                                   geo_start, par_start, geo_line, par_end)
 
-# JPL le 26/07/2011 :
-# l'association des edges n'est pas necessaire (implicite)
-
 # 6. association des 4 points restants (x1, x4, y1, y4) :
 # =======================================================
 
@@ -334,12 +259,6 @@ for z in dico_haut_bas.iteritems():
 # dictionnaire geom_vertices
 # il s'agit de points des grilles cylindriques, à l'intérieur
 # de la bielle, ayant servis au joinQuads (ie: mod_x1, mod_x4, mod_y1, mod_y4)
-
-
-## pt_a = geompy.MakeVertex(0, 0, hauteur/2.)
-## face_haut = geompy.GetFaceNearPoint(bielle_geom, pt_a)
-## pt_b = geompy.MakeVertex(0, 0, -hauteur/2.)
-## face_bas = geompy.GetFaceNearPoint(bielle_geom, pt_b)
 
 face_haut = all_faces_bielle[dic_face_names["face_haut"]]
 
@@ -375,84 +294,19 @@ mod_x1.setAssociation(geo_x1)
 mod_x4.setAssociation(geo_x4)
 
 # 7. association des faces :
-# REM : l'association des faces internes ne semble pas necessaire (cylindres)
-# pas d'association des face_ray_XXX : pas necessaire ? De toute
-# façon, on a pour chaque 2 quads du modèle...
+# REM : l'association des faces internes n'est pas necessaire (cylindres)
 # les associations de face_haut, face_bas, face_long_g et face_long_d
 # ne sont pas necessaires ?
 
 # a decommenter donc si necessaire :
-## quad1 = grille_cyl_pte.getQuadJK(1, 1, 0)
-## quad1.addAssociation(all_faces_bielle[dic_face_names["face_pte_d"]])
-## quad2 = grille_cyl_pte.getQuadJK(1, 4, 0)
-## quad2.addAssociation(all_faces_bielle[dic_face_names["face_pte_g"]])
-## quad3 = grille_cyl_grd.getQuadJK(1, 1, 0)
-## quad3.addAssociation(all_faces_bielle[dic_face_names["face_grd_d"]])
-## quad4 = grille_cyl_grd.getQuadJK(1, 4, 0)
-## quad4.addAssociation(all_faces_bielle[dic_face_names["face_grd_g"]])
-
-
-#############################################################################################
-#############################################################################################
-# TEST :
-
-file_name = os.path.join(os.environ['TMP'], 'bielle2.vtk')
-doc.saveVtk(file_name)
-
-# affichage des points des 2 grilles cylindriques avec les
-# nouvelles coordonnées (apres association)
-
-for k in range(2):
-    # petite grille cylindrique
-    i = 0
-    for j in range(6):
-        vertex = grille_cyl_pte.getVertexIJK(i, j, k)
-        value = " ".join(["i =", str(i), "j =", str(j),
-                          str(vertex.getX()), str(vertex.getY()), str(vertex.getZ()), '\n'])
-        f_mod_apres.write(str(value))
-        pass
-
-    f_mod_apres.write("stop\n")
-
-    i = 1
-    # on n'inclut pas les vertex associés individuellement (qui ne
-    # changent pas de coordonnées...) : => j = 1 -> 5
-    for j in range(1, 6):
-        vertex = grille_cyl_pte.getVertexIJK(i, j, k)
-        value = " ".join(["i =", str(i), "j =", str(j),
-                          str(vertex.getX()), str(vertex.getY()), str(vertex.getZ()), '\n'])
-        f_mod_apres.write(str(value))
-        pass
-
-    f_mod_apres.write("stop\n")
-
-    # grande grille cylindrique
-    i = 0
-    for j in range(6):
-        vertex = grille_cyl_grd.getVertexIJK(i, j, k)
-        value = " ".join(["i =", str(i), "j =", str(j),
-                          str(vertex.getX()), str(vertex.getY()), str(vertex.getZ()), '\n'])
-        f_mod_apres.write(str(value))
-        pass
-
-    f_mod_apres.write("stop\n")
-
-    i = 1
-    # on n'inclut pas les vertex associés individuellement (qui ne
-    # changent pas de coordonnées...) (j = 3)
-    # on ecrit les points dans le meme ordre que l'association :
-    for j in [4, 5, 0, 1, 2]:
-        vertex = grille_cyl_grd.getVertexIJK(i, j, k)
-        value = " ".join(["i =", str(i), "j =", str(j),
-                          str(vertex.getX()), str(vertex.getY()), str(vertex.getZ()), '\n'])
-        f_mod_apres.write(str(value))
-        pass
-    # end TEST
-
-    f_mod_apres.write("stop\n")
-
-#############################################################################################
-#############################################################################################    
+quad1 = grille_cyl_pte.getQuadJK(1, 1, 0)
+quad1.addAssociation(all_faces_bielle[dic_face_names["face_pte_d"]])
+quad2 = grille_cyl_pte.getQuadJK(1, 4, 0)
+quad2.addAssociation(all_faces_bielle[dic_face_names["face_pte_g"]])
+quad3 = grille_cyl_grd.getQuadJK(1, 1, 0)
+quad3.addAssociation(all_faces_bielle[dic_face_names["face_grd_d"]])
+quad4 = grille_cyl_grd.getQuadJK(1, 4, 0)
+quad4.addAssociation(all_faces_bielle[dic_face_names["face_grd_g"]])
 
 
 ## #=================================================
@@ -484,9 +338,6 @@ for i, face in enumerate(all_faces_bielle):
 
 # On definit 3 groupes de mailles
 
-# JPL (le 09/05/2011) :
-# @todo a revoir : apres correction des bugs "countXXX()" dans le moteur
-
 # groupe d edges (arretes)
 edge_grp = doc.addEdgeGroup("Edge_grp")
 for i in range(doc.countEdge()):
@@ -513,9 +364,6 @@ for i in range(doc.countVertex()):
 # definir une loi: le choix de la loi reste aux utilisateurs
 law = doc.addLaw("Uniform", 4)
 
-# TEST : pour avoir le modèle de blocs :
-## law = doc.addLaw("Uniform", 0)
-
 # chercher les propagations du modele
 for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
@@ -532,6 +380,3 @@ print "Nombre d hexaedres:", mesh_hexas.NbHexas()
 print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
 print "Nombre de segments:", mesh_hexas.NbEdges()
 print "Nombre de noeuds:", mesh_hexas.NbNodes()
-
-# TESTS :
-f_mod_apres.close()

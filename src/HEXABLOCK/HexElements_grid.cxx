@@ -76,6 +76,7 @@ int Elements::makeBasicCylinder (double dr, double da, double dl, int nr,
            for (int nz=0 ; nz<size_vz ; nz++)
                {
                double pz = dl*nz;
+               //   getCylPoint (nx, ny, nz, px, py, pz);
                Vertex* node = el_root->addVertex (px, py, pz);
                setVertex (node, nx, ny, nz);
                }

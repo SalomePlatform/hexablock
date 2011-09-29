@@ -94,10 +94,11 @@ int test_bug1 (int nbargs, cpchar tabargs[])
    Hex::Quad*   quad_b1    = cheminee->getQuad (2);
    Hex::Quad*   quad_b2    = cheminee->getQuad (3);
 
-   Hex::Elements* prisme_b1 = doc->prismQuad (quad_b1, vecteur_mz, 1);
+   //Hex::Elements* prisme_b1 =
+   doc->prismQuad (quad_b1, vecteur_mz, 1);
    doc->saveVtk ("bug_bride", nvtk);
                  // Au dessus
-   Hex::Elements* prisme_b2 = doc->prismQuad (quad_b2, vecteur_pz, 1);
+   doc->prismQuad (quad_b2, vecteur_pz, 1);
    doc->saveVtk ("bug_bride", nvtk);
                  // Au dessus
 
@@ -114,14 +115,8 @@ int test_bug1 (int nbargs, cpchar tabargs[])
 // Hex::Quad*   quad_c2  = grid->getQuadIK(3, 3, 1);
    Hex::Quad*   quad_c2  = grid->getQuadIK(4, 3, 1);
 
-   Hex::Vertex* point_c1 = grid->getVertexIJK(4, 4, 1);
    Hex::Vertex* point_c2 = grid->getVertexIJK(4, 3, 1);
    Hex::Vertex* point_c3 = grid->getVertexIJK(5, 3, 1);
-
-//  # JPL : cette ligne fait planter Salome (probleme connu du moteur Hexablock)
-   //         quad_ca->setScalar (1);
-   //         doc->saveVtk ("bug_bride", nvtk);
-   //         quad_c1->setScalar (2);
 
    char c1[10];
    Hex::Vertex* point_cx = quad_c1->getVertex(3);
@@ -129,20 +124,12 @@ int test_bug1 (int nbargs, cpchar tabargs[])
    // point_cx->setScalar (2);
    // doc->saveVtk ("bug_bride", nvtk);
 
-   Hex::Quad*  quad_c1x = grid->getQuadJK  (4, 3, 2);
-   Hex::Hexa*  hexa_c1x = grid->getHexaIJK (3, 2, 2);
+   //Hex::Quad*  quad_c1x = grid->getQuadJK  (4, 3, 2);
+   //Hex::Hexa*  hexa_c1x = grid->getHexaIJK (3, 2, 2);
    HexDisplay (quad_c2->getName(c1));
    quad_c2->setScalar (5);
    doc->saveVtk ("bug_bride", nvtk);
 
-   // hexa_c1x->setScalar (5);
-   // doc->saveVtk ("bug_bride", nvtk);
-
-   // hexa_c1x->disconnectVertex (point_cx);
-   // doc->saveVtk ("bug_bride", nvtk);
-   // quad_c1x->setScalar (5);
-
-   // doc->mergeQuads(quad_c1, quad_ca,  point_c1, point_c1,  point_c2, point_cb);
    doc->closeQuads(quad_c1, quad_ca);
    doc->saveVtk ("bug_bride", nvtk);
 
@@ -155,53 +142,3 @@ int test_bug1 (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
-
-#if _pipo_
-
-# Fusionner la semelle à la grille
-# --------------------------------
-
-hexa_ca = prisme_a.getHexa(0)
-hexa_cb = prisme_a.getHexa(1)
-
-quad_ca = hexa_ca.getQuad(5)
-quad_cb = hexa_cb.getQuad(5)
-
-point_cb = quad_ca.getVertex(0)
-point_cc = quad_cb.getVertex(0)
-
-quad_c1 = grid.getQuadJK(4, 3, 1)
-quad_c2 = grid.getQuadIK(3, 3, 1)
-
-point_c1 = grid.getVertexIJK(4, 4, 1)
-point_c2 = grid.getVertexIJK(4, 3, 1)
-point_c3 = grid.getVertexIJK(5, 3, 1)
-
-# JPL : cette ligne fait planter Salome (probleme connu du moteur Hexablock)
-doc.mergeQuads(quad_ca, quad_c1,  point_c1, point_c1,  point_cb, point_c2)
-
-## # TEST : point_ca au lieu de point_c1 (confondus normalement)
-## point_ca = quad_ca.getVertex(1)
-## doc.mergeQuads(quad_ca, quad_c1, point_ca, point_c1, point_cb, point_c2)
-## # end TEST
-
-doc.mergeQuads(quad_cb, quad_c2, point_cb, point_c2, point_cc, point_c3)
-
-# temporaire : sauvegarde du modele de blocs :
-save_schema(doc)
-# fin temporaire
-
-
-# geometrie :
-# ===========
-
-bride_geom = geompy.ImportFile(BREP_PATH, "BREP")
-geompy.addToStudy(bride_geom, "bride_geom")
-all_edges_bride = geompy.SubShapeAllSorted(bride_geom, geompy.ShapeType["EDGE"])
-
-# => 92 edges au total dans la geometrie
-
-for i, edge in enumerate(all_edges_bride):
-    geompy.addToStudy(edge, "edge_" + str(i))
-
-#endif

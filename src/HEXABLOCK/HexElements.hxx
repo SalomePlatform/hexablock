@@ -95,6 +95,8 @@ public:
    void setVertex (Vertex* node, int nx, int ny, int nz);
 
    void transfoVertices (Vertex* orig, Vector* vi, Vector* vj, Vector* vk);
+   void transfoVertices (Vertex* orig, Vector* base, Vector* haut);
+
 
    void setVertex (Vertex* node, int nro);
    void setEdge   (Edge*   edge, int nro);
@@ -103,10 +105,22 @@ public:
 
    int nroVertex (int nsommet,  int nquad, int nh);
 
-              // Version 3 de 2011
+              // Evols Hexa3 
 
+   int getCylPoint (int nr, int na, int nh, double& px, double& py, double& pz);
    int revolutionQuads (Quads& start, Vertex* center, Vector* axis, 
                         RealVector &angles);
+
+   int makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz, 
+                 double rext, double rint,  double radhole,
+                 Vertex* plorig, double angle, int nrad, int nang, int nhaut);
+
+   static int controlRind (Vertex* cx, Vector* vx, Vector* vz, 
+                           double rext, double rint, double radhole,
+                           Vertex* plorig, double angle, 
+                           int nrad, int nang, int nhaut, 
+                           double &phi0, double &phi1);
+   void cutAssociation (Shapes tshapes, Edges tedges);
 
 protected :
  
@@ -175,15 +189,23 @@ protected :
     int   gr_hauteur;            // Joint
     int   nbr_secteurs;          // Cyl
 
-    bool     cyl_closed;         // Cyl
-    bool     cyl_fill;           // Cyl
-    EnumCyl  cyl_dispo;          // Cyl
+    bool     cyl_closed;         // Angre = 180 degres
+    bool     cyl_fill;           // Interieur rempli
+    EnumCyl  cyl_dispo;          // Type de remplissage
 
+                                 // Evols Hexa3
     bool           revo_lution;  // Number 9 ...
     Vertex*        revo_center;
     Vector*        revo_axis;
     vector<double> revo_angle;
     Matrix         revo_matrix;
+
+//  EnumGrid grid_type;   // deja la
+    bool    grid_nocart;   // Grille non cartesienne : no acces aux getTrucIJK
+    double  cyl_length;
+    double  cyl_radhole, cyl_radext, cyl_radint;
+    double  cyl_dtheta;              // angle = na*dtheta
+    double  cyl_phi0,    cyl_dphi;   // angle = phi0 + nh*dphi; 
 };
 // =================================================== getStrate
 inline Hexa* Elements::getStrate (int couche, EnumHQuad nroface)

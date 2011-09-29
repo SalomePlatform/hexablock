@@ -169,7 +169,7 @@ public :
    void   setShape (Shape* forme)           { doc_shape = forme ; }
    Shape* getShape ()                       { return doc_shape  ; }
 
-   // --------------------------------------------------- HexaBlock v3
+   // --------------------------------------------------- Evols Hexa3
 
    Document* copyDocument ();
 
@@ -191,6 +191,25 @@ public :
    Elements* revolutionQuads (Quads& start, Vertex* center, Vector* axis, 
                               RealVector &angles);
 
+   Elements* makeSphere (Vertex* center, Vector* vx, Vector* vz, 
+                         double radius, double radhole,
+                         Vertex* plorig, 
+                         int nrad, int nang, int nhaut);
+
+   Elements* makePartSphere (Vertex* center, Vector* vx, Vector* vz, 
+                             double  radius, double radhole,
+                             Vertex* plorig, double angle,
+                             int nrad, int nang, int nhaut);
+
+   Elements* makeRind (Vertex* center, Vector* vx, Vector* vz, 
+                       double  radext, double radint, double radhole,
+                       Vertex* plorig, 
+                       int nrad, int nang, int nhaut);
+
+   Elements* makePartRind (Vertex* center, Vector* vx, Vector* vz, 
+                           double  radext, double radint, double radhole,
+                           Vertex* plorig, double angle,
+                           int nrad, int nang, int nhaut);
 public:
     Document (cpchar filename);
    ~Document ();
@@ -238,9 +257,9 @@ private :
    int associateCascade (Edges& mline, int msens[], Shape* gstart, 
                          Shapes& gline, double pstart, double pend, bool clos);
    int associateLine (Vertex* mfirst, Edge*  mstart, Edges& mline, 
-                   Shape*  gstart, double pstart, Shapes& gline, double pend);
+                   Shape* gstart, double pstart, Shapes& gline, double pend);
 
-   // --------------------------------------------------- HexaBlock v3
+   // --------------------------------------------------- Evols Hexa3
    Hexa* addHexaQuadsAB   (AnaQuads& strquads);
    Hexa* addHexaQuadsAC   (AnaQuads& strquads);
    Hexa* addHexaQuadsACE  (AnaQuads& strquads);

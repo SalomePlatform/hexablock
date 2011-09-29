@@ -82,11 +82,8 @@ Document::~Document ()
        EltBase* next = NULL;
        for (EltBase* elt=doc_first_elt [type] ; elt != NULL ; elt=next) 
            {
-           //  elt->dump();
            next = elt->next();
-           //  Display(elt);e0057
-           //  if (type!=EL_NONE) 
-              delete elt;
+           delete elt;
            }
        }
 }
@@ -202,6 +199,50 @@ Elements* Document::makeCylindrical (Vertex* c, Vector* b, Vector* h,
 {
    Elements* grille = new Elements (this);
    grille->makeCylindricalGrid (c, b, h, dr, da, dl, nr, na, nl, fill);
+   return grille;
+}
+// ======================================================== makeSphere
+Elements* Document::makeSphere (Vertex* center, Vector* vx, Vector* vz, 
+                                double radius, double radhole, Vertex* plorig, 
+                                int nrad, int nang, int nhaut)
+{
+   Elements* grille = new Elements (this);
+   double radint = (radhole + radius)*DEMI;
+   grille->makeRind (GR_HEMISPHERIC, center, vx, vz, radius, radint, radhole, 
+                     plorig, 360.0, nrad, nang, nhaut);
+   return grille;
+}
+// ======================================================== makePartSphere
+Elements* Document::makePartSphere (Vertex* center, Vector* vx, Vector* vz, 
+                                 double  radius, double radhole,
+                                 Vertex* plorig, double angle,
+                                 int nrad, int nang, int nhaut)
+{
+   Elements* grille = new Elements (this);
+   double radint = (radhole + radius)*DEMI;
+   grille->makeRind (GR_PART_SPHERIC, center, vx, vz, radius, radint, radhole, 
+                     plorig, angle, nrad, nang, nhaut);
+   return grille;
+}
+// ======================================================== makeRind 
+Elements* Document::makeRind (Vertex* center, Vector* vx, Vector* vz, 
+                              double  radext, double radint, double radhole,
+                              Vertex* plorig, int nrad, int nang, int nhaut)
+{
+   Elements* grille = new Elements (this);
+   grille->makeRind (GR_RIND, center, vx, vz, radext, radint, radhole, 
+                     plorig, 360.0, nrad, nang, nhaut);
+   return grille;
+}
+// ======================================================== makePartRind
+Elements* Document::makePartRind (Vertex* center, Vector* vx, Vector* vz, 
+                           double  radext, double radint, double radhole,
+                           Vertex* plorig, double angle,
+                               int nrad, int nang, int nhaut)
+{
+   Elements* grille = new Elements (this);
+   grille->makeRind (GR_PART_RIND, center, vx, vz, radext, radint, radhole, 
+                     plorig, angle, nrad, nang, nhaut);
    return grille;
 }
 // ======================================================== findVertex

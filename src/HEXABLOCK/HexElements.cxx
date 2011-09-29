@@ -1,3 +1,6 @@
+
+// C++ : Grilles
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,19 +17,15 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// C++ : Table des noeuds
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #include "HexElements.hxx"
-
 #include "HexDocument.hxx"
 #include "HexVector.hxx"
 #include "HexVertex.hxx"
 #include "HexHexa.hxx"
 #include "HexEdge.hxx"
-
 #include "HexGlobale.hxx"
 
 #include <cmath>
@@ -51,6 +50,7 @@ Elements::Elements (Document* doc) : EltBase (doc)
    ker_vertex = 0;
    cyl_closed = false;
    cyl_fill   = false;
+   grid_nocart = true;
    cyl_dispo  = CYL_NOFILL;
 }
 // ====================================================== Constructeur
@@ -94,13 +94,15 @@ Elements::Elements (Elements* orig) : EltBase (orig->el_root)
 // ====================================================== resize
 void Elements::resize (EnumGrid type, int nx, int ny, int nz)
 {
-   grid_type = type;
+   grid_type   = type;
+   grid_nocart = true;
 
    switch (grid_type)
       {
       case GR_CARTESIAN :
       case GR_CYLINDRIC :
       default :
+           grid_nocart = false;
            size_hx = std::max (nx, 1);
            size_hy = std::max (ny, 1);
            size_hz = std::max (nz, 1);
@@ -650,22 +652,27 @@ int Elements::makeCylindricalNodes (Vertex* orig, Vector* base, Vector* haut,
    if (ier!=HOK) 
        return ier;
 
+   transfoVertices  (orig,  base, haut);
+   return HOK;
+}
+// ====================================================== transfoVertices
+void Elements::transfoVertices (Vertex* orig, Vector* base, Vector* haut)
+{
    Vector* iprim = new Vector (base);
    Vector* jprim = new Vector (base);
    Vector* kprim = new Vector (haut);
 
-   ier = kprim->renormer ();
+   int ier = kprim->renormer ();
    if (ier!=HOK) 
-       return ier;
+       return;
 
    jprim->vectoriel (kprim, base);
    ier = jprim->renormer ();
    if (ier!=HOK) 
-       return ier;
+       return;
 
    iprim->vectoriel (jprim, kprim);
    transfoVertices  (orig,  iprim, jprim, kprim);
-   return HOK;
 }
 // ====================================================== transfoVertices
 void Elements::transfoVertices (Vertex* orig, Vector* iprim, Vector* jprim, 
@@ -805,6 +812,8 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
    int nbinter = nbcuts + 1;
    for (int ned=0; ned<nbnodes ; ned++)
        {
+       Shapes ass_shapes = t_edges[ned] -> getAssociations ();
+       Edges  ass_edges;
        t_edges [ned]->remove ();
        Vertex* ndamont = v_amont [ned];
        Vertex* ndaval  = v_aval  [ned];
@@ -822,11 +831,14 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
                                              ndamont->getZ() + nc1*dz);
            tab_vertex [nc1*nbnodes + ned] = nd1;
            tab_pilier [nc *nbnodes + ned] = newEdge (nd0, nd1);
+           ass_edges.push_back (tab_pilier [nc *nbnodes + ned]);
            nd0 =  nd1;
            }
        tab_vertex [nbinter*nbnodes + ned] = ndaval;
        tab_pilier [nbcuts *nbnodes + ned] = newEdge (nd0, ndaval);
+       ass_edges.push_back (tab_pilier[nbcuts *nbnodes + ned]);
        ndamont->setMark (ned);
+       cutAssociation (ass_shapes, ass_edges);
        }
                    // ------------------- Les aretes horizontales
                    // ------------------- Les faces verticales
@@ -850,7 +862,7 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
                   if (db) 
                      {
                      printf (" %2d : %d quad_vertical [%02d] =", nro, ns, 
-				                         nc*sizelig + nmur);
+                                                        nc*sizelig + nmur);
                      printf (" quad_vertical [%02d]\n",  nc*sizelig + nmur0);
                      }
                   }
