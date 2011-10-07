@@ -60,6 +60,7 @@ Document::Document (cpchar filename)
    nbr_propagations = 0;
    maj_propagation  = true;
    doc_xml          = NULL;
+   doc_shape        = NULL;
 
    addLaw ("DefaultLaw", 0);
    

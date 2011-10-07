@@ -120,7 +120,7 @@ public:
                            Vertex* plorig, double angle, 
                            int nrad, int nang, int nhaut, 
                            double &phi0, double &phi1);
-   void cutAssociation (Shapes tshapes, Edges tedges);
+   void cutAssociation (Shapes& tshapes, Edges& tedges);
 
 protected :
  

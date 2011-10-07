@@ -1,3 +1,6 @@
+
+// class : Gestion des formes associees
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,13 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
-// Class : Implementation provisoire et symbolique de la classe "shape"
-//
-
-// #ifdef  _NO_CASCADE 
 #ifndef __SHAPE_H_
 #define __SHAPE_H_
 
@@ -34,10 +33,10 @@ public :
     Shape (string brep);
     string getBrep ()  { return b_rep; }
 
-    void  setBrep   (string brep)         { b_rep = brep; }
-    void  setBounds (int pdeb, int pfin)  { debut = pdeb ; fin = pfin; }
-    void  setStart  (int val)             { debut = val ; }
-    void  setEnd    (int val)             { fin   = val ; }
+    void  setBrep   (string brep)               { b_rep = brep; }
+    void  setBounds (double pdeb, double pfin)  { debut = pdeb ; fin = pfin; }
+    void  setStart  (double val)                { debut = val ; }
+    void  setEnd    (double val)                { fin   = val ; }
 
 public :
     double debut;
@@ -49,4 +48,3 @@ private :
 };
 END_NAMESPACE_HEXA
 #endif
-// #endif

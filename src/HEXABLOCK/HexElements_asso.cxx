@@ -90,11 +90,13 @@
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
 static double HEXA_EPSILON  = 1E-6; //1E-3; 
+#define PutCoord(x) cout << " ... " #x " = (" << x[0] << ", " \
+                         << x[1] << ", "   << x[2] << ") "   << endl
 
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 // ---------------------------------------------------------------------
 class GeomLine
 {
@@ -113,8 +115,8 @@ public :
    double  getRank   ()       { return geom_rang ; }
 
    void defineLine (Shape* asso);
-   void setRank (int rang, int sens, double& abscisse);
-   void addAssociations (Edge* edge, double sm1, double sm2);
+   void setRank   (int rang, int sens, double& abscisse);
+   void associate (Edge* edge, double sm1, double sm2);
 
 private :
    void majCoord ();
@@ -146,7 +148,8 @@ public :
    void associate   (Vertex* node);
    void razPoint    ();
    int  definePoint (Vertex* node);
-   void definePoint (Real3  coord);
+   void definePoint (Real3   coord);
+   void definePoint (gp_Pnt& gpoint);
 
 private :
    string b_rep; 
@@ -198,14 +201,21 @@ int GeomPoint::definePoint (Vertex* node)
    g_coord [dir_x] = g_point.X(); 
    g_coord [dir_y] = g_point.Y(); 
    g_coord [dir_z] = g_point.Z(); 
+   if (db) PutCoord (g_coord);
 
    return HOK;
 }
-// ======================================================= definePoint (xy)
+// ======================================================= definePoint (xyz)
 void GeomPoint::definePoint (Real3 coord)
 {
+   gp_Pnt gpoint (coord[dir_x], coord[dir_y], coord[dir_z]);
+   definePoint   (gpoint);
+}
+// ======================================================= definePoint (g_pnt)
+void GeomPoint::definePoint (gp_Pnt& gpoint)
+{
    is_ok   = true;
-   g_point = gp_Pnt (coord[dir_x], coord[dir_y], coord[dir_z]);
+   g_point = gpoint;
 
    ostringstream   streamShape;
 
@@ -215,7 +225,23 @@ void GeomPoint::definePoint (Real3 coord)
 
    g_vertex = TopoDS::Vertex( aShape );
    b_rep    = streamShape.str();
-   for (int nc=0; nc <DIM3 ; nc++) g_coord [nc] = coord [nc];
+
+   g_coord [dir_x] = g_point.X();
+   g_coord [dir_y] = g_point.Y();
+   g_coord [dir_z] = g_point.Z();
+
+   if (db) PutCoord (g_coord);
+}
+// ======================================================= associate
+void GeomPoint::associate (Vertex* node)
+{
+   if (db) cout << " ++ GeomPoint::associate " << endl;
+   if (db) PutName (node);
+   if (node==NULL)
+      return;
+
+   Shape* vshape = new Shape (b_rep); 
+   node->setAssociation (vshape);
 }
 // ---------------------------------------------------------------------
 // ======================================================= Constructeur
@@ -268,24 +294,40 @@ void GeomLine::defineLine (Shape* asso)
    geom_length = geom_total_length * fabs (asso->fin-asso->debut);
 
                                // Extremites
-   GCPnts_AbscissaPoint s1 (*geom_curve, asso->debut, 
+   GCPnts_AbscissaPoint s1 (*geom_curve, geom_total_length*asso->debut, 
                              geom_curve->FirstParameter());
-   GCPnts_AbscissaPoint s2 (*geom_curve, asso->fin, 
+   GCPnts_AbscissaPoint s2 (*geom_curve, geom_total_length*asso->fin, 
                              geom_curve->FirstParameter());
 
-   double u1 = s1.Parameter ();
-   double u2 = s2.Parameter ();
+   double u1    = s1.Parameter ();
+   double u2    = s2.Parameter ();
    start_gpoint =  geom_curve->Value (u1);
    end_gpoint   =  geom_curve->Value (u2);
    majCoord ();
+
+   if (db) 
+      {
+      HexDisplay (asso->debut);
+      HexDisplay (asso->fin);
+      HexDisplay (geom_total_length);
+      HexDisplay (geom_curve->FirstParameter());
+      HexDisplay (s1.Parameter());
+      HexDisplay (s2.Parameter());
+
+      PutCoord (start_coord);
+      PutCoord (end_coord);
+      }
+
 }
-// ========================================================= addAssociations
-void GeomLine::addAssociations (Edge* edge, double sm1, double sm2)
+// ========================================================= associate
+void GeomLine::associate (Edge* edge, double sm1, double sm2)
 {
+   if (db) cout << " ++ GeomLine::associate " << sm1 << ", " << sm2 << endl;
+   if (db) PutName (edge);
    if (sm2 < start_absc) return;
    if (sm1 > end_absc)   return;
 
-   double dg = (end_absc-start_absc);
+   double dg    = (end_absc-start_absc);
    double para1 = start_absc < sm1 ? (sm1-start_absc)/dg : 0.0;
    double para2 = end_absc   > sm2 ? (sm2-start_absc)/dg : 1.0;
 
@@ -300,12 +342,15 @@ void GeomLine::addAssociations (Edge* edge, double sm1, double sm2)
    double orig = bloc_shape->debut;
    double dp   = bloc_shape->fin - orig;
    shape->setBounds (orig + dp*para1, orig + dp*para2);
-   edge->addAssociation (shape);
+   edge ->addAssociation (shape);
+   if (db) printf (" ... Asso ligne : [%g, %g]\n", orig + dp*para1, 
+                                               orig + dp*para2);
+
 
                                // ---------------Association du vertex 
    if (sm2 < start_absc || sm2 > end_absc+HEXA_EPSILON)
       return;
-   Vertex* node = edge->getVertex (V_AMONT);
+   Vertex* node = edge->getVertex (V_AVAL);
    if (node->getAssociation()!=NULL)
       return;
                                           // .....  Coordonnees du point
@@ -313,19 +358,17 @@ void GeomLine::addAssociations (Edge* edge, double sm1, double sm2)
 
    GCPnts_AbscissaPoint s1 (*geom_curve, alpha, geom_curve->FirstParameter());
    double u1       = s1.Parameter ();
+
+   HexDisplay (alpha);
+   HexDisplay (shape->debut);
+   HexDisplay (shape->fin);
+   HexDisplay (u1);
    gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-   BRepBuilderAPI_MakeVertex mkVertex (pnt_asso);
-   ostringstream             streamShape;
-
-   TopoDS_Shape  topo = mkVertex.Shape();
-   BRepTools::Write (topo, streamShape);
-
-   string   brep   = streamShape.str();
-   Shape*   vshape = new Shape (brep); 
-
-   node->setAssociation (vshape);
+   GeomPoint gpoint;
+   gpoint.definePoint (pnt_asso);
+   gpoint.associate (node);
 }
 // ========================================================= majCoord
 void GeomLine::majCoord ()
@@ -368,6 +411,11 @@ inline bool same_coords (double* pa, double* pb)
 
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
              + carre (pb[dir_z]-pa[dir_z]); 
+/********************************************
+   printf ( " ... same_coords :d2 ((%g,%g,%g), (%g,%g,%g)) = %g\n", 
+           pa[dir_x], pa[dir_y], pa[dir_z], pb[dir_x],
+           pb[dir_y], pb[dir_z],  d2);
+**************************************/
    return d2 < Epsil2;
 }
 // ========================================================= findBound
@@ -382,7 +430,7 @@ int GeomLine::findBound (Real3 coord)
    return NOTHING;
 }
 // ========================================================= cutAssociation
-void Elements::cutAssociation (Shapes tshapes, Edges tedges)
+void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 {
    int nbedges  = tedges.size();
    int nbshapes = tshapes.size ();
@@ -407,7 +455,7 @@ void Elements::cutAssociation (Shapes tshapes, Edges tedges)
       }
    else if (pnt_last.isBad ())  
       {
-      el_root->putError (W_ASSO_CUT1, derns->getName (foo));
+      el_root->putError (W_ASSO_CUT2, derns->getName (foo));
       return;
       }
                             // ----------- Define + longueur totale 
@@ -426,7 +474,6 @@ void Elements::cutAssociation (Shapes tshapes, Edges tedges)
    for (int rg = 0 ; rg<nbshapes ; rg++)
        {
        bool more = true;
-       longueur += tab_gline[rg].getLength ();
        for (int ns = 0 ; ns<nbshapes && more ; ns++)
            {
            if (tab_gline[ns].getRank()==NOTHING)
@@ -444,32 +491,40 @@ void Elements::cutAssociation (Shapes tshapes, Edges tedges)
                        // Pas trouve 
        if (more)
           {
-          el_root->putError (W_ASSO_CUT1, derns->getName (foo));
+          el_root->putError (W_ASSO_CUT3, derns->getName (foo));
           return;
           }
        }
-
                             // ----------- Dernier
-   coord = pnt_first.getCoord ();
+   coord = pnt_last.getCoord ();
    int pos = tab_gline[nslast].findBound (coord);
    if (pos != V_AVAL)
       {
-      el_root->putError (W_ASSO_CUT1, derns->getName (foo));
+      el_root->putError (W_ASSO_CUT4, derns->getName (foo));
       return;
       }
                             // ----------- Associations
+
+   HexDisplay (nbedges);
+   HexDisplay (nbshapes);
+   HexDisplay (longueur);
+   abscisse     = 0;
    double delta = longueur / nbedges;
    for (int ned = 0 ; ned<nbedges ; ned++)
        {
-       Edge*   edge = tedges[ned];
-       Vertex* node = edge->getVertex(V_AVAL);
+       if (db) cout << " ++ Association Edge nro " 
+                    << ned << "/" <<nbedges << endl;
+       Edge*  edge = tedges[ned];
        double  sm1 = ned*delta; 
        double  sm2 = sm1 + delta; 
        for (int ns = 0 ; ns<nbshapes ; ns++)
-           tab_gline[ns].addAssociations (edge, sm1, sm2);
+           {
+           tab_gline[ns].associate (edge, sm1, sm2);
+           }
 
        abscisse += delta;
        }
+   if (db) cout << " +++ End of Elements::cutAssociation" << endl;
 }
 END_NAMESPACE_HEXA
       

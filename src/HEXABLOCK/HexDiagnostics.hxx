@@ -42,7 +42,10 @@
 #define W_ASSO_LINE5 "associateLine : l'edge nro %s est incorrect"
 #define W_ASSO_LINE6 "associateLine : Le contour n'est pas ferme"
 
-#define W_ASSO_CUT1 "cut : L'ancienne association est incoherente"
+#define W_ASSO_CUT1 "cut 1 : ancienne association incoherente (pnt1=%s)"
+#define W_ASSO_CUT2 "cut 2 : ancienne association incoherente (dernier=%s)"
+#define W_ASSO_CUT3 "cut 3 : ancienne association incoherente (vertex=%s)"
+#define W_ASSO_CUT4 "cut 4 : ancienne association incoherente (%s)"
 
 
 #endif
