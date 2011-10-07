@@ -215,6 +215,32 @@ char*  getBrep ()     throw (SALOME::SALOME_Exception);
                                 Vector_ptr axis, const RealVector &angles)
            throw (SALOME::SALOME_Exception);
 
+  Elements_ptr makeSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+                         ::CORBA::Double radius, ::CORBA::Double radhole,
+                         Vertex_ptr plorig, 
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception);
+
+  Elements_ptr makePartSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+                             ::CORBA::Double  radius, ::CORBA::Double radhole,
+                             Vertex_ptr plorig, ::CORBA::Double angle,
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception);
+
+  Elements_ptr makeRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+                       ::CORBA::Double  radext, ::CORBA::Double radint, 
+                       ::CORBA::Double radhole, Vertex_ptr plorig, 
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception);
+
+  Elements_ptr makePartRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+                       ::CORBA::Double radext, ::CORBA::Double radint, 
+                       ::CORBA::Double radhole,
+                       Vertex_ptr plorig, ::CORBA::Double angle,
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception);
+public:
+
 
   ::CORBA::Boolean removeQuad (Quad_ptr quad) 
            throw (SALOME::SALOME_Exception);

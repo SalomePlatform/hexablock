@@ -1920,13 +1920,152 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
 
    return result;
 }
+// ===================================================== makeSphere
+Elements_ptr Document_impl::makeSphere (Vertex_ptr center, Vector_ptr vx, 
+                            Vector_ptr vz, ::CORBA::Double radius, 
+                            ::CORBA::Double radhole, Vertex_ptr plorig, 
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+
+   Vertex_impl* v_center = ::DownCast<Vertex_impl*> (center);
+   Vertex_impl* v_orig   = ::DownCast<Vertex_impl*> (plorig);
+   Vector_impl* v_x      = ::DownCast<Vector_impl*> (vx);
+   Vector_impl* v_z      = ::DownCast<Vector_impl*> (vz);
+
+   ASSERT (v_center);
+   ASSERT (v_orig);
+   ASSERT (v_x);
+   ASSERT (v_z);
+
+   HEXA_NS::Vertex* i_center = v_center->GetImpl();
+   HEXA_NS::Vertex* i_orig   = v_orig  ->GetImpl();
+   HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
+   HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
+
+   HEXA_NS::Elements* i_elts  = _document_cpp->makeSphere (i_center, i_x, i_z,
+                                radius, radhole, i_orig, nrad, nang, nhaut);
+
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
+// ===================================================== makePartSphere
+Elements_ptr Document_impl::makePartSphere (Vertex_ptr center, Vector_ptr vx, 
+                            Vector_ptr vz, ::CORBA::Double  radius, 
+                            ::CORBA::Double radhole,
+                             Vertex_ptr plorig, ::CORBA::Double angle,
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
 
 
+   Vertex_impl* v_center = ::DownCast<Vertex_impl*> (center);
+   Vertex_impl* v_orig   = ::DownCast<Vertex_impl*> (plorig);
+   Vector_impl* v_x      = ::DownCast<Vector_impl*> (vx);
+   Vector_impl* v_z      = ::DownCast<Vector_impl*> (vz);
+
+   ASSERT (v_center);
+   ASSERT (v_orig);
+   ASSERT (v_x);
+   ASSERT (v_z);
+
+   HEXA_NS::Vertex* i_center = v_center->GetImpl();
+   HEXA_NS::Vertex* i_orig   = v_orig  ->GetImpl();
+   HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
+   HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
+
+   HEXA_NS::Elements* i_elts  = _document_cpp->makePartSphere (i_center, i_x, 
+                      i_z, radius, radhole, i_orig, angle, nrad, nang, nhaut);
+
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
+// ===================================================== makeRind
+Elements_ptr Document_impl::makeRind (Vertex_ptr center, Vector_ptr vx, 
+                                      Vector_ptr vz, 
+                 ::CORBA::Double  radext, ::CORBA::Double radint, 
+                 ::CORBA::Double radhole, Vertex_ptr plorig, 
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+
+   Vertex_impl* v_center = ::DownCast<Vertex_impl*> (center);
+   Vertex_impl* v_orig   = ::DownCast<Vertex_impl*> (plorig);
+   Vector_impl* v_x      = ::DownCast<Vector_impl*> (vx);
+   Vector_impl* v_z      = ::DownCast<Vector_impl*> (vz);
+
+   ASSERT (v_center);
+   ASSERT (v_orig);
+   ASSERT (v_x);
+   ASSERT (v_z);
+
+   HEXA_NS::Vertex* i_center = v_center->GetImpl();
+   HEXA_NS::Vertex* i_orig   = v_orig  ->GetImpl();
+   HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
+   HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
+
+   HEXA_NS::Elements* i_elts  = _document_cpp->makeRind (i_center, i_x, i_z, 
+                    radext, radint, radhole, i_orig, nrad, nang, nhaut);
+
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
+// ===================================================== makePartRind
+Elements_ptr Document_impl::makePartRind (Vertex_ptr center, Vector_ptr vx, 
+                                          Vector_ptr vz, 
+                       ::CORBA::Double radext, ::CORBA::Double radint, 
+                       ::CORBA::Double radhole,
+                       Vertex_ptr plorig, ::CORBA::Double angle,
+                 ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+
+
+   Vertex_impl* v_center = ::DownCast<Vertex_impl*> (center);
+   Vertex_impl* v_orig   = ::DownCast<Vertex_impl*> (plorig);
+   Vector_impl* v_x      = ::DownCast<Vector_impl*> (vx);
+   Vector_impl* v_z      = ::DownCast<Vector_impl*> (vz);
+
+   ASSERT (v_center);
+   ASSERT (v_orig);
+   ASSERT (v_x);
+   ASSERT (v_z);
+
+   HEXA_NS::Vertex* i_center = v_center->GetImpl();
+   HEXA_NS::Vertex* i_orig   = v_orig  ->GetImpl();
+   HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
+   HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
+
+   HEXA_NS::Elements* i_elts = _document_cpp->makePartRind (i_center, i_x, i_z,
+                    radext, radint, radhole, i_orig, angle, nrad, nang, nhaut);
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
 // ___________________________________________________________ ini
-
-
-
-
 
 // HEXA_ORB::HEXA_ORB::Hexas* Document_impl::addCartesian1(HEXA_ORB::Vertex_ptr v, HEXA_ORB::Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz)
 //     throw (SALOME::SALOME_Exception)

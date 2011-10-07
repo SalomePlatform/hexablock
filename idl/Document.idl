@@ -287,9 +287,6 @@ module HEXABLOCK_ORB
     Elements prismQuads( in Quads qds, in Vector v, in long nb )
         raises (SALOME::SALOME_Exception); //CS_NEW
 
-    Elements revolutionQuads( in Quads qds, in Vertex ori, in Vector dir, 
-                              in RealVector angles)
-        raises (SALOME::SALOME_Exception); //CS_NEW
 
     Elements joinQuad( in Quad qa, in Quad qb,
                        in Vertex va1, in Vertex vb1,
@@ -303,6 +300,35 @@ module HEXABLOCK_ORB
                         in Vertex va2, in Vertex vb2,
                         in long nb )
         raises (SALOME::SALOME_Exception);
+
+                // HexaBlock V3
+    Elements revolutionQuads( in Quads qds, in Vertex ori, in Vector dir, 
+                              in RealVector angles)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makeSphere (in Vertex center, in Vector vx, in Vector vz, 
+                         in double radius, in double radhole,
+                         in Vertex plorig, 
+                         in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makePartSphere (in Vertex center, in Vector vx, in Vector vz, 
+                             in double  radius, in double radhole,
+                             in Vertex plorig, in double angle,
+                             in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makeRind (in Vertex center, in Vector vx, in Vector vz, 
+                       in double  radext, in double radint, in double radhole,
+                       in Vertex plorig, 
+                       in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makePartRind (in Vertex center, in Vector vx, in Vector vz, 
+                         in double  radext, in double radint, in double radhole,
+                         in Vertex plorig, in double angle,
+                         in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
 // 
 // 
 //     /*!
