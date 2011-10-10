@@ -510,13 +510,13 @@ Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 
 void DocumentModel::allowEdition()
 {
-  std::cout<<"allowEdition "<< this << std::endl;
+//   std::cout<<"allowEdition "<< this << std::endl;
   _disallowEdition = false;
 }
 
 void DocumentModel::disallowEdition()
 {
-  std::cout<<"disallowEdition "<< this << std::endl;
+//   std::cout<<"disallowEdition "<< this << std::endl;
   _disallowEdition = true;
 }
 
@@ -2335,14 +2335,29 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
 { //CS_TODO : check input? add child?
 // int       addElement    (EltBase* elt);
 
+  bool addOk = false;
   HEXA_NS::Group*   hGroup = data(igrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
-  HEXA_NS::EltBase* hElt   = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::EltBase *>();
+  HEXA_NS::EltBase* hElt   = NULL; 
+  switch ( hGroup->getKind() ){
+  case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Hexa *>(); break;
+  case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>(); break;
+  case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>(); break;
+  case HEXA_NS::Vertex_Node: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); break;
+  }
 
+  std::cout << "hGroup" << hGroup << std::endl;
+  std::cout << "hElt"   << hElt   << std::endl;
+
+  int res = HERR;   
   if ( hGroup and hElt )
-    hGroup->addElement( hElt );
+    res = hGroup->addElement( hElt );
 
-  QString tmp = "/tmp/addGroupElement.vtk";
+  if ( res == HOK ) addOk = true;
+
+//   QString tmp = "/tmp/addGroupElement.vtk";
   //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+
+  return addOk;
 }
 
 

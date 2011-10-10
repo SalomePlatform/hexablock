@@ -51,6 +51,7 @@ public:
 
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);
+  char* getName() throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Vertex* _vertex_cpp;

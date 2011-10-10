@@ -63,3 +63,9 @@ void Vector_impl::printName() throw (SALOME::SALOME_Exception)
 {
   _vector_cpp->printName();
 }
+
+char* Vector_impl::getName() throw (SALOME::SALOME_Exception)
+{
+   char name[12];
+   return CORBA::string_dup( _vector_cpp->getName(name) );
+}

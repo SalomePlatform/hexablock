@@ -3285,9 +3285,9 @@ void EdgeAssocDialog::addLine()
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_EDGE);
   TopoDS_Shape aShape;
 
-  std::cout << "aSelectedObject =>" << aSelectedObject << std::endl;
-  std::cout << "GEOMBase::GetShape(aSelectedObject.get(), aShape) =>" << GEOMBase::GetShape(aSelectedObject.get(), aShape) << std::endl;
-  std::cout << "!aShape.IsNull() => " << !aShape.IsNull() << std::endl;
+//   std::cout << "aSelectedObject =>" << aSelectedObject << std::endl;
+//   std::cout << "GEOMBase::GetShape(aSelectedObject.get(), aShape) =>" << GEOMBase::GetShape(aSelectedObject.get(), aShape) << std::endl;
+//   std::cout << "!aShape.IsNull() => " << !aShape.IsNull() << std::endl;
 
   if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
     DocumentModel::GeomObj aLine;
@@ -3318,9 +3318,9 @@ void EdgeAssocDialog::addLine()
     aLine.brep  = brep;
     aLine.start = 0.;
     aLine.end   = 1.;
-    std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
-    std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
-    std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
+// //     std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
+// //     std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
+// //     std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
 
     item  = new QListWidgetItem( aLine.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
@@ -3623,16 +3623,34 @@ void GroupDialog::setValue(HEXA_NS::Group* g)
   QListWidgetItem* item = NULL;
   QModelIndex iEltBase;
   QList<QStandardItem *> eltBaseItems;
+  QVariant q;
+
+  if ( !_documentModel ) return;
+
   for ( int nr = 0; nr < g->countElement(); ++nr ){
     eltBase = g->getElement( nr );
-    eltBase->getName(pName);
-    item = new QListWidgetItem( QString(pName) );
-    if ( _documentModel ){
-      eltBaseItems = _documentModel->findItems( _value->getName(), Qt::MatchExactly | Qt::MatchRecursive, 1);
-      iEltBase = eltBaseItems[0]->index();
-      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iEltBase) );
+//     eltBase = dynamic_cast<HEXA_NS::Quad*>( g->getElement( nr ) );
+    std::cout<< "eltBase"<< eltBase << std::endl;
+    switch ( g->getKind() ){
+      case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: q = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
+      case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: q = QVariant::fromValue( (HEXA_NS::Quad *)eltBase ); break;
+      case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: q = QVariant::fromValue( (HEXA_NS::Edge *)eltBase ); break;
+      case HEXA_NS::Vertex_Node: q = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
     }
-    eltBase_lw->addItem( item );
+
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          q,
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      eltBase->getName(pName);
+      item = new QListWidgetItem( QString(pName) );
+      iEltBase = iElts[0];
+      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iEltBase) );
+      eltBase_lw->addItem( item );
+    }
   }
   int r = eltBase_lw->count()-1;
   eltBase_lw->setCurrentRow(r);
@@ -3701,9 +3719,9 @@ void GroupDialog::accept()
 //                           HexaCell, QuadCell, EdgeCell,
 //                           HexaNode, QuadNode, EdgeNode, Vertex_Node
   if ( !_patternDataSelectionModel ) return;
-  if ( !_groupsSelectionModel )       return;
+//   if ( !_groupsSelectionModel )       return;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  const GroupsModel*           groupsModel = dynamic_cast<const GroupsModel*>( _groupsSelectionModel->model() );
+//   const GroupsModel*           groupsModel = dynamic_cast<const GroupsModel*>( _groupsSelectionModel->model() );
 
   QString               grpName = name_le->text();
   DocumentModel::Group  grpKind = static_cast<DocumentModel::Group>( kind_cb->itemData( kind_cb->currentIndex() ).toInt());
@@ -3723,19 +3741,20 @@ void GroupDialog::accept()
     _documentModel->clearGroupElement(iGrp);
     for ( int r = 0; r < eltBase_lw->count(); ++r){
       item     = eltBase_lw->item(r);
+      std::cout << " item " << item->text().toStdString() << std::endl;
       iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
       if ( iEltBase.isValid() )
         eltAdded = _documentModel->addGroupElement( iGrp, iEltBase );
       if ( eltAdded == false ){
-        SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED" ) );
+        SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
       }
     }
     QDialog::accept();
     _disallowSelection();
     SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "GROUP ADDED : %1" ).arg( iGrp.data().toString()) );
-    iGrp = groupsModel->mapFromSource( iGrp );
-    _patternBuilderSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Select );
+//     iGrp = groupsModel->mapFromSource( iGrp );
+//     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
+//     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Select );
 
   } else {
       SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD GROUP" ) );

@@ -42,6 +42,8 @@ public:
   void setScalar( ::CORBA::Double val ) throw (SALOME::SALOME_Exception);
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);
+  char* getName() throw (SALOME::SALOME_Exception);
+
 private:
   HEXA_NS::Hexa *_hexa_cpp;
 };

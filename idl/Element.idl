@@ -34,6 +34,7 @@ module HEXABLOCK_ORB
   {
       void dump() raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
       void printName() raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
+      string getName() raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
   };
 
 

@@ -49,10 +49,8 @@ throw (SALOME::SALOME_Exception)
 char* Law_impl::getName()
 throw (SALOME::SALOME_Exception)
 {
-//   string name;
-//   name = _law_cpp->getName();
-//   return  name.c_str();
-    return (char*)_law_cpp->getName();
+//   return (char*)_law_cpp->getName();
+  return CORBA::string_dup( _law_cpp->getName() );
 }
 
 void Law_impl::setNodes(::CORBA::Long n)

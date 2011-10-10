@@ -180,7 +180,11 @@ void CrossElements_impl::printName() throw (SALOME::SALOME_Exception)
   _crossElements_cpp->printName();
 }
 
-
+char* CrossElements_impl::getName() throw (SALOME::SALOME_Exception)
+{
+  char name[12];
+  return CORBA::string_dup( _crossElements_cpp->getName(name) );
+}
 
 
 

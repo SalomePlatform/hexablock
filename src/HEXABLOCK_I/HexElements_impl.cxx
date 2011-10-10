@@ -138,6 +138,12 @@ void Elements_impl::printName() throw (SALOME::SALOME_Exception)
   _elements_cpp->printName();
 }
 
+char* Elements_impl::getName() throw (SALOME::SALOME_Exception)
+{
+   char name[12];
+   return CORBA::string_dup( _elements_cpp->getName(name) );
+}
+
 
 
 

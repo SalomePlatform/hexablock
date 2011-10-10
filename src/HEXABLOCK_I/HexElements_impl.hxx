@@ -72,6 +72,7 @@ public:
     ::CORBA::Long saveVtk(const char* fname) throw (SALOME::SALOME_Exception);
     void dump() throw (SALOME::SALOME_Exception);
     void printName() throw (SALOME::SALOME_Exception);
+    char* getName() throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Elements *_elements_cpp;

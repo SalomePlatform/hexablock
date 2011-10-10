@@ -51,6 +51,8 @@ public:
   void setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception);
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);
+  char* getName() throw (SALOME::SALOME_Exception);
+
 private:
   HEXA_NS::Quad *_quad_cpp;
 //   std::vector<GEOM::GEOM_Object_ptr> _associations;

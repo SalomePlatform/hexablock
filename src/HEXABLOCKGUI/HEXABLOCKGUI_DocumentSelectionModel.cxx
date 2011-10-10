@@ -198,7 +198,7 @@ void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 //         -Face: idem vertex
 void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
 {
-  std::cout << "PatternDataSelectionModel::onCurrentChanged " << std::endl;
+//   std::cout << "PatternDataSelectionModel::onCurrentChanged " << std::endl;
 //   _selectSalome( current, true );
 //   _selectSalome( previous, false );
 }
@@ -207,7 +207,7 @@ void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, c
 
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  std::cout << "******PatternDataSelectionModel::onSelectionChanged" << std::endl;
+//   std::cout << "******PatternDataSelectionModel::onSelectionChanged" << std::endl;
 //   if ( _salomeSelectionChanged ) return;// to avoid infinite loop
   _theModelSelectionChanged = true;
 
@@ -218,7 +218,7 @@ void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selec
 
   QModelIndexList indexes = selected.indexes();
   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-    std::cout << "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() << std::endl;
+//     std::cout << "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() << std::endl;
     if ( !_theVtkSelectionChanged )  _selectVTK( *i_index );
     if ( !_theGeomSelectionChanged ) _highlightGEOM( *i_index );
     
@@ -241,7 +241,7 @@ void PatternDataSelectionModel::salomeSelectionChanged()
 {
   QModelIndex eltIndex;
 
-  std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
+//   std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
   SALOME_ListIO salomeSelected;
 //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
   _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false ); 
@@ -254,7 +254,7 @@ void PatternDataSelectionModel::salomeSelectionChanged()
   SALOME_ListIteratorOfListIO it(salomeSelected);
   for( ; it.More(); it.Next()){
     anIObject = it.Value(); //
-    std::cout << "obj name => " << anIObject->getName() << std::endl;
+//     std::cout << "obj name => " << anIObject->getName() << std::endl;
     eltIndex = _geomSelectionChanged( anIObject );// is it comming from GEOM?
     if ( !eltIndex.isValid() ){
       eltIndex = _vtkSelectionChanged( anIObject ); ;// or VTK?...
@@ -267,14 +267,14 @@ void PatternDataSelectionModel::salomeSelectionChanged()
 SVTK_ViewWindow* PatternDataSelectionModel::_getVTKViewWindow()
 {
   SVTK_ViewWindow* aVtkView = HEXABLOCKGUI::currentVtkView;
-  std::cout << "aVtkView ===========>" << aVtkView<< std::endl;
+//   std::cout << "aVtkView ===========>" << aVtkView<< std::endl;
   return aVtkView;
 }
 
 
 QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int role )
 {
-  std::cout << "_indexOf  " <<anEntry.toStdString() << std::endl;
+//   std::cout << "_indexOf  " <<anEntry.toStdString() << std::endl;
   QModelIndex elt; // element (vertex, edge, quad) of model
   const QAbstractItemModel* theModel = model();
   QModelIndex         theStart = theModel->index(0, 0);
@@ -288,9 +288,9 @@ QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int rol
 // Qt::MatchContains  );
   if ( theIndexes.count()>0 ){
     elt = theIndexes[0] ;
-    std::cout << "_indexOf YES found -> " << elt.data().toString().toStdString() << std::endl;
+//     std::cout << "_indexOf YES found -> " << elt.data().toString().toStdString() << std::endl;
   } else {
-    std::cout << "_indexOf NOT found" << std::endl;
+//     std::cout << "_indexOf NOT found" << std::endl;
   }
 
   return elt;
@@ -330,7 +330,7 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 
 void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 {
-  std::cout << "PatternDataSelectionModel::_highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
+//   std::cout << "PatternDataSelectionModel::_highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
   if ( HEXABLOCKGUI::currentOccView == NULL ) return;
   OCCViewer_Viewer* occViewer=(OCCViewer_Viewer*)HEXABLOCKGUI::currentOccView->getViewManager()->getViewModel();
   SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
@@ -367,7 +367,7 @@ void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
       if ( !aSh.IsNull() ){
         TColStd_IndexedMapOfInteger anIndexes;
         foreach ( int subid, assocMap.values(entry) ){
-          std::cout << "highlight => (" << entry.toStdString() << "," << subid << ")" << std::endl;
+//           std::cout << "highlight => (" << entry.toStdString() << "," << subid << ")" << std::endl;
           if ( subid != -1 ) // a sub-shape
             anIndexes.Add( subid ); //23
         }
@@ -396,7 +396,7 @@ void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 
 void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 {
-  std::cout << "PatternDataSelectionModel::_selectVTK" << std::endl;
+//   std::cout << "PatternDataSelectionModel::_selectVTK" << std::endl;
   SVTK_ViewWindow* currentVTKViewWindow = NULL;
   SVTK_Selector* selector = NULL;
 
@@ -433,13 +433,13 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
   docEntry = docEntryVariant.toString();
 
 // 
-  std::cout<<"eltEntry " << eltEntry.toStdString() << std::endl;
-  std::cout<<"docEntry " << docEntry.toStdString() << std::endl;
+//   std::cout<<"eltEntry " << eltEntry.toStdString() << std::endl;
+//   std::cout<<"docEntry " << docEntry.toStdString() << std::endl;
 
   // Select the document in Salome
   docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
   if ( docActor == NULL)  return;
-  std::cout<<"yes found an Actor for " << docEntry.toStdString() << std::endl;
+//   std::cout<<"yes found an Actor for " << docEntry.toStdString() << std::endl;
 
   if ( _salomeSelectionMgr == NULL ) return;
 
@@ -466,7 +466,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
 {
   QModelIndex eltIndex;// the element of the model which is associated to the geom object and that is to be selected
   bool fromGEOM = ( strcmp("GEOM", anIObject->getComponentDataType()) == 0 );
-  std::cout << "_geomSelectionChanged fromGEOM " << fromGEOM << std::endl;
+//   std::cout << "_geomSelectionChanged fromGEOM " << fromGEOM << std::endl;
   if ( fromGEOM ) {
     QString aName;
     GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject( anIObject );
@@ -481,13 +481,13 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
       }
       QString aGeomObjStudyEntry = aGeomObj->GetStudyEntry();
       QString aGeomObjModelEntry = aGeomObjStudyEntry + "," + QString::number(anIndex) + ";";
-      std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
-      std::cout << "geom selected => " << std::endl;
-      std::cout << "aName              : " << aName.toStdString()  << std::endl;
-      std::cout << "GetEntry()         : " << aGeomObj->GetEntry() << std::endl;
-      std::cout << "GetStudyEntry      : " << aGeomObj->GetStudyEntry() << std::endl;
-      std::cout << "anIndex            : " << anIndex << std::endl;
-      std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
+//       std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
+//       std::cout << "geom selected => " << std::endl;
+//       std::cout << "aName              : " << aName.toStdString()  << std::endl;
+//       std::cout << "GetEntry()         : " << aGeomObj->GetEntry() << std::endl;
+//       std::cout << "GetStudyEntry      : " << aGeomObj->GetStudyEntry() << std::endl;
+//       std::cout << "anIndex            : " << anIndex << std::endl;
+//       std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
       
       eltIndex = _indexOf( aGeomObjModelEntry, HEXA_ASSOC_ENTRY_ROLE );//aGeomObjEntry );
       if ( !_theModelSelectionChanged && eltIndex.isValid() ){ // select in model
@@ -496,7 +496,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
         //       select( newIndex, QItemSelectionModel::SelectCurrent );
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
-        std::cout << "setCurrentIndex => "<< eltIndex.data().toString().toStdString() << std::endl;
+//         std::cout << "setCurrentIndex => "<< eltIndex.data().toString().toStdString() << std::endl;
         _theGeomSelectionChanged = false;
       } else {
         clearSelection();
@@ -512,7 +512,7 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 {
   QModelIndex anIOIndex;// the corresponding element of the model 
   bool fromVTK  = ( strcmp("HEXABLOCK", anIObject->getComponentDataType()) == 0 );
-  std::cout << "_vtkSelectionChanged fromVTK  " << fromVTK << std::endl;
+//   std::cout << "_vtkSelectionChanged fromVTK  " << fromVTK << std::endl;
 
   if ( fromVTK ){
     if ( anIObject->hasEntry() ){
@@ -539,7 +539,7 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
             //       select( newIndex, QItemSelectionModel::SelectCurrent );
             setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
             setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
-            std::cout << "setCurrentIndex => "<< anIOIndex.data().toString().toStdString() << std::endl;
+//             std::cout << "setCurrentIndex => "<< anIOIndex.data().toString().toStdString() << std::endl;
             _theVtkSelectionChanged = false;
           } else {
             clearSelection();

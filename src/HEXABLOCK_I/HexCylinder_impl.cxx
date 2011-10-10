@@ -93,6 +93,13 @@ void Cylinder_impl::printName() throw (SALOME::SALOME_Exception)
   _cylinder_cpp->printName();
 }
 
+
+char* Cylinder_impl::getName() throw (SALOME::SALOME_Exception)
+{
+  char name[12];
+  return CORBA::string_dup( _cylinder_cpp->getName(name) );
+}
+
 // ::CORBA::Long Cylinder_impl::saveVtk(const char* fname) throw (SALOME::SALOME_Exception)
 // {
 //   ::CORBA::Long ret = _cylinder_cpp->saveVtk( fname );

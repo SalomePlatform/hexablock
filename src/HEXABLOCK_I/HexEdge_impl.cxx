@@ -78,6 +78,13 @@ void Edge_impl::printName()throw (SALOME::SALOME_Exception)
   _edge_cpp->printName();
 }
 
+char* Edge_impl::getName() throw (SALOME::SALOME_Exception)
+{
+  char name[12];
+  return CORBA::string_dup( _edge_cpp->getName(name) );
+}
+
+
 
 
 void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)

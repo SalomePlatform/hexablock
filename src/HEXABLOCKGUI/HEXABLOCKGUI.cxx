@@ -623,13 +623,13 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   
   QFrame*      patternFrame  = new QFrame(_dwPattern);
   QVBoxLayout* patternLayout = new QVBoxLayout(patternFrame);
-  _patternDataTreeView    = new QTreeView(patternFrame); //_dwPattern);
+  _patternDataTreeView    = new QTreeView(patternFrame);//_dwPattern);
   _patternBuilderTreeView = new QTreeView(patternFrame);
   patternLayout->addWidget(_patternDataTreeView );
   patternLayout->addWidget(_patternBuilderTreeView );
 //   _patternDataTreeView->setMinimumHeight(DW_MINIMUM_WIDTH); 
 
-  _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers); 
+  _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
   _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection);//QAbstractItemView::DoubleClicked, QAbstractItemView::SelectedClicked)
   _patternDataTreeView->setItemDelegate(_treeViewDelegate);
 
@@ -875,7 +875,7 @@ void HEXABLOCKGUI::createActions()
                                             0, aParent, false, this,  SLOT(removeLaw()) );
 
   _setPropagation = createAction( _menuId++, tr("Set Propagation"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SET_PROPAGATION" ) ),tr("Set Propagation"),  tr("Set Propagation"),
-                                            0, aParent, false, this,  SLOT(_setPropagation()) );
+                                            0, aParent, false, this,  SLOT(setPropagation()) );
 
   _computeMesh    = createAction( _menuId++,
                                   tr("Compute mesh"),
@@ -2055,6 +2055,7 @@ void HEXABLOCKGUI::addGroup()
   GroupDialog* diag = new GroupDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setFocus();
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
@@ -2139,7 +2140,7 @@ void HEXABLOCKGUI::setPropagation()
   QModelIndexList l = meshSelectionModel->selectedIndexes();
   foreach( const QModelIndex& selected, l ){
     if ( selected.data(HEXA_TREE_ROLE) == PROPAGATION_TREE ){
-      QModelIndex selected = _meshModel->mapToSource( selected );
+//       QModelIndex selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
       HEXA_NS::Propagation* p = selected.data(HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
       PropagationDialog* diag = new PropagationDialog(_dwInputPanel, true);

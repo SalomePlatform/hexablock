@@ -92,3 +92,10 @@ void Hexa_impl::printName() throw (SALOME::SALOME_Exception)
 {
   _hexa_cpp->printName();
 }
+
+
+char* Hexa_impl::getName() throw (SALOME::SALOME_Exception)
+{
+   char name[12];
+   return CORBA::string_dup( _hexa_cpp->getName(name) );
+}
