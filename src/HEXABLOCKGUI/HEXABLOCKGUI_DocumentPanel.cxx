@@ -486,7 +486,7 @@ void VertexDialog::accept()
         bool ok = _documentModel->updateVertex( _index, newX, newY, newZ );
         std::cout << "ok = " << ok << std::endl;
         if ( ok ){
-          SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_index.data().toString()) );
+          //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_index.data().toString()) );
 //           QDialog::accept();
           std::cout << "AAAAAAAAAAA " << std::endl;
         } else {
@@ -497,7 +497,7 @@ void VertexDialog::accept()
         QModelIndex newIndex = _documentModel->addVertex( newX, newY, newZ );
         if ( newIndex.isValid() ){
           _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
-          SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX BUILDED : %1" ).arg(newIndex.data().toString()) );
+          //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX BUILDED : %1" ).arg(newIndex.data().toString()) );
           QDialog::accept();
           if ( _patternDataSelectionModel ){
             const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
@@ -632,7 +632,7 @@ void EdgeDialog::accept()
     iEdge = patternDataModel->mapFromSource(iEdge);
     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Clear );
     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Select );
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED : %1" ).arg(iEdge.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED : %1" ).arg(iEdge.data().toString()) );
     //emit editingFinished();
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "EDGE ADDED" ) );
@@ -800,7 +800,7 @@ void QuadDialog::accept()
     QDialog::accept();
     _value = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED : %1" ).arg(iQuad.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED : %1" ).arg(iQuad.data().toString()) );
     iQuad = patternDataModel->mapFromSource( iQuad );
     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
@@ -978,7 +978,7 @@ void HexaDialog::accept()
     QDialog::accept();
     _value = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA BUILDED : %1" ).arg(iHexa.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA BUILDED : %1" ).arg(iHexa.data().toString()) );
     iHexa = patternDataModel->mapFromSource( iHexa );
     _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Clear );
     _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Select );
@@ -1097,7 +1097,7 @@ void VectorDialog::accept()
     QDialog::accept();
     _value = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED : %1" ).arg(iVector.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED : %1" ).arg(iVector.data().toString()) );
     iVector = patternBuilderModel->mapFromSource( iVector );
     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Select );
@@ -1129,7 +1129,7 @@ void VectorDialog::accept()
 //           _patternBuilderSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Current  );
 //         }
 //       }
-//       SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED" ) );
+//       //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED" ) );
 //     } else {
 //       SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VECTOR" ) );
 //     }
@@ -1232,7 +1232,7 @@ void CylinderDialog::accept()
   if ( iCyl.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD CYLINDER DONE : %1" ).arg(iCyl.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD CYLINDER DONE : %1" ).arg(iCyl.data().toString()) );
     iCyl = patternBuilderModel->mapFromSource(iCyl);
     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Select );
@@ -1356,7 +1356,7 @@ void PipeDialog::accept()
   if ( iPipe.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD PIPE DONE : %1" ).arg(iPipe.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD PIPE DONE : %1" ).arg(iPipe.data().toString()) );
     iPipe = patternBuilderModel->mapFromSource( iPipe );
     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Select );
@@ -1481,7 +1481,7 @@ void MakeGridDialog::accept()
   if ( iNewElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE GRID DONE : %1" ).arg(iNewElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE GRID DONE : %1" ).arg(iNewElts.data().toString()) );
     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
@@ -1561,7 +1561,7 @@ void MakeCylinderDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDER DONE : %1" ).arg(iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDER DONE : %1" ).arg(iElts.data().toString()) );
     iElts = patternBuilderModel->mapFromSource( iElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
@@ -1635,7 +1635,7 @@ void MakePipeDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPE DONE : %1" ).arg(iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPE DONE : %1" ).arg(iElts.data().toString()) );
     iElts = patternBuilderModel->mapFromSource( iElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
@@ -1709,7 +1709,7 @@ void MakeCylindersDialog::accept()
   if ( iCrossElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDERS DONE : %1" ).arg(iCrossElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDERS DONE : %1" ).arg(iCrossElts.data().toString()) );
     iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
@@ -1776,7 +1776,7 @@ void MakePipesDialog::accept()
   if ( iCrossElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPES DONE : %1" ).arg(iCrossElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPES DONE : %1" ).arg(iCrossElts.data().toString()) );
     iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
@@ -1845,7 +1845,7 @@ void RemoveHexaDialog::accept()
   if ( removed == true ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA(S) REMOVED" ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA(S) REMOVED" ) );
     //emit editingFinished();
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE HEXA" ) );
@@ -2004,7 +2004,7 @@ void PrismQuadDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PRISM QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PRISM QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
     if ( _patternBuilderSelectionModel ){
       const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
       if ( patternBuilderModel ){
@@ -2163,7 +2163,7 @@ void JoinQuadDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "JOIN QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "JOIN QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
     if ( _patternBuilderSelectionModel ){
       const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
       if ( patternBuilderModel ){
@@ -2290,7 +2290,7 @@ void MergeDialog::accept()
   if ( merged == true ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MERGED" ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MERGED" ) );
     //emit editingFinished();
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MERGE" ) );
@@ -2398,7 +2398,7 @@ void DisconnectDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "DISCONNECT OK : %1" ).arg( iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "DISCONNECT OK : %1" ).arg( iElts.data().toString()) );
 
     if ( _patternBuilderSelectionModel ){
       const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
@@ -2474,7 +2474,7 @@ void CutEdgeDialog::accept()
   if ( iElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE CUTTED : %1" ).arg( iElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE CUTTED : %1" ).arg( iElts.data().toString()) );
     std::cout<<"_patternBuilderSelectionModel =>"<< _patternBuilderSelectionModel << std::endl;
     if ( _patternBuilderSelectionModel ){
       const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
@@ -2588,7 +2588,7 @@ void MakeTransformationDialog::accept()
   if ( iNewElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE : %1" ).arg( iNewElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE : %1" ).arg( iNewElts.data().toString()) );
     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
@@ -2696,7 +2696,7 @@ void MakeSymmetryDialog::accept()
   if ( iNewElts.isValid() ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE %1" ).arg( iNewElts.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE %1" ).arg( iNewElts.data().toString()) );
     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
@@ -2803,7 +2803,7 @@ void PerformTransformationDialog::accept()
   if ( performed == true ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE" ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE" ) );
     //emit editingFinished();
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM TRANSFORMATION" ) );
@@ -2906,7 +2906,7 @@ void PerformSymmetryDialog::accept()
   if ( performed == true ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "SYMMETRY DONE" ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "SYMMETRY DONE" ) );
     //emit editingFinished();
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM SYMMETRY" ) );
@@ -3068,7 +3068,7 @@ void VertexAssocDialog::accept()
     _documentModel->allowEdition();
     _patternDataSelectionModel->setAllSelection();
 
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
     _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
     _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Select );
     QDialog::accept();
@@ -3172,13 +3172,13 @@ EdgeAssocDialog::~EdgeAssocDialog()
 
 void EdgeAssocDialog::deleteEdgeItem()
 {
-  std::cout << "EdgeAssocDialog::deleteEdgeItem() "<< std::endl;
+//   std::cout << "EdgeAssocDialog::deleteEdgeItem() "<< std::endl;
   delete edges_lw->currentItem();
 }
 
 void EdgeAssocDialog::deleteLineItem()
 {
-  std::cout << "EdgeAssocDialog::deleteLineItem() "<< std::endl;
+//   std::cout << "EdgeAssocDialog::deleteLineItem() "<< std::endl;
   delete lines_lw->currentItem();
 }
 
@@ -3190,15 +3190,15 @@ void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
 
 bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
-  std::cout << "EdgeAssocDialog::eventFilter"<< std::endl;
+//   std::cout << "EdgeAssocDialog::eventFilter"<< std::endl;
   if ( ( obj == lines_lw ) and  ( event->type() == QEvent::FocusIn ) ){
-    std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
+//     std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
     globalSelection(); // close local contexts, if any
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
     _currentObj = obj;
     return false;
   } else if ( ( obj == edges_lw ) and  ( event->type() == QEvent::FocusIn ) ){
-    std::cout << "obj == edges_lw XXXXXXXXXXXXXXX "<< std::endl;
+//     std::cout << "obj == edges_lw XXXXXXXXXXXXXXX "<< std::endl;
     _setEdgeSelectionOnly();
     _currentObj = obj;
     return false;
@@ -3210,7 +3210,7 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 
 void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  std::cout << "EdgeAssocDialog::onSelectionChanged "<< std::endl;
+//   std::cout << "EdgeAssocDialog::onSelectionChanged "<< std::endl;
 
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
@@ -3358,7 +3358,7 @@ void EdgeAssocDialog::accept()
   for ( int r = 0; r < lines_lw->count(); ++r){
     item = lines_lw->item(r);
     aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-    std::cout << " line added : " << aLine.name.toStdString() << std::endl;
+//     std::cout << " line added : " << aLine.name.toStdString() << std::endl;
     assocs << aLine;
   }
 
@@ -3372,7 +3372,7 @@ void EdgeAssocDialog::accept()
   if ( assocOk ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE(S) ASSOCIATION OK : " ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE(S) ASSOCIATION OK : " ) );
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
   }
@@ -3540,7 +3540,7 @@ void QuadAssocDialog::accept()
 
   QDialog::accept();
   _disallowSelection();
-  SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD ASSOCIATION OK : %1" ).arg(iQuad.data().toString()) );
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD ASSOCIATION OK : %1" ).arg(iQuad.data().toString()) );
   iQuad = patternDataModel->mapFromSource( iQuad );
   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
@@ -3746,12 +3746,12 @@ void GroupDialog::accept()
       if ( iEltBase.isValid() )
         eltAdded = _documentModel->addGroupElement( iGrp, iEltBase );
       if ( eltAdded == false ){
-        SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
+        //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
       }
     }
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "GROUP ADDED : %1" ).arg( iGrp.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "GROUP ADDED : %1" ).arg( iGrp.data().toString()) );
 //     iGrp = groupsModel->mapFromSource( iGrp );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Select );
@@ -3844,7 +3844,7 @@ void LawDialog::accept()
     QDialog::accept();
     bool setOk = _documentModel->setLaw( iLaw, nbnodes, coeff, lawKind );
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "LAW ADDED : %1" ).arg( iLaw.data().toString()) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "LAW ADDED : %1" ).arg( iLaw.data().toString()) );
 //     _meshSelectionModel->select( iLaw, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex( iLaw, QItemSelectionModel::Current );
     _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Clear );
@@ -3954,7 +3954,7 @@ void PropagationDialog::accept()
   if ( setOk ){
     QDialog::accept();
     _disallowSelection();
-    SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PROPAGATION SETTED" ) );
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PROPAGATION SETTED" ) );
   } else {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
   }
