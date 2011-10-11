@@ -64,7 +64,7 @@ Linux<br>
 <dt><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp;&nbsp;<a href="LastNews.html"><span style="text-decoration: underline;">Last news</span></a></dt>
 </td>
 </tr>
-<tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; Last last News : Voir les <a href="#Partie_3">nouvelles formes </a><br> </td></tr><tr>
+<tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; Last last News : Voir les <a href="#Partie_3">nouvelles formes </a><br> </td></tr><tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; Précisions sur las <a href="AssoLines.html">associations par lignes</a></td></tr><tr>
 <td>
 <dt><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp;&nbsp;<a href="Questions.html"><span style="text-decoration: underline;">Frequently asked questions</span></a></dt>
 </td>
@@ -127,7 +127,7 @@ en argument. et mémorise ces informations qui seront transmises aux
 fonctions internes, afin de ne pas répêter ces calculs d'intersection.</li><li>En fonction du nombre d'arêtes communes à chaque quadrangle, on se ramène à 7 cas.&nbsp;</li><li>Si le nombre d'arêtes communes est insuffisant, le cas est rejeté.</li><li>On nomme ces cas en se servant de la nomenclature des faces dans le projet : (A, B, C, D, E,F)</li></ul>Remarques :<br><ul><li>Les quadrangles passés en arguments sont considérés comme planaires, il n'y a pas de contrôle d'arguments en entrée à ce niveau</li><li>Ils
 sont sensés générer des quadrangles planaires et non croisés. Par
 exemple pour addHexaQuadsACD() : il n'y a pas de contrôle de planéité
-de la face B.&nbsp;</li></ul><img src="red-ball.gif" style="width: 12px; height: 12px;" alt="o">&nbsp;&nbsp;&nbsp; <span style="font-weight: bold;">Rappel&nbsp; :&nbsp; formalisation des Hexaèdres/Quadrangles/Vertex</span><br><br><br>Pour rappel :<br><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+de la face B.&nbsp;</li></ul><img src="red-ball.gif" style="width: 12px; height: 12px;" alt="o">&nbsp;&nbsp;&nbsp; <span style="font-weight: bold;">Rappel&nbsp; :&nbsp; formalisation des Hexaèdres/Quadrangles/Vertex</span><br><br><a name="RappelNotations"></a><br>Pour rappel :<br><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
 <tbody>
 <tr>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -281,7 +281,38 @@ tedge[3]);</li><li>Enfin l'hexaèdre : hexa = new Hexa (q_a, q_b, tquad[0], tquad
 <td>Elements* revolutionQuads (Quads&amp; start, Vertex* center, Vector* axis, vector&lt;double&gt;&amp; angles);<br></td>
 </tr>
 </tbody>
-</table><br>Avec :<br><ul><li><span style="font-weight: bold;">start</span> est la liste des quadrangles de départ. Ils doivent costituer une surface libre.Rappelons que le type <span style="font-weight: bold;">Quads</span> est équivalent à <span style="font-weight: bold;">vector&lt;Quad*&gt;</span></li><li><span style="font-weight: bold;">center</span> et <span style="font-weight: bold;">axis</span> sont respecttivement le centre et l'axe de la rotation</li><li>le vecteur <span style="font-weight: bold;">angles</span> définit pour chaque incrément l'angle de la rotation.</li></ul><br><br><br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="QuadRevolution1.png" style="width: 282px; height: 226px;" alt="En diedre"></p></td><td style="vertical-align: middle; text-align: center;"><img src="QuadRevolution2.png" style="width: 278px; height: 223px;" alt="Trièdre"></td></tr><tr><td style="vertical-align: middle;">Avant la revolution : on a coloré les quadrangles à déplacer, ainsi que l'axe de rotation.</td><td style="vertical-align: middle;">Résultat de&nbsp; la revolution.</td><td style="vertical-align: middle;"></td></tr></tbody></table><br><p><a href="index.html#DebutPage">Retour au début</a></p><a name="Partie_2.3"></a><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big> 2.3 Substitution d'Hexaèdres</big></font></b></p><p></p><p><br> </p><p><a href="index.html#DebutPage">Retour au début</a>
+</table><br>Avec :<br><ul><li><span style="font-weight: bold;">start</span> est la liste des quadrangles de départ. Ils doivent costituer une surface libre.Rappelons que le type <span style="font-weight: bold;">Quads</span> est équivalent à <span style="font-weight: bold;">vector&lt;Quad*&gt;</span></li><li><span style="font-weight: bold;">center</span> et <span style="font-weight: bold;">axis</span> sont respecttivement le centre et l'axe de la rotation</li><li>le vecteur <span style="font-weight: bold;">angles</span> définit pour chaque incrément l'angle de la rotation.</li></ul><br><br><br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="QuadRevolution1.png" style="width: 282px; height: 226px;" alt="En diedre"></p></td><td style="vertical-align: middle; text-align: center;"><img src="QuadRevolution2.png" style="width: 278px; height: 223px;" alt="Trièdre"></td></tr><tr><td style="vertical-align: middle;">Avant la revolution : on a coloré les quadrangles à déplacer, ainsi que l'axe de rotation.</td><td style="vertical-align: middle;">Résultat de&nbsp; la revolution.</td><td style="vertical-align: middle;"></td></tr></tbody></table><br><p><a href="index.html#DebutPage">Retour au début</a></p><a name="Partie_2.3"></a><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big> 2.3 Substitution d'Hexaèdres</big></font></b></p><p>Il
+s'agit de remplacer un hexaèdre ou des hexaèdres par une autre série
+d'hexaaaèdres. Pour pouvoir effectuer ce remplacement, cette autre
+série d'hexaèdres doit vérifier des conditions de collage de faces.<br>
+
+<span style="font-size: 11pt; font-family: Garamond;"></span>
+</p><br><br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="ReplaceBefore.gif" style="width: 282px; height: 226px;" alt="En diedre"></p></td><td style="vertical-align: middle; text-align: center;"><img src="ReplaceResult.gif" style="width: 278px; height: 223px;" alt="Trièdre"></td></tr><tr><td style="vertical-align: middle; text-align: center;">Exemple
+: remplacement des 3 hexaèdres jaunes centraux par 3 fois 5 nouveaux
+hexaèdres qui sont construits par extrusion des 5 quadrangles marrons
+(le motif).</td><td style="vertical-align: middle; text-align: center;">Résultat du remplacement.&nbsp;</td></tr></tbody></table><br><br>La signature de la fonction est la suivante :<br><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td>Elements* Document::revolutionQuads (Hexas&amp; pattern, Vertex* p1,&nbsp;Vertex* c1, <br>&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Vertex*
+p2,&nbsp;Vertex* c2,&nbsp;Vertex* p3,&nbsp;Vertex* c3);<br></td>
+</tr>
+</tbody>
+</table><br>Avec :<br><ul><li><span style="font-weight: bold;">pattern </span>est la liste des hexaèdres&nbsp; à extruder.<span style="font-weight: bold;"></span></li><li><span style="font-weight: bold;">c1, c2 </span>et&nbsp;<span style="font-weight: bold;">c3</span>
+définissent le quadrangle "cible" QB. Soit QA la face opposée à QB. A
+partir de cette face, on définit l'ensemble des n hexaèdres liés par
+les faces "opposées" &nbsp;(QAi, QBi).&nbsp;</li><li><span style="font-weight: bold;">p1, p2 </span>et <span style="font-weight: bold;">p3</span> sont les vertices du pattern qui seront associés resperctivement à c1, c2 et c3.&nbsp;&nbsp;</li></ul><p></p><p style="font-weight: bold;"><big>Conditions :&nbsp;</big></p><ul><li>Le pattern doit avoir exactement&nbsp;4 faces latérales externes, que l'on appellera pqc, pqd, pqe, pqf. </li><li>Les
+faces"transversales" inférieure et supérieure et doivent être
+superposables : le motif des quadrangles qui constituent ces faces doit
+être identique.</li><li>c1,c2 et c3 sont sur une face externe</li></ul><p></p><p>Pour désigner les faces d'un hexaèdres, on utilise les&nbsp; <a href="#RappelNotations">notations habituelles</a> définies plus haut.</p><p><big><span style="font-weight: bold;">Conventions et orientations</span></big> : </p><ul><li>Les
+3 vertices de départ du pattern définissent deux edges : pe_ac (sens
+Ox) et pe_ae (sens oy) et 3 vertices pv_aed, pv_ace, pv_acf.&nbsp;
+pv_ace est celui des 3 vertices qui est commun aux deux edges, pv_ade
+la première des extrémités. </li><li>Les&nbsp;4 faces latérales externes du pattern sont notées pq_c, pq_d, pq_e, pq_f.</li><li>Les
+3 vertices cibles définissent un quadrangle cq_b , deux edges&nbsp;
+&nbsp;ce_bc (Ox) et ce_be (Oy) et 3 vertices cv_bed, cv_bce et cv_bcf.
+définis comme pout le pattern.</li></ul><br>&nbsp; (A suivre ...)<p></p><p></p><p><br> </p><p><a href="index.html#DebutPage">Retour au début</a>
 </p><hr width="100%">
 <p><a name="Partie_3"></a></p>
 <p><img src="blue-ball.gif" alt="o" height="12" width="12"><b><font size="+1">
@@ -303,7 +334,7 @@ nrad, int nang, int nhaut);</span></td></tr></tbody>
 forcément par le centre de la sphère. Il définit le demi-espace dans
 lequel se situe l'objet à dessiner.Il peut même être disjoint de la
 sphère. S'il est "en dessous", la sphère est entièrement dessinée, s'il
-est "au dessus", l'objet sera vide.&nbsp;&nbsp;</li></ul><br><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Aspect visuel (exemples)</big></font></b></p><br><br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="HemiSphere.png" style="width: 282px; height: 226px;" alt="Demi Sphere trouee"></p></td><td style="vertical-align: middle; text-align: center;"><img src="PartSphere.png" style="width: 278px; height: 223px;" alt="Huitième de sphère"></td></tr><tr><td style="vertical-align: middle; text-align: center;">Demi-Sphère trouée (makeSphere ())</td><td style="vertical-align: middle; text-align: center;">Huitième de sphère trouée (makePartSphere ())</td></tr><tr><td style="vertical-align: middle; text-align: center;"><p><img src="Rind.png" style="width: 282px; height: 226px;" alt="Ecorce trouée">&nbsp;&nbsp; &nbsp;</p></td><td style="vertical-align: middle; text-align: center;"><p><img src="PartRind.png" style="width: 282px; height: 226px;" alt="Huitième d'ecorce"> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p></td></tr><tr><td style="text-align: center;" valign="middle">Demi écorce trouée (makeRind ())</td><td style="text-align: center;" valign="middle">Huitième d'écorce trouée (makePartRind ())</td></tr></tbody></table><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Implémentation</big></font></b></p><p>Toutes ces fonctions publiques appellent une seule fonction&nbsp; de la classe <span style="font-weight: bold;">Elements :</span></p><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+est "au dessus", l'objet sera vide.&nbsp;&nbsp;</li></ul><br><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Aspect visuel (exemples)</big></font></b></p><br>Conditions<br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="HemiSphere.png" style="width: 282px; height: 226px;" alt="Demi Sphere trouee"></p></td><td style="vertical-align: middle; text-align: center;"><img src="PartSphere.png" style="width: 278px; height: 223px;" alt="Huitième de sphère"></td></tr><tr><td style="vertical-align: middle; text-align: center;">Demi-Sphère trouée (makeSphere ())</td><td style="vertical-align: middle; text-align: center;">Huitième de sphère trouée (makePartSphere ())</td></tr><tr><td style="vertical-align: middle; text-align: center;"><p><img src="Rind.png" style="width: 282px; height: 226px;" alt="Ecorce trouée">&nbsp;&nbsp; &nbsp;</p></td><td style="vertical-align: middle; text-align: center;"><p><img src="PartRind.png" style="width: 282px; height: 226px;" alt="Huitième d'ecorce"> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p></td></tr><tr><td style="text-align: center;" valign="middle">Demi écorce trouée (makeRind ())</td><td style="text-align: center;" valign="middle">Huitième d'écorce trouée (makePartRind ())</td></tr></tbody></table><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Im</big></font></b>Conditions<b><font size="+1"><big>plémentation</big></font></b></p><p>Toutes ces fonctions publiques appellent une seule fonction&nbsp; de la classe <span style="font-weight: bold;">Elements :</span></p><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
 <tbody>
 
 <tr><td><span style="font-family: monospace;">int makeRind (EnumGrid type, Vertex* center, </span><span style="font-family: monospace;"></span><span style="font-family: monospace;">Vector* vx, Vector* vz,</span><span style="font-family: monospace;"> <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span style="font-family: monospace;">double&nbsp; radius, double radint, </span><span style="font-family: monospace;"></span><span style="font-family: monospace;">double radhole</span><span style="font-family: monospace;">,</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex*
@@ -320,17 +351,16 @@ d'azimuth theta (longitude) est défini explicitement par l'utilisateur.
 L'angle d'élévation phi est délimité par la position du&nbsp; plan
 horizontal et par le diamètre du trou. &nbsp;Soit :<br><ul><li>Une sphère de centre O et de rayon R.</li><li>La phère est traversée par un trou cylindrique de rayon r.</li><li>Un plan défini par son vecteur normal n (vertical sur la figure qui suit) et un point A</li></ul><p style="text-align: center;"><img src="Sphere.gif" style="width: 373px; height: 311px;" alt="Sphere"></p>A partir de ces éléments de base, on&nbsp; définit<small><small><small><small><small><small> </small></small></small></small></small></small>:<br><ul><li>Le point H, projection orhogonale du centre O de la sphere sur le plan (A,n)</li><li>L'angle alpha défini par le centre O et le cylindre : sin (alpha) = &nbsp;r/R</li><li>L'angle beta délimité&nbsp; par l'horizontale et l'intersection du plan (A,n) et de la sphère.&nbsp;</li><ul><li>sin (beta) = OH/R</li><li>et OH = OA.n/|n| &nbsp;(produit scalaire de OA par le vecteur unitaire associé à n).</li></ul></ul>L'angle d'élévation&nbsp; phi &nbsp;est encadré par les valeurs suivantes : <ul><li>max (alpha-pi/2, beta) &lt;= phi &lt;= pi/2 - alpha</li></ul><br><p><a href="index.html#DebutPage">Retour au début</a>
 </p><hr width="100%">
-<p><a name="Partie_4"></a></p>
+<p><a name="Partie_4"></a>Conditions</p>
 <p><img src="blue-ball.gif" alt="o" height="12" width="12"><b><font size="+1">
-&nbsp;<big>Partie 4 : Nouvelles fonctions de construction</big> </font></b></p>
-Il s'agit de ...........<center><span style="font-style: italic;"><span style="font-weight: bold;"><br><br></span></span>
+&nbsp;<big>Partie 4 : Evolution des associations</big></font></b></p>
+Il s'agit de&nbsp;<center><span style="font-style: italic;"><span style="font-weight: bold;"><br><br></span></span>
 </center>
 <p><a href="index.html#DebutPage">Retour au début</a>
 </p><hr width="100%">
 <p><a name="Partie_5"></a></p>
 <p><img src="blue-ball.gif" alt="o" height="12" width="12"><b><font size="+1">
-&nbsp;<big>Partie 5 : Nouvelles fonctions de construction</big> </font></b></p>
-Il s'agit de........... 
+&nbsp;<big>Partie 5 : Programmation d'exemples</big></font></b></p>Il s'agit de........... 
 <p><a href="index.html#DebutPage">Retour au début</a></p>
 <hr width="100%">
 <p><br></p><br><p><br>
