@@ -606,7 +606,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   _dwInputPanel = new QDockWidget(aParent);
   _dwInputPanel->setVisible(false);
   _dwInputPanel->setWindowTitle("Input Panel");
-  _dwInputPanel->setMinimumHeight(DWINPUT_MINIMUM_HEIGHT);
+//   _dwInputPanel->setMinimumHeight(DWINPUT_MINIMUM_HEIGHT);
   _dwInputPanel->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
   _dwInputPanel->raise();
 

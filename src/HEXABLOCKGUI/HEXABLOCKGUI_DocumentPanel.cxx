@@ -3890,6 +3890,8 @@ PropagationDialog::PropagationDialog( QWidget* parent, bool editMode, Qt::Window
     law_le->installEventFilter(this);
     setFocusProxy( law_le );
   } else {
+    buttonBox->clear();
+    law_le->setReadOnly(true);
   }
 }
 

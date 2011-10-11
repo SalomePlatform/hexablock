@@ -176,6 +176,8 @@ void DocumentModel::updateData()
   std::cout<<"DocumentModel::updateData()  begin"<<std::endl;
   clearData();
   fillData();
+  clearMesh();
+  fillMesh();
   QString tmp = "/tmp/load.vtk";
   ////_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   emit patternDataChanged();
