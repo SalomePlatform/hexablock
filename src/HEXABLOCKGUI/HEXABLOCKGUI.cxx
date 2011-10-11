@@ -639,19 +639,19 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   patternFrame->show();
   //_dwPattern->raise();
 
-  //      Association
-  _dwAssociation = new QDockWidget(aParent);
-//   _dwAssociation->installEventFilter(this);
-  _dwAssociation->setVisible(false);
-  _dwAssociation->setWindowTitle("Association");
-  _dwAssociation->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-  _associationTreeView = new QTreeView(_dwAssociation);
-  //   _associationTreeView->setMinimumHeight(DW_MINIMUM_WIDTH);
-  _associationTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);//QAbstractItemView::SelectedClicked); 
-  _associationTreeView->setItemDelegate(_treeViewDelegate);
-  _dwAssociation->setWidget(_associationTreeView);
-  _associationTreeView->show();
-  //   _dwAssociation->raise();
+//   //      Association
+//   _dwAssociation = new QDockWidget(aParent);
+// //   _dwAssociation->installEventFilter(this);
+//   _dwAssociation->setVisible(false);
+//   _dwAssociation->setWindowTitle("Association");
+//   _dwAssociation->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+//   _associationTreeView = new QTreeView(_dwAssociation);
+//   //   _associationTreeView->setMinimumHeight(DW_MINIMUM_WIDTH);
+//   _associationTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);//QAbstractItemView::SelectedClicked); 
+//   _associationTreeView->setItemDelegate(_treeViewDelegate);
+//   _dwAssociation->setWidget(_associationTreeView);
+//   _associationTreeView->show();
+//   //   _dwAssociation->raise();
 
   //      Groups
   _dwGroups = new QDockWidget(aParent);
@@ -706,8 +706,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwInputPanel );
 
   aParent->tabifyDockWidget( _dwObjectBrowser, _dwPattern );
-  aParent->tabifyDockWidget( _dwPattern, _dwAssociation );
-  aParent->tabifyDockWidget( _dwAssociation, _dwGroups );
+  aParent->tabifyDockWidget( _dwPattern, /*_dwAssociation );
+  aParent->tabifyDockWidget( _dwAssociation, */_dwGroups );
   aParent->tabifyDockWidget( _dwGroups, _dwMesh );
 
 
@@ -717,7 +717,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
 
   connect( _dwPattern, SIGNAL( visibilityChanged(bool) ),     this, SLOT( showPatternMenus(bool) ) ); 
-  connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
+//   connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
   connect( _dwGroups, SIGNAL( visibilityChanged(bool) ),      this, SLOT( showGroupsMenus(bool) ) );
   connect( _dwMesh, SIGNAL( visibilityChanged(bool) ),        this, SLOT( showMeshMenus(bool) ) );
 
@@ -746,10 +746,10 @@ void HEXABLOCKGUI::createActions()
   _saveAct = createAction( _menuId++, tr("Save a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SAVE_DOCUMENT" ) ), tr("Save document"), tr("Save a document"), 0, aParent, false, this,  SLOT(saveDocument()) );
 
 
-  _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
-                                     tr("Test"),  tr("New test"),
-                                     0, aParent, false, this, SLOT(test_association()) );
-// SLOT(()) );
+//   _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
+//                                      tr("Test"),  tr("New test"),
+//                                      0, aParent, false, this, SLOT(test_association()) );
+
 
 
   // Pattern Data creation
@@ -908,14 +908,14 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _newAct, aMenuId );
   createMenu( _importAct, aMenuId );
   createMenu( _saveAct, aMenuId );
-  createMenu( _testAct, aMenuId );
+//   createMenu( _testAct, aMenuId );
 
 //   aMenuId = createMenu( tr( "HEXABLOCK" ), -1, -1, 30 );
   aMenuId = createMenu( tr( "Object Browser" ), -1, -1, 30 );
   createMenu( _newAct, aMenuId );//, 10
   createMenu( _importAct, aMenuId );
   createMenu( _saveAct, aMenuId );
-  createMenu( _testAct, aMenuId );
+//   createMenu( _testAct, aMenuId );
 
   aMenuId = createMenu( tr("Model"), -1, -1, 30 );
   createMenu( _addVertex, aMenuId );
@@ -977,7 +977,7 @@ void HEXABLOCKGUI::createTools()
   createTool( _newAct, aToolId );
   createTool( _importAct, aToolId );
   createTool( _saveAct, aToolId );
-  createTool( _testAct, aToolId );
+//   createTool( _testAct, aToolId );
   createTool( separator(), aToolId );
 
   // Pattern Data
@@ -1055,8 +1055,8 @@ void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
   setToolShown(_importAct, show);
   setMenuShown(_saveAct, show);
   setToolShown(_saveAct, show);
-  setMenuShown(_testAct, show);
-  setToolShown(_testAct, show);
+//   setMenuShown(_testAct, show);
+//   setToolShown(_testAct, show);
 }
 
 void HEXABLOCKGUI::showPatternMenus(bool show)
@@ -1177,7 +1177,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     _currentModel = _documentModels[view];
     _patternDataModel->setSourceModel(_currentModel);
     _patternBuilderModel->setSourceModel(_currentModel);
-    _associationsModel->setSourceModel(_currentModel);
+//     _associationsModel->setSourceModel(_currentModel);
     _groupsModel->setSourceModel(_currentModel);
     _meshModel->setSourceModel(_currentModel);
 
@@ -1187,7 +1187,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
 //     connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
     _patternDataTreeView->setModel(_patternDataModel); //_currentModel
     _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel
-    _associationTreeView->setModel(_associationsModel);;
+//     _associationTreeView->setModel(_associationsModel);;
     _groupsTreeView->setModel(_groupsModel);
     _meshTreeView->setModel(_meshModel);
 
@@ -1234,8 +1234,8 @@ void HEXABLOCKGUI::showDockWidgets(bool isVisible)
   if (_dwPattern) _dwPattern->setVisible(isVisible);
   if (_dwPattern) _dwPattern->toggleViewAction()->setVisible(isVisible);
 
-  if (_dwAssociation) _dwAssociation->setVisible(isVisible);
-  if (_dwAssociation) _dwAssociation->toggleViewAction()->setVisible(isVisible);
+//   if (_dwAssociation) _dwAssociation->setVisible(isVisible);
+//   if (_dwAssociation) _dwAssociation->toggleViewAction()->setVisible(isVisible);
 
   if (_dwMesh) _dwMesh->setVisible(isVisible);
   if (_dwMesh) _dwMesh->toggleViewAction()->setVisible(isVisible);
@@ -1584,13 +1584,13 @@ void HEXABLOCKGUI::newDocument()
 //   _currentModel->setHeaderData(0, Qt::Vertical, tr("HELLOV0"));
   _patternDataModel    = new PatternDataModel(this);
   _patternBuilderModel = new PatternBuilderModel(this);
-  _associationsModel   = new AssociationsModel(this);
+//   _associationsModel   = new AssociationsModel(this);
   _groupsModel     = new GroupsModel(this);
   _meshModel       = new MeshModel(this);
 
   _patternDataModel->setSourceModel(_currentModel);
   _patternBuilderModel->setSourceModel(_currentModel);
-  _associationsModel->setSourceModel(_currentModel);
+//   _associationsModel->setSourceModel(_currentModel);
   _groupsModel->setSourceModel(_currentModel);
   _meshModel->setSourceModel(_currentModel);
 
@@ -1604,7 +1604,7 @@ void HEXABLOCKGUI::newDocument()
   _patternDataTreeView->setModel(_patternDataModel);//_currentModel;
 //   _patternDataTreeView->setModel(_currentModel);//;
   _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel;
-  _associationTreeView->setModel(_associationsModel);
+//   _associationTreeView->setModel(_associationsModel);
   _groupsTreeView->setModel(_groupsModel);
   _meshTreeView->setModel(_meshModel);
 

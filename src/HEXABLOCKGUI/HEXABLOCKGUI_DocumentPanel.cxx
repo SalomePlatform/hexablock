@@ -3729,8 +3729,14 @@ void GroupDialog::accept()
   if ( _value == NULL ){ // create group
     iGrp = _documentModel->addGroup( grpName, grpKind );
   } else {
-    QList<QStandardItem *> grpItems = _documentModel->findItems( _value->getName(), Qt::MatchExactly | Qt::MatchRecursive, 1);
-    iGrp = grpItems[0]->index();
+    QModelIndexList iGrps = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive );
+    if ( !iGrps.isEmpty() )
+      iGrp = iGrps[0];
   }
 
 //   kind_cb->
@@ -3835,10 +3841,15 @@ void LawDialog::accept()
   if ( _value == NULL ){ // create Law
     iLaw = _documentModel->addLaw( lawName, nbnodes );
   } else {
-    QList<QStandardItem *> lawItems = _documentModel->findItems( _value->getName(), Qt::MatchExactly | Qt::MatchRecursive, 1);
-    iLaw = lawItems[0]->index();
+    QModelIndexList iLaws = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive );
+    if ( !iLaws.isEmpty() )
+      iLaw = iLaws[0];
   }
-
 
   if ( iLaw.isValid() ){ //fill it and select it
     QDialog::accept();
