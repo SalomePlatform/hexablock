@@ -124,6 +124,7 @@ public:
   void createTools();
 
   void initialMenus();
+  void showAllMenus();
 
 //   void showBaseMenus(bool show);
 //   void showEditionMenus(bool show);
@@ -139,7 +140,7 @@ public slots:
   bool activateModule( SUIT_Study* theStudy);
   void onObjectBrowserClick(const QModelIndex& index);
 
-  void showObjectBrowserMenus(bool show);
+  void showDocumentMenus(bool show);
   void showPatternMenus(bool show);
   void showAssociationMenus(bool show);
   void showGroupsMenus(bool show);

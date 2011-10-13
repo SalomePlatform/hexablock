@@ -3127,10 +3127,14 @@ EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   lines_lw->installEventFilter(this);
   setFocusProxy( edges_lw );
 
-  QShortcut* _delEdgeShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), edges_lw);
-  connect(_delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()));
+  QShortcut* _delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), edges_lw);
+  QShortcut* _delLineShortcut = new QShortcut(QKeySequence(Qt::Key_X), lines_lw);
 
-  QShortcut* _delLineShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), lines_lw);
+  _delLineShortcut->setContext( Qt::WidgetShortcut );
+  _delEdgeShortcut->setContext( Qt::WidgetShortcut );
+  //Qt::ApplicationShortcut);//Qt::WidgetWithChildrenShortcut);//Qt::WidgetShortcut );
+
+  connect(_delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()));
   connect(_delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()));
 
   // for geom selection :
@@ -3190,7 +3194,7 @@ void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
 
 bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
-//   std::cout << "EdgeAssocDialog::eventFilter"<< std::endl;
+//     std::cout << "QApplication::focusWidget ()"<< QApplication::focusWidget ()<< std::endl;
   if ( ( obj == lines_lw ) and  ( event->type() == QEvent::FocusIn ) ){
 //     std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
     globalSelection(); // close local contexts, if any
@@ -3211,7 +3215,6 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
 //   std::cout << "EdgeAssocDialog::onSelectionChanged "<< std::endl;
-
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
 
@@ -3223,8 +3226,8 @@ void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItem
       item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
       edges_lw->addItem(item);
     }
-    int r = edges_lw->count() - 1;
-    edges_lw->setCurrentRow(r);
+//     int r = edges_lw->count() - 1;
+//     edges_lw->setCurrentRow(r);
   } else {
     return HexaBaseDialog::onSelectionChanged( sel, unsel );
   }
@@ -3325,8 +3328,10 @@ void EdgeAssocDialog::addLine()
     item  = new QListWidgetItem( aLine.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
     lines_lw->addItem(item);
-    lines_lw->setCurrentRow( lines_lw->count() - 1 );
-//     _assocs << aFace;
+//     lines_lw->setCurrentRow( lines_lw->count() - 1 );
+    // preview
+    if ( _firstLine->_is_nil() ) _firstLine = aSelectedObject;
+    _lastLine = aSelectedObject;
   }
 }
 
@@ -3406,8 +3411,10 @@ QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
 
-  _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_Delete), faces_lw );
+  _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_X/*Qt::Key_Delete*/), faces_lw );
+  _delFaceShortcut->setContext( Qt::WidgetShortcut );
   connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
+  //Qt::ApplicationShortcut);//Qt::WidgetWithChildrenShortcut);//Qt::WidgetShortcut );
 
 //   connect(_mgr, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
@@ -3509,8 +3516,7 @@ void QuadAssocDialog::addFace()
     item  = new QListWidgetItem( aFace.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aFace) );
     faces_lw->addItem(item);
-    faces_lw->setCurrentRow( faces_lw->count() - 1 );
-//     _assocs << aFace;
+//     faces_lw->setCurrentRow( faces_lw->count() - 1 );
   }
 }
 

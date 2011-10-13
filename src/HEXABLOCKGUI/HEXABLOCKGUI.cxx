@@ -716,10 +716,10 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 #endif
 
 
-  connect( _dwPattern, SIGNAL( visibilityChanged(bool) ),     this, SLOT( showPatternMenus(bool) ) ); 
-//   connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
-  connect( _dwGroups, SIGNAL( visibilityChanged(bool) ),      this, SLOT( showGroupsMenus(bool) ) );
-  connect( _dwMesh, SIGNAL( visibilityChanged(bool) ),        this, SLOT( showMeshMenus(bool) ) );
+//   connect( _dwPattern, SIGNAL( visibilityChanged(bool) ),     this, SLOT( showPatternMenus(bool) ) ); 
+// //   connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
+//   connect( _dwGroups, SIGNAL( visibilityChanged(bool) ),      this, SLOT( showGroupsMenus(bool) ) );
+//   connect( _dwMesh, SIGNAL( visibilityChanged(bool) ),        this, SLOT( showMeshMenus(bool) ) );
 
 }
 
@@ -911,7 +911,7 @@ void HEXABLOCKGUI::createMenus()
 //   createMenu( _testAct, aMenuId );
 
 //   aMenuId = createMenu( tr( "HEXABLOCK" ), -1, -1, 30 );
-  aMenuId = createMenu( tr( "Object Browser" ), -1, -1, 30 );
+  aMenuId = createMenu( tr( "Document" ), -1, -1, 30 );
   createMenu( _newAct, aMenuId );//, 10
   createMenu( _importAct, aMenuId );
   createMenu( _saveAct, aMenuId );
@@ -1037,17 +1037,25 @@ void HEXABLOCKGUI::createTools()
 
 void HEXABLOCKGUI::initialMenus()
 {
-  showObjectBrowserMenus( true );
+  showDocumentMenus( true );
   showPatternMenus( false );
 //   showAssociationMenus( false );
   showGroupsMenus( false );
   showMeshMenus( false );
 }
 
-
-void HEXABLOCKGUI::showObjectBrowserMenus(bool show)
+void HEXABLOCKGUI::showAllMenus()
 {
-  DEBTRACE("HEXABLOCKGUI::showObjectBrowserMenus " << show);
+  showDocumentMenus( true );
+  showPatternMenus( true );
+  showGroupsMenus( true );
+  showMeshMenus( true );
+}
+
+
+void HEXABLOCKGUI::showDocumentMenus(bool show)
+{
+  DEBTRACE("HEXABLOCKGUI::showDocumentMenus " << show);
   show = true; // 
   setMenuShown(_newAct, show);
   setToolShown(_newAct, show);
@@ -1645,6 +1653,7 @@ void HEXABLOCKGUI::newDocument()
 //   testDocument();
 //   test_make_cart_grid();
 //   test_make_elmts_transform();
+  showAllMenus();
   getApp()->updateObjectBrowser();
 }
 
@@ -2338,13 +2347,13 @@ SMESH::SMESH_Gen_var SMESHGUI::GetSMESHGen()
 // bool HEXABLOCKGUI::eventFilter(QObject *obj, QEvent *event)
 // {
 //     if ( event->type() == QEvent::Enter ){//QEvent::Show ){ //QEvent::KeyPress) { 
-//         showObjectBrowserMenus( false );
+//         showDocumentMenus( false );
 //         showPatternMenus( false );
 //         showAssociationMenus( false );
 //         showGroupsMenus( false );
 //         showMeshMenus( false );
 //         if ( obj == _dwObjectBrowser ) {
-//           showObjectBrowserMenus( true );
+//           showDocumentMenus( true );
 //         } else if ( obj == _dwPattern  ) {
 //           showPatternMenus( true );
 //         } else if ( obj == _dwAssociation ) {
