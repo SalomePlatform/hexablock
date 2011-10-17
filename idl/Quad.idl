@@ -51,6 +51,9 @@ module HEXABLOCK_ORB
 //       GEOM_Objects getAssociations()
 //           raises (SALOME::SALOME_Exception);
 
+      void clearAssociation ( ) 
+          raises (SALOME::SALOME_Exception);
+
       long addAssociation( in GEOM::GEOM_Object geom_object_2D ) //CS_NOT_SPEC
           raises (SALOME::SALOME_Exception);
 

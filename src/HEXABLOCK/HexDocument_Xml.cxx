@@ -26,6 +26,7 @@
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
 #include "HexHexa.hxx"
+#include "HexShape.hxx"
 
 #include "HexElements.hxx"
 
@@ -49,6 +50,14 @@ int get_coords (const string& chaine, double& x, double& y, double& z)
    cpchar buffer = chaine.c_str ();
    int nv = sscanf (buffer, "%lg %lg %lg", &x, &y, &z);
    if (nv!=3) return HERR;
+   return HOK;
+}
+// ======================================================== get_coords
+int get_coords (const string& chaine, double& x, double& y)
+{
+   cpchar buffer = chaine.c_str ();
+   int nv = sscanf (buffer, "%lg %lg", &x, &y);
+   if (nv!=2) return HERR;
    return HOK;
 }
 // ======================================================== get_names
@@ -98,6 +107,22 @@ int Document::setXml (cpchar flux)
       doc_saved = true;
    return ier;
 }
+// ======================================================== parseShape
+Shape* Document::parseShape (XmlTree* node)
+{
+   const  string& ident = node->findValue ("ident");
+   const  string& inter = node->findValue ("interval");
+   const  string& brep  = node->findValue ("brep");
+
+   double pdeb, pfin;
+   get_coords (inter, pdeb, pfin);
+   
+   Shape* shape = new Shape (brep);
+   shape->setBounds (pdeb, pfin);
+   shape->setName   (ident);
+
+   return shape;
+}
 // ======================================================== parseXml
 int Document::parseXml (XmlTree& xml)
 {
@@ -118,36 +143,65 @@ int Document::parseXml (XmlTree& xml)
        double px, py, pz;
        const  string& nom    = node->findValue ("id");
        const  string& coords = node->findValue ("coord");
+       const  string& brep   = node->findValue ("shape");
        get_coords (coords, px, py, pz);
 
-       t_vertex [nom] = addVertex (px, py, pz);
+       Vertex*  vertex = addVertex (px, py, pz);
+       Shape*   shape  = NULL;
+       if (brep != "" ) 
+          {
+          shape = new Shape (brep);
+          vertex->setAssociation (shape); 
+          }
+       t_vertex [nom] = vertex;
        }
 
    rubrique = xml.findChild ("ListEdges");
    nbrelts  = rubrique->getNbrChildren ();
+   Edge* edge = NULL;
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
-       XmlTree* node = rubrique->getChild (nro);
-       const  string& nom      = node->findValue ("id");
-       const  string& vertices = node->findValue ("vertices");
-       get_names (vertices, V_TWO, tname);
-
-       t_edge [nom] = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
+       XmlTree*      node = rubrique->getChild (nro);
+       const string& type = node->getName();
+       if (type=="Edge")
+          {
+          const  string& nom      = node->findValue ("id");
+          const  string& vertices = node->findValue ("vertices");
+          get_names (vertices, V_TWO, tname);
+          edge = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
+          t_edge [nom] = edge;
+          }
+       else if (type=="Shape" && edge!=NULL)
+          {
+          Shape* shape = parseShape (node);
+          edge->addAssociation (shape);
+          }
        }
 
    rubrique = xml.findChild ("ListQuads");
    nbrelts  = rubrique->getNbrChildren ();
+   Quad* quad = NULL;
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
-       XmlTree* node = rubrique->getChild (nro);
-       const string& nom   = node->findValue ("id");
-       const string& edges = node->findValue ("edges");
-       get_names (edges, V_TWO, tname);
+       XmlTree*      node = rubrique->getChild (nro);
+       const string& type = node->getName();
+       if (type=="Quad")
+          {
+          const string& nom   = node->findValue ("id");
+          const string& edges = node->findValue ("edges");
+          get_names (edges, V_TWO, tname);
 
-       t_quad [nom] = new Quad (t_edge [tname[0]], t_edge [tname[1]],
-                                t_edge [tname[2]], t_edge [tname[3]]);
+          quad = new Quad (t_edge [tname[0]], t_edge [tname[1]],
+                           t_edge [tname[2]], t_edge [tname[3]]);
+          t_quad [nom] = quad;
+          }
+       else if (type=="Shape" && quad!=NULL)
+          {
+          Shape* shape = parseShape (node);
+          edge->addAssociation (shape);
+          }
        }
 
    rubrique = xml.findChild ("ListHexas");
@@ -163,6 +217,45 @@ int Document::parseXml (XmlTree& xml)
        t_hexa [nom] = new Hexa (t_quad [tname[0]], t_quad [tname[1]],
                                 t_quad [tname[2]], t_quad [tname[3]],
                                 t_quad [tname[4]], t_quad [tname[5]]);
+       }
+
+   rubrique = xml.findChild ("ListDicretizationLaws");
+   nbrelts  = rubrique->getNbrChildren ();
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       const  string& id    = node->findValue ("id");
+       const  string& kind  = node->findValue ("kind");
+       const  string& nodes = node->findValue ("nodes");
+       const  string& coeff = node->findValue ("coeff");
+
+       int    nbnodes = atoi (nodes.c_str());
+       double koeff   = atof (coeff.c_str());
+       if (id != "DefaultLaw")
+          {
+          Law*   law  = addLaw (id.c_str(), nbnodes);
+          law->setCoefficient (koeff);
+          law->setKind (kind.c_str());
+          }
+       }
+
+   rubrique = xml.findChild ("ListPropagations");
+   nbrelts  = rubrique->getNbrChildren ();
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       const  string& nmedge  = node->findValue ("edge");
+       const  string& nmlaw   = node->findValue ("law");
+       //  const  string& nmway   = node->findValue ("way");
+       
+       edge     = t_edge [nmedge];
+       Law* law = findLaw (nmlaw.c_str());
+       //  bool way = nmway == "true";
+
+       if (edge != NULL)
+           edge->setLaw (law);
        }
 
    return HOK;

@@ -32,6 +32,8 @@ public :
    double getX()   { return v_x; }
    double getY()   { return v_y; }
    double getZ()   { return v_z; }
+   double getCoord (int dir);
+
 
    void setX (double v)   { v_x = v ; }
    void setY (double v)   { v_y = v ; }
@@ -94,6 +96,21 @@ inline Vertex::Vertex (Vertex* other)
       gc_x = gc_y = gc_z = 0;
       gc_ass = false;
       }
+}
+// ===================================================== getCoord
+inline double Vertex::getCoord (int dir) 
+{
+   double val = 0;
+   switch (dir)
+          {
+          case dir_x : val = v_x; 
+               break;
+          case dir_y : val = v_z; 
+               break;
+          case dir_z : val = v_z; 
+               break;
+          }
+   return val;
 }
 // ========================================================= dump 
 inline void Vertex::dump ()

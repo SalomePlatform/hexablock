@@ -32,13 +32,14 @@
 #include "HexLaw.hxx"
 
 #include "HexAnaQuads.hxx"
+#include "HexElements.hxx"
 #include "HexCramer.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
 double* prod_vectoriel (Edge* e1, Edge* e2, double result[]);
 double  prod_scalaire  (double v1[], double v2[]);
-void    permuter  (Edge* &e1, Edge* &e2);
+void    permuter_edges  (Edge* &e1, Edge* &e2);
 
 // ======================================================== copyDocument
 Document* Document::copyDocument ()
@@ -80,7 +81,7 @@ Document* Document::copyDocument ()
 // ======================================================== countUsedHexa
 int Document::countUsedHexa ()
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    return nbr_used_hexas;
@@ -88,7 +89,7 @@ int Document::countUsedHexa ()
 // ======================================================== countUsedQuad
 int Document::countUsedQuad ()
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    return nbr_used_quads;
@@ -96,7 +97,7 @@ int Document::countUsedQuad ()
 // ======================================================== countUsedEdge
 int Document::countUsedEdge ()
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    return nbr_used_edges;
@@ -104,7 +105,7 @@ int Document::countUsedEdge ()
 // ======================================================== countUsedVertex
 int Document::countUsedVertex ()
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    return nbr_used_vertex;
@@ -113,7 +114,7 @@ int Document::countUsedVertex ()
 // ======================================================== getUsedHexa
 Hexa* Document::getUsedHexa (int nro)
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    if (nro<0 || nro >= nbr_used_hexas)
@@ -124,7 +125,7 @@ Hexa* Document::getUsedHexa (int nro)
 // ======================================================== getUsedQuad
 Quad* Document::getUsedQuad (int nro)
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    if (nro<0 || nro >= nbr_used_quads)
@@ -135,7 +136,7 @@ Quad* Document::getUsedQuad (int nro)
 // ======================================================== getUsedEdge
 Edge* Document::getUsedEdge (int nro)
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    if (nro<0 || nro >= nbr_used_edges)
@@ -146,7 +147,7 @@ Edge* Document::getUsedEdge (int nro)
 // ======================================================== getUsedVertex
 Vertex* Document::getUsedVertex (int nro)
 {
-   if (doc_modified)
+   if (count_modified)
        renumeroter ();
 
    if (nro<0 || nro >= nbr_used_vertex)
@@ -157,7 +158,7 @@ Vertex* Document::getUsedVertex (int nro)
 // ======================================================== renumeroter
 void Document::renumeroter ()
 {
-   doc_modified = false;
+   count_modified = false;
                                        // -- 1) Raz numerotation precedente
    markAll (NO_COUNTED);
 
@@ -562,13 +563,13 @@ Hexa* Document::addHexaQuadsACD (AnaQuads& strquads)
    Vertex* v_ade = e_ae->commonVertex (e_de);
    if (v_ace==NULL)
       {
-      permuter (e_ce, e_cf);
+      permuter_edges (e_ce, e_cf);
       v_ace = e_ae->commonVertex (e_ce);
       }
 
    if (v_ade==NULL)
       {
-      permuter (e_de, e_df);
+      permuter_edges (e_de, e_df);
       v_ade = e_ae->commonVertex (e_de);
       }
 
@@ -634,13 +635,13 @@ Hexa* Document::addHexaQuadsABCD (AnaQuads& strquads)
    Edge*  e_bf = q_b->getEdge ((nb_bc + 3) MODULO QUAD4); 
 
    if (e_ae->commonVertex (e_ce) == NULL)
-      permuter (e_ce, e_cf);
+      permuter_edges (e_ce, e_cf);
 
    if (e_ae->commonVertex (e_de) == NULL)
-      permuter (e_de, e_df);
+      permuter_edges (e_de, e_df);
 
    if (e_ce->commonVertex (e_be) == NULL)
-      permuter (e_be, e_cf);
+      permuter_edges (e_be, e_cf);
 
    Quad* q_e = new Quad  (e_ae, e_ce, e_be, e_de);
    Quad* q_f = new Quad  (e_af, e_cf, e_bf, e_df);
@@ -703,6 +704,27 @@ Hexa* Document::addHexaQuadsACDE (AnaQuads& strquads)
    Hexa*  hexa = new Hexa (q_a, q_b, q_c, q_d, q_e, q_f);
    return hexa;
 }
+// ======================================================== revolutionQuads
+Elements* Document::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
+                                     RealVector &angles)
+{
+   if (center==NULL)     return NULL;
+   if (axis  ==NULL)     return NULL;
+   if (angles.size()==0) return NULL;
+   if (start .size()==0) return NULL;
+
+   Elements*  prisme = new Elements (this);
+   prisme->revolutionQuads (start, center, axis, angles);
+   return prisme;
+}
+// ========================================================= replace
+Elements* Document::replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
+                             Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
+{
+   Elements*  t_hexas = new Elements (this);
+   int ier =  t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
+   return     t_hexas;
+}
 // ========================================================= prod_vectoriel
 double*  prod_vectoriel (Edge* e1, Edge* e2, double prod[])
 {
@@ -727,8 +749,8 @@ double prod_scalaire (double v1[], double v2[])
                                      + v1[dir_z]*v2[dir_z];
    return prod;
 }
-// ========================================================= permuter
-void  permuter  (Edge* &e1, Edge* &e2)
+// ========================================================= permuter_edges
+void  permuter_edges  (Edge* &e1, Edge* &e2)
 {
    Edge* foo = e1;
    e1  = e2;

@@ -86,6 +86,14 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
 }
 
 
+void Quad_impl::clearAssociation()
+      throw (SALOME::SALOME_Exception)
+{
+  _quad_cpp->clearAssociation ();
+}
+
+
+
 GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
   throw (SALOME::SALOME_Exception)
 // {

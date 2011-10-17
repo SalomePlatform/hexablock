@@ -367,9 +367,12 @@ void Quad::saveXml (XmlWriter* xml)
    xml->openMark     ("Quad");
    xml->addAttribute ("id",    getName (buffer));
    xml->addAttribute ("edges", edges);
-   if (el_assoc!=NULL)
-      xml->addAttribute ("shape", el_assoc->getBrep().c_str());
    xml->closeMark ();
+
+   int nbass = tab_assoc.size();
+   for (int nro=0 ; nro<nbass ; nro++)
+       if (tab_assoc[nro] != NULL)
+           tab_assoc[nro]->saveXml (xml); 
 }
 // ======================================================== replaceEdge
 void Quad::replaceEdge (Edge* old, Edge* par)

@@ -66,9 +66,9 @@ public:
     void setScalar (double valeur);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
+    virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
     int   addAssociation (Shape* forme); 
     const Shapes & getAssociations ()       { return tab_assoc ;  }
-    void  clearAssociations ()              { tab_assoc.clear() ; }
 
     virtual void duplicate ();
     Edge*   getClone ()                     {  return e_clone ;   }
@@ -89,7 +89,8 @@ private:
 // ========================================================== addAssociation
 inline int Edge::addAssociation (Shape* forme)
 {
-   tab_assoc.push_back (forme);
+   if (forme != NULL)
+       tab_assoc.push_back (forme);
    return HOK;
 }
 // =============================================================== getVertex

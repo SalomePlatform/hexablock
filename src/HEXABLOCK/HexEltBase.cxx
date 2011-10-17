@@ -40,6 +40,12 @@ EltBase::EltBase (Document* doc, EnumElt type)
    el_root->doc_last_elt [type] -> el_next = this;
    el_root->doc_last_elt [type] = this;
    el_root->setDeprecated (1);
+
+   // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
+   char buffer [16];
+   cpchar nm_type = "xveqh????";
+   sprintf (buffer, "%c%04d", nm_type[el_type], el_id);
+   el_name = buffer;
 }
 // =================================================== Destructeur
 EltBase::~EltBase ()

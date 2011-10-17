@@ -308,6 +308,7 @@ int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    cyl_closed = true;
    makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, true);
    fillGrid ();
+   assoCylinder (orig, dir, 360);
    return HOK;
 }
 // ====================================================== makePipe
@@ -322,6 +323,7 @@ int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    cyl_closed = true;
    makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, false);
    fillGrid ();
+   assoCylinder (orig, dir, 360);
    return HOK;
 }
 

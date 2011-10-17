@@ -178,6 +178,7 @@ class   Group;
 
 class   AnaQuads;
 
+typedef std::vector <Hexa*>  Hexas;
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;

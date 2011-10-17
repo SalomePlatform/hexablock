@@ -790,7 +790,7 @@ void Hexa::removeConnected ()
    if (el_type == EL_REMOVED)
       return;
 
-   el_type = EL_REMOVED;
+   remove();
 
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
        {
@@ -803,6 +803,13 @@ void Hexa::removeConnected ()
               cell->removeConnected ();
            }
        }
+
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       h_quad [nro]->remove();
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       h_edge [nro]->remove();
+   for (int nro=0 ; nro<HV_MAXI ; nro++)
+       h_vertex [nro]->remove();
 }
 // ======================================================== findOpposedQuad
 int Hexa::findOpposedQuad (Quad* face, Edge* arete)

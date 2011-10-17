@@ -132,19 +132,34 @@ public:
   Elements_ptr cut(Edge_ptr e, ::CORBA::Long nb_of_cuts) throw (SALOME::SALOME_Exception);
 //   Elements_ptr makeTranslation(Element_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);//CS_Bruno
   Elements_ptr makeTranslation(Elements_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeScale(Vertex_ptr e, Vertex_ptr ver, ::CORBA::Double k) throw (SALOME::SALOME_Exception);
-  Elements_ptr makeRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, ::CORBA::Double angle) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeSymmetryPoint(Element_ptr e, Vertex_ptr ver) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeSymmetryLine(Element_ptr e, Vertex_ptr ver, Vector_ptr vec) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeSymmetryPlane(Element_ptr e, Vertex_ptr ver, Vector_ptr vec) throw (SALOME::SALOME_Exception);
+
+Elements_ptr makeRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, 
+                          ::CORBA::Double angle) 
+             throw (SALOME::SALOME_Exception);
+
+Elements_ptr makeScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k) 
+             throw (SALOME::SALOME_Exception);
+Elements_ptr makeSymmetryPoint (Elements_ptr e, Vertex_ptr ver) 
+             throw (SALOME::SALOME_Exception);
+Elements_ptr makeSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+             throw (SALOME::SALOME_Exception);
+Elements_ptr makeSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
+             throw (SALOME::SALOME_Exception);
 
 //   void performTranslation(Element_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);
   void performTranslation(Elements_ptr l, Vector_ptr vec) throw (SALOME::SALOME_Exception);
-//   void performScale(Element_ptr e, Vertex_ptr ver, ::CORBA::Double k) throw (SALOME::SALOME_Exception);
-  void performRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, ::CORBA::Double angle) throw (SALOME::SALOME_Exception);
-//   void performSymmetryPoint(Element_ptr e, Vertex_ptr ver) throw (SALOME::SALOME_Exception);
-//   void performSymmetryLine(Element_ptr e, Vertex_ptr ver, Vector_ptr vec) throw (SALOME::SALOME_Exception);
-//   void performSymmetryPlane(Element_ptr e, Vertex_ptr ver, Vector_ptr vec) throw (SALOME::SALOME_Exception);
+
+void performRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, ::CORBA::Double angle) throw (SALOME::SALOME_Exception);
+
+void performScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k) 
+     throw (SALOME::SALOME_Exception);
+void performSymmetryPoint (Elements_ptr e, Vertex_ptr ver) 
+     throw (SALOME::SALOME_Exception);
+void performSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+     throw (SALOME::SALOME_Exception);
+void performSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+     throw (SALOME::SALOME_Exception);
+
   Group_ptr addHexaGroup(const char* name) throw (SALOME::SALOME_Exception);
   Group_ptr addQuadGroup(const char* name) throw (SALOME::SALOME_Exception);
   Group_ptr addEdgeGroup(const char* name) throw (SALOME::SALOME_Exception);

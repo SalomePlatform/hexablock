@@ -534,7 +534,7 @@ END_NAMESPACE_HEXA
 
 BEGIN_NAMESPACE_HEXA
 // ========================================================= cutAssociation
-void Elements::cutAssociation (Shapes tshapes, Edges tedges)
+void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 {
 }
 END_NAMESPACE_HEXA

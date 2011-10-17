@@ -89,8 +89,9 @@ public:
     virtual void replaceEdge   (Edge*   old, Edge*   nouveau);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
+    virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
     int   addAssociation (Shape* forme); 
-    const Shapes& getAssociations () { return tab_assoc ; }
+    const Shapes& getAssociations ()        { return tab_assoc ; }
     void  inverser ();
 
     virtual void duplicate ();
@@ -111,7 +112,8 @@ private:
 // ========================================================== addAssociation
 inline int Quad::addAssociation (Shape* forme)
 {
-   tab_assoc.push_back (forme);
+   if (forme != NULL)
+       tab_assoc.push_back (forme);
    return HOK;
 }
 // ============================================================  getEdge

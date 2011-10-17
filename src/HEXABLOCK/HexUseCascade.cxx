@@ -519,7 +519,7 @@ int Document::associateCascade (Edges& mline, int msens[], Shape* gstart,
        if (closed && ned==nbedges-1) 
           point_libre = false;
 
-       edge->clearAssociations ();
+       edge->clearAssociation ();
        sm1 = sm2;
        // sm2 = mod_absc [ned];
        sm2 = (ned+1.0) /nbedges;

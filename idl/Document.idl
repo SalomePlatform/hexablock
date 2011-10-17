@@ -391,49 +391,49 @@ module HEXABLOCK_ORB
     /*!
         Make elements by transforming elements
     */
-//     Elements makeTranslation( in Element e, in Vector vec )
+//     Elements makeTranslation( in Elements e, in Vector vec )
 //         raises (SALOME::SALOME_Exception);
     Elements makeTranslation( in Elements l, in Vector vec )
         raises (SALOME::SALOME_Exception);
 // 
-//     Elements makeScale( in Vertex e, in Vertex ver, in double k )
-//         raises (SALOME::SALOME_Exception);
 // 
-    Elements makeRotation(in Elements l, in Vertex ver, in Vector vec, in double angle)
+    Elements makeRotation (in Elements l, in Vertex ver, in Vector vec, in double angle)
         raises (SALOME::SALOME_Exception);
-// 
-//     Elements makeSymmetryPoint(in Element e, in Vertex ver)
-//         raises (SALOME::SALOME_Exception);
-// 
-//     Elements makeSymmetryLine(in Element e, in Vertex ver, in Vector vec)
-//         raises (SALOME::SALOME_Exception);
-// 
-//     Elements makeSymmetryPlane(in Element e, in Vertex ver, in Vector vec)
-//         raises (SALOME::SALOME_Exception);
-// 
+    Elements makeScale (in Elements e, in Vertex ver, in double k )
+        raises (SALOME::SALOME_Exception);
+
+    Elements makeSymmetryPoint (in Elements e, in Vertex ver)
+        raises (SALOME::SALOME_Exception);
+
+    Elements makeSymmetryLine (in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+ 
+    Elements makeSymmetryPlane (in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+
     /*!
     Modify elements by transforming elements
     */
-//     void performTranslation(in Element e, in Vector vec)
+//     void performTranslation(in Elements e, in Vector vec)
 //         raises (SALOME::SALOME_Exception);
 
     void performTranslation(in Elements l, in Vector vec)
         raises (SALOME::SALOME_Exception);
 // 
-//     void performScale(in Element e, in Vertex ver, in double k)
-//         raises (SALOME::SALOME_Exception);
-// 
     void performRotation(in Elements l, in Vertex ver, in Vector vec, in double angle)
         raises (SALOME::SALOME_Exception);
 // 
-//     void performSymmetryPoint(in Element e, in Vertex ver)
-//         raises (SALOME::SALOME_Exception);
-// 
-//     void performSymmetryLine(in Element e, in Vertex ver, in Vector vec)
-//         raises (SALOME::SALOME_Exception);
-// 
-//     void performSymmetryPlane(in Element e, in Vertex ver, in Vector vec)
-//         raises (SALOME::SALOME_Exception);
+    void performScale(in Elements e, in Vertex ver, in double k)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryPoint(in Elements e, in Vertex ver)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryLine(in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryPlane(in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
 // 
 //     /*!
 //                     --------

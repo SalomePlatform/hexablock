@@ -38,7 +38,8 @@ public:
    int     setNodes (int  nbre);
    int     setCoefficient (double coeff);
    void    setKind (KindLaw type)  { law_type = type ;  }
-   int     setName (const char* nom);
+   void    setKind (cpchar  type);
+   int     setName (cpchar  nom);
 
 public:
     Law (cpchar name, int nbnodes);
@@ -80,7 +81,7 @@ inline int Law::setCoefficient (double coeff)
    return HOK;
 }
 // ================================================== setName
-inline int Law::setName (const char* name)
+inline int Law::setName (cpchar name)
 {
    law_name = name;
    return HOK;
@@ -96,6 +97,14 @@ inline void Law::saveXml (XmlWriter* xml)
    xml->addAttribute ("nodes",   nbr_nodes);
    xml->addAttribute ("coeff", law_coefficient);
    xml->closeMark ();
+}
+// ================================================== setKind
+inline void Law::setKind (cpchar type)
+{
+#define VerifKind(t,k) if (strcmp(t,#k)==0) law_type = k
+   VerifKind (type, Uniform);
+   VerifKind (type, Arithmetic);
+   VerifKind (type, Geometric);
 }
 END_NAMESPACE_HEXA
 #endif

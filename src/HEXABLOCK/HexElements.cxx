@@ -192,6 +192,7 @@ int Elements::makeCylindricalGrid (Vertex* c, Vector* b, Vector* h,
    cyl_closed = da >= 360.0;
    makeCylindricalNodes (c, b, h, dr, da, dl, nr, na, nl, fill);
    fillGrid ();
+   assoCylinder (c, h, da);
    return HOK;
 }
 // ====================================================== makeSphericalGrid

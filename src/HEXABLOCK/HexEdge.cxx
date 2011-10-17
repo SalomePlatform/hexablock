@@ -111,7 +111,7 @@ Quad* Edge::getParent  (int nro)
 {
    return static_cast <Quad*> (getFather (nro));
 }
-// ========================================================= getParent 
+// ========================================================= saveXml 
 void Edge::saveXml (XmlWriter* xml)
 {
    char buffer[12];
@@ -122,9 +122,12 @@ void Edge::saveXml (XmlWriter* xml)
    xml->openMark     ("Edge");
    xml->addAttribute ("id",       getName (buffer));
    xml->addAttribute ("vertices", vertices);
-   if (el_assoc!=NULL)
-      xml->addAttribute ("shape", el_assoc->getBrep ().c_str());
    xml->closeMark ();
+
+   int nbass = tab_assoc.size();
+   for (int nro=0 ; nro<nbass ; nro++)
+       if (tab_assoc[nro] != NULL)
+           tab_assoc[nro]->saveXml (xml); 
 }
 // ======================================================== replaceVertex
 void Edge::replaceVertex (Vertex* old, Vertex* par)

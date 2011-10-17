@@ -51,7 +51,7 @@ public :
    virtual bool    isValid     ()  { return el_status==HOK; }
 
    virtual void    setAssociation (Shape* forme)  { el_assoc = forme ; }
-   virtual void    removeAssociation ()           { el_assoc = NULL  ; }
+   virtual void    clearAssociation ()            { el_assoc = NULL  ; }
    virtual void    duplicate ()                   {}
    virtual Shape*  getAssociation ()              { return el_assoc  ; }
 
@@ -91,11 +91,15 @@ public :
    bool  hasParents ();
    EltBase* getFather  (int nro);  
 
-   int   getMark ()         { return el_mark; }
-   void  setMark (int ln)   { el_mark = ln ; }
-   char* getName  (pchar nom);
+   int   getMark ()                   { return el_mark; }
+   void  setMark (int ln)             { el_mark = ln ; }
+   char* getName   (pchar nom);
    void  printName (cpchar sep=" ");
    void  dumpRef ();
+
+   cpchar getName ()                  { return el_name.c_str() ; }
+   void   setName (const string& nom) { el_name = nom ; }
+   void   setName (cpchar nom)        { el_name = nom ; }
 
    bool   debug (int niv=0) { return el_root->getLevel() > niv ; } 
 
@@ -105,6 +109,7 @@ protected :
    int       el_id;
    Document* el_root;
    Shape*    el_assoc;
+   string    el_name;
 
    int       el_status;
    int       el_mark;

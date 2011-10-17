@@ -45,7 +45,7 @@ public:
   void setZ(::CORBA::Double z) throw (SALOME::SALOME_Exception);
   void setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex) throw (SALOME::SALOME_Exception);
   GEOM::GEOM_Object_ptr getAssociation() throw (SALOME::SALOME_Exception);
-//   void removeAssociation() throw (SALOME::SALOME_Exception);
+  void clearAssociation() throw (SALOME::SALOME_Exception);
 
   void setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception);
 

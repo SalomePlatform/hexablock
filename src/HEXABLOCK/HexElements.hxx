@@ -65,6 +65,8 @@ public:
    Edge*   getEdgeK     (int nx, int ny, int nz);
    Vertex* getVertexIJK (int nx, int ny, int nz);
 
+   int     getHexas (Hexas& liste);
+
    void   addHexa (Hexa* element);
    void   addQuad (Quad* element);
    void   addEdge (Edge* element);
@@ -120,8 +122,16 @@ public:
                            Vertex* plorig, double angle, 
                            int nrad, int nang, int nhaut, 
                            double &phi0, double &phi1);
-   void cutAssociation (Shapes& tshapes, Edges& tedges);
 
+   int replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 
+                     Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+
+
+protected :
+   void cutAssociation (Shapes& tshapes, Edges& tedges);
+   void assoCylinder   (Vertex* center, Vector* vz, double rayon);
+
+              // Fin evols Hexa3 
 protected :
  
    int   fillGrid ();

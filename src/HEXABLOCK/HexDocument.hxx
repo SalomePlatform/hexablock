@@ -210,6 +210,9 @@ public :
                            double  radext, double radint, double radhole,
                            Vertex* plorig, double angle,
                            int nrad, int nang, int nhaut);
+
+   Elements* replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
+                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 public:
     Document (cpchar filename);
    ~Document ();
@@ -267,10 +270,13 @@ private :
    Hexa* addHexaQuadsABCD (AnaQuads& strquads);
    Hexa* addHexaQuadsACDE (AnaQuads& strquads);
 
+   Shape* parseShape (XmlTree* node);
+
 private :
    friend class EltBase;
 
    bool doc_modified; 
+   bool count_modified; 
    bool doc_saved; 
    bool maj_connection;
    bool purge_elements;
@@ -336,6 +342,7 @@ inline void Document::setDeprecated (int level)
           case 1 : maj_propagation = true;
                          // Par defaut : 
           default: doc_modified    = true;
+                   count_modified  = true;
           }
 }
 

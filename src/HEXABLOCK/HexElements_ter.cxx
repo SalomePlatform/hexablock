@@ -22,14 +22,10 @@
 
 #include "HexElements.hxx"
 
-#include "HexDocument.hxx"
 #include "HexVector.hxx"
 #include "HexVertex.hxx"
-#include "HexHexa.hxx"
 #include "HexEdge.hxx"
-
-#include "HexGlobale.hxx"
-#include "HexCylinder.hxx"
+#include "HexShape.hxx"
 
 #include <cmath>
 
@@ -112,6 +108,7 @@ int Elements::makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz,
 
    transfoVertices (center, vx, vz);
    fillGrid ();
+   assoCylinder (center, vz, angle);
    return HOK;
 }
 // ====================================================== getCylPoint 
@@ -149,7 +146,7 @@ int Elements::getCylPoint (int nr, int na, int nh, double& px, double& py,
 
    return HOK;
 }
-// ====================================================== getCylPoint 
+// ====================================================== controlRind 
 int Elements::controlRind (Vertex* cx, Vector* vx, Vector* vz, 
                            double rext, double rint, double rhole,
                            Vertex* px, double angle, 
@@ -199,5 +196,79 @@ int Elements::controlRind (Vertex* cx, Vector* vx, Vector* vz,
    phi1 = M_PI*DEMI - alpha;
    return HOK; 
 }
+// ====================================================== getHexas 
+int Elements::getHexas (Hexas& liste)
+{
+   liste.clear ();
+   for (int nro = 0 ; nro<nbr_hexas ; nro++)
+       {
+       Hexa* cell = tab_hexa [nro];
+       if (cell!=NULL && cell->isValid())
+          liste.push_back (cell);
+       }
+}
+// ====================================================== geom_create_circle 
+void geom_create_circle (double* milieu, double rayon, Vector* normale, 
+                         double* vx, string& brep)
+{
+   char buffer [80];
+   sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g", 
+                    milieu[0], milieu[1], milieu[2], rayon);
+   brep = buffer;
+}
+// ====================================================== assoCylinder 
+void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)
+{
+   return;           // Abu : Provisoire avant realisation 
+   double dparam = (angle/360) / size_hy;
+   Vector* vk = new Vector (vz);
+   vk->renormer ();
 
+   for (int nz=0 ; nz<size_vz ; nz++)
+       {
+       for (int nx=0 ; nx<size_vx ; nx++)
+           {
+           Vertex* pm = getVertexIJK (nx, 0, nz); 
+           Real3   om = { pm->getX() - ori->getX(), 
+                          pm->getY() - ori->getY(), 
+                          pm->getZ() - ori->getZ() };
+
+           double oh = om[dir_x]*vk->getDx() + om[dir_y]*vk->getDy() 
+                     + om[dir_z]*vk->getDz() ;
+           double rayon  = 0;
+           Real3  ph, hm;
+           for (int dd=dir_x; dd<=dir_z ; dd++)
+               {
+               ph [dd] = ori->getCoord(dd) + oh*vk->getCoord(dd), 
+               hm [dd] = pm ->getCoord(dd) - ph[dd];
+               rayon += hm[dd]*hm[dd];
+               }
+
+           rayon = sqrt (rayon);
+           string brep;
+           geom_create_circle (ph, rayon, vz, hm, brep);
+           double param2 = 0;
+           printf (" nz=%d, nx=%d, rayon=%g", nz, nx, rayon);
+           printf (", centre=(%g,%g,%g)", ph[0],  ph[1],  ph[2]);
+           printf (", hm=(%g,%g,%g) \n", hm[0],  hm[1],  hm[2]);
+
+           for (int ny=0 ; ny<size_hy ; ny++)
+               {
+               double   param1 = param2;
+               param2 = param1 + dparam;
+               Edge*  edge  = getEdgeJ  (nx, ny, nz);
+               Shape* shape = new Shape (brep);
+               shape->setBounds (param1, param2);
+               edge ->addAssociation (shape);
+               printf (" .....       ny=%d, param2=%g\n", ny, param2);
+               }
+           }
+       }
+}
+// ====================================================== replaceHexas 
+int Elements::replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 
+                            Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3)
+{
+    return HOK;
+}
 END_NAMESPACE_HEXA

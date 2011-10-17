@@ -52,9 +52,9 @@ module HEXABLOCK_ORB
 
         GEOM::GEOM_Object getAssociation()
             raises (SALOME::SALOME_Exception);
-// 
-//         void removeAssociation()
-//             raises (SALOME::SALOME_Exception);
+
+        void clearAssociation()
+            raises (SALOME::SALOME_Exception);
 
 	void setScalar( in double val ) //CS_NOT_SPEC
 		raises (SALOME::SALOME_Exception);

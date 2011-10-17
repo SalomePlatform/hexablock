@@ -1221,8 +1221,6 @@ Elements_ptr Document_impl::makeRotation(Elements_ptr lIn, Vertex_ptr pIn, Vecto
   }
   return result;
 }
-
-
 void Document_impl::performTranslation(Elements_ptr lIn, Vector_ptr vecIn) throw (SALOME::SALOME_Exception)
 {
   Elements_impl* lServant  = ::DownCast<Elements_impl*>( lIn );
@@ -2065,6 +2063,185 @@ Elements_ptr Document_impl::makePartRind (Vertex_ptr center, Vector_ptr vx,
 
    return result;
 }
+// ================================================== makeScale
+Elements_ptr Document_impl::makeScale (Elements_ptr lIn, Vertex_ptr pIn, 
+                                       ::CORBA::Double k)
+                            throw (SALOME::SALOME_Exception)
+{
+  Elements_ptr result = Elements::_nil();
+
+  Elements_impl* lServant = ::DownCast <Elements_impl*> ( lIn );
+  Vertex_impl*   pServant = ::DownCast <Vertex_impl*>   ( pIn );
+
+  ASSERT (lServant);
+  ASSERT (pServant);
+
+  if ( lServant && pServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+
+    HEXA_NS::Elements* r = _document_cpp->makeScale(l, p, k);
+    if ( r != NULL ){
+      Elements_impl* servantCorba = new Elements_impl(r);
+      result = servantCorba->_this();
+    }
+  }
+  return result;
+}
+// ================================================== makeSymmetryLine
+Elements_ptr Document_impl::makeSymmetryLine (Elements_ptr lIn, Vertex_ptr pIn,
+                                              Vector_ptr vecIn)
+             throw (SALOME::SALOME_Exception)
+{
+  Elements_ptr result = Elements::_nil();
+
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+  Vector_impl* vecServant = ::DownCast<Vector_impl*>( vecIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+  ASSERT( vecServant );
+
+  if ( lServant && pServant && vecServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    HEXA_NS::Vector* vec = vecServant->GetImpl();
+
+    HEXA_NS::Elements* r = _document_cpp->makeSymmetryLine(l, p, vec);
+    if ( r != NULL ){
+      Elements_impl* servantCorba = new Elements_impl(r);
+      result = servantCorba->_this();
+    }
+  }
+  return result;
+}
+// ================================================== makeSymmetryPlane
+Elements_ptr Document_impl::makeSymmetryPlane (Elements_ptr lIn, Vertex_ptr pIn,
+                                              Vector_ptr vecIn)
+             throw (SALOME::SALOME_Exception)
+{
+  Elements_ptr result = Elements::_nil();
+
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+  Vector_impl* vecServant = ::DownCast<Vector_impl*>( vecIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+  ASSERT( vecServant );
+
+  if ( lServant && pServant && vecServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    HEXA_NS::Vector* vec = vecServant->GetImpl();
+
+    HEXA_NS::Elements* r = _document_cpp->makeSymmetryPlane(l, p, vec);
+    if ( r != NULL ){
+      Elements_impl* servantCorba = new Elements_impl(r);
+      result = servantCorba->_this();
+    }
+  }
+  return result;
+}
+// ================================================== makeSymmetryPoint
+Elements_ptr Document_impl::makeSymmetryPoint (Elements_ptr lIn, Vertex_ptr pIn)
+             throw (SALOME::SALOME_Exception)
+{
+  Elements_ptr result = Elements::_nil();
+
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+
+  if ( lServant && pServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+
+    HEXA_NS::Elements* r = _document_cpp->makeSymmetryPoint(l, p);
+    if ( r != NULL ){
+      Elements_impl* servantCorba = new Elements_impl(r);
+      result = servantCorba->_this();
+    }
+  }
+  return result;
+}
+// ================================================== performScale
+void Document_impl::performScale (Elements_ptr lIn, Vertex_ptr pIn, 
+                                  ::CORBA::Double k) 
+     throw (SALOME::SALOME_Exception)
+{
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+
+  if ( lServant && pServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    _document_cpp->performScale (l, p, k);
+  }
+}
+// ================================================== performSymmetryPlane
+void Document_impl::performSymmetryPlane (Elements_ptr lIn, Vertex_ptr pIn, 
+                                          Vector_ptr vecIn) 
+     throw (SALOME::SALOME_Exception)
+{
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+  Vector_impl* vecServant = ::DownCast<Vector_impl*>( vecIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+  ASSERT( vecServant );
+
+  if ( lServant && pServant && vecServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    HEXA_NS::Vector* vec = vecServant->GetImpl();
+    _document_cpp->performSymmetryPlane (l, p, vec);
+  }
+}
+// ================================================== performSymmetryLine
+void Document_impl::performSymmetryLine (Elements_ptr lIn, Vertex_ptr pIn, 
+                                          Vector_ptr vecIn) 
+     throw (SALOME::SALOME_Exception)
+{
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+  Vector_impl* vecServant = ::DownCast<Vector_impl*>( vecIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+  ASSERT( vecServant );
+
+  if ( lServant && pServant && vecServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    HEXA_NS::Vector* vec = vecServant->GetImpl();
+    _document_cpp->performSymmetryLine (l, p, vec);
+  }
+}
+// ================================================== performSymmetryPoint
+void Document_impl::performSymmetryPoint (Elements_ptr lIn, Vertex_ptr pIn)
+     throw (SALOME::SALOME_Exception)
+{
+  Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
+  Vertex_impl*   pServant = ::DownCast<Vertex_impl*>( pIn );
+
+  ASSERT( lServant );
+  ASSERT( pServant );
+
+  if ( lServant && pServant ){
+    HEXA_NS::Elements* l = lServant->GetImpl();
+    HEXA_NS::Vertex*   p = pServant->GetImpl();
+    _document_cpp->performSymmetryPoint (l, p);
+  }
+}
+
 // ___________________________________________________________ ini
 
 // HEXA_ORB::HEXA_ORB::Hexas* Document_impl::addCartesian1(HEXA_ORB::Vertex_ptr v, HEXA_ORB::Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz)

@@ -21,6 +21,7 @@
 //  or email : webmaster.salome@opencascade.com
 
 #include "HexShape.hxx"
+#include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -31,5 +32,17 @@ Shape::Shape  (string brep)
    debut  = 0;
    fin    = 1;
    ident  = "";
+}
+// ====================================================== saveXml
+void Shape::saveXml (XmlWriter* xml)
+{
+   char interval [80];
+   sprintf (interval, "%g %g", debut, fin);
+
+   xml->openMark     ("Shape");
+   xml->addAttribute ("interval", interval);
+   xml->addAttribute ("ident", ident.c_str());
+   xml->addAttribute ("brep",  b_rep.c_str());
+   xml->closeMark ();
 }
 END_NAMESPACE_HEXA

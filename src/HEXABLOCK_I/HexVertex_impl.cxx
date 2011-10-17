@@ -112,11 +112,11 @@ GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
 }
 
 
-
-// void Vertex_impl::removeAssociation()
-//   throw (SALOME::SALOME_Exception)
-// {
-// }
+void Vertex_impl::clearAssociation()
+      throw (SALOME::SALOME_Exception)
+{
+  _vertex_cpp->clearAssociation ();
+}
 
 
 void Vertex_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)

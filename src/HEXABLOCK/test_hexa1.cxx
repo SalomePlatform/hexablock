@@ -537,6 +537,8 @@ int test_relecture (int nbargs, cpchar tabargs[])
 
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
+   doc ->setFile ("restore");
+   doc ->saveFile ();
 
    // doc ->reorderFaces ();
    // doc ->dump ();
@@ -1105,7 +1107,7 @@ int test_move ()
    return HOK;
 }
 // ======================================================== test_move2
-int test_transfo ()
+int test_transfo (int nbargs, cpchar tabargs[])
 {
    const int size_x = 1;
    const int size_y = 1;
@@ -1210,11 +1212,56 @@ int test_copy_document (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
+// ======================================================== test_remove
+int test_remove ()
+{
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 2;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig  = doc->addVertex (0,0,0);
+   Hex::Vertex* orig1 = doc->addVertex (6,0,0);
+   Hex::Vector* dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  size_x,size_y,size_z);
+   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, 1,1,1);
+   doc->saveVtk ("removeConn1.vtk");
+
+   Echo ("--------- Avant destruction");
+   HexDisplay (doc->countVertex ());
+   HexDisplay (doc->countEdge ());
+   HexDisplay (doc->countQuad ());
+   HexDisplay (doc->countHexa ());
+   HexDisplay (doc->countUsedVertex ());
+   HexDisplay (doc->countUsedEdge ());
+   HexDisplay (doc->countUsedQuad ());
+   HexDisplay (doc->countUsedHexa ());
+
+
+   doc->removeConnectedHexa (grid->getHexaIJK (0,0,0));
+
+   Echo ("--------- Apres destruction");
+   HexDisplay (doc->countVertex ());
+   HexDisplay (doc->countEdge ());
+   HexDisplay (doc->countQuad ());
+   HexDisplay (doc->countHexa ());
+
+   HexDisplay (doc->countUsedVertex ());
+   HexDisplay (doc->countUsedEdge ());
+   HexDisplay (doc->countUsedQuad ());
+   HexDisplay (doc->countUsedHexa ());
+   doc->saveVtk ("removeConn2.vtk");
+
+   return HOK;
+}
 
 int test_quads (int nbargs, cpchar tabargs[]);
 int test_hemispheres (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa1
 int test_hexa1 (int nbargs, cpchar tabargs[])
 {
-   return test_hemispheres (nbargs, tabargs);
+   // return test_hemispheres (nbargs, tabargs);
+   return test_remove ();
 }

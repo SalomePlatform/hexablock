@@ -173,6 +173,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
        les_orig. push_back (tab_sens [nedge]);
        }
 
+   /********************
    if (db)
       {
       printf (" ... gstart = 0x%x, pstart=%g\n", gstart, pstart);
@@ -181,6 +182,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
           printf (" ... gline[%d] = 0x%x\n", ns, gline[ns]);
           }
        }
+   **************************/
     
    if (closed)
       {

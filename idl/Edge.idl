@@ -55,6 +55,9 @@ module HEXABLOCK_ORB
     long addAssociation (in GEOM::GEOM_Object geom_object_1D, in double debut, in double val ) //CS_NOT_SPEC
       raises (SALOME::SALOME_Exception);
 
+      void clearAssociation ( ) 
+          raises (SALOME::SALOME_Exception);
+
 //     sequence<EdgeAssociation> getAssociations() //CS_NOT_SPEC
     EdgeAssociations getAssociations() //CS_NOT_SPEC CS_WARNING: not working when reloading a document
       raises (SALOME::SALOME_Exception);

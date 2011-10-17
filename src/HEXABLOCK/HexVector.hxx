@@ -32,9 +32,10 @@ BEGIN_NAMESPACE_HEXA
 class Vector : public EltBase
 {
 public:
-    double getDx ();
-    double getDy ();
-    double getDz ();
+    double getDx ()    { return v_dx ; }
+    double getDy ()    { return v_dy ; }
+    double getDz ()    { return v_dz ; }
+    double getCoord (int dir);
 
 public:
     Vector (Document* doc, double dx=0, double dy=0, double dz=0);
@@ -54,10 +55,21 @@ private:
     double v_dz;
 };
 // ------------------------------------------- Inlining
-inline double Vector::getDx() { return v_dx; }
-inline double Vector::getDy() { return v_dy; }
-inline double Vector::getDz() { return v_dz; }
-
+// ===================================================== getCoord
+inline double Vector::getCoord (int dir) 
+{
+   double val = 0;
+   switch (dir)
+          {
+          case dir_x : val = v_dx; 
+               break;
+          case dir_y : val = v_dz; 
+               break;
+          case dir_z : val = v_dz; 
+               break;
+          }
+   return val;
+}
 // ===================================================== renormer
 inline int Vector::renormer() 
 {

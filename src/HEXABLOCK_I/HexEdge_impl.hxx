@@ -45,9 +45,9 @@ public:
   Vertex_ptr getVertex(::CORBA::Long n) throw (SALOME::SALOME_Exception);
 //   void setAssociation(GEOM::GEOM_Object_ptr geom_object_1D) throw (SALOME::SALOME_Exception);
 //   GEOM::GEOM_Object_ptr getAssociation() throw (SALOME::SALOME_Exception);
-//   void removeAssociation() throw (SALOME::SALOME_Exception);
   ::CORBA::Long addAssociation( GEOM::GEOM_Object_ptr geom_object_1D, double debut, double fin ) //CS_NOT_SPEC
       throw (SALOME::SALOME_Exception);
+  void clearAssociation() throw (SALOME::SALOME_Exception);
 
   EdgeAssociations* getAssociations () //CS_NOT_SPEC
       throw (SALOME::SALOME_Exception);

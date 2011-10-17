@@ -639,19 +639,6 @@ Elements* Document::prismQuad  (Quad* start, Vector* dir, int nb)
    Elements* prisme = prismQuads (tstart, dir, nb);
    return    prisme;
 }
-// ======================================================== revolutionQuads
-Elements* Document::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                                     RealVector &angles)
-{
-   if (center==NULL)     return NULL;
-   if (axis  ==NULL)     return NULL;
-   if (angles.size()==0) return NULL;
-   if (start .size()==0) return NULL;
-
-   Elements*  prisme = new Elements (this);
-   prisme->revolutionQuads (start, center, axis, angles);
-   return prisme;
-}
 // ======================================================== prismQuads
 Elements* Document::prismQuads (Quads& tstart, Vector* dir, int nb)
 {

@@ -118,6 +118,12 @@ void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
   return ok;
 }
 
+void Edge_impl::clearAssociation()
+      throw (SALOME::SALOME_Exception)
+{
+  _edge_cpp->clearAssociation ();
+}
+
 
 
 // EdgeAssociations* Edge_impl::getAssociations() //CS_NOT_SPEC
