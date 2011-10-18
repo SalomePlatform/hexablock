@@ -1,4 +1,5 @@
 # -*- coding: latin-1 -*-
+
 #  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 #
 #  This library is free software; you can redistribute it and/or
@@ -23,8 +24,14 @@
 
 import salome
 import smesh
+
 from HEXABLOCK_ORB import *
 import HEXABLOCKPlugin
+
+geompy = smesh.geompy
+
+# Load HEXABLOCK componant
+# ------------------------
 
 component = salome.lcc.FindOrLoadComponent("FactoryServer", "HEXABLOCK")
 component = component._narrow(HEXABLOCK_Gen)
@@ -36,9 +43,81 @@ for k in dir(component):
 
 del k
 
+# Add laws on propagations based on min or max segment length
+# -----------------------------------------------------------
+
+def addLaws(doc, lg, lgmax=True):
+    laws = {}
+    n = doc.countPropagation()
+    for i in xrange(n):
+        p = doc.getPropagation(i)
+        if lgmax:
+            m = 0
+        else:
+            m = (max)
+        for e in p.getEdges():
+            a = e.getAssociations()
+            l = 0.0
+            for g, d, f in a:
+                le, su, vo = geompy.BasicProperties(g)
+                l += le * (f-d)
+            if ( lgmax and l>m ) or ( (not lgmax) and l<m ):
+                m = l
+
+        nn = m / lg
+        if lgmax and (int(nn) != nn):
+            nn = int(nn)
+        else:
+            nn = int(nn) - 1
+
+        try:
+            law = laws[nn]
+        except:
+            law = doc.addLaw("u_"+str(nn), nn)
+            laws[nn] = law
+
+        p.setLaw(law)
+
+# Display informations about a document
+# -------------------------------------
+
+def dump(doc, mesh=None, full=False):
+    if full:
+        hn = doc.countUsedHexa()
+        print "Model dump: number of hexas: ", hn
+        for hi in xrange(hn):
+            hh = doc.getUsedHexa(hi)
+            print "  hexa: ", hi
+            for fi in xrange(6):
+                ff = hh.getQuad(fi)
+                fa = ff.getAssociations()
+                print "    quadrangle: ", fi, " associated: ", fa!=[]
+                for ei in xrange(4):
+                    ee = ff.getEdge(ei)
+                    ea = ee.getAssociations()
+                    print "      edge: ", ei, " associated: ", ea!=[]
+                    for vi in xrange(2):
+                        vv = ee.getVertex(vi)
+                        va = vv.getAssociation()
+                        print "        vertex: ", vi, " associated: ", va!=None,
+                        print " -> x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ()
+
+    print "Model vertices    number: ", doc.countUsedVertex()
+    print "Model edges       number: ", doc.countUsedEdge()
+    print "Model quadrangles number: ", doc.countUsedQuad()
+    print "Model blocks      number: ", doc.countUsedHexa()
+
+    if mesh != None:
+        print "Mesh nodes       number: ", mesh.NbNodes()
+        print "Mesh segments    number: ", mesh.NbEdges()
+        print "Mesh quadrangles number: ", mesh.NbQuadrangles()
+        print "Mesh hexas       number: ", mesh.NbHexas()
+
+# Mesh a document
+# ---------------
+
 def mesh(name, doc, dim=3, container="FactoryServer"):
-    geompy = smesh.geompy
-    study  = salome.myStudy
+    study = salome.myStudy
 
     if type(doc) == type(""):
         sobject = study.FindObjectID(doc)
