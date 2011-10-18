@@ -41,6 +41,8 @@
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
 
+#include <cstdlib>
+
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== get_coords
