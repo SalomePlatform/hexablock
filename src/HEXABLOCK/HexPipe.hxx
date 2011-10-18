@@ -33,6 +33,8 @@ public :
 
 public :
     Pipe (Vertex* b, Vector* v, double ri, double re, double h);
+    virtual ~Pipe () {}
+    void saveXml (XmlWriter* xml);
 
 private:
     double c_int_radius;

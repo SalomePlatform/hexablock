@@ -3571,7 +3571,7 @@ GroupDialog::GroupDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   strKind[ HEXA_NS::HexaNode ] = "HexaNode";
   strKind[ HEXA_NS::QuadNode ] = "QuadNode";
   strKind[ HEXA_NS::EdgeNode ] = "EdgeNode";
-  strKind[ HEXA_NS::Vertex_Node ] = "VertexNode";
+  strKind[ HEXA_NS::VertexNode ] = "VertexNode";
 
   kind_cb->clear();
   QMap<HEXA_NS::EnumGroup, QString>::ConstIterator iKind;
@@ -3610,7 +3610,7 @@ void GroupDialog::onKindChanged(int index)
   case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: _setHexaSelectionOnly(); break;
   case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: _setQuadSelectionOnly(); break;
   case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: _setEdgeSelectionOnly(); break;
-  case HEXA_NS::Vertex_Node: _setVertexSelectionOnly(); break;
+  case HEXA_NS::VertexNode: _setVertexSelectionOnly(); break;
   default:Q_ASSERT( false );
   }
 
@@ -3641,7 +3641,7 @@ void GroupDialog::setValue(HEXA_NS::Group* g)
       case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: q = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
       case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: q = QVariant::fromValue( (HEXA_NS::Quad *)eltBase ); break;
       case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: q = QVariant::fromValue( (HEXA_NS::Edge *)eltBase ); break;
-      case HEXA_NS::Vertex_Node: q = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
+      case HEXA_NS::VertexNode: q = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
     }
 
     QModelIndexList iElts = _documentModel->match(
@@ -3723,7 +3723,7 @@ void GroupDialog::accept()
   SUIT_OverrideCursor wc;
   if ( !_documentModel ) return;
 //                           HexaCell, QuadCell, EdgeCell,
-//                           HexaNode, QuadNode, EdgeNode, Vertex_Node
+//                           HexaNode, QuadNode, EdgeNode, VertexNode
   if ( !_patternDataSelectionModel ) return;
 //   if ( !_groupsSelectionModel )       return;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );

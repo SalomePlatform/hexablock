@@ -1328,7 +1328,7 @@ Group_ptr Document_impl::addEdgeNodeGroup(const char* name) throw (SALOME::SALOM
 Group_ptr Document_impl::addVertexNodeGroup(const char* name) throw (SALOME::SALOME_Exception)
 {
   Group_ptr result = Group::_nil();
-  HEXA_NS::Group* g = _document_cpp->addGroup( name, HEXA_NS::Vertex_Node );
+  HEXA_NS::Group* g = _document_cpp->addGroup( name, HEXA_NS::VertexNode );
   if ( g != NULL ){
     Group_impl* servantCorba = new Group_impl(g);
     result = servantCorba->_this();

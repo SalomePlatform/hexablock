@@ -34,6 +34,7 @@
 #include "HexLaw.hxx"
 #include "HexMatrix.hxx"
 #include "HexCramer.hxx"
+#include "HexGroup.hxx"
 
 // ======================================================== print_propagations
 void print_propagations (Hex::Document* doc)
@@ -521,7 +522,10 @@ int test_string_xml (int nbargs, cpchar tabargs[])
 int test_relecture (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.loadDocument ("Essai");
+   cpchar nomdoc = "Essai";
+   if (nbargs>1) 
+      nomdoc = tabargs[1];
+   Hex::Document* doc = mon_ex.loadDocument (nomdoc);
 
 /*********************
    Hex::Vertex* v4 = doc->findVertex (80.0, 0.0,  0.0);
@@ -708,7 +712,7 @@ int test_asso_line (int nbargs, cpchar tabargs[])
    return HOK;
 }
 // ===================================================== test_cylinder
-int test_cylinder ()
+int test_cylinder (int nbargs, cpchar tabargs[])
 {
    int    nvtk    = 0;
    cpchar fic_vtk = "cylindre";
@@ -730,11 +734,20 @@ int test_cylinder ()
    Hex::Cylinder* cyl  = doc->addCylinder   (orig1, vz, nr, nl);
    Hex::Pipe*     pipe = doc->addPipe       (orig2, vz, nri, nre, nl);
 
-   doc->makeCylinder (cyl,  vx, nr, na, nl);
+   Hex::Elements* grid = doc->makeCylinder (cyl,  vx, nr, na, nl);
    doc ->saveVtk (fic_vtk, nvtk);
+
+   Hex::Group* groupe = doc->addGroup ("GroupeAMA", Hex::HexaCell);
+   groupe->addElement (grid->getHexaIJK (0,0,0));
+   groupe->addElement (grid->getHexaIJK (1,0,0));
+   groupe->addElement (grid->getHexaIJK (0,1,0));
+   groupe->addElement (grid->getHexaIJK (1,1,0));
+   groupe->addElement (grid->getHexaIJK (2,1,0));
 
    doc->makePipe     (pipe, vx, nr, na, nl);
    doc ->saveVtk (fic_vtk, nvtk);
+   doc->setFile ("cylindre");
+   doc->saveFile ();
 
    return HOK;
 }
@@ -1226,7 +1239,7 @@ int test_remove ()
    Hex::Vertex* orig1 = doc->addVertex (6,0,0);
    Hex::Vector* dir   = doc->addVector (1,1,1);
    Hex::Elements* grid  = doc->makeCartesian (orig, dir,  size_x,size_y,size_z);
-   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, 1,1,1);
+   doc->makeCartesian (orig1, dir, 1,1,1);
    doc->saveVtk ("removeConn1.vtk");
 
    Echo ("--------- Avant destruction");

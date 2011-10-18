@@ -24,7 +24,7 @@ using namespace std;
 
 #include "hexa_base.hxx"
 #include "HexEltBase.hxx"
-#include "HexGroups.hxx"
+#include "HexGroup.hxx"
 
 #include "HexElements_impl.hxx"
 
@@ -65,7 +65,7 @@ GroupKind Group_impl::getKind() throw (SALOME::SALOME_Exception)
     case HEXA_NS::HexaNode:  return HEXANODE_GROUP;
     case HEXA_NS::QuadNode:  return QUADNODE_GROUP;
     case HEXA_NS::EdgeNode:  return EDGENODE_GROUP;
-    case HEXA_NS::Vertex_Node:  return VERTEXNODE_GROUP;
+    case HEXA_NS::VertexNode:  return VERTEXNODE_GROUP;
     default : ASSERT(false);
   }
 }

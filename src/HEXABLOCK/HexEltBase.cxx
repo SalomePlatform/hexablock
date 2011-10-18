@@ -43,8 +43,7 @@ EltBase::EltBase (Document* doc, EnumElt type)
 
    // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
    char buffer [16];
-   cpchar nm_type = "xveqh????";
-   sprintf (buffer, "%c%04d", nm_type[el_type], el_id);
+   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
    el_name = buffer;
 }
 // =================================================== Destructeur

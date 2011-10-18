@@ -85,7 +85,7 @@ inline void XmlWriter::addAttribute (cpchar attrib, string& valeur)
 {
    addAttribute (attrib, valeur.c_str());
 }
-// ====================================================== addmot
+// ====================================================== addMot
 inline void XmlWriter::addMot (cpchar mot)
 {
    if (on_file) 

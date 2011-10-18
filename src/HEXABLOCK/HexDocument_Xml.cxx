@@ -20,6 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
+#include <cstdlib>               // Pour atoi et atof
 
 #include "HexEltBase.hxx"
 #include "HexVertex.hxx"
@@ -37,6 +38,7 @@
 #include "HexCloner.hxx"
 #include "HexPropagation.hxx"
 #include "HexLaw.hxx"
+#include "HexGroup.hxx"
 
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
@@ -93,9 +95,11 @@ void get_names (const string& chaine, int size, vector<string>& table)
 int Document::loadXml ()
 {
    XmlTree xml("");
-   xml.parseFile (doc_name + ".xml");
+   int ier = xml.parseFile (doc_name + ".xml");
+   if (ier!=HOK) 
+      return ier;
 
-   int    ier = parseXml (xml);
+   ier = parseXml (xml);
    return ier;
 }
 // ======================================================== setXml
@@ -128,12 +132,13 @@ Shape* Document::parseShape (XmlTree* node)
 // ======================================================== parseXml
 int Document::parseXml (XmlTree& xml)
 {
-   xml.dump ();
+   // xml.dump ();
 
    map <std::string, Vertex*> t_vertex;
    map <std::string, Edge*>   t_edge;
    map <std::string, Quad*>   t_quad;
    map <std::string, Hexa*>   t_hexa;
+   map <std::string, Vector*> t_vector;
    vector <string> tname;
 
    XmlTree* rubrique = xml.findChild ("ListVertices");
@@ -221,8 +226,23 @@ int Document::parseXml (XmlTree& xml)
                                 t_quad [tname[4]], t_quad [tname[5]]);
        }
 
+   rubrique = xml.findChild ("ListVectors");
+   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree* node = rubrique->getChild (nro);
+       double px, py, pz;
+       const  string& nom    = node->findValue ("id");
+       const  string& coords = node->findValue ("coord");
+       get_coords (coords, px, py, pz);
+
+       Vector* vector = addVector (px, py, pz);
+       t_vector [nom] = vector;
+       }
+
    rubrique = xml.findChild ("ListDicretizationLaws");
-   nbrelts  = rubrique->getNbrChildren ();
+   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -243,7 +263,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListPropagations");
-   nbrelts  = rubrique->getNbrChildren ();
+   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -259,6 +279,74 @@ int Document::parseXml (XmlTree& xml)
        if (edge != NULL)
            edge->setLaw (law);
        }
+
+   for (int pipe=0 ; pipe<2 ; pipe++)
+       {
+       rubrique = pipe ? xml.findChild ("ListPipes")
+                       : xml.findChild ("ListCylinders");
+                 
+       nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+
+       for (int nro=0 ; nro < nbrelts ; nro++)
+           {
+           XmlTree* node = rubrique->getChild (nro);
+           const  string& cbase   = node->findValue ("c_base"  );
+           const  string& cdir    = node->findValue ("c_dir"   );
+           const  string& cradius = node->findValue ("c_radius");
+           const  string& cheight = node->findValue ("c_height");
+       
+           Vertex* base    = t_vertex [cbase];
+           Vector* dir     = t_vector [cdir];
+           double radius  = atof (cradius.c_str());
+           double height  = atof (cheight.c_str());
+
+           if (pipe)
+              {
+              const string& cradius1  = node->findValue ("c_int_radius");
+              double radius1  = atof (cradius1.c_str());
+              addPipe (base, dir, radius1, radius, height);
+              }
+           else
+              {
+              addCylinder (base, dir, radius, height);
+              }
+           }
+       }
+
+   rubrique = xml.findChild ("ListGroups");
+   int nbrgroups  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+
+   for (int nro=0 ; nro < nbrgroups ; nro++)
+       {
+       XmlTree*  ndgroup = rubrique->getChild (nro);
+       XmlTree*  node    = ndgroup ->getChild (0);
+       const  string& name  = node->findValue ("name");
+       const  string& ckind = node->findValue ("kind");
+
+       EnumGroup kind   = Group::getKind (ckind);
+       Group*    groupe = addGroup (name.c_str(), kind);
+       EnumElt   type   = groupe->getTypeElt ();
+
+       nbrelts = ndgroup->getNbrChildren ();
+       for (int nelt=1 ; nelt < nbrelts ; nelt++)
+           {
+           node = ndgroup ->getChild (nelt);
+           const string& id = node->findValue ("id");
+           switch (type) 
+              {
+              case EL_HEXA : groupe->addElement (t_hexa [id]);
+                   break;
+              case EL_QUAD : groupe->addElement (t_quad [id]);
+                   break;
+              case EL_EDGE : groupe->addElement (t_edge [id]);
+                   break;
+              case EL_VERTEX :
+              default      : groupe->addElement (t_vertex [id]);
+                   break;
+              } 
+           } 
+       }
+
 
    return HOK;
 }
@@ -293,10 +381,11 @@ int Document::genXml (cpchar filename)
    doc_xml->addAttribute ("name", doc_name);
    doc_xml->endMark ();
 
-   cpchar balise [] = {"ListXXX", 
-          "ListVertices", "ListEdges", "ListQuads", "ListHexas", "ListXXXX" };
+   cpchar balise [] = {"ListXXXX", 
+          "ListVertices", "ListEdges", "ListQuads", "ListHexas", "ListVectors",
+          "ListXXXX" };
 
-   for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
+   for (int type=EL_VERTEX ; type <= EL_VECTOR ; type++)
        {
        doc_xml->addMark (balise [type]);
        for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
@@ -316,6 +405,24 @@ int Document::genXml (cpchar filename)
    doc_xml->addMark ("ListPropagations");
    for (int nro=0 ; nro<nbr_propagations ; nro++)
        doc_propagation[nro]->saveXml (doc_xml);
+   doc_xml->closeMark (true);
+
+   int nombre = countCylinder();
+   doc_xml->addMark ("ListCylinders");
+   for (int nro=0 ; nro<nombre ; nro++)
+       doc_cylinder[nro]->saveXml (doc_xml);
+   doc_xml->closeMark (true);
+
+   nombre = countPipe();
+   doc_xml->addMark ("ListPipes");
+   for (int nro=0 ; nro<nombre ; nro++)
+       doc_pipe[nro]->saveXml (doc_xml);
+   doc_xml->closeMark (true);
+
+   nombre = countGroup();
+   doc_xml->addMark ("ListGroups");
+   for (int nro=0 ; nro<nombre ; nro++)
+       doc_group[nro]->saveXml (doc_xml);
    doc_xml->closeMark ();
 
    doc_xml->closeMark ();

@@ -24,7 +24,7 @@
 #include "SALOME_GenericObj_i.hh"
 
 #include "hexa_base.hxx"
-#include "HexGroups.hxx"
+#include "HexGroup.hxx"
 
 
 using namespace HEXABLOCK_ORB;

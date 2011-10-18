@@ -2344,7 +2344,7 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
   case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Hexa *>(); break;
   case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>(); break;
   case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Edge *>(); break;
-  case HEXA_NS::Vertex_Node: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); break;
+  case HEXA_NS::VertexNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); break;
   }
 
   std::cout << "hGroup" << hGroup << std::endl;

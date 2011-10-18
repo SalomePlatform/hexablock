@@ -1,3 +1,6 @@
+
+// C++ : ParserXml
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// C++ : ParserXml
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #include "HexXmlTree.hxx"
 
@@ -91,7 +92,11 @@ int XmlTree::parseFile (const string& ficnom)
 
    xml_file = fopen (ficnom.c_str(), "r");
    if (xml_file==NULL)
+      {
+      cout << " **** Fichier XML '" << ficnom << "' inaccessible" 
+           << endl;
       return HERR;
+      }
 
    int ier = parseXml ();
    return ier;
@@ -256,7 +261,7 @@ int XmlTree::getIdent (string& ident)
    for (int nc=fic_pos-1; nc<len_buffer ; nc++)
        {
        char car = fic_buffer[nc];
-       if (isalnum (car))
+       if (isalnum (car) || car =='_')
            {
            ident.push_back (car);
            }

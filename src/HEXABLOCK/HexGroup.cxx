@@ -1,3 +1,6 @@
+
+// C++ : Implementation des groupes
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,41 +17,20 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
-// Class : Implementation provisoire et symbolique de la classe "shape"
-//
-#ifndef __GROUPS_H
-#define __GROUPS_H
-
-#include "hexa_base.hxx"
+#include "HexGroup.hxx"
+#include "HexEltBase.hxx"
+#include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Group 
-{
-public :
-   Group (cpchar nom, EnumGroup grp);
-  ~Group ()                   {}
+static const cpchar kind_name[] = { "HexaCell", "QuadCell", "EdgeCell", 
+                  "HexaNode", "QuadNode", "EdgeNode", "VertexNode" };
 
-   void      setName (cpchar nom)          { grp_name = nom ; }
-   cpchar    getName ()                    { return grp_name.c_str () ; }
-   EnumGroup getKind ()                    { return grp_kind ; }
-   int       addElement    (EltBase* elt);
-   int       removeElement (int nro);
-   EltBase*  getElement    (int nro)       { return grp_table [nro] ; }
-   int       countElement  ()              { return grp_table.size () ; }
-   void      clearElement  ()              { grp_table.clear () ; }
-
-private :
-   EnumGroup   grp_kind;
-   EnumElt     grp_typelt;
-   std::string grp_name;
-   std::vector <EltBase*> grp_table;
-};
 // ======================================================== Constructeur
-inline Group::Group (cpchar nom, EnumGroup grp)  
+Group::Group (cpchar nom, EnumGroup grp)  
 {
    grp_name = nom ; 
    grp_kind = grp;
@@ -67,21 +49,21 @@ inline Group::Group (cpchar nom, EnumGroup grp)
            grp_typelt = EL_EDGE;
            break;
 
-      case Vertex_Node : default :
+      case VertexNode : default :
            grp_typelt = EL_VERTEX;
       }
 }
 // ======================================================== addElement
-inline int Group::addElement (EltBase* elt)
+int Group::addElement (EltBase* elt)
 {
-   if (grp_typelt != elt->getType())
+   if (elt==NULL || elt->isDeleted() || grp_typelt != elt->getType())
       return HERR;
  
    grp_table.push_back (elt);
    return HOK;
 }
 // ======================================================== removeElement
-inline int Group::removeElement (int nro)
+int Group::removeElement (int nro)
 {
    int nbelts = grp_table.size ();
 
@@ -91,5 +73,39 @@ inline int Group::removeElement (int nro)
    grp_table.erase (grp_table.begin() + nro);
    return HOK;
 }
+// ======================================================== saveXml
+void Group::saveXml (XmlWriter* xml)
+{
+   char buffer[16];
+   int nbelts = grp_table.size ();
+
+   xml->addMark  ("Group");
+
+   xml->openMark ("Identification");
+   xml->addAttribute ("name",  grp_name);
+   xml->addAttribute ("kind",  kind_name [grp_kind]);
+   xml->closeMark ();
+
+   for (int nro=0 ; nro<nbelts ; nro++)
+       {
+       if (grp_table[nro]->isHere ())
+          {
+          xml->openMark ("Element");
+          xml->addAttribute ("id",  grp_table[nro]->getName (buffer));
+          xml->closeMark ();
+          }
+       }
+   xml->closeMark ();
+}
+// ======================================================== getKind
+EnumGroup Group::getKind (cpchar kind)
+{
+   int nbk = sizeof (kind_name) / sizeof (cpchar);
+   for (int nro=0; nro<nbk ; nro++)
+       {
+       if (Cestegal (kind, kind_name[nro]))
+          return (EnumGroup) nro;
+       }
+   return VertexNode;
+}
 END_NAMESPACE_HEXA
-#endif

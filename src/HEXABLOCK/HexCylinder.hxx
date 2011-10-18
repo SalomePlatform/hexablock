@@ -36,7 +36,10 @@ public :
 
 public :
     Cylinder (Vertex* b, Vector* v, double r, double h);
+    virtual ~Cylinder () {}
+
     Vertex* interCylinder (Cylinder* other);
+    void saveXml (XmlWriter* xml);
 
 protected:
     Vertex* c_base;

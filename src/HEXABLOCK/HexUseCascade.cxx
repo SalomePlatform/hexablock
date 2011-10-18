@@ -58,7 +58,6 @@
 #include "HexHexa.hxx"
 #include "HexPropagation.hxx"
 #include "HexShape.hxx"
-#include "HexGroups.hxx"
 #include "HexDiagnostics.hxx"
 
 #include <list>

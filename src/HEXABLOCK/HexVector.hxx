@@ -35,13 +35,15 @@ public:
     double getDx ()    { return v_dx ; }
     double getDy ()    { return v_dy ; }
     double getDz ()    { return v_dz ; }
-    double getCoord (int dir);
 
 public:
     Vector (Document* doc, double dx=0, double dy=0, double dz=0);
     Vector (Vector* lautre);
     virtual ~Vector () {}
     virtual void dump ();
+    double getCoord (int dir);
+
+    virtual void saveXml (XmlWriter* xml);
 
     double norme   ()    { return sqrt (v_dx*v_dx + v_dy*v_dy + v_dz*v_dz); }
     int    renormer ();

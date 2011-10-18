@@ -42,7 +42,6 @@
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
 #include "HexGlobale.hxx"
-#include "HexGroups.hxx"
 
 BEGIN_NAMESPACE_HEXA
 // ========================================================= performTranslation

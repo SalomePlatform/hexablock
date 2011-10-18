@@ -1,3 +1,6 @@
+
+// C++ : Gestion des tuyaux
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,12 +17,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des tuyaux
-
 #include "HexPipe.hxx"
+#include "HexVertex.hxx"
+#include "HexVector.hxx"
+#include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -29,5 +33,17 @@ Pipe::Pipe (Vertex* b, Vector* v, double ri, double re, double h)
 {
     c_int_radius = ri;
 }
+// ========================================================= saveXml 
+void Pipe::saveXml  (XmlWriter* xml)
+{
+   char buffer[12];
 
+   xml->openMark     ("Pipe");
+   xml->addAttribute ("c_base", c_base->getName (buffer));
+   xml->addAttribute ("c_dir",  c_dir->getName  (buffer));
+   xml->addAttribute ("c_radius",     c_radius);
+   xml->addAttribute ("c_int_radius", c_int_radius);
+   xml->addAttribute ("c_height",     c_height);
+   xml->closeMark ();
+}
 END_NAMESPACE_HEXA

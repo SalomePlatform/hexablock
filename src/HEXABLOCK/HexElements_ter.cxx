@@ -206,6 +206,7 @@ int Elements::getHexas (Hexas& liste)
        if (cell!=NULL && cell->isValid())
           liste.push_back (cell);
        }
+   return HOK;
 }
 // ====================================================== geom_create_circle 
 void geom_create_circle (double* milieu, double rayon, Vector* normale, 

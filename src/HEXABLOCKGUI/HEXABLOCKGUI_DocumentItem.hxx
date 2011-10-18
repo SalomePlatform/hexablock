@@ -37,7 +37,7 @@
 
 
 
-#include <HexGroups.hxx>
+#include <HexGroup.hxx>
 #include <HexLaw.hxx>
 #include <HexPropagation.hxx>
 

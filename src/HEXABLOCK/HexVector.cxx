@@ -20,12 +20,13 @@
 // C++ : Gestion des aretes
 
 #include "HexVector.hxx"
+#include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== Constructeur
 Vector::Vector (Document* doc, double dx, double dy, double dz)
-      : EltBase (doc)
+      : EltBase (doc, EL_VECTOR)
 {
     v_dx = dx;
     v_dy = dy;
@@ -76,6 +77,18 @@ int Vector::calculNormale (double& nx, double& ny, double& nz)
    nx =  v_dy / norme;
    ny = -v_dx / norme;
    return HOK;  
+}
+// ========================================================= saveXml 
+void Vector::saveXml (XmlWriter* xml)
+{
+   char buffer[12], coord[80];
+
+   sprintf (coord, "%g %g %g", v_dx, v_dy, v_dz);
+
+   xml->openMark     ("Vector");
+   xml->addAttribute ("id",    getName (buffer));
+   xml->addAttribute ("coord", coord);
+   xml->closeMark ();
 }
 
 END_NAMESPACE_HEXA

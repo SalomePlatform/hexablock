@@ -1,3 +1,6 @@
+
+// C++ : La clase principale de Hexa
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// C++ : La clase principale de Hexa
-
 #include "Hex.hxx"
 
 #include "HexDocument.hxx"
@@ -71,7 +72,7 @@ void Hex::removeDocument (Document* doc)
 Document* Hex::addDocument ()
 {
    char   un_nom [40];
-   cpchar nomdoc = get_temp_name ("HexaTempo%02d.dat", un_nom);
+   cpchar nomdoc = get_temp_name ("HexaTempo%02d", un_nom);
 
    Document* doc = new Document (nomdoc);
    

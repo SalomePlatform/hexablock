@@ -27,7 +27,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # 	
 # header files  
 salomeinclude_HEADERS = \
-	HexGroups.hxx \
+	HexGroup.hxx \
 	HexCylinder.hxx \
 	HexEdge.hxx \
 	HexGlobale.hxx \
@@ -76,6 +76,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexElements_asso.cxx \
 	HexElements_grid.cxx \
 	HexCylinder.cxx \
+	HexGroup.cxx \
 	HexPipe.cxx \
 	HexShape.cxx \
 	HexDocument_trans.cxx \

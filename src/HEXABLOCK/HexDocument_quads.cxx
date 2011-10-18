@@ -722,7 +722,7 @@ Elements* Document::replace (Hexas& pattern, Vertex* p1, Vertex* c1,
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
 {
    Elements*  t_hexas = new Elements (this);
-   int ier =  t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
+   t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
    return     t_hexas;
 }
 // ========================================================= prod_vectoriel

@@ -22,6 +22,7 @@
 #include "HexCylinder.hxx"
 #include "HexVertex.hxx"
 #include "HexVector.hxx"
+#include "HexXmlWriter.hxx"
 
 #include <cmath>
 
@@ -178,6 +179,18 @@ bool is_out (double val, double v1, double v2)
 
    else 
       return val != v1;
+}
+// ========================================================= saveXml 
+void Cylinder::saveXml  (XmlWriter* xml)
+{
+   char buffer[12];
+
+   xml->openMark     ("Cylinder");
+   xml->addAttribute ("c_base", c_base->getName (buffer));
+   xml->addAttribute ("c_dir",  c_dir->getName  (buffer));
+   xml->addAttribute ("c_radius", c_radius);
+   xml->addAttribute ("c_height", c_height);
+   xml->closeMark ();
 }
 END_NAMESPACE_HEXA
 
