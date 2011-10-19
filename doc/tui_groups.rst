@@ -6,8 +6,6 @@
 Define groups on the model of blocks
 ====================================
 
-**todo a revoir pour les kinds de groupes**
-
 Three kinds of group of meshing elements:
 
 - group of hexahedra:

@@ -14,9 +14,8 @@ To remove an **Hexaedron** in the **Main Menu** select **Model -> Remove hexa**
 
 The dialogue box for removing hexahedra:
 
-**todo refaire les copies d'ecran avec les hexaedres selectionnes**
 
-.. image:: _static/dialogbox_remove.PNG
+.. image:: _static/dialogbox_remove.png
    :align: center
 
 .. centered::
@@ -24,7 +23,9 @@ The dialogue box for removing hexahedra:
 
 The selection can be made either in the list of hexahedra or in the graphic zone.
 
-.. image:: _static/remove3.PNG
+The result of this action is:
+
+.. image:: _static/remove3.png
    :align: center
 
 TUI command: :ref:`tuiremove`

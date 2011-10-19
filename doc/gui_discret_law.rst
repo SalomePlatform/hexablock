@@ -17,8 +17,8 @@ A discretization law is defined by four properties:
 - the name of the law
 - the number of nodes for the discretization law
 - the coefficient for the arithmetic and geometric law
-- the kind of the law 
-	- uniform
+- the kind of the law:
+	- uniform (default)
 	- arithmetic
 	- geometric
 
@@ -39,7 +39,8 @@ Remove law
 To remove a discretization law in the **Main Menu** select **Mesh ->
 Remove law**.
 
-*todo copie d'ecran*
+
+*todo copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
 
 .. image:: _static/gui_remove_law.png
    :align: center

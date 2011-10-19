@@ -11,7 +11,9 @@ Rotate and translate for any kind of elements::
  	elts = doc.makeTranslation(element, vec)
 	elts = doc.makeRotation(element, ver, vec, angle)
 
-and "element" could be Vertex, Edge, Quad, Hexa, Vector, Cylinder, Pipe and Elements and the result "elts" is always an object of type "Elements".
+and "element" could be Vertex, Edge, Quad, Hexa, Vector, Cylinder,
+Pipe and Elements and the result "elts" is always an object of type
+"Elements".
 
 Example
 -------
@@ -35,30 +37,6 @@ Example
   grid2 = doc.makeTranslation(grid, devant)
 
   grid4 = doc.makeRotation(grid2, orig, dirVr, 45)
-
-
-.. image:: _static/transfo0.png
-   :align: center
-
-.. centered::
-   Before Transforming 
-
-
-
-.. image:: _static/transfo_translation.png
-   :align: center
-
-.. centered::
-   Make Translation
-
-
-.. image:: _static/transfo_rotation.png
-   :align: center
-
-.. centered::
-   Make Rotation
-
-
 
 
 GUI command: :ref:`guimakeelements`

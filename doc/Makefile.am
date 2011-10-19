@@ -1,4 +1,7 @@
-#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +19,6 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Makefile.am for Sphinx documentation of HEXABLOCK component
@@ -50,7 +52,7 @@ help:
 
 DOXFILES=
 
-EXTRA_DIST+= $(DOXFILES)
+EXTRA_DIST+= htmldev $(DOXFILES)
 
 hexablockdocdir=$(docdir)/gui/HEXABLOCK
 hexablockdevdocdir=$(docdir)/gui/HEXABLOCK/dev
@@ -91,9 +93,7 @@ RSTFILES= \
 	block_method.rst            \
 	cad.rst                     \
 	creategrids.rst             \
-	full_example_bridle.rst     \
 	general.rst                 \
-	gui.rst                     \
 	gui_asso_quad_to_geom.rst   \
 	gui_blocks_for_cyl_pipe.rst \
 	gui_component.rst           \
@@ -103,7 +103,6 @@ RSTFILES= \
 	gui_discret_law.rst         \
 	gui_document.rst            \
 	gui_edge.rst                \
-	gui_elements.rst            \
 	gui_groups.rst              \
 	gui_hexahedron.rst          \
 	gui_make_elmts.rst          \
@@ -125,9 +124,7 @@ RSTFILES= \
 	intro_groups.rst            \
 	intro_mesh.rst              \
 	intro_python.rst            \
-	mesh.rst                    \
 	python.rst                  \
-	tui.rst                     \
 	tui_asso_quad_to_geom.rst   \
 	tui_blocks_for_cyl_pipe.rst \
 	tui_cartgrid.rst            \
@@ -139,7 +136,6 @@ RSTFILES= \
 	tui_discret_law.rst         \
 	tui_document.rst            \
 	tui_edge.rst                \
-	tui_elements.rst            \
 	tui_groups.rst              \
 	tui_hexahedron.rst          \
 	tui_make_elmts.rst          \
@@ -157,7 +153,10 @@ RSTFILES= \
 
 
 
-EXTRA_DIST+= $(RSTFILES) _static cas_test_python pyplots
+EXTRA_DIST+= conf.py $(RSTFILES) _static cas_test_python html
+
+EXTRA_DIST+= \
+	cas_test_python/BIELLE.py
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(hexablockdocdir)

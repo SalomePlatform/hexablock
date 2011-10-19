@@ -7,13 +7,11 @@ Using Hexablock with the Graphical User Interface (GUI)
 #######################################################
 
 
-This application is a Corba component of SALOME (like SMESH) and has:
+This application is a component of SALOME (like SMESH) and has:
 
 - its own menus and toolboxes
 - its document zone to represent the coordinates
 - its graphic zone to visualize the model and the mesh.
-
-**todo refaire copie ecran avec vue vtk**
 
 .. image:: _static/interactive.png
    :align: center

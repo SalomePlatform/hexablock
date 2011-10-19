@@ -24,6 +24,10 @@ na: number of angular section.
 
 nl: number of blocks along the axis of the cylinder.
 
+The result is an array of hexahedral ranked first by following the
+radial direction and the angular direction, then according to the
+layers in the cylinder axis.
+
 
 Example
 -------
@@ -52,6 +56,15 @@ Example
 .. centered::
    Cylinder
 
+Make blocks for cylinders
+=========================
+
+::
+
+	 elts = doc.makeCylinders(cyl1, cyl2)
+
+The result is an array of hexahedral.
+
 
 Make blocks for a pipe
 ======================
@@ -59,6 +72,9 @@ Make blocks for a pipe
 ::
 
 	 elts = doc.makePipe(pi, vb, nr, na, nl)
+
+The result is an array of hexahedral arranged in layers following the
+first radial and angular layers, and finally the axial layers.
 
 Example
 -------
@@ -86,5 +102,17 @@ Example
 
 .. centered::
    Pipe
+
+Make blocks for pipes
+=====================
+
+::
+
+	 elts = doc.makePipes(p1, p2)
+
+The result is an array of hexahedral where we first find hexahedral of
+the first pipe and the second pipe. Each pipe range hexaedra following
+first radial layers and angular layers, and finally the axial layers.
+
 
 GUI command: :ref:`guiblockscylinderpipe`

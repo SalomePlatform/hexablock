@@ -2,9 +2,14 @@
 
 .. _tuiassoquadtogeom:
 
-=============================================================
-Associate a quadrangle of the model of blocks to the geometry
-=============================================================
+=============================================
+Associate the model of blocks to the geometry
+=============================================
+
+.. _tuiassoelemts:
+
+Elements association
+====================
 
 Associate to a vertex of the geometry::
 
@@ -18,8 +23,6 @@ Associate to an edge or a wire of the geometry::
 
 	 l = edg.addAssociation(geom_object_1D, debut, val)
 
-**todo debut ? val ?**
-
 Get the associations::
 
 	 edge_associations = edg.getAssociations()
@@ -32,42 +35,43 @@ Give the association::
 
  	go2d = quad.getAssociations()
 
-Associate Line
-==============
+.. _tuiassolines:
+
+Associate by lines
+==================
 
 To associate an opened line to the geometry, the following data have
 to be mentionned:
 
-- the starting edge : *mstart*
-- *todo Edges* : *mline*
-- *todo Shape* : *gstart*
-- *todo double* : *pstart*
-- *todo Shapes* : *gline*
-- *todo double* : *pend*
+- the starting edge of the model of blocks: *mstart*
+- the list of edges of the model of blocks: *mline*
+- the starting edge of the geometry: *gstart*
+- the curvilinear abscissa on the starting edge of the geometry: *pstart* (double)
+- the list of edges of the geometry: *gline*
+- the curvilinear abscissa on the last edge of the geometry: *pend*
+
+The number of edges of the model of blocks to associate may be
+different from the number of edges of the geometry. 
 
 Associate an opened line::
 
         l = doc.associateOpenedLine(mstart, mline, gstart, pstart, gline, pend) 
 
-To associate an closed line to the geometry, the following data have
+To associate a closed line to the geometry, the following data have
 to be mentionned:
 
-- the starting vertex : *mfirst*
-- the starting edge : *mstart*
-- *todo Edges* : *mline*
-- *todo Shape* : *gstart*
-- *todo double* : *pstart*
-- *todo Shapes* : *gline*
+- the starting vertex of the model of blocks: *mfirst*
+- the starting edge of the model of blocks: *mstart*
+- the list of edges of the model of blocks: *mline*
+- the starting edge of the geometry: *gstart*
+- the curvilinear abscissa on the starting edge of the geometry: *pstart* (double)
+- the list of edges of the geometry: *gline*
 
-Associate an opened line::
+The number of edges of the model of blocks to associate may be
+different from the number of edges of the geometry. 
+
+Associate a closed line::
 
         l = doc.associateClosedLine(mfirst, mstart, mline, gstart, pstart, gline) 
-
-Example
-=======
-
-::
-
-*todo*
 
 GUI command: :ref:`guiassoquadtogeom`

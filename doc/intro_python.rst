@@ -30,238 +30,141 @@ Model creation
 
 ::
 
- import os
- import GEOM
- import geompy
- import smesh
- import hexablock
- import math
- import SALOMEDS
+        import os
+        import geompy
+        import hexablock
+        import math
 
+        STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
 
- STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
+        #=============================
+        # CREATION DOCUMENT
+        #=============================
 
+        doc = hexablock.addDocument()
 
- #=============================
- # CREATION DOCUMENT
- #=============================
+        #=============================
+        # MODEL CREATION
+        #=============================
 
- doc = hexablock.addDocument()
+        # For the connecting rod, two cylindrical grids have to be build and
+        # the quadrangles have to be prismed between these wo grids
 
- #=============================
- # MODEL CREATION
- #=============================
+        #=============================
+        # PARAMETRES
+        #=============================
 
- # For the connecting rod, two cylindrical grids have to be build and
- # the quadrangles have to be prismed between these wo grids
+        R = 0.095168291790720005
 
- #=============================
- # PARAMETRES
- #=============================
+        r_pte = R
+        r_pte_t = R/2.0
 
- R = 40.0
- r_grd = R
- r_grd_t = R/2.0
+        xpetit = 0.0
+        xgrand = 1.35739 + 0.1595
+        longueur = (xgrand - xpetit)/2.0
+        hauteur = 0.019999999553*2
 
- longueur = 200.0
- hauteur = 0.019999999553*2
- ## hauteur = 40.
+        dr_pte = R
+        da_pte = 360
+        dl_pte = hauteur
 
- # Taille du grand cylindre
- dr_grd = R
- da_grd = 360
- dl_grd = hauteur
+        nr_pte = 1
+        na_pte = 6
+        nl_pte = 1
 
- nr_grd = 1
- na_grd = 6
- nl_grd = 1
+        #=============================
+        # Vectors Creation 
+        #=============================
 
- #=============================
- # Vectors Creation 
- #=============================
+        dx = doc.addVector(longueur, 0, 0)
+        dy = doc.addVector(0, longueur, 0)
+        dz = doc.addVector(0, 0, longueur)
 
- dx = doc.addVector(longueur, 0, 0)
- dy = doc.addVector(0, longueur, 0)
- dz = doc.addVector(0, 0, longueur)
+        #=================================================
+        # Creation of cylindrical grid centers
+        #=================================================
 
- #=================================================
- # Creation of cylindrical grid centers
- #=================================================
+        c_pte = doc.addVertex(xpetit, 0, 0)
+        c_grd = doc.addVertex(2*longueur, 0, 0)
+        dx_prime = doc.addVectorVertices(c_pte, c_grd)
 
- c_grd = doc.addVertex(0, 0, 0)
- c_pte = doc.addVertex(2*longueur, 0, 0)
- dx_prime = doc.addVectorVertices(c_grd, c_pte)
+        #=================================================
+        # small cylindrical grid creation
+        #=================================================
 
- #=================================================
- # Big cylindrical grid creation
- #=================================================
+        grille_cyl_pte = doc.makeCylindrical(c_pte, dx, dz, dr_pte, da_pte, dl_pte, nr_pte, na_pte, nl_pte, False)
 
- grille_cyl_grd = doc.makeCylindrical(c_grd, dx, dz, dr_grd, da_grd, dl_grd, nr_grd, na_grd, nl_grd, False)
+        #=================================
+        #  Small cylindrical grid creation
+        #=================================
 
- # We obtain a liste containing 6 equal hexaedra
- # 30 = pi/6
- # 60 = pi/3
- # 45 = pi/4
- # 90 = pi/2
- # 180 = pi
+        grille_cyl_grd = doc.makeTranslation(grille_cyl_pte, dx_prime)
 
- alpha_x = 2*R*math.cos(math.pi/3)
- alpha_y = 2*R*math.sin(math.pi/3)
+        #==================================
+        # Joining the two cylindrical grids
+        #==================================
 
- x1 = doc.findVertex(2*R, 0, hauteur)
- x2 = doc.findVertex(alpha_x, alpha_y, 0)
- x3 = doc.findVertex(alpha_x, -alpha_y, 0)
- x4 = doc.findVertex(2*R, 0, 0)
+        mod_x1 = grille_cyl_pte.getVertexIJK(1, 0, 1)
+        mod_x2 = grille_cyl_pte.getVertexIJK(1, 1, 0)
+        mod_x3 = grille_cyl_pte.getVertexIJK(1, 5, 0)
+        mod_x4 = grille_cyl_pte.getVertexIJK(1, 0, 0)
+        quad_11 = doc.findQuad(mod_x1, mod_x2)
+        quad_12 = doc.findQuad(mod_x1, mod_x3)
 
- quad_11 = doc.findQuad(x1, x2)
- quad_12 = doc.findQuad(x1, x3)
+        mod_y1 = grille_cyl_grd.getVertexIJK(1, 3, 1)
+        mod_y2 = grille_cyl_grd.getVertexIJK(1, 2, 0)
+        mod_y3 = grille_cyl_grd.getVertexIJK(1, 4, 0)
+        mod_y4 = grille_cyl_grd.getVertexIJK(1, 3, 0)
 
- #=================================
- #  Small cylindrical grid creation
- #=================================
+        quad_21 = doc.findQuad(mod_y1, mod_y2)
+        quad_22 = doc.findQuad(mod_y1, mod_y3)
 
- grille_cyl_pte = doc.makeTranslation(grille_cyl_grd, dx_prime)
-
- # We obtain a liste containing 6 equal hexaedra
- y1 = doc.findVertex(2*longueur - 2*R, 0 , hauteur)
- y2 = doc.findVertex(2*longueur - alpha_x, alpha_y, 0)
- y3 = doc.findVertex(2*longueur - alpha_x, -alpha_y, 0)
- y4 = doc.findVertex(2*longueur - 2*R, 0, 0)
-
- quad_21 = doc.findQuad(y1, y2)
- quad_22 = doc.findQuad(y1, y3)
-
- #==================================
- # Joining the two cylindrical grids
- #==================================
- model_biell_fin = doc.joinQuads([quad_11, quad_12], quad_21, x1, y1, x4, y4, 1)
+        model_biell_fin = doc.joinQuads([quad_11, quad_12], quad_21, mod_x1, mod_y1, mod_x4, mod_y4, 1)
 
 
 Go back to :ref:`menu`
 
 .. _recover:
 
-Recovering vertices and points before the association
-======================================================
+Recovering edges and faces before the association
+=================================================
 
 ::
 
- #=======================================================
- # Recover vertices of the hexa model for the association
- #=======================================================
-
- # NB:
- # h = top (haut)
- # b = bottom (bas)
- # g = big (grand)
- # p = small (petit)
- # t = hole (trou)
-
- bielle_geom = geompy.ImportFile(STEP_PATH, "STEP")
-
- geompy.addToStudy(bielle_geom, "bielle_geom")
-
- pt_a = geompy.MakeVertex(0, 0, hauteur/2.)
- face_haut = geompy.GetFaceNearPoint(bielle_geom, pt_a)
-
- pt_b = geompy.MakeVertex(0, 0, -hauteur/2.)
- face_bas = geompy.GetFaceNearPoint(bielle_geom, pt_b)
-
- edge_haut_droite = geompy.GetEdgesByLength(face_haut, 0.136, 0.137)
- edge_haut_gauche = geompy.GetEdgesByLength(face_haut, 0.131, 0.132)
-
- # Paramètres pour :
- # - récupération des points.
- # - et associations.
-
- u_1 = 1.0
- u_3 = 0.0
-
- # dictionnaire des vertices de la géométrie (grande et petite grilles) :
- # key = nom, value = indice dans geom_vert_grd (resp. geom_vert_pte)
- # on commence par les vertex externes du haut du grand (resp. petit) cylindre,
- # ensuite :
- # 1. vertex internes (trou),
- # 2. puis vertex du bas (externes puis internes)
- dic_vert_names = {}
- ind = 0
- for z in ['h', 'b']:  # haut/bas
-     for x in ['e', 't']:  # externe/interne(trou)
-         for y in ['y', 'x', 'u', 'v', 'w', 'z']:  # 
-             key = '_'.join([y, z, x])
-             dic_vert_names[key] = ind
-             ind += 1
-             pass
-         pass
-     pass
-
- # 1. grand cylindre :
- geom_vert_grd = []  # liste des vertex du grand cylindre
-
- # 1.1 face du haut :
- # 1.1.1 sommets externes :
- # la création des vertex de la geometrie se fait obligatoirement
- # dans cet ordre :
- geom_vert_grd.append(geompy.MakeVertexOnSurface(face_haut, 1, 0.5))  # y_h_e_g
- edge_haut_grd = geompy.GetEdgeNearPoint(bielle_geom, geom_vert_grd[0])
- geom_vert_grd.append(geompy.MakeVertexOnCurve(edge_haut_grd, u_3))  # x_h_e_g
- geom_vert_grd.append(geompy.MakeVertexOnCurve(edge_haut_grd, u_1))  # z_h_e_g
- geom_vert_grd.insert(2, geompy.MakeVertexOnCurve(edge_haut_droite, 1))  # u_h_e_g
- geom_vert_grd.insert(3, geompy.MakeVertexOnCurve(edge_haut_gauche, 0))  # w_h_e_g
- edge_v_grd = geompy.MakeLineTwoPnt(geom_vert_grd[2], geom_vert_grd[3])
- geom_vert_grd.insert(3, geompy.MakeVertexOnCurve(edge_v_grd, 0.5))  # v_h_e_g
- # les vertex sont rangés dans cet ordre :
- # y_h_e_g, x_h_e_g, u_h_e_g, v_h_e_g, w_h_e_g, z_h_e_g
-
- # 1.1.2 sommets internes (trou) :
- edge_haut_grd_trou = geompy.GetEdgesByLength(face_haut, 0.147, 0.148)
- # y_h_t_g, x_h_t_g, u_h_t_g, v_h_t_g, w_h_t_g, z_h_t_g
- for val in [0, 0.8, 0.6, 0.5, 0.4, 0.2]:
-     geom_vert_grd.append(geompy.MakeVertexOnCurve(edge_haut_grd_trou, val))
-
- # 1.2 face du bas :
- # pour tous les vertex de la face du bas, on les crée par référence à ceux déjà crées (dans le meme ordre :
- # sommets externes puis internes) :
- geom_vert_grd_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -hauteur) for vertex in geom_vert_grd]
- geom_vert_grd.extend(geom_vert_grd_bas)
-
- # pour l'utilisation :
- # geom_vert_grd[dic_vert_names["y_h_t"]] # par exemple
-
- # 2. petit cylindre :
- # REM : le modele petit cylindre a ete cree par translation / au grand
- # cylindre. Les vertices de la geometrie sont donc ete crées de manière
- # similaire (# d'une symmetrie / miroir)
- geom_vert_pte = []
-
- # 2.1 face du haut :
- # 2.1.1 sommets externes :
-
- # la création des vertex de la geometrie se fait obligatoirement
- # dans cet ordre :
- geom_vert_pte.append(geompy.MakeVertexOnSurface(face_haut, 0, 0.5))  # v_h_e_p
- edge_haut_pte = geompy.GetEdgeNearPoint(bielle_geom, geom_vert_pte[0])
- geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_haut_pte, u_3))  # w_h_e_p
- geom_vert_pte.insert(0, geompy.MakeVertexOnCurve(edge_haut_pte, u_1))  # u_h_e_p
- geom_vert_pte.insert(0, geompy.MakeVertexOnCurve(edge_haut_droite, 0))  # x_h_e_p
- geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_haut_gauche, 1))  # z_h_e_p
- edge_v_pte = geompy.MakeLineTwoPnt(geom_vert_pte[0], geom_vert_pte[4])
- geom_vert_pte.insert(0, geompy.MakeVertexOnCurve(edge_v_pte, 0.5))  # y_h_e_p
- # les vertex sont rangés dans cet ordre :
- # y_h_e_p, x_h_e_p, u_h_e_p, v_h_e_p, w_h_e_p, z_h_e_p
+        bielle_geom = geompy.ImportFile(STEP_PATH, "STEP")
+        doc.setShape(bielle_geom)
+        geompy.addToStudy(bielle_geom, "bielle_geom")
+        all_edges_bielle = geompy.SubShapeAllSorted(bielle_geom, geompy.ShapeType["EDGE"])
 
 
- # 2.1.2 sommets internes (trou) :
- edge_haut_pte_trou = geompy.GetEdgesByLength(face_haut, 0.094, 0.095)
- # y_h_t_p, x_h_t_p, u_h_t_p, v_h_t_p, w_h_t_p, z_h_t_p
- for val in [0, 0.9, 0.65, 0.5, 0.35, 0.1]:
-     geom_vert_pte.append(geompy.MakeVertexOnCurve(edge_haut_pte_trou, val))
 
- # 2.2 face du bas :
- # pour tous les vertex de la face du bas, on les crée par référence à ceux déjà crées (dans le meme ordre :
- # sommets externes puis internes) :
- geom_vert_pte_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -hauteur) for vertex in geom_vert_pte]
- geom_vert_pte.extend(geom_vert_pte_bas)
+        # dictionnaire des edges de la géométrie :
+        # key = nom, value = indice dans all_edges_bielle
+        dic_edge_names = {"edge_ray_pte_b": 0, "edge_ray_pte_h": 1,
+                          "edge_trou_pte_b": 2, "edge_trou_pte_h" :3,
+                          "edge_arr_pte_g_b": 7, "edge_arr_pte_g_h": 8,
+                          "edge_arr_pte_d_b": 9, "edge_arr_pte_d_h": 10,
+                          "edge_arr_grd_g_b": 19, "edge_arr_grd_g_h": 20,
+                          "edge_arr_grd_d_b": 21, "edge_arr_grd_d_h": 22,              
+                          "edge_trou_grd_b": 25, "edge_trou_grd_h": 26,
+                          "edge_ray_grd_b": 27, "edge_ray_grd_h": 28,
+                          "edge_long_g_b": 13, "edge_long_g_h": 14,
+                          "edge_long_d_b": 15, "edge_long_d_h": 16
+                          }
+
+
+        all_faces_bielle = geompy.SubShapeAllSorted(bielle_geom, geompy.ShapeType["FACE"])
+        # dictionnaire des faces de la geometrie :
+        # key = nom, value = indice dans all_faces_bielle
+        dic_face_names = {"face_ray_pte": 0, "face_trou_pte": 1, "face_pte_g": 2,
+                          "face_pte_d": 3, "face_long_g": 4, "face_long_d": 5,
+                          "face_bas": 6, "face_haut": 7, "face_grd_g": 8,
+                          "face_grd_d": 9, "face_trou_grd": 10,
+                          "face_ray_grd": 11
+                         }
+
+
+
 
 Go back to :ref:`menu`
 
@@ -272,301 +175,154 @@ Association of the model to the geometry
 
 ::
 
- # pour l'association, il suffit de faire 6 appels à la méthode
- # associateClosedLine() :
- # 1 pour la ligne du trou haut du grand cylindre
- # 1 pour la ligne du trou bas du grand cylindre
- # 1 pour la ligne du trou haut du petit cylindre
- # 1 pour la ligne du trou bas du petit cylindre
- # 1 pour la ligne "externe" de la bielle, en haut
- # 1 pour la ligne "externe" de la bielle, en bas
+ dico_haut_bas = {"h": 1, "b": 0}
 
- all_edges_bielle = geompy.SubShapeAllSorted(bielle_geom, geompy.ShapeType["EDGE"])
+ # 1. lignes internes (trou) haut/bas du petit cylindre
+ # ====================================================
+ for z in dico_haut_bas.iteritems():
 
- # dictionnaire des edges de la géométrie :
- # key = nom, value = indice dans all_edges_bielle
- dic_edge_names = {"edge_ray_pte_b": 0, "edge_ray_pte_h": 1,
-                   "edge_trou_pte_b": 2, "edge_trou_pte_h" :3,
-                   "edge_arr_pte_g_b": 7, "edge_arr_pte_g_h": 8,
-                   "edge_arr_pte_d_b": 9, "edge_arr_pte_d_h": 10,
-                   "edge_arr_grd_g_b": 19, "edge_arr_grd_g_h": 20,
-                   "edge_arr_grd_d_b": 21, "edge_arr_grd_d_h": 22,              
-                   "edge_trou_grd_b": 25, "edge_trou_grd_h": 26,
-                   "edge_ray_grd_b": 27, "edge_ray_grd_h": 28,
-                   "edge_long_g_b": 13, "edge_long_g_h": 14,
-                   "edge_long_d_b": 15, "edge_long_d_h": 16
-                   }
+     mod_line = [grille_cyl_pte.getEdgeJ(0, j, z[1]) for j in range(5)]
+     mod_start = grille_cyl_pte.getEdgeJ(0, 5, z[1])
+     mod_first = mod_start.getVertex(1)
 
- # 1. ligne du trou haut du grand cylindre
- # =======================================
+     # geometrie : 1 seule ligne
+     edge_hole_in = all_edges_bielle[dic_edge_names["edge_trou_pte_"+z[0]]]
+     geo_start = edge_hole_in
+     par_start = 0.0
+     geo_line  = []
 
- # modele de blocs :
- mod_start = grille_cyl_grd.getEdgeJ(0, 0, 1)  # 1er edge
- mod_first = mod_start.getVertex(0)  # 1er vertex
- # table des edges :
- mod_line = [grille_cyl_grd.getEdgeJ(0, j, 1) for j in [5, 1, 4, 2, 3]]
+     # association :
+     ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
+                                   geo_start, par_start, geo_line)
+ 
 
- # geometrie :
- e_t_g_h = all_edges_bielle[dic_edge_names["edge_trou_grd_h"]]
- li_vert = geom_vert_grd[dic_vert_names['x_h_t']:dic_vert_names['z_h_t']+1]
- li_vert.reverse()  # z_h_t_g, w_h_t_g, v_h_t_g, u_h_t_g, x_h_t_g
- part_trou_grd_haut = geompy.MakePartition([e_t_g_h],
-                                           li_vert,
-                                           [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_trou_grd_haut = geompy.SubShapeAllSorted(part_trou_grd_haut, geompy.ShapeType["EDGE"])
+ # 2. lignes internes (trou) haut/bas du grand cylindre
+ # =====================================================
+ for z in dico_haut_bas.iteritems():
 
- geo_start = all_edge_part_trou_grd_haut[0]  # 1ere ligne
- par_start = 0.0  # param 1ere ligne
- geo_line = all_edge_part_trou_grd_haut[1:6]  # table des lignes
+     mod_start = grille_cyl_grd.getEdgeJ(0, 5, z[1])
+     mod_first = mod_start.getVertex(1)
+     mod_line = [grille_cyl_grd.getEdgeJ(0, j, z[1]) for j in range (5)]
 
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
+     # geometrie : 1 seule ligne
+     edge_hole_in = all_edges_bielle[dic_edge_names["edge_trou_grd_"+z[0]]]
+     geo_start = edge_hole_in
+     par_start = 0.0
+     geo_line  = []
 
- # 2. ligne du trou bas du grand cylindre
- # =======================================
+     # association :
+     ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
+                                   geo_start, par_start, geo_line)
 
- # modele de blocs :
- mod_start = grille_cyl_grd.getEdgeJ(0, 0, 0)
- mod_first = mod_start.getVertex(0)
- del(mod_line[:])
- mod_line = [grille_cyl_grd.getEdgeJ(0, j, 0) for j in [5, 1, 4, 2, 3]]
 
- # geometrie :
- e_t_g_b = all_edges_bielle[dic_edge_names["edge_trou_grd_b"]]
- del(li_vert[:])
- li_vert = geom_vert_grd[dic_vert_names['x_b_t']:dic_vert_names['z_b_t']+1]
- li_vert.reverse()  # z_b_t_g, w_b_t_g, v_b_t_g, u_b_t_g, x_b_t_g
- part_trou_grd_bas = geompy.MakePartition([e_t_g_b],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_trou_grd_bas = geompy.SubShapeAllSorted(part_trou_grd_bas, geompy.ShapeType["EDGE"])
+ # 3. lignes externes haut/bas du petit cylindre
+ # =============================================
+ for z in dico_haut_bas.iteritems():
 
- geo_start = all_edge_part_trou_grd_bas[0]
- par_start = 0.0
- del(geo_line[:])
- geo_line = all_edge_part_trou_grd_bas[1:6]
+     # modele de blocs :
+     mod_start = grille_cyl_pte.getEdgeJ(1, 1, z[1])
+     # table des edges :
+     mod_line = [grille_cyl_pte.getEdgeJ(1, j, z[1]) for j in [2, 3, 4]]
 
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
+     # geometrie :
+     # les edges de la geometrie correspondant sont, dans l'ordre (par
+     # exemple pour le haut) :
+     # edge_arr_pte_d_h, edge_ray_pte_h, edge_arr_pte_g_h
+     geo_start = all_edges_bielle[dic_edge_names["edge_arr_pte_d_"+z[0]]]
 
- # 3. ligne du trou haut du petit cylindre
- # =======================================
+     geo_line  = []
+     geo_line.append(all_edges_bielle[dic_edge_names["edge_ray_pte_"+z[0]]])
+     geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_pte_g_"+z[0]]])
 
- # modele de blocs :
- mod_start = grille_cyl_pte.getEdgeJ(0, 0, 1)
- mod_first = mod_start.getVertex(0)
- del(mod_line[:])
- mod_line = [grille_cyl_pte.getEdgeJ(0, j, 1) for j in [5, 1, 4, 2, 3]]
+     # association :
+     # la première est la dernière ligne sont orientées "dans le
+     # mauvais sens" => on fournit cette info :
+     par_start = 0.0
+     par_end = 1.0
+     ier = doc.associateOpenedLine(mod_start, mod_line,
+                                   geo_start, par_start, geo_line, par_end)
 
- # geometrie :
- e_t_p_h = all_edges_bielle[dic_edge_names["edge_trou_pte_h"]]
- del(li_vert[:])
- li_vert = geom_vert_pte[dic_vert_names['x_h_t']:dic_vert_names['z_h_t']+1]
- li_vert.reverse()  # z_h_t_p, w_h_t_p, v_h_t_p, u_h_t_p, x_h_t_p
- part_trou_pte_haut = geompy.MakePartition([e_t_p_h],
-                                           li_vert,
-                                           [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_trou_pte_haut = geompy.SubShapeAllSorted(part_trou_pte_haut, geompy.ShapeType["EDGE"])
 
- geo_start = all_edge_part_trou_pte_haut[0]
- par_start = 0.0
- del(geo_line[:])
- geo_line = all_edge_part_trou_pte_haut[1:6]
+ ## # 4. lignes externes haut/bas du grand cylindre
+ ## # =============================================
+ for z in dico_haut_bas.iteritems():
 
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
+     # modele de blocs :
+     mod_start = grille_cyl_grd.getEdgeJ(1, 4, z[1])
+     # table des edges :
+     mod_line = [grille_cyl_grd.getEdgeJ(1, j, z[1]) for j in [5, 0, 1]]
 
- # 4. ligne du trou bas du petit cylindre
- # =======================================
+     # geometrie :
+     # les edges de la geometrie correspondant sont, dans l'ordre (par
+     # exemple pour le haut) :
+     # edge_arr_grd_g_h, edge_ray_grd_h, edge_arr_grd_d_h
+     geo_start = all_edges_bielle[dic_edge_names["edge_arr_grd_g_"+z[0]]]
 
- # modele de blocs :
- mod_start = grille_cyl_pte.getEdgeJ(0, 0, 0)
- mod_first = mod_start.getVertex(0)
- del(mod_line[:])
- mod_line = [grille_cyl_pte.getEdgeJ(0, j, 0) for j in [5, 1, 4, 2, 3]]
+     geo_line  = []
+     geo_line.append(all_edges_bielle[dic_edge_names["edge_ray_grd_"+z[0]]])
+     geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_grd_d_"+z[0]]])
 
- # geometrie :
- e_t_p_b = all_edges_bielle[dic_edge_names["edge_trou_pte_b"]]
- del(li_vert[:])
- li_vert = geom_vert_pte[dic_vert_names['x_b_t']:dic_vert_names['z_b_t']+1]
- li_vert.reverse()  # z_b_t_p, w_b_t_p, v_b_t_p, u_b_t_p, x_b_t_p
- part_trou_pte_bas = geompy.MakePartition([e_t_p_b],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_trou_pte_bas = geompy.SubShapeAllSorted(part_trou_pte_bas, geompy.ShapeType["EDGE"])
+     # association :
+     # la première est la dernière ligne sont orientées "dans le
+     # mauvais sens" => on fournit cette info :
+     par_start = 0.0
+     par_end = 1.0
+     ier = doc.associateOpenedLine(mod_start, mod_line,
+                                   geo_start, par_start, geo_line, par_end)
 
- geo_start = all_edge_part_trou_pte_bas[0]
- par_start = 0.0
- del(geo_line[:])
- geo_line = all_edge_part_trou_pte_bas[1:6]
+ # 6. association des 4 points restants (x1, x4, y1, y4) :
+ # =======================================================
 
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
+ # NB:
+ # h = top (haut)
+ # b = bottom (bas)
+ # g = big (grand)
+ # p = small (petit)
+ # t = hole (trou)
 
- # 5. ligne "externe" de la bielle, en haut
- # ========================================
+ face_haut = all_faces_bielle[dic_face_names["face_haut"]]
 
- # modele de blocs :
- mod_start = grille_cyl_grd.getEdgeJ(1, 4, 1)
- mod_first = mod_start.getVertex(0)
- del(mod_line[:])
- mod_line = [grille_cyl_grd.getEdgeJ(1, j, 1) for j in [3, 2, 1]]  # @todo a revoir ??
+ edge_haut_droite = geompy.GetEdgesByLength(face_haut, 0.136, 0.137)
+ edge_haut_gauche = geompy.GetEdgesByLength(face_haut, 0.131, 0.132)
 
- # edge haut gauche :
- v1_g = doc.findVertex(alpha_x, alpha_y, hauteur)
- v2_g = doc.findVertex(2*longueur - alpha_x, alpha_y, hauteur)
- ed = doc.findEdge(v1_g, v2_g)
- mod_line.append(doc.findEdge(v1_g, v2_g))
+ # 1. grand cylindre :
+ y_h_g = geompy.MakeVertexOnSurface(face_haut, 1, 0.5)
+ u_h_g = geompy.MakeVertexOnCurve(edge_haut_droite, 1)
+ w_h_g = geompy.MakeVertexOnCurve(edge_haut_gauche, 0)
+ edge_v_grd = geompy.MakeLineTwoPnt(u_h_g, w_h_g)
 
- mod_line.extend([grille_cyl_pte.getEdgeJ(1, j, 1) for j in [1, 0, 5, 4]])
+ geo_y1 = geompy.MakeVertexOnCurve(edge_v_grd, 0.5)
+ geo_y4 = geompy.MakeVertexWithRef(geo_y1, 0.0, 0.0, -hauteur)
 
- # edge haut droit :
- v1_d = doc.findVertex(alpha_x, -alpha_y, hauteur)
- v2_d = doc.findVertex(2*longueur - alpha_x, -alpha_y, hauteur)
- mod_line.append(doc.findEdge(v1_d, v2_d))
+ # vertex cote grande grille cylindrique :
+ mod_y1.setAssociation(geo_y1)
+ mod_y4.setAssociation(geo_y4)
 
- # geometrie :
- # les edges de la geometrie a prendre en compte sont :
- # (en partant du grand cylindre)
- # edge_arr_grd_d_h, edge_ray_grd_h, edge_arr_grd_g_h, edge_long_g_h,
- # edge_arr_pte_g_h, edge_ray_pte_h, edge_arr_pte_d_h, edge_long_d_h
+ # 2. petit cylindre :
+ # REM : le modele grand cylindre a ete cree par translation / au petit
+ # cylindre.
+ v_h_p = geompy.MakeVertexOnSurface(face_haut, 0, 0.5)
+ x_h_p = geompy.MakeVertexOnCurve(edge_haut_droite, 0)
+ z_h_p = geompy.MakeVertexOnCurve(edge_haut_gauche, 1)
+ edge_v_pte = geompy.MakeLineTwoPnt(x_h_p, z_h_p)
 
- geo_start = all_edges_bielle[dic_edge_names["edge_arr_grd_d_h"]]
- par_start = 0.0
+ geo_x1 = geompy.MakeVertexOnCurve(edge_v_pte, 0.5)
+ geo_x4 = geompy.MakeVertexWithRef(geo_x1, 0.0, 0.0, -hauteur)
 
- e_r_g_h = all_edges_bielle[dic_edge_names["edge_ray_grd_h"]]
- # x_h_e_g, y_h_e_g, z_h_e_g :
- del(li_vert[:])
- li_vert.append(geom_vert_grd[dic_vert_names['x_h_e']])
- li_vert.append(geom_vert_grd[dic_vert_names['y_h_e']])
- li_vert.append(geom_vert_grd[dic_vert_names['z_h_e']])
- part_ray_grd_haut = geompy.MakePartition([e_r_g_h],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_ray_grd_haut = geompy.SubShapeAllSorted(part_ray_grd_haut, geompy.ShapeType["EDGE"])
+ # vertex cote petite grille cylindrique :
+ mod_x1.setAssociation(geo_x1)
+ mod_x4.setAssociation(geo_x4)
 
- del(geo_line[:])
- all_edge_part_ray_grd_haut.reverse()
- geo_line = all_edge_part_ray_grd_haut[:]
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_grd_g_h"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_long_g_h"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_pte_g_h"]])
+ # 7. association des faces :
+ quad1 = grille_cyl_pte.getQuadJK(1, 1, 0)
+ quad1.addAssociation(all_faces_bielle[dic_face_names["face_pte_d"]])
+ quad2 = grille_cyl_pte.getQuadJK(1, 4, 0)
+ quad2.addAssociation(all_faces_bielle[dic_face_names["face_pte_g"]])
+ quad3 = grille_cyl_grd.getQuadJK(1, 1, 0)
+ quad3.addAssociation(all_faces_bielle[dic_face_names["face_grd_d"]])
+ quad4 = grille_cyl_grd.getQuadJK(1, 4, 0)
+ quad4.addAssociation(all_faces_bielle[dic_face_names["face_grd_g"]])
 
- e_r_p_h = all_edges_bielle[dic_edge_names["edge_ray_pte_h"]]
- # w_h_e_p, v_h_e_p, u_h_e_p :
- del(li_vert[:])
- li_vert.append(geom_vert_pte[dic_vert_names['w_h_e']])
- v_h_e_p_bis = geompy.MakeVertexOnCurve(e_r_p_h, 0.5)
- li_vert.append(v_h_e_p_bis)
- li_vert.append(geom_vert_pte[dic_vert_names['u_h_e']])
- part_ray_pte_haut = geompy.MakePartition([e_r_p_h],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_ray_pte_haut = geompy.SubShapeAllSorted(part_ray_pte_haut, geompy.ShapeType["EDGE"])
-
- ## # tmp :
- ## print "all_edge_part_ray_pte_haut nb edges = ", len(all_edge_part_ray_pte_haut)
- ## for num, ed in enumerate(all_edge_part_ray_pte_haut):
- ##     geompy.addToStudy(ed, "all_edge_part_ray_pte_haut" + str(num))
- ##     pass
- ## # => l'unique renvoye ici correspond a edge_ray_pte_h (on devrait
- ## # avoir 2 edges
-
- all_edge_part_ray_pte_haut.reverse()
- geo_line.extend(all_edge_part_ray_pte_haut[:])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_pte_d_h"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_long_d_h"]])
-
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
-
- # 6. ligne "externe" de la bielle, en bas
- # ========================================
-
- # modele de blocs :
- mod_start = grille_cyl_grd.getEdgeJ(1, 4, 0)
- mod_first = mod_start.getVertex(0)
- del(mod_line[:])
- mod_line = [grille_cyl_grd.getEdgeJ(1, j, 0) for j in [3, 2, 1]]  # @todo a revoir ??
-
- # edge haut gauche :
- v1_g = doc.findVertex(alpha_x, alpha_y, 0)
- v2_g = doc.findVertex(2*longueur - alpha_x, alpha_y, 0)
- ed = doc.findEdge(v1_g, v2_g)
- mod_line.append(doc.findEdge(v1_g, v2_g))
-
- mod_line.extend([grille_cyl_pte.getEdgeJ(1, j, 0) for j in [1, 0, 5, 4]])
-
- # edge haut droit :
- v1_d = doc.findVertex(alpha_x, -alpha_y, 0)
- v2_d = doc.findVertex(2*longueur - alpha_x, -alpha_y, 0)
- mod_line.append(doc.findEdge(v1_d, v2_d))
-
- # geometrie :
- # les edges de la geometrie a prendre en compte sont :
- # (en partant du grand cylindre)
- # edge_arr_grd_d_h, edge_ray_grd_h, edge_arr_grd_g_h, edge_long_g_h,
- # edge_arr_pte_g_h, edge_ray_pte_h, edge_arr_pte_d_h, edge_long_d_h
-
- geo_start = all_edges_bielle[dic_edge_names["edge_arr_grd_d_b"]]
- par_start = 0.0
-
- e_r_g_b = all_edges_bielle[dic_edge_names["edge_ray_grd_b"]]
- # x_b_e_g, y_b_e_g, z_b_e_g :
- del(li_vert[:])
- li_vert.append(geom_vert_grd[dic_vert_names['x_b_e']])
- li_vert.append(geom_vert_grd[dic_vert_names['y_b_e']])
- li_vert.append(geom_vert_grd[dic_vert_names['z_b_e']])
- part_ray_grd_bas = geompy.MakePartition([e_r_g_b],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_ray_grd_bas = geompy.SubShapeAllSorted(part_ray_grd_bas, geompy.ShapeType["EDGE"])
-
- del(geo_line[:])
- all_edge_part_ray_grd_bas.reverse()
- geo_line = all_edge_part_ray_grd_bas[:]
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_grd_g_b"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_long_g_b"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_pte_g_b"]])
-
- e_r_p_b = all_edges_bielle[dic_edge_names["edge_ray_pte_b"]]
- # w_h_e_p, v_h_e_p, u_h_e_p :
- del(li_vert[:])
- li_vert.append(geom_vert_pte[dic_vert_names['w_b_e']])
- v_b_e_p_bis = geompy.MakeVertexOnCurve(e_r_p_b, 0.5)
- li_vert.append(v_b_e_p_bis)
- li_vert.append(geom_vert_pte[dic_vert_names['u_b_e']])
- part_ray_pte_bas = geompy.MakePartition([e_r_p_b],
-                                          li_vert,
-                                          [], [], geompy.ShapeType["EDGE"], 0, [], 0)
- all_edge_part_ray_pte_bas = geompy.SubShapeAllSorted(part_ray_pte_bas, geompy.ShapeType["EDGE"])
-
- all_edge_part_ray_pte_bas.reverse()
- geo_line.extend(all_edge_part_ray_pte_bas[:])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_arr_pte_d_b"]])
- geo_line.append(all_edges_bielle[dic_edge_names["edge_long_d_b"]])
-
- # association :
- ier = doc.associateClosedLine(mod_first, mod_start, mod_line,
-                               geo_start, par_start, geo_line)
-
- ## #=================================================
- ## # VERTEX, EDGES, FACES DANS L'ARBRE D'ETUDE SALOME
- ## #=================================================
-
- # vertices :
- for key, value in dic_vert_names.iteritems():
-     geompy.addToStudy(geom_vert_grd[value], key + '_g')
-     geompy.addToStudy(geom_vert_pte[value], key + '_p')
-
- # edges :
- for key, value in dic_edge_names.iteritems():
-     geompy.addToStudy(all_edges_bielle[value], key)
 
 Go back to :ref:`menu`
  
@@ -577,7 +333,7 @@ Definition of elements groups for the mesh
 
 ::
 
- # On definit 3 groupes de mailles
+ # We define 3 groups 
 
  # groupe d edges (arretes)
  edge_grp = doc.addEdgeGroup("Edge_grp")
@@ -610,10 +366,9 @@ Definition of a law discretization
 
  law = doc.addLaw("Uniform", 4)
 
- # chercher les propagations du modele
  for j in range(doc.countPropagation()):
      propa = doc.getPropagation(j)
-     propa.setLaw(law)  # appliquer la loi de discretisation sur tout le modele et generer le maillage
+     propa.setLaw(law)  # apply discretization law on the model and generate the mesh
 
 Go back to :ref:`menu`
 

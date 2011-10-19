@@ -35,7 +35,6 @@ Set the way where the law is applied on the propagation::
 
  	propa.setWay(bo)
 
-**todo bo is a boolean**
 
 Example
 -------
@@ -44,13 +43,5 @@ Example
 
   import hexablock
   doc = hexablock.addDocument()
-
-
-.. image:: _static/propagation.png
-   :align: center
-
-.. centered::
-   Propagation
-
 
 GUI command: :ref:`guipropag`

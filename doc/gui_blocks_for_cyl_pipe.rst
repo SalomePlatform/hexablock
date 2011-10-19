@@ -34,12 +34,24 @@ The dialogue box to make a cylinder is:
 .. centered::
    Make a Cylinder
 
+The result is an array of hexahedral ranked first by following the
+radial direction and the angular direction, then according to the
+layers in the cylinder axis.
+
+The result of this action is:
+
+.. image:: _static/cylinder.png
+   :align: center
+
+.. centered::
+   Cylinder
+
 .. _makecylinders:
 
 Make Cylinders
 ==============
 
-To make **Cylinders** in the **Main Menu** select **Model -> Make cylinders** 
+To make **two cylinders in T** in the **Main Menu** select **Model -> Make cylinders** 
 
 You can make **Cylinders** through **Cylinder1** and **Cylinder2**.
 
@@ -53,10 +65,12 @@ The dialogue box to make cylinders is:
 .. centered::
    Make Cylinders
 
+The result is an array of hexahedral.
+
 .. _makepipe:
 
 Make Pipe
-=============
+=========
 
 To make a **Pipe** in the **Main Menu** select **Model -> Make pipe** 
 
@@ -80,12 +94,24 @@ The dialogue box to make a pipe is:
 .. centered::
    Make a Pipe
 
+The result is an array of hexahedral arranged in layers following the
+first radial and angular layers, and finally the axial layers.
+
+The result of this action is:
+
+.. image:: _static/pipe.png
+   :align: center
+
+.. centered::
+   Pipe
+
+
 .. _makepipes:
 
 Make Pipes
-==============
+==========
 
-To make **Pipes** in the **Main Menu** select **Model -> Make pipes** 
+To make **two intersect pipes** in the **Main Menu** select **Model -> Make pipes** 
 
 You can make **Pipes** through **Pipe1** and **Pipe2**.
 
@@ -98,5 +124,9 @@ The dialogue box to make pipes is:
 
 .. centered::
    Make Pipes
+
+The result is an array of hexahedral where we first find hexahedral of
+the first pipe and the second pipe. Each pipe range hexaedra following
+first radial layers and angular layers, and finally the axial layers.
 
 TUI command: :ref:`tuiblockscylinderpipe`

@@ -20,6 +20,7 @@ Make elements by point symmetry
 - vertex
 
 
+
 The dialogue box to make elements by point symmetry is:
 
 

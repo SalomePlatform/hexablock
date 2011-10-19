@@ -6,8 +6,15 @@
 The CAD
 =======
 
-The geometry to mesh is defined by a set of independant shapes, these shapes are external referencies to the GEOM module of SALOME. The shapes of this set can be faces and/or solids. 
-In Hexablock module you can import geometrical objects from BREP, IGES, STEP files. 
+
+
+The geometry to mesh is defined by a set of independant shapes, these
+shapes are external referencies to the GEOM module of SALOME. The
+shapes of this set can be faces and/or solids. In Hexablock module you
+can:
+
+- use a geometry defined in GEOM module
+- import geometrical objects from BREP, IGES, STEP files.
 
 The TUI script to import geometrical objects from a BREP file is::
 

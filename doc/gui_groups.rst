@@ -13,8 +13,15 @@ Add group
 
 A group is characterized by:
 
-- its type
 - its name
+- its type:
+      - HexaCell (default)
+      - EdgeCell
+      - QuadCell
+      - HexaNode
+      - QuadNode
+      - EdgeNode
+      - VertexNode
 - its elements
 
 To define groups on the model in the **Main Menu** select **Groups ->
@@ -32,7 +39,7 @@ Remove group
 To remove group of the model in the **Main Menu** select **Groups ->
 Remove group**.
 
-*todo copie d'ecran*
+*todo copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
 
 .. image:: _static/gui_remove_group.png
    :align: center

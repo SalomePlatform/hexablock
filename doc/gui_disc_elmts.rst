@@ -27,6 +27,14 @@ The dialogue box to disconnect a quadrangle is:
 .. centered::
    Disconnect a Quadrangle
 
+Example:
+
+.. image:: _static/disco_quad.png
+   :align: center
+
+.. centered::
+   Disconnect a Quadrangle
+
 
 .. _guidiscoedge:
 

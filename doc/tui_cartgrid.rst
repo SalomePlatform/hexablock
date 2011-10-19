@@ -10,7 +10,7 @@ Make cartesian grids
 To add a cartesian grid to the model, the following data are required:
 
 - the vertex of the initial hexahedron: *pt*
-- the vectors corrsponding to the diametrically opposite vertices to the initial vertex: *vx, vy, vz*
+- the vectors corresponding to the diametrically opposite vertices to the initial vertex: *vx, vy, vz*
 - the number of repetition of this hexahedra along the three axes: *ni, nj, nk*
 
 Make a Cartesian grid::
@@ -21,7 +21,6 @@ or::
 
  	elts = doc.makeCartesian1(pt, vec1, px, py, pz, mx, my, mz)
 
-** todo expliciter les arguments...**
 
 Access to the number of elements of the grid::
 
@@ -96,7 +95,7 @@ Specialized access to all quadrangles // on plane vy, vz::
 	 qu_c = elts.getQuadJK(i, j, k)
  
 
- 0 <= i < ni+1 ; 0 <= j < nj ; 0 <= k < nk
+0 <= i < ni+1 ; 0 <= j < nj ; 0 <= k < nk
 
 Specialized access to all hexahedra of the grid::
 

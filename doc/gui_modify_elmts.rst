@@ -17,8 +17,8 @@ Modify elements by translation
 
 **Arguments:**
 
-- elements
-- vector *todo kesako ?*
+- elements to translate
+- vector
 
 The dialogue box to modify elements by translation is:
 
@@ -36,8 +36,8 @@ Modify elements by scaling
 **Arguments:**
 
 - elements
-- vertex *todo kesako ?*
-- k *todo kesako ?*
+- vertex
+- k growing factor
 
 
 The dialogue box to modify elements by scaling is:
@@ -56,8 +56,8 @@ Modify elements by rotation
 **Arguments:**
 
 - elements
-- vector *todo kesako ?*
-- vertex *todo kesako ?*
+- vector direction
+- vertex 
 - angle
 
 

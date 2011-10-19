@@ -10,16 +10,22 @@ Make spherical grids
 
 To add a spherical grid, the following data are required:
 
-- the vertex of the central hexahedron: *pt*
-- the vector corrsponding to the diametrically opposite vertex to the
+- the center (vertex) of the central hexahedron: *pt*
+- the vector corresponding to the diametrically opposite vertex to the
   initial vertex: *dv*
 - the number of embedded hexahedra: *n*
-- **todo??????** :*k*
+- the coefficient of growth:*k*
 
 
 Make a spherical grid::
 
 	 elts = doc.makeSpherical(pt, dv, n, k)
+
+The result is an array of hexahedra starting with the central and
+other hexahedral are arranged layer by layer from the center. Each
+layer contains six hexahedral always in the following order: two along
+the X axis, then 2 for the Y axis and 2 for the Z axis.
+
 
 Example
 -------
@@ -42,17 +48,5 @@ Example
 
  grid = doc.makeSpherical(orig, direction, n, k)
 
-
-.. image:: _static/sph_grid.PNG
-   :align: center
-
-.. centered::
-   Spherical Grid
-
-.. image:: _static/sph_grid2.PNG
-   :align: center
-
-.. centered::
-   Spherical Grid
 
 GUI command: :ref:`guisphergrid`

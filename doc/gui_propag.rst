@@ -7,13 +7,13 @@ Discretize on the propagation edges
 ===================================
 
 To define a propagation in the **Main Menu** select **Mesh ->
-Propagation**.
+Set Propagation**.
 
 **Arguments:** law + direction
 
 The dialogue box for creating a propagation is:
 
-*todo a revoir : copie d'ecran propagation*
+*todo a revoir : copie d'ecran propagation : comment fait-on ??*
 
 .. image:: _static/gui_propagation.png
    :align: center

@@ -35,18 +35,4 @@ Example
 
     doc.cut(arete, 1)
                
-
-.. image:: _static/no_decoupe.png
-   :align: center
-
-.. centered::
-   no cut
-
-
-.. image:: _static/decoupe.png
-   :align: center
-
-.. centered::
-   cut
-
 GUI command: :ref:`guicuthexa`

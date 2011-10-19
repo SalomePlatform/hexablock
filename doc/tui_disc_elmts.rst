@@ -18,6 +18,4 @@ Disconnect a vertex::
 
  	elts = doc.disconnectVertex(hexa, ver)
 
-**todo exemple (cf. test_disconnect())**
-
 GUI command: :ref:`guidisconnectelements`

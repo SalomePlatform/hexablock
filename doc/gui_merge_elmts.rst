@@ -18,6 +18,11 @@ Merge 2 quadrangles
 - 2 quadrangles (q1 and q2)
 - 4 vertices (v1, v2, v3, v4)
 
+v1 : vertex of the quadrangle q1 to merge with the vertex v2 of the
+quadrangle q2.
+v3 : vertex of the quadrangle q1 to merge with the vertex v4 of the
+quadrangle q2.
+
 
 The dialogue box to merge 2 quadrangles is:
 
@@ -37,6 +42,8 @@ Merge 2 edges
 
 - 2 edges (e1 and e2)
 - 2 vertices (v1 and v2)
+
+v1 : vertex of the edge e1 to merge with the vertex v2 of the edge e2
 
 The dialogue box to merge 2 edges is:
 

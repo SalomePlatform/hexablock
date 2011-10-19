@@ -2,15 +2,67 @@
 
 .. _generale:
 
-###############################
+#########################
 Introduction to HEXABLOCK 
-###############################
+#########################
 
-Within the SALOME framework, a CAD module (GEOM) and a meshing module (SMESH) are developped. This tools enable the construction of hexaedrical meshes by means of a CAD cutting in blocks (the method of blocks)  topologically equivalent to hexaedra. Once this cutting performed, the mesh construction is easy, but the method of blocks can be touchy if the piece to mesh is complex.
+.. Within the SALOME framework, a CAD module (GEOM) and a meshing
+   module (SMESH) are developped. This tools enable the construction
+   of hexaedrical meshes by means of a CAD cutting in blocks (the
+   method of blocks) topologically equivalent to hexaedra. Once this
+   cutting performed, the mesh construction is easy, but the method of
+   blocks can be touchy if the piece to mesh is complex.
 
-The Hexablock module aims at helping users to build hexaedrical meshes via this method by blocks. The fondamental choice is to execute the method by blocks where the user has to determine the needed blocks
--
-The HexaBlock component is destined for: 
+Goals
+=====
+
+The Hexablock module aims at helping users to build hexaedrical meshes
+via the method by blocks. The two fondamental choices are :
+
+- to execute the method by blocks where the user has to determine the needed blocks.
+
+- to simplify all other tasks to obtain the mesh (in particular by
+  using directly the geometry to mesh).
+
+
+
+Solution
+========
+
+Finding a coumpound of blocks is in charge of users.
+ 
+Hexablock enables to define a mesh with hexahedra in five stages:
+
+- Load and create a geometry without constraint
+
+- Search a compound of blocks (mental working)
+	
+- Create a model of blocks:
+
+  - logic realization of this division with operations on blocks
+  - Regardless of the geometry to be meshed in terms of shape and placement
+
+- Associate this model of blocks to the geometry:
+
+  - Associate all the vertices of the model to the geometry
+  - if necessary, associate edges of the model to the geometry
+  - if necessary, associate quads of the model to the geometry
+
+- Generate the mesh:
+
+  - Create discretization laws
+  - Discretize the edges
+  - Define mesh groups
+  - Setting the mesh generation
+
+Two ways of working are possible:
+
+- *Graphic User Interface*
+- *Python Scripting*
+
+
+Presentation of the stages
+==========================
 
 - the construction of the real CAD (see :ref:`cad`)
 

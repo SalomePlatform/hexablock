@@ -18,6 +18,13 @@ The dialogue box for the import of a document is:
 .. centered::
    Import Document
 
-**todo ajouter copie d'ecran resultat (avec browser, etc...)**
+The result of this action is:
+
+.. image:: _static/gui_new_document.png
+   :align: center
+
+.. centered::
+   New Document
+
 
 TUI command: :ref:`tuidocument`
