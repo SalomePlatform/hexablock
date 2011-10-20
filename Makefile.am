@@ -34,7 +34,8 @@ salomeinclude_DATA = HEXABLOCK_version.h
 
 EXTRA_DIST +=		\
 	build_configure	\
-	clean_configure
+	clean_configure \
+	cppunit-report.xml
 
 dist-hook:
 	rm -rf `find $(distdir) -name CVS`
