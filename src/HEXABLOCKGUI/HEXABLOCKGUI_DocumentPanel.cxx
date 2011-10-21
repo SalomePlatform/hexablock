@@ -90,6 +90,45 @@ HexaBaseDialog::~HexaBaseDialog()
 {
 }
 
+
+void HexaBaseDialog::_initButtonBox()
+{
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+  buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+  buttonBox->setOrientation(Qt::Horizontal);
+  layout()->addWidget(buttonBox);
+
+  QPushButton* applyCloseButton = new QPushButton(tr("Apply And Close"));
+  QPushButton* applyButton      = new QPushButton(tr("Apply"));
+  QPushButton* closeButton      = new QPushButton(tr("Close"));
+  QPushButton* helpButton       = new QPushButton(tr("Help"));
+
+  buttonBox->addButton( applyCloseButton, QDialogButtonBox::AcceptRole );
+  buttonBox->addButton( applyButton, QDialogButtonBox::ApplyRole );
+  buttonBox->addButton( closeButton, QDialogButtonBox::RejectRole);
+  buttonBox->addButton( helpButton, QDialogButtonBox::HelpRole);
+
+  connect( buttonBox, SIGNAL(accepted()), this, SLOT(accept()) );
+  connect( buttonBox, SIGNAL(rejected()), this, SLOT(reject()) );
+  connect( applyButton, SIGNAL(clicked()), this, SLOT(apply()) );
+}
+
+void HexaBaseDialog::accept()
+{
+  bool applied = apply();
+  if ( applied ){
+    QDialog::accept();
+    _disallowSelection();
+  }
+}
+
+void HexaBaseDialog::reject()
+{
+  QDialog::reject();
+  _disallowSelection();
+}
+
+
 void HexaBaseDialog::_allowSelection()
 {
   std::cout << "_allowSelection() _allowSelection() _allowSelection() "<< std::endl;
@@ -430,9 +469,11 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
   _value(0)
 {
   setupUi( this );
+  _initButtonBox();
   x_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
   y_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
   z_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+
 //   installEventFilter();
 }
 
@@ -464,10 +505,8 @@ void VertexDialog::setIndex(const QModelIndex& i)
 
 
 
-void VertexDialog::accept()
+bool VertexDialog::apply()
 {
-    std::cout << "VertexDialog::accept " << std::endl;
-
     double newX = x_spb->value();
     double newY = y_spb->value();
     double newZ = z_spb->value();
@@ -480,17 +519,15 @@ void VertexDialog::accept()
     }
 
     if ( _documentModel ){
-      std::cout << "_documentModel" << std::endl;
       if ( _index.isValid() ){ //EDITION MODE
-        std::cout << "_index.isValid()" << std::endl;
         bool ok = _documentModel->updateVertex( _index, newX, newY, newZ );
-        std::cout << "ok = " << ok << std::endl;
         if ( ok ){
           //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_index.data().toString()) );
 //           QDialog::accept();
-          std::cout << "AAAAAAAAAAA " << std::endl;
+          return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT UPDATE VERTEX" ) );
+          return false;
         }
         //emit editingFinished();
       } else { //NEW MODE
@@ -498,22 +535,26 @@ void VertexDialog::accept()
         if ( newIndex.isValid() ){
           _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
           //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX BUILDED : %1" ).arg(newIndex.data().toString()) );
-          QDialog::accept();
-          if ( _patternDataSelectionModel ){
-            const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-            if ( patternDataModel ){
-              newIndex = patternDataModel->mapFromSource(newIndex);
-//               _patternDataSelectionModel->select( newIndex, QItemSelectionModel::Clear );
-//               _patternDataSelectionModel->select( newIndex, QItemSelectionModel::Select );
-              _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Clear );
-              _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Select );
-            }
-          }
+//           QDialog::accept();
+//           if ( _patternDataSelectionModel ){
+//             const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+//             if ( patternDataModel ){
+//               newIndex = patternDataModel->mapFromSource(newIndex);
+// //               _patternDataSelectionModel->select( newIndex, QItemSelectionModel::Clear );
+// //               _patternDataSelectionModel->select( newIndex, QItemSelectionModel::Select );
+//               _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Clear );
+//               _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Select );
+//             }
+//           }
           //emit editingFinished();
+          return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VERTEX" ) );
+          return false;
         }
       }
+    } else {
+      return false;
     }
 }
 
@@ -526,7 +567,6 @@ void VertexDialog::accept()
 EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
-//   _currentObj(0)
 {
   setupUi( this );
 
@@ -534,6 +574,7 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   _vectorLineEdits << vec_le_rb1;
   
   if  ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -546,7 +587,6 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     setFocusProxy( rb0 );
 
   } else {
-    buttonBox->clear();
     rb1->hide();
     v0_le_rb0->setReadOnly(true);
     v1_le_rb0->setReadOnly(true);
@@ -554,8 +594,6 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 
   // Default 
   rb0->click();
-//   setFocusPolicy(Qt::NoFocus);
-  
 }
 
 
@@ -596,16 +634,16 @@ HEXA_NS::Edge* EdgeDialog::getValue()
   return _value;
 }
 
-void EdgeDialog::accept()
+bool EdgeDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel ) return false;
+  if ( !patternBuilderModel ) return false;
 
 
   QModelIndex iEdge;
@@ -626,26 +664,24 @@ void EdgeDialog::accept()
     }
   }
 
-  if ( iEdge.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    iEdge = patternDataModel->mapFromSource(iEdge);
-    _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Clear );
-    _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Select );
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED : %1" ).arg(iEdge.data().toString()) );
-    //emit editingFinished();
-  } else {
+  if ( !iEdge.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "EDGE ADDED" ) );
+    return false;
   }
-
+  _value = iEdge.model()->data(iEdge, HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
+//   iEdge = patternDataModel->mapFromSource(iEdge);
+//     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Clear );
+//     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Select );
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED : %1" ).arg(iEdge.data().toString()) );
+//emit editingFinished();
+  return true;
 }
 
-
-void EdgeDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void EdgeDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 // ------------------------- QUAD ----------------------------------
@@ -660,6 +696,7 @@ QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 
 
   if  ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _edgeLineEdits)
@@ -678,8 +715,6 @@ QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     e1_le_rb1->setReadOnly(true);
     e2_le_rb1->setReadOnly(true);
     e3_le_rb1->setReadOnly(true);
-
-    buttonBox->clear();
   }
 
   // Default 
@@ -759,13 +794,13 @@ HEXA_NS::Quad* QuadDialog::getValue()
 }
 
 
-void QuadDialog::accept()
+bool QuadDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   QModelIndex iQuad;
 
@@ -795,30 +830,25 @@ void QuadDialog::accept()
     }
   }
 
-
-  if ( iQuad.isValid() ){
-    QDialog::accept();
-    _value = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED : %1" ).arg(iQuad.data().toString()) );
-    iQuad = patternDataModel->mapFromSource( iQuad );
-    _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
-    _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iQuad.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD QUAD" ) );
+    return false;
   }
+  _value = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED : %1" ).arg(iQuad.data().toString()) );
+//     iQuad = patternDataModel->mapFromSource( iQuad );
+//     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
+//     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
+    //emit editingFinished();
+  return true;
 }
 
 
-void QuadDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
+// void QuadDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 // ------------------------- HEXA ----------------------------------
@@ -834,6 +864,7 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
                  << q3_le_rb0 << q4_le_rb0 << q5_le_rb0;
 
   if  ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _quadLineEdits)
@@ -849,7 +880,6 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     q3_le_rb0->setReadOnly(true);
     q4_le_rb0->setReadOnly(true);
     q5_le_rb0->setReadOnly(true);
-    buttonBox->clear();
   }
 
   // Default 
@@ -927,13 +957,13 @@ HEXA_NS::Hexa* HexaDialog::getValue()
   return _value;
 }
 
-void HexaDialog::accept()
+bool HexaDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
 
   QModelIndex iHexa;
@@ -974,26 +1004,24 @@ void HexaDialog::accept()
       iHexa = _documentModel->addHexaVertices( iv0, iv1, iv2, iv3, iv4, iv5, iv6, iv7 );
   }
 
-  if ( iHexa.isValid() ){
-    QDialog::accept();
-    _value = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA BUILDED : %1" ).arg(iHexa.data().toString()) );
-    iHexa = patternDataModel->mapFromSource( iHexa );
-    _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Clear );
-    _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iHexa.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD HEXA" ) );
+    return false;
   }
+  _value = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA BUILDED : %1" ).arg(iHexa.data().toString()) );
+//     iHexa = patternDataModel->mapFromSource( iHexa );
+//     _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Clear );
+//     _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Select );
+  return true;
 }
 
 
-void HexaDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void HexaDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1007,6 +1035,7 @@ VectorDialog::VectorDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   _vertexLineEdits << v0_le_rb1 << v1_le_rb1;
 
   if ( editMode ){
+    _initButtonBox();
     v0_le_rb1->installEventFilter(this);
     v1_le_rb1->installEventFilter(this);
 
@@ -1018,7 +1047,7 @@ VectorDialog::VectorDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     dx_spb_rb0->setReadOnly(true);
     dy_spb_rb0->setReadOnly(true);
     dz_spb_rb0->setReadOnly(true);
-    buttonBox->clear();
+//     buttonBox->clear();
   }
   // Default 
   rb0->click();
@@ -1063,16 +1092,16 @@ HEXA_NS::Vector* VectorDialog::getValue()
 
 
 
-void VectorDialog::accept()
+bool VectorDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_documentModel ) return false;
+  if ( !_patternDataSelectionModel )  return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel ) return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iVector;
 
@@ -1092,50 +1121,18 @@ void VectorDialog::accept()
     }
   }
 
-
-  if ( iVector.isValid() ){
-    QDialog::accept();
-    _value = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED : %1" ).arg(iVector.data().toString()) );
-    iVector = patternBuilderModel->mapFromSource( iVector );
-    _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Select );
-  } else {
+  if ( !iVector.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VECTOR" ) );
+    return false;
   }
+
+  _value = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED : %1" ).arg(iVector.data().toString()) );
+//     iVector = patternBuilderModel->mapFromSource( iVector );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Select );
+  return true;
 }
-
-
-
-
-
-// void VectorDialog::accept()
-// {
-//   SUIT_OverrideCursor wc;
-// //if ( !_documentModel ) return;
-// 
-//   if ( _documentModel ){ //NEW MODE
-//     QModelIndex newIndex = _documentModel->addVector( dx_spb_rb0->value(), dy_spb_rb0->value(),  dz_spb_rb0->value() );
-//     if ( newIndex.isValid() ){
-//       _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
-//       QDialog::accept();
-//       if ( _patternBuilderSelectionModel ){
-//         const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-//         if ( patternBuilderModel ){
-//           newIndex = patternBuilderModel->mapFromSource(newIndex);
-//           _patternBuilderSelectionModel->select( newIndex, 
-//                                             QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
-//           _patternBuilderSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Current  );
-//         }
-//       }
-//       //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED" ) );
-//     } else {
-//       SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VECTOR" ) );
-//     }
-//   }
-// 
-// }
 
 
 
@@ -1149,6 +1146,7 @@ CylinderDialog::CylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
   _vectorLineEdits << vec_le;
 
   if ( editMode ){
+    _initButtonBox();
     vex_le->installEventFilter(this);
     vec_le->installEventFilter(this);
 
@@ -1158,10 +1156,9 @@ CylinderDialog::CylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
     vec_le->setReadOnly(true);
     r_spb->setReadOnly(true);
     h_spb->setReadOnly(true);
-    buttonBox->clear();
   }
-
 }
+
 
 CylinderDialog::~CylinderDialog()
 {
@@ -1207,16 +1204,16 @@ HEXA_NS::Cylinder* CylinderDialog::getValue()
 
 
 
-void CylinderDialog::accept()
+bool CylinderDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_documentModel ) return false;
+  if ( !_patternDataSelectionModel ) return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel ) return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iCyl;
   QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
@@ -1229,26 +1226,26 @@ void CylinderDialog::accept()
     iCyl = _documentModel->addCylinder( ivex, ivec, r,  h );
   }
 
-  if ( iCyl.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD CYLINDER DONE : %1" ).arg(iCyl.data().toString()) );
-    iCyl = patternBuilderModel->mapFromSource(iCyl);
-    _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Select );
-  } else {
+  if ( !iCyl.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
+    return false;
   }
+
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD CYLINDER DONE : %1" ).arg(iCyl.data().toString()) );
+//     iCyl = patternBuilderModel->mapFromSource(iCyl);
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Select );
+  return true;
 }
 
 
 
 
-void CylinderDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void CylinderDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1268,6 +1265,7 @@ PipeDialog::PipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   _vectorLineEdits << vec_le;
 
   if ( editMode ){
+    _initButtonBox();
     vex_le->installEventFilter(this);
     vec_le->installEventFilter(this);
     setFocusProxy( vex_le );
@@ -1277,7 +1275,6 @@ PipeDialog::PipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
     ir_spb->setReadOnly(true);
     er_spb->setReadOnly(true);
     h_spb->setReadOnly(true);
-    buttonBox->clear();
   }
 
 }
@@ -1330,16 +1327,16 @@ HEXA_NS::Pipe* PipeDialog::getValue()
 
 
 
-void PipeDialog::accept()
+bool PipeDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iPipe;
   QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
@@ -1353,26 +1350,23 @@ void PipeDialog::accept()
     iPipe = _documentModel->addPipe( ivex, ivec, ir, er, h );
   }
 
-  if ( iPipe.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD PIPE DONE : %1" ).arg(iPipe.data().toString()) );
-    iPipe = patternBuilderModel->mapFromSource( iPipe );
-    _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Select );
-  } else {
+  if ( !iPipe.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
+    return true;
   }
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD PIPE DONE : %1" ).arg(iPipe.data().toString()) );
+//     iPipe = patternBuilderModel->mapFromSource( iPipe );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Select );
+  return false;
 }
 
 
-
-
-void PipeDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void PipeDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1389,6 +1383,7 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
   _vectorLineEdits << vec_le_rb0 << vec_x_le_rb1 << vec_z_le_rb1 << vec_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -1418,17 +1413,17 @@ MakeGridDialog::~MakeGridDialog()
 // }
 
 
-void MakeGridDialog::accept()
+bool MakeGridDialog::apply()
 {
 
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
   
   QModelIndex iNewElts;
 
@@ -1477,35 +1472,25 @@ void MakeGridDialog::accept()
     }
   }
 
-
-  if ( iNewElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE GRID DONE : %1" ).arg(iNewElts.data().toString()) );
-    iNewElts = patternBuilderModel->mapFromSource( iNewElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iNewElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE GRID" ) );
+    return false;
   }
+
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE GRID DONE : %1" ).arg(iNewElts.data().toString()) );
+//     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
+    //emit editingFinished();
+  return true;
 }
 
 
-
-
-void MakeGridDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
-
-
-
-
+// void MakeGridDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
@@ -1517,6 +1502,7 @@ MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, bool editMode, Qt::Wind
   _vectorLineEdits << vec_le;
 
   if ( editMode ){
+    _initButtonBox();
     cyl_le->installEventFilter(this);
     vec_le->installEventFilter(this);
     setFocusProxy( cyl_le );
@@ -1539,13 +1525,13 @@ MakeCylinderDialog::~MakeCylinderDialog()
 
 
 
-void MakeCylinderDialog::accept()
+bool MakeCylinderDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternBuilderModel ) return;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iElts;
   QModelIndex icyl = patternBuilderModel->mapToSource( _index[cyl_le] );
@@ -1558,27 +1544,28 @@ void MakeCylinderDialog::accept()
     && ivec.isValid() ){
     iElts = _documentModel->makeCylinder( icyl, ivec, nr, na, nl );
   }
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDER DONE : %1" ).arg(iElts.data().toString()) );
-    iElts = patternBuilderModel->mapFromSource( iElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDER" ) );
+    return false;
   }
+
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDER DONE : %1" ).arg(iElts.data().toString()) );
+//   iElts = patternBuilderModel->mapFromSource( iElts );
+//   _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//   _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+  //emit editingFinished();
+  return true;
 }
 
 
 
 
-void MakeCylinderDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void MakeCylinderDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1593,6 +1580,7 @@ MakePipeDialog::MakePipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
   _vectorLineEdits << vec_le;
 
   if ( editMode ){
+    _initButtonBox();
     pipe_le->installEventFilter(this);
     vec_le->installEventFilter(this);
     setFocusProxy( pipe_le );
@@ -1613,13 +1601,13 @@ MakePipeDialog::~MakePipeDialog()
 
 
 
-void MakePipeDialog::accept()
+bool MakePipeDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternBuilderModel ) return;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iElts;
   QModelIndex ipipe = patternBuilderModel->mapToSource( _index[pipe_le] );
@@ -1632,32 +1620,24 @@ void MakePipeDialog::accept()
     && ivec.isValid() ){
     iElts = _documentModel->makePipe( ipipe, ivec, nr, na, nl );
   }
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPE DONE : %1" ).arg(iElts.data().toString()) );
-    iElts = patternBuilderModel->mapFromSource( iElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPE" ) );
+    return false;
   }
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPE DONE : %1" ).arg(iElts.data().toString()) );
+//     iElts = patternBuilderModel->mapFromSource( iElts );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+  return true;
 }
 
 
 
-
-void MakePipeDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
-
-
+// void MakePipeDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1669,6 +1649,7 @@ MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, bool editMode, Qt::Wi
   _cylinderLineEdits << cyl1_le << cyl2_le;
 
   if ( editMode ){
+    _initButtonBox();
     cyl1_le->installEventFilter(this);
     cyl2_le->installEventFilter(this);
     setFocusProxy( cyl1_le );
@@ -1690,13 +1671,13 @@ MakeCylindersDialog::~MakeCylindersDialog()
 
 
 
-void MakeCylindersDialog::accept()
+bool MakeCylindersDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternBuilderModel ) return;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iCrossElts;
   QModelIndex icyl1 = patternBuilderModel->mapToSource( _index[cyl1_le] );
@@ -1706,25 +1687,24 @@ void MakeCylindersDialog::accept()
     && icyl2.isValid() ){
     iCrossElts = _documentModel->makeCylinders( icyl1, icyl2 );
   }
-  if ( iCrossElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDERS DONE : %1" ).arg(iCrossElts.data().toString()) );
-    iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+
+  if ( !iCrossElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDERS" ) );
+    return false;
   }
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE CYLINDERS DONE : %1" ).arg(iCrossElts.data().toString()) );
+//     iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
+  return true;
 }
 
 
-void MakeCylindersDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void MakeCylindersDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1737,6 +1717,7 @@ MakePipesDialog::MakePipesDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   _pipeLineEdits << pipe1_le << pipe2_le;
 
   if ( editMode ){
+    _initButtonBox();
     pipe1_le->installEventFilter(this);
     pipe2_le->installEventFilter(this);
     setFocusProxy( pipe1_le );
@@ -1757,13 +1738,13 @@ MakePipesDialog::~MakePipesDialog()
 // }
 
 
-void MakePipesDialog::accept()
+bool MakePipesDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternBuilderModel ) return;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iCrossElts;
   QModelIndex ipipe1 = patternBuilderModel->mapToSource( _index[pipe1_le] );
@@ -1773,28 +1754,22 @@ void MakePipesDialog::accept()
     && ipipe2.isValid() ){
     iCrossElts = _documentModel->makeCylinders( ipipe1, ipipe2 );
   }
-  if ( iCrossElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPES DONE : %1" ).arg(iCrossElts.data().toString()) );
-    iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iCrossElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPES" ) );
+    return false;
+    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MAKE PIPES DONE : %1" ).arg(iCrossElts.data().toString()) );
+//     iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
   }
+  return true;
 }
 
-
-void MakePipesDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
+// void MakePipesDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
@@ -1804,6 +1779,7 @@ RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFl
 
   _hexaLineEdits << hexa_le;
   if ( editMode ){
+    _initButtonBox();
     hexa_le->installEventFilter(this); 
     setFocusProxy( hexa_le );
   }
@@ -1823,13 +1799,13 @@ RemoveHexaDialog::~RemoveHexaDialog()
 // }
 
 
-void RemoveHexaDialog::accept()
+bool RemoveHexaDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   QModelIndex ihexa = patternDataModel->mapToSource( _index[hexa_le] );
 
@@ -1842,22 +1818,20 @@ void RemoveHexaDialog::accept()
     }
   }
 
-  if ( removed == true ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA(S) REMOVED" ) );
-    //emit editingFinished();
-  } else {
+  if ( removed == false ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE HEXA" ) );
+    return false;
   }
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA(S) REMOVED" ) );
+  return true;
 }
 
 
-void RemoveHexaDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void RemoveHexaDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -1871,6 +1845,7 @@ PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlag
   _vectorLineEdits << vec_le;
 
   if ( editMode ){
+    _initButtonBox();
     vec_le->installEventFilter(this);
     quads_lw->installEventFilter(this);
     setFocusProxy( quads_lw );
@@ -1969,16 +1944,16 @@ bool PrismQuadDialog::eventFilter(QObject *obj, QEvent *event)
 }
 
 
-void PrismQuadDialog::accept()
+bool PrismQuadDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   /////
   QModelIndexList iquads;
@@ -2001,30 +1976,30 @@ void PrismQuadDialog::accept()
     }
   }
 
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PRISM QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
-    if ( _patternBuilderSelectionModel ){
-      const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-      if ( patternBuilderModel ){
-        iElts = patternBuilderModel->mapFromSource( iElts );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-      }
-      //emit editingFinished();
-    }
-  } else {
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PRISM QUAD(S)" ) );
+    return false;
   }
+
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PRISM QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
+//   if ( _patternBuilderSelectionModel ){
+//     const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//     if ( patternBuilderModel ){
+//       iElts = patternBuilderModel->mapFromSource( iElts );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+//     }
+//       //emit editingFinished();
+//   }
+  return true;
 }
 
 
-void PrismQuadDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void PrismQuadDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -2040,6 +2015,7 @@ JoinQuadDialog::JoinQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
   _quadLineEdits   << quad_dest_le;
 
   if ( editMode ){
+    _initButtonBox();
     vex0_le->installEventFilter(this);
     vex1_le->installEventFilter(this); 
     vex2_le->installEventFilter(this);
@@ -2116,16 +2092,16 @@ bool JoinQuadDialog::eventFilter(QObject *obj, QEvent *event)
 }
 
 
-void JoinQuadDialog::accept()
+bool JoinQuadDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   /////
   QModelIndexList iquads;
@@ -2160,30 +2136,30 @@ void JoinQuadDialog::accept()
     }
   }
 
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "JOIN QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
-    if ( _patternBuilderSelectionModel ){
-      const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-      if ( patternBuilderModel ){
-        iElts = patternBuilderModel->mapFromSource( iElts );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-      }
-      //emit editingFinished();
-    }
-  } else {
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT JOIN QUAD(S)" ) );
+    return false;
   }
+
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "JOIN QUAD(S) OK : %1" ).arg( iElts.data().toString()) );
+//   if ( _patternBuilderSelectionModel ){
+//     const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//     if ( patternBuilderModel ){
+//       iElts = patternBuilderModel->mapFromSource( iElts );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+//     }
+//   }
+
+  return true;
 }
 
 
-void JoinQuadDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void JoinQuadDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -2205,6 +2181,7 @@ MergeDialog::MergeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   _quadLineEdits << q0_le_rb2 << q1_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _edgeLineEdits)
@@ -2238,12 +2215,12 @@ MergeDialog::~MergeDialog()
 
 
 
-void MergeDialog::accept()
+bool MergeDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel )    return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel*    patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   bool merged = false;
 
@@ -2287,28 +2264,20 @@ void MergeDialog::accept()
     }
   }
 
-  if ( merged == true ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MERGED" ) );
-    //emit editingFinished();
-  } else {
+  if ( merged == false ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MERGE" ) );
+    return false;
   }
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MERGED" ) );
+  return true;
 }
 
 
-void MergeDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
-
-
-
+// void MergeDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 // ------------------------- Disconnect ----------------------------------
 DisconnectDialog::DisconnectDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
@@ -2322,6 +2291,7 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, bool editMode, Qt::WindowFl
   _hexaLineEdits   << h_le_rb0 << h_le_rb1 << h_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     //vertex
     v_le_rb0->installEventFilter(this);
     h_le_rb0->installEventFilter(this);
@@ -2361,10 +2331,10 @@ DisconnectDialog::~DisconnectDialog()
 
 
 
-void DisconnectDialog::accept()
+bool DisconnectDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
 
   QModelIndex iElts;
@@ -2395,40 +2365,29 @@ void DisconnectDialog::accept()
     }
   }
 
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "DISCONNECT OK : %1" ).arg( iElts.data().toString()) );
-
-    if ( _patternBuilderSelectionModel ){
-      const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-      if ( patternBuilderModel ){
-        iElts = patternBuilderModel->mapFromSource( iElts );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-      }
-      //emit editingFinished();
-    }
-  } else {
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT DISCONNECT" ) );
+    return false;
   }
+
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "DISCONNECT OK : %1" ).arg( iElts.data().toString()) );
+//   if ( _patternBuilderSelectionModel ){
+//     const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//     if ( patternBuilderModel ){
+//       iElts = patternBuilderModel->mapFromSource( iElts );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+//     }
+//   }
+  return true;
 }
 
 
-void DisconnectDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
-
-
-
-
-
-
-
-
-
+// void DisconnectDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 // ------------------------- CutEdgeDialog ----------------------------------
 CutEdgeDialog::CutEdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
@@ -2438,6 +2397,7 @@ CutEdgeDialog::CutEdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f 
   _edgeLineEdits << e_le;
 
   if ( editMode ){
+    _initButtonBox();
     e_le->installEventFilter(this);
     setFocusProxy( e_le );
   }
@@ -2456,13 +2416,13 @@ CutEdgeDialog::~CutEdgeDialog()
 // }
 
 
-void CutEdgeDialog::accept()
+bool CutEdgeDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   int nbCut = nb_cut_spb->value();
   QModelIndex iedge = patternDataModel->mapToSource( _index[e_le] );
@@ -2471,32 +2431,30 @@ void CutEdgeDialog::accept()
   if ( iedge.isValid() ){
     iElts = _documentModel->cutEdge( iedge, nbCut );
   }
-  if ( iElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE CUTTED : %1" ).arg( iElts.data().toString()) );
-    std::cout<<"_patternBuilderSelectionModel =>"<< _patternBuilderSelectionModel << std::endl;
-    if ( _patternBuilderSelectionModel ){
-      const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-      std::cout<<"patternBuilderModel =>"<< patternBuilderModel << std::endl;
-      if  ( patternBuilderModel ){
-        iElts = patternBuilderModel->mapFromSource( iElts );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
-        _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
-      }
-    }
-    //emit editingFinished();
-  } else {
+
+  if ( !iElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT CUT EDGE" ) );
+    return false;
   }
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE CUTTED : %1" ).arg( iElts.data().toString()) );
+//   if ( _patternBuilderSelectionModel ){
+//       const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//       std::cout<<"patternBuilderModel =>"<< patternBuilderModel << std::endl;
+//       if  ( patternBuilderModel ){
+//         iElts = patternBuilderModel->mapFromSource( iElts );
+//         _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
+//         _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+//       }
+//   }
+   return true;
 }
 
 
-void CutEdgeDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void CutEdgeDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -2513,6 +2471,7 @@ MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, bool editMo
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -2544,15 +2503,15 @@ MakeTransformationDialog::~MakeTransformationDialog()
 
 
 
-void MakeTransformationDialog::accept()
+bool MakeTransformationDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iNewElts;
 
@@ -2585,25 +2544,24 @@ void MakeTransformationDialog::accept()
       iNewElts = _documentModel->makeRotation( ielts, ivex, ivec, angle );
   }
 
-  if ( iNewElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE : %1" ).arg( iNewElts.data().toString()) );
-    iNewElts = patternBuilderModel->mapFromSource( iNewElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iNewElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) );
+    return false;
   }
+
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE : %1" ).arg( iNewElts.data().toString()) );
+//   iNewElts = patternBuilderModel->mapFromSource( iNewElts );
+//   _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
+//   _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
+  return true;
 }
 
 
-void MakeTransformationDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void MakeTransformationDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -2621,6 +2579,7 @@ MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, bool editMode, Qt::Wind
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -2651,15 +2610,15 @@ MakeSymmetryDialog::~MakeSymmetryDialog()
 // }
 
 
-void MakeSymmetryDialog::accept()
+bool MakeSymmetryDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex iNewElts;
 
@@ -2693,25 +2652,23 @@ void MakeSymmetryDialog::accept()
       iNewElts = _documentModel->makeSymmetryPlane( ielts, ivex, ivec );
   }
 
-  if ( iNewElts.isValid() ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE %1" ).arg( iNewElts.data().toString()) );
-    iNewElts = patternBuilderModel->mapFromSource( iNewElts );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
-    _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
-    //emit editingFinished();
-  } else {
+  if ( !iNewElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) );
+    return false;
   }
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE %1" ).arg( iNewElts.data().toString()) );
+//     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
+//     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
+  return true;
 }
 
 
-void MakeSymmetryDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void MakeSymmetryDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -2728,6 +2685,7 @@ PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, bool 
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -2759,15 +2717,15 @@ PerformTransformationDialog::~PerformTransformationDialog()
 // }
 
 
-void PerformTransformationDialog::accept()
+bool PerformTransformationDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   bool performed = false;
 
@@ -2800,22 +2758,20 @@ void PerformTransformationDialog::accept()
       performed = _documentModel->performRotation( ielts, ivex, ivec, angle );
   }
 
-  if ( performed == true ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE" ) );
-    //emit editingFinished();
-  } else {
+  if ( performed == false){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM TRANSFORMATION" ) );
+    return false;
   }
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE" ) );
+  return true;
 }
 
 
-void PerformTransformationDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void PerformTransformationDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 // // ------------------------- PerformSymmetryDialog ----------------------------------
@@ -2830,6 +2786,7 @@ PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, bool editMode, Qt
   _elementsLineEdits << elts_le_rb0 << elts_le_rb1 << elts_le_rb2;
 
   if ( editMode ){
+    _initButtonBox();
     foreach(QLineEdit* le,  _vertexLineEdits)
       le->installEventFilter(this);
     foreach(QLineEdit* le,  _vectorLineEdits)
@@ -2861,15 +2818,15 @@ PerformSymmetryDialog::~PerformSymmetryDialog()
 // }
 
 
-void PerformSymmetryDialog::accept()
+bool PerformSymmetryDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_patternDataSelectionModel )    return;
-  if ( !_patternBuilderSelectionModel ) return;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel*    patternDataModel    = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  if ( !patternDataModel ) return;
-  if ( !patternBuilderModel ) return;
+  if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   
   bool performed = false;
@@ -2903,22 +2860,20 @@ void PerformSymmetryDialog::accept()
       performed = _documentModel->performSymmetryPlane( ielts, ivex, ivec );
   }
 
-  if ( performed == true ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "SYMMETRY DONE" ) );
-    //emit editingFinished();
-  } else {
+  if ( performed == false ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM SYMMETRY" ) );
+    return false;
   }
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "SYMMETRY DONE" ) );
+  return true;
 }
 
 
-void PerformSymmetryDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void PerformSymmetryDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -3043,18 +2998,18 @@ void VertexAssocDialog::onSelectionChanged( const QItemSelection& sel, const QIt
 
 
 
-void VertexAssocDialog::accept()
+bool VertexAssocDialog::apply()
 {
   std::cout << "VertexAssocDialog::accept"<< std::endl;
   SUIT_OverrideCursor wc;
 
-  if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_documentModel )             return false;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   QModelIndex iVertex = patternDataModel->mapToSource( *_ivertex );
-  if ( !iVertex.isValid() ) return;
+  if ( !iVertex.isValid() ) return false;
 
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX);
   TopoDS_Shape aShape;
@@ -3077,17 +3032,20 @@ void VertexAssocDialog::accept()
 }
 
 
-void VertexAssocDialog::reject()
-{
-  std::cout << "VertexAssocDialog::reject"<< std::endl;
-  if ( _documentModel ){
-    _documentModel->allowEdition();
-  }
-  if ( _patternDataSelectionModel ){
-    _patternDataSelectionModel->setAllSelection();
-  }
-  QDialog::reject();
-}
+// void VertexAssocDialog::reject()
+// {
+//   std::cout << "VertexAssocDialog::reject"<< std::endl;
+//   if ( _documentModel ){
+//     _documentModel->allowEdition();
+//   }
+//   if ( _patternDataSelectionModel ){
+//     _patternDataSelectionModel->setAllSelection();
+//   }
+//   QDialog::reject();
+// }
+
+
+
 
 
 bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
@@ -3114,6 +3072,7 @@ EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
 {
   setupUi( this );
   setWindowTitle( tr("MAKE EDGE ASSOCIATION") );
+  _initButtonBox();
 
   pend_spb->setValue(1.);
   _firstLine.nullify();
@@ -3337,14 +3296,14 @@ void EdgeAssocDialog::addLine()
 
 
 
-void EdgeAssocDialog::accept()
+bool EdgeAssocDialog::apply()
 {
   SUIT_OverrideCursor wc;
   bool assocOk = false;
 
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel ) return false;
 
   QListWidgetItem* item = NULL;
   // edges
@@ -3374,22 +3333,22 @@ void EdgeAssocDialog::accept()
     assocOk = _documentModel->associateOpenedLine( iEdges, assocs, pstart_spb->value(), pend_spb->value() );
   }
 
-  if ( assocOk ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE(S) ASSOCIATION OK : " ) );
-  } else {
+  if ( !assocOk ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+    return false;
   }
+
+  //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE(S) ASSOCIATION OK : " ) );
+  return true;
 }
 
 
 
-void EdgeAssocDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void EdgeAssocDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -3401,6 +3360,7 @@ QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlag
 {
   setupUi( this );
   setWindowTitle( tr("MAKE QUAD ASSOCIATION") );
+  _initButtonBox();
 
   _quadLineEdits << quad_le;
   quad_le->installEventFilter(this);
@@ -3521,13 +3481,13 @@ void QuadAssocDialog::addFace()
 }
 
 
-void QuadAssocDialog::accept()
+bool QuadAssocDialog::apply()
 {
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternDataModel ) return;
+  if ( !patternDataModel )           return false;
 
   // quad
   QModelIndex iQuad = patternDataModel->mapToSource( _index[quad_le] );
@@ -3544,19 +3504,18 @@ void QuadAssocDialog::accept()
     _documentModel->addAssociation( iQuad, aFace );
   }
 
-  QDialog::accept();
-  _disallowSelection();
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD ASSOCIATION OK : %1" ).arg(iQuad.data().toString()) );
-  iQuad = patternDataModel->mapFromSource( iQuad );
-  _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
-  _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
+//   iQuad = patternDataModel->mapFromSource( iQuad );
+//   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
+//   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
+  return true;
 }
 
-void QuadAssocDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void QuadAssocDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 // ------------------------- GROUP ----------------------------------
@@ -3565,6 +3524,8 @@ GroupDialog::GroupDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   _value(NULL)
 {
   setupUi( this );
+  _initButtonBox();
+
   strKind[ HEXA_NS::HexaCell ] = "HexaCell";
   strKind[ HEXA_NS::QuadCell ] = "QuadCell";
   strKind[ HEXA_NS::EdgeCell ] = "EdgeCell";
@@ -3718,13 +3679,13 @@ void GroupDialog::clearEltBase()
 // }
 
 
-void GroupDialog::accept()
+bool GroupDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return;
+  if ( !_documentModel ) return false;
 //                           HexaCell, QuadCell, EdgeCell,
 //                           HexaNode, QuadNode, EdgeNode, VertexNode
-  if ( !_patternDataSelectionModel ) return;
+  if ( !_patternDataSelectionModel ) return false;
 //   if ( !_groupsSelectionModel )       return;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
 //   const GroupsModel*           groupsModel = dynamic_cast<const GroupsModel*>( _groupsSelectionModel->model() );
@@ -3746,39 +3707,39 @@ void GroupDialog::accept()
   }
 
 //   kind_cb->
-  if ( iGrp.isValid() ){ //fill it and select it
-    QModelIndex iEltBase;
-    QListWidgetItem* item = NULL;
-    bool eltAdded = false;
-    _documentModel->clearGroupElement(iGrp);
-    for ( int r = 0; r < eltBase_lw->count(); ++r){
-      item     = eltBase_lw->item(r);
-      std::cout << " item " << item->text().toStdString() << std::endl;
-      iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-      if ( iEltBase.isValid() )
-        eltAdded = _documentModel->addGroupElement( iGrp, iEltBase );
-      if ( eltAdded == false ){
-        //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
-      }
+  if ( !iGrp.isValid() ){ 
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD GROUP" ) );
+    return false;
+  }
+
+//fill it and select it
+  QModelIndex iEltBase;
+  QListWidgetItem* item = NULL;
+  bool eltAdded = false;
+  _documentModel->clearGroupElement(iGrp);
+  for ( int r = 0; r < eltBase_lw->count(); ++r){
+    item     = eltBase_lw->item(r);
+    std::cout << " item " << item->text().toStdString() << std::endl;
+    iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+    if ( iEltBase.isValid() )
+      eltAdded = _documentModel->addGroupElement( iGrp, iEltBase );
+    if ( eltAdded == false ){
+      //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
     }
-    QDialog::accept();
-    _disallowSelection();
+  }
     //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "GROUP ADDED : %1" ).arg( iGrp.data().toString()) );
 //     iGrp = groupsModel->mapFromSource( iGrp );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Select );
-
-  } else {
-      SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD GROUP" ) );
-  }
-
+  return true;
 }
 
-void GroupDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+
+// void GroupDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -3793,6 +3754,8 @@ LawDialog::LawDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   _value(NULL)
 {
   setupUi( this );
+  _initButtonBox();
+
   strKind[ HEXA_NS::Uniform ]    = "Uniform";
   strKind[ HEXA_NS::Arithmetic ] = "Arithmetic";
   strKind[ HEXA_NS::Geometric ]  = "Geometric";
@@ -3829,12 +3792,12 @@ HEXA_NS::Law* LawDialog::getValue()
 
 
 
-void LawDialog::accept()
+bool LawDialog::apply()
 {
   SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return;
+  if ( !_documentModel ) return false;
 
-  if ( !_meshSelectionModel ) return;
+  if ( !_meshSelectionModel ) return false;
   const MeshModel* meshModel = dynamic_cast<const MeshModel*>( _meshSelectionModel->model() );
 
   QString lawName = name_le->text();
@@ -3857,28 +3820,30 @@ void LawDialog::accept()
       iLaw = iLaws[0];
   }
 
-  if ( iLaw.isValid() ){ //fill it and select it
-    QDialog::accept();
-    bool setOk = _documentModel->setLaw( iLaw, nbnodes, coeff, lawKind );
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "LAW ADDED : %1" ).arg( iLaw.data().toString()) );
+  if ( !iLaw.isValid() ){ 
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
+    return false;
+  } 
+  //fill it and select it
+  bool setOk = _documentModel->setLaw( iLaw, nbnodes, coeff, lawKind );
+  if ( !setOk ){ 
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
+    return false;
+  } 
+//SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "LAW ADDED : %1" ).arg( iLaw.data().toString()) );
 //     _meshSelectionModel->select( iLaw, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex( iLaw, QItemSelectionModel::Current );
-    _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Clear );
-    _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Select );
+//     _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Clear );
+//     _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Select );
 
-
-  } else {
-      SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
-  }
-
+  return true;
 }
 
-void LawDialog::reject()
-{
-  QDialog::reject();
-  _disallowSelection();
-}
+// void LawDialog::reject()
+// {
+//   QDialog::reject();
+//   _disallowSelection();
+// }
 
 
 
@@ -3890,15 +3855,16 @@ PropagationDialog::PropagationDialog( QWidget* parent, bool editMode, Qt::Window
   _value(NULL)
 {
   setupUi( this );
-  _lawLineEdits << law_le;
 
+  _lawLineEdits << law_le;
   if ( editMode ){
+    _initButtonBox();
     law_le->installEventFilter(this);
     setFocusProxy( law_le );
   } else {
-    buttonBox->clear();
     law_le->setReadOnly(true);
   }
+
 }
 
 
@@ -3935,25 +3901,21 @@ HEXA_NS::Propagation* PropagationDialog::getValue()
 
 
 
-void PropagationDialog::accept()
+bool PropagationDialog::apply()
 {
+  bool isOk = false;
   SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return;
+  if ( !_documentModel ) return false;
 
-  if ( !_meshSelectionModel ) return;
+  if ( !_meshSelectionModel ) return false;
   const MeshModel* meshModel = dynamic_cast<const MeshModel*>( _meshSelectionModel->model() );
 
   QModelIndex iPropagation;
   QModelIndex iLaw;
   bool way = way_cb->isChecked();
   if ( _value == NULL ){
-    return;
+    return false;
   } else {
-//     QList<QStandardItem *> propagationItems = _documentModel->findItems( _value->getName(), Qt::MatchExactly | Qt::MatchRecursive, 1);
-//     QList<QStandardItem *> lawItems = _documentModel->findItems( lawName, Qt::MatchExactly | Qt::MatchRecursive, 1);
-//     iPropagation = propagationItems[0]->index();
-//     iLaw         = lawItems[0]->index();
-
     QModelIndexList iPropagations = _documentModel->match(
             _documentModel->index(0, 0),
             HEXA_DATA_ROLE,
@@ -3964,26 +3926,40 @@ void PropagationDialog::accept()
     iLaw = meshModel->mapToSource( _index[law_le] );
   }
 
-  bool setOk = false;
-  if ( iPropagation.isValid() && iLaw.isValid() ){ //fill it and select it
-    setOk = _documentModel->setPropagation( iPropagation, iLaw, way );
+
+  if ( !iPropagation.isValid() || !iLaw.isValid() ){ 
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
+    return false;
+  }
+
+  //fill it and select it
+  isOk = _documentModel->setPropagation( iPropagation, iLaw, way );
+  if ( !isOk ){
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
+    return false;
   }
 //     _meshSelectionModel->select( iPropagation, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex( iPropagation, QItemSelectionModel::Current );
-  if ( setOk ){
-    QDialog::accept();
-    _disallowSelection();
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PROPAGATION SETTED" ) );
-  } else {
-    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
-  }
+//   SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PROPAGATION SETTED" ) );
+  return true;
 }
 
-void PropagationDialog::reject()
-{
-  _disallowSelection();
-  QDialog::reject();
-}
+
+// void PropagationDialog::accept()
+// {
+//   bool applied = apply();
+//   if ( applied ){
+//     _disallowSelection();
+//     QDialog::accept();
+//   }
+// }
+
+
+// void PropagationDialog::reject()
+// {
+//   _disallowSelection();
+//   QDialog::reject();
+// }
 
 // ------------------------- COMPUTE MESH ----------------------------------
 
@@ -4035,7 +4011,13 @@ ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, bool editMode, Qt::Window
 ComputeMeshDialog::~ComputeMeshDialog() {
 }
 
-void ComputeMeshDialog::accept() {
+
+bool ComputeMeshDialog::apply()
+{
+  return false;
+}
+
+void  ComputeMeshDialog::accept() {
     _disallowSelection();
     QDialog::accept();
 

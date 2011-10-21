@@ -422,16 +422,6 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Help</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
@@ -593,38 +583,6 @@
     <hint type="destinationlabel">
      <x>419</x>
      <y>674</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>MakeGridDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>224</x>
-     <y>753</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>224</x>
-     <y>387</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>MakeGridDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>224</x>
-     <y>753</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>224</x>
-     <y>387</y>
     </hint>
    </hints>
   </connection>

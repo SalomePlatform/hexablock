@@ -48,17 +48,13 @@
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI.hxx"
-// #include "HEXABLOCKGUI_DataModel.hxx"
-// #include "HEXABLOCKGUI_DataObject.hxx"
 
 
 #include <SVTK_Selector.h>
 #include <SVTK_ViewModel.h>
 
 
-// #include <SalomeApp_DataObject.h>
 #include <SalomeApp_Study.h>
-// #include <SalomeApp_Module.h>
 #include <SalomeApp_Application.h>
 #include <SALOME_Actor.h>
 #include <SALOME_ListIO.hxx>
@@ -173,10 +169,11 @@ void PatternDataSelectionModel::setSalomeSelectionMgr( LightApp_SelectionMgr* mg
 
 void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 {
-  SVTK_ViewWindow* aViewWindow = _getVTKViewWindow();
+  SVTK_ViewWindow* aVTKViewWindow = _getVTKViewWindow();
 //   aViewWindow->clearFilters();
 //   _salomeSelectionMgr->clearFilters();
-  aViewWindow->SetSelectionMode( theMode );
+  if ( aVTKViewWindow )
+    aVTKViewWindow->SetSelectionMode( theMode );
 }
 
 
@@ -198,7 +195,6 @@ void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 //         -Face: idem vertex
 void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
 {
-//   std::cout << "PatternDataSelectionModel::onCurrentChanged " << std::endl;
 //   _selectSalome( current, true );
 //   _selectSalome( previous, false );
 }
@@ -207,103 +203,93 @@ void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, c
 
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-//   std::cout << "******PatternDataSelectionModel::onSelectionChanged" << std::endl;
-//   if ( _salomeSelectionChanged ) return;// to avoid infinite loop
+  MESSAGE("PatternDataSelectionModel::onSelectionChanged");
   _theModelSelectionChanged = true;
-
-  if ( _salomeSelectionMgr == NULL ) return;
-  _salomeSelectionMgr->clearSelected();
-
-  erasePreview(true);
-
-  QModelIndexList indexes = selected.indexes();
-  for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-//     std::cout << "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() << std::endl;
-    if ( !_theVtkSelectionChanged )  _selectVTK( *i_index );
-    if ( !_theGeomSelectionChanged ) _highlightGEOM( *i_index );
-    
+  try {
+    if ( _salomeSelectionMgr == NULL ) return;
+    _salomeSelectionMgr->clearSelected();
+    //   erasePreview(true);
+    QModelIndexList indexes = selected.indexes();
+    for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
+  //     std::cout << "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() << std::endl;
+      if ( !_theVtkSelectionChanged )  _selectVTK( *i_index );
+      if ( !_theGeomSelectionChanged ) _highlightGEOM( *i_index );
+    }
+    // CS_BP todo SALOMEGUI_Swig.cxx:370
+    //   indexes = deselected.indexes();
+    //   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index )
+    //     _unselectSalome( *i_index);
+  } catch ( ... ) {
+    MESSAGE("Unknown exception was cought !!!");
   }
-
   _theModelSelectionChanged = false;
- // CS_BP todo SALOMEGUI_Swig.cxx:370
-//   indexes = deselected.indexes();
-//   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index )
-//     _unselectSalome( *i_index);
 }
-
-
-
-
-
 
 
 void PatternDataSelectionModel::salomeSelectionChanged()
 {
-  QModelIndex eltIndex;
-
-//   std::cout << "PatternDataSelectionModel::salomeSelectionChanged()" << std::endl;
-  SALOME_ListIO salomeSelected;
-//   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
-  _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false ); 
-  if ( salomeSelected.IsEmpty() ) {
-    clearSelection();
-    return;
-  }
-
-  Handle(SALOME_InteractiveObject) anIObject;
-  SALOME_ListIteratorOfListIO it(salomeSelected);
-  for( ; it.More(); it.Next()){
-    anIObject = it.Value(); //
-//     std::cout << "obj name => " << anIObject->getName() << std::endl;
-    eltIndex = _geomSelectionChanged( anIObject );// is it comming from GEOM?
-    if ( !eltIndex.isValid() ){
-      eltIndex = _vtkSelectionChanged( anIObject ); ;// or VTK?...
+  MESSAGE("PatternDataSelectionModel::salomeSelectionChanged");
+  try {
+    QModelIndex toSelect;
+  
+    if ( _salomeSelectionMgr == NULL ) return;
+    SALOME_ListIO salomeSelected;
+  //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
+    _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false ); 
+    if ( salomeSelected.IsEmpty() ){
+      clearSelection();
+      return;
     }
+  
+    Handle(SALOME_InteractiveObject) anIObject;
+    SALOME_ListIteratorOfListIO it(salomeSelected);
+    for( ; it.More(); it.Next()){
+      anIObject = it.Value(); //anIObject->getName()
+      toSelect = _geomSelectionChanged( anIObject );// is it comming from GEOM?
+      if ( !toSelect.isValid() ){
+        toSelect = _vtkSelectionChanged( anIObject ); ;// or VTK?...
+      }
+    }
+  } catch ( ... ) {
+    MESSAGE("Unknown exception was cought !!!");
   }
 }
-
-
 
 SVTK_ViewWindow* PatternDataSelectionModel::_getVTKViewWindow()
 {
   SVTK_ViewWindow* aVtkView = HEXABLOCKGUI::currentVtkView;
-//   std::cout << "aVtkView ===========>" << aVtkView<< std::endl;
   return aVtkView;
+}
+
+
+OCCViewer_ViewWindow*  PatternDataSelectionModel::_getOCCViewWindow()
+{
+  OCCViewer_ViewWindow* aOccView = HEXABLOCKGUI::currentOccView;
+  return aOccView;
 }
 
 
 QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int role )
 {
-//   std::cout << "_indexOf  " <<anEntry.toStdString() << std::endl;
-  QModelIndex elt; // element (vertex, edge, quad) of model
+  QModelIndex eltIndex; // element (vertex, edge, quad) of model
   const QAbstractItemModel* theModel = model();
-  QModelIndex         theStart = theModel->index(0, 0);
-//   QString exactMatch = anEntry + ";";
-
-  QModelIndexList     theIndexes = theModel->match( theStart,
+  if ( !theModel ) return eltIndex;
+  QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
                                           role,
-                                          anEntry, //exactMatch,
+                                          anEntry,
                                           1,
                                           Qt::MatchRecursive | Qt::MatchContains );//Qt::MatchFixedString );
-// Qt::MatchContains  );
-  if ( theIndexes.count()>0 ){
-    elt = theIndexes[0] ;
-//     std::cout << "_indexOf YES found -> " << elt.data().toString().toStdString() << std::endl;
-  } else {
-//     std::cout << "_indexOf NOT found" << std::endl;
-  }
-
-  return elt;
+  if ( theIndexes.count()>0 )
+    eltIndex = theIndexes[0] ;
+  return eltIndex;
 }
 
 
 void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow )
 {
   QVariant treeVariant = eltIndex.data( HEXA_TREE_ROLE );
-  int eltType;
-
   if ( !treeVariant.isValid() ) return;
-  eltType = treeVariant.toInt();
+  int eltType = treeVariant.toInt();
 
   if ( (_selectionFilter != -1) and ( _selectionFilter != eltType ) ) return;
 
@@ -316,6 +302,8 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
     case QUAD_DIR_TREE :   vtkViewWindow->SetSelectionMode(FaceSelection);     break;
     case HEXA_TREE :
     case HEXA_DIR_TREE :   vtkViewWindow->SetSelectionMode(VolumeSelection);   break;
+    case PROPAGATION_TREE :
+    case PROPAGATION_DIR_TREE :   vtkViewWindow->SetSelectionMode(EdgeSelection);   break;
 //  CellSelection,
 //  EdgeOfCellSelection,
 //  VolumeSelection,
@@ -324,57 +312,40 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 }
 
 
+
+
 // 1 vertex -> 1 point
 // 1 edge   -> n lines + points(deb,fin)
 // 1 quad   -> n faces
-
-void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
+void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs )
 {
-//   std::cout << "PatternDataSelectionModel::_highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
-  if ( HEXABLOCKGUI::currentOccView == NULL ) return;
-  OCCViewer_Viewer* occViewer=(OCCViewer_Viewer*)HEXABLOCKGUI::currentOccView->getViewManager()->getViewModel();
-  SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+  OCCViewer_ViewWindow*  occView = _getOCCViewWindow();
+  if ( occView == NULL ) return;
+  SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>( occView->getViewManager()->getViewModel() ); 
   if (!soccViewer) return;
+  _PTR(Study) aStudy = GetActiveStudyDocument();
+  if (!aStudy) return;
 
-  // getting association(s) from model
-  QList<DocumentModel::GeomObj> assocList;
-  DocumentModel               *docModel = NULL;
-  const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
-  if ( pModel ){
-    docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() ); 
-    if ( docModel ){
-      assocList = docModel->getAssociations( pModel->mapToSource(anEltIndex) );
-    }
-  }
-
-  QMultiMap< QString, int > assocMap;
-  foreach( const DocumentModel::GeomObj& anAssoc, assocList )
-    assocMap.insert( anAssoc.entry, anAssoc.subid.toInt() );
-
-  // highlight it(them)
-  _PTR(Study)   aStudy = GetActiveStudyDocument();
-  _PTR(SObject) aSChild;
-  CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-  GEOM::GEOM_Object_var assoc;
-
-  foreach ( QString entry, assocMap.keys() ){
-    aSChild   = aStudy->FindObjectID( entry.toStdString() );
+  CORBA::Object_var     aCorbaObj = CORBA::Object::_nil();
+  GEOM::GEOM_Object_var aGeomObj  = GEOM::GEOM_Object::_nil();
+  erasePreview(true);
+  foreach ( QString entry, entrySubIDs.keys() ){
+    _PTR(SObject) aSChild = aStudy->FindObjectID( entry.toStdString() );
     aCorbaObj = corbaObj( aSChild );
-    assoc = GEOM::GEOM_Object::_narrow( aCorbaObj );
-    if ( !CORBA::is_nil(assoc) ){
-      QString objIOR = GEOMBase::GetIORFromObject( assoc._retn() );
+    aGeomObj = GEOM::GEOM_Object::_narrow( aCorbaObj );
+    if ( !CORBA::is_nil(aGeomObj) ){
+      QString objIOR = GEOMBase::GetIORFromObject( aGeomObj._retn() );
       Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape( objIOR );//, true );
       if ( !aSh.IsNull() ){
         TColStd_IndexedMapOfInteger anIndexes;
-        foreach ( int subid, assocMap.values(entry) ){
-//           std::cout << "highlight => (" << entry.toStdString() << "," << subid << ")" << std::endl;
-          if ( subid != -1 ) // a sub-shape
-            anIndexes.Add( subid ); //23
+        foreach ( int subid, entrySubIDs.values(entry) ){
+          if ( subid != -1 ) 
+            anIndexes.Add( subid );
         }
-        if ( anIndexes.Extent() > 0 ){ //  sub-shape(s)
+        if ( anIndexes.Extent() > 0 ){ // if it's a sub-shape
           aSh->highlightSubShapes( anIndexes, true );
           soccViewer->Repaint();
-        } else {  // a main shape
+        } else {  // or a main shape
 //             std::cout << "aSh->getIO() => " << aSh->getIO() << std::endl;
 //           getDisplayer()->SetDisplayMode(0);
 //           soccViewer->setColor( aSh->getIO(), QColor( Qt::red ), true );
@@ -388,17 +359,32 @@ void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 }
 
 
+void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
+{
+  // getting association(s) from model
+  QList<DocumentModel::GeomObj> assocs;
+  QMultiMap< QString, int >     assocEntrySubIDs;
+  DocumentModel               *docModel = NULL;
+  const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
 
+  if ( !pModel ) return;
+  docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() ); 
+  if ( !docModel ) return;
+  assocs = docModel->getAssociations( pModel->mapToSource(anEltIndex) );
+  foreach( const DocumentModel::GeomObj& anAssoc, assocs )
+    assocEntrySubIDs.insert( anAssoc.entry, anAssoc.subid.toInt() );
 
-
+  _highlightGEOM( assocEntrySubIDs );
+}
 
 
 
 void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 {
-//   std::cout << "PatternDataSelectionModel::_selectVTK" << std::endl;
-  SVTK_ViewWindow* currentVTKViewWindow = NULL;
-  SVTK_Selector* selector = NULL;
+  SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+  if ( currentVTKViewWindow == NULL ) return;
+  SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
+  if ( selector == NULL ) return;
 
   // document selection
   Document_Actor* docActor = NULL;
@@ -413,42 +399,35 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
   // data from model
   QString eltEntry;
   QString docEntry;
-  QVariant entryVariant;
-  QVariant docEntryVariant;
+  QVariant entryVariant    = eltIndex.data( HEXA_ENTRY_ROLE );
+  QVariant docEntryVariant = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
 
-  currentVTKViewWindow = _getVTKViewWindow();
-  if ( currentVTKViewWindow == NULL ) return;
-
-  // Set selection mode in VTK view
-  _setVTKSelectionMode( eltIndex, currentVTKViewWindow );
-
-  // Get Data from model
-  entryVariant    = eltIndex.data( HEXA_ENTRY_ROLE );
-  docEntryVariant = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
-
-  if ( !entryVariant.isValid() ) { std::cout<<"entryVariant not valid"<< std::endl; return;}
-  if ( !docEntryVariant.isValid() ) { std::cout<<"docEntryVariant not valid"<< std::endl;  return;}
+  if ( !entryVariant.isValid() ){ 
+    INFOS("entryVariant not valid");
+    return;
+  }
+  if ( !docEntryVariant.isValid() ){
+    INFOS("docEntryVariant not valid");
+    return;
+  }
 
   eltEntry = entryVariant.toString();
   docEntry = docEntryVariant.toString();
 
-// 
-//   std::cout<<"eltEntry " << eltEntry.toStdString() << std::endl;
-//   std::cout<<"docEntry " << docEntry.toStdString() << std::endl;
-
   // Select the document in Salome
   docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
-  if ( docActor == NULL)  return;
-//   std::cout<<"yes found an Actor for " << docEntry.toStdString() << std::endl;
+  if ( docActor == NULL) return;
 
-  if ( _salomeSelectionMgr == NULL ) return;
+  // Set selection mode in VTK view
+  _setVTKSelectionMode( eltIndex, currentVTKViewWindow );
 
+// if ( _salomeSelectionMgr == NULL ) return;
 //   _salomeSelectionMgr->selectedObjects( aList );
 //   std::cout<<"aList.Extent() => " << aList.Extent() << std::endl;
-  docIO = docActor->getIO();
 //   aList.Append(docIO);
 //   _salomeSelectionMgr->setSelectedObjects( aList, true );//false );//true ); //CS_BP false?
-// 
+  docIO = docActor->getIO();
+ 
   // Highlight in vtk view the element from document 
   vtkElemsId = docActor->vtkElemsId[ eltEntry.toInt() ];// get vtk ids from actor
   if ( vtkElemsId > 0 ) // CS_BP ?: erreur si 1er elt == vertex (0,0,0)
@@ -456,53 +435,45 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 //     for (anIter = theIds.begin(); anIter != theIds.end(); ++anIter) {
 //       aMap.Add(*anIter);
 //     }
-  selector = currentVTKViewWindow->GetSelector();
   selector->AddOrRemoveIndex( docIO, aMap, false );
   currentVTKViewWindow->highlight( docIO, true, true );
 }
 
 
+
 QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
   QModelIndex eltIndex;// the element of the model which is associated to the geom object and that is to be selected
-  bool fromGEOM = ( strcmp("GEOM", anIObject->getComponentDataType()) == 0 );
-//   std::cout << "_geomSelectionChanged fromGEOM " << fromGEOM << std::endl;
-  if ( fromGEOM ) {
-    QString aName;
-    GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject( anIObject );
 
-    int anIndex = -1;
-    if ( GEOMBase::IsShape(aGeomObj) ){
-      aName = GEOMBase::GetName(aGeomObj);
-      TColStd_IndexedMapOfInteger anIndexes;
-      _salomeSelectionMgr->GetIndexes(anIObject, anIndexes);
-      if ( anIndexes.Extent() == 1 ){
-        anIndex = anIndexes(1);
-      }
+  bool fromGEOM = ( strcmp("GEOM", anIObject->getComponentDataType()) == 0 );
+  if ( !fromGEOM ) return eltIndex;
+  if (!_salomeSelectionMgr) return eltIndex;
+
+  QString aName;
+  GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject( anIObject );
+
+  int anIndex = -1;
+  if ( GEOMBase::IsShape(aGeomObj) ){
+    aName = GEOMBase::GetName(aGeomObj);
+    TColStd_IndexedMapOfInteger anIndexes;
+    _salomeSelectionMgr->GetIndexes(anIObject, anIndexes);
+    if ( anIndexes.Extent() == 1 )
+      anIndex = anIndexes(1);
       QString aGeomObjStudyEntry = aGeomObj->GetStudyEntry();
       QString aGeomObjModelEntry = aGeomObjStudyEntry + "," + QString::number(anIndex) + ";";
-//       std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
-//       std::cout << "geom selected => " << std::endl;
-//       std::cout << "aName              : " << aName.toStdString()  << std::endl;
-//       std::cout << "GetEntry()         : " << aGeomObj->GetEntry() << std::endl;
-//       std::cout << "GetStudyEntry      : " << aGeomObj->GetStudyEntry() << std::endl;
-//       std::cout << "anIndex            : " << anIndex << std::endl;
-//       std::cout << "aGeomObjModelEntry : " << aGeomObjModelEntry.toStdString() << std::endl;
-      
-      eltIndex = _indexOf( aGeomObjModelEntry, HEXA_ASSOC_ENTRY_ROLE );//aGeomObjEntry );
+      eltIndex = _indexOf( aGeomObjModelEntry, HEXA_ASSOC_ENTRY_ROLE );
       if ( !_theModelSelectionChanged && eltIndex.isValid() ){ // select in model
         _theGeomSelectionChanged = true;
         //       select( newIndex, QItemSelectionModel::ClearAndSelect );
         //       select( newIndex, QItemSelectionModel::SelectCurrent );
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
-//         std::cout << "setCurrentIndex => "<< eltIndex.data().toString().toStdString() << std::endl;
         _theGeomSelectionChanged = false;
       } else {
         clearSelection();
       }
     }
-  }
+
   return eltIndex;
 }
 
@@ -510,43 +481,36 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
 
 QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
-  QModelIndex anIOIndex;// the corresponding element of the model 
+  QModelIndex anIOIndex;// // the element of the model which is associated to the Interactive object and that is to be selected
+
   bool fromVTK  = ( strcmp("HEXABLOCK", anIObject->getComponentDataType()) == 0 );
-//   std::cout << "_vtkSelectionChanged fromVTK  " << fromVTK << std::endl;
+  if ( !fromVTK ) return anIOIndex;
+  SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+  if ( !currentVTKViewWindow )  return anIOIndex;
+  if ( !anIObject->hasEntry() ) return anIOIndex;
+  
+  QString anIOEntry = anIObject->getEntry();
+  Document_Actor *anDocActor = NULL;
+  int anhexaElemsId;
 
-  if ( fromVTK ){
-    if ( anIObject->hasEntry() ){
-      SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
-      QString         anIOEntry = anIObject->getEntry();
-      QModelIndex     anIOIndex;
-      Document_Actor *anDocActor = NULL;
-      int anhexaElemsId;
+  QString aText = "";
+  if ( GetNameOfSelectedElements( currentVTKViewWindow, anIObject, aText ) <= 0 ) return anIOIndex;
+  anDocActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, anIOEntry.toLatin1() ) );
+  if ( !anDocActor ) return anIOIndex;
+  anhexaElemsId = anDocActor->hexaElemsId[ aText.toInt() ];
+  anIOEntry = QString::number( anhexaElemsId );
+  anIOIndex = _indexOf( anIOEntry, HEXA_ENTRY_ROLE );
 
-      QString aText = "";
-//       if ( GetNameOfSelectedElements( currentVTKViewWindow, anIObject, aText ) <= 0 ) return;
-      if ( GetNameOfSelectedElements( currentVTKViewWindow, anIObject, aText ) > 0 ){
-        //       GetNameOfSelectedNodes(activeViewWindow, anIObject, aText)
-        //       QStringList aListId = theNewText.split(" ", QString::SkipEmptyParts);
-        anDocActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, anIOEntry.toLatin1() ) );
-        if ( anDocActor != NULL ){
-          anhexaElemsId = anDocActor->hexaElemsId[ aText.toInt() ];
-          anIOEntry = QString::number( anhexaElemsId );
-          anIOIndex = _indexOf( anIOEntry, HEXA_ENTRY_ROLE );
-    
-          if ( !_theModelSelectionChanged && anIOIndex.isValid() ){ // select in model
-            _theVtkSelectionChanged = true;
-            //       select( newIndex, QItemSelectionModel::ClearAndSelect );
-            //       select( newIndex, QItemSelectionModel::SelectCurrent );
-            setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
-            setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
-//             std::cout << "setCurrentIndex => "<< anIOIndex.data().toString().toStdString() << std::endl;
-            _theVtkSelectionChanged = false;
-          } else {
-            clearSelection();
-          }
-        }
-      }
-    }
+  if ( !_theModelSelectionChanged && anIOIndex.isValid() ){ // select in model
+    _theVtkSelectionChanged = true;
+    //       select( newIndex, QItemSelectionModel::ClearAndSelect );
+//     select( anIOIndex, QItemSelectionModel::SelectCurrent );
+    setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
+    setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
+
+    _theVtkSelectionChanged = false;
+  } else {
+    clearSelection();
   }
 
   return anIOIndex;
@@ -555,6 +519,118 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 
 
 
+MeshSelectionModel::MeshSelectionModel( QAbstractItemModel * model ):
+QItemSelectionModel( model )
+{
+  connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+           this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
+  connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+}
+
+
+MeshSelectionModel::~MeshSelectionModel()
+{
+  disconnect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+          this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
+  disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+          this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+}
+
+
+
+SVTK_ViewWindow* MeshSelectionModel::_getVTKViewWindow()
+{
+  SVTK_ViewWindow* aVtkView = HEXABLOCKGUI::currentVtkView;
+  return aVtkView;
+}
+
+
+void MeshSelectionModel::_highlightPropagation( const QModelIndex& eltIndex )
+{
+  const MeshModel* m = dynamic_cast<const MeshModel *>( model() );
+  if ( m == NULL ) return;
+  SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+  if ( currentVTKViewWindow == NULL ) return;
+  SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
+  if ( selector == NULL ) return;
+
+  // document selection
+  Document_Actor* docActor = NULL;
+  Handle(SALOME_InteractiveObject) docIO;
+  SALOME_ListIO aList;
+
+  // element highlight
+  TColStd_MapOfInteger aMap;
+  QList<int>::const_iterator anIter;
+  int vtkElemsId;
+
+  // data from model
+  int     eltType;
+  QString docEntry;
+
+  QVariant treeVariant        = eltIndex.data( HEXA_TREE_ROLE );
+  QVariant docEntryVariant    = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
+
+  if ( !treeVariant.isValid() || !docEntryVariant.isValid() ){ 
+    INFOS("data from model not valid");
+    return;
+  }
+
+  eltType  = treeVariant.toInt();
+  docEntry = docEntryVariant.toString();
+
+  if ( eltType != PROPAGATION_TREE ){
+    INFOS("bad element type : not a propagation item" << eltType );
+    return;
+  }
+
+  // Select the document in Salome
+  docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
+  if ( docActor == NULL) return;
+
+//   // Set selection mode in VTK view
+  currentVTKViewWindow->SetSelectionMode(EdgeSelection); 
+  docIO = docActor->getIO();
+ 
+  // Highlight in vtk view the element from document 
+  QModelIndexList iEdges = m->getPropagation( eltIndex );
+
+  QString edgeEntry;
+  foreach( const QModelIndex& iEdge, iEdges ){
+    edgeEntry = iEdge.data( HEXA_ENTRY_ROLE ).toString();
+    vtkElemsId = docActor->vtkElemsId[ edgeEntry.toInt() ];
+    if ( vtkElemsId > 0 ) aMap.Add( vtkElemsId );
+  }
+
+  selector->AddOrRemoveIndex( docIO, aMap, false );
+  currentVTKViewWindow->highlight( docIO, true, true );
+}
+
+
+
+void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
+{
+  MESSAGE("MeshSelectionModel::onSelectionChanged");
+  try {
+    //     if ( _salomeSelectionMgr == NULL ) return;
+    //     _salomeSelectionMgr->clearSelected();
+    //   erasePreview(true);
+    QModelIndexList indexes = selected.indexes();
+    for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
+      MESSAGE( "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() );
+      _highlightPropagation( *i_index );
+    }
+
+    // CS_BP todo SALOMEGUI_Swig.cxx:370
+    //   indexes = deselected.indexes();
+    //   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index )
+    //     _unselectSalome( *i_index);
+  } catch ( ... ) {
+    MESSAGE("Unknown exception was cought !!!");
+  }
+
+}
 
 
 

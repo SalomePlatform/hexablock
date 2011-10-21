@@ -293,7 +293,7 @@ namespace HEXABLOCK
 // int   setLaw (Law* loi);
 // void  setWay (bool sens);
         bool setPropagation( const QModelIndex& iPropagation, const QModelIndex& iLaw, bool way );
-
+        QModelIndexList getPropagation( const QModelIndex& iPropagation ) const;
 
 // 
 // 9.1 Boite: éditer 
@@ -425,6 +425,9 @@ namespace HEXABLOCK
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
         virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
+
+
+        QModelIndexList getPropagation( const QModelIndex& iPropagation ) const;
     }; 
 
 

@@ -79,7 +79,7 @@
 
 #include <OCCViewer_ViewManager.h>
 
-
+#include <QtxPopupMgr.h>
 
 // #include <BasicGUI_PointDlg.h>
 
@@ -148,6 +148,7 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
   _treeViewDelegate(0),
   _patternDataSelectionModel(0),
   _patternBuilderSelectionModel(0),
+  _meshSelectionModel(0),
 //   _documentCnt(0),
   _isSaved( false ),
   _suitVM(0)//,
@@ -242,10 +243,6 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
   // add component to study
   if (createSComponent()) updateObjBrowser();
 
-
-//   SalomeApp_Study* activestudy = activeStudy();
-//   activestudy->addComponent( dataModel() );
- 
 }
 
 void HEXABLOCKGUI::viewManagers( QStringList& list ) const
@@ -417,6 +414,7 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
   if ( !viewWindow ) return;
 //   _selectFromTree = true;
   viewWindow->setFocus();
+  _currentGraphicView->update(); //CS_TEST
 //   _selectFromTree = false;
 
 //   if (getApp()->activeModule()->moduleName().compare("HEXABLOCK") != 0)
@@ -750,7 +748,9 @@ void HEXABLOCKGUI::createActions()
 //                                      tr("Test"),  tr("New test"),
 //                                      0, aParent, false, this, SLOT(test_association()) );
 
-
+  _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
+                                     tr("Test"),  tr("New test"),
+                                     0, aParent, false, this, SLOT(test()) );
 
   // Pattern Data creation
   _addVertex = createAction( _menuId++, tr("Create a vertex"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_VERTEX" ) ),
@@ -927,6 +927,7 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _addVector, aMenuId );
   createMenu( _addCylinder, aMenuId );
   createMenu( _addPipe, aMenuId );
+  createMenu( separator(), aMenuId);
   createMenu( _makeGrid,  aMenuId ); //Cartesian, Cylindrical, Spherical
   createMenu( _makeCylinder, aMenuId );
   createMenu( _makePipe,     aMenuId );
@@ -947,9 +948,7 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _performSymmetry,         aMenuId );
 
 // // Association
-//   aMenuId = createMenu( tr("Association"), -1, -1, 30 );
-//   createMenu( _newAct, aMenuId );
-//   createMenu( _importAct, aMenuId );
+  aMenuId = createMenu( tr("Association"), -1, -1, 30 );
   createMenu( _assocVertex, aMenuId );
   createMenu( _assocEdge,   aMenuId );
   createMenu( _assocQuad,   aMenuId );
@@ -996,6 +995,7 @@ void HEXABLOCKGUI::createTools()
   createTool( _addVector, aToolId );
   createTool( _addCylinder, aToolId );
   createTool( _addPipe, aToolId );
+  createTool( separator(), aToolId );
   createTool( _makeGrid,  aToolId );
   createTool( _makeCylinder, aToolId );
   createTool( _makePipe,     aToolId );
@@ -1039,7 +1039,7 @@ void HEXABLOCKGUI::initialMenus()
 {
   showDocumentMenus( true );
   showPatternMenus( false );
-//   showAssociationMenus( false );
+  showAssociationMenus( false );
   showGroupsMenus( false );
   showMeshMenus( false );
 }
@@ -1048,6 +1048,7 @@ void HEXABLOCKGUI::showAllMenus()
 {
   showDocumentMenus( true );
   showPatternMenus( true );
+  showAssociationMenus( true );
   showGroupsMenus( true );
   showMeshMenus( true );
 }
@@ -1122,14 +1123,6 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
   setMenuShown( _performSymmetry,  show );//true);
   setToolShown( _performSymmetry, show);
 
-  // Association Edition
-  setMenuShown( _assocVertex,  show );//true);
-  setToolShown( _assocVertex, show);
-  setMenuShown( _assocEdge,  show );//true);
-  setToolShown( _assocEdge, show);
-  setMenuShown( _assocQuad,  show );//true);
-  setToolShown( _assocQuad, show);
-
 }
 
 
@@ -1137,6 +1130,15 @@ void HEXABLOCKGUI::showAssociationMenus(bool show)
 {
   DEBTRACE("HEXABLOCKGUI::showAssociationMenus" << show);
   if ( show && !_currentModel ) return;
+
+  // Association Edition
+  setMenuShown( _assocVertex,  show );
+  setToolShown( _assocVertex, show);
+  setMenuShown( _assocEdge,  show );
+  setToolShown( _assocEdge, show);
+  setMenuShown( _assocQuad,  show );
+  setToolShown( _assocQuad, show);
+
 }
 
 void HEXABLOCKGUI::showGroupsMenus(bool show)
@@ -1202,18 +1204,24 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     // set selections for each view  
     if ( _patternDataSelectionModel )    delete _patternDataSelectionModel;
     if ( _patternBuilderSelectionModel ) delete _patternBuilderSelectionModel;
+    if ( _meshSelectionModel )           delete _meshSelectionModel;
     _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
     _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
+    _meshSelectionModel           = new MeshSelectionModel( _meshModel );
+
     _patternDataSelectionModel->setSalomeSelectionMgr( selectionMgr() );
+//     _meshSelectionModel->setSalomeSelectionMgr( selectionMgr() );
 //     _patternDataSelectionModel->setGeomEngine( _geomEngine );
   
     _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
+
     _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
-//       _patternDataTreeView->setSelectionMode( QAbstractItemView::MultiSelection );//CS_TEST
-//       _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection); //CS_TEST
     _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
     _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
     _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+
+    _meshTreeView->setSelectionModel( _meshSelectionModel );
 
 
     // delegate for edition
@@ -1399,6 +1407,13 @@ QModelIndex grid4 = _currentModel->makeRotation(grid2, orig, dirVr, 45);
 // print "...test make elements by transforming elements OK"
 }
 
+
+void HEXABLOCKGUI::test()
+{
+  DEBTRACE("HEXABLOCKGUI::test");
+  _currentGraphicView->update();
+
+}
 
 void HEXABLOCKGUI::test_association()
 {
@@ -1620,15 +1635,20 @@ void HEXABLOCKGUI::newDocument()
   // --- setting selection model
   if ( _patternDataSelectionModel )    delete _patternDataSelectionModel;
   if ( _patternBuilderSelectionModel ) delete _patternBuilderSelectionModel;
-  _patternDataSelectionModel    = new PatternDataSelectionModel(_patternDataModel); //_currentModel
+  if ( _meshSelectionModel )           delete _meshSelectionModel;
+
+  _patternDataSelectionModel    = new PatternDataSelectionModel(_patternDataModel); 
   _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
+  _meshSelectionModel           = new MeshSelectionModel(_meshModel);
+
   _patternDataSelectionModel->setSalomeSelectionMgr( selectionMgr() );
-//   _patternDataSelectionModel->setGeomEngine( _geomEngine );
+//   _meshSelectionModel->setSalomeSelectionMgr( selectionMgr() );
 
   _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
   _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
 //   _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection); QAbstractItemView::MultiSelection //CS_TEST
   _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
+  _meshTreeView->setSelectionModel(_meshSelectionModel);
 
   _treeViewDelegate->setDocumentModel( _currentModel );
   _treeViewDelegate->setPatternDataSelectionModel( _patternDataSelectionModel );
@@ -2370,3 +2390,15 @@ SMESH::SMESH_Gen_var SMESHGUI::GetSMESHGen()
 //          return QObject::eventFilter(obj, event);
 //     }
 // }
+
+// try {
+// //   throw SALOME_Exception(LOCALIZED("assocVertex"));
+//   } catch ( SALOME::SALOME_Exception& exc ){
+//       INFOS("Following exception was cought:\n\t"<<exc.details.text);
+//   } catch( const std::exception& exc){
+//       INFOS("Following exception was cought:\n\t"<<exc.what());
+//   } catch (Standard_Failure& exc) {
+//       MESSAGE("OCCT Exception in SMESH_Pattern: " << exc.GetMessageString());
+//   } catch(...){
+//       MESSAGE("Unknown exception was cought !!!");
+//   }

@@ -435,6 +435,7 @@ void DocumentModel::fillMesh()
 //     std::cout<<"getPropagation => "<< i << std::endl;
     pItem = new PropagationItem(p);
     pItem->setText(QString("Propagation%1").arg(i) );
+    pItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _propagationDirItem->appendRow(pItem);
   }
 
@@ -2467,6 +2468,31 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
 }
 
 
+QModelIndexList DocumentModel::getPropagation( const QModelIndex& iPropagation ) const
+{
+  QModelIndexList iEdges;
+
+  QModelIndexList iFound;
+  HEXA_NS::Propagation* propa = iPropagation.data(HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
+  if ( !propa ) return iEdges;
+
+  const HEXA_NS::Edges& edges = propa->getEdges();
+  for ( HEXA_NS::Edges::const_iterator anEdge = edges.begin();
+        anEdge != edges.end();
+        ++anEdge ){
+    iFound = match( index(0, 0),
+              HEXA_DATA_ROLE,
+              QVariant::fromValue( *anEdge ),
+              1,
+              Qt::MatchRecursive);
+    if ( !iFound.isEmpty() )
+      iEdges << iFound[0];
+  }
+
+  return iEdges;
+}
+
+
 HEXA_NS::Document* DocumentModel::documentImpl()
 {
   return _hexaDocument;
@@ -2916,4 +2942,14 @@ QStandardItem* MeshModel::itemFromIndex ( const QModelIndex & index ) const
     item = m->itemFromIndex( mapToSource(index) );
   }
   return item;
+}
+
+QModelIndexList MeshModel::getPropagation( const QModelIndex& iPropagation ) const
+{
+  QModelIndexList edges;
+  DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+  if ( m != NULL ){
+    edges = m->getPropagation( mapToSource(iPropagation) );
+  }
+  return edges;
 }

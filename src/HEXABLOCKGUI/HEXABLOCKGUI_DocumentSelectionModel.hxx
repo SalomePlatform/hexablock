@@ -27,17 +27,22 @@
 #include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
 
+// #include <SOCC_ViewModel.h>
+// #include <SOCC_ViewWindow.h>
+// #include <OCCViewer_ViewWindow.h>
+
 #include <GEOMBase_Helper.h>
 
 #include "klinkitemselectionmodel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 
 
+class OCCViewer_ViewWindow;
+
 namespace HEXABLOCK
 {
   namespace GUI
   {
-    class MyGEOMBase_Helper;
 
     class PatternBuilderSelectionModel: public KLinkItemSelectionModel
     {
@@ -49,7 +54,6 @@ namespace HEXABLOCK
         }
     };
 
-//     class DocumentSelectionModel : public QItemSelectionModel
     class PatternDataSelectionModel : public QItemSelectionModel,
                                       public GEOMBase_Helper
     {
@@ -57,7 +61,6 @@ namespace HEXABLOCK
 
       public:
         PatternDataSelectionModel( QAbstractItemModel * model );
-//         PatternDataSelectionModel( QAbstractItemModel * model, QObject * parent );
         virtual ~PatternDataSelectionModel();
 
         void setVertexSelection();
@@ -68,22 +71,20 @@ namespace HEXABLOCK
 
         //Salome
         void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
-//         static LightApp_SelectionMgr* selectionMgr();
-        void SetSelectionMode(Selection_Mode theMode);
-//         void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
+        void SetSelectionMode( Selection_Mode theMode );
 
       protected slots:
         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
         void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
         void salomeSelectionChanged(); // Salome to Qt
 
       private:
-        SVTK_ViewWindow* _getVTKViewWindow();
+        SVTK_ViewWindow*       _getVTKViewWindow();
+        OCCViewer_ViewWindow*  _getOCCViewWindow();
 
         QModelIndex _indexOf( const QString& anIOEntry, int role );
-
         void _setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow );
+        void _highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs );
         void _highlightGEOM( const QModelIndex & index );
         void _selectVTK( const QModelIndex & index );
 
@@ -98,19 +99,30 @@ namespace HEXABLOCK
         bool _theGeomSelectionChanged;
 
     };
+
+
+    class MeshSelectionModel : public QItemSelectionModel
+    {
+      Q_OBJECT
+
+      public:
+        MeshSelectionModel( QAbstractItemModel * model );
+        virtual ~MeshSelectionModel();
+
+      protected slots:
+//         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+      private:
+        SVTK_ViewWindow* _getVTKViewWindow();
+        void _highlightPropagation( const QModelIndex& eltIndex );
+
+    };
+
+
   }
 }
 
 #endif
 
 
-//       protected:
-//         virtual GEOM::GEOM_IOperations_ptr createOperation();
-//         virtual bool execute( ObjectList& );
-//         virtual void displayPreview ( const bool   display,
-// 				const bool   activate = false, 
-//                                 const bool   update = true,
-//                                 const bool   toRemoveFromEngine = true,
-//                                 const double lineWidth = -1, 
-//                                 const int    displayMode = -1,
-//                                 const int    color  = -1 );

@@ -63,6 +63,7 @@ namespace HEXABLOCK
     class MeshModel;
     class PatternDataSelectionModel;
     class PatternBuilderSelectionModel;
+    class MeshSelectionModel;
   }
 }
 
@@ -168,6 +169,7 @@ protected:
   static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
   void test_association();
+  void test();
 
   void newDocument();
   void importDocument( const QString &path = QString() );
@@ -314,6 +316,7 @@ private:
   //    SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL     SELECTION_MODEL
   HEXABLOCK::GUI::PatternDataSelectionModel    *_patternDataSelectionModel;   // 1..n   selection
   HEXABLOCK::GUI::PatternBuilderSelectionModel *_patternBuilderSelectionModel;// 1..n   selection
+  HEXABLOCK::GUI::MeshSelectionModel           *_meshSelectionModel;
 
   //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
   SUIT_ViewManager *_suitVM;
