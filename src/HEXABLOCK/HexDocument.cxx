@@ -766,8 +766,9 @@ int Document::removeLaw (Law* loi)
 void Document::majPropagation ()
 { 
    majReferences ();
-   if (purge_elements)
-       purge ();
+   update ();
+   // if (purge_elements)
+       // purge ();
 
    for (int nro=0 ; nro<nbr_propagations ; nro++)
        {

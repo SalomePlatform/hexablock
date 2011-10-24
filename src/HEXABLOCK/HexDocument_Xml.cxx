@@ -43,8 +43,6 @@
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
 
-#include <cstdlib>
-
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== get_coords
@@ -515,7 +513,7 @@ int Document::saveVtk (cpchar nomfic)
 // ====================================================== purge
 void Document::purge ()
 {
-   purge_elements = true;
+   purge_elements = false;
                        // ------------------- Raz marques
    markAll (NO_USED);
 
@@ -539,6 +537,7 @@ void Document::purge ()
        }
                        // ------------------- Sortie elements inutilises
 
+/* ****************************************************************
    EltBase* trash = doc_last_elt [EL_REMOVED];
 
    for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
@@ -564,6 +563,7 @@ void Document::purge ()
        }
 
    doc_last_elt [EL_REMOVED] = trash;
+   **************************************************************** */
    update ();
 }
 // ======================================================== majReferences

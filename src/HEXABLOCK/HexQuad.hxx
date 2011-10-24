@@ -84,6 +84,7 @@ public:
     virtual void dumpPlus ();
     virtual void saveXml (XmlWriter* xml);
     void setScalar (double valeur);
+    void setColor  (double valeur)          { setScalar (valeur) ; }
 
     void         replace (Quad* old);
     virtual void replaceEdge   (Edge*   old, Edge*   nouveau);

@@ -932,8 +932,9 @@ int test_lorraine()
    // doc->dump ();
    return HOK;
 }
-// ======================================================== test_disconnect
-int test_disconnect (int nbargs, cpchar tabargs[])
+// ======================================================== test_disconnect2
+// === Disconnect Edge seul
+int test_disconnect2 (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -942,9 +943,11 @@ int test_disconnect (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex*   orig2 = doc->addVertex (4,0,0);
+   Hex::Vertex*   orig2 = doc->addVertex (0,0,0);
    Hex::Vector*   dir   = doc->addVector (1,1,1);
    Hex::Elements* grid2 = doc->makeCartesian (orig2, dir, size_x,size_y,size_z);
+
+   doc->dump ();
 
    int nvtk = 0;
    doc->setLevel (1);
@@ -959,6 +962,7 @@ int test_disconnect (int nbargs, cpchar tabargs[])
 
    doc->saveVtk ("test_disco", nvtk);
 
+   doc->setLevel (4);
 
    Hex::Elements* disco_edges =  doc->disconnectEdge (hexa2, edge);
    HexDisplay (disco_edges->countVertex());
@@ -975,10 +979,95 @@ int test_disconnect (int nbargs, cpchar tabargs[])
        }
 
    doc->saveVtk ("test_disco", nvtk);
+   doc->setFile ("test_disco");
+   doc->dump ();
+   hexa2->dumpFull ();
+
+   doc->setLevel (4);
+   doc->saveFile ();
    return HOK;
 }
-// ======================================================== test_disconnect0
-int test_disconnect0 (int nbargs, cpchar tabargs[])
+// ======================================================== test_disconnect
+// ==== Disconnect Quad
+int test_disconnect1 (int nbargs, cpchar tabargs[])
+{
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 1;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
+   Hex::Vector*   dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, size_x,size_y,size_z);
+
+   int nvtk = 0;
+   doc->setLevel (1);
+   Hex::Matrix  matrice;
+   Hex::Vector* ecart  = doc->addVector (0.5,0.5,0);
+   matrice.defTranslation (ecart);
+
+   Hex::Hexa* hexa1 = grid1->getHexaIJK (1,1,0);
+   Hex::Quad* quad  = grid1->getQuadJK  (1,1,0);
+
+   quad->setScalar   (5);
+
+   doc->saveVtk ("test_disco", nvtk);
+   doc->disconnectQuad (hexa1, quad);
+   hexa1 ->transform (&matrice);
+   doc->saveVtk ("test_disco", nvtk);
+
+   // doc->dumpPropagation ();
+   // doc->dump  ();
+
+   doc->setFile  ("disco_all");
+   doc->saveFile ();
+   return HOK;
+}
+// ======================================================== test_disconnect
+// ==== disconnectVertex
+int test_disconnect (int nbargs, cpchar tabargs[])
+{
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 1;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
+
+   Hex::Vector*   dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, size_x,size_y,size_z);
+
+   int nvtk = 0;
+   doc->setLevel (1);
+   Hex::Matrix  matrice;
+   Hex::Vector* ecart  = doc->addVector (0.5,0.5,0);
+   matrice.defTranslation (ecart);
+
+   Hex::Hexa* hexa1 = grid1->getHexaIJK (1,1,0);
+   Hex::Vertex* vertex = grid1->getVertexIJK (1,1,1);
+
+   vertex->setScalar (5);
+
+   doc->saveVtk ("test_disco", nvtk);
+
+   doc->disconnectVertex (hexa1, vertex);
+   hexa1->transform (&matrice);
+   doc->saveVtk ("test_disco", nvtk);
+
+   // doc->dumpPropagation ();
+   // doc->dump  ();
+
+   doc->setFile  ("disco_all");
+   doc->saveFile ();
+   return HOK;
+}
+// ======================================================== test_disconnect
+// ==== Les 3 disconnect
+int test_disconnect_all (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -1030,6 +1119,8 @@ int test_disconnect0 (int nbargs, cpchar tabargs[])
    // doc->dumpPropagation ();
    // doc->dump  ();
 
+   doc->setFile  ("disco_all");
+   doc->saveFile ();
    return HOK;
 }
 // ======================================================== test_propagation

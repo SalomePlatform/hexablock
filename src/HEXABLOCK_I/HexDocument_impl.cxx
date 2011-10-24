@@ -1588,11 +1588,13 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
                        ->geomObjectToShape(geom_object);
 
   string strBrep = shape2string( shape );
-  std::cout << "setShape ---------> len(strBrep)"
+  std::cout << "setShape ---------> len(strBrep) = "
             << strBrep.size() << std::endl;
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
 
+  std::cout << " ............  Shape creee" << std::endl;
   _document_cpp->setShape (s);
+  std::cout << " ............  Shape associee" << std::endl;
 }
 // ===================================================== getShape
 GEOM::GEOM_Object_ptr Document_impl::getShape ()
@@ -1628,7 +1630,11 @@ char* Document_impl::getBrep () throw (SALOME::SALOME_Exception)
 
    HEXA_NS::Shape* shape = _document_cpp->getShape();
    if (shape != NULL)
-       brep = shape->getBrep().c_str();
+       {    
+       string b_rep = shape->getBrep();
+       brep = b_rep.c_str();
+       // brep = shape->getBrep().c_str();
+       }    
      
   if (brep == NULL)
       brep = "";

@@ -85,6 +85,7 @@ public:
     bool hasFreeEdges  ();
     void propager (Propagation* prop, int nro);
     void setScalar (double valeur);
+    void setColor  (double valeur)          { setScalar (valeur) ; }
 
     virtual void saveXml (XmlWriter* xml);
 

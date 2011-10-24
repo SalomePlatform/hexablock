@@ -43,9 +43,9 @@ int test_bielle (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   double R   = 40.0;
-   double l = 200.0;
-   double h = 40.0;
+   double R = 1;
+   double l = 1;
+   double h = 1;
 
     // Taille du grand cylindre
    double dr_grd = R;
@@ -56,46 +56,56 @@ int test_bielle (int nbargs, cpchar tabargs[])
    int na_grd = 4;
    int nl_grd = 1;
 
-   Hex::Vector* dx  = doc->addVector (l, 0, 0);
-   Hex::Vector* dxy = doc->addVector (l, l, 0);
-   Hex::Vector* dz  = doc->addVector (0, 0, l);
+   Hex::Vector* dx    = doc->addVector (1, 0, 0);
+   Hex::Vector* dz    = doc->addVector (0, 0, 1);
+   Hex::Vector* decal = doc->addVector (5, 5, 0);
 
-   Hex::Vertex* c_grd = doc->addVertex(0,   0, 0);
-   Hex::Vertex* c_pte = doc->addVertex(2*l, 0, 0);
-   Hex::Vector* dx_prime = doc->addVectorVertices( c_grd, c_pte );
+   Hex::Vertex* center = doc->addVertex (0, 0, 0);
 
     //=================================================
     // Creation de la grande grille cylindrique
     //=================================================
 
-   Hex::Elements* grille1 = doc->makeCylindrical (c_grd, dxy, dz, 
+   Hex::Elements* grille1 = doc->makeCylindrical (center, dx, dz, 
                  dr_grd, da_grd, dl_grd, nr_grd, na_grd, nl_grd, false);
 
+   doc->setFile ("bielle1");
+   doc->saveFile ();
+
    int nvtk = 0;
+   //  doc->saveVtk ("bielle", nvtk);
+
+   Hex::Elements* grille2 = doc->makeTranslation( grille1, decal );
+
+   doc->setFile ("bielle2");
+   doc->saveFile ();
    doc->saveVtk ("bielle", nvtk);
 
-   Hex::Elements* grille2 = doc->makeTranslation( grille1, dx_prime );
-   doc->saveVtk ("bielle", nvtk);
+   Hex::Quad* facea = grille1 ->getQuadJK (1,0,0);
+   Hex::Quad* faceb = grille2 ->getQuadJK (1,2,0);
 
-   Hex::Quad* facea = grille1 ->getQuadJK (1,3,0);
-   Hex::Quad* faceb = grille2 ->getQuadJK (1,1,0);
+   //  facea->setScalar (4);
+   //  faceb->setScalar (4);
 
    Hex::Vertex* va1 = facea->getVertex (0);
-   Hex::Vertex* va2 = facea->getVertex (1);
    Hex::Vertex* vb1 = faceb->getVertex (1);
-   Hex::Vertex* vb2 = faceb->getVertex (0);
 
-   va1->setScalar (4);
-   vb1->setScalar (4);
+   Hex::Vertex* va2 = facea->getVertex (3);
+   Hex::Vertex* vb2 = faceb->getVertex (2);
+
+   // va1->setScalar (4);
+   // vb1->setScalar (4);
    va2->setScalar (7);
    vb2->setScalar (7);
 
-   doc->saveVtk ("bielle", nvtk);
+   //  doc->saveVtk ("bielle", nvtk);
    Hex::Quads quad_list;
    quad_list.push_back (facea);
-   doc->joinQuads (quad_list, faceb, va1, vb1, va2, vb2, 1);
+   return HOK;
 
-   doc->saveVtk ("bielle", nvtk);
+   doc->joinQuads (quad_list, faceb, va1, vb1, va2, vb2, 3);
+
+   // doc->saveVtk ("bielle", nvtk);
    doc->setFile ("bielle");
    doc->saveFile ();
    return HOK;

@@ -51,6 +51,7 @@ public :
 
    void   setScalar (double val)             { v_scalar = val ; }
    double getScalar ()                       { return v_scalar ; }
+   void   setColor  (double valeur)          { setScalar (valeur) ; }
    void   getPoint (double point[]);
 
    void setCoord  (double x, double y, double z);
@@ -85,6 +86,7 @@ inline Vertex::Vertex (Vertex* other)
       v_x = other->v_x;
       v_y = other->v_y;
       v_z = other->v_z;
+      v_scalar = other->v_scalar;
       gc_ass = other->gc_ass;
       gc_x   = other->gc_x;
       gc_y   = other->gc_y;
@@ -94,6 +96,7 @@ inline Vertex::Vertex (Vertex* other)
       {
       v_x  = v_y  = v_z  = 0;
       gc_x = gc_y = gc_z = 0;
+      v_scalar = 0;
       gc_ass = false;
       }
 }

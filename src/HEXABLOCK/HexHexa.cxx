@@ -17,7 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
@@ -544,17 +545,23 @@ Elements* Hexa::disconnectQuad (Quad* quad)
           }
        }
 
+   replaceQuad (quad, new_quad);
    for (int nro=0 ; nro<QUAD4 ; nro++)
-       {
-       if (make_edge[nro])
-          replaceEdge (old_opp_edge [nro], new_opp_edge [nro]);
-
        if (make_quad[nro])
           replaceQuad (old_opp_quad [nro], new_opp_quad [nro]);
 
-       h_edge   [ind_edge[nro]] = new_quad->getEdge   (nro);
-       h_vertex [ind_node[nro]] = new_quad->getVertex (nro);
+   for (int nro=0 ; nro<QUAD4 ; nro++)
+       {
+       replaceEdge (h_edge[ind_edge[nro]], new_quad->getEdge (nro));
+       if (make_edge[nro])
+          replaceEdge (old_opp_edge [nro], new_opp_edge [nro]);
        }
+
+   for (int nro=0 ; nro<QUAD4 ; nro++)
+       {
+       replaceVertex (quad->getVertex(nro), new_node[nro]);
+       }
+
 
    h_quad [nface] = new_quad;
    if (debug())
@@ -587,8 +594,10 @@ Elements* Hexa::disconnectEdge (Edge* arete)
    if (nedge==NOTHING || namont==NOTHING || naval==NOTHING)
       return NULL;
 
-   Vertex*   new_amont = new Vertex (arete->getVertex(V_AMONT));
-   Vertex*   new_aval  = new Vertex (arete->getVertex(V_AVAL ));
+   Vertex*   old_amont = arete->getVertex (V_AMONT);
+   Vertex*   old_aval  = arete->getVertex (V_AVAL );
+   Vertex*   new_amont = new Vertex (old_amont);
+   Vertex*   new_aval  = new Vertex (old_aval);
    Edge*     new_edge  = new Edge   (new_amont, new_aval);
 
    h_vertex [namont]   = new_amont;
@@ -599,6 +608,13 @@ Elements* Hexa::disconnectEdge (Edge* arete)
    nouveaux->addVertex (new_amont);
    nouveaux->addVertex (new_aval);
    nouveaux->addEdge   (new_edge);
+
+   if (debug())
+      {
+      printf (" ... Avant disconnectEdge, arete=");
+      arete->printName ("\n");
+      dumpFull ();
+      }
 
                 // Trouver les 2 faces contigues a l'arete
                 // et verifier si la face est commune a 2 hexas
@@ -628,8 +644,11 @@ Elements* Hexa::disconnectEdge (Edge* arete)
              Quad* new_quad   = new Quad (new_edge, new_eleft, eoppos, 
                                           new_eright);
              replaceQuad (h_quad[nq], new_quad);
+             replaceEdge (arete,      new_edge);
              replaceEdge (eleft,      new_eleft);
              replaceEdge (eright,     new_eright);
+             replaceVertex (old_amont,  new_amont);
+             replaceVertex (old_aval,   new_aval);
 
              nouveaux->addEdge (new_eleft);
              nouveaux->addEdge (new_eright);
@@ -637,6 +656,12 @@ Elements* Hexa::disconnectEdge (Edge* arete)
              }
           }
        }
+
+   if (debug())
+      {
+      printf (" ... Apres disconnectEdge\n");
+      dumpFull ();
+      }
 
    return nouveaux;
 }
@@ -691,26 +716,28 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
        }
 
    Elements* nouveaux  = new Elements (el_root);
-   h_vertex [node] = new_node;
-   nouveaux->addVertex (new_node);
-
-   for (int nro=0 ; nro<HE_MAXI ; nro++) 
-       if (new_edge [nro] != NULL)
-          {
-          h_edge [nro] = new_edge [nro];
-          nouveaux->addEdge (new_edge[nro]);
-          }
 
    for (int nro=0 ; nro<HQ_MAXI ; nro++) 
        if (new_quad [nro] != NULL)
           {
-          h_quad [nro] = new_quad [nro];
+          replaceQuad (h_quad [nro], new_quad [nro]);
           nouveaux->addQuad (new_quad[nro]);
           }
 
+   for (int nro=0 ; nro<HE_MAXI ; nro++) 
+       if (new_edge [nro] != NULL)
+          {
+          replaceEdge (h_edge [nro], new_edge [nro]);
+          nouveaux->addEdge (new_edge[nro]);
+          }
+
+   replaceVertex (noeud, new_node);
+   nouveaux->addVertex (new_node);
+
+
    if (debug())
       {
-      printf (" ... Apres disconnectVertex");
+      printf (" ... Apres disconnectVertex\n");
       dumpFull ();
       }
 
@@ -745,6 +772,7 @@ void Hexa::replaceQuad (Quad* old, Quad* par)
               }
            }
        }
+                                            
 }
 // ======================================================== replaceEdge
 void Hexa::replaceEdge (Edge* old, Edge* par)
@@ -763,6 +791,11 @@ void Hexa::replaceEdge (Edge* old, Edge* par)
               par->printName ("\n");
               }
            }
+       }
+
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       {
+       h_quad[nro]->replaceEdge (old, par);
        }
 }
 // ======================================================== replaceVertex
@@ -783,10 +816,21 @@ void Hexa::replaceVertex (Vertex* old, Vertex* par)
               }
            }
        }
+
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       {
+       h_edge[nro]->replaceVertex (old, par);
+       }
+
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       {
+       h_quad[nro]->replaceVertex (old, par);
+       }
 }
 // ======================================================== removeConnected
 void Hexa::removeConnected ()
 {
+                                            
    if (el_type == EL_REMOVED)
       return;
 
@@ -796,6 +840,7 @@ void Hexa::removeConnected ()
        {
        Quad*  face = h_quad [nro];
        int nbhexas = face->getNbrParents ();
+                                            
        for (int nc=0 ; nc<nbhexas ; nc++)
            {
            Hexa* cell = face->getParent(nc);
@@ -838,6 +883,7 @@ void Hexa::dump ()
    printf (")\n");
 
    printf ("      = (");
+                                            
    for (int nro=0; nro<HE_MAXI ; nro++)
         {
         PrintName (h_edge[nro]);
@@ -907,6 +953,20 @@ void Hexa::dumpFull ()
            for (int nc=0; nc<V_TWO ; nc++)
                 h_edge[nro]->getVertex(nc)->printName ();
            printf (")\n");
+           }
+       }
+   printf ("\n");
+
+   for (int nro=0; nro<HV_MAXI ; nro++)
+       {
+       Vertex* pv = h_vertex[nro];
+       printf (" vertex(%s) = ", glob->namofHexaVertex(nro));
+       if (pv ==NULL)
+           printf (" NULL");
+       else
+           {
+           pv->printName (" = (");
+           printf ("%g, %g, %g)\n", pv->getX(), pv->getY(), pv->getZ());
            }
        }
    printf ("\n");

@@ -64,6 +64,7 @@ public:
     void setLaw (Law* law)    { e_law =  law ; } 
 
     void setScalar (double valeur);
+    void setColor  (double valeur)          { setScalar (valeur) ; }
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
     virtual void  clearAssociation  ()      { tab_assoc.clear() ; }

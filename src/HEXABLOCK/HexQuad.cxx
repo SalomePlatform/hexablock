@@ -346,7 +346,14 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
            }
        }
    //             TODO : traiter l'erreur
+   cout << " ... Probleme dans Quad::getOpposedEdge :" << endl;
+   PutName (start);
+   PutName (vaprim);
+   PutName (vbprim);
+   HexDisplay (na);
+   HexDisplay (nb);
    dumpPlus ();
+
    for (int ned = 0 ; ned < QUAD4 ; ned++)
        q_edge[ned]->dump();
 
