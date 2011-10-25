@@ -372,6 +372,8 @@ void Hexa::saveXml (XmlWriter* xml)
    xml->openMark     ("Hexa");
    xml->addAttribute ("id",    ident);
    xml->addAttribute ("quads", quads);
+   if (el_name!=ident) 
+       xml->addAttribute ("name", el_name);
    xml->closeMark ();
 }
 // ========================================================= findQuad 

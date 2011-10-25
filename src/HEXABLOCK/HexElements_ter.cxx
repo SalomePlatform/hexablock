@@ -29,9 +29,12 @@
 
 #include <cmath>
 
+BEGIN_NAMESPACE_HEXA
+
+void geom_create_circle (double* milieu, double rayon, Vector* normale, 
+                         double* vx, string& brep);
 // static bool db=false;
 
-BEGIN_NAMESPACE_HEXA
 
 // ======================================================== revolutionQuads
 int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
@@ -207,15 +210,6 @@ int Elements::getHexas (Hexas& liste)
           liste.push_back (cell);
        }
    return HOK;
-}
-// ====================================================== geom_create_circle 
-void geom_create_circle (double* milieu, double rayon, Vector* normale, 
-                         double* vx, string& brep)
-{
-   char buffer [80];
-   sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g", 
-                    milieu[0], milieu[1], milieu[2], rayon);
-   brep = buffer;
 }
 // ====================================================== assoCylinder 
 void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)

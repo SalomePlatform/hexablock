@@ -374,6 +374,8 @@ void Quad::saveXml (XmlWriter* xml)
    xml->openMark     ("Quad");
    xml->addAttribute ("id",    getName (buffer));
    xml->addAttribute ("edges", edges);
+   if (el_name!=buffer) 
+       xml->addAttribute ("name", el_name);
    xml->closeMark ();
 
    int nbass = tab_assoc.size();

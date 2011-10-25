@@ -123,6 +123,8 @@ void Edge::saveXml (XmlWriter* xml)
    xml->openMark     ("Edge");
    xml->addAttribute ("id",       getName (buffer));
    xml->addAttribute ("vertices", vertices);
+   if (el_name!=buffer) 
+       xml->addAttribute ("name", el_name);
    xml->closeMark ();
 
    int nbass = tab_assoc.size();

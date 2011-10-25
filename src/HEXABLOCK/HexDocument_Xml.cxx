@@ -62,6 +62,16 @@ int get_coords (const string& chaine, double& x, double& y)
    if (nv!=2) return HERR;
    return HOK;
 }
+// ======================================================== parseName
+int parseName (XmlTree* node, EltBase* elt)
+{
+   const  string& name = node->findValue ("name");
+   if (name=="")
+      return HERR;
+
+   elt->setName (name);
+   return HOK;
+}
 // ======================================================== get_names
 void get_names (const string& chaine, int size, vector<string>& table)
 {
@@ -93,7 +103,11 @@ void get_names (const string& chaine, int size, vector<string>& table)
 int Document::loadXml ()
 {
    XmlTree xml("");
-   int ier = xml.parseFile (doc_name + ".xml");
+   string filename = doc_name;
+   size_t ici = filename.find (".xml");
+   if (ici < 0 || ici > filename.size())
+      filename += ".xml"; 
+   int ier = xml.parseFile (filename);
    if (ier!=HOK) 
       return ier;
 
@@ -152,6 +166,7 @@ int Document::parseXml (XmlTree& xml)
        get_coords (coords, px, py, pz);
 
        Vertex*  vertex = addVertex (px, py, pz);
+       parseName (node, vertex);
        Shape*   shape  = NULL;
        if (brep != "" ) 
           {
@@ -176,6 +191,7 @@ int Document::parseXml (XmlTree& xml)
           get_names (vertices, V_TWO, tname);
           edge = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
           t_edge [nom] = edge;
+          parseName (node, edge);
           }
        else if (type=="Shape" && edge!=NULL)
           {
@@ -201,6 +217,7 @@ int Document::parseXml (XmlTree& xml)
           quad = new Quad (t_edge [tname[0]], t_edge [tname[1]],
                            t_edge [tname[2]], t_edge [tname[3]]);
           t_quad [nom] = quad;
+          parseName (node, quad);
           }
        else if (type=="Shape" && quad!=NULL)
           {
@@ -219,9 +236,11 @@ int Document::parseXml (XmlTree& xml)
        const  string& quads = node->findValue ("quads");
        get_names (quads, V_TWO, tname);
 
-       t_hexa [nom] = new Hexa (t_quad [tname[0]], t_quad [tname[1]],
+       Hexa* hexa =  new Hexa (t_quad [tname[0]], t_quad [tname[1]],
                                 t_quad [tname[2]], t_quad [tname[3]],
                                 t_quad [tname[4]], t_quad [tname[5]]);
+       t_hexa [nom] = hexa;
+       parseName (node, hexa);
        }
 
    rubrique = xml.findChild ("ListVectors");
@@ -237,6 +256,7 @@ int Document::parseXml (XmlTree& xml)
 
        Vector* vector = addVector (px, py, pz);
        t_vector [nom] = vector;
+       parseName (node, vector);
        }
 
    rubrique = xml.findChild ("ListDicretizationLaws");

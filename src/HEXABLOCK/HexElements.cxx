@@ -729,6 +729,18 @@ int Elements::transform (Matrix* matrice)
            cell->moveNodes (matrice);
        }
 
+   if (nbr_hexas!=0 )
+      return HOK;
+                    // -- Cas pathologique : il n'y avait pas d'hexas
+                    // -- On se rabat sur les sommets
+
+   for (int nro=0 ; nro<nbr_vertex ; nro++)
+       {
+       Vertex* node = tab_vertex[nro];
+       if (node!=NULL && node->isHere())
+           matrice->perform (node);
+       }
+
    return HOK;
 }
 // ====================================================== cutHexas

@@ -88,6 +88,8 @@ void Vector::saveXml (XmlWriter* xml)
    xml->openMark     ("Vector");
    xml->addAttribute ("id",    getName (buffer));
    xml->addAttribute ("coord", coord);
+   if (el_name!=buffer) 
+       xml->addAttribute ("name", el_name);
    xml->closeMark ();
 }
 

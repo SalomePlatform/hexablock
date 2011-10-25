@@ -525,6 +525,15 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
        }
    if (db) cout << " +++ End of Elements::cutAssociation" << endl;
 }
+// ====================================================== geom_create_circle 
+void geom_create_circle (double* milieu, double rayon, Vector* normale, 
+                         double* vx, string& brep)
+{
+   printf ("geom_create_circle c=(%g,%g,%g), r=%g", 
+                    milieu[0], milieu[1], milieu[2], rayon);
+   brep = "";
+}
+//
 END_NAMESPACE_HEXA
       
 // ------------------------------------------------------------------------
@@ -532,6 +541,17 @@ END_NAMESPACE_HEXA
 // ------------------------------------------------------------------------
 
 BEGIN_NAMESPACE_HEXA
+
+// ====================================================== geom_create_circle 
+void geom_create_circle (double* milieu, double rayon, Vector* normale, 
+                         double* vx, string& brep)
+{
+   char buffer [80];
+   sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g", 
+                    milieu[0], milieu[1], milieu[2], rayon);
+   brep = buffer;
+}
+//
 // ========================================================= cutAssociation
 void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 {

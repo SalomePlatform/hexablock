@@ -56,6 +56,8 @@ void Vertex::saveXml  (XmlWriter* xml)
    xml->openMark     ("Vertex");
    xml->addAttribute ("id",    getName (buffer));
    xml->addAttribute ("coord", coord);
+   if (el_name!=buffer) 
+       xml->addAttribute ("name", el_name);
    if (el_assoc!=NULL)
       xml->addAttribute ("shape", el_assoc->getBrep().c_str());
    xml->closeMark ();
