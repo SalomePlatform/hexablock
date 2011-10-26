@@ -65,7 +65,7 @@ inline double Vector::getCoord (int dir)
           {
           case dir_x : val = v_dx; 
                break;
-          case dir_y : val = v_dz; 
+          case dir_y : val = v_dy; 
                break;
           case dir_z : val = v_dz; 
                break;

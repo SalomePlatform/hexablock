@@ -1366,6 +1366,14 @@ int test_hemispheres (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa1
 int test_hexa1 (int nbargs, cpchar tabargs[])
 {
-   // return test_hemispheres (nbargs, tabargs);
-   return test_remove ();
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig  = doc->addVertex (0,0,0);
+   Hex::Vector* dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  2, 2, 2);
+
+   doc->saveVtk ("cartes.vtk");
+
+   
 }

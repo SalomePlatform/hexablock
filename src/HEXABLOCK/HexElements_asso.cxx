@@ -1,5 +1,5 @@
 //
-// CC++ : interface Cascade de la classe Elements
+// CC++ : Interface Cascade de la classe Elements
 //
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
@@ -61,8 +61,19 @@
 #include "HexShape.hxx"
 #include "HexDiagnostics.hxx"
 
-#include <list>
-#include <map>
+                                    // Cercles 
+                                    //
+#include <GEOMImpl_CircleDriver.hxx>
+#include <GEOMImpl_ICircle.hxx>
+
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRep_Tool.hxx>
+
+#include <GC_MakeCircle.hxx>
+#include <Geom_Circle.hxx>
+
+#include <Standard_ConstructionError.hxx>
+#include <gp_Circ.hxx>
 
 #ifdef WNT
 #include <process.h>
@@ -132,7 +143,6 @@ private :
    gp_Pnt             start_gpoint, end_gpoint;
    TopoDS_Edge        geom_line;
    BRepAdaptor_Curve* geom_curve;
-
 };
 // ---------------------------------------------------------------------
 class GeomPoint
@@ -149,6 +159,8 @@ public :
    int  definePoint (Vertex* node);
    void definePoint (Real3   coord);
    void definePoint (gp_Pnt& gpoint);
+
+   TopoDS_Vertex& getVertex ()              { return g_vertex;  }
 
 private :
    string b_rep; 
@@ -171,7 +183,7 @@ void GeomPoint::razPoint ()
    b_rep = "";
    for (int nc=0; nc <DIM3 ; nc++) g_coord [nc] = 0;
 }
-// ======================================================= definePoint (shape)
+// ======================================================= definePoint (vertex)
 int GeomPoint::definePoint (Vertex* node)
 {
    razPoint ();
@@ -216,14 +228,14 @@ void GeomPoint::definePoint (gp_Pnt& gpoint)
    is_ok   = true;
    g_point = gpoint;
 
-   ostringstream   streamShape;
+   ostringstream   stream_shape;
 
    BRepBuilderAPI_MakeVertex mkVertex (g_point);
    TopoDS_Shape              aShape = mkVertex.Shape();
-   BRepTools::Write(aShape, streamShape);
+   BRepTools::Write(aShape, stream_shape);
 
    g_vertex = TopoDS::Vertex( aShape );
-   b_rep    = streamShape.str();
+   b_rep    = stream_shape.str();
 
    g_coord [dir_x] = g_point.X();
    g_coord [dir_y] = g_point.Y();
@@ -342,32 +354,31 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2)
    double dp   = bloc_shape->fin - orig;
    shape->setBounds (orig + dp*para1, orig + dp*para2);
    edge ->addAssociation (shape);
-   if (db) printf (" ... Asso ligne : [%g, %g]\n", orig + dp*para1, 
-                                               orig + dp*para2);
-
 
                                // ---------------Association du vertex 
    if (sm2 < start_absc || sm2 > end_absc+HEXA_EPSILON)
       return;
-   Vertex* node = edge->getVertex (V_AVAL);
-   if (node->getAssociation()!=NULL)
-      return;
+
+   double alpha = geom_total_length*shape->debut;
+   for (int nx=V_AMONT ; nx<=V_AVAL ; nx++)
+       {
+       Vertex* node = edge->getVertex (nx);
+       if (node->getAssociation()==NULL)
+          {
                                           // .....  Coordonnees du point
-   double alpha = geom_total_length*shape->fin;
 
-   GCPnts_AbscissaPoint s1 (*geom_curve, alpha, geom_curve->FirstParameter());
-   double u1       = s1.Parameter ();
-
-   HexDisplay (alpha);
-   HexDisplay (shape->debut);
-   HexDisplay (shape->fin);
-   HexDisplay (u1);
-   gp_Pnt pnt_asso = geom_curve->Value (u1);
+          GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+                                    geom_curve->FirstParameter());
+          double u1       = s1.Parameter ();
+          gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-   GeomPoint gpoint;
-   gpoint.definePoint (pnt_asso);
-   gpoint.associate (node);
+          GeomPoint gpoint;
+          gpoint.definePoint (pnt_asso);
+          gpoint.associate (node);
+          }
+      alpha = geom_total_length*shape->fin; // Pour le point suivant
+      }
 }
 // ========================================================= majCoord
 void GeomLine::majCoord ()
@@ -431,6 +442,7 @@ int GeomLine::findBound (Real3 coord)
 // ========================================================= cutAssociation
 void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 {
+   char foo[18];
    int nbedges  = tedges.size();
    int nbshapes = tshapes.size ();
    int nbvertex = nbshapes + 1;
@@ -446,7 +458,7 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
    pnt_first.definePoint (prems);
    pnt_last .definePoint (derns);
 
-   char foo[18];
+/* ************************************
    if (pnt_first.isBad())
       {
       el_root->putError (W_ASSO_CUT1, prems->getName (foo));
@@ -457,6 +469,7 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
       el_root->putError (W_ASSO_CUT2, derns->getName (foo));
       return;
       }
+   ************************************ */
                             // ----------- Define + longueur totale 
    double  longueur = 0;
    for (int ns = 0 ; ns<nbshapes ; ns++)
@@ -467,34 +480,43 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 
                             // ----------- Ordonnancement des shapes
    double  abscisse = 0;
-   int     nslast   = 0;
-   double* coord    = pnt_first.getCoord ();
+   if (nbshapes==1)
+      {
+      tab_gline [0].setRank (0, 0, abscisse);
+      }
+   else
+      {
+      int     nslast   = 0;
+      double* coord    = pnt_first.getCoord ();
 
-   for (int rg = 0 ; rg<nbshapes ; rg++)
-       {
-       bool more = true;
-       for (int ns = 0 ; ns<nbshapes && more ; ns++)
-           {
-           if (tab_gline[ns].getRank()==NOTHING)
+      for (int rg = 0 ; rg<nbshapes ; rg++)
+          {
+          bool more = true;
+          for (int ns = 0 ; ns<nbshapes && more ; ns++)
               {
-              int pos = tab_gline[ns].findBound (coord);
-              if (pos!=NOTHING)
+              if (tab_gline[ns].getRank()==NOTHING)
                  {
-                 more   = false;
-                 nslast = ns;
-                 tab_gline [ns].setRank (rg, pos, abscisse);
-                 coord = tab_gline [ns].getEnd ();
+                 int pos = tab_gline[ns].findBound (coord);
+                 if (pos!=NOTHING)
+                    {
+                    more   = false;
+                    nslast = ns;
+                    tab_gline [ns].setRank (rg, pos, abscisse);
+                    coord = tab_gline [ns].getEnd ();
+                    }
                  }
               }
-           }
-                       // Pas trouve 
-       if (more)
-          {
-          el_root->putError (W_ASSO_CUT3, derns->getName (foo));
-          return;
+                          // Pas trouve 
+          if (more)
+             {
+             el_root->putError (W_ASSO_CUT3, derns->getName (foo));
+             return;
+             }
           }
-       }
+      }
                             // ----------- Dernier
+                            //
+/* ************************************ 
    coord = pnt_last.getCoord ();
    int pos = tab_gline[nslast].findBound (coord);
    if (pos != V_AVAL)
@@ -502,11 +524,8 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
       el_root->putError (W_ASSO_CUT4, derns->getName (foo));
       return;
       }
+   ************************************ */
                             // ----------- Associations
-
-   HexDisplay (nbedges);
-   HexDisplay (nbshapes);
-   HexDisplay (longueur);
    abscisse     = 0;
    double delta = longueur / nbedges;
    for (int ned = 0 ; ned<nbedges ; ned++)
@@ -529,9 +548,43 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 void geom_create_circle (double* milieu, double rayon, Vector* normale, 
                          double* vx, string& brep)
 {
-   printf ("geom_create_circle c=(%g,%g,%g), r=%g", 
+   if (db) printf ("geom_create_circle c=(%g,%g,%g), r=%g\n", 
                     milieu[0], milieu[1], milieu[2], rayon);
-   brep = "";
+   if (db) printf (" -------- vx=(%g,%g,%g)\n", vx[0], vx[1], vx[2]);
+
+   gp_Pnt gp_center (milieu [dir_x], milieu [dir_y], milieu [dir_z]);
+   gp_Vec gp_vx     (vx     [dir_x], vx     [dir_y], vx     [dir_z]);
+   gp_Vec gp_norm   (normale->getDx(), normale->getDy(), normale->getDz());
+
+   gp_Ax2  gp_axes (gp_center, gp_norm, gp_vx);
+   gp_Circ gp_circ (gp_axes,   rayon);
+
+   TopoDS_Edge    geom_circ = BRepBuilderAPI_MakeEdge(gp_circ).Edge();
+   ostringstream  stream_shape;
+   BRepTools::Write(geom_circ, stream_shape);
+
+   brep = stream_shape.str();
+
+   if (NOT db)
+      return;
+                             // Impressions de mise au point
+   double umin = 0, umax = 0;
+   TopLoc_Location    loc;
+   Handle(Geom_Curve) handle = BRep_Tool::Curve (geom_circ, loc, umin, umax);
+   GeomAdaptor_Curve  AdaptCurve (handle);
+   double length = GCPnts_AbscissaPoint::Length(AdaptCurve, umin, umax);
+
+   BRepAdaptor_Curve geom_curve (geom_circ);
+
+   for (int pk=0; pk<=4; pk++)
+       {
+       GCPnts_AbscissaPoint s1 (geom_curve, pk*length/4,
+                                geom_curve.FirstParameter());
+       double u1    = s1.Parameter ();
+       gp_Pnt point = geom_curve.Value (u1);
+       printf ( " ........ pnt%d = (%g, %g, %g)\n", pk, point.X(),
+                                            point.Y(),  point.Z());
+       }
 }
 //
 END_NAMESPACE_HEXA

@@ -108,7 +108,7 @@ inline double Vertex::getCoord (int dir)
           {
           case dir_x : val = v_x; 
                break;
-          case dir_y : val = v_z; 
+          case dir_y : val = v_y; 
                break;
           case dir_z : val = v_z; 
                break;

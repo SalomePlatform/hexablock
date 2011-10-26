@@ -29,12 +29,12 @@
 
 #include <cmath>
 
+
 BEGIN_NAMESPACE_HEXA
 
 void geom_create_circle (double* milieu, double rayon, Vector* normale, 
                          double* vx, string& brep);
-// static bool db=false;
-
+static bool db=false;
 
 // ======================================================== revolutionQuads
 int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
@@ -214,8 +214,14 @@ int Elements::getHexas (Hexas& liste)
 // ====================================================== assoCylinder 
 void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)
 {
-   return;           // Abu : Provisoire avant realisation 
-   double dparam = (angle/360) / size_hy;
+   //  return;           // Abu : Provisoire avant realisation 
+   double paramax = angle/360;
+   string brep;
+   Shape* shape = new Shape (brep);
+   Shapes t_shape;
+   Edges  contour;
+   t_shape.push_back (shape);
+
    Vector* vk = new Vector (vz);
    vk->renormer ();
 
@@ -234,29 +240,21 @@ void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)
            Real3  ph, hm;
            for (int dd=dir_x; dd<=dir_z ; dd++)
                {
-               ph [dd] = ori->getCoord(dd) + oh*vk->getCoord(dd), 
+               ph [dd] = ori->getCoord(dd) + oh*vk->getCoord(dd); 
                hm [dd] = pm ->getCoord(dd) - ph[dd];
                rayon += hm[dd]*hm[dd];
                }
 
            rayon = sqrt (rayon);
-           string brep;
            geom_create_circle (ph, rayon, vz, hm, brep);
-           double param2 = 0;
-           printf (" nz=%d, nx=%d, rayon=%g", nz, nx, rayon);
-           printf (", centre=(%g,%g,%g)", ph[0],  ph[1],  ph[2]);
-           printf (", hm=(%g,%g,%g) \n", hm[0],  hm[1],  hm[2]);
+           shape->setBrep   (brep);
+           shape->setBounds (0, paramax);
 
+           contour.clear();
            for (int ny=0 ; ny<size_hy ; ny++)
-               {
-               double   param1 = param2;
-               param2 = param1 + dparam;
-               Edge*  edge  = getEdgeJ  (nx, ny, nz);
-               Shape* shape = new Shape (brep);
-               shape->setBounds (param1, param2);
-               edge ->addAssociation (shape);
-               printf (" .....       ny=%d, param2=%g\n", ny, param2);
-               }
+               contour.push_back (getEdgeJ  (nx, ny, nz));
+
+           cutAssociation (t_shape, contour);
            }
        }
 }
