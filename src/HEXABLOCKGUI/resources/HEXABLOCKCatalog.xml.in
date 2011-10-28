@@ -36,9 +36,9 @@
                 <component-name>HEXABLOCK</component-name>
 		<component-username>HEXABLOCK TUI</component-username>
                 <component-type>Data</component-type>
-                <component-author>P. RASCLE</component-author>
+                <component-author>CS</component-author>
                 <component-version>@VERSION@</component-version>
-                <component-comment>EDF - RD</component-comment>
+                <component-comment>CEA - RD</component-comment>
                 <component-multistudy>1</component-multistudy>
                 <component-icone>ModuleHexablock.png</component-icone>
                 <constraint>'linux' ~ OS</constraint>

@@ -22,12 +22,17 @@
 <document>
   <section name="HEXABLOCK">
     <!-- Major module parameters -->
-    <parameter name="name" value="HexaBlock"/>
-    <parameter name="icon" value="ModuleHexablock.png"/>
-    <parameter name="version" value="@VERSION@"/>	
+    <parameter name="name"          value="HexaBlock"/>
+    <parameter name="icon"          value="ModuleHexablock.png"/>
+    <parameter name="version"       value="@VERSION@"/>	
+    <parameter name="documentation" value="hexablock_help"/>
+  </section>
+  <section name="hexablock_help" >
+    <parameter name="sub_menu"          value="%1 module"/>
+    <parameter name="User's Guide"      value="${HEXABLOCK_ROOT_DIR}/share/doc/salome/gui/HEXABLOCK/index.html"/>
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="HEXABLOCK" value="%HEXABLOCK_ROOT_DIR%/share/salome/resources/hexablock"/>
+    <parameter name="HEXABLOCK" value="${HEXABLOCK_ROOT_DIR}/share/salome/resources/hexablock"/>
   </section>
 </document>

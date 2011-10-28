@@ -155,6 +155,7 @@ BUILT_SOURCES = $(UIC_FILES)
 # resources files
 ICONS =  \
 	resources/LightApp.xml \
+	resources/SalomeApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
 	resources/new_document.png \
@@ -198,6 +199,6 @@ QMFILES = \
 	HEXABLOCK_msg_fr.qm \
 	HEXABLOCK_icons.qm
 
-dist_salomeres_DATA = ${ICONS} 
+dist_salomeres_DATA = ${ICONS}
 
-nodist_salomeres_DATA = $(QMFILES) resources/SalomeApp.xml
+nodist_salomeres_DATA = $(QMFILES)
