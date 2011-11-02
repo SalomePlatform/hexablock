@@ -157,7 +157,7 @@ void DocumentDelegate::setEditorData( QWidget *editor,
               HEXA_NS::Vertex *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
               VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
               vertexEditor->setValue(value);
-              vertexEditor->setIndex(index);
+//               vertexEditor->setIndex(index);
 //               vertexEditor->exec();
         }
         break;

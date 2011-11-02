@@ -98,22 +98,20 @@ void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ok;
   TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_1D );
-  string strBrep = shape2string( aShape );
+  string      strBrep = shape2string( aShape );
+  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_1D );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-//   std::cout<< "geom_object_1D->GetStudyEntry() " << geom_object_1D->GetStudyEntry()<<std::endl;
-//   std::cout<< "geom_object_1D->GetEntry() " << geom_object_1D->GetEntry()<<std::endl;
+  s->ior   = anIOR.in(); //geom_object_1D->GetStudyEntry(); GetEntry()
   s->ident = geom_object_1D->GetStudyEntry();
   s->debut = debut;
   s->fin   = fin;
+  ok       = _edge_cpp->addAssociation( s );
 
-  ok = _edge_cpp->addAssociation( s );
-
-
-  /// Edge_impl::Assoc assoc;
-  /// assoc.geomObj = GEOM::GEOM_Object::_duplicate( geom_object_1D );
-  /// assoc.debut   = debut;
-  /// assoc.fin     = fin;
-  /// _associations.push_back(assoc);
+//   Edge_impl::Assoc assoc;
+//   assoc.geomObj = GEOM::GEOM_Object::_duplicate( geom_object_1D );
+//   assoc.debut   = debut;
+//   assoc.fin     = fin;
+//   _associations.push_back(assoc);
 
   return ok;
 }
@@ -161,24 +159,31 @@ EdgeAssociations* Edge_impl::getAssociations ()
   result->length( shapes.size() );
   HEXABLOCK_ORB::EdgeAssociation assoc;
   CORBA::ULong i = 0;
+  CORBA::Object_var corbaObj;
+  GEOM::GEOM_Object_var geomObj;
+
   for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
 	iter != shapes.end();
         ++iter ){
-      aShape = string2shape( (*iter)->getBrep());
 //       ge = GEOM::GEOM_Object::_duplicate(HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape )); 
 //       ge = HEXABLOCK_ORB::GEOM_Edge::_duplicate(HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape ));
 //       ge = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
 //       ge->debut( (*iter)->debut );
 //       ge->fin( (*iter)->fin );
-
 //       assoc.geomObj = GEOM::GEOM_Object::_duplicate( (*iter).geomObj );
-      std::cout <<"AAAAAA"<<std::endl;
-      assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
-      assoc.debut = (*iter)->debut;
-      assoc.fin   = (*iter)->fin;
-      (*result)[ i++ ] = assoc;
+//       aShape = string2shape( (*iter)->getBrep());
+//       assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
+      if ( !(*iter)->ior.empty() ){
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
+        if ( !CORBA::is_nil( corbaObj ) ){
+          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+          assoc.geomObj = geomObj._retn();
+          assoc.debut   = (*iter)->debut;
+          assoc.fin     = (*iter)->fin;
+          (*result)[ i++ ] = assoc;
+        }
+      }
   }
-
   return result;
 }
 

@@ -101,6 +101,9 @@ namespace HEXABLOCK
         void allowLawSelectionOnly();
 
 
+        void setName( const QModelIndex& iElt, const QString& name );
+        bool clearEltAssociations( const QModelIndex& iElt );
+
         //  ************  BUILD HEXABLOCK MODEL ************
         QModelIndex addVertex( double x, double y, double z );
 

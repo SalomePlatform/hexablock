@@ -75,10 +75,10 @@ void Vertex_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex)
 //   HEXABLOCK::HEXABLOCK* gen = HEXABLOCK::GetHEXABLOCKGen();
 //   TopoDS_Shape shape = gen->geomObjectToShape(geom_object_vertex);
   string strBrep = shape2string( shape );
+  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_vertex );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-//   std::cout<< "geom_object_vertex->GetStudyEntry() " << geom_object_vertex->GetStudyEntry()<<std::endl;
-//   std::cout<< "geom_object_vertex->GetEntry() " << geom_object_vertex->GetEntry()<<std::endl;
-  s->ident = geom_object_vertex->GetStudyEntry();
+  s->ior   = anIOR.in(); 
+  s->ident = geom_object_vertex->GetStudyEntry(); //geom_object_vertex->GetEntry()
   _vertex_cpp->setAssociation(s);
 
 //   _association = GEOM::GEOM_Object::_duplicate( geom_object_vertex );
@@ -92,15 +92,18 @@ GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
 //   GEOM::GEOM_Object_ptr result = GEOM::GEOM_Object::_nil();
 
   GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
+  CORBA::Object_var corbaObj;
 
   HEXA_NS::Shape* s = _vertex_cpp->getAssociation();
-
-  std::cout << "getAssociation ->" << s << std::endl;
-
+//   std::cout << "getAssociation ->" << s << std::endl;
   if (s != NULL){
-    string strBrep = s->getBrep();
-    TopoDS_Shape shape = string2shape( strBrep );
-    result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
+//     string strBrep = s->getBrep();
+//     TopoDS_Shape shape = string2shape( strBrep );
+//     result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
+    corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
+    if ( !CORBA::is_nil( corbaObj ) ){
+        result = GEOM::GEOM_Object::_narrow( corbaObj );
+    }
   }
 
 // //   _vertex_cpp->getAssociation()->_topo;

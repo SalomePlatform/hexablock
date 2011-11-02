@@ -44,6 +44,7 @@ public :
     double debut;
     double fin;
     string ident;
+    string ior;
 
 private :
     std::string b_rep;

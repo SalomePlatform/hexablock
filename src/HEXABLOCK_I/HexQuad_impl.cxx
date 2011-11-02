@@ -72,19 +72,19 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
   throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ok;
-  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_2D );
 
-  string strBrep = shape2string( aShape );
+  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_2D );
+  string      strBrep = shape2string( aShape );
+
+  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_2D );
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-//   std::cout<< "geom_object_2D->GetStudyEntry() " << geom_object_2D->GetStudyEntry()<<std::endl;
-//   std::cout<< "geom_object_2D->GetEntry() " << geom_object_2D->GetEntry()<<std::endl;
-  s->ident = geom_object_2D->GetStudyEntry();
+  s->ior     = anIOR.in();
+  s->ident   = geom_object_2D->GetStudyEntry();
+
   ok = _quad_cpp->addAssociation( s );
 //   _associations.push_back(GEOM::GEOM_Object::_duplicate( geom_object_2D ));
-
   return ok;
 }
-
 
 void Quad_impl::clearAssociation()
       throw (SALOME::SALOME_Exception)
@@ -116,13 +116,22 @@ GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
   GEOM::ListOfGO* result = new GEOM::ListOfGO;
   result->length( shapes.size() );
 
+  CORBA::Object_var     corbaObj;
+  GEOM::GEOM_Object_var geomObj;
   HEXABLOCK_ORB::EdgeAssociation assoc;
   CORBA::ULong i = 0;
   for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
 	iter != shapes.end();
         ++iter ){
-      aShape = string2shape( (*iter)->getBrep());
-      (*result)[ i++ ] = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
+//     aShape = string2shape( (*iter)->getBrep() );
+//     (*result)[ i++ ] = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
+      if ( !(*iter)->ior.empty() ){
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
+        if ( !CORBA::is_nil( corbaObj ) ){
+          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+          (*result)[ i++ ] = geomObj;
+        }
+      }
   }
 
   return result;

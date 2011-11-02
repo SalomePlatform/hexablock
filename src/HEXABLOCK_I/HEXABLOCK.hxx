@@ -203,6 +203,7 @@ private:
 
 
   GEOM::GEOM_Object_ptr _makeVertex( const TopoDS_Shape& theShape );
+  GEOM::GEOM_Object_ptr _makeEdge( const TopoDS_Shape& theShape );
 
   map<int, StudyContext*>   myStudyContextMap;  // Map of study context objects
   SALOMEDS::Study_var       myCurrentStudy;     // Current study

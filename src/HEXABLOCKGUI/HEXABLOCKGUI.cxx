@@ -594,6 +594,25 @@ void HEXABLOCKGUI::studyActivated() //CS_TODO
 }
 
 
+
+
+void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
+{
+  QModelIndex currentIndex = _patternDataTreeView->currentIndex();
+
+  QVariant currentAssocVariant = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE );
+  if ( !currentAssocVariant.isValid() ) return;
+
+  QString currentAssocEntry    = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE ).toString();
+  if ( currentAssocEntry.isEmpty() ) return;
+
+//   _currentModel->allowEdition();
+  QMenu menu( _patternDataTreeView );
+  QAction *clearAct = menu.addAction( "Remove association(s)" );
+  connect( clearAct, SIGNAL(triggered()), this, SLOT(clearAssociations()) );
+  menu.exec( _patternDataTreeView->mapToGlobal( aPosition) );
+}
+
 void HEXABLOCKGUI::createAndFillDockWidget() 
 {
   QMainWindow *aParent = application()->desktop();
@@ -627,9 +646,10 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   patternLayout->addWidget(_patternBuilderTreeView );
 //   _patternDataTreeView->setMinimumHeight(DW_MINIMUM_WIDTH); 
 
-  _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+  _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers/*QAbstractItemView::DoubleClicked*/);
   _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection);//QAbstractItemView::DoubleClicked, QAbstractItemView::SelectedClicked)
   _patternDataTreeView->setItemDelegate(_treeViewDelegate);
+
 
   _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
   _patternBuilderTreeView->setItemDelegate(_treeViewDelegate);
@@ -718,6 +738,18 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 // //   connect( _dwAssociation, SIGNAL( visibilityChanged(bool) ), this, SLOT( showAssociationMenus(bool) ) );
 //   connect( _dwGroups, SIGNAL( visibilityChanged(bool) ),      this, SLOT( showGroupsMenus(bool) ) );
 //   connect( _dwMesh, SIGNAL( visibilityChanged(bool) ),        this, SLOT( showMeshMenus(bool) ) );
+
+
+
+  // popup menu on data tree view
+ _patternDataTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(_patternDataTreeView,
+          SIGNAL(customContextMenuRequested(const QPoint &)),
+          this,
+          SLOT(treeContextMenu(const QPoint &)));
+
+
+
 
 }
 
@@ -1216,7 +1248,9 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
 
     _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
-    _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _patternDataTreeView->setEditTriggers(QAbstractItemView::EditKeyPressed/*QAbstractItemView::AllEditTriggers*/);
+//     _patternDataTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
 
     _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
     _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
@@ -1350,12 +1384,12 @@ void HEXABLOCKGUI::testDocument()
 
 void HEXABLOCKGUI::test_make_cart_grid()
 {
-QModelIndex orig1 = _currentModel->addVertex(0, 0, 0);
-QModelIndex orig2 = _currentModel->addVertex(10, 0, 0);
-QModelIndex orig3 = _currentModel->addVertex(0, 10, 0);
-QModelIndex orig4 = _currentModel->addVertex(10, 10, 0);
-QModelIndex orig5 = _currentModel->addVertex(0, 20, 0);
-QModelIndex orig6 = _currentModel->addVertex(10, 20, 0);
+QModelIndex orig1 = _currentModel->addVertex( 0, 0, 0);
+QModelIndex orig2 = _currentModel->addVertex( 10, 0, 0);
+QModelIndex orig3 = _currentModel->addVertex( 0, 10, 0);
+QModelIndex orig4 = _currentModel->addVertex( 10, 10, 0);
+QModelIndex orig5 = _currentModel->addVertex( 0, 20, 0);
+QModelIndex orig6 = _currentModel->addVertex( 10, 20, 0);
 
 QModelIndex vz = _currentModel->addVector(0, 0, 1);
 QModelIndex vx = _currentModel->addVector(1, 0, 0);
@@ -2203,6 +2237,19 @@ void HEXABLOCKGUI::computeMesh() {
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle( tr("Compute Mesh") );
 }
+
+
+void HEXABLOCKGUI::clearAssociations()
+{
+//   QMessageBox::warning( 0, "windowTitle()", "clearAssociations" );
+  QModelIndex iDataModel = _patternDataTreeView->currentIndex();
+  QModelIndex iModel     = _patternDataModel->mapToSource(iDataModel);
+
+  _currentModel->clearEltAssociations(iModel);
+
+  SUIT_MessageBox::information( 0, tr( "HEXA_INFO" ), tr( "ASSOCIATION CLEARED" ) );
+}
+
 
 LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
 {

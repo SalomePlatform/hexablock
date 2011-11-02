@@ -168,6 +168,9 @@ protected:
 //   static SMESH::SMESH_Gen_var             _smeshEngine;
   static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
+
+  void treeContextMenu(const QPoint& aPosition);
+
   void test_association();
   void test();
 
@@ -215,6 +218,8 @@ private slots:
   void removeLaw();
   void setPropagation();
   void computeMesh();
+
+  void clearAssociations();
 
 private:
 

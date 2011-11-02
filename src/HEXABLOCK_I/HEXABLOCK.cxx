@@ -350,35 +350,35 @@ TopoDS_Shape HEXABLOCK_Gen_i::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObj
 //   return result._retn();
 // }
 
-// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeEdge( const TopoDS_Shape& theShape )
-// {
-//   ASSERT ( theShape.ShapeType() == TopAbs_EDGE );
-//   int theStudyID = 0;
-//   GEOM::GEOM_Object_var result;
-//   GEOM::GEOM_Object_var p1;
-//   GEOM::GEOM_Object_var p2;
-// 
-//   GEOM::GEOM_IBasicOperations_var     aBasicOp  = _geomGen->GetIBasicOperations(theStudyID);
-//   GEOM::GEOM_IShapesOperations_var    aShapesOp = _geomGen->GetIShapesOperations(theStudyID);
-// 
-//   TopoDS_Edge anEdge = TopoDS::Edge( theShape );
-//   double f, l;
-//   Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, f, l);
-// 
-//   gp_Pnt aCurveStart = aCurve->Value( f );
-//   gp_Pnt aCurveEnd   = aCurve->Value( l );
-// 
-//   double x1, y1, z1;
-//   double x2, y2, z2;
-// 
-//   x1 = aCurveStart.X(); y1 = aCurveStart.Y(); z1 = aCurveStart.Z();
-//   x2 = aCurveEnd.X();   y2 = aCurveEnd.Y(); z2 = aCurveEnd.Z();
-//   p1= aBasicOp->MakePointXYZ(x1, y1, z1);
-//   p2= aBasicOp->MakePointXYZ(x2, y2, z2);
-//   result = aShapesOp->MakeEdge(p1, p2);
-// 
-//   return result._retn();
-// }
+GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeEdge( const TopoDS_Shape& theShape )
+{
+  ASSERT ( theShape.ShapeType() == TopAbs_EDGE );
+  int theStudyID = 0;
+  GEOM::GEOM_Object_var result;
+  GEOM::GEOM_Object_var p1;
+  GEOM::GEOM_Object_var p2;
+
+  GEOM::GEOM_IBasicOperations_var     aBasicOp  = _geomGen->GetIBasicOperations(theStudyID);
+  GEOM::GEOM_IShapesOperations_var    aShapesOp = _geomGen->GetIShapesOperations(theStudyID);
+
+  TopoDS_Edge anEdge = TopoDS::Edge( theShape );
+  double f, l;
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, f, l);
+
+  gp_Pnt aCurveStart = aCurve->Value( f );
+  gp_Pnt aCurveEnd   = aCurve->Value( l );
+
+  double x1, y1, z1;
+  double x2, y2, z2;
+
+  x1 = aCurveStart.X(); y1 = aCurveStart.Y(); z1 = aCurveStart.Z();
+  x2 = aCurveEnd.X();   y2 = aCurveEnd.Y(); z2 = aCurveEnd.Z();
+  p1= aBasicOp->MakePointXYZ(x1, y1, z1);
+  p2= aBasicOp->MakePointXYZ(x2, y2, z2);
+  result = aShapesOp->MakeEdge(p1, p2);
+
+  return result._retn();
+}
 
 GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeVertex( const TopoDS_Shape& theShape )
 {

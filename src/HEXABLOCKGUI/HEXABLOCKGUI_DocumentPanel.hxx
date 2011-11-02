@@ -203,11 +203,12 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
+//         void updateName();
+
 
       private:
         HEXA_NS::Vertex     *_value;
-        QModelIndex         _index;
+        QModelIndex         _ivalue;
     };
 
 
@@ -225,14 +226,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Edge *_value;
+        QModelIndex   _ivalue;
     };
 
 
@@ -250,15 +248,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Quad    *_value;
-
+        QModelIndex      _ivalue;
     };
 
 
@@ -277,14 +271,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Hexa   *_value;
+        QModelIndex     _ivalue;
 
     };
 
@@ -303,14 +294,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Vector *_value;
+        QModelIndex     _ivalue;
   };
 
 
@@ -329,14 +317,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Cylinder   *_value;
+        QModelIndex         _ivalue;
     };
 
 
@@ -355,14 +340,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
+        void updateName();
 
       private:
         HEXA_NS::Pipe   *_value;
+        QModelIndex     _ivalue;
 
     };
 
@@ -379,11 +361,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -400,12 +377,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
-
   };
 
 
@@ -420,11 +391,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -439,11 +405,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -458,11 +419,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
   };
 
 
@@ -478,12 +434,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
-
   };
 
 
@@ -498,12 +448,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -523,12 +470,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addQuad();
@@ -549,12 +493,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
-
    };
 
 
@@ -570,11 +508,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
 
    };
 
@@ -591,11 +524,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -610,11 +538,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -629,11 +552,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -650,16 +568,11 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-        ////virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
    };
 
 
   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
-                                                        public Ui::SymmetryDialog
+                                                                  public Ui::SymmetryDialog
   {
       Q_OBJECT
 
@@ -669,11 +582,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
    };
 
 
@@ -691,7 +599,7 @@ namespace HEXABLOCK
   };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexAssocDialog : public QDialog,
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexAssocDialog : public HexaBaseDialog,
                                                               public GEOMBase_Helper
   {
       Q_OBJECT
@@ -706,8 +614,6 @@ namespace HEXABLOCK
       public slots:
         void onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel );
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
 
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
@@ -739,8 +645,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
@@ -752,8 +656,6 @@ namespace HEXABLOCK
       protected slots:
         virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
-//       private slots:
-//         void addEdge();
         void deleteEdgeItem();
         void deleteLineItem();
 
@@ -762,7 +664,6 @@ namespace HEXABLOCK
         void pendChanged( double val );
 
       private:
-//         QList<DocumentModel::GeomObj> _assocs;
         LightApp_SelectionMgr*        _mgr;
 
         QShortcut* _delEdgeShortcut;
@@ -791,13 +692,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
-//         virtual void hideEvent ( QHideEvent * event );
-//         virtual void showEvent ( QShowEvent * event );
 
       protected slots:
         void addFace();
@@ -807,19 +704,6 @@ namespace HEXABLOCK
         QList<DocumentModel::GeomObj> _assocs;
         LightApp_SelectionMgr*        _mgr;
         QShortcut*                    _delFaceShortcut;
-
-
-//       private:
-//         bool  isAllSubShapes() const;
-//         int   shapeType() const;
-// 
-//         
-
-//         TopoDS_Shape                        myShape;
-//         GEOM::GEOM_Object_var               myObject;
-//         bool                                myWithShape;
-//         bool                                myIsHiddenMain;
-
   };
 
 
@@ -829,9 +713,6 @@ namespace HEXABLOCK
   {
       Q_OBJECT
 
-//       enum {
-//         LW_QMODELINDEX_ROLE = Qt::UserRole + 1
-//       };
       QMap<DocumentModel::Group, QString> strKind;
 
       public:
@@ -843,14 +724,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
-
-//       protected:
-//         virtual bool eventFilter(QObject *obj, QEvent *event);
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
 
       private slots:
         void addEltBase();
@@ -880,12 +753,7 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        //virtual void accept();
-//         //virtual void reject();
 
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
-  
       private:
         HEXA_NS::Law   *_value;
   };
@@ -907,11 +775,6 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-//         ////virtual void accept();
-//         //virtual void reject();
-
-//       protected:
-//         virtual void showEvent ( QShowEvent * event );
   
       private:
         HEXA_NS::Propagation *_value;

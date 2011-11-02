@@ -475,6 +475,7 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
   z_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
 
 //   installEventFilter();
+//   connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
 
 
@@ -482,14 +483,32 @@ VertexDialog::~VertexDialog()
 {
 }
 
+// void VertexDialog::updateName()
+// {
+//   QString newName = name_le->text();
+//   if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+// }
+
 
 void VertexDialog::setValue(HEXA_NS::Vertex* v)
 {
-  _value = v;
-
   x_spb->setValue( v->getX() );
   y_spb->setValue( v->getY() );
   z_spb->setValue( v->getZ() );
+  name_le->setText( v->getName() );
+
+  _value = v;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 }
 
 HEXA_NS::Vertex* VertexDialog::getValue()
@@ -498,32 +517,32 @@ HEXA_NS::Vertex* VertexDialog::getValue()
 }
 
 
-void VertexDialog::setIndex(const QModelIndex& i)
-{
-  _index = i;
-}
-
+// void VertexDialog::setIndex(const QModelIndex& i)
+// {
+//   _ivalue = i;
+// }
 
 
 bool VertexDialog::apply()
 {
+    QString newName = name_le->text();
     double newX = x_spb->value();
     double newY = y_spb->value();
     double newZ = z_spb->value();
 
-    if ( _value ){
-      std::cout << "_value " << std::endl;
-      _value->setX( newX );
-      _value->setY( newY );
-      _value->setZ( newZ );
-    }
+//     if ( _value ){
+//       std::cout << "_value " << std::endl;
+//       _value->setX( newX );
+//       _value->setY( newY );
+//       _value->setZ( newZ );
+//     }
 
     if ( _documentModel ){
-      if ( _index.isValid() ){ //EDITION MODE
-        bool ok = _documentModel->updateVertex( _index, newX, newY, newZ );
+      if ( _ivalue.isValid() ){ //EDITION MODE
+        bool ok = _documentModel->updateVertex( _ivalue, newX, newY, newZ );
+        _documentModel->setName(_ivalue, newName);
         if ( ok ){
-          //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_index.data().toString()) );
-//           QDialog::accept();
+          //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_ivalue.data().toString()) );
           return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT UPDATE VERTEX" ) );
@@ -533,7 +552,9 @@ bool VertexDialog::apply()
       } else { //NEW MODE
         QModelIndex newIndex = _documentModel->addVertex( newX, newY, newZ );
         if ( newIndex.isValid() ){
-          _value = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+          _value  = newIndex.model()->data(newIndex, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+          _ivalue = newIndex;
+          if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
           //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX BUILDED : %1" ).arg(newIndex.data().toString()) );
 //           QDialog::accept();
 //           if ( _patternDataSelectionModel ){
@@ -546,7 +567,6 @@ bool VertexDialog::apply()
 //               _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Select );
 //             }
 //           }
-          //emit editingFinished();
           return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VERTEX" ) );
@@ -590,10 +610,13 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     rb1->hide();
     v0_le_rb0->setReadOnly(true);
     v1_le_rb0->setReadOnly(true);
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
 
   // Default 
   rb0->click();
+
+  
 }
 
 
@@ -601,31 +624,34 @@ EdgeDialog::~EdgeDialog()
 {
 }
 
-// void EdgeDialog::showEvent ( QShowEvent * event )
-// {
-//   // Default 
-//   rb0->click();
-//   // select first Vertex
-//   _currentObj = v0_le_rb0;
-//   v0_le_rb0->setFocus();
-//   QDialog::showEvent ( event );
-// }
+void EdgeDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+}
+
 
 void EdgeDialog::setValue(HEXA_NS::Edge* e)
 {
-  char pName[12];
-
   HEXA_NS::Vertex* v0 = e->getVertex(0);
   HEXA_NS::Vertex* v1 = e->getVertex(1);
 
-  v0_le_rb0->setText( v0->getName(pName) );
-  v1_le_rb0->setText( v1->getName(pName) );
+  v0_le_rb0->setText( v0->getName() );
+  v1_le_rb0->setText( v1->getName() );
+  name_le->setText( e->getName() );
 
-//   buttonBox->clear();
-//   rb1->hide();
-//   v0_le_rb0->setReadOnly(true);
-//   v1_le_rb0->setReadOnly(true);
   _value = e;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 }
 
 
@@ -665,10 +691,15 @@ bool EdgeDialog::apply()
   }
 
   if ( !iEdge.isValid() ){
-    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "EDGE ADDED" ) );
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD EDGE" ) );
     return false;
   }
-  _value = iEdge.model()->data(iEdge, HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
+  _value  = iEdge.model()->data(iEdge, HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
+  _ivalue = iEdge;
+
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
+
 //   iEdge = patternDataModel->mapFromSource(iEdge);
 //     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Clear );
 //     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Select );
@@ -715,15 +746,23 @@ QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     e1_le_rb1->setReadOnly(true);
     e2_le_rb1->setReadOnly(true);
     e3_le_rb1->setReadOnly(true);
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
 
   // Default 
   rb0->click();
+  
 }
 
 
 QuadDialog::~QuadDialog()
 {
+}
+
+void QuadDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
 }
 
 
@@ -742,7 +781,7 @@ QuadDialog::~QuadDialog()
 
 void QuadDialog::setValue(HEXA_NS::Quad* q)
 {
-  char pName[12];
+//   char pName[12];
 
   Q_ASSERT( q->countEdge() == 4 );
   Q_ASSERT( q->countVertex() == 4 );
@@ -753,10 +792,10 @@ void QuadDialog::setValue(HEXA_NS::Quad* q)
   HEXA_NS::Vertex* v2 = q->getVertex(2);
   HEXA_NS::Vertex* v3 = q->getVertex(3);
 
-  v0_le_rb0->setText( v0->getName(pName) );
-  v1_le_rb0->setText( v1->getName(pName) );
-  v2_le_rb0->setText( v2->getName(pName) );
-  v3_le_rb0->setText( v3->getName(pName) );
+  v0_le_rb0->setText( v0->getName(/*pName*/) );
+  v1_le_rb0->setText( v1->getName(/*pName*/) );
+  v2_le_rb0->setText( v2->getName(/*pName*/) );
+  v3_le_rb0->setText( v3->getName(/*pName*/) );
 //   v0_le_rb0->setReadOnly(true);
 //   v1_le_rb0->setReadOnly(true);
 //   v2_le_rb0->setReadOnly(true);
@@ -772,10 +811,10 @@ void QuadDialog::setValue(HEXA_NS::Quad* q)
 //   edges << e0;
 //   edges[0]; 
 
-  e0_le_rb1->setText( e0->getName(pName) );
-  e1_le_rb1->setText( e1->getName(pName) );
-  e2_le_rb1->setText( e2->getName(pName) );
-  e3_le_rb1->setText( e3->getName(pName) );
+  e0_le_rb1->setText( e0->getName(/*pName*/) );
+  e1_le_rb1->setText( e1->getName(/*pName*/) );
+  e2_le_rb1->setText( e2->getName(/*pName*/) );
+  e3_le_rb1->setText( e3->getName(/*pName*/) );
 //   e0_le_rb1->setReadOnly(true);
 //   e1_le_rb1->setReadOnly(true);
 //   e2_le_rb1->setReadOnly(true);
@@ -783,8 +822,20 @@ void QuadDialog::setValue(HEXA_NS::Quad* q)
 
 //   rb0->click();
 //   buttonBox->clear();
+  name_le->setText( q->getName() );
 
   _value = q;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 
 }
 
@@ -834,7 +885,11 @@ bool QuadDialog::apply()
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD QUAD" ) );
     return false;
   }
-  _value = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  _value  = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  _ivalue = iQuad;
+
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
     //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "QUAD BUILDED : %1" ).arg(iQuad.data().toString()) );
 //     iQuad = patternDataModel->mapFromSource( iQuad );
 //     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
@@ -880,10 +935,12 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     q3_le_rb0->setReadOnly(true);
     q4_le_rb0->setReadOnly(true);
     q5_le_rb0->setReadOnly(true);
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
 
   // Default 
   rb0->click();
+  
 }
 
 
@@ -902,10 +959,16 @@ HexaDialog::~HexaDialog()
 //   QDialog::showEvent ( event );
 // }
 
+void HexaDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+}
+
 
 void HexaDialog::setValue(HEXA_NS::Hexa* h)
 {
-  char pName[12];
+//   char pName[12];
   HEXA_NS::Quad* q0 = h->getQuad(0);
   HEXA_NS::Quad* q1 = h->getQuad(1);
   HEXA_NS::Quad* q2 = h->getQuad(2);
@@ -913,12 +976,12 @@ void HexaDialog::setValue(HEXA_NS::Hexa* h)
   HEXA_NS::Quad* q4 = h->getQuad(4);
   HEXA_NS::Quad* q5 = h->getQuad(5);
 
-  q0_le_rb0->setText( q0->getName(pName) );
-  q1_le_rb0->setText( q1->getName(pName) );
-  q2_le_rb0->setText( q2->getName(pName) );
-  q3_le_rb0->setText( q3->getName(pName) );
-  q4_le_rb0->setText( q4->getName(pName) );
-  q5_le_rb0->setText( q5->getName(pName) );
+  q0_le_rb0->setText( q0->getName(/*pName*/) );
+  q1_le_rb0->setText( q1->getName(/*pName*/) );
+  q2_le_rb0->setText( q2->getName(/*pName*/) );
+  q3_le_rb0->setText( q3->getName(/*pName*/) );
+  q4_le_rb0->setText( q4->getName(/*pName*/) );
+  q5_le_rb0->setText( q5->getName(/*pName*/) );
 
 
   HEXA_NS::Vertex* v0 = h->getVertex(0);
@@ -931,16 +994,29 @@ void HexaDialog::setValue(HEXA_NS::Hexa* h)
   HEXA_NS::Vertex* v7 = h->getVertex(7);
 
 
-  v0_le_rb1->setText( v0->getName(pName) ); 
-  v1_le_rb1->setText( v1->getName(pName) ); 
-  v2_le_rb1->setText( v2->getName(pName) ); 
-  v3_le_rb1->setText( v3->getName(pName) ); 
-  v4_le_rb1->setText( v4->getName(pName) ); 
-  v5_le_rb1->setText( v5->getName(pName) ); 
-  v6_le_rb1->setText( v6->getName(pName) ); 
-  v7_le_rb1->setText( v7->getName(pName) ); 
+  v0_le_rb1->setText( v0->getName(/*pName*/) ); 
+  v1_le_rb1->setText( v1->getName(/*pName*/) ); 
+  v2_le_rb1->setText( v2->getName(/*pName*/) ); 
+  v3_le_rb1->setText( v3->getName(/*pName*/) ); 
+  v4_le_rb1->setText( v4->getName(/*pName*/) ); 
+  v5_le_rb1->setText( v5->getName(/*pName*/) ); 
+  v6_le_rb1->setText( v6->getName(/*pName*/) ); 
+  v7_le_rb1->setText( v7->getName(/*pName*/) ); 
+
+  name_le->setText( h->getName() );
 
   _value = h;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 
 //   buttonBox->clear();
 //   q0_le_rb0->setReadOnly(true);
@@ -1009,6 +1085,10 @@ bool HexaDialog::apply()
     return false;
   }
   _value = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
+  _ivalue = iHexa;
+
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
     //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA BUILDED : %1" ).arg(iHexa.data().toString()) );
 //     iHexa = patternDataModel->mapFromSource( iHexa );
 //     _patternDataSelectionModel->setCurrentIndex ( iHexa, QItemSelectionModel::Clear );
@@ -1048,11 +1128,13 @@ VectorDialog::VectorDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     dy_spb_rb0->setReadOnly(true);
     dz_spb_rb0->setReadOnly(true);
 //     buttonBox->clear();
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
   // Default 
   rb0->click();
 //   setFocusProxy( rb1 );
 //   setFocusProxy( v0_le );
+  
 }
 
 
@@ -1069,6 +1151,12 @@ VectorDialog::~VectorDialog()
 // }
 
 
+void VectorDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+}
+
 void VectorDialog::setValue(HEXA_NS::Vector* v)
 {
   dx_spb_rb0->setValue( v->getDx() );
@@ -1080,8 +1168,20 @@ void VectorDialog::setValue(HEXA_NS::Vector* v)
 //   dx_spb_rb0->setReadOnly(true);
 //   dy_spb_rb0->setReadOnly(true);
 //   dz_spb_rb0->setReadOnly(true);
+  name_le->setText( v->getName() );
 
   _value = v;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 }
 
 HEXA_NS::Vector* VectorDialog::getValue()
@@ -1126,7 +1226,10 @@ bool VectorDialog::apply()
     return false;
   }
 
-  _value = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  _value  = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  _ivalue = iVector;
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
     //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VECTOR BUILDED : %1" ).arg(iVector.data().toString()) );
 //     iVector = patternBuilderModel->mapFromSource( iVector );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Clear );
@@ -1156,7 +1259,9 @@ CylinderDialog::CylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
     vec_le->setReadOnly(true);
     r_spb->setReadOnly(true);
     h_spb->setReadOnly(true);
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
+
 }
 
 
@@ -1172,18 +1277,24 @@ CylinderDialog::~CylinderDialog()
 //   QDialog::showEvent ( event );
 // }
 
+void CylinderDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+}
+
 
 void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
 {
-  char pName[12];
+//   char pName[12];
 
   HEXA_NS::Vertex* base      = c->getBase();
   HEXA_NS::Vector* direction = c->getDirection();
   double  r = c->getRadius();
   double  h = c->getHeight();
 
-  vex_le->setText( base->getName(pName) );
-  vec_le->setText( direction->getName(pName) );
+  vex_le->setText( base->getName(/*pName*/) );
+  vec_le->setText( direction->getName(/*pName*/) );
   r_spb->setValue(r);
   h_spb->setValue(h);
 
@@ -1192,8 +1303,20 @@ void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
 //   r_spb->setReadOnly(true);
 //   h_spb->setReadOnly(true);
 //   buttonBox->clear();
+  name_le->setText( c->getName() );
 
   _value = c;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 }
 
 HEXA_NS::Cylinder* CylinderDialog::getValue()
@@ -1230,6 +1353,11 @@ bool CylinderDialog::apply()
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
     return false;
   }
+
+  _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
+  _ivalue = iCyl;
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
 
 //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD CYLINDER DONE : %1" ).arg(iCyl.data().toString()) );
 //     iCyl = patternBuilderModel->mapFromSource(iCyl);
@@ -1275,6 +1403,7 @@ PipeDialog::PipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
     ir_spb->setReadOnly(true);
     er_spb->setReadOnly(true);
     h_spb->setReadOnly(true);
+    connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
 
 }
@@ -1293,9 +1422,15 @@ PipeDialog::~PipeDialog()
 // }
 
 
+void PipeDialog::updateName()
+{
+  QString newName = name_le->text();
+  if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
+}
+
 void PipeDialog::setValue(HEXA_NS::Pipe* p)
 {
-  char pName[12];
+//   char pName[12];
 
   HEXA_NS::Vertex* base      = p->getBase();
   HEXA_NS::Vector* direction = p->getDirection();
@@ -1303,8 +1438,8 @@ void PipeDialog::setValue(HEXA_NS::Pipe* p)
   double  er = p->getRadius();
   double  h  = p->getHeight();
 
-  vex_le->setText( base->getName(pName) );
-  vec_le->setText( direction->getName(pName) );
+  vex_le->setText( base->getName(/*pName*/) );
+  vec_le->setText( direction->getName(/*pName*/) );
   ir_spb->setValue(ir);
   er_spb->setValue(er);
   h_spb->setValue(h);
@@ -1315,8 +1450,20 @@ void PipeDialog::setValue(HEXA_NS::Pipe* p)
 //   er_spb->setReadOnly(true);
 //   h_spb->setReadOnly(true);
 //   buttonBox->clear();
+  name_le->setText( p->getName() );
 
   _value = p;
+  if ( _documentModel ){
+    QModelIndexList iElts = _documentModel->match(
+          _documentModel->index(0, 0),
+          HEXA_DATA_ROLE,
+          QVariant::fromValue( _value ),
+          1,
+          Qt::MatchRecursive);
+    if ( !iElts.isEmpty() ){
+      _ivalue = iElts[0];
+    }
+  }
 }
 
 HEXA_NS::Pipe* PipeDialog::getValue()
@@ -1352,13 +1499,18 @@ bool PipeDialog::apply()
 
   if ( !iPipe.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
-    return true;
+    return false;
   }
+
+  _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
+  _ivalue = iPipe;
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
 //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ADD PIPE DONE : %1" ).arg(iPipe.data().toString()) );
 //     iPipe = patternBuilderModel->mapFromSource( iPipe );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Select );
-  return false;
+  return true;
 }
 
 
@@ -2915,11 +3067,11 @@ QPushButton* MyBasicGUI_PointDlg::buttonApply() const
 
 VertexAssocDialog::VertexAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent()) ),
+HexaBaseDialog(parent, f),
 _documentModel( NULL ),
 _patternDataSelectionModel( NULL ),
 _ivertex  ( new QModelIndex() )
 {
-
   QVBoxLayout* layout = new QVBoxLayout;
   setLayout( layout );
 
@@ -2957,9 +3109,10 @@ _ivertex  ( new QModelIndex() )
   _vertex_le->installEventFilter(this);
   setFocusProxy( _vertex_le );
 
-  connect(_nested->buttonOk(),     SIGNAL(clicked()), this, SLOT(accept()));
-  connect(_nested->buttonApply(),  SIGNAL(clicked()), this, SLOT(accept()));
-  connect(_nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()));
+  connect( _nested->buttonOk(),      SIGNAL(clicked()), this, SLOT(accept()) );
+  connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
+  connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
+
 }
 
 
@@ -3020,15 +3173,16 @@ bool VertexAssocDialog::apply()
     aPoint.brep  = shape2string( aShape ).c_str();
 
     _documentModel->addAssociation( iVertex, aPoint );
-    _documentModel->allowEdition();
-    _patternDataSelectionModel->setAllSelection();
+//     _documentModel->allowEdition();
+//     _patternDataSelectionModel->setAllSelection();
+//  SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
+//  _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
+//  _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Select );
 
-    //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
-    _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
-    _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Select );
-    QDialog::accept();
+  } else  {
+    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE VERTEX ASSOCIATION" ) );
+    return false;
   }
-
 }
 
 
@@ -3046,8 +3200,6 @@ bool VertexAssocDialog::apply()
 
 
 
-
-
 bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if ( obj == _vertex_le and event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
@@ -3059,7 +3211,6 @@ bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
       return QObject::eventFilter(obj, event);
     }
 }
-
 
 VertexAssocDialog::~VertexAssocDialog() 
 {
@@ -3580,7 +3731,7 @@ void GroupDialog::onKindChanged(int index)
 
 void GroupDialog::setValue(HEXA_NS::Group* g)
 {
-  char pName[12];
+//   char pName[12];
   name_le->setText( g->getName() );
 
   kind_cb->clear();
@@ -3612,8 +3763,8 @@ void GroupDialog::setValue(HEXA_NS::Group* g)
           1,
           Qt::MatchRecursive);
     if ( !iElts.isEmpty() ){
-      eltBase->getName(pName);
-      item = new QListWidgetItem( QString(pName) );
+//       eltBase->getName(/*pName*/);
+      item = new QListWidgetItem( eltBase->getName() );
       iEltBase = iElts[0];
       item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iEltBase) );
       eltBase_lw->addItem( item );
@@ -3727,6 +3878,9 @@ bool GroupDialog::apply()
       //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
     }
   }
+
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( iGrp, newName );
     //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "GROUP ADDED : %1" ).arg( iGrp.data().toString()) );
 //     iGrp = groupsModel->mapFromSource( iGrp );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
@@ -3829,7 +3983,10 @@ bool LawDialog::apply()
   if ( !setOk ){ 
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
     return false;
-  } 
+  }
+
+  QString newName = name_le->text();
+  if (!newName.isEmpty()) _documentModel->setName( iLaw, newName );
 //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "LAW ADDED : %1" ).arg( iLaw.data().toString()) );
 //     _meshSelectionModel->select( iLaw, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex( iLaw, QItemSelectionModel::Current );

@@ -242,12 +242,12 @@ void DocumentModel::fillData()
   HEXA_NS::Vertex *v     = NULL;
   VertexItem      *vItem = NULL;
   for ( int i=0; i<_hexaDocument->countVertex(); ++i ){
-    char pName[12]; std::string name;
+//     /*char pName[12];*/ std::string name;
 //     HEXA_NS::Shape *aShape = NULL;
 //     QString         shapeIDs;
 
     v = _hexaDocument->getVertex(i);
-    name   = v->getName(pName);
+//     name   = v->getName(/*pName*/);
 //     aShape = v->getAssociation();
 
     vItem = new VertexItem(v);
@@ -277,7 +277,7 @@ void DocumentModel::fillData()
   HEXA_NS::Edge *e     = NULL;
   EdgeItem      *eItem = NULL;
   for ( int i=0; i<_hexaDocument->countEdge(); ++i ){
-    char pName[12]; std::string name;
+//     /*char pName[12]; */std::string name;
 //     HEXA_NS::Shapes shapeList;
 //     QString         shapeIDs;
 
@@ -306,12 +306,12 @@ void DocumentModel::fillData()
   HEXA_NS::Quad *q     = NULL;
   QuadItem      *qItem = NULL;
   for ( int i=0; i<_hexaDocument->countQuad(); ++i ){
-    char pName[12]; std::string name;
+//     char pName[12]; std::string name;
 //     HEXA_NS::Shapes shapeList;
 //     QString         shapeIDs;
 
     q = _hexaDocument->getQuad(i);
-    name      = q->getName(pName);
+//     name      = q->getName(pName);
 //     shapeList = q->getAssociations();
 
     qItem = new QuadItem(q);
@@ -491,6 +491,8 @@ void DocumentModel::fillMesh()
 Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags flags;
+
+//   std::cout<<"flags ===> "<< index.data().toString().toStdString() << std::endl;
 
   if (!index.isValid()){
       std::cout<<"!index.isValid()"<<std::endl;
@@ -809,13 +811,86 @@ void DocumentModel::allowLawSelectionOnly()
 }
 
 
+
+void DocumentModel::setName( const QModelIndex& iElt, const QString& name )
+{
+  HEXA_NS::EltBase *elt = NULL;
+
+  switch ( data(iElt, HEXA_TREE_ROLE).toInt() ){
+  case VERTEX_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >(); break;
+  case EDGE_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >(); break;
+  case QUAD_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >(); break;
+  case HEXA_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Hexa* >(); break;
+  case VECTOR_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vector* >(); break;
+  case CYLINDER_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Cylinder* >(); break;
+  case PIPE_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Pipe* >(); break;
+  case ELEMENTS_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Elements* >(); break;
+  case CROSSELEMENTS_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::CrossElements* >(); break;
+  case GROUP_TREE :
+    { 
+      HEXA_NS::Group* grp = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
+      grp->setName( name.toLatin1().data() );
+      break;
+    }
+  case LAW_TREE :
+    {
+      HEXA_NS::Law* l = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Law* >();
+      l->setName( name.toLatin1().data() );
+      break;
+    }
+//   case PROPAGATION_TREE : elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Propagation* >(); break;
+  }
+
+  if ( elt != NULL ) elt->setName( name.toStdString() );
+
+  setData( iElt, name );
+}
+
+
+bool DocumentModel::clearEltAssociations( const QModelIndex& iElt )
+{
+  bool isOk = false;
+  HEXA_NS::EltBase *elt = NULL;
+
+  switch ( data(iElt, HEXA_TREE_ROLE).toInt() ){
+  case VERTEX_TREE :
+    { 
+      elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >(); 
+      std::cout<<"VERTEX_TREE:"<<std::endl;
+      break;
+    }
+  case EDGE_TREE :
+    {
+      elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
+      std::cout<<"EDGE_TREE :"<<std::endl;
+      break;
+    }
+  case QUAD_TREE :
+    {
+      elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
+      std::cout<<"QUAD_TREE :"<<std::endl;
+      break;
+    }
+  }
+
+  if ( elt != NULL ){
+    elt->clearAssociation();
+    setData( iElt, QVariant(), HEXA_ASSOC_ENTRY_ROLE );
+    isOk = true;
+  }
+
+  return isOk;
+
+}
+
+
+
 QModelIndex DocumentModel::addVertex( double x, double y, double z )
 {
   std::cout << "DocumentModel::addVertex() _hexaDocument->" << _hexaDocument << std::endl;
   QModelIndex vertexIndex;
 
   HEXA_NS::Vertex* hv = _hexaDocument->addVertex(x, y, z);
-
   if ( hv->isValid() ){
     VertexItem* v = new VertexItem(hv);
     v->setData( _entry, HEXA_DOC_ENTRY_ROLE );
@@ -1374,6 +1449,7 @@ bool DocumentModel::updateVertex( const QModelIndex& ivertex, double x, double y
 
   cout << "DocumentModel::updateVertex hVertex = " << hVertex << endl;
   if ( hVertex ){
+//     hVertex->setName( name.toStdString() );
     hVertex->setX ( x );
     hVertex->setY ( y );
     hVertex->setZ ( z );
@@ -2180,7 +2256,7 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
             std::cout << "gstart->debut" << gstart->debut << std::endl;
-            std::cout << "gstart->fin"   << gstart->fin<< std::endl;
+            std::cout << "gstart->fin"   << gstart->fin << std::endl;
             std::cout << "gstart->ident" << gstart->ident << std::endl;
             std::cout << "gstart->getBrep()" << gstart->getBrep()<< std::endl;
 //             pstart = anAssoc.start;

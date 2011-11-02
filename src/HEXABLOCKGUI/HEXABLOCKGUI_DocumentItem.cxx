@@ -40,8 +40,8 @@ VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
   QStandardItem(),
   _hexaVertex( hexaVertex )
 {
-  char pName[12];
-  QString name = _hexaVertex->getName(pName);
+//   char pName[12];
+  QString name = _hexaVertex->getName(/*pName*/);
 //   QString docEntry = model()->invisibleRootItem()->data(HEXA_ENTRY_ROLE).toString();
   setText(name);
 //   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
@@ -87,8 +87,10 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   QStandardItem(),
   _hexaEdge( hexaEdge )
 {
-  char pName[12];
-  QString name = _hexaEdge->getName(pName);
+//   char pName[12];
+//   QString name = _hexaEdge->getName(pName);
+  QString name = _hexaEdge->getName();
+  std::cout << "EdgeItem name : "<<  name.toStdString() << std::endl;
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
@@ -101,6 +103,7 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
   }
   if ( !entries.isEmpty() )
     setData( entries, HEXA_ASSOC_ENTRY_ROLE );
+
 }
 
 
@@ -136,8 +139,8 @@ QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
   QStandardItem(),
   _hexaQuad( hexaQuad )
 {
-  char pName[12];
-  QString name = _hexaQuad->getName(pName);
+//   char pName[12];
+  QString name = _hexaQuad->getName(/*pName*/);
   setText(name);
   setData( QUAD_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
@@ -187,8 +190,8 @@ HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
   QStandardItem(),
   _hexaHexa( hexaHexa )
 {
-  char pName[12];
-  QString name = _hexaHexa->getName(pName);
+//   char pName[12];
+  QString name = _hexaHexa->getName(/*pName*/);
   setText(name);
   setData( HEXA_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
@@ -228,8 +231,8 @@ VectorItem::VectorItem( HEXA_NS::Vector* hexaVector ):
   QStandardItem(),
   _hexaVector( hexaVector )
 {
-  char pName[12];
-  QString name = _hexaVector->getName(pName);
+//   char pName[12];
+  QString name = _hexaVector->getName(/*pName*/);
   setText(name);
   setData( VECTOR_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaVector)), HEXA_ENTRY_ROLE );
@@ -267,8 +270,8 @@ CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder):
   QStandardItem(),
   _hexaCylinder( hexaCylinder )
 {
-  char pName[12];
-  QString name = _hexaCylinder->getName(pName);
+//   char pName[12];
+  QString name = _hexaCylinder->getName(/*pName*/);
   setText(name);
   setData( CYLINDER_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaCylinder)), HEXA_ENTRY_ROLE );
@@ -306,8 +309,8 @@ PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe ):
   QStandardItem(),
   _hexaPipe( hexaPipe )
 {
-  char pName[12];
-  QString name = _hexaPipe->getName(pName);
+//   char pName[12];
+  QString name = _hexaPipe->getName(/*pName*/);
   setText(name);
   setData( PIPE_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaPipe)), HEXA_ENTRY_ROLE );
@@ -344,8 +347,8 @@ ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
   QStandardItem(),
   _hexaElements( hexaElements )
 {
-  char pName[12];
-  QString name = _hexaElements->getName(pName);
+//   char pName[12];
+  QString name = _hexaElements->getName(/*pName*/);
   setText(name);
   setData( ELEMENTS_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaElements)), HEXA_ENTRY_ROLE );
@@ -382,8 +385,8 @@ CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts ):
   QStandardItem(),
   _hexaCrossElts( hexaCrossElts )
 {
-  char pName[12];
-  QString name = _hexaCrossElts->getName(pName);
+//   char pName[12];
+  QString name = _hexaCrossElts->getName(/*pName*/);
   setText(name);
   setData( CROSSELEMENTS_TREE, HEXA_TREE_ROLE );
   setData( QString::number(reinterpret_cast<intptr_t>(_hexaCrossElts)), HEXA_ENTRY_ROLE );
