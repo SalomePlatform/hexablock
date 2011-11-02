@@ -53,7 +53,7 @@ Linux<br>
 </tr>
 
 
-<tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; <a href="#Partie_4">Partie 4 : Evolution des associations</a></td></tr><tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; <a href="#Partie_5">Partie 5 : Programmation d'exemples</a></td></tr></tbody>
+<tr><td><img src="green-ball.gif" alt="o" height="12" width="12"> &nbsp; <a href="#Partie_4">Partie 4 : Evolution des associations</a></td></tr></tbody>
 </table>
 </center>
 <p><img src="blue-ball.gif" alt="o" height="12" width="12"><b> See also :</b></p><center>
@@ -334,7 +334,7 @@ nrad, int nang, int nhaut);</span></td></tr></tbody>
 forcément par le centre de la sphère. Il définit le demi-espace dans
 lequel se situe l'objet à dessiner.Il peut même être disjoint de la
 sphère. S'il est "en dessous", la sphère est entièrement dessinée, s'il
-est "au dessus", l'objet sera vide.&nbsp;&nbsp;</li></ul><br><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Aspect visuel (exemples)</big></font></b></p><br>Conditions<br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="HemiSphere.png" style="width: 282px; height: 226px;" alt="Demi Sphere trouee"></p></td><td style="vertical-align: middle; text-align: center;"><img src="PartSphere.png" style="width: 278px; height: 223px;" alt="Huitième de sphère"></td></tr><tr><td style="vertical-align: middle; text-align: center;">Demi-Sphère trouée (makeSphere ())</td><td style="vertical-align: middle; text-align: center;">Huitième de sphère trouée (makePartSphere ())</td></tr><tr><td style="vertical-align: middle; text-align: center;"><p><img src="Rind.png" style="width: 282px; height: 226px;" alt="Ecorce trouée">&nbsp;&nbsp; &nbsp;</p></td><td style="vertical-align: middle; text-align: center;"><p><img src="PartRind.png" style="width: 282px; height: 226px;" alt="Huitième d'ecorce"> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p></td></tr><tr><td style="text-align: center;" valign="middle">Demi écorce trouée (makeRind ())</td><td style="text-align: center;" valign="middle">Huitième d'écorce trouée (makePartRind ())</td></tr></tbody></table><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Im</big></font></b>Conditions<b><font size="+1"><big>plémentation</big></font></b></p><p>Toutes ces fonctions publiques appellent une seule fonction&nbsp; de la classe <span style="font-weight: bold;">Elements :</span></p><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+est "au dessus", l'objet sera vide.&nbsp;&nbsp;</li></ul><br><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Aspect visuel (exemples)</big></font></b></p><br>Conditions<br><table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td style="vertical-align: middle; text-align: center;"><p><img src="HemiSphere.png" style="width: 282px; height: 226px;" alt="Demi Sphere trouee"></p></td><td style="vertical-align: middle; text-align: center;"><img src="PartSphere.png" style="width: 278px; height: 223px;" alt="Huitième de sphère"></td></tr><tr><td style="vertical-align: middle; text-align: center;">Demi-Sphère trouée (makeSphere ())</td><td style="vertical-align: middle; text-align: center;">Huitième de sphère trouée (makePartSphere ())</td></tr><tr><td style="vertical-align: middle; text-align: center;"><p><img src="Rind.png" style="width: 282px; height: 226px;" alt="Ecorce trouée">&nbsp;&nbsp; &nbsp;</p></td><td style="vertical-align: middle; text-align: center;"><p><img src="PartRind.png" style="width: 282px; height: 226px;" alt="Huitième d'ecorce"> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p></td></tr><tr><td style="text-align: center;" valign="middle">Demi écorce trouée (makeRind ())</td><td style="text-align: center;" valign="middle">Huitième d'écorce trouée (makePartRind ())</td></tr></tbody></table><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big>&nbsp;3.1&nbsp; <span style="font-family: Terminal;"></span> Im</big></font></b><b><font size="+1"><big>plémentation</big></font></b></p><p>Toutes ces fonctions publiques appellent une seule fonction&nbsp; de la classe <span style="font-weight: bold;">Elements :</span></p><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
 <tbody>
 
 <tr><td><span style="font-family: monospace;">int makeRind (EnumGrid type, Vertex* center, </span><span style="font-family: monospace;"></span><span style="font-family: monospace;">Vector* vx, Vector* vz,</span><span style="font-family: monospace;"> <br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span style="font-family: monospace;">double&nbsp; radius, double radint, </span><span style="font-family: monospace;"></span><span style="font-family: monospace;">double radhole</span><span style="font-family: monospace;">,</span><br style="font-family: monospace;"><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex*
@@ -351,16 +351,72 @@ d'azimuth theta (longitude) est défini explicitement par l'utilisateur.
 L'angle d'élévation phi est délimité par la position du&nbsp; plan
 horizontal et par le diamètre du trou. &nbsp;Soit :<br><ul><li>Une sphère de centre O et de rayon R.</li><li>La phère est traversée par un trou cylindrique de rayon r.</li><li>Un plan défini par son vecteur normal n (vertical sur la figure qui suit) et un point A</li></ul><p style="text-align: center;"><img src="Sphere.gif" style="width: 373px; height: 311px;" alt="Sphere"></p>A partir de ces éléments de base, on&nbsp; définit<small><small><small><small><small><small> </small></small></small></small></small></small>:<br><ul><li>Le point H, projection orhogonale du centre O de la sphere sur le plan (A,n)</li><li>L'angle alpha défini par le centre O et le cylindre : sin (alpha) = &nbsp;r/R</li><li>L'angle beta délimité&nbsp; par l'horizontale et l'intersection du plan (A,n) et de la sphère.&nbsp;</li><ul><li>sin (beta) = OH/R</li><li>et OH = OA.n/|n| &nbsp;(produit scalaire de OA par le vecteur unitaire associé à n).</li></ul></ul>L'angle d'élévation&nbsp; phi &nbsp;est encadré par les valeurs suivantes : <ul><li>max (alpha-pi/2, beta) &lt;= phi &lt;= pi/2 - alpha</li></ul><br><p><a href="index.html#DebutPage">Retour au début</a>
 </p><hr width="100%">
-<p><a name="Partie_4"></a>Conditions</p>
+<p><a name="Partie_4"></a></p>
 <p><img src="blue-ball.gif" alt="o" height="12" width="12"><b><font size="+1">
-&nbsp;<big>Partie 4 : Evolution des associations</big></font></b></p>
-Il s'agit de&nbsp;<center><span style="font-style: italic;"><span style="font-weight: bold;"><br><br></span></span>
-</center>
-<p><a href="index.html#DebutPage">Retour au début</a>
-</p><hr width="100%">
-<p><a name="Partie_5"></a></p>
-<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b><font size="+1">
-&nbsp;<big>Partie 5 : Programmation d'exemples</big></font></b></p>Il s'agit de........... 
+&nbsp;<big>Partie 4 : Evolution des associations</big></font></b></p><p class="MsoNormal">Cette tâche est composée de 3 évolutions, au sujet de
+l'association, qui sont décrites ci-après.</p><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big> 4.1 Nouveaux objets <span style="font-family: Terminal;"></span>&nbsp;</big></font></b></p>
+
+<p class="MsoNormal">Il s'agit d'ajouter de nouveaux objets
+intermédiaires de travail, comme le vecteur ou le cylindre :</p>
+
+<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="">le
+     cercle défini par&nbsp;un
+      centre, un
+      rayon et une
+      normale,</li><li class="MsoNormal" style="">la
+     sphère définie par&nbsp;un
+      centre et&nbsp;un
+      rayon.<br></li></ul>Il daudra aussi&nbsp;associer&nbsp;
+les objets intermédiaires aux objets géométriques venant du
+composant GEOM de SALOME :<br><ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="">un
+     cercle,</li><li class="MsoNormal" style="">une
+     sphère,</li><li class="MsoNormal" style="">un
+     cylindre.</li></ul> <p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big> 4.2 Associations prédéfinies <span style="font-family: Terminal;"></span>&nbsp;</big></font></b></p><p class="MsoNormal">La deuxième évolution consiste à améliorer les associations
+des modèles de blocs prédéfinis en calculant automatiquement des associations
+implicites, les fonctions concernées sont les suivantes:</p>
+
+<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="">ajouter
+     une grille cylindrique .</li><li class="MsoNormal" style="">ajouter
+     une grille sphérique.</li><li class="MsoNormal" style="">ajouter
+     un cylindre, un tuyau.</li><li class="MsoNormal" style="">ajouter
+     l&#8217;intersection de 2 cylindres ou de 2 tuyaux.</li><li class="MsoNormal" style="">faire
+     de même pour toutes les nouvelles fonctions : ecorces et portions de sphères.</li></ul>
+
+<p class="MsoNormal">Pour chaque arête (sphérique) concernée, on associera un arc de cercle.</p><p class="MsoNormal">Il est inutile d'associer laes faces, SMESH est capable de mailler si les arêtes sont associées.</p><p class="MsoNormal"><big><span style="font-weight: bold;">Implémentation</span></big>&nbsp;</p><p class="MsoNormal">Rappelons que l'objet&nbsp;Shape de HexaBlock est constitué :</p><ul><li>D'une chaine de caractère (b_rep) qui permet de décrire toute forme de GEOM</li><li>De deux paramètres <span style="font-style: italic;">debut</span> et <span style="font-style: italic;">fin</span> compris entre 0 et 1 permettant de délimiter la ligne décrite par la b-rep quand c'en est une</li></ul><p class="MsoNormal">Deux opérations sont nécessaires&nbsp; :</p><ol><li>&nbsp;créer un cercle au moyen de GEOM,</li><li>découper ce cercle en arcs de cercle qui seront associés aux arêtes concernées.</li></ol><p class="MsoNormal"><span style="font-weight: bold;">Opération 1 </span>:
+Le cercle à créer est en fait un arc de cercle orienté de 360 degrés,
+dans la mesure où il possède une origine. GEOM permet de définir un tel
+cercle, qu'HexaBlock pourra gérer au moyen des paramètres <span style="font-style: italic;">debut</span> et <span style="font-style: italic;">fin</span> des shapes :</p><p class="MsoNormal">Cette action est assurée par la fonction <span style="font-weight: bold;">geom_create_circle</span> qui génère la brep du cercle à partir de son&nbsp;centre, de son rayon, de son vecteur normal, du&nbsp; vecteur Ox qui permet de définir son origine.</p><br><span style="font-weight: bold;"></span><table style="width: 80%; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2">
+<tbody>
+
+<tr><td><span style="font-family: monospace;"></span><span style="font-family: monospace;"></span><span style="font-family: monospace;">void <span style="font-weight: bold;">geom_create_circle</span> (double* centre, double rayon, Vector* normale,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+double* ox, string&amp; brep)<br>{<br>&nbsp;&nbsp; gp_Pnt gp_center (centre [dir_x], centre [dir_y], centre [dir_z]);<br>&nbsp;&nbsp;
+gp_Vec gp_ox&nbsp;&nbsp;&nbsp;&nbsp; (ox&nbsp;&nbsp;&nbsp;&nbsp;
+[dir_x], ox&nbsp;&nbsp;&nbsp;&nbsp; [dir_y], ox&nbsp;&nbsp;&nbsp;&nbsp;
+[dir_z]);<br>&nbsp;&nbsp; gp_Vec gp_norm&nbsp;&nbsp; (normale-&gt;getDx(), normale-&gt;getDy(), normale-&gt;getDz());<br><br>&nbsp;&nbsp; <span style="font-weight: bold;">gp_Ax2</span>&nbsp; gp_axes (gp_center, gp_norm, gp_ox);<br>&nbsp;&nbsp; <span style="font-weight: bold;">gp_Circ</span> gp_circ (gp_axes,&nbsp;&nbsp; rayon);<br><br>&nbsp;&nbsp; TopoDS_Edge&nbsp;&nbsp;&nbsp; geom_circ = <span style="font-weight: bold;">BRepBuilderAPI_MakeEdge</span>(gp_circ).Edge();<br>&nbsp;&nbsp; ostringstream&nbsp; stream_shape;<br>&nbsp;&nbsp; <span style="font-weight: bold;">BRepTools::Write</span>(geom_circ, stream_shape);<br><br>&nbsp;&nbsp; brep = stream_shape.str();<br>}</span><span style="font-family: monospace;"></span></td></tr></tbody>
+</table><br>GEOM permet de définir un tel cercle (calsse <span style="font-style: italic;">gp_Circ</span>)&nbsp; à partir d'un systemes d'axes 2D (classe <span style="font-style: italic;">gp_Ax2</span> ) &nbsp;et d'un rayon. Ce cercle esr ensuite transformé en forme&nbsp;<span style="font-style: italic;">TopoDS_Shape</span> qui est l'objet GEOM que l'on maniplule habituellement losque l'on procède aux associations. Plus précisément en <span style="font-style: italic;">TopoDS_Edge</span> &nbsp;au moyen de&nbsp;<span style="font-style: italic;">BRepBuilderAPI_MakeEdge</span><span style="font-family: monospace;"></span>. Enfin l'objet est&nbsp; transformé en chaine de caractères de format Brep via <span style="font-style: italic;">ostringstream</span>.<br><br><span style="font-weight: bold;">Opération 2 </span>:
+On dispose d'une b-rep&nbsp; décrivant un arc de cercle de 360 degrés.
+Il est aisé de définir proportionnellement pour chacun des edges
+constituant la ligne associée à la portion de cercle les paramètres
+début et fin par rapport aux angles de départ et d'arrivée de chaque
+arc. Cette opération fut d'ailleurs réalisée lors de la préservarion
+des associations lors d'un "cut". On réutilisera donc la fonction <span style="font-style: italic;">Elements::cutAssociation(...) </span>moyennant quelques aménagements.<br><p class="MsoNormal"></p><p><big><img src="green-ball.gif" style="width: 12px; height: 12px;" alt="o"></big><b><font size="+1"><big> 4.3&nbsp;Propagation des associations <span style="font-family: Terminal;"></span>&nbsp;</big></font></b></p><p class="MsoNormal"><br>La troisième évolution consiste à améliorer la propagation
+automatique des associations, les fonctions concernées sont les suivantes:</p>
+
+<ul style="margin-top: 0cm;" type="disc"><li class="MsoNormal" style="">fusionner
+     ou déconnecter des sommets, des arêtes, des quadrangles :</li><ul style="margin-top: 0cm;" type="circle"><li class="MsoNormal" style="">s&#8217;il
+      y a des associations, ne pas les perdre,</li></ul><li class="MsoNormal" style="">prismer
+     un ou des quadrangles :</li><ul style="margin-top: 0cm;" type="circle"><li class="MsoNormal" style="">s&#8217;il
+      y a des associations dans la direction de l&#8217;extrusion, les propager,</li></ul><li class="MsoNormal" style="">ajouter
+     des hexaèdres par translation, par rotation, par homothétie ou par
+     symétries :</li><ul style="margin-top: 0cm;" type="circle"><li class="MsoNormal" style="">si
+      les hexaèdres sources ont une association, alors les propager,</li></ul><li class="MsoNormal" style="">faire
+     de même pour la fonction «révolution» du lot 2.</li></ul>
+
+<p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+
+<p class="MsoNormal">Ces trois évolutions seront implémentées dans le moteur.
+Seule le première évolution (création de sphères ou cercles) sera implémentée
+dans la partie interactive. </p><p></p> 
 <p><a href="index.html#DebutPage">Retour au début</a></p>
 <hr width="100%">
 <p><br></p><br><p><br>
