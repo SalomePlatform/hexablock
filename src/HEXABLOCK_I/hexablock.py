@@ -58,9 +58,9 @@ def addLaws(doc, lg, lgmax=True):
         for e in p.getEdges():
             a = e.getAssociations()
             l = 0.0
-            for g, d, f in a:
-                le, su, vo = geompy.BasicProperties(g)
-                l += le * (f-d)
+            for gdf in a:
+                le, su, vo = geompy.BasicProperties(gdf.geomObj)
+                l += le * (gdf.fin - gdf.debut)
             if ( lgmax and l>m ) or ( (not lgmax) and l<m ):
                 m = l
 
