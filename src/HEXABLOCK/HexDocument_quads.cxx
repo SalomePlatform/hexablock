@@ -38,7 +38,6 @@
 BEGIN_NAMESPACE_HEXA
 
 double* prod_vectoriel (Edge* e1, Edge* e2, double result[]);
-double  prod_scalaire  (double v1[], double v2[]);
 void    permuter_edges  (Edge* &e1, Edge* &e2);
 
 // ======================================================== copyDocument
@@ -740,13 +739,6 @@ double*  prod_vectoriel (Edge* e1, Edge* e2, double prod[])
    prod [dir_y] = v1[dir_z] * v2[dir_x] - v2[dir_z] * v1[dir_x];
    prod [dir_z] = v1[dir_x] * v2[dir_y] - v2[dir_x] * v1[dir_y];
 
-   return prod;
-}
-// ========================================================= prod_scalaire
-double prod_scalaire (double v1[], double v2[])
-{
-   double prod = v1[dir_x]*v2[dir_x] + v1[dir_y]*v2[dir_y] 
-                                     + v1[dir_z]*v2[dir_z];
    return prod;
 }
 // ========================================================= permuter_edges

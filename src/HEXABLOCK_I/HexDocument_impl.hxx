@@ -85,12 +85,12 @@ public:
   Elements_ptr makeCartesian(Vertex_ptr pt, Vector_ptr vx, Vector_ptr vy, Vector_ptr vz, ::CORBA::Long nx, ::CORBA::Long ny, ::CORBA::Long nz) throw (SALOME::SALOME_Exception);
   Elements_ptr makeCartesian1(Vertex_ptr v, Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz) throw (SALOME::SALOME_Exception);
   Elements_ptr makeCylindrical(Vertex_ptr pt, Vector_ptr vex, Vector_ptr vez, ::CORBA::Double dr, ::CORBA::Double da, ::CORBA::Double dl, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl, ::CORBA::Boolean fill) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeSpherical( Vertex_ptr pt, ::CORBA::Double dx, ::CORBA::Double dy, ::CORBA::Double dz, ::CORBA::Long n ) throw (SALOME::SALOME_Exception);
+
   Elements_ptr makeSpherical( Vertex_ptr ptIn,
-    Vector_ptr dvIn,
+    ::CORBA::Double rayon, 
     ::CORBA::Long n,
-    ::CORBA::Double k ) throw (SALOME::SALOME_Exception); //CS_TODO
-//   Elements_ptr makeCylinder(Cylinder_ptr cyl, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
+    ::CORBA::Double k ) throw (SALOME::SALOME_Exception);
+
   Elements_ptr makeCylinder(Cylinder_ptr cyl, Vector_ptr vr, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
   Elements_ptr makePipe(Pipe_ptr p, Vector_ptr vr, ::CORBA::Long nr, 
                                  ::CORBA::Long na, ::CORBA::Long nl) 

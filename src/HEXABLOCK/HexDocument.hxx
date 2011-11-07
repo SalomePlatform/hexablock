@@ -73,7 +73,9 @@ public :
    Elements* makeCylindrical (Vertex* c, Vector* b, Vector* h, double dr, 
              double da, double dl, int nr, int na, int nl, bool fill=false);
 
-   Elements* makeSpherical   (Vertex* v, Vector* dv, int nb, double k=1);
+                                                      // Obsolete
+   Elements* makeSpherical (Vertex* v, Vector* dv, int nb, double k=1) {return NULL;}
+   Elements* makeSpherical (Vertex* center, double rayon, int nb, double k=1);
 
    Elements* prismQuad  (Quad*  start, Vector* dv, int nb);
    Elements* prismQuads (Quads& start, Vector* dv, int nb);
@@ -213,6 +215,10 @@ public :
 
    Elements* replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
                       Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+
+   Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h, 
+             RealVector& tdr, RealVector& tda, RealVector& tdh, bool fill=false);
+
 public:
     Document (cpchar filename);
    ~Document ();

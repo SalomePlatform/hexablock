@@ -109,8 +109,6 @@ using namespace std;
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 BEGIN_NAMESPACE_HEXA
 
-pchar get_temp_name (cpchar format, pchar nomfic);
-
 enum EnumCoord  { dir_x, dir_y, dir_z, DIM3 };
 enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR, 
                   EL_REMOVED, EL_MAXI };
@@ -187,6 +185,16 @@ typedef std::vector <double> RealVector;
 typedef double Real;
 typedef double Real3 [DIM3];
 
+                        // Quelques fonctions :
+
+pchar   get_temp_name (cpchar format, pchar nomfic);
+
+double  prod_scalaire  (double v1[], double v2[]);
+double* prod_vectoriel (double v1[], double v2[], double v3[]);
+double  calc_norme     (double v1[]);
+double  calc_distance  (double v1[], double v2[]);
+void    calc_vecteur   (double pta[], double ptb[], double vab[]);
+int     normer_vecteur (double v1[]);
 
 END_NAMESPACE_HEXA
 

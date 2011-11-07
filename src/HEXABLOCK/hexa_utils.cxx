@@ -21,6 +21,7 @@
 
 #include "hexa_base.hxx"
 
+#include <cmath>
 #include <sys/stat.h>
 
 BEGIN_NAMESPACE_HEXA
@@ -40,5 +41,52 @@ pchar get_temp_name (cpchar format, pchar nomfic)
             return nomfic;
          }
 }
+// ========================================================= prod_scalaire
+double prod_scalaire (double v1[], double v2[])
+{
+   double prod = v1[dir_x]*v2[dir_x] + v1[dir_y]*v2[dir_y] 
+                                     + v1[dir_z]*v2[dir_z];
+   return prod;
+}
+// ========================================================= calc_norme
+double calc_norme (double vect[])
+{
+    double norme = vect[dir_x]*vect[dir_x] + vect[dir_y]*vect[dir_y] 
+	                                   + vect[dir_z]*vect[dir_z];
+    return sqrt (norme);
+}
+// ========================================================= calc_distance
+double  calc_distance  (double v1[], double v2[])
+{
+   Real3 vv = { v2[dir_x]-v1[dir_x],  v2[dir_y]-v1[dir_y],  v2[dir_z]-v1[dir_z] };
+   return calc_norme (vv);
+}
+// ========================================================= calc_vecteur
+void calc_vecteur  (double pta[], double ptb[], double vab[])
+{
+   vab [dir_x] = ptb [dir_x] - pta [dir_x];
+   vab [dir_y] = ptb [dir_y] - pta [dir_y];
+   vab [dir_z] = ptb [dir_z] - pta [dir_z];
+}
+// ========================================================= normer_vecteur
+int normer_vecteur (double vect[])
+{
+   double dn = calc_norme (vect);
+   if (dn < 1e-30) 
+      return HERR;
 
+   vect [dir_x] /= dn;
+   vect [dir_y] /= dn;
+   vect [dir_z] /= dn;
+   return HOK;
+}
+// ========================================================= prod_vectoriel
+double* prod_vectoriel (double v1[], double v2[], double prod[])
+{
+   prod [dir_x] = v1[dir_y] * v2[dir_z] - v2[dir_y] * v1[dir_z];
+   prod [dir_y] = v1[dir_z] * v2[dir_x] - v2[dir_z] * v1[dir_x];
+   prod [dir_z] = v1[dir_x] * v2[dir_y] - v2[dir_x] * v1[dir_y];
+
+   return prod;
+}
 END_NAMESPACE_HEXA

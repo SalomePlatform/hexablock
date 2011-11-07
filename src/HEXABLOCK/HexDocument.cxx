@@ -189,10 +189,10 @@ Elements* Document::makeCartesian (Vertex* v, Vector* v1, Vector* v2,
    return grille;
 }
 // ======================================================== makeSpherical
-Elements* Document::makeSpherical (Vertex* c, Vector* dv, int nb, double k)
+Elements* Document::makeSpherical (Vertex* c, double rayon, int nb, double k)
 {
    Elements* grille = new Elements (this);
-   grille->makeSphericalGrid (c, dv, nb, k);
+   grille->makeSphericalGrid (c, rayon, nb, k);
    return grille;
 }
 // ======================================================== makeCylindrical

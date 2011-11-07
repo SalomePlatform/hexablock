@@ -99,7 +99,7 @@ public :
    void  printName (cpchar sep=" ");
    void  dumpRef ();
 
-   cpchar getName ()                  { return el_name.c_str() ; }
+   cpchar getName ();
    void   setName (const string& nom) { el_name = nom ; }
    void   setName (cpchar nom)        { el_name = nom ; }
 
@@ -117,21 +117,6 @@ protected :
    int       el_mark;
    std::vector <EltBase*> el_parent;
 };
-// ========================================================= getName 
-inline char* EltBase::getName  (pchar buffer)
-{
-// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
-
-   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
-   return   buffer;
-}
-// ========================================================= printName 
-inline void EltBase::printName  (cpchar sep)
-{
-   char nom[12];
-
-   printf ("%s%s", getName(nom), sep);
-}
 // ========================================================= dump
 inline void EltBase::dump ()
 {

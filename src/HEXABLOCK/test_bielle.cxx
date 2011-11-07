@@ -44,7 +44,6 @@ int test_bielle (int nbargs, cpchar tabargs[])
    Hex::Document* doc = mon_ex.addDocument ();
 
    double R = 1;
-   double l = 1;
    double h = 1;
 
     // Taille du grand cylindre

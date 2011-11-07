@@ -1,3 +1,6 @@
+
+// Class : Gestion des tableaux d'hexaedres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// Class : Gestion des tableaux d'hexaedres
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #ifndef __ELEMENTS_H
 #define __ELEMENTS_H
@@ -85,7 +86,8 @@ public:
    int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h, 
          double dr, double da, double dl, int nr, int na, int nl, bool fill);
 
-   int makeSphericalGrid (Vertex* v, Vector* dv, int nb, double k=1);
+   int makeSphericalGrid (Vertex* v, Vector* dv, int nb, double k=1); // perime
+   int makeSphericalGrid (Vertex* v, double rayon, int nb, double k=1);
 
    int  joinQuads (Quads& q0, int nb, Vertex* v1, Vertex* v2, Vertex* v3, 
                    Vertex* v4, Quad* dest);
@@ -117,7 +119,7 @@ public:
                  double rext, double rint,  double radhole,
                  Vertex* plorig, double angle, int nrad, int nang, int nhaut);
 
-   static int controlRind (Vertex* cx, Vector* vx, Vector* vz, 
+   static int controlRind (EnumGrid type, Vertex* cx, Vector* vx, Vector* vz, 
                            double rext, double rint, double radhole,
                            Vertex* plorig, double angle, 
                            int nrad, int nang, int nhaut, 
@@ -128,8 +130,11 @@ public:
 
 
 protected :
-   void cutAssociation (Shapes& tshapes, Edges& tedges);
+   void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
    void assoCylinder   (Vertex* center, Vector* vz, double rayon);
+   void assoRind       (double* center, double* vx, Shapes& tshape, int nx);
+   void assoSphere     (Vertex* center, Edge* t_edge[], Quad* t_quad[]);
+   void assoCircle     (double* center, Edge* ed1, Edge* ed2);
 
               // Fin evols Hexa3 
 protected :

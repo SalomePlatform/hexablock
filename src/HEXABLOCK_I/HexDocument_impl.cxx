@@ -709,7 +709,7 @@ Elements_ptr Document_impl::makeCylindrical( Vertex_ptr ptIn,
 
 Elements_ptr Document_impl::makeSpherical(
     Vertex_ptr ptIn,
-    Vector_ptr dvIn,
+    ::CORBA::Double rayon,
     ::CORBA::Long n,
     ::CORBA::Double k )
   throw (SALOME::SALOME_Exception) //CS_TODO
@@ -717,14 +717,11 @@ Elements_ptr Document_impl::makeSpherical(
   Elements_ptr result = Elements::_nil();
 
   Vertex_impl* ptServant = ::DownCast<Vertex_impl*>( ptIn );
-  Vector_impl* dvServant = ::DownCast<Vector_impl*>( dvIn );
   ASSERT( ptServant );
-  ASSERT( dvServant );
 
-  if ( ptServant && dvServant ) {
+  if ( ptServant ) {
     HEXA_NS::Vertex* pt = ptServant->GetImpl();
-    HEXA_NS::Vector* dv = dvServant->GetImpl();
-    HEXA_NS::Elements* l = _document_cpp->makeSpherical( pt, dv, n, k );
+    HEXA_NS::Elements* l = _document_cpp->makeSpherical( pt, rayon, n, k );
     if ( l != NULL ){
       Elements_impl* servantCorba = new Elements_impl(l);
       result = servantCorba->_this();

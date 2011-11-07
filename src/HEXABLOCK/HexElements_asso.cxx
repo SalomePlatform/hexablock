@@ -62,7 +62,6 @@
 #include "HexDiagnostics.hxx"
 
                                     // Cercles 
-                                    //
 #include <GEOMImpl_CircleDriver.hxx>
 #include <GEOMImpl_ICircle.hxx>
 
@@ -74,6 +73,13 @@
 
 #include <Standard_ConstructionError.hxx>
 #include <gp_Circ.hxx>
+
+                                    // Sphere
+//  #include <gp_Ax2.hxx>
+//  #include <gp_Pnt.hxx>
+//  #include <gp_Dir.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
+// #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
 #include <process.h>
@@ -376,6 +382,37 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2)
           GeomPoint gpoint;
           gpoint.definePoint (pnt_asso);
           gpoint.associate (node);
+          Real* ass = gpoint.getCoord();
+          if (db) printf (" Asso point %s (%g,%g,%g) -> (%g,%g, %g)\n", 
+                    node->getName(), node->getX(), node->getY(), node->getZ(),
+                    ass[dir_x], ass[dir_y], ass[dir_z]);
+          }
+      else if (db)
+          {
+          GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+                                    geom_curve->FirstParameter());
+          double u1       = s1.Parameter ();
+          gp_Pnt pnt_asso = geom_curve->Value (u1);
+
+                                          // .....  Creation d'un vertex Geom
+          GeomPoint gpoint;
+          gpoint.definePoint (pnt_asso);
+          Real* ass = gpoint.getCoord();
+          // gpoint.associate (node);
+          printf (" Asso point %s (%g,%g,%g) -> (%g,%g, %g)\n", node->getName(),
+                  node->getX(), node->getY(), node->getZ(),
+                  ass[dir_x], ass[dir_y], ass[dir_z]);
+
+          gpoint.definePoint (node);
+          ass = gpoint.getCoord();
+          printf ("   deja associe a (%g,%g, %g)\n", 
+                  ass[dir_x], ass[dir_y], ass[dir_z]);
+          HexDisplay (sm1);
+          HexDisplay (sm2);
+          HexDisplay (bloc_shape->debut);
+          HexDisplay (bloc_shape->fin);
+          HexDisplay (shape->debut);
+          HexDisplay (shape->fin);
           }
       alpha = geom_total_length*shape->fin; // Pour le point suivant
       }
@@ -440,12 +477,11 @@ int GeomLine::findBound (Real3 coord)
    return NOTHING;
 }
 // ========================================================= cutAssociation
-void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
+void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
 {
    char foo[18];
    int nbedges  = tedges.size();
    int nbshapes = tshapes.size ();
-   int nbvertex = nbshapes + 1;
    if (nbshapes==0) 
       return;
 
@@ -458,18 +494,19 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
    pnt_first.definePoint (prems);
    pnt_last .definePoint (derns);
 
-/* ************************************
-   if (pnt_first.isBad())
+   if (exist)
       {
-      el_root->putError (W_ASSO_CUT1, prems->getName (foo));
-      return;
+      if (pnt_first.isBad())
+         {
+         el_root->putError (W_ASSO_CUT1, prems->getName (foo));
+         return;
+         }
+      else if (pnt_last.isBad ())  
+         {
+         el_root->putError (W_ASSO_CUT2, derns->getName (foo));
+         return;
+         }
       }
-   else if (pnt_last.isBad ())  
-      {
-      el_root->putError (W_ASSO_CUT2, derns->getName (foo));
-      return;
-      }
-   ************************************ */
                             // ----------- Define + longueur totale 
    double  longueur = 0;
    for (int ns = 0 ; ns<nbshapes ; ns++)
@@ -480,14 +517,14 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
 
                             // ----------- Ordonnancement des shapes
    double  abscisse = 0;
+   int     nslast   = 0;
+   double* coord    = pnt_first.getCoord ();
    if (nbshapes==1)
       {
       tab_gline [0].setRank (0, 0, abscisse);
       }
    else
       {
-      int     nslast   = 0;
-      double* coord    = pnt_first.getCoord ();
 
       for (int rg = 0 ; rg<nbshapes ; rg++)
           {
@@ -515,16 +552,16 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
           }
       }
                             // ----------- Dernier
-                            //
-/* ************************************ 
-   coord = pnt_last.getCoord ();
-   int pos = tab_gline[nslast].findBound (coord);
-   if (pos != V_AVAL)
+   if (exist)
       {
-      el_root->putError (W_ASSO_CUT4, derns->getName (foo));
-      return;
+      coord = pnt_last.getCoord ();
+      int pos = tab_gline[nslast].findBound (coord);
+      if (pos != V_AVAL)
+         {
+         el_root->putError (W_ASSO_CUT4, derns->getName (foo));
+         return;
+         }
       }
-   ************************************ */
                             // ----------- Associations
    abscisse     = 0;
    double delta = longueur / nbedges;
@@ -545,16 +582,18 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
    if (db) cout << " +++ End of Elements::cutAssociation" << endl;
 }
 // ====================================================== geom_create_circle 
-void geom_create_circle (double* milieu, double rayon, Vector* normale, 
-                         double* vx, string& brep)
+void geom_create_circle (double* milieu, double rayon, double* normale, 
+                         double* base, string& brep)
 {
    if (db) printf ("geom_create_circle c=(%g,%g,%g), r=%g\n", 
                     milieu[0], milieu[1], milieu[2], rayon);
-   if (db) printf (" -------- vx=(%g,%g,%g)\n", vx[0], vx[1], vx[2]);
+   if (db) printf ("    -------- base=(%g,%g,%g)\n", base[0], base[1], base[2]);
+   if (db) printf ("    -------- norm=(%g,%g,%g)\n", normale[0], normale[1], 
+                                                  normale[2]);
 
    gp_Pnt gp_center (milieu [dir_x], milieu [dir_y], milieu [dir_z]);
-   gp_Vec gp_vx     (vx     [dir_x], vx     [dir_y], vx     [dir_z]);
-   gp_Vec gp_norm   (normale->getDx(), normale->getDy(), normale->getDz());
+   gp_Vec gp_vx     (base   [dir_x], base   [dir_y], base   [dir_z]);
+   gp_Vec gp_norm   (normale[dir_x], normale[dir_y], normale[dir_z]);
 
    gp_Ax2  gp_axes (gp_center, gp_norm, gp_vx);
    gp_Circ gp_circ (gp_axes,   rayon);
@@ -582,9 +621,24 @@ void geom_create_circle (double* milieu, double rayon, Vector* normale,
                                 geom_curve.FirstParameter());
        double u1    = s1.Parameter ();
        gp_Pnt point = geom_curve.Value (u1);
-       printf ( " ........ pnt%d = (%g, %g, %g)\n", pk, point.X(),
+       printf ( " ..... pnt%d = (%g, %g, %g)\n", pk, point.X(),
                                             point.Y(),  point.Z());
        }
+}
+// ====================================================== geom_create_sphere 
+void geom_create_sphere (double* milieu, double radius, string& brep)
+{
+   gp_Pnt gp_center (milieu [dir_x], milieu [dir_y], milieu [dir_z]);
+   gp_Ax2 gp_axis = gp_Ax2 (gp_center, gp_Dir(0,0,1), gp_Dir(1,0,0));
+
+   BRepPrimAPI_MakeSphere make_sphere (gp_axis, radius);
+
+   make_sphere.Build();
+
+   ostringstream     stream_shape;
+   TopoDS_Shape      geom_sphere = make_sphere.Face(); 
+   BRepTools::Write (geom_sphere, stream_shape);
+   brep = stream_shape.str();
 }
 //
 END_NAMESPACE_HEXA
@@ -596,17 +650,21 @@ END_NAMESPACE_HEXA
 BEGIN_NAMESPACE_HEXA
 
 // ====================================================== geom_create_circle 
-void geom_create_circle (double* milieu, double rayon, Vector* normale, 
-                         double* vx, string& brep)
+void geom_create_circle (double* milieu, double rayon, double* normale, 
+                         double* base, string& brep)
 {
    char buffer [80];
    sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g", 
                     milieu[0], milieu[1], milieu[2], rayon);
    brep = buffer;
 }
+// ====================================================== geom_create_sphere 
+void geom_create_sphere (double* milieu, double radius, string& brep)
+{
+}
 //
 // ========================================================= cutAssociation
-void Elements::cutAssociation (Shapes& tshapes, Edges& tedges)
+void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
 {
 }
 END_NAMESPACE_HEXA

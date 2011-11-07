@@ -26,14 +26,16 @@
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexShape.hxx"
+#include "HexGlobale.hxx"
 
 #include <cmath>
 
-
 BEGIN_NAMESPACE_HEXA
 
-void geom_create_circle (double* milieu, double rayon, Vector* normale, 
-                         double* vx, string& brep);
+void geom_create_circle (double* milieu, double rayon, double* normale, 
+                         double* base, string& brep);
+void geom_create_sphere (double* milieu, double radius, string& brep);
+
 static bool db=false;
 
 // ======================================================== revolutionQuads
@@ -74,7 +76,7 @@ int Elements::makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz,
 		        Vertex* plorig, double angle, int nr, int na, int nl)
 {
    double phi1;
-   int ier = controlRind (center, vx, vz, radext, radint, radhole,
+   int ier = controlRind (type, center, vx, vz, radext, radint, radhole,
                           plorig, angle, nr, na, nl, cyl_phi0, phi1);
    if (ier!=HOK)
       return ier;
@@ -150,7 +152,7 @@ int Elements::getCylPoint (int nr, int na, int nh, double& px, double& py,
    return HOK;
 }
 // ====================================================== controlRind 
-int Elements::controlRind (Vertex* cx, Vector* vx, Vector* vz, 
+int Elements::controlRind (EnumGrid type, Vertex* cx, Vector* vx, Vector* vz, 
                            double rext, double rint, double rhole,
                            Vertex* px, double angle, 
                            int nrad, int nang, int nhaut, 
@@ -177,13 +179,15 @@ int Elements::controlRind (Vertex* cx, Vector* vx, Vector* vz,
    double nvx = vx->norme();
    double nvz = vz->norme();
 
-   if (nvx<Epsil1 || nvz <  Epsil1) 
+   if (nvx < Epsil1 || nvz <  Epsil1) 
       return HERR;
 
    double alpha = asin (rhole/rext);
    double beta  = -M_PI*DEMI;
+   if (type==GR_HEMISPHERIC || type==GR_PART_SPHERIC) 
+       alpha = 2*alpha;
 
-   if (px!=NULL) 
+   if (px!=NULL)
       {
           // oh = oa.n/|n|
       double oh = ((px->getX() - cx->getX()) * vz->getDx()
@@ -212,18 +216,18 @@ int Elements::getHexas (Hexas& liste)
    return HOK;
 }
 // ====================================================== assoCylinder 
-void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)
+void Elements::assoCylinder (Vertex* ori, Vector* normal, double angle)
 {
    //  return;           // Abu : Provisoire avant realisation 
    double paramax = angle/360;
    string brep;
-   Shape* shape = new Shape (brep);
+   Shape  shape (brep);
    Shapes t_shape;
    Edges  contour;
-   t_shape.push_back (shape);
+   t_shape.push_back (&shape);
 
-   Vector* vk = new Vector (vz);
-   vk->renormer ();
+   Real3 vk = { normal->getDx(), normal->getDy(), normal->getDz() };
+   normer_vecteur (vk);
 
    for (int nz=0 ; nz<size_vz ; nz++)
        {
@@ -234,29 +238,220 @@ void Elements::assoCylinder (Vertex* ori, Vector* vz, double angle)
                           pm->getY() - ori->getY(), 
                           pm->getZ() - ori->getZ() };
 
-           double oh = om[dir_x]*vk->getDx() + om[dir_y]*vk->getDy() 
-                     + om[dir_z]*vk->getDz() ;
+           double oh     = prod_scalaire (om, vk);
            double rayon  = 0;
            Real3  ph, hm;
            for (int dd=dir_x; dd<=dir_z ; dd++)
                {
-               ph [dd] = ori->getCoord(dd) + oh*vk->getCoord(dd); 
+               ph [dd] = ori->getCoord(dd) + oh*vk[dd]; 
                hm [dd] = pm ->getCoord(dd) - ph[dd];
-               rayon += hm[dd]*hm[dd];
+               rayon  += hm[dd] * hm[dd];
                }
 
            rayon = sqrt (rayon);
-           geom_create_circle (ph, rayon, vz, hm, brep);
-           shape->setBrep   (brep);
-           shape->setBounds (0, paramax);
+           geom_create_circle (ph, rayon, vk, hm, brep);
+           shape.setBrep   (brep);
+           shape.setBounds (0, paramax);
 
            contour.clear();
            for (int ny=0 ; ny<size_hy ; ny++)
                contour.push_back (getEdgeJ  (nx, ny, nz));
 
-           cutAssociation (t_shape, contour);
+           cutAssociation (t_shape, contour, false);
            }
        }
+   
+   // Association automatique des vertex non associes -> bph
+   // Traitement des faces spheriques
+
+   Real3 vi = { -vk[dir_x],  -vk[dir_y],  -vk[dir_z] };
+   Real3 po = { ori->getX(), ori->getY(), ori->getZ() };
+
+   switch (grid_type)
+      {
+      case GR_HEMISPHERIC  :    // Pour l'exterieur
+      case GR_PART_SPHERIC :
+           assoRind (po, vi, t_shape, size_vx-1);
+           break;
+      case GR_PART_RIND    :    // Exterieur + interieur
+      case GR_RIND         :
+           assoRind (po, vi, t_shape, 0);
+           assoRind (po, vi, t_shape, size_vx-1);
+           break;
+      default :
+           return;
+      }
+}
+// ====================================================== assoRind 
+// Association des meridiennes
+// Creation sphere geometrique + association faces
+void Elements::assoRind (double* ori, double* vi, Shapes& t_shape, int nx)
+{
+   Real3 vk;
+   Edges  contour;
+   Shape* shape = t_shape[0];
+   string brep;
+   double paramin = (cyl_phi0 + M_PI/2) / (2*M_PI);
+   double paramax = paramin + size_hz*cyl_dphi/(2*M_PI);
+   paramin = std::max (paramin, 0.0);
+   paramax = std::min (paramax, 1.0);
+   int nz1 = size_vz/2;
+   int nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
+
+   for (int ny=0 ; ny<nb_secteurs ; ny++)
+       {
+       Vertex* pm = getVertexIJK (nx, ny, nz1); 
+       Real3   vj = { pm->getX(), pm->getY(), pm->getZ() };
+       prod_vectoriel (vi, vj, vk);
+       double rayon = cyl_radint + nx*(cyl_radext-cyl_radint)/size_hx;
+       geom_create_circle (ori, rayon, vk, vi, brep);
+       shape->setBrep   (brep);
+       shape->setBounds (paramin, paramax);
+       contour.clear ();
+       for (int nz=0 ; nz<size_hz ; nz++)
+           contour.push_back (getEdgeK  (nx, ny, nz));
+
+       cutAssociation (t_shape, contour, false);
+       }
+}
+// ====================================================== assoCircle 
+void Elements::assoCircle (double* center, Edge* ed1, Edge* ed2)
+{
+   Real3 oa,  ob, normal;
+   Real3 pta, ptb, ptc, ptd;
+   string brep;
+
+   Echo ("Elements::assoCircle");
+   HexDump (ed1->getVertex (V_AMONT));
+   HexDump (ed1->getVertex (V_AVAL ));
+   HexDump (ed2->getVertex (V_AMONT));
+   HexDump (ed2->getVertex (V_AVAL));
+
+//  Les 2 edges dont les petits cotes d'un rectangle de rapport L/l=sqrt(2)
+//  Soit le cercle circonscrit a ce rectangle. la largeur est balayee par l'angle alpha
+//  la longueur par l'angle beta = pi -alpha
+
+   ed1->getVertex(V_AMONT)->getPoint (pta);
+   ed1->getVertex(V_AVAL )->getPoint (ptb);
+   ed2->getVertex(V_AMONT)->getPoint (ptc);
+   ed2->getVertex(V_AVAL )->getPoint (ptd);
+
+   double d1 = calc_distance (pta, ptc);
+   double d2 = calc_distance (pta, ptd);
+
+   if (d1 < d2)
+      {
+      Echo ("Permutation");
+      ed2->getVertex(V_AMONT)->getPoint (ptd);
+      ed2->getVertex(V_AVAL )->getPoint (ptc);
+      }
+
+   calc_vecteur   (center, pta, oa);
+   calc_vecteur   (center, ptb, ob);
+   prod_vectoriel (oa, ob, normal);
+   double rayon = calc_norme (oa);
+
+   geom_create_circle (center, rayon, normal, oa, brep);
+
+   Shape* asso1 = new Shape (brep);
+   Shape* asso2 = new Shape (brep);
+
+   const double alpha = atan (sqrt(2)/2)/M_PI; //  angle proche de 70.528 degres
+   asso1->setBounds (0,   alpha);
+   asso2->setBounds (0.5, alpha + 0.5);
+
+   ed1->addAssociation (asso1);
+   ed2->addAssociation (asso2);
+}
+// ====================================================== assoSphere 
+void Elements::assoSphere (Vertex* ori, Edge* t_edge[], Quad* t_quad[])
+{
+   Real3 center, sommet;
+   ori->getPoint(center);
+
+   assoCircle (center, t_edge [E_AC], t_edge [E_BD]);
+   assoCircle (center, t_edge [E_AD], t_edge [E_BC]);
+   assoCircle (center, t_edge [E_AE], t_edge [E_BF]);
+   assoCircle (center, t_edge [E_AF], t_edge [E_BE]);
+   assoCircle (center, t_edge [E_CE], t_edge [E_DF]);
+   assoCircle (center, t_edge [E_CF], t_edge [E_DE]);
+
+   t_edge[E_AC]->getVertex(V_AMONT)->getPoint (sommet);
+   double radius = calc_distance (center, sommet);;
+
+   string brep;
+   geom_create_sphere (center, radius, brep);
+
+   FILE*    fic = fopen ("sphere.brep", "w");
+   fprintf (fic, brep.c_str());
+   fclose  (fic);
+
+   for (int nf=0 ; nf < HQ_MAXI ; nf++)
+       {
+       Shape* shape = new Shape (brep);
+       t_quad [nf]->addAssociation (shape);
+       }
+}
+// ====================================================== makeSphericalGrid
+int Elements::makeSphericalGrid (Vertex* c, double rayon, int nb, double  k)
+{
+   resize (GR_SPHERIC, nb);
+
+   if (nb<0) 
+      return HERR;
+   else if (rayon <=ZEROR)
+      return HERR;
+
+   Vertex* i_node [HV_MAXI];    // Les noeuds de l'hexa englobant
+   Edge*   i_edge [HE_MAXI];    // Les noeuds de l'hexa englobant
+   Quad*   i_quad [HQ_MAXI];    // Les noeuds de l'hexa englobant
+
+   for (int nro=0 ; nro<HV_MAXI; nro++)
+       {
+       double dx = glob->CoordVertex (nro, dir_x) * rayon;
+       double dy = glob->CoordVertex (nro, dir_y) * rayon;
+       double dz = glob->CoordVertex (nro, dir_z) * rayon;
+
+       i_node [nro] = el_root->addVertex (c->getX ()+dx, c->getY ()+dy, 
+                                          c->getZ ()+dz);
+       }
+
+   for (int nro=0 ; nro<HE_MAXI; nro++)
+       {
+       int v1 = glob->EdgeVertex (nro, V_AMONT);
+       int v2 = glob->EdgeVertex (nro, V_AVAL);
+       i_edge[nro] = newEdge (i_node[v1], i_node[v2]);
+
+       if (db)
+          {
+          char nm0[8], nm1 [8], nm2 [8];
+          printf (" %2d : %s = %s = [%s, %s] = [%d,%d] = [%s,%s]\n", nro, 
+                 glob->namofHexaEdge(nro), i_edge[nro]->getName(nm0), 
+                 glob->namofHexaVertex(v1), glob->namofHexaVertex(v2), v1, v2,
+                 i_node[v1]->getName(nm1), i_node[v2]->getName(nm2));
+          }
+       }
+        
+   for (int nro=0 ; nro<HQ_MAXI; nro++)
+       i_quad[nro] = newQuad (i_edge[glob->QuadEdge (nro, E_A)], 
+                              i_edge[glob->QuadEdge (nro, E_B)], 
+                              i_edge[glob->QuadEdge (nro, E_C)], 
+                              i_edge[glob->QuadEdge (nro, E_D)]);
+
+   tab_hexa.push_back (newHexa (i_quad[Q_A], i_quad[Q_B], i_quad[Q_C], 
+                                i_quad[Q_D], i_quad[Q_E], i_quad[Q_F]));
+   double lambda  = 1;
+   double dcell   = 1;
+   for (int niv=0; niv<gr_rayon ; niv++)
+       {
+       double lambda0 = lambda;
+       dcell  *= k;
+       lambda += dcell;
+       addStrate (i_quad, i_edge, i_node, c,  lambda/lambda0);
+       }
+       
+   assoSphere (c, i_edge, i_quad);
+   return HOK;
 }
 // ====================================================== replaceHexas 
 int Elements::replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 

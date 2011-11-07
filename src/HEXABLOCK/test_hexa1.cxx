@@ -69,23 +69,28 @@ void print_propagations (Hex::Document* doc)
        }
 }
 // ======================================================== test_sphere
-int test_sphere ()
+int test_sphere (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
    Hex::Vertex*  orig = doc->addVertex (0,0,0);
 
-   int    ncouches = 1;
-   double k = 0.8;
-   Hex::Vector*   decal  = doc->addVector (1,1,1);
-   Hex::Elements* sphere = doc->makeSpherical (orig, decal, ncouches, k);
+   int    ncouches = 0;
+   double k      = 1;
+   double rayon  = 1;
+   Hex::Elements* sphere = doc->makeSpherical (orig, rayon, ncouches, k);
 
+   if (ncouches>0)
+      {
    for (int nc=0 ; nc <= ncouches ; nc++)
        {
        Hex::Hexa* cell = sphere->getStrate (nc, Hex::Q_A);
+       if (nc==0)
+          cell->dumpFull();
        cell->remove ();
        // sphere->getStrate (nc, Hex::Q_A)->remove ();
        // sphere->getStrate (nc, Hex::Q_B)->remove ();
+       }
        }
 
    sphere->saveVtk ("sphere.vtk");
@@ -349,7 +354,6 @@ int test_revolution ()
        angles.push_back (alpha);
        }
 
-
    Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
    if (bloc != NULL)
        doc->saveVtk ("revolution2.vtk");
@@ -603,10 +607,10 @@ int test_spherical (int nbargs, const char* tabargs[])
    Hex::Document* doc = mon_ex.addDocument ();
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
+   double       rayon  = 1;
    int          nbr    = 3;
 
-   Hex::Elements* grid = doc->makeSpherical (orig, dir, nbr);
+   Hex::Elements* grid = doc->makeSpherical (orig, rayon, nbr);
 
    int nbhexas = grid->countHexa ();
    HexDisplay (nbhexas);
@@ -725,6 +729,11 @@ int test_cylinder (int nbargs, cpchar tabargs[])
    Hex::Vector* vz    = doc->addVector (0,0,1);
    Hex::Vector* vx    = doc->addVector (1,0,0);
 
+   vx->setName ("vx");
+   vz->setName ("vz");
+   orig1->setName ("orig1");
+   orig2->setName ("orig2");
+
    int nr  = 4;
    int nri = 3;
    int nre = nr;
@@ -743,6 +752,10 @@ int test_cylinder (int nbargs, cpchar tabargs[])
    groupe->addElement (grid->getHexaIJK (0,1,0));
    groupe->addElement (grid->getHexaIJK (1,1,0));
    groupe->addElement (grid->getHexaIJK (2,1,0));
+
+   grid->getHexaIJK  (0,0,0)->setName ("Hexa0");
+   grid->getQuadIJ   (0,0,0)->setName ("QuadIJ0");
+   grid->getEdgeK    (0,0,0)->setName ("EdgeK0");
 
    doc->makePipe     (pipe, vx, nr, na, nl);
    doc ->saveVtk (fic_vtk, nvtk);
@@ -1027,7 +1040,7 @@ int test_disconnect1 (int nbargs, cpchar tabargs[])
 }
 // ======================================================== test_disconnect
 // ==== disconnectVertex
-int test_disconnect (int nbargs, cpchar tabargs[])
+int test_disconnect3 (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -1067,7 +1080,35 @@ int test_disconnect (int nbargs, cpchar tabargs[])
 }
 // ======================================================== test_disconnect
 // ==== Les 3 disconnect
-int test_disconnect_all (int nbargs, cpchar tabargs[])
+void contraction (Hex::Hexa* hexa, Hex::Elements* grid)
+{
+   Hex::Real3 cg = { 0, 0, 0 };
+
+   for (int nro=0; nro<Hex::HV_MAXI ; nro++)
+       {
+       cg [0] += hexa->getVertex(nro)->getX()/Hex::HV_MAXI; 
+       cg [1] += hexa->getVertex(nro)->getY()/Hex::HV_MAXI; 
+       cg [2] += hexa->getVertex(nro)->getZ()/Hex::HV_MAXI; 
+       }
+
+   int nbvertex = grid->countVertex();
+   const double coeff = 0.5;
+   for (int nro=0; nro<nbvertex ; nro++)
+       {
+       Hex::Vertex* pv = grid->getVertex(nro);
+       Hex::Real3 pold = { pv->getX(), pv->getY(), pv->getZ() };
+       Hex::Real3 pnew;
+       for (int dd=0; dd<3 ; dd++)
+           pnew [dd] = cg[dd] + coeff * (pold[dd]-cg[dd]);
+
+       pv->setX (pnew[0]);
+       pv->setY (pnew[1]);
+       pv->setZ (pnew[2]);
+       }
+}
+// ======================================================== test_disconnect
+// ==== Les 3 disconnect
+int test_disconnect (int nbargs, cpchar tabargs[])
 {
    const int size_x = 2;
    const int size_y = 2;
@@ -1104,16 +1145,22 @@ int test_disconnect_all (int nbargs, cpchar tabargs[])
    vertex->setScalar (5);
 
    doc->saveVtk ("test_disco", nvtk);
-   doc->disconnectQuad (hexa1, quad);
-   hexa1 ->transform (&matrice);
+   Hex::Elements* dq = doc->disconnectQuad (hexa1, quad);
+   // doc->performTranslation (dq, ecart);
+   //      hexa1 ->transform (&matrice);
+   contraction  (hexa1, dq) ;
    doc->saveVtk ("test_disco", nvtk);
 
-   doc->disconnectEdge (hexa2, edge);
-   hexa2->transform (&matrice);
+   Hex::Elements* de = doc->disconnectEdge (hexa2, edge);
+   // doc->performTranslation (de, ecart);
+   //      hexa2->transform (&matrice);
+   contraction  (hexa2, de) ;
    doc->saveVtk ("test_disco", nvtk);
 
-   doc->disconnectVertex (hexa3, vertex);
-   hexa3->transform (&matrice);
+   Hex::Elements* dv = doc->disconnectVertex (hexa3, vertex);
+   // doc->performTranslation (dv, ecart);
+   //      hexa3->transform (&matrice);
+   contraction  (hexa3, dv) ;
    doc->saveVtk ("test_disco", nvtk);
 
    // doc->dumpPropagation ();
@@ -1371,9 +1418,41 @@ int test_hexa1 (int nbargs, cpchar tabargs[])
 
    Hex::Vertex* orig  = doc->addVertex (0,0,0);
    Hex::Vector* dir   = doc->addVector (1,1,1);
-   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  2, 2, 2);
+   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  1, 1, 1);
 
    doc->saveVtk ("cartes.vtk");
+   Hex::Edge* edge = grid->getEdgeI (0,0,0);
 
-   
+   Hex::Shape* shape0 = new Hex::Shape ("paul");
+   Hex::Shape* shape1 = new Hex::Shape ("emile");
+   Hex::Shape* shape2 = new Hex::Shape ("victor");
+
+   shape0->setBounds(0,   0.3);
+   shape1->setBounds(0.3, 0.6);
+   shape2->setBounds(0.6, 1.0);
+
+   shape0->ident = "riri";
+   shape1->ident = "fifi";
+   shape2->ident = "loulou";
+
+   edge->addAssociation (shape0);
+   edge->addAssociation (shape1);
+   edge->addAssociation (shape2);
+
+   Hex::Shapes assos = edge->getAssociations();
+   HexDisplay (assos[0]->getBrep());
+   HexDisplay (assos[1]->getBrep());
+   HexDisplay (assos[2]->getBrep());
+
+   HexDisplay (assos[0]->debut);
+   HexDisplay (assos[0]->fin);
+   HexDisplay (assos[1]->debut);
+   HexDisplay (assos[1]->fin);
+   HexDisplay (assos[2]->debut);
+   HexDisplay (assos[2]->fin);
+
+   HexDisplay (assos[0]->ident);
+   HexDisplay (assos[1]->ident);
+   HexDisplay (assos[2]->ident);
+   return HOK;
 }

@@ -112,5 +112,24 @@ void EltBase::copyAssociation (EltBase* orig)
    el_assoc = orig->el_assoc;
    el_root->hputError (W_DISCO_ASSOC, orig);
 }
+// ========================================================= getName 
+cpchar EltBase::getName  ()
+{
+   return el_name.c_str() ;
+}
+// ========================================================= getName 
+char* EltBase::getName  (pchar buffer)
+{
+// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
+   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
+   return   buffer;
+}
+// ========================================================= printName 
+void EltBase::printName  (cpchar sep)
+{
+   char nom[12];
+
+   printf ("%s%s", getName(nom), sep);
+}
 END_NAMESPACE_HEXA
 

@@ -237,15 +237,9 @@ module HEXABLOCK_ORB
     /*!
         Grille sphÃ©rique
     */
-//     Elements makeSpherical( in Vertex pt,
-//           in double dx,
-//           in double dy,
-//           in double dz,
-//           in long n )
-//         raises (SALOME::SALOME_Exception); //CS_TODO
 
     Elements makeSpherical( in Vertex pt,
-        in Vector dv,
+        in double rayon,
         in long n,
         in double k )
         raises (SALOME::SALOME_Exception); //CS_TO_DEL
