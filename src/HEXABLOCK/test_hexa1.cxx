@@ -17,8 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
+
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
@@ -623,7 +624,7 @@ int test_spherical (int nbargs, const char* tabargs[])
    return HOK;
 }
 // ================================================== test_grille_cyl
-int test_grille_cyl ()
+int test_grille_cyl (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -765,7 +766,7 @@ int test_cylinder (int nbargs, cpchar tabargs[])
    return HOK;
 }
 // ======================================================== test_croix
-int test_croix ()
+int test_croix (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -841,7 +842,7 @@ int test_croix ()
    return HOK;
 }
 // ======================================================== test_pipes
-int test_pipes ()
+int test_pipes (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -869,7 +870,7 @@ int test_pipes ()
    return HOK;
 }
 // ======================================================== test_lorraine
-int test_lorraine()
+int test_lorraine(int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
@@ -940,7 +941,6 @@ int test_lorraine()
    int hauteur = 3;
    doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, hauteur);
    doc->saveVtk ("lorraine.vtk");
-
 
    // doc->dump ();
    return HOK;
@@ -1407,52 +1407,60 @@ int test_remove ()
 
    return HOK;
 }
+// ================================================== test_cylindricals
+void init_vec (Hex::RealVector& tab, double n0, double n1, double n2, 
+               double n3=0, double n4=0, double n5=0, double n6=0, 
+               double n7=0, double n8=0, double n9=0, double n10=0,
+               double n11=0, double n12=0, double n13=0, double n14=0, 
+               double n15=0, double n16=0)
+{
+   if (n0>0.0) tab.push_back (n0);
+   if (n1>0.0) tab.push_back (n1);
+   if (n2>0.0) tab.push_back (n2);
+   if (n3>0.0) tab.push_back (n3);
+   if (n4>0.0) tab.push_back (n4);
+   if (n5>0.0) tab.push_back (n5);
+   if (n6>0.0) tab.push_back (n6);
+   if (n7>0.0) tab.push_back (n7);
+   if (n8>0.0) tab.push_back (n8);
+   if (n9>0.0) tab.push_back (n9);
 
-int test_quads (int nbargs, cpchar tabargs[]);
-int test_hemispheres (int nbargs, cpchar tabargs[]);
-// ======================================================== test_hexa1
-int test_hexa1 (int nbargs, cpchar tabargs[])
+   if (n10>0.0) tab.push_back (n10);
+   if (n11>0.0) tab.push_back (n11);
+   if (n12>0.0) tab.push_back (n12);
+   if (n13>0.0) tab.push_back (n13);
+   if (n14>0.0) tab.push_back (n14);
+   if (n15>0.0) tab.push_back (n15);
+   if (n16>0.0) tab.push_back (n16);
+}
+// ================================================== test_cylindricals
+int test_cylindricals (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig  = doc->addVertex (0,0,0);
-   Hex::Vector* dir   = doc->addVector (1,1,1);
-   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  1, 1, 1);
+   Hex::Vertex* orig = doc->addVertex (0, 0, 0);
+   Hex::Vector* vz   = doc->addVector (0, 0, 1);
+   Hex::Vector* vx   = doc->addVector (1 ,0, 0);
 
-   doc->saveVtk ("cartes.vtk");
-   Hex::Edge* edge = grid->getEdgeI (0,0,0);
+   Hex::RealVector tdr, tda, tdl;
 
-   Hex::Shape* shape0 = new Hex::Shape ("paul");
-   Hex::Shape* shape1 = new Hex::Shape ("emile");
-   Hex::Shape* shape2 = new Hex::Shape ("victor");
+   init_vec (tdr, 2, 1, 0.5);
+   init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5, 
+                   5, 10, 15, 20, 25, 30, 35, 40);
+   init_vec (tdl, 1, 2, 3 );
 
-   shape0->setBounds(0,   0.3);
-   shape1->setBounds(0.3, 0.6);
-   shape2->setBounds(0.6, 1.0);
+   Hex::Elements* c1 = doc->makeCylindricals (orig, vx,vz, tdr, tda, tdl,true);
 
-   shape0->ident = "riri";
-   shape1->ident = "fifi";
-   shape2->ident = "loulou";
-
-   edge->addAssociation (shape0);
-   edge->addAssociation (shape1);
-   edge->addAssociation (shape2);
-
-   Hex::Shapes assos = edge->getAssociations();
-   HexDisplay (assos[0]->getBrep());
-   HexDisplay (assos[1]->getBrep());
-   HexDisplay (assos[2]->getBrep());
-
-   HexDisplay (assos[0]->debut);
-   HexDisplay (assos[0]->fin);
-   HexDisplay (assos[1]->debut);
-   HexDisplay (assos[1]->fin);
-   HexDisplay (assos[2]->debut);
-   HexDisplay (assos[2]->fin);
-
-   HexDisplay (assos[0]->ident);
-   HexDisplay (assos[1]->ident);
-   HexDisplay (assos[2]->ident);
+   doc->saveVtk ("cylindricals.vtk");
    return HOK;
+}
+int test_quads (int nbargs, cpchar tabargs[]);
+int test_hemispheres (int nbargs, cpchar tabargs[]);
+
+// ======================================================== test_hexa1
+int test_hexa1 (int nbargs, cpchar tabargs[])
+{
+   int ier = test_cylindricals (nbargs, tabargs);
+   return ier;
 }

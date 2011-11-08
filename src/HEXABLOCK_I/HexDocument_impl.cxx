@@ -689,6 +689,50 @@ Elements_ptr Document_impl::makeCylindrical( Vertex_ptr ptIn,
   return result;
 }
 
+// =================================================== makeCylindricals
+Elements_ptr Document_impl::makeCylindricals (Vertex_ptr ptin, 
+                           Vector_ptr vexin, Vector_ptr vezin,
+        const RealVector& tdr, const RealVector& tda, const RealVector& tdl,
+       	::CORBA::Boolean fill)
+        throw (SALOME::SALOME_Exception)
+{
+  Elements_ptr result = Elements::_nil();
+
+  Vertex_impl* ptServant  = ::DownCast<Vertex_impl*>( ptin );
+  Vector_impl* vexServant = ::DownCast<Vector_impl*>( vexin );
+  Vector_impl* vezServant = ::DownCast<Vector_impl*>( vezin );
+
+  ASSERT( ptServant );
+  ASSERT( vexServant );
+  ASSERT( vezServant );
+
+  if ( ptServant==NULL  || vexServant == NULL || vezServant== NULL )
+     return result;
+
+  std::vector <CORBA::Double> cdr, cda, cdl;
+  for ( int nro = 0; nro < tdr.length(); nro++) 
+      cdr.push_back (tdr[nro]);
+
+  for ( int nro = 0; nro < tda.length(); nro++) 
+      cda.push_back (tda[nro]);
+
+  for ( int nro = 0; nro < tdl.length(); nro++) 
+      cdl.push_back (tdl[nro]);
+
+  HEXA_NS::Vertex*  pt  = ptServant->GetImpl();
+  HEXA_NS::Vector*  vex = vexServant->GetImpl();
+  HEXA_NS::Vector*  vez = vezServant->GetImpl();
+  HEXA_NS::Elements* grid = _document_cpp->makeCylindricals ( pt, vex, vez, 
+                                                      cdr, cda, cdl, fill );
+  if ( grid != NULL )
+     {
+     Elements_impl* servantCorba = new Elements_impl (grid);
+     result = servantCorba->_this();
+     }
+
+  return result;
+}
+
 
 
 // Elements_ptr Document_impl::makeSpherical( Vertex_ptr ptIn,

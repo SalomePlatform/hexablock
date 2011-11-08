@@ -218,14 +218,18 @@ int Elements::getHexas (Hexas& liste)
 // ====================================================== assoCylinder 
 void Elements::assoCylinder (Vertex* ori, Vector* normal, double angle)
 {
-   //  return;           // Abu : Provisoire avant realisation 
-   double paramax = angle/360;
-   string brep;
-   Shape  shape (brep);
-   Shapes t_shape;
-   Edges  contour;
-   t_shape.push_back (&shape);
+   RealVector tangles;
+   assoCylinders (ori, normal, angle, tangles);
+}
+// ====================================================== assoCylinders 
+void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle, 
+                              RealVector& t_angles)
+{
+   int    na      = t_angles.size();
+   bool   regul   = na == 0;
+   double alpha   = angle/size_hy;
 
+   string brep;
    Real3 vk = { normal->getDx(), normal->getDy(), normal->getDz() };
    normer_vecteur (vk);
 
@@ -250,14 +254,18 @@ void Elements::assoCylinder (Vertex* ori, Vector* normal, double angle)
 
            rayon = sqrt (rayon);
            geom_create_circle (ph, rayon, vk, hm, brep);
-           shape.setBrep   (brep);
-           shape.setBounds (0, paramax);
 
-           contour.clear();
+           double  pmax = 0;
            for (int ny=0 ; ny<size_hy ; ny++)
-               contour.push_back (getEdgeJ  (nx, ny, nz));
-
-           cutAssociation (t_shape, contour, false);
+               {
+               double beta  = regul ? alpha : t_angles [ny]; 
+               double pmin = pmax;
+               pmax  += beta/360;
+               Edge* edge   =  getEdgeJ  (nx, ny, nz);
+               Shape* shape = new Shape (brep);
+               shape-> setBounds (pmin, pmax);
+               edge->addAssociation (shape);
+               }
            }
        }
    
@@ -271,12 +279,12 @@ void Elements::assoCylinder (Vertex* ori, Vector* normal, double angle)
       {
       case GR_HEMISPHERIC  :    // Pour l'exterieur
       case GR_PART_SPHERIC :
-           assoRind (po, vi, t_shape, size_vx-1);
+           assoRind (po, vi, size_vx-1);
            break;
       case GR_PART_RIND    :    // Exterieur + interieur
       case GR_RIND         :
-           assoRind (po, vi, t_shape, 0);
-           assoRind (po, vi, t_shape, size_vx-1);
+           assoRind (po, vi, 0);
+           assoRind (po, vi, size_vx-1);
            break;
       default :
            return;
@@ -285,16 +293,23 @@ void Elements::assoCylinder (Vertex* ori, Vector* normal, double angle)
 // ====================================================== assoRind 
 // Association des meridiennes
 // Creation sphere geometrique + association faces
-void Elements::assoRind (double* ori, double* vi, Shapes& t_shape, int nx)
+void Elements::assoRind (double* ori, double* vi, int nx)
 {
-   Real3 vk;
+   Real3  vk;
    Edges  contour;
-   Shape* shape = t_shape[0];
-   string brep;
+   string c_brep, s_brep;
+   Shape  shape (c_brep);
+   Shapes t_shape;
+   t_shape.push_back (&shape);
+
+   double radius = nx==0 ? cyl_radint : cyl_radext;
    double paramin = (cyl_phi0 + M_PI/2) / (2*M_PI);
    double paramax = paramin + size_hz*cyl_dphi/(2*M_PI);
+
    paramin = std::max (paramin, 0.0);
    paramax = std::min (paramax, 1.0);
+   geom_create_sphere (ori, radius, s_brep);
+
    int nz1 = size_vz/2;
    int nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
 
@@ -304,32 +319,36 @@ void Elements::assoRind (double* ori, double* vi, Shapes& t_shape, int nx)
        Real3   vj = { pm->getX(), pm->getY(), pm->getZ() };
        prod_vectoriel (vi, vj, vk);
        double rayon = cyl_radint + nx*(cyl_radext-cyl_radint)/size_hx;
-       geom_create_circle (ori, rayon, vk, vi, brep);
-       shape->setBrep   (brep);
-       shape->setBounds (paramin, paramax);
+       geom_create_circle (ori, rayon, vk, vi, c_brep);
+       shape.setBrep   (c_brep);
+       shape.setBounds (paramin, paramax);
        contour.clear ();
-       for (int nz=0 ; nz<size_hz ; nz++)
-           contour.push_back (getEdgeK  (nx, ny, nz));
 
+       for (int nz=0 ; nz<size_hz ; nz++)
+           {
+           contour.push_back (getEdgeK  (nx, ny, nz));
+           Quad* quad = getQuadJK (nx, ny, nz);
+           if (quad != NULL)
+              {
+              Shape* sshape = new Shape (s_brep); 
+              quad->addAssociation (sshape);
+              }
+           }
        cutAssociation (t_shape, contour, false);
        }
 }
 // ====================================================== assoCircle 
+// ==== utilise pour les spheres carrees
 void Elements::assoCircle (double* center, Edge* ed1, Edge* ed2)
 {
    Real3 oa,  ob, normal;
    Real3 pta, ptb, ptc, ptd;
    string brep;
 
-   Echo ("Elements::assoCircle");
-   HexDump (ed1->getVertex (V_AMONT));
-   HexDump (ed1->getVertex (V_AVAL ));
-   HexDump (ed2->getVertex (V_AMONT));
-   HexDump (ed2->getVertex (V_AVAL));
-
 //  Les 2 edges dont les petits cotes d'un rectangle de rapport L/l=sqrt(2)
-//  Soit le cercle circonscrit a ce rectangle. la largeur est balayee par l'angle alpha
-//  la longueur par l'angle beta = pi -alpha
+//  Soit le cercle circonscrit a ce rectangle. 
+//    * la largeur est balayee par l'angle alpha
+//    * la longueur par l'angle beta = pi -alpha
 
    ed1->getVertex(V_AMONT)->getPoint (pta);
    ed1->getVertex(V_AVAL )->getPoint (ptb);
@@ -341,7 +360,6 @@ void Elements::assoCircle (double* center, Edge* ed1, Edge* ed2)
 
    if (d1 < d2)
       {
-      Echo ("Permutation");
       ed2->getVertex(V_AMONT)->getPoint (ptd);
       ed2->getVertex(V_AVAL )->getPoint (ptc);
       }
@@ -381,10 +399,6 @@ void Elements::assoSphere (Vertex* ori, Edge* t_edge[], Quad* t_quad[])
 
    string brep;
    geom_create_sphere (center, radius, brep);
-
-   FILE*    fic = fopen ("sphere.brep", "w");
-   fprintf (fic, brep.c_str());
-   fclose  (fic);
 
    for (int nf=0 ; nf < HQ_MAXI ; nf++)
        {

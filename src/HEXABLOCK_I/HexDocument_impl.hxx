@@ -84,7 +84,13 @@ public:
   ::CORBA::Boolean removeConnectedHexa(Hexa_ptr h) throw (SALOME::SALOME_Exception);
   Elements_ptr makeCartesian(Vertex_ptr pt, Vector_ptr vx, Vector_ptr vy, Vector_ptr vz, ::CORBA::Long nx, ::CORBA::Long ny, ::CORBA::Long nz) throw (SALOME::SALOME_Exception);
   Elements_ptr makeCartesian1(Vertex_ptr v, Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz) throw (SALOME::SALOME_Exception);
+
   Elements_ptr makeCylindrical(Vertex_ptr pt, Vector_ptr vex, Vector_ptr vez, ::CORBA::Double dr, ::CORBA::Double da, ::CORBA::Double dl, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl, ::CORBA::Boolean fill) throw (SALOME::SALOME_Exception);
+
+  Elements_ptr makeCylindricals (Vertex_ptr pt, Vector_ptr vex, Vector_ptr vez,
+        const RealVector& tdr, const RealVector& tda, const RealVector& tdl,
+       	::CORBA::Boolean fill)
+        throw (SALOME::SALOME_Exception);
 
   Elements_ptr makeSpherical( Vertex_ptr ptIn,
     ::CORBA::Double rayon, 

@@ -716,6 +716,14 @@ Elements* Document::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
    prisme->revolutionQuads (start, center, axis, angles);
    return prisme;
 }
+// ======================================================== makeCylindricals
+Elements* Document::makeCylindricals (Vertex* c, Vector* b, Vector* h, 
+                 RealVector& tdr, RealVector& tda, RealVector& tdl, bool fill)
+{
+   Elements* grille = new Elements (this);
+   grille->makeCylindricalGrid (c, b, h, tdr, tda, tdl, fill);
+   return grille;
+}
 // ========================================================= replace
 Elements* Document::replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)

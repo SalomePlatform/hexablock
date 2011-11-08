@@ -128,13 +128,20 @@ public:
    int replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 
                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
+   int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h, 
+                            RealVector& tdr, RealVector& tda, RealVector& tdh, 
+                            bool fill=false);
 
 protected :
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
    void assoCylinder   (Vertex* center, Vector* vz, double rayon);
-   void assoRind       (double* center, double* vx, Shapes& tshape, int nx);
+   void assoCylinders  (Vertex* center, Vector* vz, double ray, RealVector& ta);
+   void assoRind       (double* center, double* vx, int nx);
    void assoSphere     (Vertex* center, Edge* t_edge[], Quad* t_quad[]);
    void assoCircle     (double* center, Edge* ed1, Edge* ed2);
+
+   int makeBasicCylinder (RealVector& tdr, RealVector& tda, RealVector& tdh, 
+                          bool fill=false);
 
               // Fin evols Hexa3 
 protected :

@@ -235,6 +235,15 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
     /*!
+        Grille cylindrique (variante)
+    */
+    Elements makeCylindricals( in Vertex pt,
+          in Vector vex, in Vector vez,
+          in RealVector tdr, in RealVector tda, in RealVector tdl,
+          in boolean fill )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
         Grille sphÃ©rique
     */
 

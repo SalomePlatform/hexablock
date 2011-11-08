@@ -17,8 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
@@ -217,7 +217,8 @@ public :
                       Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
    Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h, 
-             RealVector& tdr, RealVector& tda, RealVector& tdh, bool fill=false);
+             RealVector& tdr, RealVector& tda, RealVector& tdh, 
+             bool fill=false);
 
 public:
     Document (cpchar filename);

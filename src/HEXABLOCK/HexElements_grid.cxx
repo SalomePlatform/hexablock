@@ -477,5 +477,119 @@ void Elements::fillCenterOdd ()
           }
        }
 }
+// --------------------------------------------------------------------------
+// ----------------------------------------- Evols Hexa 3
+// --------------------------------------------------------------------------
+// ====================================================== makeCylindricalGrid
+// ==== Version avec vecteurs
+int Elements::makeCylindricalGrid (Vertex* orig, Vector* base, Vector* haut, 
+                            RealVector& tdr, RealVector& tda, RealVector& tdh, 
+                            bool fill)
+{
+   int nr = tdr.size() - 1;
+   int na = tda.size();
+   int nl = tdh.size();
+   double angle = 0;
+
+   for (int nro=0 ; nro<na ; nro++)
+       angle += tda[nro];
+
+   resize (GR_CYLINDRIC, nr, na, nl);
+   cyl_closed = angle >= 360.0;
+
+   int ier = makeBasicCylinder (tdr, tda, tdh, fill);
+   if (ier!=HOK) 
+       return ier;
+
+   transfoVertices  (orig,  base, haut);
+
+   fillGrid ();
+   assoCylinders (orig, haut, angle, tda);
+   return HOK;
+}
+// ====================================================== makeBasicCylinder
+// ==== Version avec vecteurs
+int Elements::makeBasicCylinder (RealVector& tdr, RealVector& tda, 
+                                 RealVector& tdh, bool fill)
+{
+   int na = tda.size();
+
+   cyl_dispo = CYL_NOFILL;
+   if (fill && na > 3)
+      {
+      if (cyl_closed)
+         {
+         if (na==4)
+            cyl_dispo = CYL_CL4;
+	 else if (na==6)
+            cyl_dispo = CYL_CL6;
+	 else if (na MODULO 2 == 0)
+            cyl_dispo = CYL_CLOSED;
+         }
+      else if ((na MODULO 2)==0)
+         cyl_dispo = CYL_PEER;
+      else 
+         cyl_dispo = CYL_ODD;
+      }
+
+   cyl_fill = cyl_dispo != CYL_NOFILL;
+
+   double alpha  = 0;
+   int    nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
+
+   for (int ny=0 ; ny<nb_secteurs ; ny++)
+       {
+       if (ny>0)
+          alpha  += tda[ny-1];
+
+       double theta     = M_PI*alpha/180;
+       double cos_theta = cos (theta);
+       double sin_theta = sin (theta);
+       double rayon = 0;
+
+       for (int nx=0 ; nx<size_vx ; nx++)
+           {
+           //  double rayon = dr*(nx+1);
+           rayon += tdr [nx];
+           double px = rayon*cos_theta;
+           double py = rayon*sin_theta;
+           double pz = 0;
+
+           for (int nz=0 ; nz<size_vz ; nz++)
+               {
+               if (nz > 0)
+                   pz += tdh [nz-1];
+               Vertex* node = el_root->addVertex (px, py, pz);
+               setVertex (node, nx, ny, nz);
+               }
+           }
+       }
+
+   if (cyl_closed) 
+      {
+      for (int nx=0 ; nx<size_vx ; nx++)
+          for (int nz=0 ; nz<size_vz ; nz++)
+              {
+              Vertex* node = getVertexIJK (nx, 0, nz);
+              setVertex (node, nx, size_vy-1, nz);
+              }
+      }
+                      // Les vertex centraux
+   if (cyl_fill) 
+      {
+      double pz = 0;
+      ker_vertex = nbr_vertex;
+      for (int nz=0 ; nz<size_vz ; nz++)
+          {
+          if (nz > 0)
+              pz += tdh [nz-1];
+          Vertex* node = el_root->addVertex (0, 0, pz);
+          tab_vertex.push_back (node);
+          nbr_vertex ++;
+          }
+      }
+
+   return HOK;
+}
 END_NAMESPACE_HEXA
 
