@@ -123,15 +123,15 @@ GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
   for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
 	iter != shapes.end();
         ++iter ){
-//     aShape = string2shape( (*iter)->getBrep() );
-//     (*result)[ i++ ] = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
-      if ( !(*iter)->ior.empty() ){
+      if ( !(*iter)->ior.empty() ){ // geom object from current session
         corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
         if ( !CORBA::is_nil( corbaObj ) ){
           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-          (*result)[ i++ ] = geomObj;
         }
+      } else { // no geom object => we have to built it
+        geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( (*iter)->getBrep() );
       }
+      (*result)[ i++ ] = geomObj._retn();
   }
 
   return result;

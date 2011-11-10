@@ -151,7 +151,8 @@ public:
 
     GEOM_Client* getGeomClient();
     TopoDS_Shape geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject);
-    GEOM::GEOM_Object_ptr shapeToGeomObject(const TopoDS_Shape& theShape );
+//     GEOM::GEOM_Object_ptr shapeToGeomObject(const TopoDS_Shape& theShape );
+    GEOM::GEOM_Object_ptr brepToGeomObject(const std::string& theBrep);
     static SALOME_LifeCycleCORBA*  GetLCC();
     static SALOME_NamingService* GetNS();
     static HEXABLOCK_Gen_i* GetHEXABLOCKGen() { return _HEXABLOCKGen;}

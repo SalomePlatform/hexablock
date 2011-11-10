@@ -162,6 +162,7 @@ EdgeAssociations* Edge_impl::getAssociations ()
   CORBA::Object_var corbaObj;
   GEOM::GEOM_Object_var geomObj;
 
+//   std::cout << "XXXXXXXX shapes "<< shapes.size() << std::endl;
   for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
 	iter != shapes.end();
         ++iter ){
@@ -173,16 +174,31 @@ EdgeAssociations* Edge_impl::getAssociations ()
 //       assoc.geomObj = GEOM::GEOM_Object::_duplicate( (*iter).geomObj );
 //       aShape = string2shape( (*iter)->getBrep());
 //       assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
-      if ( !(*iter)->ior.empty() ){
+
+//       if ( !(*iter)->ior.empty() ){
+//         corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
+//         if ( !CORBA::is_nil( corbaObj ) ){
+//           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+//           assoc.geomObj = geomObj._retn();
+//           assoc.debut   = (*iter)->debut;
+//           assoc.fin     = (*iter)->fin;
+//           (*result)[ i++ ] = assoc;
+//         }
+//       }
+      assoc.debut   = (*iter)->debut;
+      assoc.fin     = (*iter)->fin;
+
+      if ( !(*iter)->ior.empty() ){ // geom object from current session
         corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
         if ( !CORBA::is_nil( corbaObj ) ){
           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
           assoc.geomObj = geomObj._retn();
-          assoc.debut   = (*iter)->debut;
-          assoc.fin     = (*iter)->fin;
-          (*result)[ i++ ] = assoc;
         }
+      } else { // no geom object => we have to built it
+        assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( (*iter)->getBrep() );
       }
+
+      (*result)[ i++ ] = assoc;
   }
   return result;
 }

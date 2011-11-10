@@ -350,70 +350,108 @@ TopoDS_Shape HEXABLOCK_Gen_i::geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObj
 //   return result._retn();
 // }
 
-GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeEdge( const TopoDS_Shape& theShape )
-{
-  ASSERT ( theShape.ShapeType() == TopAbs_EDGE );
-  int theStudyID = 0;
-  GEOM::GEOM_Object_var result;
-  GEOM::GEOM_Object_var p1;
-  GEOM::GEOM_Object_var p2;
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeEdge( const TopoDS_Shape& theShape )
+// {
+//   ASSERT ( theShape.ShapeType() == TopAbs_EDGE );
+//   int theStudyID = 0;
+//   GEOM::GEOM_Object_var result;
+//   GEOM::GEOM_Object_var p1;
+//   GEOM::GEOM_Object_var p2;
+// 
+//   if ( CORBA::is_nil(_geomGen) ) { //_geomGen->_is_nil() 
+//     Engines::EngineComponent_ptr temp=GetLCC()->FindOrLoad_Component("FactoryServer","GEOM");
+//     _geomGen=GEOM::GEOM_Gen::_narrow(temp);
+//   }
+//   GEOM::GEOM_IBasicOperations_var     aBasicOp  = _geomGen->GetIBasicOperations(theStudyID);
+//   GEOM::GEOM_IShapesOperations_var    aShapesOp = _geomGen->GetIShapesOperations(theStudyID);
+// 
+//   TopoDS_Edge anEdge = TopoDS::Edge( theShape );
+//   double f, l;
+//   Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, f, l);
+// 
+//   gp_Pnt aCurveStart = aCurve->Value( f );
+//   gp_Pnt aCurveEnd   = aCurve->Value( l );
+// 
+//   double x1, y1, z1;
+//   double x2, y2, z2;
+// 
+//   x1 = aCurveStart.X(); y1 = aCurveStart.Y(); z1 = aCurveStart.Z();
+//   x2 = aCurveEnd.X();   y2 = aCurveEnd.Y(); z2 = aCurveEnd.Z();
+//   p1= aBasicOp->MakePointXYZ(x1, y1, z1);
+//   p2= aBasicOp->MakePointXYZ(x2, y2, z2);
+//   result = aShapesOp->MakeEdge(p1, p2);
+// 
+//   return result._retn();
+// }
 
-  GEOM::GEOM_IBasicOperations_var     aBasicOp  = _geomGen->GetIBasicOperations(theStudyID);
-  GEOM::GEOM_IShapesOperations_var    aShapesOp = _geomGen->GetIShapesOperations(theStudyID);
-
-  TopoDS_Edge anEdge = TopoDS::Edge( theShape );
-  double f, l;
-  Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, f, l);
-
-  gp_Pnt aCurveStart = aCurve->Value( f );
-  gp_Pnt aCurveEnd   = aCurve->Value( l );
-
-  double x1, y1, z1;
-  double x2, y2, z2;
-
-  x1 = aCurveStart.X(); y1 = aCurveStart.Y(); z1 = aCurveStart.Z();
-  x2 = aCurveEnd.X();   y2 = aCurveEnd.Y(); z2 = aCurveEnd.Z();
-  p1= aBasicOp->MakePointXYZ(x1, y1, z1);
-  p2= aBasicOp->MakePointXYZ(x2, y2, z2);
-  result = aShapesOp->MakeEdge(p1, p2);
-
-  return result._retn();
-}
-
-GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeVertex( const TopoDS_Shape& theShape )
-{
-  ASSERT ( theShape.ShapeType() == TopAbs_VERTEX );
-
-  int theStudyID = 0;
-  GEOM::GEOM_Object_var result;
-
-  TopoDS_Vertex aPoint;
-  aPoint      = TopoDS::Vertex( theShape );
-  gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
-  double x = aPnt.X();
-  double y = aPnt.Y();
-  double z = aPnt.Z();
-
-  GEOM::GEOM_IBasicOperations_var aBasicOp = _geomGen->GetIBasicOperations(theStudyID);
-  result = aBasicOp->MakePointXYZ(x, y, z);
-
-  return result._retn();
-}
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::_makeVertex( const TopoDS_Shape& theShape )
+// {
+//   ASSERT ( theShape.ShapeType() == TopAbs_VERTEX );
+// 
+//   int theStudyID = 0;
+//   GEOM::GEOM_Object_var result;
+// 
+//   TopoDS_Vertex aPoint;
+//   aPoint      = TopoDS::Vertex( theShape );
+//   gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
+//   double x = aPnt.X();
+//   double y = aPnt.Y();
+//   double z = aPnt.Z();
+// 
+//   GEOM::GEOM_IBasicOperations_var aBasicOp = _geomGen->GetIBasicOperations(theStudyID);
+//   result = aBasicOp->MakePointXYZ(x, y, z);
+// 
+//   return result._retn();
+// }
 
 
-GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )
-{
-  GEOM::GEOM_Object_var aShapeObj;
-  if ( !theShape.IsNull() ) {
-    switch ( theShape.ShapeType() ){
-      case TopAbs_VERTEX: aShapeObj = _makeVertex( theShape ); break;
-//       case TopAbs_FACE:   aShapeObj = _makeFace( theShape ); break;
+// GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )
+// {
+//   std::cout << "XXXXXXXX shapeToGeomObject "<< std::endl;
+//   GEOM::GEOM_Object_var aShapeObj;
+//   if ( !theShape.IsNull() ) {
+//     switch ( theShape.ShapeType() ){
+//       case TopAbs_VERTEX: aShapeObj = _makeVertex( theShape ); break;
+// //       case TopAbs_FACE:   aShapeObj = _makeFace( theShape ); break; //CS_TODO
 //       case TopAbs_EDGE:   aShapeObj = _makeEdge( theShape ); break;
-      default: throw (SALOME_Exception(LOCALIZED("shapeToGeomObject : shape type not supported")));
-    }
+//       default: throw (SALOME_Exception(LOCALIZED("shapeToGeomObject : shape type not supported")));
+//     }
+//   }
+//   return aShapeObj._retn();
+// }
+
+
+
+
+GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::brepToGeomObject(const std::string& theBrep)
+{
+  int theStudyID = 0; //CS_TODO
+  GEOM::GEOM_Object_var aShapeObj;
+
+  if ( CORBA::is_nil(_geomGen) ){
+    Engines::EngineComponent_ptr temp=GetLCC()->FindOrLoad_Component("FactoryServer","GEOM");
+    _geomGen=GEOM::GEOM_Gen::_narrow(temp);
   }
+  GEOM::GEOM_IInsertOperations_var aInsOp = _geomGen->GetIInsertOperations(theStudyID);
+
+  char *tmpname = strdup("HexaAssocXXXXXX");
+  int fd = mkstemp( tmpname );
+
+  if ( fd != -1 ){
+    ofstream tmpfile( tmpname );
+    tmpfile << theBrep;
+    tmpfile.close();
+    aShapeObj = aInsOp->ImportFile( tmpname, "BREP" );
+    close(fd);
+    unlink(tmpname);
+  }
+
   return aShapeObj._retn();
 }
+
+
+
+
 
 
 // GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::shapeToGeomObject (const TopoDS_Shape& theShape )

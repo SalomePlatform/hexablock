@@ -90,28 +90,22 @@ GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
 {
 //   GEOM::GEOM_Object_var result = GEOM::GEOM_Object::_nil();
 //   GEOM::GEOM_Object_ptr result = GEOM::GEOM_Object::_nil();
-
-  GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
+  GEOM::GEOM_Object_var geomObj; // = new GEOM::GEOM_Object;
   CORBA::Object_var corbaObj;
 
   HEXA_NS::Shape* s = _vertex_cpp->getAssociation();
-//   std::cout << "getAssociation ->" << s << std::endl;
   if (s != NULL){
-//     string strBrep = s->getBrep();
-//     TopoDS_Shape shape = string2shape( strBrep );
-//     result = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject(shape);
-    corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
-    if ( !CORBA::is_nil( corbaObj ) ){
-        result = GEOM::GEOM_Object::_narrow( corbaObj );
-    }
+      if ( !s->ior.empty() ){ // geom object from current session
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
+        if ( !CORBA::is_nil( corbaObj ) ){
+          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+        }
+      } else { // no geom object => we have to built it
+          geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( s->getBrep() );
+      }
   }
 
-// //   _vertex_cpp->getAssociation()->_topo;
-// //   result = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject(_shape);
-
-//   return result;
-  return result._retn();
-//   return GEOM::GEOM_Object::_duplicate( _association );
+  return geomObj._retn();
 }
 
 
