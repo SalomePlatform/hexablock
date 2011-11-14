@@ -41,7 +41,8 @@ public:
     Vector (Vector* lautre);
     virtual ~Vector () {}
     virtual void dump ();
-    double getCoord (int dir);
+    double  getCoord (int dir);
+    double* getCoord (double coord[]);
 
     virtual void saveXml (XmlWriter* xml);
 
@@ -93,6 +94,14 @@ inline void Vector::vectoriel (Vector* a, Vector*b)
    v_dz =   a->v_dx * b->v_dy - b->v_dx * a->v_dy; 
 }
 
+// ===================================================== getCoord
+inline double* Vector::getCoord (double coord[])
+{
+   coord [dir_x] = v_dx;
+   coord [dir_y] = v_dy;
+   coord [dir_z] = v_dz;
+   return coord;
+}
 // ===================================================== multiplier
 inline void Vector::multiplier (double scalaire)
 {

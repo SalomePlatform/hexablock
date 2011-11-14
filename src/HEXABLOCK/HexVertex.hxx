@@ -40,6 +40,7 @@ public :
    void setZ (double v)   { v_z = v ; }
  
    void assoCoord (double x, double y, double z);
+   void assoCoord (double* pnt); 
 
 public :
    Vertex (Document* prev, double x=0.0, double y=0.0, double z=0.0); 
@@ -49,10 +50,10 @@ public :
    virtual void dump () ;
    virtual void saveXml (XmlWriter* xml);
 
-   void   setScalar (double val)             { v_scalar = val ; }
-   double getScalar ()                       { return v_scalar ; }
-   void   setColor  (double valeur)          { setScalar (valeur) ; }
-   void   getPoint (double point[]);
+   void    setScalar (double val)             { v_scalar = val ; }
+   double  getScalar ()                       { return v_scalar ; }
+   void    setColor  (double valeur)          { setScalar (valeur) ; }
+   double* getPoint (double point[]);
 
    void setCoord  (double x, double y, double z);
    bool isin      (double xmin, double xmax, double ymin, double ymax, 
@@ -136,6 +137,11 @@ inline void Vertex::setCoord (double x, double y, double z)
    v_z = z;
 }
 // ========================================================= assoCoord 
+inline void Vertex::assoCoord (double* coord)
+{
+   assoCoord (coord[dir_x], coord[dir_y], coord[dir_z]);
+}
+// ========================================================= assoCoord 
 inline void Vertex::assoCoord (double x, double y, double z)
 {
    gc_ass = true;
@@ -153,11 +159,12 @@ inline bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax,
    return rep;
 }
 // ========================================================= getPoint
-inline void Vertex::getPoint (double point[])
+inline double* Vertex::getPoint (double point[])
 {
    point [dir_x] = v_x;
    point [dir_y] = v_y;
    point [dir_z] = v_z;
+   return point;
 }
 // ========================================================= duplicate 
 inline void Vertex::duplicate (Document* cible)

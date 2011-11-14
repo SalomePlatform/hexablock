@@ -27,7 +27,7 @@
 BEGIN_NAMESPACE_HEXA
 
 enum {Cyl1=0, Cyl2=1, NbrSlices1=6, NbrSlices2=4, NbrVSlices1=NbrSlices1+1,
-      NbrVSlices2=NbrSlices2+1 };
+      NbrVSlices2=NbrSlices2+1, NxExt=2, NxInt=1 };
 
 class CrossElements : public Elements 
 {
@@ -94,6 +94,9 @@ private :
    Hexa* findHexa1 (Quad*   q1, Quad*   q2);
    Edge* findEdge1 (Vertex* v1, Vertex* v2);
    Quad* findQuad1 (Edge*   e1, Edge*   e2);
+
+   void assoCylinder (int cyl, double* normal);
+   void assoSlice    (int cyl, double* normal, int slice);
 
 private :
     bool      is_filled;

@@ -133,6 +133,7 @@ public :
    void defineLine (Shape* asso);
    void setRank   (int rang, int sens, double& abscisse);
    void associate (Edge* edge, double sm1, double sm2);
+   void assoPoint (double alpha, Vertex* node);
 
 private :
    void majCoord ();
@@ -301,6 +302,7 @@ void GeomLine::defineLine (Shape* asso)
 
    BRepTools::Read(topo, streamBrep, aBuilder);
    geom_line  = TopoDS::Edge(topo);
+   delete geom_curve;
    geom_curve = new BRepAdaptor_Curve (geom_line);
                                // Longueur de la ligne
    double umin = 0, umax = 0;
@@ -334,7 +336,23 @@ void GeomLine::defineLine (Shape* asso)
       PutCoord (start_coord);
       PutCoord (end_coord);
       }
+}
+// ========================================================= assoPoint
+void GeomLine::assoPoint (double alpha, Vertex* node)
+{
+   GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+                             geom_curve->FirstParameter());
+   double u1       = s1.Parameter ();
+   gp_Pnt pnt_asso = geom_curve->Value (u1);
 
+   GeomPoint gpoint;
+   gpoint.definePoint (pnt_asso);
+   gpoint.associate   (node);
+
+   double* coord = gpoint.getCoord();
+   printf (" ... assoPoint : angle=%g, v=%s (%g,%g,%g) -> (%g, %g, %g)\n", 
+           alpha, node->getName(), node->getX(), node->getY(), node->getZ(), 
+           coord[dir_x], coord[dir_y], coord[dir_z]);
 }
 // ========================================================= associate
 void GeomLine::associate (Edge* edge, double sm1, double sm2)
@@ -581,6 +599,20 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
        }
    if (db) cout << " +++ End of Elements::cutAssociation" << endl;
 }
+static GeomLine current_line;
+static Shape    current_shape ("");
+// ====================================================== geom_define_line
+void geom_define_line (string& brep)
+{
+   current_shape.setBrep (brep);
+   current_shape.setBounds (0,1);
+   current_line.defineLine (&current_shape);
+}
+// ====================================================== geom_asso_point
+void geom_asso_point (double angle, Vertex* node)
+{
+   current_line.assoPoint (angle, node);
+}
 // ====================================================== geom_create_circle 
 void geom_create_circle (double* milieu, double rayon, double* normale, 
                          double* base, string& brep)
@@ -665,6 +697,14 @@ void geom_create_sphere (double* milieu, double radius, string& brep)
 //
 // ========================================================= cutAssociation
 void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
+{
+}
+// ====================================================== geom_define_line
+void geom_define_line (string& brep)
+{
+}
+// ========================================================= geom_asso_point
+void geom_asso_point (double angle, Vertex* node)
 {
 }
 END_NAMESPACE_HEXA

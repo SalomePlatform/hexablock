@@ -176,7 +176,7 @@ void Hexa::controlerFaces  ()
           el_root->putError (W_H_NULL_QUAD, 
                              el_root->glob->namofHexaQuad (n1));
           el_status = 886;
-	  return;
+          return;
           }
        for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
            if (h_quad [n1] == h_quad[n2])
@@ -198,7 +198,7 @@ void Hexa::controlerSommets  ()
           el_root->putError (W_H_NULL_QUAD, 
                              el_root->glob->namofHexaVertex (n1));
           el_status = 886;
-	  return;
+          return;
           }
        for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
            if (h_vertex [n1] == h_vertex[n2])
@@ -482,16 +482,16 @@ Elements* Hexa::disconnectQuad (Quad* quad)
        if (make_edge[nro])
           {
           Quad*   pface  = h_quad [ind_opp_quad [nro]];
-	  int     bid;
-	  int     ncut = pface->inter (quad, bid);
-	  Edge*   ecut = pface->getEdge ((ncut+1) MODULO QUAD4);  
-	  Vertex* vopp = ecut->getVertex(V_AMONT);
+          int     bid;
+          int     ncut = pface->inter (quad, bid);
+          Edge*   ecut = pface->getEdge ((ncut+1) MODULO QUAD4);  
+          Vertex* vopp = ecut->getVertex(V_AMONT);
           if (vopp==o_v0)
               vopp = ecut->getVertex (V_AVAL);
           else if (o_v0 != ecut->getVertex (V_AVAL));
               {
-	      ecut = pface->getEdge ((ncut+3) MODULO QUAD4);  
-	      vopp = ecut->getVertex(V_AMONT);
+              ecut = pface->getEdge ((ncut+3) MODULO QUAD4);  
+              vopp = ecut->getVertex(V_AMONT);
               if (vopp==o_v0)
                   vopp = ecut->getVertex (V_AVAL);
               else if (o_v0 != ecut->getVertex (V_AVAL))
@@ -596,21 +596,6 @@ Elements* Hexa::disconnectEdge (Edge* arete)
    if (nedge==NOTHING || namont==NOTHING || naval==NOTHING)
       return NULL;
 
-   Vertex*   old_amont = arete->getVertex (V_AMONT);
-   Vertex*   old_aval  = arete->getVertex (V_AVAL );
-   Vertex*   new_amont = new Vertex (old_amont);
-   Vertex*   new_aval  = new Vertex (old_aval);
-   Edge*     new_edge  = new Edge   (new_amont, new_aval);
-
-   h_vertex [namont]   = new_amont;
-   h_vertex [naval]    = new_aval;
-   h_edge   [nedge]    = new_edge;
-
-   Elements* nouveaux  = new Elements (el_root);
-   nouveaux->addVertex (new_amont);
-   nouveaux->addVertex (new_aval);
-   nouveaux->addEdge   (new_edge);
-
    if (debug())
       {
       printf (" ... Avant disconnectEdge, arete=");
@@ -618,46 +603,91 @@ Elements* Hexa::disconnectEdge (Edge* arete)
       dumpFull ();
       }
 
-                // Trouver les 2 faces contigues a l'arete
-                // et verifier si la face est commune a 2 hexas
-   int nf = 0;
-   for (int nq=0 ; nq<HQ_MAXI && nf < V_TWO; nq++)
+   Edge*   n_edge   [HE_MAXI];
+   Quad*   n_quad   [HQ_MAXI];
+   Vertex* n_vertex [HV_MAXI];
+
+   for (int nro=0 ; nro<HQ_MAXI ; nro++) n_quad [nro]   = NULL;
+   for (int nro=0 ; nro<HE_MAXI ; nro++) n_edge [nro]   = NULL;
+   for (int nro=0 ; nro<HV_MAXI ; nro++) n_vertex [nro] = NULL;
+
+   Vertex* old_amont = arete->getVertex (V_AMONT);
+   Vertex* old_aval  = arete->getVertex (V_AVAL );
+   Vertex* new_amont = n_vertex [namont] = new Vertex (old_amont);
+   Vertex* new_aval  = n_vertex [naval]  = new Vertex (old_aval);
+   n_edge [nedge]    = new Edge   (new_amont, new_aval);
+
+   // Un edge non remplace, qui contient un vertex remplace
+   //         commun a plus de 2 faces (donc appartenant a un autre hexa)
+   //         doit etre duplique
+
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
        {
-       int nro = h_quad[nq]->indexEdge (arete);
-       if (nro>=0)
+       if (   n_edge[nro]==NULL && h_edge[nro] != NULL
+           && h_edge[nro]->getNbrParents()>2)
           {
-          nf ++;
-          if (h_quad[nq]->getNbrParents()>1)
-             {
-             Edge* eoppos = h_quad[nq]->getEdge ((nro+2) MODULO QUAD4);
-             Edge* eleft  = h_quad[nq]->getEdge ((nro+3) MODULO QUAD4);
-             Edge* eright = h_quad[nq]->getEdge ((nro+1) MODULO QUAD4);
-             int nl2, nr2;
-             int nl1 = arete->inter (eleft,  nl2);
-             int nr1 = arete->inter (eright, nr2);
-             if (nl1==NOTHING && nr1==NOTHING)
-                return nouveaux;
+          Vertex* va =  h_edge[nro]->getVertex (V_AMONT); 
+          Vertex* vb =  h_edge[nro]->getVertex (V_AVAL); 
 
-             Vertex*  new_vleft  = nl1==V_AMONT ? new_amont : new_aval;
-             Vertex*  new_vright = nr1==V_AMONT ? new_amont : new_aval;
-
-             Edge* new_eleft  = new Edge (new_vleft,  eleft ->getVertex(1-nl2));
-             Edge* new_eright = new Edge (new_vright, eright->getVertex(1-nr2));
-             Quad* new_quad   = new Quad (new_edge, new_eleft, eoppos, 
-                                          new_eright);
-             replaceQuad (h_quad[nq], new_quad);
-             replaceEdge (arete,      new_edge);
-             replaceEdge (eleft,      new_eleft);
-             replaceEdge (eright,     new_eright);
-             replaceVertex (old_amont,  new_amont);
-             replaceVertex (old_aval,   new_aval);
-
-             nouveaux->addEdge (new_eleft);
-             nouveaux->addEdge (new_eright);
-             nouveaux->addQuad (new_quad);
-             }
+          if (va==old_amont)
+             n_edge [nro] = new Edge (new_amont, vb);
+          else if (va==old_aval)
+             n_edge [nro] = new Edge (new_aval,  vb);
+          else if (vb==old_amont)
+             n_edge [nro] = new Edge (va, new_amont);
+          else if (vb==old_aval)
+             n_edge [nro] = new Edge (va, new_aval);
           }
        }
+
+   // Un quad non remplace, qui contient un edge remplace 
+   //         commun a plus de 2 Hexas
+   //         doit etre duplique
+
+   Globale* glob = Globale::getInstance();
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       if (   n_quad[nro]==NULL && h_quad[nro] != NULL
+           && h_quad[nro]->getNbrParents()>1)
+          {
+          Edge* qedge[QUAD4];
+          bool  duplic = false;
+          for (int ned=0 ; ned<QUAD4 ; ned++)
+              {
+              int ndup = glob->QuadEdge (nro, (EnumQuad)ned);
+              if (n_edge [ndup] ==NULL)
+                 qedge [ned] = h_edge[ndup];
+              else
+                 {
+                 qedge [ned] = n_edge[ndup];
+                 duplic = true;
+                 }
+              }
+          if (duplic) 
+             n_quad[nro] = new Quad (qedge[Q_A], qedge[Q_B], 
+                                     qedge[Q_C], qedge[Q_D]);
+          }
+
+   Elements* nouveaux  = new Elements (el_root);
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       if (n_quad[nro]!=NULL)
+          {
+          replaceQuad (h_quad[nro], n_quad[nro]);
+          nouveaux->addQuad  (n_quad[nro]);
+          }
+
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       if (n_edge[nro]!=NULL)
+          {
+          replaceEdge (h_edge[nro], n_edge[nro]);
+          nouveaux->addEdge  (n_edge[nro]);
+          }
+
+   for (int nro=0 ; nro<HV_MAXI ; nro++)
+       if (n_vertex[nro]!=NULL)
+          {
+          replaceVertex (h_vertex[nro], n_vertex[nro]);
+          nouveaux->addVertex  (n_vertex[nro]);
+          }
 
    if (debug())
       {
@@ -703,10 +733,10 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
                   {
                   nbmod++;  
                   int hed = findEdge (arete);
-		  if (hed<0)
+                  if (hed<0)
                      return NULL;
-		  if (new_edge [hed]==NULL)
-		      new_edge [hed] = new Edge (new_node, 
+                  if (new_edge [hed]==NULL)
+                      new_edge [hed] = new Edge (new_node, 
                                                  arete->getVertex(1-indv));
                   tedge [qed] = new_edge [hed];
                   }
@@ -764,8 +794,8 @@ void Hexa::replaceQuad (Quad* old, Quad* par)
        if (h_quad[nro]==old) 
            {
            h_quad[nro] = par;
-	   if (debug())
-	      {
+           if (debug())
+              {
               printf (" Dans ");
               printName ();
               printf (" [%d], ", nro);
@@ -784,8 +814,8 @@ void Hexa::replaceEdge (Edge* old, Edge* par)
        if (h_edge[nro]==old) 
            {
            h_edge[nro] = par;
-	   if (debug())
-	      {
+           if (debug())
+              {
               printf (" Dans ");
               printName ();
               printf (" [%d], ", nro);
@@ -808,8 +838,8 @@ void Hexa::replaceVertex (Vertex* old, Vertex* par)
        if (h_vertex [nro]==old) 
            {
            h_vertex [nro] = par;
-	   if (debug())
-	      {
+           if (debug())
+              {
               printf (" Dans ");
               printName ();
               printf (" [%d], ", nro);

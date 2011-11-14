@@ -1,3 +1,6 @@
+
+// C++ : Gestion des cylindres croises
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// C++ : Gestion du croisement de cylindres
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #include "HexCrossElements.hxx"
 
@@ -29,6 +30,7 @@
 
 #include "HexGlobale.hxx"
 #include "HexCylinder.hxx"
+#include "HexShape.hxx"
 
 static bool   db  = false;
 
@@ -40,6 +42,12 @@ static const double epaiss2 = 0.5;
 BEGIN_NAMESPACE_HEXA
 
 double calcul_centre (Vertex* orig, Vertex* inter); 
+void geom_create_circle (double* milieu, double rayon, double* normale, 
+                         double* base, string& brep);
+
+void geom_define_line (string& brep);
+void geom_asso_point  (double angle, Vertex* node);
+
 // ====================================================== crossCylinders
 CrossElements::CrossElements (Document* doc, EnumGrid type) 
              : Elements (doc)
@@ -665,7 +673,7 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    createBigCyl    ();
 
    Vector* iprim = new Vector (cross_cyl1->getDirection());
-   Vector* kprim = new Vector ((cross_cyl2->getDirection()));
+   Vector* kprim = new Vector (cross_cyl2->getDirection());
    Vector* jprim = new Vector (kprim);
 
    iprim->renormer ();
@@ -673,6 +681,10 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    jprim->vectoriel (kprim, iprim);
 
    transfoVertices (cross_center, iprim, jprim, kprim);
+
+   Real3 coord;
+   assoCylinder (Cyl1, iprim->getCoord (coord));
+   assoCylinder (Cyl2, kprim->getCoord (coord));
    return HOK;
 }
 // ====================================================== fillGrid
@@ -945,5 +957,56 @@ double calcul_centre (Vertex* orig, Vertex* inter)
    double dz = inter->getZ () - orig->getZ ();
    double dd = sqrt (dx*dx + dy*dy + dz*dz);
    return dd;
+}
+// ===================================================== assoCylinder 
+void CrossElements::assoCylinder (int cyl, double* normal)
+{
+   assoSlice (cyl, normal, 0);
+   assoSlice (cyl, normal, size_hz[cyl]);
+}
+// ===================================================== assoSlice 
+void CrossElements::assoSlice (int cyl, double* normal, int nzs)
+{
+   Real3  center, base, pnt1, pnt2, vec1;
+   string brep;
+
+   Vertex* v_e  = getVertexIJK (cyl, NxExt, S_E , nzs);
+   Vertex* v_ne = getVertexIJK (cyl, NxExt, S_NE, nzs);
+   Vertex* v_n  = getVertexIJK (cyl, NxExt, S_N , nzs);
+   Vertex* v_s  = getVertexIJK (cyl, NxExt, S_S , nzs);
+
+   v_s->getPoint (pnt1); 
+   v_n->getPoint (pnt2); 
+
+   double rayon  = calc_distance (pnt1, pnt2)/2;
+   for (int nro=0 ; nro<DIM3 ; nro++) 
+       center[nro] = (pnt1[nro] + pnt2[nro])/2; 
+
+   v_e ->getPoint (pnt1); 
+   v_ne->getPoint (pnt2); 
+   calc_vecteur (center, pnt1, base);
+   calc_vecteur (center, pnt2, vec1);
+
+   double ps    = prod_scalaire (base,vec1);
+   double pnorm = calc_norme(base) * calc_norme(vec1);
+   double alpha = acos (ps/pnorm);
+
+   double t_angle[S_MAXI+1]  = { 0,         alpha,   M_PI/2,   M_PI-alpha, 
+                                 M_PI, M_PI+alpha, 3*M_PI/3, 2*M_PI-alpha, 
+                                 2*M_PI };
+
+   geom_create_circle (center, rayon, normal, base, brep);
+   geom_define_line   (brep);   // pour geom_asso_point
+
+   for (int ny=0 ; ny<S_MAXI ; ny++)
+       {
+       Edge*   edge  = getEdgeJ     (cyl, NxExt, ny, nzs);
+       Vertex* node  = getVertexIJK (cyl, NxExt, ny, nzs);
+       Shape*  shape = new Shape (brep);
+
+       geom_asso_point (t_angle[ny], node);
+       shape->setBounds (t_angle[ny]/M_PI, t_angle[ny+1]/M_PI);
+       edge ->addAssociation (shape);
+       }
 }
 END_NAMESPACE_HEXA

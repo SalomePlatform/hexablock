@@ -1445,12 +1445,17 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
 
    Hex::RealVector tdr, tda, tdl;
 
+   /******************
    init_vec (tdr, 2, 1, 0.5);
    init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5, 
                    5, 10, 15, 20, 25, 30, 35, 40);
    init_vec (tdl, 1, 2, 3 );
+    ****************** */
+   init_vec (tdr, 1, 1, 1, 1);
+   init_vec (tda, 45,45, 45,45, 45,45, 45,45 );
+   init_vec (tdl, 1, 1, 1 );
 
-   Hex::Elements* c1 = doc->makeCylindricals (orig, vx,vz, tdr, tda, tdl,true);
+   Hex::Elements* c1 = doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
 
    doc->saveVtk ("cylindricals.vtk");
    return HOK;
@@ -1458,9 +1463,9 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
 int test_quads (int nbargs, cpchar tabargs[]);
 int test_hemispheres (int nbargs, cpchar tabargs[]);
 
-// ======================================================== test_hexa1
-int test_hexa1 (int nbargs, cpchar tabargs[])
+// ======================================================== test_hexa
+int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_cylindricals (nbargs, tabargs);
+   int ier = test_quads (nbargs, tabargs);
    return ier;
 }
