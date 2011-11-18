@@ -860,12 +860,20 @@ int test_pipes (int nbargs, cpchar tabargs[])
    Hex::Pipe* pipe2  = doc->addPipe (ori2, vx, ri2, re2, h2);
    Hex::CrossElements* grid = doc->makePipes (pipe1, pipe2);
 
-   grid->getHexaIJK (0, 1,1,1)->setScalar (3);
-   grid->getHexaIJK (1, 1,1,1)->setScalar (6);
-   grid->dump();
-   grid->dumpHexas();
+   int nvtk = 0;
+   doc->saveVtk ("pipe", nvtk);
+   int nbh = grid->countHexa();
+   for (int nro=1 ; nro<nbh ; nro++)
+       { 
+       Hex::Hexa* hexa = grid->getHexa (nro);
+       if (hexa!=NULL)
+          {
+          hexa->remove ();
+          doc->saveVtk ("pipe", nvtk);
+          }
+       } 
+   
 
-   doc->saveVtk ("pipes.vtk");
    /// doc->dump ();
    return HOK;
 }
@@ -1455,7 +1463,7 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
    init_vec (tda, 45,45, 45,45, 45,45, 45,45 );
    init_vec (tdl, 1, 1, 1 );
 
-   Hex::Elements* c1 = doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
+   doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
 
    doc->saveVtk ("cylindricals.vtk");
    return HOK;

@@ -40,6 +40,7 @@ public :
 
     Vertex* interCylinder (Cylinder* other);
     void saveXml (XmlWriter* xml);
+    virtual double  getInternalRadius () { return 0; }
 
 protected:
     Vertex* c_base;

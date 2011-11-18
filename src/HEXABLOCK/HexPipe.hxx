@@ -29,7 +29,7 @@ BEGIN_NAMESPACE_HEXA
 class Pipe : public Cylinder 
 {
 public :
-    double  getInternalRadius () { return c_int_radius; }
+    virtual double  getInternalRadius () { return c_int_radius; }
 
 public :
     Pipe (Vertex* b, Vector* v, double ri, double re, double h);

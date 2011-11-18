@@ -1,3 +1,6 @@
+
+// Class : Gestion des tutaux en T (like castles in scotland)
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// Class : Gestion des tutaux en T (like castles in scotland)
-
 #ifndef __CROSS_ELEMENTS_H
 #define __CROSS_ELEMENTS_H
 
@@ -26,8 +27,10 @@
 
 BEGIN_NAMESPACE_HEXA
 
-enum {Cyl1=0, Cyl2=1, NbrSlices1=6, NbrSlices2=4, NbrVSlices1=NbrSlices1+1,
-      NbrVSlices2=NbrSlices2+1, NxExt=2, NxInt=1 };
+enum {Cyl1=0, Cyl2=1, NbrSlices1=6, NbrSlices2=4, NxExt=2, NxInt=1 };
+enum {SizeRay=3, BiCyl=2};
+enum {NbrVSlices1=NbrSlices1+1, NbrVSlices2=NbrSlices2+1};
+enum {CylSmall=Cyl1, CylBig=Cyl2 };
 
 class CrossElements : public Elements 
 {
@@ -95,8 +98,18 @@ private :
    Edge* findEdge1 (Vertex* v1, Vertex* v2);
    Quad* findQuad1 (Edge*   e1, Edge*   e2);
 
-   void assoCylinder (int cyl, double* normal);
-   void assoSlice    (int cyl, double* normal, int slice);
+   void assoCylinder  (int cyl, double* normal);
+   void assoSlice     (int cyl, double* base, double* norm, int nx, int zlice);
+   void assoArc       (int cyl, int nx, int ny, int nz, string& brep, 
+                       double rayon, double angle1, double angle2);
+   void assoBigMiddle (double* base, double* normal, int nzlice);
+
+
+
+   double getAngle  (int cyl, int ny);
+   void   addSlice  (int cyl, int ni, int nk, double px);
+   void   addVertex (int cyl, int ni, int nj, int nk, double px);
+   void   majIntersection ();
 
 private :
     bool      is_filled;
@@ -108,8 +121,11 @@ private :
     double    cross_he1,   cross_hi1,   cross_he2,    cross_hi2; 
 
     int  size_hiy, size_h1z, size_h2z, size_v1z, size_v2z;
-    int  size_vz[2], size_hz[2];
+    int  size_vz[BiCyl], size_hz[BiCyl];
     int  nbr_hexas1, nbr_quads1, nbr_edges1, nbr_vertex1;
+
+    double angle_inter [BiCyl];
+    double cross_rayon [BiCyl][SizeRay];
 };
 END_NAMESPACE_HEXA
 #endif

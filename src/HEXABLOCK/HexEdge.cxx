@@ -32,6 +32,8 @@ static int niveau = 0;
 
 BEGIN_NAMESPACE_HEXA
 
+void geom_dump_asso (Edge* edge);
+
 // ======================================================== Constructeur
 Edge::Edge (Vertex* va, Vertex* vb)
     : EltBase (va->dad(), EL_EDGE)
@@ -170,6 +172,17 @@ void Edge::dump ()
       }
 
    dumpRef ();
+}
+// ======================================================== dumpAsso
+void Edge::dumpAsso ()
+{
+   if (NOT isHere ())
+      {
+      printName(" = *** deleted **\n");
+      return;
+      }
+
+   geom_dump_asso (this);
 }
 // ======================================================== dumpPlus
 void Edge::dumpPlus ()

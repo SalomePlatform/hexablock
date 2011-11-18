@@ -349,10 +349,13 @@ void GeomLine::assoPoint (double alpha, Vertex* node)
    gpoint.definePoint (pnt_asso);
    gpoint.associate   (node);
 
-   double* coord = gpoint.getCoord();
-   printf (" ... assoPoint : angle=%g, v=%s (%g,%g,%g) -> (%g, %g, %g)\n", 
+   if (db)
+      {
+      double* coord = gpoint.getCoord();
+      printf (" ... assoPoint : angle=%g, v=%s (%g,%g,%g) -> (%g, %g, %g)\n", 
            alpha, node->getName(), node->getX(), node->getY(), node->getZ(), 
            coord[dir_x], coord[dir_y], coord[dir_z]);
+      }
 }
 // ========================================================= associate
 void GeomLine::associate (Edge* edge, double sm1, double sm2)
@@ -611,7 +614,8 @@ void geom_define_line (string& brep)
 // ====================================================== geom_asso_point
 void geom_asso_point (double angle, Vertex* node)
 {
-   current_line.assoPoint (angle, node);
+   if (node!=NULL && node->getAssociation() == NULL)
+       current_line.assoPoint (angle, node);
 }
 // ====================================================== geom_create_circle 
 void geom_create_circle (double* milieu, double rayon, double* normale, 
@@ -672,6 +676,61 @@ void geom_create_sphere (double* milieu, double radius, string& brep)
    BRepTools::Write (geom_sphere, stream_shape);
    brep = stream_shape.str();
 }
+// ====================================================== geom_dump_asso
+void geom_dump_asso (Edge* edge)
+{
+   if (edge==NULL || NOT edge->isHere ())
+      {
+      printf ("*** deleted ***)\n");
+      return;
+      }
+
+   edge->printName(" = (");
+   edge->getVertex (V_AMONT)-> printName (", ");
+   edge->getVertex (V_AVAL) -> printName (")\n");
+   
+   GeomPoint asso_point;
+   for (int nro=0 ; nro<V_TWO ; nro++)
+       {
+       Vertex* vertex = edge->getVertex (nro);
+       vertex->printName ("");
+       printf (" = (%g, %g, %g)\n", vertex->getX(),  vertex->getY(),  
+                                    vertex->getZ());
+
+       int ier = asso_point.definePoint (vertex);
+       if (ier==HOK)
+          {
+          double* coord = asso_point.getCoord();
+          printf (" = (%g, %g, %g)", coord[dir_x],  coord[dir_y],  
+                                     coord[dir_z]);
+          }
+       printf ("\n");
+       }
+
+   GeomLine asso_line;
+   const Shapes&  tshapes = edge->getAssociations ();
+   for (int nro=0 ; nro<tshapes.size() ; nro++)
+       {
+       printf ( " ------------------- Association Edge nro %d :\n", nro);
+       if (tshapes[nro] == NULL)
+          {
+          HexDisplay (tshapes[nro]);
+          }
+       else
+          {
+          Shape* shape = tshapes[nro];
+          asso_line.defineLine (shape);
+          double* deb = asso_line.getStart  ();
+          double* fin = asso_line.getEnd    ();
+          double  lg  = asso_line.getLength ();
+          printf (" Longueur = %g\n", lg);
+          printf (" Debut = %g = (%g, %g, %g)\n", shape->debut, deb[0], 
+                                                        deb[1], deb[2]);
+          printf (" Fin   = %g = (%g, %g, %g)\n", shape->fin, fin[0], 
+                                                        fin[1], fin[2]);
+          }
+       }
+}
 //
 END_NAMESPACE_HEXA
       
@@ -701,6 +760,10 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
 }
 // ====================================================== geom_define_line
 void geom_define_line (string& brep)
+{
+}
+// ====================================================== geom_dump_asso
+void geom_dump_asso (Edge* edge)
 {
 }
 // ========================================================= geom_asso_point

@@ -47,6 +47,7 @@ public:
     Quad* getParent (int nro); 
     virtual void dump ();
     void         dumpPlus ();
+    void         dumpAsso ();
     virtual void saveXml (XmlWriter* xml);
     virtual void majReferences();
 
