@@ -124,6 +124,9 @@ namespace HEXABLOCK
                                      const QModelIndex &i_v6, const QModelIndex &i_v7 );
         QModelIndex addHexaQuad( const QModelIndex &i_q0, const QModelIndex &i_q1, const QModelIndex &i_q2, const QModelIndex &i_q3, const QModelIndex &i_q4, const QModelIndex &i_q5 );
 
+        QModelIndex addHexaQuads( const QModelIndexList &i_quads ); //NEW HEXA3
+
+
         //
         QModelIndex addVector( double dx, double dy, double dz );
         QModelIndex addVectorVertices( const QModelIndex &i_v0, const QModelIndex &i_v1 );
@@ -150,8 +153,14 @@ namespace HEXABLOCK
                                      long nr, long na, long nl,
                                      bool fill  = false );
 
-        QModelIndex makeSpherical( const QModelIndex& i_v, const QModelIndex& i_vec, int nb, double k = 1 );
+        QModelIndex makeCylindricals(
+            const QModelIndex& i_center, const QModelIndex& i_base, const QModelIndex& i_height,
+            QList< double>     i_radius, QList<double> i_angles,    QList<double> i_heights, 
+            bool fill = false ); //NEW HEXA3
 
+        QModelIndex makeSpherical( const QModelIndex& i_v, const QModelIndex& i_vec, int nb, double k = 1 ); //CS_TO_DEL
+
+        QModelIndex makeSpherical( const QModelIndex& i_center, double rayon, int nb, double k = 1 );
 
         //
         QModelIndex makeCylinder( const QModelIndex& cyl, const QModelIndex& vec,
@@ -167,6 +176,27 @@ namespace HEXABLOCK
         //
         QModelIndex makePipes( const QModelIndex& pipe1, const QModelIndex& pipe2 );
 
+
+    
+        QModelIndex makeRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
+                    double  radext, double radint, double radhole,
+                    const QModelIndex& plorig,
+                    int nrad, int nang, int nhaut ); //NEW HEXA3
+
+        QModelIndex makePartRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
+                    double  radext, double radint, double radhole,
+                    const QModelIndex& plorig, double angle,
+                    int nrad, int nang, int nhaut ); //NEW HEXA3
+
+        QModelIndex makeSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
+                    double radius, double radhole,
+                    const QModelIndex& plorig,
+                    int nrad, int nang, int nhaut ); //NEW HEXA3
+
+        QModelIndex makePartSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
+                    double  radius, double radhole,
+                    const QModelIndex& plorig, double angle,
+                    int nrad, int nang, int nhaut ); //NEW HEXA3
 
         // ************  EDIT HEXABLOCK MODEL ************
 
@@ -236,6 +266,18 @@ namespace HEXABLOCK
         bool performSymmetryPoint( const QModelIndex& elts, const QModelIndex& v );
         bool performSymmetryLine( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
         bool performSymmetryPlane( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
+
+
+        QModelIndex revolutionQuads( const QModelIndexList& startQuads, const QModelIndex& center, 
+                                     const QModelIndex& vec_axis, const QList<double>& angles); //NEW HEXA3
+
+        QModelIndex replace( const QModelIndexList& hexaPattern, 
+                             const QModelIndex& p1, const QModelIndex& c1,
+                             const QModelIndex& p2, const QModelIndex& c2,
+                             const QModelIndex& p3, const QModelIndex& c3 ); //NEW HEXA3
+
+
+
 
 
         // ************  ASSOCIATION ************

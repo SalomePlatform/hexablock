@@ -194,6 +194,10 @@ private slots:
   void makePipe();
   void makeCylinders();
   void makePipes();
+
+  void makeRind();    // NEW HEXA3
+  void makeSphere();  // NEW HEXA3
+
   void removeHexa();
   void prismQuad();
   void joinQuad();
@@ -207,6 +211,10 @@ private slots:
   void makeSymmetry();
   void performTransformation();
   void performSymmetry();
+
+  void replaceHexa();    // NEW HEXA3
+  void quadRevolution(); // NEW HEXA3
+
 
   void assocVertex();
   void assocEdge();
@@ -264,6 +272,10 @@ private:
   QAction *_makeCylinders;
   QAction *_makePipes;
 
+  QAction *_makeRind;   // NEW HEXA3
+  QAction *_makeSphere; // NEW HEXA3
+
+
   // Pattern Data Edition
   QAction *_removeHexa;
   QAction *_prismQuad;
@@ -275,6 +287,9 @@ private:
   QAction *_makeSymmetry;
   QAction *_performTransformation;
   QAction *_performSymmetry;
+
+  QAction *_replaceHexa;    // NEW HEXA3
+  QAction *_quadRevolution; // NEW HEXA3
 
   // Pattern Data Association
   QAction *_assocVertex;

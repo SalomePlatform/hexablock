@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
-    <height>581</height>
+    <width>217</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QRadioButton" name="rb0">
+       <widget class="QRadioButton" name="quads_rb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -35,7 +35,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>quads</string>
+         <string>Quads</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="rb1">
+       <widget class="QRadioButton" name="vertices_rb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -51,7 +51,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>vertices</string>
+         <string>Vertices</string>
         </property>
        </widget>
       </item>
@@ -59,11 +59,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Arguments</string>
+      <string>Result Name</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_3">
+     <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label_15">
         <property name="text">
@@ -87,260 +87,27 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QWidget" name="widget" native="true">
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Quad 1</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="q0_le_rb0">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Quad 2</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="q1_le_rb0">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Quad 3</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="q2_le_rb0">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Quad 4</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="q3_le_rb0">
-           <property name="minimumSize">
-            <size>
-             <width>127</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Quad 5</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="q4_le_rb0">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Quad 6</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="q5_le_rb0">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Arguments</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QListWidget" name="quads_lw">
+        <property name="toolTip">
+         <string>Select a quad</string>
+        </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QWidget" name="widget_2" native="true">
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Vertex 1</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="v0_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Vertex 2</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="v1_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>Vertex 3</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="v2_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Vertex 4</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="v3_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Vertex 5</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="v4_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>Vertex 6</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="v5_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>Vertex 7</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLineEdit" name="v6_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_14">
-           <property name="text">
-            <string>Vertex 8</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="v7_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
+      <item>
+       <widget class="QListWidget" name="vertices_lw">
+        <property name="toolTip">
+         <string>Select a vertice</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -351,66 +118,66 @@
  <resources/>
  <connections>
   <connection>
-   <sender>rb0</sender>
+   <sender>quads_rb</sender>
    <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>hide()</slot>
+   <receiver>quads_lw</receiver>
+   <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>144</x>
-     <y>50</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>54</x>
-     <y>293</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb1</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>showMaximized()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>231</x>
-     <y>49</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>102</x>
-     <y>291</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb1</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>214</x>
+     <x>74</x>
      <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>185</x>
-     <y>109</y>
+     <x>135</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>rb0</sender>
+   <sender>quads_rb</sender>
    <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>showMaximized()</slot>
+   <receiver>vertices_lw</receiver>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>35</x>
-     <y>49</y>
+     <x>95</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>43</x>
-     <y>110</y>
+     <x>173</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vertices_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>vertices_lw</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vertices_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>quads_lw</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>258</y>
     </hint>
    </hints>
   </connection>

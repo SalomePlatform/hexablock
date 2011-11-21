@@ -402,7 +402,7 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
   QVariant entryVariant    = eltIndex.data( HEXA_ENTRY_ROLE );
   QVariant docEntryVariant = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
 
-  if ( !entryVariant.isValid() ){ 
+  if ( !entryVariant.isValid() ){
     INFOS("entryVariant not valid");
     return;
   }
@@ -416,7 +416,7 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 
   // Select the document in Salome
   docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
-  if ( docActor == NULL) return;
+  if ( docActor == NULL ) return;
 
   // Set selection mode in VTK view
   _setVTKSelectionMode( eltIndex, currentVTKViewWindow );

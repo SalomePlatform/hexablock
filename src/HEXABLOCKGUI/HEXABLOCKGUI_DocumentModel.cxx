@@ -1095,6 +1095,51 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
 }
 
 
+
+QModelIndex DocumentModel::addHexaQuads( const QModelIndexList &iquads)
+{ 
+  QModelIndex hexaIndex;
+
+  HEXA_NS::Hexa* hh = NULL;
+  HEXA_NS::Quad* hq0, *hq1, *hq2, *hq3, *hq4, *hq5 = NULL;
+
+  hq0 = data( iquads.value(0), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  hq1 = data( iquads.value(1), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  hq2 = data( iquads.value(2), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  hq3 = data( iquads.value(3), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  hq4 = data( iquads.value(4), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+  hq5 = data( iquads.value(5), HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+
+  if ( hq0 && hq1 ){
+      hh = _hexaDocument->addHexa2Quads( hq0, hq1);
+  } else if ( hq0 && hq1 && hq2){
+      hh = _hexaDocument->addHexa3Quads( hq0, hq1, hq2 );
+  } else if ( hq0 && hq1 && hq2 && hq3 ){
+      hh = _hexaDocument->addHexa4Quads( hq0, hq1, hq2, hq3 );
+  } else if ( hq0 && hq1 && hq2 && hq3 && hq4 ){
+      hh = _hexaDocument->addHexa5Quads( hq0, hq1, hq2, hq3, hq4 );
+  } else if ( hq0 && hq1 && hq2 && hq3 && hq4 && hq5 ){
+      hh = _hexaDocument->addHexa( hq0, hq1, hq2, hq3, hq4, hq5 );
+  }
+
+  if ( hh->isValid() ){
+    HexaItem* h = new HexaItem(hh);
+    h->setData( _entry, HEXA_DOC_ENTRY_ROLE );
+    _hexaDirItem->appendRow(h);
+    hexaIndex = h->index();
+    emit patternDataChanged();
+    QString tmp = "/tmp/addHexaQuads.vtk";
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  } else {
+    delete hh;
+  }
+
+  return hexaIndex;
+}
+
+
+
+
 // Vector addVector( in double dx, in double dy, in double dz )
 //         raises (SALOME::SALOME_Exception);
 QModelIndex DocumentModel::addVector( double dx, double dy, double dz )
@@ -1307,6 +1352,47 @@ QModelIndex DocumentModel::makeCylindrical( const QModelIndex& i_pt,
 }
 
 
+
+QModelIndex DocumentModel::makeCylindricals( 
+    const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& iheight,
+    QList< double> radius, QList<double> angles, QList<double> heights, 
+    bool fill ) //HEXA3
+{
+  QModelIndex eltsIndex;
+
+  HEXA_NS::Vertex* hcenter = data( icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* hbase   = data( ibase,   HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vector* hheight = data( iheight, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+
+//   HEXA_NS::Elements* helts;
+  std::vector<double> r = radius.toVector().toStdVector();
+  std::vector<double> a = angles.toVector().toStdVector();
+  std::vector<double> h = heights.toVector().toStdVector();
+
+  HEXA_NS::Elements* helts = _hexaDocument->makeCylindricals( 
+             hcenter, hbase, hheight,
+             r, a, h,
+             fill );
+
+//   HEXA_NS::Elements* helts = _hexaDocument->makeCylindricals( 
+//              hcenter, hbase, hheight,
+//              radius.toVector().toStdVector(), angles.toVector().toStdVector(), heights.toVector().toStdVector(),
+//              fill );
+
+  if ( helts->isValid() ){
+    updateData(); //CS_TODO  more or less?
+    ElementsItem* eltsItem = new ElementsItem(helts);
+    _elementsDirItem->appendRow(eltsItem);
+    eltsIndex = eltsItem->index();
+  } else {
+    delete helts;
+  }
+
+  return eltsIndex;
+}
+
+
+
 QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelIndex& ivec, int nb, double k)
 {
   QModelIndex iElts;
@@ -1329,6 +1415,31 @@ QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelInd
 
   return iElts;
 }
+
+
+QModelIndex DocumentModel::makeSpherical( const QModelIndex& icenter, double radius, int nb, double k )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Vertex* hcenter = data(icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+  HEXA_NS::Elements* helts = _hexaDocument->makeSpherical( hcenter, radius, nb, k );
+
+  if ( helts->isValid() ){
+    updateData(); //CS_TODO more or less?
+    ElementsItem* eltsItem = new ElementsItem(helts);
+    _elementsDirItem->appendRow(eltsItem);
+    iElts = eltsItem->index();
+//     QString tmp = "/tmp/makeSpherical.vtk";
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  } else {
+    delete helts;
+  }
+
+  return iElts;
+}
+
+
 
 
 QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIndex& ivec,
@@ -1382,6 +1493,7 @@ QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex
 
 
 
+
 QModelIndex DocumentModel::makeCylinders(const QModelIndex& icyl1, const QModelIndex& icyl2)
 { //CS_TODO
   QModelIndex iCrossElts;
@@ -1428,6 +1540,137 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
   
   return iCrossElts;
 }
+
+
+
+QModelIndex DocumentModel::makeRind( const QModelIndex& icenter, 
+                    const QModelIndex& ivecx, const QModelIndex& ivecz,
+                    double  radext, double radint, double radhole,
+                    const QModelIndex& iplorig,
+                    int nrad, int nang, int nhaut )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Vertex* hcenter = data(icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* hvecx   = data(ivecx, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vector* hvecz   = data(ivecz, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vertex* hplorig = data(iplorig, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+  HEXA_NS::Elements* hElts = _hexaDocument->makeRind( hcenter, 
+                            hvecx, hvecz,
+                            radext, radint, radhole,
+                            hplorig,
+                            nrad, nang, nhaut );
+
+  if ( hElts->isValid() ){
+    updateData(); //CS_TODO more or less?
+    ElementsItem* eltsItem = new ElementsItem(hElts);
+    _elementsDirItem->appendRow(eltsItem);
+    iElts = eltsItem->index();
+  } else {
+    delete hElts;
+  }
+
+  return iElts;
+}
+
+QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter, 
+                    const QModelIndex& ivecx, const QModelIndex& ivecz,
+                    double  radext, double radint, double radhole,
+                    const QModelIndex& iplorig, double angle,
+                    int nrad, int nang, int nhaut )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Vertex* hcenter = data(icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* hvecx   = data(ivecx, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vector* hvecz   = data(ivecz, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vertex* hplorig = data(iplorig, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+  HEXA_NS::Elements* hElts = _hexaDocument->makePartRind( hcenter, 
+                            hvecx, hvecz,
+                            radext, radint, radhole,
+                            hplorig, angle,
+                            nrad, nang, nhaut );
+
+  if ( hElts->isValid() ){
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(hElts);
+    _elementsDirItem->appendRow(eltsItem);
+    iElts = eltsItem->index();
+  } else {
+    delete hElts;
+  }
+
+  return iElts;
+}
+
+
+QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter, 
+                    const QModelIndex& ivecx, const QModelIndex& ivecz,
+                    double radius, double radhole,
+                    const QModelIndex& iplorig,
+                    int nrad, int nang, int nhaut )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Vertex* hcenter = data(icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* hvecx   = data(ivecx, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vector* hvecz   = data(ivecz, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vertex* hplorig = data(iplorig, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+  HEXA_NS::Elements* hElts = _hexaDocument->makeSphere( hcenter, 
+                                                hvecx, hvecz, 
+                                                radius, radhole,
+                                                hplorig, 
+                                                nrad, nang, nhaut);
+
+  if ( hElts->isValid() ){
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(hElts);
+    _elementsDirItem->appendRow(eltsItem);
+    iElts = eltsItem->index();
+  } else {
+    delete hElts;
+  }
+
+  return iElts;
+}
+
+
+QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter, 
+                    const QModelIndex& ivecx, const QModelIndex& ivecz,
+                    double  radius, double radhole,
+                    const QModelIndex& iplorig, double angle,
+                    int nrad, int nang, int nhaut )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Vertex* hcenter = data(icenter, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* hvecx   = data(ivecx, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vector* hvecz   = data(ivecz, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+  HEXA_NS::Vertex* hplorig = data(iplorig, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+  HEXA_NS::Elements* hElts = _hexaDocument->makePartSphere( hcenter,
+                                                hvecx, hvecz,
+                                                radius, radhole,
+                                                hplorig, angle, 
+                                                nrad, nang, nhaut);
+
+  if ( hElts->isValid() ){
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(hElts);
+    _elementsDirItem->appendRow(eltsItem);
+    iElts = eltsItem->index();
+  } else {
+    delete hElts;
+  }
+
+  return iElts;
+}
+
+
+
 
 
 
@@ -2093,6 +2336,79 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
 
   return ret;
 }
+
+
+
+
+QModelIndex DocumentModel::revolutionQuads( const QModelIndexList& istartquads,
+                                            const QModelIndex& icenter, 
+                                            const QModelIndex& ivecaxis, 
+                                            const QList<double>& angles )
+{
+  QModelIndex ielts;
+
+  HEXA_NS::Quads   hstartquads;
+  HEXA_NS::Quad*   hquad = NULL;
+  foreach( const QModelIndex& iquad, istartquads){
+    hquad = data( iquad, HEXA_DATA_ROLE ).value<HEXA_NS::Quad*>();
+    hstartquads.push_back( hquad );
+  }
+  HEXA_NS::Vertex* hcenter = data( icenter,  HEXA_DATA_ROLE ).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vector* haxis   = data( ivecaxis, HEXA_DATA_ROLE ).value<HEXA_NS::Vector *>();
+  std::vector<double> hangles = angles.toVector().toStdVector();
+
+  HEXA_NS::Elements* helts = _hexaDocument->revolutionQuads( hstartquads, hcenter, haxis, hangles );
+
+  if ( helts && helts->isValid() ){
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(helts);
+    _elementsDirItem->appendRow(eltsItem);
+    ielts = eltsItem->index();
+  } else {
+    delete helts;
+  }
+
+  return ielts;
+}
+
+
+QModelIndex DocumentModel::replace( const QModelIndexList& ihexapattern,
+                             const QModelIndex& ip1, const QModelIndex& ic1,
+                             const QModelIndex& ip2, const QModelIndex& ic2,
+                             const QModelIndex& ip3, const QModelIndex& ic3 )
+{
+  QModelIndex ielts;
+
+  HEXA_NS::Vertex* hp1 = data(ip1, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hc1 = data(ic1, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hp2 = data(ip2, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hc2 = data(ic2, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hp3 = data(ip3, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+  HEXA_NS::Vertex* hc3 = data(ic3, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
+
+
+  HEXA_NS::Hexas   hhexas;
+  HEXA_NS::Hexa*   hhexa = NULL;
+  foreach( const QModelIndex& ihexa, ihexapattern ){
+    hhexa = data( ihexa, HEXA_DATA_ROLE ).value<HEXA_NS::Hexa*>();
+    hhexas.push_back( hhexa );
+  }
+
+  HEXA_NS::Elements* helts = _hexaDocument->replace( hhexas,
+                                hp1, hc1, hp2, hc2, hp3, hc3 );
+
+  if ( helts && helts->isValid() ){
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(helts);
+    _elementsDirItem->appendRow(eltsItem);
+    ielts = eltsItem->index();
+  } else {
+    delete helts;
+  }
+
+  return ielts;
+}
+
 
 // ************  ADD ASSOCIATION ************
 //

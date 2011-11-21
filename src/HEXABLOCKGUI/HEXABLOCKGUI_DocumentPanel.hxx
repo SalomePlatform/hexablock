@@ -64,6 +64,10 @@
 #include "ui_Propagation_QTD.h"
 
 
+#include "ui_QuadRevolution_QTD.h"
+#include "ui_MakeRind_QTD.h"
+#include "ui_ReplaceHexa_QTD.h"
+#include "ui_MakeSphere_QTD.h"
 
 
 
@@ -152,7 +156,7 @@ namespace HEXABLOCK
 
         protected :
 //           void installEventFilter();
-          void _initButtonBox();
+          QDialogButtonBox* _initButtonBox();
           virtual bool eventFilter(QObject *obj, QEvent *event);
 //           HexaBaseModel          *_model;
 //           DocumentSelectionModel *_selectionModel;
@@ -182,6 +186,9 @@ namespace HEXABLOCK
           QList<QLineEdit*>  _elementsLineEdits;
 
           QList<QLineEdit*>  _lawLineEdits;
+
+          QPushButton* _applyCloseButton;
+          QPushButton* _applyButton;
 
     };
 
@@ -272,11 +279,22 @@ namespace HEXABLOCK
       public slots:
         virtual bool apply();
         void updateName();
+        void onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel );
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        void deleteQuadItem();
+        void deleteVertexItem();
+        void updateButtonBox();
 
       private:
+        void _fillQuads( HEXA_NS::Hexa* h );
+        void _fillVertices( HEXA_NS::Hexa* h );
+
         HEXA_NS::Hexa   *_value;
         QModelIndex     _ivalue;
-
     };
 
 
@@ -361,6 +379,16 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void addRadiusItem();
+        void delRadiusItem();
+        void addAngleItem();
+        void delAngleItem();
+        void addHeightItem();
+        void delHeightItem();
+        void updateButtonBox();
+
   };
 
 
@@ -666,8 +694,8 @@ namespace HEXABLOCK
       private:
         LightApp_SelectionMgr*        _mgr;
 
-        QShortcut* _delEdgeShortcut;
-        QShortcut* _delLineShortcut;
+//         QShortcut* _delEdgeShortcut;
+//         QShortcut* _delLineShortcut;
 
 
         // Preview in GEOM
@@ -804,8 +832,96 @@ namespace HEXABLOCK
 	QLineEdit* _fact;
   };
 
-  }
 
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ReplaceHexaDialog : public HexaBaseDialog,
+                                                              public Ui::ReplaceHexaDialog
+  {
+      Q_OBJECT
+
+      public:
+        ReplaceHexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~ReplaceHexaDialog();
+
+      public slots:
+        virtual bool apply();
+        void onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel );
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        void deleteHexaItem();
+        void updateButtonBox();
+  };
+
+
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadRevolutionDialog : public HexaBaseDialog,
+                                                                 public Ui::QuadRevolutionDialog
+  {
+      Q_OBJECT
+
+      public:
+        QuadRevolutionDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~QuadRevolutionDialog();
+
+      public slots:
+        virtual bool apply();
+        void onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel );
+
+      protected:
+        bool eventFilter(QObject *obj, QEvent *event);
+
+      protected slots:
+        void addAngleItem();
+        void delAngleItem();
+        void delQuadItem();
+        void updateButtonBox();
+  };
+
+
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeSphereDialog : public HexaBaseDialog,
+                                                             public Ui::MakeSphereDialog
+  {
+      Q_OBJECT
+
+      public:
+        MakeSphereDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeSphereDialog();
+
+//         void setValue(HEXA_NS::Propagation* v);
+//         HEXA_NS::Propagation* getValue();
+
+      public slots:
+        virtual bool apply();
+
+      private:
+//         HEXA_NS::Propagation *_value;:q
+  };
+
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeRindDialog : public HexaBaseDialog,
+                                                    public Ui::MakeRindDialog
+  {
+      Q_OBJECT
+
+      public:
+        MakeRindDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeRindDialog();
+
+      public slots:
+        virtual bool apply();
+  
+      private:
+//         HEXA_NS::Propagation *_value;:q
+
+  };
+
+
+  }
 }
 
 

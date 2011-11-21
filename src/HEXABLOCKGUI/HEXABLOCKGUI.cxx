@@ -595,7 +595,6 @@ void HEXABLOCKGUI::studyActivated() //CS_TODO
 
 
 
-
 void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
 {
   QModelIndex currentIndex = _patternDataTreeView->currentIndex();
@@ -838,6 +837,13 @@ void HEXABLOCKGUI::createActions()
                                             0, aParent, false, this,  SLOT(makePipes()) );
 
 
+  _makeRind     = createAction( _menuId++, tr("Make rind"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_RIND" ) ),
+                                            tr("Make rind"),  tr("Make rind"),
+                                            0, aParent, false, this,  SLOT(makeRind()) );
+
+  _makeSphere   = createAction( _menuId++, tr("Make sphere"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_SPHERE" ) ),
+                                            tr("Make sphere"),  tr("Make sphere"),
+                                            0, aParent, false, this,  SLOT(makeSphere()) );
 
   // Pattern Data edition
   _removeHexa     = createAction( _menuId++, tr("Remove hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REMOVE_HEXA" ) ),
@@ -879,6 +885,15 @@ void HEXABLOCKGUI::createActions()
   _performSymmetry     = createAction( _menuId++, tr("Perform Symmetry"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_PERFORM_SYMMETRY" ) ),
                                             tr("Perform Symmetry"),  tr("Perform Symmetry"),
                                             0, aParent, false, this,  SLOT(performSymmetry()) );
+
+  _replaceHexa    = createAction( _menuId++, tr("Replace Hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REPLACE_HEXA" ) ),
+                                            tr("Replace Hexa"),  tr("Replace Hexa"),
+                                            0, aParent, false, this,  SLOT(replaceHexa()) );
+
+  _quadRevolution = createAction( _menuId++, tr("Quad Revolution"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_QUAD_REVOLUTION" ) ),
+                                            tr("Quad Revolution"),  tr("Quad Revolution"),
+                                            0, aParent, false, this,  SLOT(quadRevolution()) );
+
 
 
   _assocVertex  =  createAction( _menuId++, tr("Make Vertex Association"), resMgr->loadPixmap( "HEXABLOCK", tr("ICON_VERTEX_ASSOCIATION") ), tr("Make Vertex association"),  tr("Make Vertex association"),
@@ -965,6 +980,8 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _makePipe,     aMenuId );
   createMenu( _makeCylinders,aMenuId );
   createMenu( _makePipes,    aMenuId );
+  createMenu( _makeRind,  aMenuId );
+  createMenu( _makeSphere,aMenuId );
   createMenu( separator(), aMenuId);
 
   // Pattern Data Edition
@@ -978,6 +995,10 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _makeSymmetry,       aMenuId );
   createMenu( _performTransformation,   aMenuId );
   createMenu( _performSymmetry,         aMenuId );
+  createMenu( _replaceHexa,    aMenuId );
+  createMenu( _quadRevolution, aMenuId );
+
+
 
 // // Association
   aMenuId = createMenu( tr("Association"), -1, -1, 30 );
@@ -1033,6 +1054,8 @@ void HEXABLOCKGUI::createTools()
   createTool( _makePipe,     aToolId );
   createTool( _makeCylinders,aToolId );
   createTool( _makePipes,    aToolId );
+  createTool( _makeRind,     aToolId);
+  createTool( _makeSphere,   aToolId );
   createTool( separator(), aToolId );
 
   // Pattern Data Edition
@@ -1046,6 +1069,8 @@ void HEXABLOCKGUI::createTools()
   createTool( _makeSymmetry,       aToolId );
   createTool( _performTransformation,   aToolId );
   createTool( _performSymmetry,         aToolId );
+  createTool( _replaceHexa,    aToolId );
+  createTool( _quadRevolution, aToolId );
   createTool( separator(), aToolId );
 
   // Association
@@ -1132,6 +1157,10 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
   setToolShown( _makeCylinders, show);
   setMenuShown( _makePipes,  show );//true);
   setToolShown( _makePipes, show);
+  setMenuShown( _makeRind,  show );//true);
+  setToolShown( _makeRind, show);
+  setMenuShown( _makeSphere,  show );//true);
+  setToolShown( _makeSphere, show);
 
   // Pattern Data Edition
   setMenuShown( _removeHexa,  show );//true);
@@ -1154,6 +1183,10 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
   setToolShown( _performTransformation, show);
   setMenuShown( _performSymmetry,  show );//true);
   setToolShown( _performSymmetry, show);
+  setMenuShown( _replaceHexa,  show );//true);
+  setToolShown( _replaceHexa, show);
+  setMenuShown( _quadRevolution,  show );//true);
+  setToolShown( _quadRevolution, show);
 
 }
 
@@ -1925,6 +1958,34 @@ void HEXABLOCKGUI::makePipes()
   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
 }
 
+void HEXABLOCKGUI::makeRind()    // NEW HEXA3
+{
+ if (!_dwInputPanel) return;
+
+  MakeRindDialog* diag = new MakeRindDialog(_dwInputPanel, true);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  diag->setFocus();
+  _dwInputPanel->setWidget(diag);
+  _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+
+}
+
+void HEXABLOCKGUI::makeSphere()  // NEW HEXA3
+{
+  if (!_dwInputPanel) return;
+
+  MakeSphereDialog* diag = new MakeSphereDialog(_dwInputPanel, true);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  diag->setFocus();
+  _dwInputPanel->setWidget(diag);
+  _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+}
 
 
 void HEXABLOCKGUI::removeHexa()
@@ -2069,6 +2130,33 @@ void HEXABLOCKGUI::performSymmetry()
   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
 }
 
+void HEXABLOCKGUI::replaceHexa()    // NEW HEXA3
+{
+  if (!_dwInputPanel) return;
+
+  ReplaceHexaDialog* diag = new ReplaceHexaDialog(_dwInputPanel, true);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  diag->setFocus();
+  _dwInputPanel->setWidget(diag);
+  _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+}
+
+void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
+{
+  if (!_dwInputPanel) return;
+
+  QuadRevolutionDialog* diag = new QuadRevolutionDialog(_dwInputPanel, true);
+
+  diag->setDocumentModel(_currentModel);
+  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+  diag->setFocus();
+  _dwInputPanel->setWidget(diag);
+  _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+}
 
 void HEXABLOCKGUI::assocVertex()
 {

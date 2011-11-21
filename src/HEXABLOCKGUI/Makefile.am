@@ -96,8 +96,11 @@ UIC_FILES = \
 	ui_Law_QTD.h \
 	ui_Propagation_QTD.h \
 	ui_QuadAssoc_QTD.h \
-	ui_EdgeAssoc_QTD.h
-
+	ui_EdgeAssoc_QTD.h \
+	ui_QuadRevolution_QTD.h \
+	ui_MakeRind_QTD.h \
+	ui_ReplaceHexa_QTD.h \
+	ui_MakeSphere_QTD.h
 
 
 # MOC pre-processing
