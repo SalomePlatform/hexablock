@@ -150,13 +150,16 @@ HEXABLOCK_Gen_i::~HEXABLOCK_Gen_i()
  *  DumpPython
  */
 //=============================================================================
-Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
-					 CORBA::Boolean isPublished, 
-					 CORBA::Boolean& isValidScript)
+Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
+					      CORBA::Boolean /*isPublished*/,
+					      CORBA::Boolean /*isMultiFile*/,
+					      CORBA::Boolean& isValidScript)
 {
- MESSAGE("DumpPython DumpPython DumpPython DumpPython");
+  MESSAGE("DumpPython DumpPython DumpPython DumpPython");
   std::cout << "DumpPython DumpPython DumpPython DumpPython" << std::endl;
- return new Engines::TMPFile(0);
+  isValidScript = true;  // to avoid dump python operation failing
+  Engines::TMPFile_var aStreamFile = new Engines::TMPFile(0);
+  return aStreamFile._retn(); 
 }
 //   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
 //   if(CORBA::is_nil(aStudy))
