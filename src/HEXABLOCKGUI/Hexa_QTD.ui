@@ -106,7 +106,7 @@
       <item>
        <widget class="QListWidget" name="vertices_lw">
         <property name="toolTip">
-         <string>Select a vertice</string>
+         <string>Select a vertex</string>
         </property>
        </widget>
       </item>

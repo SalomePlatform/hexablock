@@ -70,6 +70,24 @@ using namespace HEXABLOCK::GUI;
 
 
 
+
+
+
+
+
+class HexaDoubleSpinBoxDelegate : public QStyledItemDelegate  {
+    public:
+	HexaDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
+
+        QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                const QModelIndex &index) const{
+          return new QDoubleSpinBox( parent );
+        }
+};
+
+
+
+
 HexaBaseDialog::HexaBaseDialog( QWidget * parent, Qt::WindowFlags f ):
 //   _model(0),
 //   _selectionModel(0),
@@ -1618,14 +1636,23 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
     setFocusProxy( rb0 );
 
     //Cylindrical
+    radius_lw->setItemDelegate(new HexaDoubleSpinBoxDelegate(radius_lw));
+    radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    angle_lw->setItemDelegate(new HexaDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    height_lw->setItemDelegate(new HexaDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
     connect( add_radius_pb, SIGNAL(clicked()), this, SLOT(addRadiusItem()) );
     connect( del_radius_pb, SIGNAL(clicked()), this, SLOT(delRadiusItem()) );
     connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
     connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
-
   }
+
   // Default 
   rb0->click();
   uniform_rb->click();
@@ -1664,9 +1691,17 @@ void MakeGridDialog::updateButtonBox() //CS_TODO
 
 void MakeGridDialog::addRadiusItem()
 {
-  QListWidgetItem* item = new QListWidgetItem();
-  radius_lw->addItem(item);
-  radius_lw->setItemWidget( item, new QDoubleSpinBox() );
+  QListWidgetItem* previousItem = radius_lw->currentItem();
+  QListWidgetItem* newItem      = new QListWidgetItem();
+
+  double defaultValue = 0.;
+  if ( previousItem )
+    defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+  newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+  newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+  radius_lw->addItem(newItem);
+
   updateButtonBox();
 }
 
@@ -1680,9 +1715,17 @@ void MakeGridDialog::delRadiusItem()
 
 void MakeGridDialog::addAngleItem()
 {
-  QListWidgetItem* item = new QListWidgetItem();
-  angle_lw->addItem(item);
-  angle_lw->setItemWidget( item, new QDoubleSpinBox() );
+  QListWidgetItem* previousItem = angle_lw->currentItem();
+  QListWidgetItem* newItem      = new QListWidgetItem();
+
+  double defaultValue = 0.;
+  if ( previousItem )
+    defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+  newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+  newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+  angle_lw->addItem(newItem);
+
   updateButtonBox();
 }
 
@@ -1696,9 +1739,17 @@ void MakeGridDialog::delAngleItem()
 
 void MakeGridDialog::addHeightItem()
 {
-  QListWidgetItem* item = new QListWidgetItem();
-  height_lw->addItem(item);
-  height_lw->setItemWidget( item, new QDoubleSpinBox() );
+  QListWidgetItem* previousItem = height_lw->currentItem();
+  QListWidgetItem* newItem      = new QListWidgetItem();
+
+  double defaultValue = 0.;
+  if ( previousItem )
+    defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+  newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+  newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+  height_lw->addItem(newItem);
+
   updateButtonBox();
 }
 
@@ -1712,7 +1763,6 @@ void MakeGridDialog::delHeightItem()
 
 bool MakeGridDialog::apply()
 {
-
   SUIT_OverrideCursor wc;
   //if ( !_documentModel ) return;
   if ( !_patternDataSelectionModel )    return false;
@@ -1768,29 +1818,20 @@ bool MakeGridDialog::apply()
 
         for ( int r = 0; r < radius_lw->count(); ++r){
           item = radius_lw->item(r);
-          spb = dynamic_cast<QDoubleSpinBox*>( radius_lw->itemWidget(item) );
-          if (spb){
-            std::cout << "angle : " << spb->value()<< std::endl;
-            radius << spb->value();
-          }
+//           std::cout << "radius : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+          radius << item->data(Qt::EditRole).toDouble();
         }
 
         for ( int r = 0; r < angle_lw->count(); ++r){
           item = angle_lw->item(r);
-          spb = dynamic_cast<QDoubleSpinBox*>( angle_lw->itemWidget(item) );
-          if (spb){
-            std::cout << "angle : " << spb->value()<< std::endl;
-            angles << spb->value();
-          }
+//           std::cout << "angles : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+          radius << item->data(Qt::EditRole).toDouble();
         }
 
         for ( int r = 0; r < height_lw->count(); ++r){
           item = height_lw->item(r);
-          spb = dynamic_cast<QDoubleSpinBox*>( height_lw->itemWidget(item) );
-          if (spb){
-            std::cout << "angle : " << spb->value()<< std::endl;
-            heights << spb->value();
-          }
+//           std::cout << "angles : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+          radius << item->data(Qt::EditRole).toDouble();
         }
 
         iNewElts =  _documentModel->makeCylindricals(
@@ -4535,17 +4576,21 @@ QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, bool editMode, Qt::
   if ( editMode ){
     _initButtonBox();
     //selection management
-    _vertexLineEdits << center_pt_le << axis_vec_le ;
+    _vertexLineEdits << center_pt_le;
+    _vectorLineEdits << axis_vec_le ;
 
     center_pt_le->installEventFilter(this);
     axis_vec_le->installEventFilter(this);
-
     quads_lw->installEventFilter(this);
+
+    angles_lw->setItemDelegate( new HexaDoubleSpinBoxDelegate(angles_lw) );
+    angles_lw->setEditTriggers( QAbstractItemView::DoubleClicked );
 
     QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
     delQuadShortcut->setContext( Qt::WidgetShortcut );
     connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(delQuadItem()) );
     setFocusProxy( quads_lw );
+
 
     connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()));
     connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()));
@@ -4614,12 +4659,17 @@ void QuadRevolutionDialog::updateButtonBox() //CS_TODO? : check center, axis
 
 void QuadRevolutionDialog::addAngleItem() //CS_TODO
 {
-  QListWidgetItem* item = new QListWidgetItem();
-//   item->setData(  Qt::UserRole + 20, QVariant::fromValue<QModelIndex>(isel) );
-  angles_lw->addItem(item);
-  QDoubleSpinBox* spb = new QDoubleSpinBox();
-  angles_lw->setItemWidget( item, spb );
-//   spb->installEventFilter(this);
+  QListWidgetItem* previousItem = angles_lw->currentItem();
+  QListWidgetItem* newItem      = new QListWidgetItem();
+
+  double defaultValue = 0.;
+  if ( previousItem )
+    defaultValue =  previousItem->data(Qt::EditRole).toDouble();
+
+  newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+  newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+  angles_lw->addItem(newItem);
+ 
   updateButtonBox();
 }
 
@@ -4661,14 +4711,10 @@ bool QuadRevolutionDialog::apply()
   QModelIndex iaxis_vec  = patternDataModel->mapToSource( _index[axis_vec_le] );
 
   QList<double> angles;
-  QDoubleSpinBox* spb = NULL;
   for ( int r = 0; r < angles_lw->count(); ++r){
     item = angles_lw->item(r);
-    spb = dynamic_cast<QDoubleSpinBox*>( angles_lw->itemWidget(item) );
-    if ( spb ){
-      std::cout << "angle : " << spb->value()<< std::endl;
-      angles << spb->value();
-    }
+    std::cout << "angle : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+    angles << item->data(Qt::EditRole).toDouble();
   }
 
   if ( icenter_pt.isValid() && iaxis_vec.isValid() ){
