@@ -521,8 +521,8 @@ bool HEXABLOCKGUI::createSComponent() //addComponent
     _PTR(AttributePixMap) aPixmap(anAttr);
     aPixmap->SetPixMap("share/salome/resources/hexablock/ModuleHexablock.png");
     
-    aBuilder->DefineComponentInstance(aComponent, getApp()->defaultEngineIOR().toStdString());
-    DEBTRACE("HEXABLOCKGUI::createSComponent defaultEngineIOR=>"<<getApp()->defaultEngineIOR().toStdString());
+    aBuilder->DefineComponentInstance(aComponent, engineIOR().toStdString());
+    DEBTRACE("HEXABLOCKGUI::createSComponent engineIOR=>"<<engineIOR().toStdString());
 //     SalomeApp_DataModel::synchronize( aComponent, HEXABLOCKGUI::activeStudy() );
     return true;
   }
