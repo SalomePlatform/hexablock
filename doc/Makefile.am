@@ -116,7 +116,10 @@ RSTFILES= \
 	gui_prism_join_quad.rst     \
 	gui_propag.rst              \
 	gui_quadrangle.rst          \
+	gui_quad_revolution.rst	    \
 	gui_remove.rst              \
+	gui_replace_hexa.rst	    \
+	gui_hemisphere.rst	    \
 	gui_vector.rst              \
 	gui_vertex.rst              \
 	index.rst                   \
@@ -154,6 +157,10 @@ RSTFILES= \
 	tui_sphergrid.rst           \
 	tui_vector.rst              \
 	tui_vertex.rst
+
+
+
+
 
 
 

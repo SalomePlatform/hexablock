@@ -21,11 +21,13 @@ It provides the toolset allowing to create a large range of geometrical objects 
 
 - create basic geometrical objects: point, edge, quadrangle, hexahedra
 - create grid: cartesian, cylindrical, spherical
-- create  a cylinder, a pipe, two intersected cylinders, two intersected pipes
+- create  a cylinder, a pipe, two intersected cylinders, two intersected pipes, an hemisphere, a rind
 - remove an hexahedron
+- replace hexahedrons
 - disconnect by a point, an edge, a quadrangle
 - join quadrangles by hexahedra, merge quadrangles
 - transform or modify by translation, rotation and other symetries
+- make quad revolution
 
 
 .. toctree::
@@ -40,13 +42,16 @@ It provides the toolset allowing to create a large range of geometrical objects 
    gui_vector.rst
    gui_cyl.rst
    gui_pipe.rst
+   gui_hemisphere.rst
    gui_remove.rst
    creategrids.rst
    gui_blocks_for_cyl_pipe.rst
    gui_prism_join_quad.rst
+   gui_quad_revolution.rst
    gui_merge_elmts.rst
    gui_disc_elmts.rst
    gui_cut_hexa.rst
+   gui_replace_hexa.rst
    gui_make_elmts.rst
    gui_make_symmetry.rst
    gui_modify_elmts.rst
@@ -56,19 +61,3 @@ It provides the toolset allowing to create a large range of geometrical objects 
    gui_discret_law.rst
    gui_propag.rst
    gui_mesh.rst
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -19,20 +19,22 @@ Three kinds of grid can be created:
 Cartesian grid
 ==============
 
-To create a cartesian grid, the following data are required:
-
-- the vertex of the initial hexahedron
-- the vector corresponding to the diametrically opposite vertex to the initial vertex
-- the number of repetition of this hexahedra along the three axes
-  (n(x), n(y) and n(z))
-
-The dialogue box for the creation of a cartesian grid is:
+To create a cartesian grid, select radio button **Cartesian** :
 
 .. image:: _static/gui_make_cart_grid.png
    :align: center
 
 .. centered::
       Dialogue Box for a Cartesian grid
+
+
+The following data are required:
+
+- the vertex of the initial hexahedron
+- the vector corresponding to the diametrically opposite vertex to the initial vertex
+- the number of repetition of this hexahedra along the three axes
+  (n(x), n(y) and n(z))
+
 
 The result of this action is:
 
@@ -50,28 +52,43 @@ TUI command: :ref:`tuicartgrid`
 Cylindrical grid
 ================
 
-To create a cylindrical grid, the following data are required:
-
-- the coordinates (vertex) of the cylinder base center
-- the vectors defining the axe and the direction of the cylinder
-- the radial, angular and axial sizes: *dr, da, dl*
-- the radial, angular and axial elements number: *nr, na, nl*
-- choose to fill or not the central part of the hexahedra
-
-Example:
+To create a cylindrical grid, select radio button **Cylindrical** :
 
 .. image:: _static/gui_make_cyl_grid.png
    :align: center
 
 .. centered::
-   Dialogue Box for a Cylindrical grid
+   Dialogue Box for a Cylindrical grid (regular size)
+
+
+The following data are required :
+
+- Cylinder
+	- center : coordinates of the cylinder base center ( select a vertex )
+        - base   : base vector of the cylinder ( select a vector )
+        - height : vertical vector of the cylinder ( select a vector )
+
+- Grid
+        - radius : size and number of elements from the center
+	- angle  : size and number of elements around the center
+        - height : size and number of elements on height
+        - fill   : choose this option to fill the central part of the hexahedra
+
+
+Elements size of the grid can be irregular ( differents sizes ). Select the adequat radio button:
+
+.. image:: _static/gui_make_cyl_grid_irregular.png
+   :align: center
+
+.. centered::
+   Dialogue Box for a Cylindrical grid (irregular size)
 
 
 The result is an array of hexahedra which are arranged along the
 radial axis first, then the angular axis, then according to the layers
 and then possibly hexahedra filling the central part.
 
-The filling the central part of the cylinder is made​according to the two following cases:
+The filling the central part of the cylinder is made​ according to the two following cases:
 
 .. image:: _static/cyl_grid2.PNG
    :align: center
@@ -117,7 +134,16 @@ TUI command: :ref:`tuicylgrid`
 Spherical grid
 ===============
 
-To create a spherical grid, the following data are required:
+To create a spherical grid, select radio button **Spherical** :
+
+.. image:: _static/gui_make_spher_grid.png
+   :align: center
+
+.. centered::
+   Dialogue Box for a Spherical grid
+
+
+The following data are required:
 
 - the center (vertex) of the central hexahedron
 - the vector corresponding to the diametrically opposite vertex to the
@@ -125,13 +151,6 @@ To create a spherical grid, the following data are required:
 - the number of embedded hexahedra (nb)
 - the coefficient of growth (k)
 
-Example:
-
-.. image:: _static/gui_make_spher_grid.png
-   :align: center
-
-.. centered::
-   Dialogue Box for a Spherical grid
 
 The result is an array of hexahedra starting with the central and
 other hexahedral are arranged layer by layer from the center. Each
