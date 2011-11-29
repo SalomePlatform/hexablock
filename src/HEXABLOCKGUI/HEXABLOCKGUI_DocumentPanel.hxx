@@ -67,7 +67,7 @@
 #include "ui_QuadRevolution_QTD.h"
 #include "ui_MakeRind_QTD.h"
 #include "ui_ReplaceHexa_QTD.h"
-#include "ui_MakeSphere_QTD.h"
+#include "ui_MakeHemiSphere_QTD.h"
 
 
 
@@ -884,14 +884,14 @@ namespace HEXABLOCK
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeSphereDialog : public HexaBaseDialog,
-                                                             public Ui::MakeSphereDialog
+  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeHemiSphereDialog : public HexaBaseDialog,
+                                                             public Ui::MakeHemiSphereDialog
   {
       Q_OBJECT
 
       public:
-        MakeSphereDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeSphereDialog();
+        MakeHemiSphereDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+        virtual ~MakeHemiSphereDialog();
 
 //         void setValue(HEXA_NS::Propagation* v);
 //         HEXA_NS::Propagation* getValue();

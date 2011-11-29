@@ -100,7 +100,7 @@ UIC_FILES = \
 	ui_QuadRevolution_QTD.h \
 	ui_MakeRind_QTD.h \
 	ui_ReplaceHexa_QTD.h \
-	ui_MakeSphere_QTD.h
+	ui_MakeHemiSphere_QTD.h
 
 
 # MOC pre-processing

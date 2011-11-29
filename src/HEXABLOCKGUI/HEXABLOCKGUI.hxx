@@ -196,7 +196,7 @@ private slots:
   void makePipes();
 
   void makeRind();    // NEW HEXA3
-  void makeSphere();  // NEW HEXA3
+  void makeHemiSphere();  // NEW HEXA3
 
   void removeHexa();
   void prismQuad();
@@ -272,8 +272,8 @@ private:
   QAction *_makeCylinders;
   QAction *_makePipes;
 
-  QAction *_makeRind;   // NEW HEXA3
-  QAction *_makeSphere; // NEW HEXA3
+//   QAction *_makeRind;   // NEW HEXA3
+  QAction *_makeHemiSphere; // NEW HEXA3
 
 
   // Pattern Data Edition

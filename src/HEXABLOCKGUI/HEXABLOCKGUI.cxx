@@ -837,13 +837,13 @@ void HEXABLOCKGUI::createActions()
                                             0, aParent, false, this,  SLOT(makePipes()) );
 
 
-  _makeRind     = createAction( _menuId++, tr("Make rind"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_RIND" ) ),
-                                            tr("Make rind"),  tr("Make rind"),
-                                            0, aParent, false, this,  SLOT(makeRind()) );
+// //   _makeRind     = createAction( _menuId++, tr("Make rind"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_RIND" ) ),
+// //                                             tr("Make rind"),  tr("Make rind"),
+// //                                             0, aParent, false, this,  SLOT(makeRind()) );
 
-  _makeSphere   = createAction( _menuId++, tr("Make sphere"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_SPHERE" ) ),
-                                            tr("Make sphere"),  tr("Make sphere"),
-                                            0, aParent, false, this,  SLOT(makeSphere()) );
+  _makeHemiSphere   = createAction( _menuId++, tr("Make hemisphere"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_HEMISPHERE" ) ),
+                                            tr("Make hemisphere"),  tr("Make hemisphere"),
+                                            0, aParent, false, this,  SLOT(makeHemiSphere()) );
 
   // Pattern Data edition
   _removeHexa     = createAction( _menuId++, tr("Remove hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REMOVE_HEXA" ) ),
@@ -980,8 +980,8 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _makePipe,     aMenuId );
   createMenu( _makeCylinders,aMenuId );
   createMenu( _makePipes,    aMenuId );
-  createMenu( _makeRind,  aMenuId );
-  createMenu( _makeSphere,aMenuId );
+//   createMenu( _makeRind,  aMenuId );
+  createMenu( _makeHemiSphere,aMenuId );
   createMenu( separator(), aMenuId);
 
   // Pattern Data Edition
@@ -1054,8 +1054,8 @@ void HEXABLOCKGUI::createTools()
   createTool( _makePipe,     aToolId );
   createTool( _makeCylinders,aToolId );
   createTool( _makePipes,    aToolId );
-  createTool( _makeRind,     aToolId);
-  createTool( _makeSphere,   aToolId );
+//   createTool( _makeRind,     aToolId);
+  createTool( _makeHemiSphere,   aToolId );
   createTool( separator(), aToolId );
 
   // Pattern Data Edition
@@ -1157,10 +1157,10 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
   setToolShown( _makeCylinders, show);
   setMenuShown( _makePipes,  show );//true);
   setToolShown( _makePipes, show);
-  setMenuShown( _makeRind,  show );//true);
-  setToolShown( _makeRind, show);
-  setMenuShown( _makeSphere,  show );//true);
-  setToolShown( _makeSphere, show);
+//   setMenuShown( _makeRind,  show );//true);
+//   setToolShown( _makeRind, show);
+  setMenuShown( _makeHemiSphere,  show );//true);
+  setToolShown( _makeHemiSphere, show);
 
   // Pattern Data Edition
   setMenuShown( _removeHexa,  show );//true);
@@ -1973,11 +1973,11 @@ void HEXABLOCKGUI::makeRind()    // NEW HEXA3
 
 }
 
-void HEXABLOCKGUI::makeSphere()  // NEW HEXA3
+void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
 {
   if (!_dwInputPanel) return;
 
-  MakeSphereDialog* diag = new MakeSphereDialog(_dwInputPanel, true);
+  MakeHemiSphereDialog* diag = new MakeHemiSphereDialog(_dwInputPanel, true);
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);

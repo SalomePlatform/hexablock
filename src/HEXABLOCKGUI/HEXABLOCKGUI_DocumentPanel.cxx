@@ -1674,7 +1674,7 @@ MakeGridDialog::~MakeGridDialog()
 // }
 
 
-void MakeGridDialog::updateButtonBox() //CS_TODO
+void MakeGridDialog::updateButtonBox() //CS_TODO?
 {
 //   int nbQuads  = quads_lw->count();
 //   int nbAngles = angles_lw->count();
@@ -1685,6 +1685,14 @@ void MakeGridDialog::updateButtonBox() //CS_TODO
 //   } else {
 //     _applyCloseButton->setEnabled(false);
 //     _applyButton->setEnabled(false);
+//   }
+
+//   if ( rb0->isChecked() ){ //cartesian
+//   } else if ( rb1->isChecked() ){ //cylindrical
+//     nb_radius = radius_lw->item(r);
+//     nb_angle  = angle_lw->item(r);
+//     nb_height = height_lw->item(r);
+//   } else if ( rb2->isChecked() ){ //spherical
 //   }
 }
 
@@ -1707,7 +1715,7 @@ void MakeGridDialog::addRadiusItem()
 
 void MakeGridDialog::delRadiusItem()
 {
-  std::cout << "delRadiusItem()" << std::endl;
+//   std::cout << "delRadiusItem()" << std::endl;
   delete radius_lw->currentItem();
   updateButtonBox();
 }
@@ -1825,13 +1833,13 @@ bool MakeGridDialog::apply()
         for ( int r = 0; r < angle_lw->count(); ++r){
           item = angle_lw->item(r);
 //           std::cout << "angles : " << item->data(Qt::EditRole).toDouble()<< std::endl;
-          radius << item->data(Qt::EditRole).toDouble();
+          angles << item->data(Qt::EditRole).toDouble();
         }
 
         for ( int r = 0; r < height_lw->count(); ++r){
           item = height_lw->item(r);
 //           std::cout << "angles : " << item->data(Qt::EditRole).toDouble()<< std::endl;
-          radius << item->data(Qt::EditRole).toDouble();
+          heights << item->data(Qt::EditRole).toDouble();
         }
 
         iNewElts =  _documentModel->makeCylindricals(
@@ -1840,7 +1848,6 @@ bool MakeGridDialog::apply()
             fill ); //NEW HEXA3
 
       }
-
     }
 
   } else if ( rb2->isChecked() ){ //spherical
@@ -4531,6 +4538,7 @@ bool ReplaceHexaDialog::apply()
   for ( int r = 0; r < hexa_lw->count(); ++r){
     item = hexa_lw->item(r);
     ihexa = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+    std::cout << "ihexa => " << ihexa.data().toString().toStdString() << std::endl;
     if ( ihexa.isValid() )
       ihexas << ihexa;
   }
@@ -4543,9 +4551,17 @@ bool ReplaceHexaDialog::apply()
   QModelIndex ip2 = patternDataModel->mapToSource( _index[p2_le] );
   QModelIndex ip3 = patternDataModel->mapToSource( _index[p3_le] );
 
+//   std::cout << "nbHexa => " << nbHexa << std::endl;
 
   if ( ic1.isValid() && ic2.isValid() && ic3.isValid()
        && ip1.isValid() && ip2.isValid() && ip3.isValid() ){
+    std::cout << "ip1 => " << ip1.data().toString().toStdString() << std::endl;
+    std::cout << "ic1 => " << ic1.data().toString().toStdString() << std::endl;
+    std::cout << "ip2 => " << ip2.data().toString().toStdString() << std::endl;
+    std::cout << "ic2 => " << ic2.data().toString().toStdString() << std::endl;
+    std::cout << "ip3 => " << ip3.data().toString().toStdString() << std::endl;
+    std::cout << "ic3 => " << ic3.data().toString().toStdString() << std::endl;
+
     ielts = _documentModel->replace( ihexas,
                                      ip1, ic1,
                                      ip2, ic2,
@@ -4690,9 +4706,12 @@ bool QuadRevolutionDialog::apply()
 {
   SUIT_OverrideCursor wc;
   if ( !_documentModel ) return false;
-  if ( !_patternDataSelectionModel ) return false;
+  if ( !_patternDataSelectionModel )    return false;
+  if ( !_patternBuilderSelectionModel ) return false;
   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+  const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
   if ( !patternDataModel )    return false;
+  if ( !patternBuilderModel ) return false;
 
   QModelIndex ielts; //result
 
@@ -4708,7 +4727,7 @@ bool QuadRevolutionDialog::apply()
   }
 
   QModelIndex icenter_pt = patternDataModel->mapToSource( _index[center_pt_le] );
-  QModelIndex iaxis_vec  = patternDataModel->mapToSource( _index[axis_vec_le] );
+  QModelIndex iaxis_vec  = patternBuilderModel->mapToSource( _index[axis_vec_le] );
 
   QList<double> angles;
   for ( int r = 0; r < angles_lw->count(); ++r){
@@ -4735,11 +4754,11 @@ bool QuadRevolutionDialog::apply()
 
 
 
-MakeSphereDialog::MakeSphereDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
+MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
   setupUi( this );
-  setWindowTitle( tr("MAKE SPHERE") );
+  setWindowTitle( tr("MAKE HEMISPHERE") );
 
   if ( editMode ){
     _initButtonBox();
@@ -4757,13 +4776,13 @@ MakeSphereDialog::MakeSphereDialog( QWidget* parent, bool editMode, Qt::WindowFl
 }
 
 
-MakeSphereDialog::~MakeSphereDialog()
+MakeHemiSphereDialog::~MakeHemiSphereDialog()
 {
 }
 
 
 
-bool MakeSphereDialog::apply()
+bool MakeHemiSphereDialog::apply()
 {
   SUIT_OverrideCursor wc;
   if ( !_documentModel ) return false;
@@ -4774,16 +4793,13 @@ bool MakeSphereDialog::apply()
   if ( !patternBuilderModel ) return false;
   if ( !patternDataModel )    return false;
 
-  _vertexLineEdits << center_le << plorig_le;
-  _vectorLineEdits << vx_le << vz_le;
-
   QModelIndex iElts;
   QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
   QModelIndex iplorig = patternDataModel->mapToSource( _index[plorig_le] );
   QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[vx_le] );
   QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[vz_le] );
 
-  double radius  = radius_spb->value();
+  double radext  = radext_spb->value();
   double radhole = radhole_spb->value();
 
   int nrad = nrad_spb->value();
@@ -4792,18 +4808,35 @@ bool MakeSphereDialog::apply()
 
 
   if ( icenter.isValid() && ivecx.isValid() && ivecz.isValid() && iplorig.isValid() ){
-    if ( partial_cb->isChecked() ){
-      double angle = angle_spb->value();
-      iElts = _documentModel->makePartSphere( icenter, ivecx, ivecz,
-                                        radius, radhole,
-                                        iplorig, angle,
+    if ( rind_cb->isChecked() ){ // rind
+      double radint  = radint_spb->value();
+      if ( partial_cb->isChecked() ){
+        double angle = angle_spb->value();
+        iElts = _documentModel->makePartRind( icenter, ivecx, ivecz,
+                                        radext, radint, radhole,
+                                        iplorig,      angle,
                                         nrad, nang, nhaut );
-    } else {
-      iElts = _documentModel->makeSphere( icenter,
+      } else {
+        iElts = _documentModel->makeRind( icenter,
                                         ivecx, ivecz,
-                                        radius, radhole,
+                                        radext, radint, radhole,
                                         iplorig,
                                         nrad, nang, nhaut );
+      }
+    } else { // sphere
+      if ( partial_cb->isChecked() ){
+        double angle = angle_spb->value();
+        iElts = _documentModel->makePartSphere( icenter, ivecx, ivecz,
+                                        radext, radhole,
+                                        iplorig, angle,
+                                        nrad, nang, nhaut );
+      } else {
+        iElts = _documentModel->makeSphere( icenter,
+                                        ivecx, ivecz,
+                                        radext, radhole,
+                                        iplorig,
+                                        nrad, nang, nhaut );
+      }
     }
   }
 
