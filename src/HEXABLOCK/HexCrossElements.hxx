@@ -27,10 +27,10 @@
 
 BEGIN_NAMESPACE_HEXA
 
-enum {Cyl1=0, Cyl2=1, NbrSlices1=6, NbrSlices2=4, NxExt=2, NxInt=1 };
+enum {CylSmall=0, CylBig=1, NbrSlices1=6, NbrSlices2=4, NxInt=1, NxExt=2 };
 enum {SizeRay=3, BiCyl=2};
 enum {NbrVSlices1=NbrSlices1+1, NbrVSlices2=NbrSlices2+1};
-enum {CylSmall=Cyl1, CylBig=Cyl2 };
+enum {Cyl1=CylSmall, Cyl2=CylBig };
 
 class CrossElements : public Elements 
 {
@@ -67,8 +67,6 @@ private :
    void fillCenter (int cyl, int deb, int fin);
    void createLittleCyl ();
    void createBigCyl    ();
-   void addLittleSlice (int i, int k, double x, double a, double b, double c);
-   void addBigSlice    (int i, int k, double z, double a, double b, double c);
 
    void copyVertex (int i1, int j1, int k1, int i2, int j2, int k2);
    void copyEdge (int d1, int i, int j, int k, int d2, int i2, int j2, int k2);
@@ -105,10 +103,9 @@ private :
    void assoBigMiddle (double* base, double* normal, int nzlice);
 
 
-
    double getAngle  (int cyl, int ny);
-   void   addSlice  (int cyl, int ni, int nk, double px);
-   void   addVertex (int cyl, int ni, int nj, int nk, double px);
+   void   addSlice  (int cyl, int ni, int nk, double px, double rayon=-1);
+   void   addVertex (int cyl, int ni, int nj, int nk, double px, double rayon);
    void   majIntersection ();
 
 private :
@@ -116,9 +113,6 @@ private :
     Cylinder* cross_cyl1;
     Cylinder* cross_cyl2;
     Vertex*   cross_center;
-    double    cross_gray1, cross_pray1, cross_igray1, cross_ipray1;
-    double    cross_gray2, cross_pray2, cross_igray2, cross_ipray2;
-    double    cross_he1,   cross_hi1,   cross_he2,    cross_hi2; 
 
     int  size_hiy, size_h1z, size_h2z, size_v1z, size_v2z;
     int  size_vz[BiCyl], size_hz[BiCyl];

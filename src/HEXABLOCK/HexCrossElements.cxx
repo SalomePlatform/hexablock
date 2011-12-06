@@ -58,7 +58,7 @@ CrossElements::CrossElements (Document* doc, EnumGrid type)
    cross_cyl2   = NULL;
    cross_center = NULL;
    grid_type    = type;
-   angle_inter [Cyl1] = angle_inter [Cyl2] =  0;
+   angle_inter [CylSmall] = angle_inter [CylBig] =  0;
 }
 // ====================================================== resize
 void CrossElements::resize ()
@@ -66,13 +66,13 @@ void CrossElements::resize ()
    size_hx  = 2;
    size_hy  = S_MAXI;
    size_hiy = NbrIntCotes;
-   size_hz [Cyl1] = size_h1z = 6;
-   size_hz [Cyl2] = size_h2z = 4;
+   size_hz [CylSmall] = size_h1z = 6;
+   size_hz [CylBig] = size_h2z = 4;
 
    size_vx  = size_hx + 1;
    size_vy  = size_hy;
-   size_vz[Cyl1] = size_v1z = size_h1z + 1;
-   size_vz[Cyl2] = size_v2z = size_h2z + 1;
+   size_vz[CylSmall] = size_v1z = size_h1z + 1;
+   size_vz[CylBig]   = size_v2z = size_h2z + 1;
 
    nbr_vertex1 = size_vx*size_vy* size_v1z;
    nbr_quads1  = nbr_vertex1*DIM3;
@@ -276,8 +276,8 @@ void CrossElements::setVertex (int cyl, int nx, int ny, int nz, double px,
 // ====================================================== copyVertex
 void CrossElements::copyVertex (int i1, int j1, int k1, int i2, int j2, int k2)
 {
-   Vertex*    node = getVertexIJK (Cyl1, i1, j1, k1);
-   setVertex (node, Cyl2, i2, j2, k2);
+   Vertex*    node = getVertexIJK (CylSmall, i1, j1, k1);
+   setVertex (node, CylBig, i2, j2, k2);
 }
 // ====================================================== copyEdge
 void CrossElements::copyEdge (int d1, int i1, int j1, int k1, int d2, int i2, 
@@ -286,15 +286,15 @@ void CrossElements::copyEdge (int d1, int i1, int j1, int k1, int d2, int i2,
    Edge* edge = NULL;
    switch (d1) 
           {
-          case dir_x : edge = getEdgeI (Cyl1, i1, j1, k1);
+          case dir_x : edge = getEdgeI (CylSmall, i1, j1, k1);
                        break;
-          case dir_y : edge = getEdgeJ (Cyl1, i1, j1, k1);
+          case dir_y : edge = getEdgeJ (CylSmall, i1, j1, k1);
                        break;
-          case dir_z : edge = getEdgeK (Cyl1, i1, j1, k1);
+          case dir_z : edge = getEdgeK (CylSmall, i1, j1, k1);
                        break;
           }
 
-   setEdge (edge, Cyl2, d2, i2, j2, k2);
+   setEdge (edge, CylBig, d2, i2, j2, k2);
 }
 // ====================================================== copyQuad
 void CrossElements::copyQuad (int d1, int i1, int j1, int k1, int d2, int i2, 
@@ -303,15 +303,15 @@ void CrossElements::copyQuad (int d1, int i1, int j1, int k1, int d2, int i2,
    Quad* quad = NULL;
    switch (d1) 
           {
-          case dir_x : quad = getQuadJK (Cyl1, i1, j1, k1);
+          case dir_x : quad = getQuadJK (CylSmall, i1, j1, k1);
                        break;
-          case dir_y : quad = getQuadIK (Cyl1, i1, j1, k1);
+          case dir_y : quad = getQuadIK (CylSmall, i1, j1, k1);
                        break;
-          case dir_z : quad = getQuadIJ (Cyl1, i1, j1, k1);
+          case dir_z : quad = getQuadIJ (CylSmall, i1, j1, k1);
                        break;
           }
 
-   setQuad (quad, Cyl2, d2, i2, j2, k2);
+   setQuad (quad, CylBig, d2, i2, j2, k2);
 }
 // ====================================================== addEdge
 Edge* CrossElements::addEdge (Vertex* v1, Vertex* v2, int cyl, int dir, 
@@ -321,7 +321,7 @@ Edge* CrossElements::addEdge (Vertex* v1, Vertex* v2, int cyl, int dir,
    if (v1==NULL || v2==NULL)
       return NULL;
 
-   else if (cyl==Cyl2) 
+   else if (cyl==CylBig) 
       {
       edge = findEdge1 (v1, v2);
       if (edge != NULL) 
@@ -348,7 +348,7 @@ Hexa* CrossElements::addHexa (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5,
                             Quad* q6, int cyl, int nx, int ny, int nz)
 {
 /* **************************
-   if (cyl==Cyl1)
+   if (cyl==CylSmall)
       {
       if (nx == 0)  return NULL;
       if (nz != 1)  return NULL;
@@ -356,7 +356,7 @@ Hexa* CrossElements::addHexa (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5,
       return NULL;
       }
 
-   if (cyl==Cyl2)
+   if (cyl==CylBig)
       {
       if (nz >  2)  return NULL;
       if (nz <  1)  return NULL;
@@ -366,7 +366,7 @@ Hexa* CrossElements::addHexa (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5,
    ************************** */
 
    Hexa* hexa = NULL;
-   if (cyl==Cyl2) 
+   if (cyl==CylBig) 
       hexa = findHexa1 (q1, q2);
 
    if (hexa == NULL) 
@@ -385,7 +385,7 @@ Quad* CrossElements::addQuad (Edge* e1, Edge* e2, Edge* e3, Edge* e4, int cyl,
                              int dir, int nx, int ny, int nz)
 {
    Quad* quad = NULL;
-   if (cyl==Cyl2) 
+   if (cyl==CylBig) 
       quad = findQuad1 (e1, e3);
 
    if (quad == NULL) 
@@ -427,32 +427,6 @@ Quad* CrossElements::findQuad1 (Edge* e1, Edge* e2)
    return NULL;
 }
 // ------------------------------------------------------------------------
-// ====================================================== addLittleSlice
-void CrossElements::addLittleSlice (int ni, int nk, double px, double gray, 
-                                    double pray, double h1)
-{
-   setVertex (Cyl1, ni, S_E,  nk,    px,  pray,  0); 
-   setVertex (Cyl1, ni, S_NE, nk,    px,  pray,  h1); 
-   setVertex (Cyl1, ni, S_N,  nk,    px,  0,     gray); 
-   setVertex (Cyl1, ni, S_NW, nk,    px, -pray,  h1); 
-   setVertex (Cyl1, ni, S_W,  nk,    px, -pray,  0); 
-   setVertex (Cyl1, ni, S_SW, nk,    px, -pray, -h1); 
-   setVertex (Cyl1, ni, S_S,  nk,    px,  0,    -gray); 
-   setVertex (Cyl1, ni, S_SE, nk,    px,  pray, -h1); 
-}
-// ====================================================== addBigSlice
-void CrossElements::addBigSlice (int ni, int nk, double pz, double gray, 
-                                 double pray, double h1)
-{
-   setVertex (Cyl2, ni, S_E,  nk,    pray,  0,    pz); 
-   setVertex (Cyl2, ni, S_NE, nk,    pray,  h1,   pz); 
-   setVertex (Cyl2, ni, S_N,  nk,    0,     gray, pz); 
-   setVertex (Cyl2, ni, S_NW, nk,    -pray,  h1,  pz); 
-   setVertex (Cyl2, ni, S_W,  nk,    -pray,  0,   pz); 
-   setVertex (Cyl2, ni, S_SW, nk,    -pray, -h1,  pz); 
-   setVertex (Cyl2, ni, S_S,  nk,    0,    -gray, pz); 
-   setVertex (Cyl2, ni, S_SE, nk,    pray, -h1,   pz); 
-}
 // ====================================================== createBigCyl
 void CrossElements::createBigCyl ()
 {
@@ -462,9 +436,9 @@ void CrossElements::createBigCyl ()
    const int kv_mil = NbrVSlices1 / 2;
 
    double z0 = - calcul_centre (cross_cyl2->getBase(), cross_center);
-   double z3 = getVertexIJK (Cyl1, ivext, S_NE, kv_mil)->getZ();
-   double z2 = getVertexIJK (Cyl1, ivext, S_E,  kv_mil)->getZ();
-   double z1 = getVertexIJK (Cyl1, ivext, S_SE, kv_mil)->getZ();
+   double z3 = getVertexIJK (CylSmall, ivext, S_NE, kv_mil)->getZ();
+   double z2 = getVertexIJK (CylSmall, ivext, S_E,  kv_mil)->getZ();
+   double z1 = getVertexIJK (CylSmall, ivext, S_SE, kv_mil)->getZ();
    double z4 = z0 + cross_cyl2->getHeight ();
 
    const int k0 = 0;
@@ -473,21 +447,21 @@ void CrossElements::createBigCyl ()
    const int k3 = 3;
    const int k4 = NbrVSlices2-1;
 
-   setVertex (Cyl2, iv0, 0, k0,    0, 0, z0);
-   addSlice  (Cyl2, ivint, k0, z0);
-   addSlice  (Cyl2, ivext, k0, z0);
+   setVertex (CylBig, iv0, 0, k0,    0, 0, z0);
+   addSlice  (CylBig, ivint, k0, z0);
+   addSlice  (CylBig, ivext, k0, z0);
 
-   setVertex (Cyl2, iv0, 0, k4,    0, 0, z4);
-   addSlice  (Cyl2, ivint, k4, z4);
-   addSlice  (Cyl2, ivext, k4, z4);
+   setVertex (CylBig, iv0, 0, k4,    0, 0, z4);
+   addSlice  (CylBig, ivint, k4, z4);
+   addSlice  (CylBig, ivext, k4, z4);
 
    //------------------------------- Points intermediaires :
 
-   double x1 = getVertexIJK (Cyl2, ivext, S_N, k0)->getX();
-   double y1 = getVertexIJK (Cyl2, ivext, S_N, k0)->getY();
+   double x1 = getVertexIJK (CylBig, ivext, S_N, k0)->getX();
+   double y1 = getVertexIJK (CylBig, ivext, S_N, k0)->getY();
 
-   double x2 = getVertexIJK (Cyl2, ivext, S_S, k0)->getX();
-   double y2 = getVertexIJK (Cyl2, ivext, S_S, k0)->getY();
+   double x2 = getVertexIJK (CylBig, ivext, S_S, k0)->getX();
+   double y2 = getVertexIJK (CylBig, ivext, S_S, k0)->getY();
 
    //------------------------------- Reprise des vertex du cylindre 1
 
@@ -496,8 +470,8 @@ void CrossElements::createBigCyl ()
        copyVertex (ivext, S_S,  3, iv0,   0,    k1);
 
    //------------------------------- Face k1 externe :
-   setVertex   (Cyl2, ivext, S_N, k1,    x1, y1, z1);
-   setVertex   (Cyl2, ivext, S_S, k1,    x2, y2, z1);
+   setVertex   (CylBig, ivext, S_N, k1,    x1, y1, z1);
+   setVertex   (CylBig, ivext, S_S, k1,    x2, y2, z1);
 
    copyVertex (ivext, S_S,  5,   ivext, S_E,  k1);
    copyVertex (ivext, S_SE, 5,   ivext, S_NE, k1);
@@ -524,8 +498,8 @@ void CrossElements::createBigCyl ()
    // copyVertex (iv0, 0,      3,   iv0,   0,    k2);
    // ------------------------------ Face k2 externe :
 
-   setVertex  (Cyl2, ivext, S_N, k2,  x1, y1, z2);
-   setVertex  (Cyl2, ivext, S_S, k2,  x2, y2, z2);
+   setVertex  (CylBig, ivext, S_N, k2,  x1, y1, z2);
+   setVertex  (CylBig, ivext, S_S, k2,  x2, y2, z2);
 
    copyVertex (ivext, S_E,  5,   ivext, S_NE, k2);
    copyVertex (ivext, S_W,  5,   ivext, S_SE, k2);
@@ -546,8 +520,8 @@ void CrossElements::createBigCyl ()
    // ------------------------------------------------------------
    //------------------------------- Face k3 externe :
 
-   setVertex   (Cyl2, ivext, S_N, k3,    x1, y1, z3);
-   setVertex   (Cyl2, ivext, S_S, k3,    x2, y2, z3);
+   setVertex   (CylBig, ivext, S_N, k3,    x1, y1, z3);
+   setVertex   (CylBig, ivext, S_S, k3,    x2, y2, z3);
 
    //------------------------------- Centre
    if (grid_type != GR_BIPIPE) 
@@ -574,42 +548,37 @@ void CrossElements::createBigCyl ()
    copyVertex (ivext, S_NE, 3,   ivint, S_N, k3);
 
    //------------------------------- Remplissage
-   fillGrid (Cyl2); 
+   fillGrid (CylBig); 
 }
 // ====================================================== createLittleCyl
 void CrossElements::createLittleCyl ()
 {
    double c1 = calcul_centre (cross_cyl1->getBase(), cross_center);
+   double cosalpha = cos (angle_inter[CylBig]);
+   double prayext  = cross_rayon [CylBig][NxExt] * cosalpha;
+   double prayint  = cross_rayon [CylBig][NxInt] * cosalpha;
 
-   double t_haut [MaxLevel] = { -c1,  -cross_pray2,  -cross_ipray2,  
-                                 0,    cross_ipray2,  cross_pray2, 
+   double t_haut [MaxLevel] = { -c1,  -prayext,  -prayint,  
+                                 0,    prayint,  prayext, 
                                  cross_cyl1->getHeight () -c1 };
 
-   // double b2 = sqrt (cross_igray2*cross_igray2 - cross_ipray2*cross_ipray2);
+   double rm = (  cross_rayon [CylSmall][NxExt] 
+                + cross_rayon [CylSmall][NxInt]) / 2; 
+   double rc =    cross_rayon [CylBig]  [NxInt];
+
+   double t_rayext [MaxLevel] = { -1,  -1, rm, rc, rm, -1, -1 }; 
 
    for (int nk = 0 ; nk<size_v1z ; nk++)
        {
        double px = t_haut [nk]; 
        if (grid_type != GR_BIPIPE) 
-           setVertex (Cyl1, 0, 0, nk,    px, 0, 0); 
+          addVertex (CylSmall, 0, 0, nk, px, 0);
 
-       addSlice (Cyl1, 1, nk, px);
-
-       switch (nk)
-          {
-          case 2 : case 4 : 
-               addSlice (Cyl1, 2, nk, px);
-               break;
-          case 3 : 
-               addSlice (Cyl1, 2, nk, px);
-               break;
-          default :
-               addSlice (Cyl1, 2, nk, px);
-               break;
-          }
+       addSlice (CylSmall, NxInt, nk, px);
+       addSlice (CylSmall, NxExt, nk, px, t_rayext[nk]);
        }
 
-   fillGrid (Cyl1);
+   fillGrid (CylSmall);
 }
 // ====================================================== crossCylinders
 int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
@@ -632,52 +601,28 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    if (cross_center==NULL)
       return HERR;
 
-   double angle1 = M_PI/6;
-                                             // Little
-   cross_gray1  = cross_cyl1->getRadius ();
-   cross_pray1  = cross_gray1 * cos (M_PI/6);
-   cross_he1    = cross_gray1 / 2;
-                                             // Big
-   cross_gray2  = cross_cyl2->getRadius ();
-   cross_pray2  = cross_gray2 * cos (M_PI/6);
-   cross_he2    = cross_pray1; 
-   cross_he2    = cross_gray1; 
+   double cross_gray1  = cross_cyl1->getRadius ();
+   double cross_gray2  = cross_cyl2->getRadius ();
+   double cross_igray1 = cross_gray1 * epaiss2;
+   double cross_igray2 = cross_gray2 * epaiss2;
 
-   cross_igray2 = cross_gray2 * epaiss2;
-   cross_ipray2 = cross_pray2 * epaiss2;
-   cross_hi2    = cross_he2   * epaiss2;
-
-   cross_ipray1 = 0.75 * cross_hi2;
-   cross_igray1 = cross_gray1 * cross_ipray1 / cross_pray1;
-   cross_hi1    = cross_igray1 / 2;
-
-   if (db) 
+   if (db+1) 
       {
       HexDisplay (cross_gray1);
-      HexDisplay (cross_pray1);
-      HexDisplay (cross_he1  );
-                                             // Big
       HexDisplay (cross_gray2);
-      HexDisplay (cross_pray2);
-      HexDisplay (cross_he2  );
-
       HexDisplay (cross_igray2);
-      HexDisplay (cross_ipray2);
-      HexDisplay (cross_hi2   );
-
-      HexDisplay (cross_ipray1);
       HexDisplay (cross_igray1);
-      HexDisplay (cross_hi1   );
       }
 
-   angle_inter [Cyl1] = asin (cross_he1/cross_gray1);
-   angle_inter [Cyl2] = asin (cross_gray1/cross_gray2);
+   angle_inter [CylSmall] = M_PI/6;
+   angle_inter [CylBig] = asin (cross_gray1/cross_gray2);
 
-   cross_rayon [Cyl1] [0] = cross_rayon [Cyl2] [0] = 0;
-   cross_rayon [Cyl1] [NxInt] = cross_igray1;
-   cross_rayon [Cyl1] [NxExt] = cross_gray1;
-   cross_rayon [Cyl2] [NxInt] = cross_igray2;
-   cross_rayon [Cyl2] [NxExt] = cross_gray2;
+   cross_rayon [CylSmall] [0] = cross_rayon [CylBig] [0] = 0;
+
+   cross_rayon [CylSmall] [NxInt] = cross_igray1;
+   cross_rayon [CylSmall] [NxExt] = cross_gray1;
+   cross_rayon [CylBig]   [NxInt] = cross_igray2;
+   cross_rayon [CylBig]   [NxExt] = cross_gray2;
 
    createLittleCyl ();
    createBigCyl    ();
@@ -694,8 +639,8 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    transfoVertices (cross_center, iprim, jprim, kprim);
 
    Real3 coord;
-   assoCylinder (Cyl1, iprim->getCoord (coord));
-   assoCylinder (Cyl2, kprim->getCoord (coord));
+   assoCylinder (CylSmall, iprim->getCoord (coord));
+   assoCylinder (CylBig, kprim->getCoord (coord));
    return HOK;
 }
 // ====================================================== fillGrid
@@ -762,7 +707,7 @@ void CrossElements::fillGrid (int cyl, int deb, int fin)
                   addQuad (e0, e1, e2, e3, cyl, dir_x, nx+1, ny, nz-1);  
                   }
                                  //   Hexas (8) 
-              if (is_filled || cyl==Cyl2 || (nz!=3 && nz != 4))
+              if (is_filled || cyl==CylBig || (nz!=3 && nz != 4))
                   {
                   for (int ny=0 ; ny<size_hy ; ny++)
                       {
@@ -879,7 +824,7 @@ void CrossElements::fillCenter (int cyl, int nz0, int nzn)
 void CrossElements::dump ()
 {
    int sizey [2] = { 4, S_MAXI };
-   for (int cyl=Cyl1 ; cyl<=Cyl2 ; cyl++)
+   for (int cyl=CylSmall ; cyl<=CylBig ; cyl++)
        {
        printf (" +++++++++ \n");
        printf (" +++++++++ Hexas du Cylindre nro %d\n", cyl);
@@ -907,7 +852,7 @@ void CrossElements::dumpVertex ()
 {
    int sizey [3] = { 1, 4, S_MAXI };
 
-   for (int cyl=Cyl1 ; cyl<=Cyl2 ; cyl++)
+   for (int cyl=CylSmall ; cyl<=CylBig ; cyl++)
        {
        printf (" +++++++++ \n");
        printf (" +++++++++ Vertex du Cylindre nro %d\n", cyl);
@@ -935,7 +880,7 @@ void CrossElements::dumpHexas ()
 {
    int sizey [3] = { 1, 4, S_MAXI };
 
-   for (int cyl=Cyl1 ; cyl<=Cyl2 ; cyl++)
+   for (int cyl=CylSmall ; cyl<=CylBig ; cyl++)
        {
        printf (" +++++++++ \n");
        printf (" +++++++++ Hexaedres du Cylindre nro %d\n", cyl);
@@ -1105,39 +1050,27 @@ double CrossElements::getAngle (int cyl, int nj)
    return 0;
 }
 // ====================================================== addVertex
-void CrossElements::addVertex (int cyl, int ni, int nj, int nk, double px)
+void CrossElements::addVertex (int cyl, int ni, int nj, int nk, double px,
+                               double rayon)
 {
-   double rayon = cross_rayon [cyl][ni];
+   if (rayon<0.0)
+       rayon = cross_rayon [cyl][ni];
    double theta = getAngle (cyl, nj);
 
-   if (cyl==Cyl1) 
+   if (cyl==CylSmall) 
        setVertex (cyl, ni, nj, nk,  px, rayon*cos(theta), rayon*sin(theta));
    else
        setVertex (cyl, ni, nj, nk,  rayon*cos(theta), rayon*sin(theta), px);
 }
 // ====================================================== addSlice
-void CrossElements::addSlice (int cyl, int ni, int nk, double px)
+void CrossElements::addSlice (int cyl, int ni, int nk, double px, double rayon)
 {
    for (int nj=0 ; nj < S_MAXI ; nj++)
-       addVertex (cyl, ni, nj, nk, px);
+       addVertex (cyl, ni, nj, nk, px, rayon);
 }
 // ====================================================== majIntersection
 void CrossElements::majIntersection ()
 {
-	/********************************
-   for (int nx=NxInt +10; nx<=NxExt ; nx++)
-       {
-       double rayon = cross_rayon [CylBig][nx];
-
-       getVertexIJK (CylBig, nx, S_E, 1)->setX (rayon);
-       getVertexIJK (CylBig, nx, S_E, 3)->setX (rayon);
-
-       getVertexIJK (CylBig, nx, S_W, 1)->setX (-rayon);
-       getVertexIJK (CylBig, nx, S_W, 3)->setX (-rayon);
-
-       }
-******************************************************/
-   double rayon = cross_rayon [CylBig][NxExt];
    for (int nx=NxInt; nx<=NxExt ; nx++)
        {
        getVertexIJK (CylSmall, nx, S_N, 1)->setX (-cross_rayon[CylBig][NxExt]);
@@ -1153,6 +1086,5 @@ void CrossElements::majIntersection ()
        getVertexIJK (CylSmall, nx, S_N, 4)->setX ( cross_rayon[CylBig][NxInt]);
        getVertexIJK (CylSmall, nx, S_S, 4)->setX ( cross_rayon[CylBig][NxInt]);
        }
-
 }
 END_NAMESPACE_HEXA
