@@ -125,7 +125,7 @@ public:
                            int nrad, int nang, int nhaut, 
                            double &phi0, double &phi1);
 
-   int replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 
+   int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1, 
                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
    int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h, 

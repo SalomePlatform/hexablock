@@ -37,6 +37,11 @@
 #include "HexCramer.hxx"
 #include "HexGroup.hxx"
 
+static int nbr_vtk = 0;
+static cpchar case_name = "hexa";
+static Hex::Document*   docu = NULL;
+
+
 // ======================================================== print_propagations
 void print_propagations (Hex::Document* doc)
 {
@@ -68,6 +73,19 @@ void print_propagations (Hex::Document* doc)
               }
            }
        }
+}
+// ======================================================== remove_hexa
+void remove_hexa (Hex::Hexa* hexa)
+{
+   if (hexa==NULL)
+      return;
+
+   hexa->remove();
+
+   if (docu==NULL)
+      return;
+
+   docu->saveVtk (case_name, nbr_vtk);
 }
 // ======================================================== test_sphere
 int test_sphere (int nbargs, cpchar tabargs[])
@@ -518,8 +536,8 @@ int test_string_xml (int nbargs, cpchar tabargs[])
 
    cpchar flux = doc ->getXml ();
    Hex::Document* docbis = mon_ex.addDocument ();
-   docbis->setXml (flux);
-   docbis ->saveVtk ("clone.vtk");
+   docbis->setXml  (flux);
+   docbis->saveVtk ("clone.vtk");
 
    return HOK;
 }
@@ -781,63 +799,23 @@ int test_croix (int nbargs, cpchar tabargs[])
    int nr2 = 1;
    int nl2 = 10;
 
-   Hex::Cylinder* cyl1  = doc->addCylinder (ori1, vz, nr1, nl1);
-   Hex::Cylinder* cyl2  = doc->addCylinder (ori2, vx, nr2, nl2);
+   Hex::Cylinder*      cyl1 = doc->addCylinder (ori1, vz, nr1, nl1);
+   Hex::Cylinder*      cyl2 = doc->addCylinder (ori2, vx, nr2, nl2);
    Hex::CrossElements* grid = doc->makeCylinders (cyl1, cyl2);
 
-   grid->dump();
-   grid->dumpVertex();
+   int nvtk=0;
+   doc->saveVtk ("croix", nvtk);
 
-#if 0
-   for (int ny=0; ny<Hex::S_MAXI; ny++)
-       {
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 0)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 1)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 2)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 3)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 4)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 1, ny, 5)->remove ();
-
-       grid->getHexaIJK (Hex::Cyl2, 1, ny, 0)->remove ();
-       // grid->getHexaIJK (Hex::Cyl2, 1, ny, 1)->remove ();
-       // grid->getHexaIJK (Hex::Cyl2, 1, ny, 2)->remove ();
-       grid->getHexaIJK (Hex::Cyl2, 1, ny, 3)->remove ();
-       }
-
-   for (int ny=0; ny<4 ;  ny++)
-       {
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 0)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 1)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 2)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 3)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 4)->remove ();
-       grid->getHexaIJK (Hex::Cyl1, 0, ny, 5)->remove ();
-
-       // grid->getHexaIJK (Hex::Cyl2, 0, ny, 0)->remove ();
-       // grid->getHexaIJK (Hex::Cyl2, 0, ny, 1)->remove ();
-       // grid->getHexaIJK (Hex::Cyl2, 0, ny, 2)->remove ();
-       // grid->getHexaIJK (Hex::Cyl2, 0, ny, 3)->remove ();
-       }
-
-   /*********************************
-   grid->getHexaIJK (Hex::Cyl2, 0, 3, 1)->remove ();
-   grid->getHexaIJK (Hex::Cyl2, 1, Hex::S_SE, 2)->remove ();
-   grid->getHexaIJK (Hex::Cyl2, 1, Hex::S_SE, 1)->remove ();
-
-   grid->getHexaIJK (Hex::Cyl1, 1, Hex::S_SE, 3)->remove ();
-   grid->getHexaIJK (Hex::Cyl1, 1, Hex::S_SE, 2)->remove ();
-   grid->getHexaIJK (Hex::Cyl1, 1, Hex::S_SE, 1)->remove ();
-    ********************************* */
-#endif
-
-   grid->getVertexIJK (Hex::Cyl1, 2, Hex::S_E, 0)->setScalar (5);
-   grid->getVertexIJK (Hex::Cyl1, 2, Hex::S_E, 1)->setScalar (5);
-
-   grid->getHexaIJK (Hex::Cyl2, 1, Hex::S_E,  0)->setScalar (5);
-   grid->getHexaIJK (Hex::Cyl2, 1, Hex::S_SW, 0)->setScalar (5);
-
-   doc->saveVtk ("croix.vtk");
-   //  doc->dump ();
+   int nbh = grid->countHexa();
+   for (int nro=nbh-1 ; nro>=0 ; nro--)
+       { 
+       Hex::Hexa* hexa = grid->getHexa (nro);
+       if (hexa!=NULL)
+          {
+          hexa->remove ();
+          doc->saveVtk ("croix", nvtk);
+          }
+       } 
 
    return HOK;
 }
@@ -852,29 +830,60 @@ int test_pipes (int nbargs, cpchar tabargs[])
    Hex::Vector* vz   = doc->addVector ( 0,0,1);
    Hex::Vector* vx   = doc->addVector ( 1,0,0);
 
-   double h1  = 10, h2  = 10;
-   double ri1 = 1,  ri2 = 1.5;
-   double re1 = 2,  re2 = 3;
+   double h1  = 10, ri1 = 1, re1 = 2;
+   double h2  = 10, ri2 = 3, re2 = 4;
 
    Hex::Pipe* pipe1  = doc->addPipe (ori1, vz, ri1, re1, h1);
    Hex::Pipe* pipe2  = doc->addPipe (ori2, vx, ri2, re2, h2);
    Hex::CrossElements* grid = doc->makePipes (pipe1, pipe2);
 
-   int nvtk = 0;
-   doc->saveVtk ("pipe", nvtk);
+   case_name = "pipe";
+   docu      = doc;
+   doc->saveVtk (case_name, nbr_vtk);
+
+   doc->dump ();
+
+/*******************************************
+   for (int nj=0 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (1, 1, nj, 3));
+   for (int nj=0 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (1, 1, nj, 2));
+
+   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 5));
+   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 4));
+   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 1));
+   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 0));
+
+   for (int nj=4 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 5));
+   for (int nj=4 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 4));
+
+   // remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NW, 1));
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NE, 1));
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_S , 1));
+
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NE, 0));
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_E,  0));
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_SE, 0));
+   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_S , 0));
+*****************************************************************/
+
+   // remove_hexa (grid->getHexaIJK (1, 1, Hex::S_SW, 1));
+
    int nbh = grid->countHexa();
-   for (int nro=1 ; nro<nbh ; nro++)
+   for (int nro=nbh-1 ; nro>=0 ; nro--)
        { 
        Hex::Hexa* hexa = grid->getHexa (nro);
        if (hexa!=NULL)
           {
+          if (nbr_vtk==9) 
+             {
+             printf (" ------------------------- Hexaedre nro %d : %d :\n", 
+                     nro, nbr_vtk);
+             hexa->dumpFull ();
+             }
           hexa->remove ();
-          doc->saveVtk ("pipe", nvtk);
+          doc->saveVtk (case_name, nbr_vtk);
           }
        } 
    
-
-   /// doc->dump ();
    return HOK;
 }
 // ======================================================== test_lorraine
@@ -911,21 +920,21 @@ int test_lorraine(int nbargs, cpchar tabargs[])
    const int nx_int = 0;
    const int nx_ext = 1;
 
-   //           vc2 = grid1->getVertexIJK (Hex::Cyl2, 0,0,0);
-   //           vc3 = grid2->getVertexIJK (Hex::Cyl1, 0,0,0);
+   //           vc2 = grid1->getVertexIJK (Hex::CylBig, 0,0,0);
+   //           vc3 = grid2->getVertexIJK (Hex::CylSmall, 0,0,0);
                                      //    Cyl     i     j     k
-   Hex::Quad* qb = grid1-> getQuadIJ (Hex::Cyl2, nx_ext, Hex::S_E, 4);
-   Hex::Quad* qh = grid2-> getQuadIJ (Hex::Cyl1, nx_ext, Hex::S_N, 0); 
+   Hex::Quad* qb = grid1-> getQuadIJ (Hex::CylBig, nx_ext, Hex::S_E, 4);
+   Hex::Quad* qh = grid2-> getQuadIJ (Hex::CylSmall, nx_ext, Hex::S_N, 0); 
 
    Hex::Vertex* vb0 = qb->getVertex (3);
    Hex::Vertex* vb1 = qb->getVertex (2);
    Hex::Vertex* vh0 = qh->getVertex (0);
    Hex::Vertex* vh1 = qh->getVertex (1);
 
-   vb0 = grid1->getVertexIJK (Hex::Cyl2, 2, Hex::S_E,  4);  // cible
-   vb1 = grid1->getVertexIJK (Hex::Cyl2, 2, Hex::S_NE, 4);
-   vh0 = grid2->getVertexIJK (Hex::Cyl1, 2, Hex::S_N,  0);   // depart
-   vh1 = grid2->getVertexIJK (Hex::Cyl1, 2, Hex::S_NW, 0);
+   vb0 = grid1->getVertexIJK (Hex::CylBig, 2, Hex::S_E,  4);  // cible
+   vb1 = grid1->getVertexIJK (Hex::CylBig, 2, Hex::S_NE, 4);
+   vh0 = grid2->getVertexIJK (Hex::CylSmall, 2, Hex::S_N,  0);   // depart
+   vh1 = grid2->getVertexIJK (Hex::CylSmall, 2, Hex::S_NW, 0);
 
    Imprimer (vh0);
    Imprimer (vh1);
@@ -940,11 +949,11 @@ int test_lorraine(int nbargs, cpchar tabargs[])
    for (int ny=1; ny<Hex::S_MAXI; ny++)
        {
        int ns = (ny + Hex::S_N) MODULO Hex::S_MAXI;
-       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_ext, ns, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_ext, ns, 0)); 
        }
 
    for (int ny=0; ny<4 ;  ny++)
-       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_int, ny, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_int, ny, 0)); 
 
    int hauteur = 3;
    doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, hauteur);
@@ -1470,10 +1479,11 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
 }
 int test_quads (int nbargs, cpchar tabargs[]);
 int test_hemispheres (int nbargs, cpchar tabargs[]);
+int test_replace (int nbargs, cpchar tabargs[]);
 
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_quads (nbargs, tabargs);
+   int ier = test_replace (nbargs, tabargs);
    return ier;
 }

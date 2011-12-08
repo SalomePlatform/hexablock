@@ -103,7 +103,7 @@ Quad::Quad (Quad* other)
        q_vertex [nro] = NULL;
        }
 }
-// ========================================================= getParent 
+// ========================================================= majReferences 
 void Quad::majReferences ()
 {
    for (int nro=0 ; nro<QUAD4 ; nro++)

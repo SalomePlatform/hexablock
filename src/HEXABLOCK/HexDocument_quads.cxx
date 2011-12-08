@@ -725,7 +725,7 @@ Elements* Document::makeCylindricals (Vertex* c, Vector* b, Vector* h,
    return grille;
 }
 // ========================================================= replace
-Elements* Document::replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
+Elements* Document::replace (Quads& pattern, Vertex* p1, Vertex* c1, 
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
 {
    Elements*  t_hexas = new Elements (this);

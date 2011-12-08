@@ -606,7 +606,7 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    double cross_igray1 = cross_gray1 * epaiss2;
    double cross_igray2 = cross_gray2 * epaiss2;
 
-   if (db+1) 
+   if (db) 
       {
       HexDisplay (cross_gray1);
       HexDisplay (cross_gray2);

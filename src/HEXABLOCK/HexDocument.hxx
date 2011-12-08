@@ -213,7 +213,7 @@ public :
                            Vertex* plorig, double angle,
                            int nrad, int nang, int nhaut);
 
-   Elements* replace (Hexas& pattern, Vertex* p1, Vertex* c1, 
+   Elements* replace (Quads& pattern, Vertex* p1, Vertex* c1, 
                       Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
    Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h, 

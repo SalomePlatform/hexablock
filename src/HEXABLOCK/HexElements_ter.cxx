@@ -27,8 +27,10 @@
 #include "HexEdge.hxx"
 #include "HexShape.hxx"
 #include "HexGlobale.hxx"
+#include "HexDiagnostics.hxx"
 
 #include <cmath>
+#include <map>
 
 BEGIN_NAMESPACE_HEXA
 
@@ -468,9 +470,65 @@ int Elements::makeSphericalGrid (Vertex* c, double rayon, int nb, double  k)
    return HOK;
 }
 // ====================================================== replaceHexas 
-int Elements::replaceHexas (Hexas& pattern, Vertex* p1, Vertex* c1, 
+int Elements::replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1, 
                             Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3)
 {
+    Edge* edp1  = el_root->findEdge (p1, p2);
+    Edge* edp2  = el_root->findEdge (p2, p3);
+
+    Edge* edc1  = el_root->findEdge (c1, c2);
+    Edge* edc2  = el_root->findEdge (c2, c3);
+
+    Quad* quadc = el_root->findQuad (c1, c3);
+
+    PutName (edp1);
+    PutName (edp2);
+    PutName (edc1);
+    PutName (edc2);
+    PutName (quadc);
+
+    if (edp1==NULL || edp2==NULL || edc1==NULL || edc2==NULL || quadc==NULL)  
+       return HERR;
+
+    int np = quadc->getNbrParents ();
+    int n1 = quadc->indexEdge (edc1);
+    int n2 = quadc->indexEdge (edc2);
+    Hexa* hexac = quadc->getParent (0);
+    Edge* edc3  = quadc->getEdge ((n1+2) MODULO QUAD4);
+    Edge* edc4  = quadc->getEdge ((n2+2) MODULO QUAD4);
+
+    PutName (edc3);
+    PutName (edc4);
+
+    if (np!=1 || edc3==NULL || edc4==NULL || hexac==NULL)  
+       return HERR;
+
+    map <Edge*,   int> map_edge;
+    map <Vertex*, int> map_vertex;
+    map <Edge*,   int> :: iterator it_edge;
+    map <Vertex*, int> :: iterator it_vertex;
+
+    int nbquads = pattern.size();
+    for (int nq=0 ; nq<nbquads ; nq++)
+        {
+        Quad* quad = pattern [nq];
+        for (int nro=0 ; nro <QUAD4 ; nro ++)
+            {
+            Edge* edge = quad->getEdge (nro);
+            map_edge [edge] ++;
+            }
+        for (int nro=0 ; nro <QUAD4 ; nro ++)
+            {
+            Vertex* vertex = quad->getVertex (nro);
+            map_vertex [vertex] ++;
+            }
+        }
+
+    for (it_edge = map_edge.begin(); it_edge!=map_edge.end(); ++it_edge)
+        {
+        printf ( " ... %s : %d fois\n", it_edge->first->getName(), 
+                                        it_edge->second); 
+        }
     return HOK;
 }
 END_NAMESPACE_HEXA
