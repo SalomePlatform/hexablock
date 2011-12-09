@@ -2396,7 +2396,7 @@ QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
 
   HEXA_NS::Elements* helts = _hexaDocument->replace( hquads,
                                 hp1, hc1, hp2, hc2, hp3, hc3 );
-  HEXA_NS::Elements* helts = NULL;
+//   HEXA_NS::Elements* helts = NULL;
 
   if ( helts && helts->isValid() ){
     updateData();
