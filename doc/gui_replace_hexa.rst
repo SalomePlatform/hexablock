@@ -12,7 +12,7 @@ To **Replace hexa** in the **Main Menu** select **Model -> Replace Hexa**
    :align: center
 
 .. centered::
-      Dialog Box
+      Replace Hexa Dialog Box
 
 
 The following data are required:
@@ -20,12 +20,12 @@ The following data are required:
 - Result Name
 	- name  : name of the elements created ( **optionnal** )
 
-- Pattern source
-        - Hexa       : CS_TODO  ( select a list(n>0) of hexa )
-	- p1, p2, p3 : CS_TODO  ( select vertices )
+- Quad(s) source
+        - the set of quads to be extruded ( select quads )
+	- s1, s2, s3 : vertices from the set of quads. Along with (d1,d2,d3) define the way the operation will be completed ( select vertices )
 
 - Quad destination
-        - c1, c2, c3 : CS_TODO  ( select vertices )
+        - d1, d2, d3 : vertices which define the target quad. As a result of the operation, each one are replaced : s1->d1, s2->d2, s3->d3  ( select vertices )
 
 
 The result is CS_TODO:

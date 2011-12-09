@@ -58,7 +58,7 @@
       <item row="1" column="0">
        <widget class="QGroupBox" name="edge_gb">
         <property name="title">
-         <string>Edge(s)</string>
+         <string>Edges of model</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0" rowspan="2">
@@ -70,7 +70,7 @@
       <item row="2" column="0">
        <widget class="QGroupBox" name="line_gb">
         <property name="title">
-         <string>Line(s)</string>
+         <string>Line of the geometry</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0" rowspan="2">

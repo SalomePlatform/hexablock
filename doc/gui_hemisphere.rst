@@ -27,13 +27,16 @@ The following data are required:
 	- internal radius : fill this field to create rind ( **optionnal**  )
 
 - Hole
-	- axis(z) : axes of the hole ( select a vector )
-	- radius  : radius size of the hole
+        - axis(z) : axes of the hole ( select a vector ). Note : This parameter also define the *vector* parameter on *Cross section* and therefore automatically fill it.
+        - radius  : radius size of the hole
 
-- Partition
-	- plan(pt)   : horizontal cut plan definition, coordinates of a point on it ( select a vertex )
-	- plan(vect) : horizontal cut plan definition ( select a vector )
-        - angle      : fill this field to make vertical cut ( value in degree , **optionnal** )
+- Cross section
+        - point   : coordinates of a point on the surface of the cross section ( select a vertex )
+        - vector  : normal vector to the surface of the cross section ( select a vector ). Note : This parameter  also define the *axis(z)* parameter on *Hole* and therefore automatically fill it.
+
+- Radial section
+	- start   : a vector defining the start of the radial section ( select a vector )
+        - angle   : fill this field to customize the section ( value in degree , **optionnal** )
 
 - Grid
 	- radius  : number of hexa from center of the sphere
@@ -69,7 +72,7 @@ TUI command: :ref:`tuihemisphericalgrid`
 
 Partial HemiSpherical Grid
 ==============
-To create a partial hemispherical grid, fill in the *angle* value by checking the *partial* checkbox:
+To create a partial hemispherical grid : On *Radial section* check the *partial* checkbox and fill in the *angle* parameter.
 
 .. image:: _static/gui_parthemispherical.png
    :align: center
@@ -94,7 +97,7 @@ TUI command: :ref:`tuiparthemisphericalgrid`
 
 Rind Grid
 ==============
-To create a rind grid, fill in the *internal radius* value by checking the *rind* checkbox:
+To create a rind grid : On *Sphere* check the *rind* checkbox and fill in the *internal radius* parameter.
 
 .. image:: _static/gui_rind.png
    :align: center
@@ -120,7 +123,7 @@ TUI command: :ref:`tuirindgrid`
 
 Partial Rind Grid
 ==============
-To create a partial rind grid, in addition to the *internal radius* value (see :ref:`guirindgrid`), fill in the *angle* value by checking the *partial* checkbox:
+To create a partial rind grid : In addition to the *internal radius* parameter (see :ref:`guirindgrid`), on *Radial section* check the *partial* checkbox and fill in the *angle* parameter.
 
 .. image:: _static/gui_partrind.png
    :align: center

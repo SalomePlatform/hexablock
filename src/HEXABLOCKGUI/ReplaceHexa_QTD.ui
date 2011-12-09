@@ -55,11 +55,11 @@
       <item>
        <widget class="QGroupBox" name="groupBox_5">
         <property name="title">
-         <string>Pattern source</string>
+         <string>Quad(s) source</string>
         </property>
         <layout class="QFormLayout" name="formLayout_4">
          <item row="0" column="0" colspan="2">
-          <widget class="QListWidget" name="hexa_lw">
+          <widget class="QListWidget" name="quads_lw">
            <property name="toolTip">
             <string>Select hexa</string>
            </property>
@@ -68,7 +68,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>p1</string>
+            <string>s1</string>
            </property>
           </widget>
          </item>
@@ -83,12 +83,15 @@
            <property name="toolTip">
             <string>Select vertex</string>
            </property>
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>p2</string>
+            <string>s2</string>
            </property>
           </widget>
          </item>
@@ -103,12 +106,15 @@
            <property name="toolTip">
             <string>Select vertex</string>
            </property>
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>p3</string>
+            <string>s3</string>
            </property>
           </widget>
          </item>
@@ -122,6 +128,9 @@
            </property>
            <property name="toolTip">
             <string>Select vertex</string>
+           </property>
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -140,7 +149,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>c1</string>
+            <string>d1</string>
            </property>
           </widget>
          </item>
@@ -155,12 +164,15 @@
            <property name="toolTip">
             <string>Select vertex</string>
            </property>
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>c2</string>
+            <string>d2</string>
            </property>
           </widget>
          </item>
@@ -175,12 +187,15 @@
            <property name="toolTip">
             <string>Select vertex</string>
            </property>
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>c3</string>
+            <string>d3</string>
            </property>
           </widget>
          </item>
@@ -194,6 +209,9 @@
            </property>
            <property name="toolTip">
             <string>Select vertex</string>
+           </property>
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>

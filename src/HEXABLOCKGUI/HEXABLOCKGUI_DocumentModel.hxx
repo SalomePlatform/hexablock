@@ -271,7 +271,7 @@ namespace HEXABLOCK
         QModelIndex revolutionQuads( const QModelIndexList& startQuads, const QModelIndex& center, 
                                      const QModelIndex& vec_axis, const QList<double>& angles); //NEW HEXA3
 
-        QModelIndex replace( const QModelIndexList& hexaPattern, 
+        QModelIndex replace( const QModelIndexList& quadsPattern, 
                              const QModelIndex& p1, const QModelIndex& c1,
                              const QModelIndex& p2, const QModelIndex& c2,
                              const QModelIndex& p3, const QModelIndex& c3 ); //NEW HEXA3

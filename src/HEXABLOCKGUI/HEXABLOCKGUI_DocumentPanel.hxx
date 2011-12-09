@@ -147,6 +147,7 @@ namespace HEXABLOCK
           virtual bool apply() = 0;
           virtual void accept();
           virtual void reject();
+          virtual void onHelpRequested();
 
         protected slots:
           virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
@@ -189,6 +190,8 @@ namespace HEXABLOCK
 
           QPushButton* _applyCloseButton;
           QPushButton* _applyButton;
+
+          QString  _helpFileName;
 
     };
 
@@ -389,6 +392,9 @@ namespace HEXABLOCK
         void delHeightItem();
         void updateButtonBox();
 
+      protected slots:
+        void updateHelpFileName();
+
   };
 
 
@@ -521,6 +527,10 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void updateHelpFileName();
+
    };
 
 
@@ -537,6 +547,8 @@ namespace HEXABLOCK
       public slots:
         virtual bool apply();
 
+      protected slots:
+        void updateHelpFileName();
    };
 
 
@@ -566,6 +578,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void updateHelpFileName();
    };
 
 
@@ -580,6 +595,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void updateHelpFileName();
    };
 
 
@@ -596,6 +614,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void updateHelpFileName();
    };
 
 
@@ -610,6 +631,9 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
+
+      protected slots:
+        void updateHelpFileName();
    };
 
 
@@ -624,6 +648,7 @@ namespace HEXABLOCK
       QPushButton* buttonCancel() const;
       QPushButton* buttonOk() const;
       QPushButton* buttonApply() const;
+      QPushButton* buttonHelp() const;
   };
 
 
@@ -803,7 +828,10 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-  
+
+      protected slots:
+        void updateHelpFileName();
+
       private:
         HEXA_NS::Propagation *_value;
   };
@@ -823,8 +851,8 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply();
-        virtual void accept();
-        virtual void reject();
+//         virtual void accept();
+//         virtual void reject();
 
       private:
 	QLineEdit* _name;
@@ -851,7 +879,7 @@ namespace HEXABLOCK
         bool eventFilter(QObject *obj, QEvent *event);
 
       protected slots:
-        void deleteHexaItem();
+        void deleteQuadItem();
         void updateButtonBox();
   };
 
@@ -903,22 +931,22 @@ namespace HEXABLOCK
 //         HEXA_NS::Propagation *_value;:q
   };
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeRindDialog : public HexaBaseDialog,
-                                                    public Ui::MakeRindDialog
-  {
-      Q_OBJECT
-
-      public:
-        MakeRindDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeRindDialog();
-
-      public slots:
-        virtual bool apply();
-  
-      private:
-//         HEXA_NS::Propagation *_value;:q
-
-  };
+//   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeRindDialog : public HexaBaseDialog,
+//                                                     public Ui::MakeRindDialog
+//   {
+//       Q_OBJECT
+// 
+//       public:
+//         MakeRindDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+//         virtual ~MakeRindDialog();
+// 
+//       public slots:
+//         virtual bool apply();
+//   
+//       private:
+// //         HEXA_NS::Propagation *_value;:q
+// 
+//   };
 
 
   }

@@ -523,6 +523,9 @@ bool HEXABLOCKGUI::createSComponent() //addComponent
     
     aBuilder->DefineComponentInstance(aComponent, engineIOR().toStdString());
     DEBTRACE("HEXABLOCKGUI::createSComponent engineIOR=>"<<engineIOR().toStdString());
+//     aBuilder->DefineComponentInstance(aComponent, getApp()->defaultEngineIOR().toStdString());
+//     DEBTRACE("HEXABLOCKGUI::createSComponent defaultEngineIOR=>"<<getApp()->defaultEngineIOR().toStdString());
+
 //     SalomeApp_DataModel::synchronize( aComponent, HEXABLOCKGUI::activeStudy() );
     return true;
   }
@@ -1958,20 +1961,20 @@ void HEXABLOCKGUI::makePipes()
   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
 }
 
-void HEXABLOCKGUI::makeRind()    // NEW HEXA3
-{
- if (!_dwInputPanel) return;
-
-  MakeRindDialog* diag = new MakeRindDialog(_dwInputPanel, true);
-
-  diag->setDocumentModel(_currentModel);
-  diag->setPatternDataSelectionModel(_patternDataSelectionModel);
-  diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  diag->setFocus();
-  _dwInputPanel->setWidget(diag);
-  _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
-
-}
+// void HEXABLOCKGUI::makeRind()    // NEW HEXA3
+// {
+//  if (!_dwInputPanel) return;
+// 
+//   MakeRindDialog* diag = new MakeRindDialog(_dwInputPanel, true);
+// 
+//   diag->setDocumentModel(_currentModel);
+//   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
+//   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
+//   diag->setFocus();
+//   _dwInputPanel->setWidget(diag);
+//   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+// 
+// }
 
 void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
 {

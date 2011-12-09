@@ -53,6 +53,8 @@
 #include "SVTK_Selection.h"
 #include <SVTK_ViewModel.h>
 
+#include <SUIT_ResourceMgr.h>
+
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 #include <BasicGUI_PointDlg.h>
@@ -131,6 +133,8 @@ QDialogButtonBox* HexaBaseDialog::_initButtonBox()
   connect( buttonBox, SIGNAL(accepted()), this, SLOT(accept()) );
   connect( buttonBox, SIGNAL(rejected()), this, SLOT(reject()) );
   connect( _applyButton, SIGNAL(clicked()), this, SLOT(apply()) );
+  connect( buttonBox, SIGNAL(helpRequested()), this, SLOT(onHelpRequested()) );
+
   return buttonBox;
 }
 
@@ -147,6 +151,31 @@ void HexaBaseDialog::reject()
 {
   QDialog::reject();
   _disallowSelection();
+}
+
+void HexaBaseDialog::onHelpRequested()
+{
+  LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if ( app )
+//     app->onHelpContextModule( myGeometryGUI ? app->moduleName( myGeometryGUI->moduleName() ) : QString( "" ), _helpFileName );
+    app->onHelpContextModule( "HEXABLOCK", _helpFileName );
+
+  else {
+    QString platform;
+#ifdef WIN32
+    platform = "winapplication";
+#else
+    platform = "application";
+#endif
+
+    SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
+                              QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( _helpFileName ),
+                              QObject::tr( "BUT_OK" ) );
+  }
+
+
+
 }
 
 
@@ -489,6 +518,7 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_vertex.html";
   setupUi( this );
   _initButtonBox();
   x_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
@@ -609,6 +639,7 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_edge.html";
   setupUi( this );
 
   _vertexLineEdits << vex_le_rb1 << v0_le_rb0 << v1_le_rb0;
@@ -741,6 +772,7 @@ QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_quadrangle.html";
   setupUi( this );
 
   _vertexLineEdits << v0_le_rb0 << v1_le_rb0 << v2_le_rb0 << v3_le_rb0;
@@ -932,6 +964,7 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_hexahedron.html";
   setupUi( this );
   setWindowTitle( tr("MAKE HEXA") );
 
@@ -1200,6 +1233,7 @@ VectorDialog::VectorDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_vector.html";
   setupUi( this );
 
   _vertexLineEdits << v0_le_rb1 << v1_le_rb1;
@@ -1333,6 +1367,7 @@ CylinderDialog::CylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
 : HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_cyl.html";
   setupUi( this );
 
   _vertexLineEdits << vex_le;
@@ -1477,6 +1512,7 @@ PipeDialog::PipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(0)
 {
+  _helpFileName = "gui_pipe.html";
   setupUi( this );
 
   _vertexLineEdits << vex_le;
@@ -1653,9 +1689,15 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
   }
 
-  // Default 
+  // Default : cartesian grid
   rb0->click();
   uniform_rb->click();
+  _helpFileName = "creategrids.html#guicartgrid";
+
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+
 }
 
 
@@ -1672,6 +1714,18 @@ MakeGridDialog::~MakeGridDialog()
 //   vex_le_rb0->setFocus();
 //   QDialog::showEvent ( event );
 // }
+
+
+void MakeGridDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "creategrids.html#guicartgrid";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "creategrids.html#guicylgrid";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "creategrids.html#guisphergrid";
+  }
+}
 
 
 void MakeGridDialog::updateButtonBox() //CS_TODO?
@@ -1886,6 +1940,7 @@ bool MakeGridDialog::apply()
 MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinder";
   setupUi( this );
 
   _cylinderLineEdits << cyl_le;
@@ -1965,6 +2020,7 @@ bool MakeCylinderDialog::apply()
 MakePipeDialog::MakePipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipe";
   setupUi( this );
   _pipeLineEdits << pipe_le;
   _vectorLineEdits << vec_le;
@@ -2034,6 +2090,7 @@ bool MakePipeDialog::apply()
 MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinders";
   setupUi( this );
 
   _cylinderLineEdits << cyl1_le << cyl2_le;
@@ -2102,6 +2159,7 @@ bool MakeCylindersDialog::apply()
 MakePipesDialog::MakePipesDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipes";
   setupUi( this );
 
   _pipeLineEdits << pipe1_le << pipe2_le;
@@ -2165,6 +2223,7 @@ bool MakePipesDialog::apply()
 RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_remove.html";
   setupUi( this );
 
   _hexaLineEdits << hexa_le;
@@ -2230,6 +2289,7 @@ bool RemoveHexaDialog::apply()
 PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_prism_join_quad.html#prism-quadrangles";
   setupUi( this );
 
   _vectorLineEdits << vec_le;
@@ -2399,6 +2459,7 @@ bool PrismQuadDialog::apply()
 JoinQuadDialog::JoinQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_prism_join_quad.html#join-quadrangles";
   setupUi( this );
 
   _vertexLineEdits << vex0_le << vex1_le << vex2_le << vex3_le;
@@ -2588,12 +2649,30 @@ MergeDialog::MergeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
   // Default 
   rb0->click();
 
+  _helpFileName = "gui_merge_elmts.html#merge-2-vertices";
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 
 MergeDialog::~MergeDialog()
 {
 }
+
+
+void MergeDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_merge_elmts.html#merge-2-vertices";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_merge_elmts.html#merge-2-edges";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_merge_elmts.html#merge-2-quadrangles";
+  }
+}
+
+
 
 
 // void MergeDialog::showEvent ( QShowEvent * event )
@@ -2703,6 +2782,11 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, bool editMode, Qt::WindowFl
 
   // Default
   rb0->click();
+  _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
+
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 
 }
 
@@ -2719,6 +2803,17 @@ DisconnectDialog::~DisconnectDialog()
 //   v_le_rb0->setFocus();
 //   QDialog::showEvent ( event );
 // }
+
+void DisconnectDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_disc_elmts.html#disconnect-an-edge";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_disc_elmts.html#disconnect-a-quadrangle";
+  }
+}
 
 
 
@@ -2780,10 +2875,12 @@ bool DisconnectDialog::apply()
 //   _disallowSelection();
 // }
 
+
 // ------------------------- CutEdgeDialog ----------------------------------
 CutEdgeDialog::CutEdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
-  HexaBaseDialog(parent, f)
+HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_cut_hexa.html";
   setupUi( this );
   _edgeLineEdits << e_le;
 
@@ -2877,6 +2974,11 @@ MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, bool editMo
   }
 
   rb0->click();
+  _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+
 }
 
 
@@ -2892,6 +2994,17 @@ MakeTransformationDialog::~MakeTransformationDialog()
 //   QDialog::showEvent ( event );
 // }
 
+
+void MakeTransformationDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_make_elmts.html#make-elements-by-scaling";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_make_elmts.html#make-elements-by-rotation";
+  }
+}
 
 
 bool MakeTransformationDialog::apply()
@@ -2955,12 +3068,9 @@ bool MakeTransformationDialog::apply()
 // }
 
 
-
-
-
 // // ------------------------- MakeSymmetryDialog ----------------------------------
-MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
+MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f)
 {
   setupUi( this );
   setWindowTitle( tr("MAKE SYMMETRY") );
@@ -2984,6 +3094,11 @@ MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, bool editMode, Qt::Wind
     setFocusProxy( rb0 );
   }
   rb0->click();
+  _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
+
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 
@@ -2999,6 +3114,19 @@ MakeSymmetryDialog::~MakeSymmetryDialog()
 //   elts_le_rb0->setFocus();
 //   QDialog::showEvent ( event );
 // }
+
+
+void MakeSymmetryDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_make_symmetry.html#make-elements-by-line-symmetry";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_make_symmetry.html#make-elements-by-plan-symmetry";
+  }
+}
+
 
 
 bool MakeSymmetryDialog::apply()
@@ -3065,8 +3193,7 @@ bool MakeSymmetryDialog::apply()
 
 
 // // ------------------------- PerformTransformationDialog ----------------------------------
-PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
+PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): HexaBaseDialog(parent, f)
 {
   setupUi( this );
   setWindowTitle( tr("PERFORM TRANSFORMATION") );
@@ -3091,11 +3218,28 @@ PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, bool 
   }
 
   rb0->click();
+  _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+
 }
 
 
 PerformTransformationDialog::~PerformTransformationDialog()
 {
+}
+
+
+void PerformTransformationDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_modify_elmts.html#modify-elements-by-scaling";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_modify_elmts.html#modify-elements-by-rotation";
+  }
 }
 
 
@@ -3193,6 +3337,10 @@ PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, bool editMode, Qt
 
   // Default
   rb0->click();
+  _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
+  connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 
@@ -3208,6 +3356,17 @@ PerformSymmetryDialog::~PerformSymmetryDialog()
 //   QDialog::showEvent ( event );
 // }
 
+
+void PerformSymmetryDialog::updateHelpFileName()
+{
+  if ( sender() == rb0 ){
+    _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
+  } else if ( sender() == rb1 ){
+    _helpFileName = "gui_modify_symmetry.html#modify-elements-by-line-symmetry";
+  } else if ( sender() == rb2 ){
+    _helpFileName = "gui_modify_symmetry.html#modify-elements-by-plan-symmetry";
+  }
+}
 
 bool PerformSymmetryDialog::apply()
 {
@@ -3281,6 +3440,8 @@ bool PerformSymmetryDialog::apply()
 MyBasicGUI_PointDlg::MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w, bool b, Qt::WindowFlags f ):
   BasicGUI_PointDlg( g, w, b, f)
 {
+  disconnect( buttonHelp(),  SIGNAL( clicked() ),
+              this,          SLOT( ClickOnHelp() ) );
 }
 
 MyBasicGUI_PointDlg::~MyBasicGUI_PointDlg()
@@ -3302,6 +3463,11 @@ QPushButton* MyBasicGUI_PointDlg::buttonApply() const
   return BasicGUI_PointDlg::buttonApply();
 }
 
+QPushButton* MyBasicGUI_PointDlg::buttonHelp() const
+{ 
+  return BasicGUI_PointDlg::buttonHelp();
+}
+
 
 
 VertexAssocDialog::VertexAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
@@ -3311,6 +3477,8 @@ _documentModel( NULL ),
 _patternDataSelectionModel( NULL ),
 _ivertex  ( new QModelIndex() )
 {
+  _helpFileName = "gui_asso_quad_to_geom.html#associate-to-a-vertex-of-the-geometry";
+
   QVBoxLayout* layout = new QVBoxLayout;
   setLayout( layout );
 
@@ -3351,6 +3519,7 @@ _ivertex  ( new QModelIndex() )
   connect( _nested->buttonOk(),      SIGNAL(clicked()), this, SLOT(accept()) );
   connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
   connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
+  connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
 
 }
 
@@ -3456,10 +3625,11 @@ VertexAssocDialog::~VertexAssocDialog()
 }
 
 // // ------------------------- EdgeAssocDialog ----------------------------------
-EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f),
-  GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent())  ) //
+EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f),
+GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent())  ) //
 {
+  _helpFileName ="gui_asso_quad_to_geom.html#associate-to-edges-or-wires-of-the-geometry";
   setupUi( this );
   setWindowTitle( tr("MAKE EDGE ASSOCIATION") );
   _initButtonBox();
@@ -3744,10 +3914,11 @@ bool EdgeAssocDialog::apply()
 
 
 // // ------------------------- QuadAssocDialog ----------------------------------
-QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-  : HexaBaseDialog(parent, f),
-  GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent()) )
+QuadAssocDialog::QuadAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f),
+GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent()) )
 {
+  _helpFileName = "gui_asso_quad_to_geom.html#associate-to-a-face-or-a-shell-of-the-geometry";
   setupUi( this );
   setWindowTitle( tr("MAKE QUAD ASSOCIATION") );
   _initButtonBox();
@@ -3909,10 +4080,11 @@ bool QuadAssocDialog::apply()
 
 
 // ------------------------- GROUP ----------------------------------
-GroupDialog::GroupDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f),
-  _value(NULL)
+GroupDialog::GroupDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
+HexaBaseDialog(parent, f),
+_value(NULL)
 {
+  _helpFileName = "gui_groups.html#add-group";
   setupUi( this );
   _initButtonBox();
 
@@ -4146,6 +4318,7 @@ LawDialog::LawDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(NULL)
 {
+  _helpFileName = "gui_discret_law.html#add-law";
   setupUi( this );
   _initButtonBox();
 
@@ -4250,6 +4423,7 @@ PropagationDialog::PropagationDialog( QWidget* parent, bool editMode, Qt::Window
 : HexaBaseDialog(parent, f),
   _value(NULL)
 {
+  _helpFileName = "gui_propag.html";
   setupUi( this );
 
   _lawLineEdits << law_le;
@@ -4359,9 +4533,10 @@ bool PropagationDialog::apply()
 
 // ------------------------- COMPUTE MESH ----------------------------------
 
-ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-        : HexaBaseDialog(parent, f) {
-
+ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f)
+{
+    _helpFileName = "gui_mesh.html";
     QVBoxLayout* layout = new QVBoxLayout;
     setLayout(layout);
 
@@ -4392,16 +4567,18 @@ ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, bool editMode, Qt::Window
     _dim->setRange(1, 3);
     _dim->setValue(3);
 
-    QPushButton* ok     = new QPushButton("OK");
-    QPushButton* cancel = new QPushButton("Cancel");
-    QPushButton* help   = new QPushButton("Help");
+    _initButtonBox();
 
-    down->addWidget(ok);
-    down->addWidget(cancel);
-    down->addWidget(help);
-
-    connect(ok    , SIGNAL( clicked() ), this, SLOT( accept() ));
-    connect(cancel, SIGNAL( clicked() ), this, SLOT( reject() ));
+//     QPushButton* ok     = new QPushButton("OK");
+//     QPushButton* cancel = new QPushButton("Cancel");
+//     QPushButton* help   = new QPushButton("Help");
+// 
+//     down->addWidget(ok);
+//     down->addWidget(cancel);
+//     down->addWidget(help);
+// 
+//     connect(ok    , SIGNAL( clicked() ), this, SLOT( accept() ));
+//     connect(cancel, SIGNAL( clicked() ), this, SLOT( reject() ));
 }
 
 ComputeMeshDialog::~ComputeMeshDialog() {
@@ -4410,39 +4587,57 @@ ComputeMeshDialog::~ComputeMeshDialog() {
 
 bool ComputeMeshDialog::apply()
 {
-  return false;
-}
+  SUIT_OverrideCursor wc;
 
-void  ComputeMeshDialog::accept() {
-    _disallowSelection();
-    QDialog::accept();
-
-    QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
+  QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
       .arg( _name->text() )
       .arg( _documentModel->documentEntry() )
       .arg( _dim->value() )
       .arg( _fact->text() );
-    std::cout << "command: " << command.toStdString() << std::endl;
+  std::cout << "command: " << command.toStdString() << std::endl;
 
-    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-    PyConsole_Console* pyConsole = app->pythonConsole();
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+  PyConsole_Console* pyConsole = app->pythonConsole();
 
-    if ( pyConsole ) pyConsole->exec( command );
+  if ( pyConsole ) 
+    pyConsole->exec( command );
+  else
+    return false;
+
+  return true;
 }
 
-void ComputeMeshDialog::reject() {
-    _disallowSelection();
-    QDialog::reject();
-}
+// void  ComputeMeshDialog::accept() {
+//     _disallowSelection();
+//     QDialog::accept();
+// 
+//     QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
+//       .arg( _name->text() )
+//       .arg( _documentModel->documentEntry() )
+//       .arg( _dim->value() )
+//       .arg( _fact->text() );
+//     std::cout << "command: " << command.toStdString() << std::endl;
+// 
+//     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+//     PyConsole_Console* pyConsole = app->pythonConsole();
+// 
+//     if ( pyConsole ) pyConsole->exec( command );
+// }
+
+// void ComputeMeshDialog::reject() {
+//     _disallowSelection();
+//     QDialog::reject();
+// }
 
 
 
 
 
 
-ReplaceHexaDialog::ReplaceHexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
+ReplaceHexaDialog::ReplaceHexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_replace_hexa.html";
   setupUi( this );
   setWindowTitle( tr("REPLACE HEXA") );
 
@@ -4459,12 +4654,13 @@ ReplaceHexaDialog::ReplaceHexaDialog( QWidget* parent, bool editMode, Qt::Window
     p2_le->installEventFilter(this);
     p3_le->installEventFilter(this);
 
-    hexa_lw->installEventFilter(this);
-    QShortcut* delHexaShortcut = new QShortcut( QKeySequence(Qt::Key_X), hexa_lw );
-    delHexaShortcut->setContext( Qt::WidgetShortcut );
-    connect( delHexaShortcut, SIGNAL(activated()), this, SLOT(deleteHexaItem()) );
-    connect( hexa_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
-    setFocusProxy( hexa_lw );
+    quads_lw->installEventFilter(this);
+    QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+    delQuadShortcut->setContext( Qt::WidgetShortcut );
+
+    connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(deleteQuadItem()) );
+    connect( quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
+    setFocusProxy( quads_lw );
   }
 }
 
@@ -4474,8 +4670,9 @@ ReplaceHexaDialog::~ReplaceHexaDialog()
 
 bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 {
-  if ( (obj == hexa_lw) and (event->type() == QEvent::FocusIn) ){
-    _setHexaSelectionOnly();
+  if ( (obj == quads_lw) and (event->type() == QEvent::FocusIn) ){
+    std::cout << "A" << std::endl;
+    _setQuadSelectionOnly();
     _currentObj = obj;
     return false;
   } else {
@@ -4487,37 +4684,48 @@ bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 void ReplaceHexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
   QModelIndexList l = sel.indexes();
+  std::cout << "B" << std::endl;
   if ( l.count() == 0 ) return;
-  if ( _currentObj != hexa_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
-
+  std::cout << "C" << std::endl;
+  if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
+  std::cout << "D" << std::endl;
   QListWidget*    currentLw = dynamic_cast<QListWidget*>( _currentObj );
+  std::cout << "E" << std::endl;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes();
+  std::cout << "F" << std::endl;
   QListWidgetItem* item = NULL;
   foreach( const QModelIndex& isel, l ){
+    std::cout << "G" << std::endl;
     item = new QListWidgetItem( isel.data().toString() );
+    std::cout << "H" << std::endl;
     item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
+    std::cout << "I" << std::endl;
     currentLw->addItem(item);
+    std::cout << "J" << std::endl;
     updateButtonBox();
   }
 }
 
 void ReplaceHexaDialog::updateButtonBox()
 {
-  int nbHexa = hexa_lw->count();
+  int nbQuad = quads_lw->count();
+  std::cout << "K" << std::endl;
 //   std::cout << "nbHexa => " << nbHexa << std::endl;
-  if ( nbHexa > 0 ){
+  if ( nbQuad > 0 ){
+    std::cout << "L" << std::endl;
     _applyCloseButton->setEnabled(true);
     _applyButton->setEnabled(true);
   } else {
+    std::cout << "M" << std::endl;
     _applyCloseButton->setEnabled(false);
     _applyButton->setEnabled(false);
   }
 }
 
 
-void ReplaceHexaDialog::deleteHexaItem()
+void ReplaceHexaDialog::deleteQuadItem()
 {
-  delete hexa_lw->currentItem();
+  delete quads_lw->currentItem();
   updateButtonBox();
 }
 
@@ -4533,14 +4741,14 @@ bool ReplaceHexaDialog::apply()
   QModelIndex ielts; //result
 
   QListWidgetItem* item = NULL;
-  QModelIndexList ihexas;
-  QModelIndex     ihexa;
-  for ( int r = 0; r < hexa_lw->count(); ++r){
-    item = hexa_lw->item(r);
-    ihexa = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-    std::cout << "ihexa => " << ihexa.data().toString().toStdString() << std::endl;
-    if ( ihexa.isValid() )
-      ihexas << ihexa;
+  QModelIndexList iquads;
+  QModelIndex     iquad;
+  for ( int r = 0; r < quads_lw->count(); ++r){
+    item = quads_lw->item(r);
+    iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+    std::cout << "iquad => " << iquad.data().toString().toStdString() << std::endl;
+    if ( iquad.isValid() )
+      iquads << iquad;
   }
 
   QModelIndex ic1 = patternDataModel->mapToSource( _index[c1_le] );
@@ -4562,7 +4770,7 @@ bool ReplaceHexaDialog::apply()
     std::cout << "ip3 => " << ip3.data().toString().toStdString() << std::endl;
     std::cout << "ic3 => " << ic3.data().toString().toStdString() << std::endl;
 
-    ielts = _documentModel->replace( ihexas,
+    ielts = _documentModel->replace( iquads,
                                      ip1, ic1,
                                      ip2, ic2,
                                      ip3, ic3 );
@@ -4583,9 +4791,10 @@ bool ReplaceHexaDialog::apply()
 
 
 
-QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
+QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_quad_revolution.html";
   setupUi( this );
   setWindowTitle( tr("QUAD REVOLUTION") );
 
@@ -4754,9 +4963,10 @@ bool QuadRevolutionDialog::apply()
 
 
 
-MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
+MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
+HexaBaseDialog(parent, f)
 {
+  _helpFileName = "gui_hemisphere.html";
   setupUi( this );
   setWindowTitle( tr("MAKE HEMISPHERE") );
 
@@ -4764,13 +4974,14 @@ MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, bool editMode, Qt::
     _initButtonBox();
 
     //selection management
-    _vertexLineEdits << center_le << plorig_le;
-    _vectorLineEdits << vx_le << vz_le;
+    _vertexLineEdits << sphere_center_le << cross_pt_le;
+    _vectorLineEdits << hole_axis_le << cross_vec_le << radial_vec_le;
 
-    center_le->installEventFilter(this);
-    plorig_le->installEventFilter(this);
-    vx_le->installEventFilter(this);
-    vz_le->installEventFilter(this);
+    sphere_center_le->installEventFilter(this);
+    hole_axis_le->installEventFilter(this);
+    cross_pt_le->installEventFilter(this);
+    cross_vec_le->installEventFilter(this);
+    radial_vec_le->installEventFilter(this);
   }
 
 }
@@ -4794,24 +5005,24 @@ bool MakeHemiSphereDialog::apply()
   if ( !patternDataModel )    return false;
 
   QModelIndex iElts;
-  QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
-  QModelIndex iplorig = patternDataModel->mapToSource( _index[plorig_le] );
-  QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[vx_le] );
-  QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[vz_le] );
+  QModelIndex icenter = patternDataModel->mapToSource( _index[sphere_center_le] );
+  QModelIndex iplorig = patternDataModel->mapToSource( _index[cross_pt_le] );
+  QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[radial_vec_le] );
+  QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[hole_axis_le] );
 
-  double radext  = radext_spb->value();
-  double radhole = radhole_spb->value();
+  double radext  = sphere_radext_spb->value();
+  double radhole = hole_rad_spb->value();
 
-  int nrad = nrad_spb->value();
-  int nang = nang_spb->value();
-  int nhaut = nhaut_spb->value();
+  int nrad  = ngrid_rad_spb->value();
+  int nang  = ngrid_ang_spb->value();
+  int nhaut = ngrid_height_spb->value();
 
 
   if ( icenter.isValid() && ivecx.isValid() && ivecz.isValid() && iplorig.isValid() ){
-    if ( rind_cb->isChecked() ){ // rind
-      double radint  = radint_spb->value();
-      if ( partial_cb->isChecked() ){
-        double angle = angle_spb->value();
+    if ( sphere_rind_cb->isChecked() ){ // rind
+      double radint  = sphere_radint_spb->value();
+      if ( radial_partial_cb->isChecked() ){
+        double angle = radial_angle_spb->value();
         iElts = _documentModel->makePartRind( icenter, ivecx, ivecz,
                                         radext, radint, radhole,
                                         iplorig,      angle,
@@ -4824,8 +5035,8 @@ bool MakeHemiSphereDialog::apply()
                                         nrad, nang, nhaut );
       }
     } else { // sphere
-      if ( partial_cb->isChecked() ){
-        double angle = angle_spb->value();
+      if ( radial_partial_cb->isChecked() ){
+        double angle = radial_angle_spb->value();
         iElts = _documentModel->makePartSphere( icenter, ivecx, ivecz,
                                         radext, radhole,
                                         iplorig, angle,
@@ -4854,82 +5065,83 @@ bool MakeHemiSphereDialog::apply()
 
 
 
-MakeRindDialog::MakeRindDialog( QWidget* parent, bool editMode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, f)
-{
-  setupUi( this );
-  setWindowTitle( tr("MAKE RIND") );
-
-  if ( editMode ){
-    _initButtonBox();
-
-    //selection management
-    _vertexLineEdits << center_le << plorig_le;
-    _vectorLineEdits << vx_le << vz_le;
-
-    center_le->installEventFilter(this);
-    plorig_le->installEventFilter(this);
-    vx_le->installEventFilter(this);
-    vz_le->installEventFilter(this);
-  }
-}
-
-
-MakeRindDialog::~MakeRindDialog()
-{
-}
-
-
-
-bool MakeRindDialog::apply()
-{
-  SUIT_OverrideCursor wc;
-  if ( !_documentModel ) return false;
-  if ( !_patternBuilderSelectionModel ) return false;
-  if ( !_patternDataSelectionModel )    return false;
-  const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
-  const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
-  if ( !patternBuilderModel ) return false;
-  if ( !patternDataModel )    return false;
-
-  QModelIndex iElts;
-  QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
-  QModelIndex iplorig = patternDataModel->mapToSource( _index[plorig_le] );
-  QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[vx_le] );
-  QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[vz_le] );
-
-  double radext = radext_spb->value();
-  double radint = radint_spb->value();
-  double radhole = radhole_spb->value();
-
-  int nrad = nrad_spb->value();
-  int nang = nang_spb->value();
-  int nhaut = nhaut_spb->value();
-
-  if ( icenter.isValid() && ivecx.isValid() && ivecz.isValid() && iplorig.isValid() ){
-    if ( partial_cb->isChecked() ){
-      double angle = angle_spb->value(); // Part Rind only
-      iElts = _documentModel->makePartRind( icenter, ivecx, ivecz,
-                                        radext, radint, radhole,
-                                        iplorig,      angle,
-                                        nrad, nang, nhaut );
-    } else {
-      iElts = _documentModel->makeRind( icenter,
-                                        ivecx, ivecz,
-                                        radext, radint, radhole,
-                                        iplorig,
-                                        nrad, nang, nhaut );
-    }
-  }
-
-  if ( !iElts.isValid() ){
-    SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE RIND" ) );
-    return false;
-  }
-
-  QString newName = name_le->text();
-  if (!newName.isEmpty()) _documentModel->setName( iElts, newName );
-
-  return true;
-}
+// MakeRindDialog::MakeRindDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
+// HexaBaseDialog(parent, f)
+// {
+// //   _helpFileName()
+//   setupUi( this );
+//   setWindowTitle( tr("MAKE RIND") );
+// 
+//   if ( editMode ){
+//     _initButtonBox();
+// 
+//     //selection management
+//     _vertexLineEdits << center_le << plorig_le;
+//     _vectorLineEdits << vx_le << vz_le;
+// 
+//     center_le->installEventFilter(this);
+//     plorig_le->installEventFilter(this);
+//     vx_le->installEventFilter(this);
+//     vz_le->installEventFilter(this);
+//   }
+// }
+// 
+// 
+// MakeRindDialog::~MakeRindDialog()
+// {
+// }
+// 
+// 
+// 
+// bool MakeRindDialog::apply()
+// {
+//   SUIT_OverrideCursor wc;
+//   if ( !_documentModel ) return false;
+//   if ( !_patternBuilderSelectionModel ) return false;
+//   if ( !_patternDataSelectionModel )    return false;
+//   const PatternBuilderModel* patternBuilderModel = dynamic_cast<const PatternBuilderModel*>( _patternBuilderSelectionModel->model() );
+//   const PatternDataModel* patternDataModel = dynamic_cast<const PatternDataModel*>( _patternDataSelectionModel->model() );
+//   if ( !patternBuilderModel ) return false;
+//   if ( !patternDataModel )    return false;
+// 
+//   QModelIndex iElts;
+//   QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+//   QModelIndex iplorig = patternDataModel->mapToSource( _index[plorig_le] );
+//   QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[vx_le] );
+//   QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[vz_le] );
+// 
+//   double radext = radext_spb->value();
+//   double radint = radint_spb->value();
+//   double radhole = radhole_spb->value();
+// 
+//   int nrad = nrad_spb->value();
+//   int nang = nang_spb->value();
+//   int nhaut = nhaut_spb->value();
+// 
+//   if ( icenter.isValid() && ivecx.isValid() && ivecz.isValid() && iplorig.isValid() ){
+//     if ( partial_cb->isChecked() ){
+//       double angle = angle_spb->value(); // Part Rind only
+//       iElts = _documentModel->makePartRind( icenter, ivecx, ivecz,
+//                                         radext, radint, radhole,
+//                                         iplorig,      angle,
+//                                         nrad, nang, nhaut );
+//     } else {
+//       iElts = _documentModel->makeRind( icenter,
+//                                         ivecx, ivecz,
+//                                         radext, radint, radhole,
+//                                         iplorig,
+//                                         nrad, nang, nhaut );
+//     }
+//   }
+// 
+//   if ( !iElts.isValid() ){
+//     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE RIND" ) );
+//     return false;
+//   }
+// 
+//   QString newName = name_le->text();
+//   if (!newName.isEmpty()) _documentModel->setName( iElts, newName );
+// 
+//   return true;
+// }
 

@@ -46,20 +46,29 @@ Example:
 Join Quadrangles
 ================
 
-To join quadrangles in the **Main Menu** select **Model -> Join
-quad**.
-
-
-**Arguments:** list of quadrangles + 1 destination quad + 4 vertices +
-  number of layers
-
-The dialogue box to join 2 sets of quadrangles is:
-
+To join quadrangles in the **Main Menu** select **Model -> Join quad**
 
 .. image:: _static/gui_join_quads.png
    :align: center
 
 .. centered::
-   Join 2 sets of Quadrangles
+   Join Quadrangles Dialog Box
+
+
+The following data are required :
+
+- From
+        - QA : the set of quads to be joined and from which hexahedrons will be created ( select quads  )
+	- QA_1 : a vertex belonging to the set of quads ( select a vertex )
+	- QA_2 : a vertex belonging to the set of quads ( select a vertex )
+
+- To
+        - QB : a quad from the set of targeted quads ( select a quad )
+	- QB_1 : the target vertex of QA_1. belongs to QB ( select a vertex )
+	- QB_2 : the target vertex of QA_2. belongs to QB ( select a vertex )
+
+- Grid
+        - size : number of layers of hexahedrons issued from the operation
+
 
 TUI command: :ref:`tuiprismjoinquad`

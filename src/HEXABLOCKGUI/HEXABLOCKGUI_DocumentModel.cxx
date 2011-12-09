@@ -2372,7 +2372,7 @@ QModelIndex DocumentModel::revolutionQuads( const QModelIndexList& istartquads,
 }
 
 
-QModelIndex DocumentModel::replace( const QModelIndexList& ihexapattern,
+QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
                              const QModelIndex& ip1, const QModelIndex& ic1,
                              const QModelIndex& ip2, const QModelIndex& ic2,
                              const QModelIndex& ip3, const QModelIndex& ic3 )
@@ -2387,15 +2387,16 @@ QModelIndex DocumentModel::replace( const QModelIndexList& ihexapattern,
   HEXA_NS::Vertex* hc3 = data(ic3, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
 
 
-  HEXA_NS::Hexas   hhexas;
-  HEXA_NS::Hexa*   hhexa = NULL;
-  foreach( const QModelIndex& ihexa, ihexapattern ){
-    hhexa = data( ihexa, HEXA_DATA_ROLE ).value<HEXA_NS::Hexa*>();
-    hhexas.push_back( hhexa );
+  HEXA_NS::Quads   hquads;
+  HEXA_NS::Quad*   hquad = NULL;
+  foreach( const QModelIndex& iquad, iquadsPattern ){
+    hquad = data( iquad, HEXA_DATA_ROLE ).value<HEXA_NS::Quad*>();
+    hquads.push_back( hquad );
   }
 
-  HEXA_NS::Elements* helts = _hexaDocument->replace( hhexas,
+  HEXA_NS::Elements* helts = _hexaDocument->replace( hquads,
                                 hp1, hc1, hp2, hc2, hp3, hc3 );
+  HEXA_NS::Elements* helts = NULL;
 
   if ( helts && helts->isValid() ){
     updateData();

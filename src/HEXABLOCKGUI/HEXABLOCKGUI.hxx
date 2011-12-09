@@ -195,7 +195,7 @@ private slots:
   void makeCylinders();
   void makePipes();
 
-  void makeRind();    // NEW HEXA3
+//   void makeRind();    // NEW HEXA3
   void makeHemiSphere();  // NEW HEXA3
 
   void removeHexa();
