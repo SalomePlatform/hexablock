@@ -1966,6 +1966,59 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
    return result;
 }
 // ===================================================== makeSphere
+
+Elements_ptr Document_impl::replace (const Quads& pattern, 
+                                     Vertex_ptr p1, Vertex_ptr c1, 
+                                     Vertex_ptr p2, Vertex_ptr c2,
+                                     Vertex_ptr p3, Vertex_ptr c3)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+
+   Vertex_impl* v_p1 = ::DownCast<Vertex_impl*> (p1);
+   Vertex_impl* v_p2 = ::DownCast<Vertex_impl*> (p2);
+   Vertex_impl* v_p3 = ::DownCast<Vertex_impl*> (p3);
+
+   Vertex_impl* v_c1 = ::DownCast<Vertex_impl*> (c1);
+   Vertex_impl* v_c2 = ::DownCast<Vertex_impl*> (c2);
+   Vertex_impl* v_c3 = ::DownCast<Vertex_impl*> (c3);
+
+   ASSERT (v_p1);    ASSERT (v_p2);    ASSERT (v_p3);
+   ASSERT (v_c1);    ASSERT (v_c2);    ASSERT (v_c3);
+
+   if (   v_c1==NULL || v_c2==NULL || v_c3==NULL
+       || v_p1==NULL || v_p2==NULL || v_p3==NULL)
+      return result;
+
+   HEXA_NS::Quads t_pattern;
+   for ( int nq = 0; nq < pattern.length(); nq++) 
+       {
+       Quad_impl* v_quad = ::DownCast<Quad_impl*> (pattern[nq]);
+       ASSERT( v_quad );
+       HEXA_NS::Quad* i_quad = v_quad->GetImpl();
+       t_pattern.push_back(i_quad);
+       }
+
+
+   HEXA_NS::Vertex*   i_p1 = v_p1->GetImpl();
+   HEXA_NS::Vertex*   i_p2 = v_p2->GetImpl();
+   HEXA_NS::Vertex*   i_p3 = v_p3->GetImpl();
+
+   HEXA_NS::Vertex*   i_c1 = v_c1->GetImpl();
+   HEXA_NS::Vertex*   i_c2 = v_c2->GetImpl();
+   HEXA_NS::Vertex*   i_c3 = v_c3->GetImpl();
+
+   HEXA_NS::Elements* i_elts   = _document_cpp->replace (t_pattern, 
+                                       i_p1, i_c1, i_p2, i_c2, i_p3, i_c3);
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
+// ===================================================== makeSphere
 Elements_ptr Document_impl::makeSphere (Vertex_ptr center, Vector_ptr vx, 
                             Vector_ptr vz, ::CORBA::Double radius, 
                             ::CORBA::Double radhole, Vertex_ptr plorig, 

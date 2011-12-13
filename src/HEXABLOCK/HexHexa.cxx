@@ -1003,4 +1003,58 @@ void Hexa::dumpFull ()
        }
    printf ("\n");
 }
+// ======================================================== getOpposedQuad
+Quad* Hexa::getOpposedQuad (Quad* face)
+{
+   if      (face == h_quad [Q_A]) return h_quad [Q_B];
+   else if (face == h_quad [Q_B]) return h_quad [Q_A];
+   else if (face == h_quad [Q_C]) return h_quad [Q_D];
+   else if (face == h_quad [Q_D]) return h_quad [Q_C];
+   else if (face == h_quad [Q_E]) return h_quad [Q_F];
+   else if (face == h_quad [Q_F]) return h_quad [Q_F];
+   else                           return NULL;
+}
+// ========================================================= findQuad 
+Quad* Hexa::findQuad (Edge* ed1, Edge* ed2)
+{
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       {
+       if (   h_quad[nro]->indexEdge (ed1) >= 0
+           && h_quad[nro]->indexEdge (ed2) >= 0) 
+          return h_quad [nro];
+       }
+
+   return NULL;
+}
+// ========================================================= findEdge 
+Edge* Hexa::findEdge (Vertex* v1, Vertex* v2)
+{
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       {
+       if (   h_edge[nro]->index (v1) >= 0
+           && h_edge[nro]->index (v2) >= 0) 
+          return h_edge [nro];
+       }
+
+   return NULL;
+}
+// ====================================================== getPerpendicularEdge
+Edge* Hexa::getPerpendicularEdge (Quad* quad, Vertex* vertex)
+{
+   if (quad==NULL || vertex==NULL)
+      return NULL;
+
+   int nv = quad->indexVertex (vertex);
+   int nq = findQuad (quad);
+   if (nv<0 || nq<0)
+      return NULL;
+
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       {
+       if (quad->indexEdge (h_edge[nro])<0 && h_edge[nro]->index(vertex)>=0) 
+          return h_edge [nro];
+       }
+
+   return NULL;
+}
 END_NAMESPACE_HEXA

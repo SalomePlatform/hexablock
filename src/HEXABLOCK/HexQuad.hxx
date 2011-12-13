@@ -98,6 +98,9 @@ public:
     virtual void duplicate ();
     Quad* getClone ()               {  return q_clone ; }
 
+    Edge* getOpposEdge     (Edge* arete);   // Version simplifiee 
+    Edge* getPerpendicular (Edge* arete, Vertex* node); 
+
 private:
     friend class Cloner;
     Quad* getBrother (StrOrient* orient);

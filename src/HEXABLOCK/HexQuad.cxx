@@ -464,4 +464,35 @@ void Quad::dumpPlus ()
           }
        }
 }
+// ======================================================== getOpposEdge (2)
+Edge* Quad::getOpposEdge (Edge* start)
+{
+   int  na = indexEdge (start);
+   if (na<0)
+      return NULL;
+   return q_edge [(na+2) MODULO QUAD4];
+}
+// ======================================================== getPerpendicular
+Edge* Quad::getPerpendicular (Edge* arete, Vertex* node)
+{
+   int na = indexEdge (arete);
+   if (na<0)
+      return NULL;
+
+   int nv = arete->index (node);
+   if (nv<0)
+      return NULL;
+   Edge* perp = q_edge [(na+1) MODULO QUAD4];
+
+   nv = perp->index (node);
+   if (nv>=0)
+      return perp;
+
+   perp = q_edge [(na+3) MODULO QUAD4];
+   nv   = perp->index (node);
+   if (nv>=0)
+      return perp;
+   else
+      return NULL;
+}
 END_NAMESPACE_HEXA

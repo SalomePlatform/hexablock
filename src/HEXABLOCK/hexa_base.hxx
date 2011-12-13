@@ -119,7 +119,7 @@ enum EnumGroup  { HexaCell, QuadCell, EdgeCell,
                 //  Modes de remplissage des grilles cylindriques
 enum EnumCyl   { CYL_NOFILL, CYL_CL4, CYL_CL6, CYL_CLOSED, CYL_PEER, CYL_ODD};
 enum EnumGrid   { GR_NONE, GR_CARTESIAN, GR_CYLINDRIC, GR_SPHERIC, GR_JOINT, 
-                  GR_BICYL, GR_BIPIPE, 
+                  GR_BICYL, GR_BIPIPE, GR_REPLACE, 
                   GR_HEMISPHERIC, GR_RIND, GR_PART_SPHERIC, GR_PART_RIND };
                 //  Sommets de la decomposition canonique du bicylindre
                 // 0    1     2    3     4    5     6    7     8
@@ -175,6 +175,7 @@ class   Law;
 class   Group;
 
 class   AnaQuads;
+class   Pattern;
 
 typedef std::vector <Hexa*>  Hexas;
 typedef std::vector <Quad*>  Quads;

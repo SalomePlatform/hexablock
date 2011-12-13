@@ -236,6 +236,10 @@ char*  getBrep ()     throw (SALOME::SALOME_Exception);
                                 Vector_ptr axis, const RealVector &angles)
            throw (SALOME::SALOME_Exception);
 
+  Elements_ptr replace (const Quads& pattern, Vertex_ptr p1, Vertex_ptr c1, 
+                Vertex_ptr p2, Vertex_ptr c2, Vertex_ptr p3, Vertex_ptr c3)
+           throw (SALOME::SALOME_Exception);
+
   Elements_ptr makeSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
                          ::CORBA::Double radius, ::CORBA::Double radhole,
                          Vertex_ptr plorig, 

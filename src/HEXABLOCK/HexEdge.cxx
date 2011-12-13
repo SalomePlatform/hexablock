@@ -203,6 +203,5 @@ void Edge::dumpPlus ()
           }
        }
 }
-
 END_NAMESPACE_HEXA
 

@@ -125,12 +125,36 @@ public:
                            int nrad, int nang, int nhaut, 
                            double &phi0, double &phi1);
 
-   int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1, 
-                     Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
-
    int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h, 
                             RealVector& tdr, RealVector& tda, RealVector& tdh, 
                             bool fill=false);
+
+   int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1, 
+                     Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+
+   int replaceHexa  (int nh, Pattern* pat, Hexa* hexa);
+   int replaceQuad  (int nh, Pattern* pat, Quad* quad, Vertex* tvert[]);
+   int extrudeQuad  (Pattern* pat);
+
+   void repVertex (int nh, int nro, Vertex* node); 
+   void repEdgeH  (int nh, int nro, Edge* node); 
+   void repEdgeV  (int nh, int nro, Edge* node); 
+   void repQuadH  (int nh, int nro, Quad* node); 
+   void repQuadV  (int nh, int nro, Quad* node); 
+
+   Vertex* repVertex (int nh, int nro, double px, double py, double pz);
+   Edge*   repEdgeV  (int nh, int nro, Vertex* v1, Vertex*v2);
+   Edge*   repEdgeH  (int nh, int nro, Vertex* v1, Vertex*v2);
+   Quad*   repQuadH  (int nh, int nro, Edge* ea, Edge* eb, Edge* ec, Edge* ed);
+   Quad*   repQuadV  (int nh, int nro, Edge* ea, Edge* eb, Edge* ec, Edge* ed);
+   Hexa*   repHexa   (int nh, int nro, Quad* qa, Quad* qb, Quad* qc, 
+                                       Quad* qd, Quad* qe, Quad* qf);
+
+   Vertex* repVertex (int nh, int nro);
+   Edge*   repEdgeV  (int nh, int nro);
+   Edge*   repEdgeH  (int nh, int nro);
+   Quad*   repQuadH  (int nh, int nro);
+   Quad*   repQuadV  (int nh, int nro);
 
 protected :
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
@@ -163,7 +187,7 @@ protected :
    Quad* newQuad (Edge* e1, Edge* e2, Edge* e3, Edge* e4);
    Hexa* newHexa (Quad* e1, Quad* e2, Quad* e3, Quad* e4, Quad* e5, Quad* e6);
 
-   void resize (EnumGrid type, int nx, int ny=0, int nz=0);
+   void resize (EnumGrid type, int nx, int ny=0, int nz=0, int nplus=0);
 
    int makeCartesianNodes (Vertex* orig, Vector* v1, Vector* v2, Vector* v3, 
                       int px, int py, int pz, int mx=0, int my=0, int mz=0);
@@ -228,6 +252,9 @@ protected :
     double  cyl_radhole, cyl_radext, cyl_radint;
     double  cyl_dtheta;              // angle = na*dtheta
     double  cyl_phi0,    cyl_dphi;   // angle = phi0 + nh*dphi; 
+
+    int pat_nbedges;
+    int pat_nbvertex;
 };
 // =================================================== getStrate
 inline Hexa* Elements::getStrate (int couche, EnumHQuad nroface)
@@ -238,7 +265,7 @@ inline Hexa* Elements::getStrate (int couche, EnumHQuad nroface)
    if (nbr_hexas==0 || nro >= nbr_hexas)
       cell = NULL;
    else
-      cell = tab_hexa [nro]; 
+      cell = tab_hexa [nro];
 
    return cell; 
 }

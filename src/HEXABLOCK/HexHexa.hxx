@@ -104,6 +104,12 @@ public:
 
     virtual void   duplicate ();
     Hexa* getClone ()               {  return h_clone ; }
+    Quad*   getOpposedQuad   (Quad* face);
+    Vertex* getOpposedVertex (Quad* face, Vertex* vertex);
+    Edge* getPerpendicularEdge (Quad* face, Vertex* vertex);
+    Edge* getParallelEdge      (Quad* face, Edge*   edge);
+    Quad* findQuad             (Edge* e1, Edge* e2);
+    Edge* findEdge             (Vertex* v1, Vertex* v2);
 
 private:
     friend class Cloner;
@@ -123,7 +129,7 @@ private:
     int   findEdge   (Edge*   element);
     int   findVertex (Vertex* element);
 
-    int   findOpposedQuad  (Quad* face, Edge* arete);
+    int   findOpposedQuad (Quad* face, Edge* arete);
 
 private:
     Quad*   h_quad   [HQ_MAXI];

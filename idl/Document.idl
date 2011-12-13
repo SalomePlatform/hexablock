@@ -309,6 +309,10 @@ module HEXABLOCK_ORB
                               in RealVector angles)
         raises (SALOME::SALOME_Exception); 
 
+    Elements replace( in Quads qds, in Vertex p1, in Vertex c1,
+                      in Vertex p2, in Vertex c2, in Vertex p3, in Vertex c3)
+        raises (SALOME::SALOME_Exception); 
+
     Elements makeSphere (in Vertex center, in Vector vx, in Vector vz, 
                          in double radius, in double radhole,
                          in Vertex plorig, 

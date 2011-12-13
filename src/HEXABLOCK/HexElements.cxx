@@ -92,7 +92,7 @@ Elements::Elements (Elements* orig) : EltBase (orig->el_root)
    cyl_closed = orig->cyl_closed;
 }
 // ====================================================== resize
-void Elements::resize (EnumGrid type, int nx, int ny, int nz)
+void Elements::resize (EnumGrid type, int nx, int ny, int nz, int nplus)
 {
    grid_type   = type;
    grid_nocart = true;
@@ -141,6 +141,21 @@ void Elements::resize (EnumGrid type, int nx, int ny, int nz)
            nbr_vertex = nbr_orig * (gr_hauteur+1)*QUAD4;
            nbr_quads  = nbr_vertex;
            nbr_edges  = 2*nbr_vertex;
+           break;
+
+      case GR_REPLACE :
+           nbr_orig    = std::max (nx, 1);    // nb quads du pattern
+           gr_hauteur  = ny + 1;              // Hauteur des hexas 
+           pat_nbvertex  = std::max (nz, 1);    // nb vertex du pattern
+           pat_nbedges   = std::max (nplus, 1); // nb edges du pattern
+           size_hx  = nbr_orig;
+           size_hy  = 1;
+           size_hz  = gr_hauteur;
+
+           nbr_hexas  = nbr_orig  * gr_hauteur;
+           nbr_vertex = pat_nbvertex * (gr_hauteur+1);
+           nbr_edges  = pat_nbedges * (gr_hauteur+1) + pat_nbvertex*gr_hauteur;
+           nbr_quads  = nbr_orig    * (gr_hauteur+1) + pat_nbedges *gr_hauteur;
            break;
 
       case GR_BICYL :
