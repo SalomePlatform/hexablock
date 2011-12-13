@@ -72,9 +72,33 @@ def bug_quad3 () :
     doc.saveVtk ("bugs_hexa_acd2.vtk")
     return doc
 
+
+# ======================================================= bug_quad3
+def bug_quad1 () :
+
+    doc  = hexablock.addDocument()
+    centre     = doc.addVertex(0, 0, 0)
+    vecteur_px = doc.addVector(1, 0, 0)
+    vecteur_pz = doc.addVector(0, 0, 1)
+
+    grille = doc.makeCylindrical(centre, vecteur_px, vecteur_pz,  1, 360, 1,  3, 8, 1,  False)
+
+    quad_1 = grille.getQuadIK(0, 1, 0)
+    quad_5 = grille.getQuadIK(0, 5, 0)
+
+    quad_1 = grille.getQuadJK(0, 1, 0)
+    quad_5 = grille.getQuadJK(0, 4, 0)
+    quad_1.setScalar (5)
+
+    doc.saveVtk ("bugs_hexa_ab1.vtk")
+    doc.addHexa2Quads(quad_1, quad_5)
+    doc.saveVtk ("bugs_hexa_ab2.vtk")
+ 
+    return doc
+
 # ================================================================= Begin
 
-doc = bug_quad3  ()
+doc = bug_quad1  ()
 
 law = doc.addLaw("Uniform", 4)
 

@@ -25,6 +25,7 @@ def test_sphere () :
 
     doc.makeSphere (center, vx, vz, radius, radhole, orig, nrad, nang, nhaut)
     doc.saveVtk ("Rind1.vtk")
+    return doc
 
 # ======================================================= test_part_sphere
 def test_part_sphere () :
@@ -45,6 +46,7 @@ def test_part_sphere () :
     doc.makePartSphere (center, vx, vz, radius, radhole, orig, angle, 
                         nrad, nang, nhaut)
     doc.saveVtk ("Rind2.vtk")
+    return doc
 
 # ======================================================= test_rind
 def test_rind () :
@@ -65,6 +67,7 @@ def test_rind () :
     doc.makeRind (center, vx, vz, radius, radint, radhole, orig, 
                   nrad, nang, nhaut)
     doc.saveVtk ("Rind3.vtk")
+    return doc
 
 # ======================================================= test_part_rind
 def test_part_rind () :
@@ -86,10 +89,21 @@ def test_part_rind () :
     doc.makePartRind (center, vx, vz, radius, radint, radhole, orig, angle,
                       nrad, nang, nhaut)
     doc.saveVtk ("Rind4.vtk")
+    return doc
 
 # ================================================================= Begin
 
-test_sphere  ()
-test_part_sphere  ()
-test_rind  ()
-test_part_rind  ()
+##test_sphere  ()
+##test_part_sphere  ()
+doc = test_part_rind  ()
+##test_rind  ()
+
+law = doc.addLaw("Uniform", 4)
+
+for j in range(doc.countPropagation()):
+    propa = doc.getPropagation(j)
+    propa.setLaw(law) 
+
+mesh_hexas = hexablock.mesh("rind:hexas", doc)
+
+

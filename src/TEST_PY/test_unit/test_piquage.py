@@ -1,0 +1,81 @@
+# -*- coding: latin-1 -*-
+# Hexa : Creation d'hexaedres 
+
+import hexablock
+import os
+import geompy
+
+#---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
+
+
+# ======================================================= test_pipes
+def test_piquage () :
+
+    doc  = hexablock.addDocument()
+
+    orig = doc.addVertex ( 0, 0, 0)
+    vx   = doc.addVector ( 1 ,0, 0)
+    vy   = doc.addVector ( 0, 1, 0)
+    vz   = doc.addVector ( 0, 0, 1)
+
+    size_x = 3
+    size_y = 3
+    size_z = 3
+
+    grid = doc.makeCartesian (orig, vx, vy, vz, size_x, size_y, size_z)
+
+    c1 = grid.getVertexIJK (1, 2, size_z)
+    c2 = grid.getVertexIJK (1, 1, size_z)
+    c3 = grid.getVertexIJK (2, 1, size_z)
+
+    pa1 = doc.addVertex (-1, -1, 0)
+    pb1 = doc.addVertex ( 1, -1, 0)
+    pc1 = doc.addVertex ( 1,  1, 0)
+    pd1 = doc.addVertex (-1,  1, 0)
+
+    pa2 = doc.addVertex (-2, -2, 0)
+    pb2 = doc.addVertex ( 2, -2, 0)
+    pc2 = doc.addVertex ( 2,  2, 0)
+    pd2 = doc.addVertex (-2,  2, 0)
+
+    edab1 = doc.addEdge (pa1, pb1)
+    edbc1 = doc.addEdge (pb1, pc1)
+    edcd1 = doc.addEdge (pc1, pd1)
+    edda1 = doc.addEdge (pd1, pa1)
+
+    edab2 = doc.addEdge (pa2, pb2)
+    edbc2 = doc.addEdge (pb2, pc2)
+    edcd2 = doc.addEdge (pc2, pd2)
+    edda2 = doc.addEdge (pd2, pa2)
+
+    edaa = doc.addEdge (pa1, pa2)
+    edbb = doc.addEdge (pb1, pb2)
+    edcc = doc.addEdge (pc1, pc2)
+    eddd = doc.addEdge (pd1, pd2)
+
+    qpattern = []
+    qpattern.append (doc.addQuad (edab1, edbc1, edcd1, edda1))
+    qpattern.append (doc.addQuad (edab1, edbb,  edab2, edaa))
+    qpattern.append (doc.addQuad (edbc1, edcc,  edbc2, edbb))
+    qpattern.append (doc.addQuad (edcd1, eddd,  edcd2, edcc))
+    qpattern.append (doc.addQuad (edda1, edaa,  edda2, eddd))
+
+    doc.saveVtk ("replace0.vtk")
+
+    doc.replace (qpattern, pd2,c1, pa2,c2, pb2,c3)
+
+    doc.saveVtk ("replace1.vtk")
+    return doc
+
+# ================================================================= Begin
+
+doc = test_piquage  ()
+
+law = doc.addLaw("Uniform", 0)
+
+for j in range(doc.countPropagation()):
+    propa = doc.getPropagation(j)
+    propa.setLaw(law) 
+
+mesh_hexas = hexablock.mesh("maillage:hexas", doc)
+
