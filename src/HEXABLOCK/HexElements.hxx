@@ -156,6 +156,7 @@ public:
    Quad*   repQuadH  (int nh, int nro);
    Quad*   repQuadV  (int nh, int nro);
 
+
 protected :
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
    void assoCylinder   (Vertex* center, Vector* vz, double rayon);
@@ -166,6 +167,9 @@ protected :
 
    int makeBasicCylinder (RealVector& tdr, RealVector& tda, RealVector& tdh, 
                           bool fill=false);
+
+   int propagateAssociation (Edge* orig, Edge* dest, Edge* dir1);
+   int prismAssociation     (Edge* orig, Edge* dest, int nh, Edge* dir);
 
               // Fin evols Hexa3 
 protected :

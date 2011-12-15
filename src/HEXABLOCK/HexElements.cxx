@@ -448,9 +448,7 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
        }
 
    Edge* e_orig = tab_orig[0] -> findEdge (v1, v3);
-   Edge* e_dest = cible        -> findEdge (v2, v4);
-   HexDump (e_orig);
-   HexDump (e_dest);
+   Edge* e_dest = cible       -> findEdge (v2, v4);
 
    if (e_orig==NULL)
       {
@@ -591,6 +589,7 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
               else 
                  ea = el_root->addEdge (tab_vertex [nva], tab_vertex [nvb]);
 
+              propagateAssociation (ec, ea, eb);
               tab_quad [nva] = newQuad (ea, eb, ec, ed);
               tab_edge [nha] = ea;
               }

@@ -1,3 +1,6 @@
+
+// class : Les matrices
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,10 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-// class : Les matrices
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 
 #ifndef __MATRIX_H
 #define __MATRIX_H
@@ -42,6 +43,9 @@ public:
 
     int perform (Vertex* noeud);
 
+    void getCoeff (double& a11, double& a12, double& a13, double& a14,
+                   double& a21, double& a22, double& a23, double& a24,
+                   double& a31, double& a32, double& a33, double& a34);
 private:
     void erase();
 private:
@@ -249,6 +253,25 @@ inline int Matrix::defSymmetryPlane (Vertex* center, Vector* normale)
 
    return HOK;
 }
+// ========================================================= getCoeff
+inline void Matrix::getCoeff(double& a11, double& a12, double& a13, double& a14,
+                             double& a21, double& a22, double& a23, double& a24,
+                             double& a31, double& a32, double& a33, double& a34)
+{
+   a11 = mat11;
+   a12 = mat12;
+   a13 = mat13;
+   a14 = mat14;
 
+   a21 = mat21;
+   a22 = mat22;
+   a23 = mat23;
+   a24 = mat24;
+
+   a31 = mat31;
+   a32 = mat32;
+   a33 = mat33;
+   a34 = mat34;
+}
 END_NAMESPACE_HEXA
 #endif

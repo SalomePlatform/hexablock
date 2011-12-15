@@ -36,6 +36,8 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
                          double* base, string& brep);
 void geom_create_sphere (double* milieu, double radius, string& brep);
 
+void translate_brep (string& brep, double vdir[], string& trep);
+
 static bool db=false;
 
 // ======================================================== revolutionQuads
@@ -465,6 +467,123 @@ int Elements::makeSphericalGrid (Vertex* c, double rayon, int nb, double  k)
        }
        
    assoSphere (c, i_edge, i_quad);
+   return HOK;
+}
+// ==================================================== propagateAssociation
+int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
+{
+   if (revo_lution || orig==NULL || dest==NULL || dir==NULL)
+      return HERR;
+
+   const Shapes& tab_shapes = orig->getAssociations ();
+   const Shapes& tab_dest   = dest->getAssociations ();
+   int   nbdest             = tab_dest.size();
+   int   nbshapes           = tab_shapes.size();
+   bool  on_edge            = nbshapes!=0 && nbdest==0;
+
+   Vertex* vo1 = orig->commonVertex  (dir);
+   Vertex* vd1 = dest->commonVertex  (dir);
+   Vertex* vo2 = orig->opposedVertex (vo1);
+   Vertex* vd2 = dest->opposedVertex (vd1);
+
+   if (vo1==NULL || vd1==NULL)
+      return HERR;
+
+   string  trep;
+   Real3   pa, pb, vdir1, vdir2;
+   calc_vecteur (vo1->getPoint (pa), vd1->getPoint (pb), vdir1);
+   calc_vecteur (vo2->getPoint (pa), vd2->getPoint (pb), vdir2);
+
+   double dd = calc_distance (vdir1, vdir2);
+   bool para = dd < 1.0e-6;
+
+   if (para && on_edge)
+      {
+      for (int nro=0 ; nro<nbshapes ; nro++)
+          {
+          Shape* shape  = tab_shapes[nro];
+          if (shape!=NULL)
+             {
+             string brep   = shape->getBrep();
+             translate_brep (brep, vdir1, trep);
+             Shape* tshape = new Shape (trep);
+             tshape->setBounds (shape->debut, shape->fin);
+             dest->addAssociation (tshape);
+             }
+          }
+      }
+
+   double* vdir = vdir1;
+   for (int nro=V_AMONT ; nro<=V_AVAL ; nro++)
+       {
+       Shape* shape = vo1->getAssociation ();
+       if (shape!=NULL && vd1->getAssociation ()==NULL)
+          {
+          string brep   = shape->getBrep();
+          translate_brep (brep, vdir, trep);
+          Shape* tshape = new Shape (trep);
+          vd1->setAssociation (tshape);
+          }
+       vo1  = vo2;
+       vd1  = vd2;
+       vdir = vdir2;
+       }
+
+   return HOK;
+}
+// ==================================================== prismAssociation
+int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
+{
+   if (revo_lution || orig==NULL || dest==NULL || dir==NULL)
+      return HERR;
+
+   const Shapes& tab_shapes = orig->getAssociations ();
+   const Shapes& tab_dest   = dest->getAssociations ();
+   int   nbdest             = tab_dest.size();
+   int   nbshapes           = tab_shapes.size();
+   bool  on_edge            = nbshapes>0 && nbdest==0;
+
+   Vertex* vo1 = orig->commonVertex (dir);
+   Vertex* vd1 = dest->commonVertex (dir);
+
+   if (vo1==NULL || vd1==NULL)
+      return HERR;
+
+   string  trep;
+   Real3   porig, pdest, vdir;
+   vo1->getPoint (porig);
+   vd1->getPoint (pdest);
+   calc_vecteur  (porig, pdest, vdir);
+    
+   if (on_edge)
+      {
+      for (int nro=0 ; nro<nbshapes ; nro++)
+          {
+          Shape* shape  = tab_shapes[nro];
+          if (shape!=NULL)
+             {
+             string brep   = shape->getBrep();
+             translate_brep (brep, vdir, trep);
+             Shape* tshape = new Shape (trep);
+             tshape->setBounds (shape->debut, shape->fin);
+             dest->addAssociation (tshape);
+             }
+          }
+      }
+
+   for (int nro=V_AMONT ; nro<=V_AVAL ; nro++)
+       {
+       Shape* shape = vo1->getAssociation ();
+       if (shape!=NULL && vd1->getAssociation ()==NULL)
+          {
+          string brep   = shape->getBrep();
+          translate_brep (brep, vdir, trep);
+          Shape* tshape = new Shape (trep);
+          vd1->setAssociation (tshape);
+          }
+       vo1 = orig->opposedVertex (vo1);
+       vd1 = dest->opposedVertex (vd1);
+       }
    return HOK;
 }
 END_NAMESPACE_HEXA

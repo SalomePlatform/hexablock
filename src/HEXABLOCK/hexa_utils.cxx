@@ -55,10 +55,10 @@ double calc_norme (double vect[])
 	                                   + vect[dir_z]*vect[dir_z];
     return sqrt (norme);
 }
-// ========================================================= calc_distance
-double  calc_distance  (double v1[], double v2[])
+// ======================================================== calc_distance
+double calc_distance  (double v1[], double v2[])
 {
-   Real3 vv = { v2[dir_x]-v1[dir_x],  v2[dir_y]-v1[dir_y],  v2[dir_z]-v1[dir_z] };
+   Real3 vv = { v2[dir_x]-v1[dir_x], v2[dir_y]-v1[dir_y], v2[dir_z]-v1[dir_z] };
    return calc_norme (vv);
 }
 // ========================================================= calc_vecteur

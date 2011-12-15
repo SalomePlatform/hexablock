@@ -731,6 +731,27 @@ void geom_dump_asso (Edge* edge)
           }
        }
 }
+// ====================================================== translate_brep
+void translate_brep (string& brep, double dir[], string& trep)
+{
+   gp_Trsf       transfo;
+   BRep_Builder  builder;
+   TopoDS_Shape  orig;
+   ostringstream stream_shape;
+
+   gp_Vec      vecteur       (dir [dir_x], dir [dir_y], dir [dir_z]);
+   transfo.SetTranslation    (vecteur);
+   istringstream stream_brep (brep);
+   BRepTools::Read           (orig, stream_brep, builder);
+   
+   TopLoc_Location  loc_orig   = orig.Location();
+   gp_Trsf          trans_orig = loc_orig.Transformation();
+   TopLoc_Location  loc_result (transfo * trans_orig);
+   TopoDS_Shape     result = orig.Located (loc_result);
+
+   BRepTools::Write (result, stream_shape);
+   trep = stream_shape.str();
+}
 //
 END_NAMESPACE_HEXA
       
@@ -769,6 +790,11 @@ void geom_dump_asso (Edge* edge)
 // ========================================================= geom_asso_point
 void geom_asso_point (double angle, Vertex* node)
 {
+}
+// ====================================================== translate_brep
+void translate_brep (string& orig, double dir[], string& result)
+{
+   result = orig;
 }
 END_NAMESPACE_HEXA
 #endif

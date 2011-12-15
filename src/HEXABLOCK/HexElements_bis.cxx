@@ -248,7 +248,7 @@ int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
    int ind_poutre [QUAD4];
    for (int ns=0 ; ns<QUAD4 ; ns++)
        {
-       Edge* ebase = qbase ->getEdge (ns);
+       Edge* ebase = qbase->getEdge (ns);
        int   indx  = ebase->getMark ();
        if (indx<0)
           {
@@ -269,6 +269,7 @@ int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
               Quad* mur = newQuad (ed0, ed1, ed2, ed3);
               tab_edge.push_back (ed0);
               tab_quad.push_back (mur);
+              prismAssociation (ed2, ed0, nh, ed1);
               }
           }
        ind_poutre [ns] = indx;
