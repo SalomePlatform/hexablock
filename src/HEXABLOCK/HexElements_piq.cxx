@@ -32,6 +32,8 @@
 
 BEGIN_NAMESPACE_HEXA
 
+static bool db = true;
+
 // --------------------------------------------------------
 struct PatQuad
 {
@@ -125,6 +127,14 @@ int Pattern::initialize (Vertex* v1, Vertex* v2, Vertex* v3)
    calc_vecteur (origine, pb, base_i);
    calc_vecteur (origine, pc, base_j);
 
+   if (db)
+      {
+      PutCoord (origine);
+      PutCoord (base_i);
+      PutCoord (base_j);
+      PutData (determinant);
+      }
+
 /* ******************************
  * AB = pu.vI + pv.vJ
  * 
@@ -173,25 +183,53 @@ int Pattern::verify (int &nbed, int &nbver)
    if (pat_edge[0].nbr_refer!=1 || pat_edge[1].nbr_refer!=1) 
       return HERR;
 
-
    for (int nro=2 ; nro<nbr_edges; nro++)
        {
        if (pat_edge[nro].nbr_refer==1)
           {
-          int pv1     = pat_edge[nro].v_amont;
-          pos_vertex4 = pat_edge[nro].v_aval;
-          if (pv1>=3)
-              {
-              pos_vertex4 = pv1;
-              pv1         = pat_edge[nro].v_aval;
-              }
+          int pv1 = pat_edge[nro].v_amont;
+          int pv2 = pat_edge[nro].v_aval;
           
           if (pv1==2)
-             pos_edge3 = nro;
+             {
+             pos_edge3   = nro;
+             if (pos_vertex4 == NOTHING)
+                 pos_vertex4 =  pv2;
+             else if (pos_vertex4 != pv2)
+                 {
+                 return HERR;
+                 }
+             }
+          else if (pv2==2)
+             {
+             pos_edge3   = nro;
+             if (pos_vertex4 == NOTHING)
+                 pos_vertex4 =  pv1;
+             else if (pos_vertex4 != pv1)
+                 {
+                 return HERR;
+                 }
+             }
           else if (pv1==0)
-             pos_edge4 = nro;
-          else 
-             return HERR;
+             {
+             pos_edge4   = nro;
+             if (pos_vertex4 == NOTHING)
+                 pos_vertex4 =  pv2;
+             else if (pos_vertex4 != pv2)
+                 {
+                 return HERR;
+                 }
+             }
+          else if (pv2==0)
+             {
+             pos_edge4   = nro;
+             if (pos_vertex4 == NOTHING)
+                 pos_vertex4 =  pv1;
+             else if (pos_vertex4 != pv1)
+                 {
+                 return HERR;
+                 }
+             }
           }
        }
 
@@ -252,8 +290,8 @@ int Pattern::addVertex (Vertex* elt)
    PatVertex vertex;
    vertex.refer = elt;
    double vx = elt->getX() - origine [dir_x];
-   double vy = elt->getY() - origine [dir_x];
-   double vz = elt->getZ() - origine [dir_x];
+   double vy = elt->getY() - origine [dir_y];
+   double vz = elt->getZ() - origine [dir_z];
    switch (projection)
       {
       case ProjXY :  default :
@@ -272,6 +310,9 @@ int Pattern::addVertex (Vertex* elt)
            break;
       }
 
+   if (db)
+      printf (" Vertex nro %d : (%g, %g, %g)\t -> (%g, %g)\n", 
+                        nbr_vertex, vx, vy, vz, vertex.v_x, vertex.v_y);
    pat_vertex.push_back (vertex);
    nbr_vertex++;
    return nbr_vertex-1;
@@ -286,53 +327,72 @@ int Elements::replaceHexas (Quads& liste, Vertex* p1, Vertex* c1,
 {
     Edge* edp1  = el_root->findEdge (p1, p2);
     Edge* edp2  = el_root->findEdge (p2, p3);
-
     Edge* edc1  = el_root->findEdge (c1, c2);
     Edge* edc2  = el_root->findEdge (c2, c3);
 
     Quad* quadc = el_root->findQuad (c1, c3);
 
-    PutName (edp1);
-    PutName (edp2);
-    PutName (edc1);
-    PutName (edc2);
-    PutName (quadc);
-
     if (edp1==NULL || edp2==NULL || edc1==NULL || edc2==NULL || quadc==NULL)  
+       {
+       printf ("... Error in HexaBlock function \n");
+       printf ("... doc.replace (lquads, p1,c1, p2,c2, p3,c3)\n");
+       if (edp1==NULL)
+           printf ("Vertices p1 and p2 don't define an edge\n");
+       else if (edp2==NULL)
+           printf ("Vertices p2 and p3 don't define an edge\n");
+       else if (edc1==NULL)
+           printf ("Vertices c1 and c2 don't define an edge\n");
+       else if (edc2==NULL)
+           printf ("Vertices c2 and c3 don't define an edge\n");
+       else if (quadc==NULL)
+           printf ("Vertices c1 and c3 don't define a quad\n");
        return HERR;
+       }
 
     int np = quadc->getNbrParents ();
-    int n1 = quadc->indexEdge (edc1);
-    int n2 = quadc->indexEdge (edc2);
     Hexa* hexac = quadc->getParent (0);
-    Edge* edc3  = quadc->getEdge ((n1+2) MODULO QUAD4);
-    Edge* edc4  = quadc->getEdge ((n2+2) MODULO QUAD4);
 
-    PutName (edc3);
-    PutName (edc4);
-
-    if (np!=1 || edc3==NULL || edc4==NULL || hexac==NULL)  
+    if (np!=1 || hexac==NULL)  
+       {
+       printf ("... Error in HexaBlock function \n");
+       printf ("... doc.replace (lquads, p1,c1, p2,c2, p3,c3)\n");
+       printf ("Quad (c1,c2,c3) is not an external quad\n");
        return HERR;
+       }
                               // Analyse du pattern
     int nbquads = liste.size();
     Pattern   pattern;
     int ier = pattern.initialize (p1, p2, p3);
     if (ier!=HOK)
-        return ier;
+       {
+       printf ("... Error in HexaBlock function \n");
+       printf ("... doc.replace (lquads, p1,c1, p2,c2, p3,c3)\n");
+       printf ("Vertices (p1,p2,p3) don't define a virtual quad\n");
+       return HERR;
+       }
 
     for (int nq=0 ; nq<nbquads ; nq++)
         {
         ier = pattern.addQuad (liste[nq]);
         if (ier!=HOK)
-            return ier;
+           {
+           printf ("... Error in HexaBlock function \n");
+           printf ("... doc.replace (lquads, p1,c1, p2,c2, p3,c3)\n");
+           printf ("Quad nr %d of the list is NULL\n", nq+1);
+           return HERR;
+           }
         }
     int nbv  = 0;
     int nbed = 0;
     int nbh  = 0;
     ier = pattern.verify (nbed, nbv);
     if (ier!=HOK)
-        return ier;
-
+       {
+       printf ("... Error in HexaBlock function \n");
+       printf ("... doc.replace (lquads, p1,c1, p2,c2, p3,c3)\n");
+       printf ("Vertices (p1,p2,p3) don't define a virtual quad\n");
+       return HERR;
+       }
                               // Analyse de la cible
     Quads pil_quad;
     Hexas pil_hexa;
@@ -340,7 +400,7 @@ int Elements::replaceHexas (Quads& liste, Vertex* p1, Vertex* c1,
     pil_hexa.push_back (hexac);
     pil_quad.push_back (quadc);
     bool more = true;
-
+                              // Constitution de la pile des hexaedres
     while (more)
           {
           nbh ++;
@@ -360,6 +420,13 @@ int Elements::replaceHexas (Quads& liste, Vertex* p1, Vertex* c1,
           }
 
     resize (GR_REPLACE, nbquads, nbh, nbv, nbed);
+
+                // 1) Constitution des 4 coins de la cible
+                // 2) Quadriller la face du haut
+                // 3) Trouver les 4 coins de la face du bas
+                // 4) Quadriller la face du bas
+                // 6) Decouper l'hexaedre defini par ces 2 faces
+                // 7) S'il y a un hexaedre dessous goto 3) 
 
     Vertex* tvert[QUAD4] = { c1, c2, c3, pil_quad[0]->getOpposVertex(c2) };
     replaceQuad (1, &pattern, pil_quad[0], tvert);

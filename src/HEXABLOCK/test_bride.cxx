@@ -20,6 +20,9 @@
 // C++ : Test bride
 
 #include "Hex.hxx"
+
+#include <cstdlib>
+
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
 #include "HexCrossElements.hxx"

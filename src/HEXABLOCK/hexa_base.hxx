@@ -75,6 +75,9 @@ typedef FILE*       pfile;
 using namespace std;
 
 #define HexDisplay(x)      cout << " ... " #x " = " << x << endl
+#define PutData(x)      cout << " ... " #x " = " << x << endl
+#define PutCoord(x)      cout << " ... " #x " = (" << x[0] << ", " \
+                              << x[1] << ", " << x[2] << ")"  << endl
 #define Echo(m)         cout << " _______________ " << m << endl
 
 //  #define Libere(obj)     { if (obj!=NULL) free (obj)      ;  obj=NULL; }

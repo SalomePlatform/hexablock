@@ -49,8 +49,9 @@ public :
    virtual int     countEdge   ()  { return 0; }
    virtual int     countVertex ()  { return 0; }
 
-   virtual int     getError    ()  { return el_status; }
-   virtual bool    isValid     ()  { return el_status==HOK; }
+   virtual void    setError    (int kod=HERR)  { el_status = kod; }
+   virtual int     getError    ()              { return el_status; }
+   virtual bool    isValid     ()              { return el_status==HOK; }
 
    virtual void    setAssociation (Shape* forme)  { el_assoc = forme ; }
    virtual void    clearAssociation ()            { el_assoc = NULL  ; }

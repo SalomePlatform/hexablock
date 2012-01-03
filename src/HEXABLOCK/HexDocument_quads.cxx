@@ -728,9 +728,14 @@ Elements* Document::makeCylindricals (Vertex* c, Vector* b, Vector* h,
 Elements* Document::replace (Quads& pattern, Vertex* p1, Vertex* c1, 
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
 {
-   Elements*  t_hexas = new Elements (this);
-   t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
-   return     t_hexas;
+   Elements* t_hexas = new Elements (this);
+   int ier = t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
+   if (ier!=HOK)
+      {
+      cout << " **** Error in Document::replace\n" << endl;
+      t_hexas->setError (ier);
+      }
+   return    t_hexas;
 }
 // ========================================================= prod_vectoriel
 double*  prod_vectoriel (Edge* e1, Edge* e2, double prod[])
