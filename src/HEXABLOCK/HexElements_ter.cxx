@@ -593,7 +593,6 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
 // ====================================================== assoResiduelle
 void Elements::assoResiduelle ()
 {
-   printf (" ... Asso Resisuelle\n");
    int nbre = tab_vertex.size();
    for (int nv=0 ; nv<nbre ; nv++)
        {
