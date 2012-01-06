@@ -36,7 +36,8 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
                          double* base, string& brep);
 void geom_create_sphere (double* milieu, double radius, string& brep);
 
-void translate_brep (string& brep, double vdir[], string& trep);
+void translate_brep  (string& brep, double vdir[], string& trep);
+void geom_asso_point (Vertex* node);
 
 static bool db=false;
 
@@ -289,8 +290,9 @@ void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle,
            assoRind (po, vi, size_vx-1);
            break;
       default :
-           return;
+           break;
       }
+   assoResiduelle ();  // Association des sommets residuels
 }
 // ====================================================== assoRind 
 // Association des meridiennes
@@ -332,7 +334,7 @@ void Elements::assoRind (double* ori, double* vi, int nx)
            Quad* quad = getQuadJK (nx, ny, nz);
            if (quad != NULL)
               {
-              Shape* sshape = new Shape (s_brep); 
+              Shape* sshape = new Shape (s_brep);
               quad->addAssociation (sshape);
               }
            }
@@ -407,6 +409,8 @@ void Elements::assoSphere (Vertex* ori, Edge* t_edge[], Quad* t_quad[])
        Shape* shape = new Shape (brep);
        t_quad [nf]->addAssociation (shape);
        }
+
+   assoResiduelle ();  // Association des sommets residuels
 }
 // ====================================================== makeSphericalGrid
 int Elements::makeSphericalGrid (Vertex* c, double rayon, int nb, double  k)
@@ -585,5 +589,15 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
        vd1 = dest->opposedVertex (vd1);
        }
    return HOK;
+}
+// ====================================================== assoResiduelle
+void Elements::assoResiduelle ()
+{
+   printf (" ... Asso Resisuelle\n");
+   int nbre = tab_vertex.size();
+   for (int nv=0 ; nv<nbre ; nv++)
+       {
+       geom_asso_point (tab_vertex [nv]);
+       }
 }
 END_NAMESPACE_HEXA

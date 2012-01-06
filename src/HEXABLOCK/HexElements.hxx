@@ -164,12 +164,13 @@ protected :
    void assoRind       (double* center, double* vx, int nx);
    void assoSphere     (Vertex* center, Edge* t_edge[], Quad* t_quad[]);
    void assoCircle     (double* center, Edge* ed1, Edge* ed2);
+   void assoResiduelle ();
 
    int makeBasicCylinder (RealVector& tdr, RealVector& tda, RealVector& tdh, 
                           bool fill=false);
 
-   int propagateAssociation (Edge* orig, Edge* dest, Edge* dir1);
-   int prismAssociation     (Edge* orig, Edge* dest, int nh, Edge* dir);
+   int  propagateAssociation (Edge* orig, Edge* dest, Edge* dir1);
+   int  prismAssociation     (Edge* orig, Edge* dest, int nh, Edge* dir);
 
               // Fin evols Hexa3 
 protected :
@@ -300,7 +301,7 @@ inline void Elements::setVertex (Vertex* elt, int nro)
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
 // ============================================================  getHexa
-inline Hexa* Elements::getHexa (int nro) 
+inline Hexa* Elements::getHexa (int nro)
 {
    Hexa* elt = NULL;
    int  nombre=tab_hexa.size();

@@ -382,6 +382,7 @@ int test_revolution (int nbargs, cpchar tabargs[])
 // ======================================================== test_coude
 int test_coude (int nbargs, cpchar tabargs[])
 {
+#if 0
    const int dimx = 11;
    const int dimy = 11;
    const int dimz = 2;
@@ -398,7 +399,7 @@ int test_coude (int nbargs, cpchar tabargs[])
    int    dl = 5;
    int    nr = 4;
    int    na = 8;
-#if 0
+
    Hex::Elements* grid1 = doc->makeCylindrical (orig1, vx,vz,dr,360, dl,
                                                 nr, 10, nl, false);
    int mx = dimx/2;
@@ -1351,8 +1352,8 @@ int test_move ()
 
    return HOK;
 }
-// ======================================================== test_move2
-int test_transfo (int nbargs, cpchar tabargs[])
+// ======================================================== test_transfo2
+int test_transfo2 (int nbargs, cpchar tabargs[])
 {
    const int size_x = 1;
    const int size_y = 1;
@@ -1441,6 +1442,40 @@ int test_transfo (int nbargs, cpchar tabargs[])
    doc ->saveVtk (fic_vtk, nvtk);
 
    grid9->getHexa(0)->removeConnected ();
+   doc ->saveVtk (fic_vtk, nvtk);
+
+   return HOK;
+}
+// ======================================================== test_transfo
+int test_transfo (int nbargs, cpchar tabargs[])
+{
+   int    nvtk    = 0;
+   cpchar fic_vtk = "transfo";
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+   doc ->setLevel (1);
+
+   Hex::Vertex* orig = doc->addVertex (0,0,0);
+   Hex::Vector* vx   = doc->addVector (1,0,0);
+   Hex::Vector* vz   = doc->addVector (0,0,1);
+   double dr = 1;
+   double da = 360;
+   double dl = 1;
+   int nr = 3;
+   int na = 8;
+   int nl = 3;
+   Hex::Elements* grid = doc->makeCylindrical (orig, vx,vz, dr, da, dl,
+                                                            nr, na, nl, false);
+   if (grid==NULL)
+      return HERR;
+
+   doc ->saveVtk (fic_vtk, nvtk);
+   Hex::Vector*   devant  = doc->addVector (10, 0, 0);
+
+   Hex::Elements* grid2 = doc->makeTranslation (grid, devant);
+   if (grid2==NULL)
+      return HERR;
    doc ->saveVtk (fic_vtk, nvtk);
 
    return HOK;
@@ -1561,6 +1596,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_replace (nbargs, tabargs);
+   int ier = test_transfo (nbargs, tabargs);
    return ier;
 }

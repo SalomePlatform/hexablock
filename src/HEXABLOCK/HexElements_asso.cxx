@@ -22,6 +22,9 @@
 //
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 #include "HexElements.hxx"
+#include "HexMatrix.hxx"
+
+static const double Epsil2 = 1e-10;
 
 #ifndef NO_CASCADE
 // CasCade includes
@@ -33,6 +36,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
 
 #include <GeomConvert_CompCurveToBSplineCurve.hxx>
 #include <GCPnts_AbscissaPoint.hxx>
@@ -106,8 +110,6 @@
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
 static double HEXA_EPSILON  = 1E-6; //1E-3; 
-#define PutCoord(x) cout << " ... " #x " = (" << x[0] << ", " \
-                         << x[1] << ", "   << x[2] << ") "   << endl
 
 
 BEGIN_NAMESPACE_HEXA
@@ -121,7 +123,7 @@ public :
    GeomLine (Shape* shape);
   ~GeomLine ();
  
-   int  findBound (Real3 point);
+   int  findBound (Real* point);
    void setAbscissa (double total, double& abscisse);
    void inverser ();
 
@@ -164,7 +166,7 @@ public :
    void associate   (Vertex* node);
    void razPoint    ();
    int  definePoint (Vertex* node);
-   void definePoint (Real3   coord);
+   void definePoint (Real*   coord);
    void definePoint (gp_Pnt& gpoint);
 
    TopoDS_Vertex& getVertex ()              { return g_vertex;  }
@@ -258,7 +260,7 @@ void GeomPoint::associate (Vertex* node)
    if (node==NULL)
       return;
 
-   Shape* vshape = new Shape (b_rep); 
+   Shape* vshape = new Shape (b_rep);
    node->setAssociation (vshape);
 }
 // ---------------------------------------------------------------------
@@ -475,7 +477,6 @@ inline double carre (double val)
 // ====================================================== same_coords
 inline bool same_coords (double* pa, double* pb)
 {
-   const double Epsil2 = 1e-10;
 
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
              + carre (pb[dir_z]-pa[dir_z]); 
@@ -487,7 +488,7 @@ inline bool same_coords (double* pa, double* pb)
    return d2 < Epsil2;
 }
 // ========================================================= findBound
-int GeomLine::findBound (Real3 coord)
+int GeomLine::findBound (Real* coord)
 {
    if (same_coords (coord, start_coord) )
       return V_AMONT;
@@ -607,8 +608,8 @@ static Shape    current_shape ("");
 // ====================================================== geom_define_line
 void geom_define_line (string& brep)
 {
-   current_shape.setBrep (brep);
-   current_shape.setBounds (0,1);
+   current_shape.setBrep   (brep);
+   current_shape.setBounds (0, 1);
    current_line.defineLine (&current_shape);
 }
 // ====================================================== geom_asso_point
@@ -616,6 +617,17 @@ void geom_asso_point (double angle, Vertex* node)
 {
    if (node!=NULL && node->getAssociation() == NULL)
        current_line.assoPoint (angle, node);
+}
+// ====================================================== geom_asso_point
+void geom_asso_point (Vertex* node)
+{
+   if (node==NULL || node->getAssociation() != NULL)
+      return;
+   
+   Real3 koord = { node->getX(), node->getY(), node->getZ() };
+   GeomPoint  asso_point ;
+   asso_point.definePoint (koord);
+   asso_point.associate   (node);
 }
 // ====================================================== geom_create_circle 
 void geom_create_circle (double* milieu, double rayon, double* normale, 
@@ -679,12 +691,15 @@ void geom_create_sphere (double* milieu, double radius, string& brep)
 // ====================================================== geom_dump_asso
 void geom_dump_asso (Edge* edge)
 {
+   printf (" _____________________ dump_edge :\n");
    if (edge==NULL || NOT edge->isHere ())
       {
       printf ("*** deleted ***)\n");
       return;
       }
 
+   bool db0 = db;
+   db  = false;
    edge->printName(" = (");
    edge->getVertex (V_AMONT)-> printName (", ");
    edge->getVertex (V_AVAL) -> printName (")\n");
@@ -694,14 +709,14 @@ void geom_dump_asso (Edge* edge)
        {
        Vertex* vertex = edge->getVertex (nro);
        vertex->printName ("");
-       printf (" = (%g, %g, %g)\n", vertex->getX(),  vertex->getY(),  
-                                    vertex->getZ());
+       printf (" = (%g, %g, %g)", vertex->getX(),  vertex->getY(),  
+                                  vertex->getZ());
 
        int ier = asso_point.definePoint (vertex);
        if (ier==HOK)
           {
           double* coord = asso_point.getCoord();
-          printf (" = (%g, %g, %g)", coord[dir_x],  coord[dir_y],  
+          printf (",  pnt_asso  = (%g, %g, %g)", coord[dir_x],  coord[dir_y],  
                                      coord[dir_z]);
           }
        printf ("\n");
@@ -711,25 +726,26 @@ void geom_dump_asso (Edge* edge)
    const Shapes&  tshapes = edge->getAssociations ();
    for (int nro=0 ; nro<tshapes.size() ; nro++)
        {
-       printf ( " ------------------- Association Edge nro %d :\n", nro);
-       if (tshapes[nro] == NULL)
+       printf ( " ------------------- Edge.tab_shape[%d] :\n", nro);
+       Shape* shape = tshapes[nro];
+       if (shape == NULL)
           {
-          HexDisplay (tshapes[nro]);
+          printf ( "                =  NULL\n");
           }
        else
           {
-          Shape* shape = tshapes[nro];
           asso_line.defineLine (shape);
           double* deb = asso_line.getStart  ();
           double* fin = asso_line.getEnd    ();
           double  lg  = asso_line.getLength ();
           printf (" Longueur = %g\n", lg);
-          printf (" Debut = %g = (%g, %g, %g)\n", shape->debut, deb[0], 
-                                                        deb[1], deb[2]);
-          printf (" Fin   = %g = (%g, %g, %g)\n", shape->fin, fin[0], 
-                                                        fin[1], fin[2]);
+          printf (" Debut = %g = (%g, %g, %g)\n", shape->debut, 
+                                                  deb[0], deb[1], deb[2]);
+          printf (" Fin   = %g = (%g, %g, %g)\n", shape->fin, 
+                                                  fin[0], fin[1], fin[2]);
           }
        }
+   db = db0;
 }
 // ====================================================== translate_brep
 void translate_brep (string& brep, double dir[], string& trep)
@@ -752,7 +768,28 @@ void translate_brep (string& brep, double dir[], string& trep)
    BRepTools::Write (result, stream_shape);
    trep = stream_shape.str();
 }
-//
+// ====================================================== transfo_brep
+void transfo_brep (string& brep, Matrix* matrice, string& trep)
+{
+   BRep_Builder  builder;
+   TopoDS_Shape  shape_orig;
+   ostringstream stream_shape;
+   gp_Trsf       transfo;
+
+   double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
+   matrice->getCoeff (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
+   transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34, 
+                      Epsil2, Epsil2);
+
+   istringstream stream_brep (brep);
+   BRepTools::Read           (shape_orig, stream_brep, builder);
+   
+   BRepBuilderAPI_Transform brep_transfo (shape_orig, transfo, Standard_True);
+   TopoDS_Shape result = brep_transfo.Shape();
+
+   BRepTools::Write (result, stream_shape);
+   trep = stream_shape.str();
+}
 END_NAMESPACE_HEXA
       
 // ------------------------------------------------------------------------
@@ -787,14 +824,27 @@ void geom_define_line (string& brep)
 void geom_dump_asso (Edge* edge)
 {
 }
-// ========================================================= geom_asso_point
+// ====================================================== geom_asso_point
 void geom_asso_point (double angle, Vertex* node)
+{
+}
+// ====================================================== geom_asso_point
+void geom_asso_point (Vertex* node)
 {
 }
 // ====================================================== translate_brep
 void translate_brep (string& orig, double dir[], string& result)
 {
    result = orig;
+}
+// ====================================================== transfo_brep
+void transfo_brep (string& brep, Matrix* matrice, string& trep)
+{
+   trep = brep;
+}
+// ====================================================== dump_edge
+void dump_edge (Edge* edge)
+{
 }
 END_NAMESPACE_HEXA
 #endif

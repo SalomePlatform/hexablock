@@ -1,3 +1,6 @@
+
+// C++ : Copiteur d'hexaedres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des noeuds
-
 #include "HexCloner.hxx"
 #include "HexMatrix.hxx"
 
@@ -28,8 +29,13 @@
 #include "HexVertex.hxx"
 
 #include "HexElements.hxx"
+#include "HexShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
+
+void transfo_brep (string& brep, Matrix* matrice, string& trep);
+void geom_dump_asso (Edge* edge);
+static bool db = false;
 
 // ============================================================= Constructeur
 Cloner::Cloner  (Matrix* mat)
@@ -49,12 +55,28 @@ Vertex* Cloner::clonerVertex (Vertex* orig)
     copie = new Vertex (orig);
     matrice -> perform (copie);
     clone_vertex [orig] = copie;
-    return copie;
+
+   Shape* tshape = copie->getAssociation ();
+   Shape* shape  = orig ->getAssociation ();
+   if (tshape != NULL || shape == NULL)
+      return copie;
+
+   string brep  = shape->getBrep();
+   string trep;
+   transfo_brep (brep, matrice, trep);
+   tshape = new Shape (trep);
+   copie ->setAssociation (tshape);
+   if (db)
+      {
+      printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName  (), 
+                                                        copie->getName ());
+      }
+   return copie;
 }
 // ============================================================== clonerEdge
 Edge* Cloner::clonerEdge (Edge* orig)
 {
-    if (orig == NULL)
+   if (orig == NULL)
         return orig;
 
    Edge* copie = clone_edge [orig];
@@ -74,6 +96,31 @@ Edge* Cloner::clonerEdge (Edge* orig)
       copie->printName (" est la copie de ");
       orig ->printName ("\n");
       }
+
+   const  Shapes & new_asso = copie->getAssociations ();
+   int    nbass             = new_asso.size();
+   if (nbass!=0) 
+      return copie;
+
+   const Shapes & tab_asso = orig->getAssociations ();
+   nbass             = tab_asso.size();
+   for (int nro=0 ; nro < nbass ; nro++)
+       {
+       Shape* shape = tab_asso [nro];
+       string brep  = shape->getBrep();
+       string trep;
+       transfo_brep (brep, matrice, trep);
+       Shape* tshape = new Shape (trep);
+       tshape->setBounds (shape->debut, shape->fin);
+       copie ->addAssociation (tshape);
+       if (db)
+          {
+          printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName (), 
+                                                            copie->getName ());
+          geom_dump_asso (orig );
+          geom_dump_asso (copie);
+          }
+       }
 
    return copie;
 }
@@ -97,6 +144,27 @@ Quad* Cloner::clonerQuad (Quad* orig)
 
    copie->majReferences ();
    clone_quad [orig] = copie;
+
+   const  Shapes & new_asso = copie->getAssociations ();
+   int    nbass             = new_asso.size();
+   if (nbass!=0) 
+      return copie;
+
+   const Shapes & tab_asso = orig->getAssociations ();
+   nbass             = tab_asso.size();
+   for (int nro=0 ; nro < nbass ; nro++)
+       {
+       Shape* shape = tab_asso [nro];
+       string brep  = shape->getBrep();
+       string trep;
+       transfo_brep (brep, matrice, trep);
+       Shape* tshape = new Shape (trep);
+       copie ->addAssociation (tshape);
+       if (db)
+          printf ( " --- Asso (%s) -> asso (%s)\n", orig ->getName (), 
+                                                    copie->getName ());
+       }
+
    return copie;
 }
 // ============================================================== clonerHexa
@@ -127,6 +195,15 @@ Hexa* Cloner::clonerHexa (Hexa* orig)
 Elements* Cloner::clonerElements (Elements* orig)
 {
    Elements* copie = new Elements (orig);
+   if (db)
+      {
+      double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
+      matrice->getCoeff (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
+      printf ( "\n");
+      printf ( " --- Matrice = (%g, %g, %g) (%g) \n", a11,a12,a13,a14 );
+      printf ( "               (%g, %g, %g) (%g) \n", a21,a22,a23,a24 );
+      printf ( "               (%g, %g, %g) (%g) \n", a31,a32,a33,a34 );
+      }
 
    int nombre = orig->countHexa ();
    for (int nro=0 ; nro<nombre ; nro++)

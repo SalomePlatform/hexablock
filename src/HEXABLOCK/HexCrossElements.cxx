@@ -640,7 +640,8 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
 
    Real3 coord;
    assoCylinder (CylSmall, iprim->getCoord (coord));
-   assoCylinder (CylBig, kprim->getCoord (coord));
+   assoCylinder (CylBig,   kprim->getCoord (coord));
+   assoResiduelle ();
    return HOK;
 }
 // ====================================================== fillGrid

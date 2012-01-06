@@ -422,7 +422,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
                                        // Face opposee : replace
    // int nfopp = (nface MODULO 2==0) ? nface+1 : nface-1;
 
-   int  ind_edge  [QUAD4], ind_node  [QUAD4], ind_opp_quad [QUAD4];
+   int  ind_edge  [QUAD4], ind_opp_quad [QUAD4];
    bool make_quad [QUAD4], make_edge [QUAD4];
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
@@ -436,7 +436,6 @@ Elements* Hexa::disconnectQuad (Quad* quad)
        int oppq  = findOpposedQuad (quad, quad->getEdge (nro));
 
        ind_edge [nro]     = pedge;
-       ind_node [nro]     = pnode;
        ind_opp_quad [nro] = oppq;
 
        if (pedge==NOTHING || pnode==NOTHING || oppq==NOTHING)

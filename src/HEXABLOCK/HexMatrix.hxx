@@ -67,7 +67,7 @@ inline void Matrix::erase ()
    mat31 = mat32 = mat34 = 0.0;
    mat11 = mat22 = mat33 = 1.0;
 }
-// ========================================================= transform
+// ========================================================= perform
 inline int Matrix::perform (Vertex* noeud)
 {
    double px, py, pz;
