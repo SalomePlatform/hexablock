@@ -37,6 +37,7 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
 void geom_create_sphere (double* milieu, double radius, string& brep);
 
 void translate_brep  (string& brep, double vdir[], string& trep);
+void transfo_brep  (string& brep, Matrix* matrice, string& trep);
 void geom_asso_point (Vertex* node);
 
 static bool db=false;
@@ -538,9 +539,12 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
 // ==================================================== prismAssociation
 int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
 {
-   if (revo_lution || orig==NULL || dest==NULL || dir==NULL)
+   if (orig==NULL || dest==NULL || dir==NULL)
       return HERR;
 
+   if (revo_lution)
+       revo_matrix.defRotation (revo_center, revo_axis, revo_angle[nh]);
+ 
    const Shapes& tab_shapes = orig->getAssociations ();
    const Shapes& tab_dest   = dest->getAssociations ();
    int   nbdest             = tab_dest.size();
@@ -567,7 +571,8 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
           if (shape!=NULL)
              {
              string brep   = shape->getBrep();
-             translate_brep (brep, vdir, trep);
+             //   translate_brep (brep, vdir, trep);
+             transfo_brep (brep, &revo_matrix, trep);
              Shape* tshape = new Shape (trep);
              tshape->setBounds (shape->debut, shape->fin);
              dest->addAssociation (tshape);
@@ -581,7 +586,8 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
        if (shape!=NULL && vd1->getAssociation ()==NULL)
           {
           string brep   = shape->getBrep();
-          translate_brep (brep, vdir, trep);
+          //  translate_brep (brep, vdir, trep);
+          transfo_brep (brep, &revo_matrix, trep);
           Shape* tshape = new Shape (trep);
           vd1->setAssociation (tshape);
           }

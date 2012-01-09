@@ -30,10 +30,15 @@
 
 #include "HexGlobale.hxx"
 #include "HexCylinder.hxx"
+#include "HexShape.hxx"
 
 #include <map>
 
 BEGIN_NAMESPACE_HEXA
+
+void geom_dump_asso     (Edge* edge);
+void geom_create_circle (double* milieu, double rayon, double* normale, 
+                         double* base, string& brep);
 
 // ====================================================== getHexaIJK
 Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
@@ -217,6 +222,7 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
 int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
 {
    int ind_node [QUAD4];
+   string c_rep;
 
            // ----------------------------- Vertex + aretes verticales
    for (int ns=0 ; ns<QUAD4 ; ns++)
@@ -229,15 +235,59 @@ int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
           vbase->setMark (indx);
           Vertex* nd0 = vbase;
           Vertex* nd1 = NULL;
+          double beta = 0;
+          if (revo_lution)
+             {
+             Real3 centre, vk, point, om;
+             revo_center->getPoint (centre);
+             vbase      ->getPoint (point);
+             revo_axis  ->getCoord (vk);
+             normer_vecteur (vk);
+
+             calc_vecteur   (centre, point, om);
+             double oh     = prod_scalaire (om, vk);
+             double rayon  = 0;
+             Real3  ph, hm;
+             for (int dd=dir_x; dd<=dir_z ; dd++)
+                 {
+                 ph [dd] = centre [dd] + oh*vk[dd]; 
+                 hm [dd] = point  [dd] - ph[dd];
+                 rayon  += hm[dd] * hm[dd];
+                 }
+             rayon = sqrt (rayon);
+/********************************
+             PutCoord (centre);
+             PutCoord (point);
+             PutData  (oh);
+             PutCoord (ph);
+             PutData  (rayon);
+             PutCoord (vk);
+             PutCoord (hm);
+********************************/
+             geom_create_circle (ph, rayon, vk, hm, c_rep);
+             }
+
           for (int nh=0 ; nh<hauteur ; nh++)
               {
               nd1 = el_root->addVertex (nd0->getX(), nd0->getY(), nd0->getZ());
               if (revo_lution)
-                  revo_matrix.defRotation (revo_center, revo_axis, 
-                                           revo_angle[nh]);
+                 {
+                 revo_matrix.defRotation (revo_center, revo_axis, 
+                                          revo_angle[nh]);
+                 }
               revo_matrix.perform  (nd1);
               tab_vertex.push_back (nd1);
-              tab_pilier.push_back (newEdge (nd0, nd1));
+              Edge* pilier = newEdge (nd0, nd1);
+              tab_pilier.push_back (pilier);
+              if (revo_lution)
+                 {
+                 double alpha = beta;
+                 beta = alpha + revo_angle[nh]; 
+                 Shape* shape = new Shape (c_rep);
+                 shape->setBounds (alpha/360, beta/360);
+                 pilier->addAssociation (shape);
+                 //      geom_dump_asso (pilier);
+                 }
               nd0 = nd1;
               }
           }

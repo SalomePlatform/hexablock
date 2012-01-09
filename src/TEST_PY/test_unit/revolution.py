@@ -21,40 +21,80 @@ class FileVtk :
         file_name = os.path.join(self.radical + str(self.count) + '.vtk')
         self.document.saveVtk(file_name)
 
-# ================================================================= add_grid
-def add_grid (doc, size_x, size_y, size_z) :
-    orig = doc.addVertex(0, 0, 0)
+# ======================================================= make_grid
+def make_grid (doc, nr, na, nl) :
 
-    vx = doc.addVector (1, 0, 0)
-    vy = doc.addVector (0, 1, 0)
-    vz = doc.addVector (0, 0, 1)
-    grid = doc.makeCartesian (orig, vx, vy, vz, size_x, size_y, size_z)
+    ori  = doc.addVertex ( 0, 0, 0)
+    vx   = doc.addVector ( 1 ,0, 0)
+    vz   = doc.addVector ( 0, 0, 1)
+
+    dr = 1
+    da = 360
+    dl = 1
+
+    grid = doc.makeCylindrical (ori, vx,vz, dr,da,dl, nr,na,nl, False)
     return grid
 
+
 # ========================================================== test_revolution
-doc  = hexablock.addDocument()
-vtk  = FileVtk (doc, "Revolution");
-dimx = 11
-dimz = 2
-grid = add_grid (doc, dimx, dimx, dimz)
-vtk.save ()
+def test_revolution () :
+    doc  = hexablock.addDocument()
+    vtk  = FileVtk (doc, "Revolution");
+    nr = 1
+    na = 6
+    nl = 1
+    grid = make_grid (doc, nr, na, nl)
+    vtk.save ()
 
-mx = dimx/2;
-liste = [ ]
+    liste = [ ]
+    for nx in range (nr) :
+        for ny in range (na) :
+            cell = grid.getQuadIJ (nx, ny, nl)
+            print " ... cell = ", cell
+            liste.append (cell);
 
-for nx in range (dimx) :
-    cell = grid.getQuadIJ (nx, mx, dimz)
-    liste.append (cell);
-    if (nx!=mx) :
-       cell = grid.getQuadIJ (mx, nx, dimz); 
-       liste.append (cell);
-       cell.setScalar (5);
+    center = doc.addVertex (0, -10, 0);
+    axis   = doc.addVector (1, 0, 0);
+    angles = [5, 10, 15, 20, 30, 20, 15, 10, 5 ]
 
-center = doc.addVertex (0, -10, 0);
-axis   = doc.addVector (1, 0, 0);
-angles = [5, 10, 15, 20, 30, 20, 15, 10, 5 ]
+    vtk.save ()
+    bloc = doc.revolutionQuads  (liste, center, axis, angles);
+    vtk.save ()
+    return doc
 
-vtk.save ()
-bloc = doc.revolutionQuads  (liste, center, axis, angles);
-vtk.save ()
+# ========================================================== test_prism
+def test_prism () :
+    doc  = hexablock.addDocument()
+    vtk  = FileVtk (doc, "prism");
+    nr = 1
+    na = 6
+    nl = 1
+    grid = make_grid (doc, nr, na, nl)
+    vtk.save ()
+
+    liste = [ ]
+    for nx in range (nr) :
+        for ny in range (na) :
+            cell = grid.getQuadIJ (nx, ny, nl)
+            print " ... cell = ", cell
+            liste.append (cell);
+
+    axis = doc.addVector (1, 1, 1);
+
+    bloc = doc.prismQuads  (liste, axis, 3)
+    vtk.save ()
+    return doc
+
+# ================================================================= Begin
+
+doc = test_revolution ()
+###  doc = test_prism ()
+
+law = doc.addLaw("Uniform", 2)
+
+for j in range(doc.countPropagation()):
+    propa = doc.getPropagation(j)
+    propa.setLaw(law) 
+
+mesh_hexas = hexablock.mesh("maillage:hexas", doc)
 

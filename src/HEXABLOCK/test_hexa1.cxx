@@ -309,8 +309,8 @@ int test_prism ()
 
    return HOK;
 }
-// ======================================================== test_revolution
-int test_revolution (int nbargs, cpchar tabargs[])
+// ======================================================== test_revolution9
+int test_revolution9 (int nbargs, cpchar tabargs[])
 {
    const int dimx = 11;
    const int dimy = 11;
@@ -347,6 +347,67 @@ int test_revolution (int nbargs, cpchar tabargs[])
           cell -> setScalar (5);
           }
 
+   Hex::Vertex* center = doc->addVertex (0, -10, 0);
+   Hex::Vector* axis   = doc->addVector (1, 0, 0);
+   Hex::RealVector  angles;
+
+   Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);
+   Hex::Elements* grid2 = doc->makeCartesian (center, dir1, 1,1,1);
+   Hex::Hexa*     cell  = grid2->getHexaIJK (0,0,0);
+   cell->setScalar (5);
+
+   doc->saveVtk ("revolution1.vtk");
+
+   double alpha = 5;
+   int niter    = 5;
+   double coeff = 1.5;
+   for (int na=0 ; na<niter ; na++)
+       {
+       angles.push_back (alpha);
+       alpha *= coeff;
+       }
+   for (int na=1 ; na<niter ; na++)
+       {
+       alpha /= coeff;
+       angles.push_back (alpha);
+       }
+
+   Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
+   if (bloc != NULL)
+       doc->saveVtk ("revolution2.vtk");
+
+   return HOK;
+}
+// ======================================================== test_revolution
+int test_revolution (int nbargs, cpchar tabargs[])
+{
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* ori = doc->addVertex (0,0,0);
+   Hex::Vector* vx  = doc->addVector (1,0,0);
+   Hex::Vector* vz  = doc->addVector (0,0,1);
+
+
+   int dr = 1;
+   int da = 360;
+   int dl = 1;
+
+   int nr = 1;
+   int na = 6;
+   int nl = 1;
+
+   Hex::Elements* grid = doc->makeCylindrical (ori, vx,vz, dr,da,dl, 
+                                               nr,na,nl, false);
+
+   Hex::Quads liste;
+   for (int nx=0; nx<nr; nx++)
+       for (int ny=0; ny<na; ny++)
+           {
+           Hex::Quad* cell = grid->getQuadIJ (nx, ny, nl); 
+           liste.push_back (cell);
+           cell -> setScalar (5);
+           }
 
    Hex::Vertex* center = doc->addVertex (0, -10, 0);
    Hex::Vector* axis   = doc->addVector (1, 0, 0);
@@ -1596,6 +1657,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_transfo (nbargs, tabargs);
+   int ier = test_revolution (nbargs, tabargs);
    return ier;
 }
