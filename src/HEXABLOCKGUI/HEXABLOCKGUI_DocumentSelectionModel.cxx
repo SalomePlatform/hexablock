@@ -207,6 +207,8 @@ void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selec
   _theModelSelectionChanged = true;
   try {
     if ( _salomeSelectionMgr == NULL ) return;
+//     if ( !_theVtkSelectionChanged and  !_theGeomSelectionChanged ) return;
+
     _salomeSelectionMgr->clearSelected();
     //   erasePreview(true);
     QModelIndexList indexes = selected.indexes();
@@ -231,7 +233,7 @@ void PatternDataSelectionModel::salomeSelectionChanged()
   MESSAGE("PatternDataSelectionModel::salomeSelectionChanged");
   try {
     QModelIndex toSelect;
-  
+
     if ( _salomeSelectionMgr == NULL ) return;
     SALOME_ListIO salomeSelected;
   //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
@@ -466,7 +468,8 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
         _theGeomSelectionChanged = true;
         //       select( newIndex, QItemSelectionModel::ClearAndSelect );
         //       select( newIndex, QItemSelectionModel::SelectCurrent );
-        setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
+//         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
+        setCurrentIndex( eltIndex, QItemSelectionModel::Clear );
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
         _theGeomSelectionChanged = false;
       } else {
@@ -503,11 +506,16 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 
   if ( !_theModelSelectionChanged && anIOIndex.isValid() ){ // select in model
     _theVtkSelectionChanged = true;
-    //       select( newIndex, QItemSelectionModel::ClearAndSelect );
+//     select( anIOIndex, QItemSelectionModel::Clear );
+//     select( anIOIndex, QItemSelectionModel::Select );
+//     select( anIOIndex, QItemSelectionModel::ClearAndSelect );
 //     select( anIOIndex, QItemSelectionModel::SelectCurrent );
+//     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
+//     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
+//     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
+//     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
+    setCurrentIndex( anIOIndex, QItemSelectionModel::Clear );
     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
-    setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
-
     _theVtkSelectionChanged = false;
   } else {
     clearSelection();

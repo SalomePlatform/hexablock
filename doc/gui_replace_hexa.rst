@@ -21,20 +21,28 @@ The following data are required:
 	- name  : name of the elements created ( **optionnal** )
 
 - Quad(s) source
-        - the set of quads to be extruded ( select quads )
-	- s1, s2, s3 : vertices from the set of quads. Along with (d1,d2,d3) define the way the operation will be completed ( select vertices )
+        - Quad's source : the set of quads to be extruded ( select quads )
+	- s1, s2, s3 : vertices from the set of quads. ( select vertices )
 
 - Quad destination
         - d1, d2, d3 : vertices which define the target quad. As a result of the operation, each one are replaced : s1->d1, s2->d2, s3->d3  ( select vertices )
 
 
-The result is CS_TODO:
+Here is an example where the quads and vertices source are highlighted:
+
+.. image:: _static/before_replacehexa.png
+   :align: center
+
+.. centered::
+   Source selection
+
+The result is:
 
 .. image:: _static/replacehexa.png
    :align: center
 
 .. centered::
-   Replace hexa
+   Hexa replaced
 
 TUI command: :ref:`tuireplacehexa`
 

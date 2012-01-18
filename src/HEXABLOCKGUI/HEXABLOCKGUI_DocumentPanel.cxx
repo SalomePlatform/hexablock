@@ -291,6 +291,10 @@ void HexaBaseDialog::setDocumentModel(DocumentModel* m)
   _documentModel = m;
 }
 
+void HexaBaseDialog::clear()
+{
+}
+
 
 void HexaBaseDialog::setPatternDataSelectionModel(PatternDataSelectionModel* s)
 {
@@ -338,6 +342,7 @@ void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
   QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
   if ( !currentLineEdit ) return;
 
+  MESSAGE("HexaBaseDialog::onSelectionChanged l.count()=>"<< l.count() );
   if ( l.count() > 0 ){
     QModelIndex selected = l[0];
     int hexaType = selected.data(HEXA_TREE_ROLE).toInt();
@@ -518,6 +523,11 @@ VertexDialog::VertexDialog( QWidget* parent, Qt::WindowFlags f )
 : HexaBaseDialog(parent, f),
   _value(0)
 {
+  QSize s = sizeHint();
+
+  std::cout << "s.height() " <<  s.height();
+  std::cout << "s.width()  " <<  s.width();
+
   _helpFileName = "gui_vertex.html";
   setupUi( this );
   _initButtonBox();
@@ -540,6 +550,11 @@ VertexDialog::~VertexDialog()
 //   if ( _documentModel && _ivalue.isValid() )  _documentModel->setName( _ivalue, newName );
 // }
 
+
+void VertexDialog::clear()
+{
+//   name_le->clear();
+}
 
 void VertexDialog::setValue(HEXA_NS::Vertex* v)
 {
@@ -594,6 +609,7 @@ bool VertexDialog::apply()
         _documentModel->setName(_ivalue, newName);
         if ( ok ){
           //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX UPDATED : %1" ).arg(_ivalue.data().toString()) );
+          clear();
           return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT UPDATE VERTEX" ) );
@@ -618,6 +634,7 @@ bool VertexDialog::apply()
 //               _patternDataSelectionModel->setCurrentIndex ( newIndex, QItemSelectionModel::Select );
 //             }
 //           }
+          clear();
           return true;
         } else {
           SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VERTEX" ) );
@@ -674,6 +691,18 @@ EdgeDialog::EdgeDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 
 EdgeDialog::~EdgeDialog()
 {
+}
+
+
+void EdgeDialog::clear()
+{
+  name_le->clear();
+
+  v0_le_rb0->clear();
+  v1_le_rb0->clear();
+
+  vex_le_rb1->clear();
+  vec_le_rb1->clear();
 }
 
 void EdgeDialog::updateName()
@@ -757,6 +786,7 @@ bool EdgeDialog::apply()
 //     _patternDataSelectionModel->setCurrentIndex ( iEdge, QItemSelectionModel::Select );
 //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE ADDED : %1" ).arg(iEdge.data().toString()) );
 //emit editingFinished();
+  clear();
   return true;
 }
 
@@ -810,6 +840,21 @@ QuadDialog::QuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 
 QuadDialog::~QuadDialog()
 {
+}
+
+void QuadDialog::clear()
+{
+  v0_le_rb0->clear();
+  v1_le_rb0->clear();
+  v2_le_rb0->clear();
+  v3_le_rb0->clear();
+
+  e0_le_rb1->clear();
+  e1_le_rb1->clear();
+  e2_le_rb1->clear();
+  e3_le_rb1->clear();
+
+  name_le->clear();
 }
 
 void QuadDialog::updateName()
@@ -948,6 +993,7 @@ bool QuadDialog::apply()
 //     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
 //     _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
     //emit editingFinished();
+  clear();
   return true;
 }
 
@@ -1004,7 +1050,13 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 
 HexaDialog::~HexaDialog()
 {
+}
 
+void HexaDialog::clear()
+{
+  name_le->clear();
+  quads_lw->clear();
+  vertices_lw->clear();
 }
 
 bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
@@ -1033,25 +1085,20 @@ void HexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelec
 
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
   QListWidgetItem* item = NULL;
+  int hexaType;
   foreach( const QModelIndex& isel, l ){
-    std::cout << "currentLw->count() " << currentLw->count() << std::endl;
     if ( ((currentLw == quads_lw) && (currentLw->count() == 6))
       || ((currentLw == vertices_lw) && (currentLw->count() == 8))
       ){
       break;
     }
-    item = new QListWidgetItem( isel.data().toString() );
-    item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
-    currentLw->addItem(item);
-    
+    hexaType = isel.data(HEXA_TREE_ROLE).toInt();
+    if ( _expectedSelection == hexaType ){
+      item = new QListWidgetItem( isel.data().toString() );
+      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
+      currentLw->addItem(item);
+    }
     updateButtonBox();
-//     if (_currentObj == quads_lw) {
-//  { and (currentLw->count() >= 2) ){
-//       _applyCloseButton->setEnabled(true);
-//       _applyButton->setEnabled(true);
-//     } else if ( _currentObj == vertices_lw ){
-//         if currentLw->count()
-//     }
   }
 }
 
@@ -1215,6 +1262,7 @@ bool HexaDialog::apply()
 
   QString newName = name_le->text();
   if (!newName.isEmpty()) _documentModel->setName( _ivalue, newName );
+  clear();
   return true;
 }
 
@@ -1274,6 +1322,18 @@ VectorDialog::~VectorDialog()
 //   QDialog::showEvent ( event );
 // }
 
+void VectorDialog::clear()
+{
+  name_le->clear();
+
+
+  dx_spb_rb0->clear();
+  dy_spb_rb0->clear();
+  dz_spb_rb0->clear();
+
+  v0_le_rb1->clear();
+  v1_le_rb1->clear();
+}
 
 void VectorDialog::updateName()
 {
@@ -1358,6 +1418,7 @@ bool VectorDialog::apply()
 //     iVector = patternBuilderModel->mapFromSource( iVector );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iVector, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -1401,6 +1462,16 @@ CylinderDialog::~CylinderDialog()
 //   vex_le->setFocus();
 //   QDialog::showEvent ( event );
 // }
+
+void CylinderDialog::clear()
+{
+  name_le->clear();
+  vex_le->clear();
+  vec_le->clear();
+  
+  r_spb->clear();
+  h_spb->clear();
+}
 
 void CylinderDialog::updateName()
 {
@@ -1488,6 +1559,7 @@ bool CylinderDialog::apply()
 //     iCyl = patternBuilderModel->mapFromSource(iCyl);
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCyl, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -1538,6 +1610,17 @@ PipeDialog::~PipeDialog()
 {
 }
 
+void PipeDialog::clear()
+{
+  name_le->clear();
+
+  vex_le->clear();
+  vec_le->clear();
+
+//   ir_spb->clear();
+//   er_spb->clear();
+//   h_spb->clear();
+}
 
 // void PipeDialog::showEvent ( QShowEvent * event )
 // {
@@ -1636,6 +1719,7 @@ bool PipeDialog::apply()
 //     iPipe = patternBuilderModel->mapFromSource( iPipe );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iPipe, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -1704,6 +1788,37 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
 MakeGridDialog::~MakeGridDialog()
 {
 }
+
+void MakeGridDialog::clear()
+{
+  vex_le_rb0->clear();
+  vec_le_rb0->clear();
+//   nx_spb_rb0->clear();
+//   ny_spb_rb0->clear();
+//   nz_spb_rb0->clear();
+
+  base_le_rb1->clear();
+  center_le_rb1->clear();
+  height_le_rb1->clear();
+  
+  random_param_w->clear();
+  radius_lw->clear();
+  angle_lw->clear();
+  height_lw->clear();
+  
+//   dr_spb_rb1->clear();
+//   nr_spb_rb1->clear();
+//   da_spb_rb1->clear();
+//   na_spb_rb1->clear();
+//   dl_spb_rb1->clear();
+//   nl_spb_rb1->clear();
+  
+  vex_le_rb2->clear();
+//   radius_spb_rb2->clear();
+//   nb_spb_rb2->clear();
+//   k_spb_rb2->clear();
+}
+
 
 
 // void MakeGridDialog::showEvent ( QShowEvent * event )
@@ -1926,6 +2041,7 @@ bool MakeGridDialog::apply()
 //     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
     //emit editingFinished();
+  clear();
   return true;
 }
 
@@ -1958,6 +2074,14 @@ MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, bool editMode, Qt::Wind
 MakeCylinderDialog::~MakeCylinderDialog()
 {
 }
+
+
+void MakeCylinderDialog::clear()
+{
+  cyl_le->clear();
+  vec_le->clear();
+}
+
 
 // void MakeCylinderDialog::showEvent ( QShowEvent * event )
 // {
@@ -2000,6 +2124,7 @@ bool MakeCylinderDialog::apply()
 //   _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
 //   _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
   //emit editingFinished();
+  clear();
   return true;
 }
 
@@ -2035,6 +2160,12 @@ MakePipeDialog::MakePipeDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
 
 MakePipeDialog::~MakePipeDialog()
 {
+}
+
+void MakePipeDialog::clear()
+{
+  pipe_le->clear();
+  vec_le->clear();
 }
 
 // void MakePipeDialog::showEvent ( QShowEvent * event )
@@ -2074,6 +2205,7 @@ bool MakePipeDialog::apply()
 //     iElts = patternBuilderModel->mapFromSource( iElts );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -2106,6 +2238,12 @@ MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, bool editMode, Qt::Wi
 
 MakeCylindersDialog::~MakeCylindersDialog()
 {
+}
+
+void MakeCylindersDialog::clear()
+{
+  cyl1_le->clear();
+  cyl2_le->clear();
 }
 
 // void MakeCylindersDialog::showEvent ( QShowEvent * event )
@@ -2143,6 +2281,7 @@ bool MakeCylindersDialog::apply()
 //     iCrossElts = patternBuilderModel->mapFromSource( iCrossElts );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -2177,6 +2316,13 @@ MakePipesDialog::~MakePipesDialog()
 {
 }
 
+void MakePipesDialog::clear()
+{
+  pipe1_le->clear();
+  pipe2_le->clear();
+}
+
+
 // void MakePipesDialog::showEvent ( QShowEvent * event )
 // {
 //   // Default 
@@ -2210,6 +2356,7 @@ bool MakePipesDialog::apply()
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iCrossElts, QItemSelectionModel::Select );
   }
+  clear();
   return true;
 }
 
@@ -2237,6 +2384,11 @@ RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, bool editMode, Qt::WindowFl
 
 RemoveHexaDialog::~RemoveHexaDialog()
 {
+}
+
+void RemoveHexaDialog::clear()
+{
+  hexa_le->clear();
 }
 
 // void RemoveHexaDialog::showEvent ( QShowEvent * event )
@@ -2272,6 +2424,7 @@ bool RemoveHexaDialog::apply()
     return false;
   }
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "HEXA(S) REMOVED" ) );
+  clear();
   return true;
 }
 
@@ -2310,6 +2463,14 @@ PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlag
 PrismQuadDialog::~PrismQuadDialog()
 {
 }
+
+
+void PrismQuadDialog::clear()
+{
+  vec_le->clear();
+  quads_lw->clear();
+}
+
 
 // void PrismQuadDialog::showEvent ( QShowEvent * event )
 // {
@@ -2441,6 +2602,7 @@ bool PrismQuadDialog::apply()
 //     }
 //       //emit editingFinished();
 //   }
+  clear();
   return true;
 }
 
@@ -2487,6 +2649,18 @@ JoinQuadDialog::JoinQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
 JoinQuadDialog::~JoinQuadDialog()
 {
 
+}
+
+void JoinQuadDialog::clear()
+{
+  quads_lw->clear();
+  vex0_le->clear();
+  vex2_le->clear();
+
+
+  quad_dest_le->clear();
+  vex1_le->clear();
+  vex3_le->clear();
 }
 
 // void JoinQuadDialog::showEvent ( QShowEvent * event )
@@ -2602,7 +2776,7 @@ bool JoinQuadDialog::apply()
 //       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
 //     }
 //   }
-
+  clear();
   return true;
 }
 
@@ -2660,6 +2834,21 @@ MergeDialog::~MergeDialog()
 {
 }
 
+void MergeDialog::clear()
+{
+  v0_le_rb0->clear();
+  v1_le_rb0->clear();
+  v0_le_rb1->clear();
+  v1_le_rb1->clear();
+  v0_le_rb2->clear();
+  v1_le_rb2->clear();
+  v2_le_rb2->clear();
+  v3_le_rb2->clear();
+  e0_le_rb1->clear();
+  e1_le_rb1->clear();
+  q0_le_rb2->clear();
+  q1_le_rb2->clear();
+}
 
 void MergeDialog::updateHelpFileName()
 {
@@ -2739,6 +2928,7 @@ bool MergeDialog::apply()
     return false;
   }
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "MERGED" ) );
+  clear();
   return true;
 }
 
@@ -2795,6 +2985,15 @@ DisconnectDialog::~DisconnectDialog()
 {
 }
 
+void DisconnectDialog::clear()
+{
+  v_le_rb0->clear();
+  e_le_rb1->clear();
+  q_le_rb2->clear();
+  h_le_rb0->clear();
+  h_le_rb1->clear();
+  h_le_rb2->clear();
+}
 
 // void DisconnectDialog::showEvent ( QShowEvent * event )
 // {
@@ -2865,6 +3064,7 @@ bool DisconnectDialog::apply()
 //       _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
 //     }
 //   }
+  clear();
   return true;
 }
 
@@ -2895,6 +3095,11 @@ HexaBaseDialog(parent, f)
 
 CutEdgeDialog::~CutEdgeDialog()
 {
+}
+
+void CutEdgeDialog::clear()
+{
+  e_le->clear();
 }
 
 // void CutEdgeDialog::showEvent ( QShowEvent * event )
@@ -2934,6 +3139,7 @@ bool CutEdgeDialog::apply()
 //         _patternBuilderSelectionModel->setCurrentIndex ( iElts, QItemSelectionModel::Select );
 //       }
 //   }
+   clear();
    return true;
 }
 
@@ -2978,12 +3184,22 @@ MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, bool editMo
   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-
 }
 
 
 MakeTransformationDialog::~MakeTransformationDialog()
 {
+}
+
+void MakeTransformationDialog::clear()
+{
+  vex_le_rb1->clear(); 
+  vex_le_rb2->clear();
+  vec_le_rb0->clear();
+  vec_le_rb2->clear();
+  elts_le_rb0->clear();
+  elts_le_rb1->clear();
+  elts_le_rb2->clear();
 }
 
 // void MakeTransformationDialog::showEvent ( QShowEvent * event )
@@ -3057,6 +3273,7 @@ bool MakeTransformationDialog::apply()
 //   iNewElts = patternBuilderModel->mapFromSource( iNewElts );
 //   _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
 //   _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -3106,6 +3323,19 @@ MakeSymmetryDialog::~MakeSymmetryDialog()
 {
 }
 
+void MakeSymmetryDialog::clear()
+{
+  vex_le_rb0->clear();
+  vex_le_rb1->clear();
+  vex_le_rb2->clear();
+
+  vec_le_rb1->clear();
+  vec_le_rb2->clear();
+
+  elts_le_rb0->clear();
+  elts_le_rb1->clear();
+  elts_le_rb2->clear();
+}
 
 // void MakeSymmetryDialog::showEvent ( QShowEvent * event )
 // {
@@ -3179,6 +3409,7 @@ bool MakeSymmetryDialog::apply()
 //     iNewElts = patternBuilderModel->mapFromSource( iNewElts );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Clear );
 //     _patternBuilderSelectionModel->setCurrentIndex ( iNewElts, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -3230,6 +3461,12 @@ PerformTransformationDialog::~PerformTransformationDialog()
 {
 }
 
+void PerformTransformationDialog::clear()
+{
+  vex_le_rb1->clear(); vex_le_rb2->clear();
+  vec_le_rb0->clear(); vec_le_rb2->clear();
+  elts_le_rb0->clear(); elts_le_rb1->clear(); elts_le_rb2->clear();
+}
 
 void PerformTransformationDialog::updateHelpFileName()
 {
@@ -3298,6 +3535,7 @@ bool PerformTransformationDialog::apply()
     return false;
   }
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "TRANSFORMATION DONE" ) );
+  clear();
   return true;
 }
 
@@ -3346,6 +3584,13 @@ PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, bool editMode, Qt
 
 PerformSymmetryDialog::~PerformSymmetryDialog()
 {
+}
+
+void PerformSymmetryDialog::clear()
+{
+  vex_le_rb0->clear(); vex_le_rb1->clear(); vex_le_rb2->clear();
+  vec_le_rb1->clear(); vec_le_rb2->clear();
+  elts_le_rb0->clear(); elts_le_rb1->clear(); elts_le_rb2->clear();
 }
 
 // void PerformSymmetryDialog::showEvent ( QShowEvent * event )
@@ -3415,6 +3660,7 @@ bool PerformSymmetryDialog::apply()
     return false;
   }
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "SYMMETRY DONE" ) );
+  clear();
   return true;
 }
 
@@ -3520,7 +3766,17 @@ _ivertex  ( new QModelIndex() )
   connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
   connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
   connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
+}
 
+
+VertexAssocDialog::~VertexAssocDialog() 
+{
+}
+
+
+void VertexAssocDialog::clear()
+{
+  _vertex_le->clear();
 }
 
 
@@ -3586,7 +3842,8 @@ bool VertexAssocDialog::apply()
 //  SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "VERTEX ASSOCIATION OK : %1" ).arg(iVertex.data().toString()) );
 //  _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Clear );
 //  _patternDataSelectionModel->setCurrentIndex ( *_ivertex , QItemSelectionModel::Select );
-
+    clear();
+    return true;
   } else  {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE VERTEX ASSOCIATION" ) );
     return false;
@@ -3620,9 +3877,10 @@ bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
     }
 }
 
-VertexAssocDialog::~VertexAssocDialog() 
-{
-}
+
+
+
+
 
 // // ------------------------- EdgeAssocDialog ----------------------------------
 EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ): 
@@ -3659,6 +3917,9 @@ GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent())  ) //
   // for geom selection :
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+
+  std::cout << "XXXXXXXXXXXXXXXXX _mgr "<<_mgr<<std::endl;
+  std::cout << "XXXXXXXXXXXXXXXXX _mgr->isSelectionCacheEnabled() "<<_mgr->isSelectionCacheEnabled()<<std::endl;
   connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
 
   connect( pstart_spb, SIGNAL(valueChanged(double)), this, SLOT( pstartChanged(double)) );
@@ -3678,6 +3939,13 @@ EdgeAssocDialog::~EdgeAssocDialog()
 
 //   delete _delEdgeShortcut;
 //   delete _delLineShortcut;
+}
+
+void EdgeAssocDialog::clear()
+{
+  first_vex_le->clear();
+  edges_lw->clear();
+  lines_lw->clear();
 }
 
 
@@ -3711,6 +3979,7 @@ void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
   _geomEngine = geomEngine;
 }
 
+
 bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
 //     std::cout << "QApplication::focusWidget ()"<< QApplication::focusWidget ()<< std::endl;
@@ -3733,24 +4002,24 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 
 void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-//   std::cout << "EdgeAssocDialog::onSelectionChanged "<< std::endl;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
 
   if ( _currentObj == edges_lw ){
     QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
     QListWidgetItem* item = NULL;
+    int hexaType;
     foreach( const QModelIndex& isel, l ){
-      item = new QListWidgetItem( isel.data().toString() );
-      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
-      edges_lw->addItem(item);
+      hexaType = isel.data(HEXA_TREE_ROLE).toInt();
+      if ( _expectedSelection == hexaType ){
+        item = new QListWidgetItem( isel.data().toString() );
+        item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
+        edges_lw->addItem(item);
+      }
     }
-//     int r = edges_lw->count() - 1;
-//     edges_lw->setCurrentRow(r);
   } else {
     return HexaBaseDialog::onSelectionChanged( sel, unsel );
   }
-
 }
 
 
@@ -3801,7 +4070,7 @@ void EdgeAssocDialog::pendChanged( double val )
 
 void EdgeAssocDialog::addLine()
 {
-//   std::cout << "EdgeAssocDialog::addLine()"<< std::endl;
+  std::cout << "EdgeAssocDialog::addLine()"<< std::endl;
   if ( !isVisible() ) return;
 
   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_EDGE);
@@ -3840,9 +4109,9 @@ void EdgeAssocDialog::addLine()
     aLine.brep  = brep;
     aLine.start = 0.;
     aLine.end   = 1.;
-// //     std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
-// //     std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
-// //     std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
+    std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
+    std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
+    std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
 
     item  = new QListWidgetItem( aLine.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
@@ -3899,6 +4168,7 @@ bool EdgeAssocDialog::apply()
   }
 
   //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "EDGE(S) ASSOCIATION OK : " ) );
+  clear();
   return true;
 }
 
@@ -3947,6 +4217,12 @@ QuadAssocDialog::~QuadAssocDialog()
   disconnect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
   disconnect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
   delete _delFaceShortcut;
+}
+
+void QuadAssocDialog::clear()
+{
+  quad_le->clear();
+  faces_lw->clear();
 }
 
 
@@ -4069,6 +4345,7 @@ bool QuadAssocDialog::apply()
 //   iQuad = patternDataModel->mapFromSource( iQuad );
 //   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Clear );
 //   _patternDataSelectionModel->setCurrentIndex ( iQuad, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -4117,6 +4394,11 @@ GroupDialog::~GroupDialog()
 {
 }
 
+void GroupDialog::clear()
+{
+  name_le->clear();
+  eltBase_lw->clear();
+}
 
 // void GroupDialog::showEvent ( QShowEvent * event )
 // {
@@ -4296,6 +4578,7 @@ bool GroupDialog::apply()
 //     iGrp = groupsModel->mapFromSource( iGrp );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Clear );
 //     _groupsSelectionModel->setCurrentIndex ( iGrp, QItemSelectionModel::Select );
+  clear();
   return true;
 }
 
@@ -4337,6 +4620,10 @@ LawDialog::~LawDialog()
 {
 }
 
+void LawDialog::clear()
+{
+  name_le->clear();
+}
 
 void LawDialog::setValue(HEXA_NS::Law* l)
 {
@@ -4404,7 +4691,7 @@ bool LawDialog::apply()
 //     _meshSelectionModel->setCurrentIndex( iLaw, QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Clear );
 //     _meshSelectionModel->setCurrentIndex ( iLaw, QItemSelectionModel::Select );
-
+  clear();
   return true;
 }
 
@@ -4442,6 +4729,11 @@ PropagationDialog::~PropagationDialog()
 {
 }
 
+
+void PropagationDialog::clear()
+{
+  law_le->clear();
+}
 // void PropagationDialog::showEvent ( QShowEvent * event )
 // {
 // //   law_le->setFocus();
@@ -4511,6 +4803,7 @@ bool PropagationDialog::apply()
 //     _meshSelectionModel->select( iPropagation, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Current );
 //     _meshSelectionModel->setCurrentIndex( iPropagation, QItemSelectionModel::Current );
 //   SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "PROPAGATION SETTED" ) );
+  clear();
   return true;
 }
 
@@ -4584,6 +4877,9 @@ HexaBaseDialog(parent, f)
 ComputeMeshDialog::~ComputeMeshDialog() {
 }
 
+void ComputeMeshDialog::clear()
+{
+}
 
 bool ComputeMeshDialog::apply()
 {
@@ -4604,6 +4900,7 @@ bool ComputeMeshDialog::apply()
   else
     return false;
 
+  clear();
   return true;
 }
 
@@ -4668,6 +4965,10 @@ ReplaceHexaDialog::~ReplaceHexaDialog()
 {
 }
 
+void ReplaceHexaDialog::clear()
+{
+}
+
 bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 {
   if ( (obj == quads_lw) and (event->type() == QEvent::FocusIn) ){
@@ -4684,24 +4985,19 @@ bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 void ReplaceHexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
   QModelIndexList l = sel.indexes();
-  std::cout << "B" << std::endl;
   if ( l.count() == 0 ) return;
-  std::cout << "C" << std::endl;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
-  std::cout << "D" << std::endl;
   QListWidget*    currentLw = dynamic_cast<QListWidget*>( _currentObj );
-  std::cout << "E" << std::endl;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes();
-  std::cout << "F" << std::endl;
   QListWidgetItem* item = NULL;
+  int hexaType;
   foreach( const QModelIndex& isel, l ){
-    std::cout << "G" << std::endl;
-    item = new QListWidgetItem( isel.data().toString() );
-    std::cout << "H" << std::endl;
-    item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
-    std::cout << "I" << std::endl;
-    currentLw->addItem(item);
-    std::cout << "J" << std::endl;
+    hexaType = isel.data(HEXA_TREE_ROLE).toInt();
+    if ( _expectedSelection == hexaType ){
+      item = new QListWidgetItem( isel.data().toString() );
+      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
+      currentLw->addItem(item);
+    }
     updateButtonBox();
   }
 }
@@ -4784,6 +5080,8 @@ bool ReplaceHexaDialog::apply()
   QString newName = name_le->text();
   if (!newName.isEmpty()) _documentModel->setName( ielts, newName );
 
+  clear();
+
   return true;
 }
 
@@ -4827,6 +5125,9 @@ QuadRevolutionDialog::~QuadRevolutionDialog()
 {
 }
 
+void QuadRevolutionDialog::clear()
+{
+}
 
 bool QuadRevolutionDialog::eventFilter(QObject *obj, QEvent *event)
 {
@@ -4858,10 +5159,14 @@ void QuadRevolutionDialog::onSelectionChanged( const QItemSelection& sel, const 
   QListWidget*    currentLw = dynamic_cast<QListWidget*>( _currentObj );
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes();
   QListWidgetItem* item = NULL;
+  int hexaType;
   foreach( const QModelIndex& isel, l ){
-    item = new QListWidgetItem( isel.data().toString() );
-    item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
-    currentLw->addItem(item);
+    hexaType = isel.data(HEXA_TREE_ROLE).toInt();
+    if ( _expectedSelection == hexaType ){
+      item = new QListWidgetItem( isel.data().toString() );
+      item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
+      currentLw->addItem(item);
+    }
     updateButtonBox();
   }
 }
@@ -4957,6 +5262,7 @@ bool QuadRevolutionDialog::apply()
   QString newName = name_le->text();
   if (!newName.isEmpty()) _documentModel->setName( ielts, newName );
 
+  clear();
   return true;
 }
 
@@ -4992,6 +5298,9 @@ MakeHemiSphereDialog::~MakeHemiSphereDialog()
 }
 
 
+void MakeHemiSphereDialog::clear()
+{
+}
 
 bool MakeHemiSphereDialog::apply()
 {
@@ -5060,6 +5369,7 @@ bool MakeHemiSphereDialog::apply()
   QString newName = name_le->text();
   if (!newName.isEmpty()) _documentModel->setName( iElts, newName );
 
+  clear();
   return true;
 }
 

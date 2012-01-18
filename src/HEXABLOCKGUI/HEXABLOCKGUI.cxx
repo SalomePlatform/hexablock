@@ -288,8 +288,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
 
 
-
-
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
   SUIT_ViewManager* vm;
@@ -312,8 +310,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
     if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
       sr->setEnabled(true);
 
-
-
   _hexaEngine->SetCurrentStudy(SALOMEDS::Study::_nil());
   if ( SalomeApp_Study* s = dynamic_cast<SalomeApp_Study*>( theStudy ))
     if ( _PTR(Study) aStudy = s->studyDS()) {
@@ -321,6 +317,7 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
       _hexaEngine->SetCurrentStudy( _CAST(Study,aStudy)->GetStudy() );
       updateObjBrowser(); // objects can be removed
     }
+
 
   return bOk;
 }
@@ -351,7 +348,6 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 //     delete _patternBuilderSelectionModel;
 //     _patternBuilderSelectionModel = NULL;
 //   }
-
   return SalomeApp_Module::deactivateModule( theStudy );
 }
 
@@ -455,34 +451,34 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 
 void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 {
+  DEBTRACE("HEXABLOCKGUI::onViewManagerAdded");
   if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
   {
-    qDebug( "connect" );
-//     connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
-//              this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
-//     connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
-//              this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
-//     connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
-//              this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
-
-    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
-    myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
-
-    // disable OCC selectors
-    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
-    while ( itOCCSel.hasNext() )
-      if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-        sr->setEnabled(true);
+//     qDebug( "connect" );
+// //     connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
+// //              this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
+// //     connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
+// //              this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+// //     connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
+// //              this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
+//     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+//     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+// 
+//     // disable OCC selectors
+//     getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+//     QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+//     while ( itOCCSel.hasNext() )
+//       if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() ){
+//         sr->setEnabled(true);
+//         std::cout<<"HEXABLOCKGUI::onViewManagerAdded sr"<<sr;
+//       }
   }
-
-
-
+  DEBTRACE("HEXABLOCKGUI::onViewManagerAdded");
 }
 
 void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* )
 {
-
+  DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");
 }
 
 
@@ -628,7 +624,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 //   _dwInputPanel->setMinimumHeight(DWINPUT_MINIMUM_HEIGHT);
   _dwInputPanel->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
   _dwInputPanel->raise();
-
 
   _treeViewDelegate = new DocumentDelegate(_dwInputPanel);
 
@@ -1988,6 +1983,7 @@ void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
   diag->setFocus();
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle( tr("INPUT PANEL : %1").arg(diag->windowTitle()) );
+
 }
 
 

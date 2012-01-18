@@ -2473,22 +2473,28 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
   QList<DocumentModel::GeomObj> res;
   DocumentModel::GeomObj        assoc;
 
-  std::cout << "getAssociations() start"  << std::endl;
+//   std::cout << "getAssociations() start"  << std::endl;
   if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
     HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
     HEXA_NS::Shape* hShape = hVex->getAssociation();
     QStringList shapeID;
     if ( hShape != NULL ){
-      shapeID = QString( hShape->ident.c_str() ).split(",");
-      assoc.entry = shapeID[0];
-      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
-      assoc.name  = _assocName[assoc.entry];
+      assoc.entry = "";
+      assoc.subid = QString::number(-1);
+      assoc.name  = "";
       assoc.brep  = hShape->getBrep().c_str();
       assoc.start = hShape->debut;
       assoc.end   = hShape->fin;
-      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
-      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
-      std::cout << "-----------"  << std::endl;
+
+      shapeID = QString( hShape->ident.c_str() ).split(",");
+      if ( shapeID.count() == 2 ){
+        assoc.entry = shapeID[0];
+        assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
+        assoc.name  = _assocName[assoc.entry];
+      }
+//       std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+//       std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+//       std::cout << "-----------"  << std::endl;
       res << assoc;
     }
   } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
@@ -2496,16 +2502,25 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
     HEXA_NS::Shapes  hShapes = hEdge->getAssociations();
     QStringList shapeID;
     for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
-      shapeID = QString( (*it)->ident.c_str() ).split(",");
-      assoc.entry = shapeID[0];
-      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
-      assoc.name  = _assocName[assoc.entry];
+      assoc.entry = "";
+      assoc.subid = QString::number(-1);
+      assoc.name  = "";
       assoc.brep  = (*it)->getBrep().c_str();
       assoc.start = (*it)->debut;
       assoc.end   = (*it)->fin;
-      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
-      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
-      std::cout << "-----------"  << std::endl;
+
+      shapeID = QString( (*it)->ident.c_str() ).split(",");
+      if ( shapeID.count() == 2 ){
+        assoc.entry = shapeID[0];
+        assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
+        assoc.name  = _assocName[assoc.entry];
+      }
+//       std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+//       std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+//       std::cout << "assoc.brep"  << assoc.brep.toStdString()<< std::endl;
+//       std::cout << "assoc.start"  << assoc.start<< std::endl;
+//       std::cout << "assoc.end"  << assoc.end<< std::endl;
+//       std::cout << "-----------"  << std::endl;
       res << assoc;
     }
   } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
@@ -2513,22 +2528,28 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
     HEXA_NS::Shapes  hShapes = hQuad->getAssociations();
     QStringList shapeID;
     for ( HEXA_NS::Shapes::iterator it = hShapes.begin(); it != hShapes.end(); ++it){
-      shapeID = QString( (*it)->ident.c_str() ).split(",");
-      assoc.entry = shapeID[0];
-      assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
-      assoc.name  = _assocName[assoc.entry];
-//       std::cout << "(*it)->getBrep() =>"  << (*it)->getBrep()<< std::endl;
+      assoc.entry = "";
+      assoc.subid = QString::number(-1);
+      assoc.name  = "";
       assoc.brep  = (*it)->getBrep().c_str();
       assoc.start = (*it)->debut;
       assoc.end   = (*it)->fin;
-      std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
-      std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
-      std::cout << "-----------"  << std::endl;
+//       std::cout << "assoc.entry"  << assoc.entry.toStdString() << std::endl;
+//       std::cout << "assoc.subid"  << assoc.subid.toStdString() << std::endl;
+//       std::cout << "-----------"  << std::endl;
+
+      shapeID = QString( (*it)->ident.c_str() ).split(",");
+      if ( shapeID.count() == 2 ){
+        assoc.entry = shapeID[0];
+        assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
+        assoc.name  = _assocName[assoc.entry];
+      }
+
       res << assoc;
     }
   }
 
-  std::cout << "getAssociations() end"  << std::endl;
+//   std::cout << "getAssociations() end"  << std::endl;
   return res;
 }
 

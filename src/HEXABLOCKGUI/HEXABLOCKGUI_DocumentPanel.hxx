@@ -115,6 +115,9 @@ namespace HEXABLOCK
           HexaBaseDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
           virtual ~HexaBaseDialog();
 
+          // clear all input widget
+          virtual void clear();
+
           //  model
           virtual void setDocumentModel( DocumentModel* m );
 
@@ -206,6 +209,8 @@ namespace HEXABLOCK
         VertexDialog( QWidget* = 0, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~VertexDialog();
 
+        void clear();
+
         void setValue(HEXA_NS::Vertex* v);
         HEXA_NS::Vertex* getValue();
 
@@ -231,6 +236,8 @@ namespace HEXABLOCK
         EdgeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~EdgeDialog();
 
+        void clear();
+
         void setValue(HEXA_NS::Edge* e);
         HEXA_NS::Edge* getValue();
 
@@ -252,6 +259,8 @@ namespace HEXABLOCK
       public:
         QuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadDialog();
+
+        void clear();
 
         void setValue(HEXA_NS::Quad* v);
         HEXA_NS::Quad* getValue();
@@ -275,6 +284,8 @@ namespace HEXABLOCK
       public:
         HexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~HexaDialog();
+
+        void clear();
 
         void setValue(HEXA_NS::Hexa* v);
         HEXA_NS::Hexa* getValue();
@@ -310,6 +321,8 @@ namespace HEXABLOCK
         VectorDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~VectorDialog();
 
+        void clear();
+
         void setValue(HEXA_NS::Vector* v);
         HEXA_NS::Vector* getValue();
 
@@ -332,6 +345,8 @@ namespace HEXABLOCK
       public:
         CylinderDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~CylinderDialog();
+
+        void clear();
 
         void setValue( HEXA_NS::Cylinder* v );
         HEXA_NS::Cylinder* getValue();
@@ -356,6 +371,8 @@ namespace HEXABLOCK
         PipeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PipeDialog();
 
+        void clear();
+
         void setValue( HEXA_NS::Pipe* p );
         HEXA_NS::Pipe* getValue();
 
@@ -379,6 +396,8 @@ namespace HEXABLOCK
       public:
         MakeGridDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeGridDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -409,6 +428,8 @@ namespace HEXABLOCK
         MakeCylinderDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeCylinderDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
   };
@@ -422,6 +443,8 @@ namespace HEXABLOCK
       public:
         MakePipeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakePipeDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -437,6 +460,8 @@ namespace HEXABLOCK
         MakeCylindersDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeCylindersDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
   };
@@ -450,6 +475,8 @@ namespace HEXABLOCK
       public:
         MakePipesDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakePipesDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -466,6 +493,8 @@ namespace HEXABLOCK
         RemoveHexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~RemoveHexaDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
   };
@@ -479,6 +508,8 @@ namespace HEXABLOCK
       public:
         PrismQuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PrismQuadDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -501,6 +532,8 @@ namespace HEXABLOCK
       public:
         JoinQuadDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~JoinQuadDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -525,6 +558,8 @@ namespace HEXABLOCK
         MergeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MergeDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
 
@@ -544,6 +579,8 @@ namespace HEXABLOCK
         DisconnectDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~DisconnectDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
 
@@ -562,6 +599,8 @@ namespace HEXABLOCK
         CutEdgeDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~CutEdgeDialog();
 
+        void clear();
+
       public slots:
         virtual bool apply();
    };
@@ -575,6 +614,8 @@ namespace HEXABLOCK
       public:
         MakeTransformationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeTransformationDialog ();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -592,6 +633,8 @@ namespace HEXABLOCK
       public:
         MakeSymmetryDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeSymmetryDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -612,6 +655,8 @@ namespace HEXABLOCK
         PerformTransformationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PerformTransformationDialog ();
 
+        void clear();
+
       public slots:
         virtual bool apply();
 
@@ -628,6 +673,8 @@ namespace HEXABLOCK
       public:
         PerformSymmetryDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PerformSymmetryDialog();
+
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -660,6 +707,7 @@ namespace HEXABLOCK
       public:
         VertexAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );
         virtual ~VertexAssocDialog();
+        void clear();
 
         void setDocumentModel(DocumentModel* m);
         void setPatternDataSelectionModel(PatternDataSelectionModel* s);
@@ -692,7 +740,7 @@ namespace HEXABLOCK
       public:
         EdgeAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~EdgeAssocDialog();
-
+        void clear();
 
         void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
 
@@ -742,6 +790,7 @@ namespace HEXABLOCK
       public:
         QuadAssocDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadAssocDialog();
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -771,6 +820,7 @@ namespace HEXABLOCK
       public:
         GroupDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~GroupDialog();
+        void clear();
 
         void setValue(HEXA_NS::Group* v);
         HEXA_NS::Group* getValue();
@@ -800,6 +850,7 @@ namespace HEXABLOCK
       public:
         LawDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~LawDialog();
+        void clear();
 
         void setValue(HEXA_NS::Law* v);
         HEXA_NS::Law* getValue();
@@ -822,6 +873,7 @@ namespace HEXABLOCK
       public:
         PropagationDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PropagationDialog();
+        void clear();
 
         void setValue(HEXA_NS::Propagation* v);
         HEXA_NS::Propagation* getValue();
@@ -848,6 +900,7 @@ namespace HEXABLOCK
       public:
         ComputeMeshDialog( QWidget* parent = 0, bool editMode = false, Qt::WindowFlags f = Qt::SubWindow );
         virtual ~ComputeMeshDialog();
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -870,6 +923,7 @@ namespace HEXABLOCK
       public:
         ReplaceHexaDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~ReplaceHexaDialog();
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -895,6 +949,7 @@ namespace HEXABLOCK
       public:
         QuadRevolutionDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadRevolutionDialog();
+        void clear();
 
       public slots:
         virtual bool apply();
@@ -920,6 +975,7 @@ namespace HEXABLOCK
       public:
         MakeHemiSphereDialog( QWidget* = 0, bool = false, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~MakeHemiSphereDialog();
+        void clear();
 
 //         void setValue(HEXA_NS::Propagation* v);
 //         HEXA_NS::Propagation* getValue();
