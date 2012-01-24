@@ -718,6 +718,10 @@ namespace HEXABLOCK
 
       protected:
         bool eventFilter(QObject *obj, QEvent *event);
+        void _raiseCurrentOccView();
+
+      protected slots:
+        void onWindowActivated(SUIT_ViewManager* vm);
 
       private:
         DocumentModel*              _documentModel;
@@ -756,6 +760,8 @@ namespace HEXABLOCK
 
       protected slots:
         virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
+        void onWindowActivated(SUIT_ViewManager*);
 
         void deleteEdgeItem();
         void deleteLineItem();
@@ -799,6 +805,7 @@ namespace HEXABLOCK
         virtual bool eventFilter(QObject *obj, QEvent *event);
 
       protected slots:
+        void onWindowActivated(SUIT_ViewManager*);
         void addFace();
         void deleteFaceItem();
 

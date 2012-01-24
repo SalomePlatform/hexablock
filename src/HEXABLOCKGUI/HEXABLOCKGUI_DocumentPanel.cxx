@@ -16,6 +16,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
+#include <OCCViewer_ViewWindow.h>
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 #include "HEXABLOCKGUI_DocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
@@ -33,9 +35,10 @@
 #include <Standard_GUID.hxx>
 #include <TDF_Label.hxx>
 
+#include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
-#include <OCCViewer_ViewModel.h>
-// #include <OCCViewer_ViewWindow.h>
+// #include <OCCViewer_ViewModel.h>
+
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -52,6 +55,7 @@
 #include <SUIT_Session.h>
 #include "SVTK_Selection.h"
 #include <SVTK_ViewModel.h>
+#include <VTKViewer_ViewModel.h>
 
 #include <SUIT_ResourceMgr.h>
 
@@ -3766,6 +3770,18 @@ _ivertex  ( new QModelIndex() )
   connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
   connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
   connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
+
+
+  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+//   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+  SUIT_ViewManager* vtkVm    = anApp->getViewManager( SVTK_Viewer::Type(),      true );
+  SUIT_ViewManager* occVm    = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
+  SUIT_ViewManager* activeVm = anApp->activeViewManager();
+
+//   connect( _mgr,  SIGNAL( currentSelectionChanged() ), this, SLOT( addLine() ) );
+  connect( vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  connect( occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  onWindowActivated ( activeVm );
 }
 
 
@@ -3774,11 +3790,24 @@ VertexAssocDialog::~VertexAssocDialog()
 }
 
 
+void VertexAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
+{
+  SUIT_ViewWindow* v = vm->getActiveView();
+  QString     vmType = vm->getType();
+  if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
+    _vertex_le->setFocus();
+    std::cout << "_vertex_le->setFocus =>"<< std::endl;
+  } /*else if ( vmType == OCCViewer_Viewer::Type() ){
+    lines_lw->setFocus();
+    std::cout << "lines_lw->setFocus =>"<< std::endl;
+  }*/
+}
+
+
 void VertexAssocDialog::clear()
 {
   _vertex_le->clear();
 }
-
 
 
 void VertexAssocDialog::setDocumentModel(DocumentModel* m)
@@ -3790,6 +3819,7 @@ void VertexAssocDialog::setPatternDataSelectionModel(PatternDataSelectionModel* 
 {
   _patternDataSelectionModel = s;
   _patternDataSelectionModel->clearSelection();
+
   connect( _patternDataSelectionModel,
            SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
            this,
@@ -3868,6 +3898,8 @@ bool VertexAssocDialog::apply()
 bool VertexAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if ( obj == _vertex_le and event->type() == QEvent::FocusIn ){ //QEvent::KeyPress) { 
+      HEXABLOCKGUI::currentVtkView->raise();
+      HEXABLOCKGUI::currentVtkView->setFocus();
       _documentModel->disallowEdition();
       _patternDataSelectionModel->setVertexSelection();
       return false;
@@ -3911,20 +3943,22 @@ GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent())  ) //
   delEdgeShortcut->setContext( Qt::WidgetShortcut );
   //Qt::ApplicationShortcut);//Qt::WidgetWithChildrenShortcut);//Qt::WidgetShortcut );
 
-  connect(delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()));
-  connect(delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()));
-
-  // for geom selection :
+  // for geom, vtk selection :
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+  SUIT_ViewManager* vtkVm    = anApp->getViewManager( SVTK_Viewer::Type(),      true );
+  SUIT_ViewManager* occVm    = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
+  SUIT_ViewManager* activeVm = anApp->activeViewManager();
 
-  std::cout << "XXXXXXXXXXXXXXXXX _mgr "<<_mgr<<std::endl;
-  std::cout << "XXXXXXXXXXXXXXXXX _mgr->isSelectionCacheEnabled() "<<_mgr->isSelectionCacheEnabled()<<std::endl;
-  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT( addLine() ) );
+  connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
+  connect( delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()) );
+  connect( pstart_spb, SIGNAL(valueChanged(double)),      this, SLOT( pstartChanged(double)) );
+  connect( pend_spb,   SIGNAL(valueChanged(double)),      this, SLOT( pendChanged(double)) );
 
-  connect( pstart_spb, SIGNAL(valueChanged(double)), this, SLOT( pstartChanged(double)) );
-  connect( pend_spb,   SIGNAL(valueChanged(double)), this, SLOT( pendChanged(double)) );
-
+  connect( _mgr,  SIGNAL( currentSelectionChanged() ), this, SLOT( addLine() ) );
+  connect( vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  connect( occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  onWindowActivated ( activeVm );
 }
 
 
@@ -3985,12 +4019,16 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 //     std::cout << "QApplication::focusWidget ()"<< QApplication::focusWidget ()<< std::endl;
   if ( ( obj == lines_lw ) and  ( event->type() == QEvent::FocusIn ) ){
 //     std::cout << "obj == lines_lw XXXXXXXXXXXXXXX "<< std::endl;
+    HEXABLOCKGUI::currentOccView->raise();
+    HEXABLOCKGUI::currentOccView->setFocus();
     globalSelection(); // close local contexts, if any
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
     _currentObj = obj;
     return false;
   } else if ( ( obj == edges_lw ) and  ( event->type() == QEvent::FocusIn ) ){
 //     std::cout << "obj == edges_lw XXXXXXXXXXXXXXX "<< std::endl;
+    HEXABLOCKGUI::currentVtkView->raise();
+    HEXABLOCKGUI::currentVtkView->setFocus();
     _setEdgeSelectionOnly();
     _currentObj = obj;
     return false;
@@ -4022,6 +4060,26 @@ void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItem
   }
 }
 
+
+void EdgeAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
+{
+  SUIT_ViewWindow* v = vm->getActiveView();
+
+//   std::cout << "onWindowActivated vm                  =>"<< vm << std::endl;
+//   std::cout << "onWindowActivated vm->getActiveView() =>"<< vm->getActiveView() << std::endl;
+//   std::cout << "HEXABLOCKGUI::currentOccView                    => "<< HEXABLOCKGUI::currentOccView << std::endl;
+//   std::cout << "HEXABLOCKGUI::currentOccView->getViewManager()  => "<< HEXABLOCKGUI::currentOccView->getViewManager() << std::endl;
+//   std::cout << "HEXABLOCKGUI::currentVtkView                    => "<< HEXABLOCKGUI::currentVtkView << std::endl;
+//   std::cout << "HEXABLOCKGUI::currentVtkView->getViewManager()  => "<< HEXABLOCKGUI::currentVtkView->getViewManager() << std::endl;
+  QString vmType = vm->getType();
+  if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
+    edges_lw->setFocus();
+    std::cout << "edges_lw->setFocus =>"<< std::endl;
+  } else if ( vmType == OCCViewer_Viewer::Type() ){
+    lines_lw->setFocus();
+    std::cout << "lines_lw->setFocus =>"<< std::endl;
+  }
+}
 
 
 GEOM::GEOM_IOperations_ptr EdgeAssocDialog::createOperation()
@@ -4201,14 +4259,18 @@ GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent()) )
 
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+  SUIT_ViewManager* vtkVm    = anApp->getViewManager( SVTK_Viewer::Type(),      true );
+  SUIT_ViewManager* occVm    = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
+  SUIT_ViewManager* activeVm = anApp->activeViewManager();
 
   _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_X/*Qt::Key_Delete*/), faces_lw );
   _delFaceShortcut->setContext( Qt::WidgetShortcut );
-  connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
-  //Qt::ApplicationShortcut);//Qt::WidgetWithChildrenShortcut);//Qt::WidgetShortcut );
 
-//   connect(_mgr, SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+  connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
+  connect( _mgr,  SIGNAL( currentSelectionChanged() ), this, SLOT( addFace() ) );
+  connect( vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  connect( occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+  onWindowActivated ( activeVm );
 }
 
 
@@ -4225,19 +4287,37 @@ void QuadAssocDialog::clear()
   faces_lw->clear();
 }
 
-
 bool QuadAssocDialog::eventFilter(QObject *obj, QEvent *event)
 {
   std::cout << "QuadAssocDialog::eventFilter "<< std::endl;
   if ( (obj == faces_lw) and  (event->type() == QEvent::FocusIn) ){
     std::cout << "obj == faces_lw XXXXXXXXXXXXXXX "<< std::endl;
+    HEXABLOCKGUI::currentOccView->raise();
+    HEXABLOCKGUI::currentOccView->setFocus();
     globalSelection(); // close local contexts, if any
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
 //     activate( TopAbs_FACE );
     _currentObj = obj;
     return true;
+  } else if ( (obj == quad_le) and (event->type() == QEvent::FocusIn) ){
+    HEXABLOCKGUI::currentVtkView->raise();
+    HEXABLOCKGUI::currentVtkView->setFocus();
+    return HexaBaseDialog::eventFilter(obj, event);
   } else {
     return HexaBaseDialog::eventFilter(obj, event);
+  }
+}
+
+void QuadAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
+{
+  SUIT_ViewWindow* v = vm->getActiveView();
+  QString     vmType = vm->getType();
+  if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
+    quad_le->setFocus();
+    std::cout << "quad_le->setFocus =>"<< std::endl;
+  } else if ( vmType == OCCViewer_Viewer::Type() ){
+    faces_lw->setFocus();
+    std::cout << "faces_lw->setFocus =>"<< std::endl;
   }
 }
 
