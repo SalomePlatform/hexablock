@@ -941,7 +941,7 @@ Elements* Document::makeCylinder (Cylinder* cyl, Vector* base, int nr, int na,
 // ======================================================== makeCylinders
 CrossElements* Document::makeCylinders (Cylinder* cyl1, Cylinder* cyl2)
 {
-   CrossElements* grille = new CrossElements (this);
+   CrossElements* grille = new CrossElements (this, GR_BICYL);
    grille->crossCylinders (cyl1, cyl2, true);
    return grille;
 }
@@ -956,7 +956,7 @@ Elements* Document::makePipe (Pipe* pipe, Vector* bx, int nr, int na, int nl)
 // ======================================================== makePipes
 CrossElements* Document::makePipes (Pipe* pipe1, Pipe* pipe2)
 {
-   CrossElements* grille = new CrossElements (this);
+   CrossElements* grille = new CrossElements (this, GR_BIPIPE);
    grille->crossCylinders (pipe1, pipe2, false);
    return grille;
 }

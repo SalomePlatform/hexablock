@@ -34,22 +34,17 @@
 
 static bool   db  = false;
 
-static const int    NbrIntCotes = 4;
-static const int    MaxLevel    = 7;
-
-static const double epaiss2 = 0.5;
 static const double UnSur2pi = DEMI/M_PI;
 
 BEGIN_NAMESPACE_HEXA
 
-double calcul_centre (Vertex* orig, Vertex* inter); 
 void geom_create_circle (double* milieu, double rayon, double* normale, 
                          double* base, string& brep);
 
 void geom_define_line (string& brep);
 void geom_asso_point  (double angle, Vertex* node);
 
-// ====================================================== crossCylinders
+// ====================================================== Constructeur
 CrossElements::CrossElements (Document* doc, EnumGrid type) 
              : Elements (doc)
 {
@@ -59,20 +54,21 @@ CrossElements::CrossElements (Document* doc, EnumGrid type)
    cross_center = NULL;
    grid_type    = type;
    angle_inter [CylSmall] = angle_inter [CylBig] =  0;
+   at_right  = at_left = true;
+   is_filled = false;
 }
 // ====================================================== resize
 void CrossElements::resize ()
 {
    size_hx  = 2;
    size_hy  = S_MAXI;
-   size_hiy = NbrIntCotes;
-   size_hz [CylSmall] = size_h1z = 6;
-   size_hz [CylBig] = size_h2z = 4;
+   size_hz [CylSmall] = size_h1z;
+   size_hz [CylBig]   = size_h2z;
 
    size_vx  = size_hx + 1;
    size_vy  = size_hy;
-   size_vz[CylSmall] = size_v1z = size_h1z + 1;
-   size_vz[CylBig]   = size_v2z = size_h2z + 1;
+   size_vz[CylSmall] = size_v1z;
+   size_vz[CylBig]   = size_v2z;
 
    nbr_vertex1 = size_vx*size_vy* size_v1z;
    nbr_quads1  = nbr_vertex1*DIM3;
@@ -272,13 +268,6 @@ void CrossElements::setVertex (int cyl, int nx, int ny, int nz, double px,
    Vertex*    node = el_root->addVertex (px, py, pz);
    setVertex (node, cyl, nx, ny, nz);
 }
-// ------------------------------------------------------------------------
-// ====================================================== copyVertex
-void CrossElements::copyVertex (int i1, int j1, int k1, int i2, int j2, int k2)
-{
-   Vertex*    node = getVertexIJK (CylSmall, i1, j1, k1);
-   setVertex (node, CylBig, i2, j2, k2);
-}
 // ====================================================== copyEdge
 void CrossElements::copyEdge (int d1, int i1, int j1, int k1, int d2, int i2, 
                                       int j2, int k2)
@@ -324,17 +313,13 @@ Edge* CrossElements::addEdge (Vertex* v1, Vertex* v2, int cyl, int dir,
    else if (cyl==CylBig) 
       {
       edge = findEdge1 (v1, v2);
+      /* ************************************************
       if (edge != NULL) 
          {
-         // printf (" Edge (%d, %d,%d,%d) trouve = ", dir, nx, ny, nz);
-         // edge->printName ("\n");
+         printf (" Edge (%d, %d,%d,%d) trouve = ", dir, nx, ny, nz);
+         edge->printName ("\n");
          }
-      else if (v1->getId () < 122 && v2->getId () < 122)
-         {
-         printf (" Edge anormal = (");
-         v1 ->printName (", ");
-         v2 ->printName (")\n");
-         }
+         ************************************************ */
       }
 
    if (edge == NULL) 
@@ -425,224 +410,6 @@ Quad* CrossElements::findQuad1 (Edge* e1, Edge* e2)
           return tab_quad[nc];
 
    return NULL;
-}
-// ------------------------------------------------------------------------
-// ====================================================== createBigCyl
-void CrossElements::createBigCyl ()
-{
-   const int ivext = 2;
-   const int ivint = 1;
-   const int iv0   = 0;
-   const int kv_mil = NbrVSlices1 / 2;
-
-   double z0 = - calcul_centre (cross_cyl2->getBase(), cross_center);
-   double z3 = getVertexIJK (CylSmall, ivext, S_NE, kv_mil)->getZ();
-   double z2 = getVertexIJK (CylSmall, ivext, S_E,  kv_mil)->getZ();
-   double z1 = getVertexIJK (CylSmall, ivext, S_SE, kv_mil)->getZ();
-   double z4 = z0 + cross_cyl2->getHeight ();
-
-   const int k0 = 0;
-   const int k1 = 1;
-   const int k2 = 2;
-   const int k3 = 3;
-   const int k4 = NbrVSlices2-1;
-
-   setVertex (CylBig, iv0, 0, k0,    0, 0, z0);
-   addSlice  (CylBig, ivint, k0, z0);
-   addSlice  (CylBig, ivext, k0, z0);
-
-   setVertex (CylBig, iv0, 0, k4,    0, 0, z4);
-   addSlice  (CylBig, ivint, k4, z4);
-   addSlice  (CylBig, ivext, k4, z4);
-
-   //------------------------------- Points intermediaires :
-
-   double x1 = getVertexIJK (CylBig, ivext, S_N, k0)->getX();
-   double y1 = getVertexIJK (CylBig, ivext, S_N, k0)->getY();
-
-   double x2 = getVertexIJK (CylBig, ivext, S_S, k0)->getX();
-   double y2 = getVertexIJK (CylBig, ivext, S_S, k0)->getY();
-
-   //------------------------------- Reprise des vertex du cylindre 1
-
-   //------------------------------- Centre
-   if (grid_type != GR_BIPIPE) 
-       copyVertex (ivext, S_S,  3, iv0,   0,    k1);
-
-   //------------------------------- Face k1 externe :
-   setVertex   (CylBig, ivext, S_N, k1,    x1, y1, z1);
-   setVertex   (CylBig, ivext, S_S, k1,    x2, y2, z1);
-
-   copyVertex (ivext, S_S,  5,   ivext, S_E,  k1);
-   copyVertex (ivext, S_SE, 5,   ivext, S_NE, k1);
-   copyVertex (ivext, S_SW, 5,   ivext, S_SE, k1);
-
-   copyVertex (ivext, S_S,  1,   ivext, S_W,  k1);
-   copyVertex (ivext, S_SE, 1,   ivext, S_NW, k1);
-   copyVertex (ivext, S_SW, 1,   ivext, S_SW, k1);
-
-   //------------------------------- Face k1 interne :
-   copyVertex (ivext, S_S,  2,   ivint, S_W,  k1);
-   copyVertex (ivext, S_SE, 2,   ivint, S_NW, k1);
-   copyVertex (ivext, S_SW, 2,   ivint, S_SW, k1);
-
-   copyVertex (ivext, S_S,  4,   ivint, S_E,  k1);
-   copyVertex (ivext, S_SE, 4,   ivint, S_NE, k1);
-   copyVertex (ivext, S_SW, 4,   ivint, S_SE, k1);
-
-   copyVertex (ivext, S_SW, 3,   ivint, S_S,  k1);
-   copyVertex (ivext, S_SE, 3,   ivint, S_N,  k1);
-
-   // ------------------------------------------------------------ K2
-   //------------------------------- Centre
-   // copyVertex (iv0, 0,      3,   iv0,   0,    k2);
-   // ------------------------------ Face k2 externe :
-
-   setVertex  (CylBig, ivext, S_N, k2,  x1, y1, z2);
-   setVertex  (CylBig, ivext, S_S, k2,  x2, y2, z2);
-
-   copyVertex (ivext, S_E,  5,   ivext, S_NE, k2);
-   copyVertex (ivext, S_W,  5,   ivext, S_SE, k2);
-
-   copyVertex (ivext, S_E,  1,   ivext, S_NW, k2);
-   copyVertex (ivext, S_W,  1,   ivext, S_SW, k2);
-
-   //------------------------------- Face k2 interne :
-   copyVertex (ivext, S_E,  2,   ivint, S_NW, k2);
-   copyVertex (ivext, S_W,  2,   ivint, S_SW, k2);
-
-   copyVertex (ivext, S_E,  4,   ivint, S_NE, k2);
-   copyVertex (ivext, S_W,  4,   ivint, S_SE, k2);
-
-   copyVertex (ivext, S_W,  3,   ivint, S_S,  k2);
-   copyVertex (ivext, S_E,  3,   ivint, S_N,  k2);
-
-   // ------------------------------------------------------------
-   //------------------------------- Face k3 externe :
-
-   setVertex   (CylBig, ivext, S_N, k3,    x1, y1, z3);
-   setVertex   (CylBig, ivext, S_S, k3,    x2, y2, z3);
-
-   //------------------------------- Centre
-   if (grid_type != GR_BIPIPE) 
-       copyVertex (ivext, S_N,  3,   iv0,   0,    k3);
-
-   copyVertex (ivext, S_N,  5,   ivext, S_E,  k3);
-   copyVertex (ivext, S_NE, 5,   ivext, S_NE, k3);
-   copyVertex (ivext, S_NW, 5,   ivext, S_SE, k3);
-
-   copyVertex (ivext, S_N,  1,   ivext, S_W,  k3);
-   copyVertex (ivext, S_NE, 1,   ivext, S_NW, k3);
-   copyVertex (ivext, S_NW, 1,   ivext, S_SW, k3);
-
-   //------------------------------- Face k3 interne :
-   copyVertex (ivext, S_N,  2,   ivint, S_W,  k3);
-   copyVertex (ivext, S_NE, 2,   ivint, S_NW, k3);
-   copyVertex (ivext, S_NW, 2,   ivint, S_SW, k3);
-
-   copyVertex (ivext, S_N,  4,   ivint, S_E,  k3);
-   copyVertex (ivext, S_NE, 4,   ivint, S_NE, k3);
-   copyVertex (ivext, S_NW, 4,   ivint, S_SE, k3);
-
-   copyVertex (ivext, S_NW, 3,   ivint, S_S, k3);
-   copyVertex (ivext, S_NE, 3,   ivint, S_N, k3);
-
-   //------------------------------- Remplissage
-   fillGrid (CylBig); 
-}
-// ====================================================== createLittleCyl
-void CrossElements::createLittleCyl ()
-{
-   double c1 = calcul_centre (cross_cyl1->getBase(), cross_center);
-   double cosalpha = cos (angle_inter[CylBig]);
-   double prayext  = cross_rayon [CylBig][NxExt] * cosalpha;
-   double prayint  = cross_rayon [CylBig][NxInt] * cosalpha;
-
-   double t_haut [MaxLevel] = { -c1,  -prayext,  -prayint,  
-                                 0,    prayint,  prayext, 
-                                 cross_cyl1->getHeight () -c1 };
-
-   double rm = (  cross_rayon [CylSmall][NxExt] 
-                + cross_rayon [CylSmall][NxInt]) / 2; 
-   double rc =    cross_rayon [CylBig]  [NxInt];
-
-   double t_rayext [MaxLevel] = { -1,  -1, rm, rc, rm, -1, -1 }; 
-
-   for (int nk = 0 ; nk<size_v1z ; nk++)
-       {
-       double px = t_haut [nk]; 
-       if (grid_type != GR_BIPIPE) 
-          addVertex (CylSmall, 0, 0, nk, px, 0);
-
-       addSlice (CylSmall, NxInt, nk, px);
-       addSlice (CylSmall, NxExt, nk, px, t_rayext[nk]);
-       }
-
-   fillGrid (CylSmall);
-}
-// ====================================================== crossCylinders
-int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
-{
-   is_filled = fill;
-   resize ();
-
-   if (lun->getRadius() < lautre->getRadius())
-      {
-      cross_cyl1 = lun;
-      cross_cyl2 = lautre;
-      }
-   else
-      {
-      cross_cyl1 = lautre;
-      cross_cyl2 = lun;
-      }
-
-   cross_center = cross_cyl2->interCylinder (cross_cyl1);
-   if (cross_center==NULL)
-      return HERR;
-
-   double cross_gray1  = cross_cyl1->getRadius ();
-   double cross_gray2  = cross_cyl2->getRadius ();
-   double cross_igray1 = cross_gray1 * epaiss2;
-   double cross_igray2 = cross_gray2 * epaiss2;
-
-   if (db) 
-      {
-      HexDisplay (cross_gray1);
-      HexDisplay (cross_gray2);
-      HexDisplay (cross_igray2);
-      HexDisplay (cross_igray1);
-      }
-
-   angle_inter [CylSmall] = M_PI/6;
-   angle_inter [CylBig] = asin (cross_gray1/cross_gray2);
-
-   cross_rayon [CylSmall] [0] = cross_rayon [CylBig] [0] = 0;
-
-   cross_rayon [CylSmall] [NxInt] = cross_igray1;
-   cross_rayon [CylSmall] [NxExt] = cross_gray1;
-   cross_rayon [CylBig]   [NxInt] = cross_igray2;
-   cross_rayon [CylBig]   [NxExt] = cross_gray2;
-
-   createLittleCyl ();
-   createBigCyl    ();
-   majIntersection ();
-
-   Vector* iprim = new Vector (cross_cyl1->getDirection());
-   Vector* kprim = new Vector (cross_cyl2->getDirection());
-   Vector* jprim = new Vector (kprim);
-
-   iprim->renormer ();
-   kprim->renormer ();
-   jprim->vectoriel (kprim, iprim);
-
-   transfoVertices (cross_center, iprim, jprim, kprim);
-
-   Real3 coord;
-   assoCylinder (CylSmall, iprim->getCoord (coord));
-   assoCylinder (CylBig,   kprim->getCoord (coord));
-   assoResiduelle ();
-   return HOK;
 }
 // ====================================================== fillGrid
 void CrossElements::fillGrid (int cyl, int deb, int fin)
@@ -915,41 +682,6 @@ double calcul_centre (Vertex* orig, Vertex* inter)
    double dd = sqrt (dx*dx + dy*dy + dz*dz);
    return dd;
 }
-// ===================================================== assoCylinder 
-void CrossElements::assoCylinder (int cyl, double* normal)
-{
-   
-   Real3   base, vec1, center, east, west, nordest;
-
-   Vertex* v_e  = getVertexIJK (cyl, NxExt, S_E , 0);
-   Vertex* v_ne = getVertexIJK (cyl, NxExt, S_NE , 0);
-   Vertex* v_w  = getVertexIJK (cyl, NxExt, S_W , 0);
-
-   v_e->getPoint (east); 
-   v_w->getPoint (west); 
-   calc_vecteur  (west, east, base);
-
-   for (int nro=0 ; nro<DIM3 ; nro++) 
-       center[nro] = (east[nro] + west[nro])/2; 
-
-   v_ne->getPoint (nordest); 
-   calc_vecteur (center, nordest, vec1);
-
-   double ps    = prod_scalaire (base, vec1);
-   double pnorm = calc_norme(base) * calc_norme(vec1);
-
-   angle_inter [cyl] = acos (ps/pnorm);
-
-   assoSlice (cyl, base, normal, NxExt, 0);
-   assoSlice (cyl, base, normal, NxExt, size_hz[cyl]);
-
-   assoSlice (cyl, base, normal, NxInt, 0);
-   assoSlice (cyl, base, normal, NxInt, size_hz[cyl]);
-
-   if (cyl==CylBig)
-      for (int nz=1 ; nz<=3 ; nz++)
-          assoBigMiddle (base, normal, nz);
-}
 // ===================================================== assoSlice 
 void CrossElements::assoSlice (int cyl, double* base, double* normal, int nx, 
                                                                       int nzs)
@@ -963,27 +695,24 @@ void CrossElements::assoSlice (int cyl, double* base, double* normal, int nx,
    v_s->getPoint (pnt1); 
    v_n->getPoint (pnt2); 
 
-   double alpha = angle_inter [cyl];
    double rayon  = calc_distance (pnt1, pnt2)/2;
    for (int nro=0 ; nro<DIM3 ; nro++) 
        center[nro] = (pnt1[nro] + pnt2[nro])/2; 
-
-   double t_angle[S_MAXI+1]  = { 0,         alpha,   M_PI/2,   M_PI-alpha, 
-                                 M_PI, M_PI+alpha, 3*M_PI/2, 2*M_PI-alpha, 
-                                 2*M_PI };
 
    geom_create_circle (center, rayon, normal, base, brep);
    geom_define_line   (brep);   // pour geom_asso_point
 
    for (int ny=0 ; ny<S_MAXI ; ny++)
        {
-       assoArc (cyl, nx, ny, nzs, brep, rayon, t_angle[ny], t_angle[ny+1]);
+       assoArc (cyl, nx, ny, nzs, brep, rayon);
        }
 }
 // ===================================================== assoArc 
 void CrossElements::assoArc (int cyl, int nx, int ny, int nz, string& brep, 
-                             double rayon, double angle1, double angle2)
+                             double rayon)
 {
+    double angle1 = getAngle (cyl, ny);
+    double angle2 = getAngle (cyl, ny+1);
     Edge*   edge  = getEdgeJ     (cyl, nx, ny, nz);
     Shape*  shape = new Shape (brep);
 
@@ -999,38 +728,6 @@ void CrossElements::assoArc (int cyl, int nx, int ny, int nz, string& brep,
 
     node = getVertexIJK (cyl, nx, ny1, nz);
     geom_asso_point (angle2*rayon, node);
-}
-// ===================================================== assoBigMiddle 
-void CrossElements::assoBigMiddle (double* base, double* normal, int nzs)
-{
-   Real3  center, pnt1, pnt2;
-   string brep;
-   int nx = NxExt;
-
-   Vertex* v_n  = getVertexIJK (CylBig, nx, S_N , nzs);
-   Vertex* v_s  = getVertexIJK (CylBig, nx, S_S , nzs);
-
-   v_s->getPoint (pnt1); 
-   v_n->getPoint (pnt2); 
-
-   double rayon = calc_distance (pnt1, pnt2)/2;
-   double alpha = angle_inter [CylBig];
-   if (nzs != 2)
-      {
-      double h1  = cross_rayon[CylSmall][NxExt] * cos (angle_inter[CylSmall]);
-      alpha = asin (h1/cross_rayon[CylBig][NxExt]);
-      }
-
-   for (int nro=0 ; nro<DIM3 ; nro++) 
-       center[nro] = (pnt1[nro] + pnt2[nro])/2; 
-
-   geom_create_circle (center, rayon, normal, base, brep);
-   geom_define_line   (brep);   // pour geom_asso_point
-
-   assoArc (CylBig, NxExt, S_NE, nzs, brep, rayon, alpha,      M_PI/2);
-   assoArc (CylBig, NxExt, S_N , nzs, brep, rayon, M_PI/2,     M_PI-alpha);
-   assoArc (CylBig, NxExt, S_SW, nzs, brep, rayon, M_PI+alpha, 3*M_PI/2);
-   assoArc (CylBig, NxExt, S_S , nzs, brep, rayon, 3*M_PI/2,   2*M_PI-alpha);
 }
 // ====================================================== getAngle
 double CrossElements::getAngle (int cyl, int nj)
@@ -1068,24 +765,5 @@ void CrossElements::addSlice (int cyl, int ni, int nk, double px, double rayon)
 {
    for (int nj=0 ; nj < S_MAXI ; nj++)
        addVertex (cyl, ni, nj, nk, px, rayon);
-}
-// ====================================================== majIntersection
-void CrossElements::majIntersection ()
-{
-   for (int nx=NxInt; nx<=NxExt ; nx++)
-       {
-       getVertexIJK (CylSmall, nx, S_N, 1)->setX (-cross_rayon[CylBig][NxExt]);
-       getVertexIJK (CylSmall, nx, S_S, 1)->setX (-cross_rayon[CylBig][NxExt]);
-   
-       getVertexIJK (CylSmall, nx, S_N, 5)->setX (cross_rayon[CylBig][NxExt]);
-       getVertexIJK (CylSmall, nx, S_S, 5)->setX (cross_rayon[CylBig][NxExt]);
-
-
-       getVertexIJK (CylSmall, nx, S_N, 2)->setX (-cross_rayon[CylBig][NxInt]);
-       getVertexIJK (CylSmall, nx, S_S, 2)->setX (-cross_rayon[CylBig][NxInt]);
-
-       getVertexIJK (CylSmall, nx, S_N, 4)->setX ( cross_rayon[CylBig][NxInt]);
-       getVertexIJK (CylSmall, nx, S_S, 4)->setX ( cross_rayon[CylBig][NxInt]);
-       }
 }
 END_NAMESPACE_HEXA

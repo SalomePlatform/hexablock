@@ -1,3 +1,6 @@
+
+// C++ : Gestion des cylindres
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des cylindres
-
 #include "HexCylinder.hxx"
 #include "HexVertex.hxx"
 #include "HexVector.hxx"
@@ -45,13 +46,13 @@ bool rdiffers (double v1, double v2)
    double dd = v1-v2;
    return dd*dd > 1e-20;
 }
-// ======================================================== rdiffers
+// ======================================================== norme
 double norme (double px, double py, double pz)
 {
    double res = sqrt (px*px + py*py + pz*pz);
    return res;
 }
-// ======================================================== interCylinders
+// ======================================================== interCylinder
 ///  Intersection de 2 droites (c1,v1) et (c2,v2)
 ///  Le point M(x,yz) est solutions de 2 equations :
 ///            (c1,m) = k * v1 
@@ -78,14 +79,15 @@ double norme (double px, double py, double pz)
 ///  nxy = (xc2-xc1) * yv2 - (yc2-yc1) * xv2
 ///  dxy =  xv1*yv2 - yv1*xv2
 ///             
-// ======================================================== interCylinders
-Vertex* Cylinder::interCylinder(Cylinder* other)
+// ======================================================== interCylinder
+Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
 {
+    left = right = true;
     c_base->dump ();
     c_dir-> dump ();
 
-    other->c_base->dump ();
-    other->c_dir-> dump ();
+    small->c_base->dump ();
+    small->c_dir-> dump ();
 
     double xc1 = c_base->getX(); 
     double yc1 = c_base->getY(); 
@@ -95,13 +97,13 @@ Vertex* Cylinder::interCylinder(Cylinder* other)
     double yv1 = c_dir->getDy(); 
     double zv1 = c_dir->getDz(); 
 
-    double xc2 = other->c_base->getX(); 
-    double yc2 = other->c_base->getY(); 
-    double zc2 = other->c_base->getZ(); 
+    double xc2 = small->c_base->getX(); 
+    double yc2 = small->c_base->getY(); 
+    double zc2 = small->c_base->getZ(); 
 
-    double xv2 = other->c_dir->getDx(); 
-    double yv2 = other->c_dir->getDy(); 
-    double zv2 = other->c_dir->getDz(); 
+    double xv2 = small->c_dir->getDx(); 
+    double yv2 = small->c_dir->getDy(); 
+    double zv2 = small->c_dir->getDz(); 
 
     double nxyz [DIM3] = { (xc2-xc1) * yv2 - (yc2-yc1) * xv2,
                            (zc2-zc1) * yv2 - (yc2-yc1) * zv2,
@@ -150,7 +152,7 @@ Vertex* Cylinder::interCylinder(Cylinder* other)
     if (lambda<0 || lambda*lg > c_height)
        return NULL;
                                     // Appartenance axe 2eme cylindre
-    lg = other->c_height / other->c_dir->norme ();
+    lg = small->c_height / small->c_dir->norme ();
     if (is_out (px, xc2, xc2+xv2*lg ) || is_out (py, yc2, xc2+yv2*lg ) 
                                       || is_out (pz, zc2, zc2+zv2*lg ))
         return NULL;
@@ -159,12 +161,18 @@ Vertex* Cylinder::interCylinder(Cylinder* other)
     double lg12 = c_height - lg11;
 
     double lg21 = norme (px-xc2, py-yc2, pz-zc2);
-    double lg22 = other->c_height - lg21;
+    double lg22 = small->c_height - lg21;
 
-    if (  lg21 < c_radius        || lg22 < c_radius 
-       || lg11 < other->c_radius || lg12 < other->c_radius)
+    if (lg11 < small->c_radius || lg12 < small->c_radius)
+       return NULL;
+    if (lg21 < c_radius        && lg22 < c_radius) 
        return NULL;
 
+    left  = lg21 >= small->c_radius;
+    right = lg22 >= small->c_radius;
+
+    HexDisplay (left);
+    HexDisplay (right);
     Vertex* sol = new Vertex (c_base->dad(), px, py, pz);
     return  sol;
 }

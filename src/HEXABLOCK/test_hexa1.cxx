@@ -873,8 +873,76 @@ int test_asso_line (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
+// ===================================================== test_cylindrical
+int test_cylindrical (int nbargs, cpchar tabargs[])
+{
+   int    nvtk    = 1;
+   cpchar fic_vtk = "cylindre";
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig = doc->addVertex (0, 0, 0);
+   Hex::Vector* vx   = doc->addVector (1, 0, 0);
+   Hex::Vector* vz   = doc->addVector (0, 0, 1);
+
+   double dr = 1;
+   double da = 360;
+   double dl = 1;
+
+   int nr = 1;
+   int na = 8;
+   int nl = 2;
+
+   if (nbargs>1) 
+      {
+      na = atoi (tabargs[1]);
+      HexDisplay (na);
+      if (na <= 2)
+          na = 8;
+      }
+
+   if (nbargs>2) 
+      {
+      da = atof (tabargs[2]);
+      HexDisplay (da);
+      }
+
+
+   // Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, nr, nl);
+   // Hex::Elements* grid = doc->makeCylinder (cyl, vx, nr, na, nl);
+   Hex::Elements* grid = doc->makeCylindrical (orig,vx, vz, dr,da,dl, 
+                                               nr,na, nl, true);
+
+   doc ->saveVtk (fic_vtk, na);
+   return HOK;
+}
 // ===================================================== test_cylinder
 int test_cylinder (int nbargs, cpchar tabargs[])
+{
+   int    nvtk    = 1;
+   cpchar fic_vtk = "cylindre";
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig = doc->addVertex (0, 0, 0);
+   Hex::Vector* vx   = doc->addVector (1, 0, 0);
+   Hex::Vector* vz   = doc->addVector (0, 0, 1);
+
+   int nr = 1;
+   int na = 9;
+   int nl = 5;
+
+   Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, nr, nl);
+
+   Hex::Elements* grid = doc->makeCylinder (cyl, vx, nr, na, nl);
+   // nvtk = na;
+   doc ->saveVtk (fic_vtk, nvtk);
+   return HOK;
+}
+// ===================================================== test_xml_cylinder
+int test_xml_cylinder (int nbargs, cpchar tabargs[])
 {
    int    nvtk    = 0;
    cpchar fic_vtk = "cylindre";
@@ -969,7 +1037,8 @@ int test_pipes (int nbargs, cpchar tabargs[])
    Hex::Vector* vz   = doc->addVector ( 0,0,1);
    Hex::Vector* vx   = doc->addVector ( 1,0,0);
 
-   double h1  = 10, ri1 = 1, re1 = 2;
+   double h1  =  5, ri1 = 1, re1 = 2;
+// double h1  = 10, ri1 = 1, re1 = 2;
    double h2  = 10, ri2 = 3, re2 = 4;
 
    Hex::Pipe* pipe1  = doc->addPipe (ori1, vz, ri1, re1, h1);
@@ -1127,6 +1196,7 @@ int test_disconnect2 (int nbargs, cpchar tabargs[])
    Hex::Hexa* hexa2 = grid2->getHexaIJK (1,1,0);
    Hex::Edge* edge  = grid2->getEdgeK   (1,2,0);
 
+   hexa2->setScalar  (2);
    edge->setScalar   (5);
 
    doc->saveVtk ("test_disco", nvtk);
@@ -1597,7 +1667,7 @@ int test_remove ()
 
    return HOK;
 }
-// ================================================== test_cylindricals
+// ================================================== init_vec
 void init_vec (Hex::RealVector& tab, double n0, double n1, double n2, 
                double n3=0, double n4=0, double n5=0, double n6=0, 
                double n7=0, double n8=0, double n9=0, double n10=0,
@@ -1641,6 +1711,7 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
                    5, 10, 15, 20, 25, 30, 35, 40);
    init_vec (tdl, 1, 2, 3 );
     ****************** */
+
    init_vec (tdr, 1, 1, 1, 1);
    init_vec (tda, 45,45, 45,45, 45,45, 45,45 );
    init_vec (tdl, 1, 1, 1 );
@@ -1657,6 +1728,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_revolution (nbargs, tabargs);
+   int ier = test_pipes (nbargs, tabargs);
    return ier;
 }

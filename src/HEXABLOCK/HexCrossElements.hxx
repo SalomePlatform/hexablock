@@ -98,8 +98,7 @@ private :
 
    void assoCylinder  (int cyl, double* normal);
    void assoSlice     (int cyl, double* base, double* norm, int nx, int zlice);
-   void assoArc       (int cyl, int nx, int ny, int nz, string& brep, 
-                       double rayon, double angle1, double angle2);
+   void assoArc    (int cyl, int nx, int ny, int nz, string& brep, double ray);
    void assoBigMiddle (double* base, double* normal, int nzlice);
 
 
@@ -107,19 +106,26 @@ private :
    void   addSlice  (int cyl, int ni, int nk, double px, double rayon=-1);
    void   addVertex (int cyl, int ni, int nj, int nk, double px, double rayon);
    void   majIntersection ();
+   void   adjustLittleSlice (int nx, int nk, int nxbig);
 
 private :
+    enum {NbrIntCotes = 4 };
+    enum {size_hiy = NbrIntCotes, size_h1z = 6,    size_h2z=4};
+    enum {size_v1z = size_h1z+1,  size_v2z = size_h2z+1};
+
     bool      is_filled;
     Cylinder* cross_cyl1;
     Cylinder* cross_cyl2;
     Vertex*   cross_center;
 
-    int  size_hiy, size_h1z, size_h2z, size_v1z, size_v2z;
     int  size_vz[BiCyl], size_hz[BiCyl];
     int  nbr_hexas1, nbr_quads1, nbr_edges1, nbr_vertex1;
 
     double angle_inter [BiCyl];
     double cross_rayon [BiCyl][SizeRay];
+    double big_hauteur [size_v2z];
+
+    bool      at_right, at_left;
 };
 END_NAMESPACE_HEXA
 #endif

@@ -86,6 +86,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexXmlTree.cxx \
 	HexXmlWriter.cxx \
 	HexCrossElements.cxx \
+	HexCrossElements_build.cxx \
 	Hex.cxx              \
 	HexDocument_asso.cxx \
 	HexUseCascade.cxx     \
