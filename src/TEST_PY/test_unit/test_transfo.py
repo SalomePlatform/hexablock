@@ -29,7 +29,7 @@ def make_grid (doc) :
 # ======================================================= test_translation
 def test_translation () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     grid = make_grid (doc)
 
     devant = doc.addVector (10, 0, 0)
@@ -41,7 +41,7 @@ def test_translation () :
 # ======================================================= test_scale
 def test_scale () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     grid = make_grid (doc)
 
     dest   = doc.addVertex (15, 0, 0)
@@ -53,7 +53,7 @@ def test_scale () :
 # ======================================================= test_sym_point
 def test_sym_point () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     grid = make_grid (doc)
 
     orig  = doc.addVertex (5, 0, 0)
@@ -65,7 +65,7 @@ def test_sym_point () :
 # ======================================================= test_sym_line
 def test_sym_line () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     grid = make_grid (doc)
 
     orig  = doc.addVertex (5, 0, 0)
@@ -78,7 +78,7 @@ def test_sym_line () :
 # ======================================================= test_sym_plan
 def test_sym_plan () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     grid = make_grid (doc)
 
     orig  = doc.addVertex (5, 0, 0)

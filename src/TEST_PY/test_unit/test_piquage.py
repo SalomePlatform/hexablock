@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_pipes
 def test_piquage () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     orig = doc.addVertex ( 0, 0, 0)
     vx   = doc.addVector ( 1 ,0, 0)

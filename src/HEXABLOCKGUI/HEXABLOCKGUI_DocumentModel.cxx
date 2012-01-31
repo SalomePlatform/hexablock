@@ -137,8 +137,9 @@ DocumentModel::~DocumentModel()
 void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 {
   QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
-  _hexaDocument->setFile( tmp.toLocal8Bit().constData() );
-  _hexaDocument->loadXml();
+  // _hexaDocument->setFile( tmp.toLocal8Bit().constData() );
+  // _hexaDocument->loadXml();
+  _hexaDocument->loadXml(tmp.toLocal8Bit().constData() );
   std::cout << "DocumentModel::load ->" << tmp.toStdString() << std::endl;
   clearAll();
 
@@ -166,8 +167,9 @@ void DocumentModel::save( const QString& xmlFileName )
 
   QString noSuffix = xmlFileName.section('.', 0, 0);
   std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
-  _hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );
-  _hexaDocument->saveFile();
+  // _hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );   // Abu
+  // _hexaDocument->saveFile();   // Abu
+  _hexaDocument->save( noSuffix.toLocal8Bit().constData() );
 
 }
 

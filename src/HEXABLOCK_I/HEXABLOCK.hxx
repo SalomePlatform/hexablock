@@ -25,8 +25,6 @@
 
 
 #include <sstream>
-// #include <strstream.h>
-// #include <iostream.h>
 
 
 #include <TopoDS_Shape.hxx>
@@ -146,8 +144,8 @@ public:
     ::CORBA::Long countDocument();
     Document_ptr getDocument(::CORBA::Long i);
     void removeDocument(Document_ptr d); //CS_TODO
-    Document_ptr addDocument();
-    Document_ptr loadDocument(const char* xmlFilename);
+    Document_ptr addDocument  (const char* name);
+    Document_ptr loadDocument (const char* xmlFilename);
 
     GEOM_Client* getGeomClient();
     TopoDS_Shape geomObjectToShape(GEOM::GEOM_Object_ptr theGeomObject);
@@ -184,8 +182,10 @@ public:
 
 
 
-  Document_ptr createDoc() throw ( SALOME::SALOME_Exception );
-  Document_ptr createDocInStudy() throw ( SALOME::SALOME_Exception );
+  Document_ptr createDoc(const char* name) 
+               throw ( SALOME::SALOME_Exception );
+  Document_ptr createDocInStudy(const char* name)
+               throw ( SALOME::SALOME_Exception );
 
 
 private:

@@ -426,8 +426,7 @@ void ModelTest::Test_gen_xml ()
    prop3->setWay (true);
 
    doc ->saveVtk ("mini.vtk");
-   doc ->setFile ("Essai");
-   doc ->saveFile ();
+   doc ->save ("Essai");
 
    CPPUNIT_ASSERT( true );
 }
@@ -912,8 +911,7 @@ void ModelTest::Test_propagation ()
 
    doc->dump  ();
    doc->saveVtk ("Test_propagation.vtk");
-   doc->setFile ("Test_propagation");
-   doc->saveFile ();
+   doc->save    ("Test_propagation");
 
    CPPUNIT_ASSERT( true );
 }

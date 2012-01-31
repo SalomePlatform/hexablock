@@ -47,7 +47,7 @@
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== Constructeur
-Document::Document (cpchar filename)
+Document::Document (cpchar name)
 {
    glob = Globale::getInstance ();
 
@@ -55,7 +55,7 @@ Document::Document (cpchar filename)
    nbr_errors    = 0;
    doc_modified  = true;
    doc_saved     = false;
-   doc_name      = filename;
+   doc_name      = name;
    doc_tolerance = 1e-6;
    nbr_laws      = 0;
    nbr_propagations = 0;

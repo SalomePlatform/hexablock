@@ -34,8 +34,8 @@ public:
    Document* getDocument (int nro);
    void      removeDocument (Document* doc);
 
-   Document* addDocument ();
-   Document* loadDocument (const char* filename);
+   Document* addDocument  (const char* name="default");
+   Document* loadDocument (const char* name);
 
              //  Constructeur + destructeur
     Hex ();

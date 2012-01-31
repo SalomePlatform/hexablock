@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_sphere
 def test_sphere () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     center   = doc.addVertex (0,0,0)
     radius   = 1

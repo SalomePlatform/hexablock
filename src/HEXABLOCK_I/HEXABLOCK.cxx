@@ -273,7 +273,7 @@ void HEXABLOCK_Gen_i::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
 }
 
 
-Document_ptr HEXABLOCK_Gen_i::addDocument()
+Document_ptr HEXABLOCK_Gen_i::addDocument(const char* name)
 {
 //     MESSAGE("ADD1");
 //     HEXA_NS::Document *doc=_engine_cpp->addDocument();
@@ -282,7 +282,7 @@ Document_ptr HEXABLOCK_Gen_i::addDocument()
 //     MESSAGE("ADD3");
 //     return servantCorba->_this();
 
-    return createDocInStudy();
+    return createDocInStudy(name);
 }
 
 
@@ -531,14 +531,15 @@ char* HEXABLOCK_Gen_i::ComponentDataType()
 
 
 
-Document_ptr HEXABLOCK_Gen_i::createDoc() throw ( SALOME::SALOME_Exception )
+Document_ptr HEXABLOCK_Gen_i::createDoc (const char* name)
+                              throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
 //   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::createMesh" );
 
   // Get or create the GEOM_Client instance
   try {
-    HEXA_NS::Document *d      = _engine_cpp->addDocument();
+    HEXA_NS::Document *d   = _engine_cpp->addDocument (name);
     Document_impl *docImpl = new Document_impl( GetPOA(), d );
 
     // activate the CORBA servant of Mesh
@@ -553,13 +554,13 @@ Document_ptr HEXABLOCK_Gen_i::createDoc() throw ( SALOME::SALOME_Exception )
   return Document::_nil();
 }
 
-Document_ptr HEXABLOCK_Gen_i::createDocInStudy()
-     throw ( SALOME::SALOME_Exception )
+Document_ptr HEXABLOCK_Gen_i::createDocInStudy (const char* name)
+                              throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
 //   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::CreateMesh" );
   // create mesh
-  Document_var doc = this->createDoc();
+  Document_var doc = this->createDoc (name);
 
   // publish mesh in the study
   if ( CanPublishInStudy( doc ) ) {

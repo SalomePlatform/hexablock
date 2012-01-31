@@ -64,20 +64,16 @@ module HEXABLOCK_ORB
       raises (SALOME::SALOME_Exception);
     /*!
     */
-    string getFile()
+    string getName()
       raises (SALOME::SALOME_Exception);
 
-    void setFile( in string fileName )
+    long setName (in string name )
       raises (SALOME::SALOME_Exception);
 
-    boolean isSavedFile()
+    long save( in string fileName )
       raises (SALOME::SALOME_Exception);
 
-//     void saveFile() 
-    long saveFile() //CS_NOT_SPEC
-      raises (SALOME::SALOME_Exception);
-
-    long saveVtk( in string fname );//CS_NOT_SPEC
+    long saveVtk( in string fname );
 
     /*!
     */

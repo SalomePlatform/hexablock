@@ -23,7 +23,7 @@ import hexablock
 
 # ======================================================== test_sphere
 def test_sphere ():
-  doc = hexablock.addDocument ()
+  doc = hexablock.addDocument ("default")
   orig = doc.addVertex (0,0,0)
 
   ncouches = 1

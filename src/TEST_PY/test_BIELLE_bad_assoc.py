@@ -39,7 +39,7 @@ STEP_PATH = os.path.expandvars("$HEXA_ROOT_DIR/bin/salome/crank.stp")
 # CREATION DOCUMENT
 #=============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument("default")
 
 #=============================
 # CREATION DU MODELE

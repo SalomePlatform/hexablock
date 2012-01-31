@@ -20,6 +20,7 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
+#include <libgen.h>               // Pour basename
 #include <cstdlib>               // Pour atoi et atof
 
 #include "HexEltBase.hxx"
@@ -100,13 +101,27 @@ void get_names (const string& chaine, int size, vector<string>& table)
       table.push_back (mot);
 }
 // ======================================================== loadXml
-int Document::loadXml ()
+int Document::loadXml (cpchar ficname)
 {
    XmlTree xml("");
-   string filename = doc_name;
-   size_t ici = filename.find (".xml");
-   if (ici < 0 || ici > filename.size())
+   string filename = ficname;
+   doc_name     = basename ((pchar)ficname);
+
+   static const int NbExt = 3;
+   static cpchar t_ext [NbExt] = { ".xml", ".XML", ".Xml" };
+   size_t ici   = 0;
+   bool   noext = true;
+   for (int nx = 0; nx < NbExt && noext ; nx++)
+       {
+       ici   = doc_name.rfind (t_ext[nx]);
+       noext = ici < 0 || ici > doc_name.size();
+       }
+
+   if (noext)
       filename += ".xml"; 
+   else
+      doc_name.erase (ici, 4);
+
    int ier = xml.parseFile (filename);
    if (ier!=HOK) 
       return ier;
@@ -368,10 +383,10 @@ int Document::parseXml (XmlTree& xml)
 
    return HOK;
 }
-// ======================================================== saveFile
-int Document::saveFile ()
+// ======================================================== save
+int Document::save (const char* ficxml)
 {
-   int    ier = genXml (doc_name.c_str ());
+   int    ier = genXml (ficxml);
    return ier;
 }
 // ======================================================== getXml
@@ -383,7 +398,7 @@ cpchar Document::getXml ()
 
    return doc_xml->getXml ();
 }
-// ======================================================== genXml
+// =====================================================HexDocument_Xml=== genXml
 int Document::genXml (cpchar filename)
 {
                                        // -- 1) Raz numerotation precedente

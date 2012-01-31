@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_sphere
 def test_sphere () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     center  = doc.addVertex (0,0,0)
     radius  = 8
@@ -30,7 +30,7 @@ def test_sphere () :
 # ======================================================= test_part_sphere
 def test_part_sphere () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     center  = doc.addVertex (0,0,0)
     radius  = 8
@@ -51,7 +51,7 @@ def test_part_sphere () :
 # ======================================================= test_rind
 def test_rind () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     center  = doc.addVertex (0,0,0)
     radius  = 8
@@ -72,7 +72,7 @@ def test_rind () :
 # ======================================================= test_part_rind
 def test_part_rind () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     center  = doc.addVertex (0,0,0)
     radius  = 8

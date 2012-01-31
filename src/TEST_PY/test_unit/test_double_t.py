@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_double_t
 def test_double_t () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     ori1 = doc.addVertex ( 0, 0, 0)
     ori2 = doc.addVertex (-5, 0, 5)
@@ -74,7 +74,7 @@ def test_double_t () :
 # ======================================================= test_lorraine
 def test_lorraine () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     ori1 = doc.addVertex ( 0, 0, 0)
     ori2 = doc.addVertex (-5, 0, 5)

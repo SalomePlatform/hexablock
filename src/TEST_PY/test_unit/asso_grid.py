@@ -27,7 +27,7 @@ STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
 
 #==========================================================================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument ("default")
 
 
 orig1 = doc.addVertex ( 0, 0,0);

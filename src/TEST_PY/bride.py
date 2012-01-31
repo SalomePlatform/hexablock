@@ -94,7 +94,7 @@ BREP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/bride.brep")
 # CREATION DOCUMENT
 #=============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument("bride")
 
 #=============================
 # PARAMETRES

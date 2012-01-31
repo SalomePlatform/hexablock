@@ -11,7 +11,7 @@ import geompy
 # ======================================================= bug_quad2
 def bug_quad2 () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     ori  = doc.addVertex ( 0, 0, 0)
     vz   = doc.addVector ( 0, 0, 1)

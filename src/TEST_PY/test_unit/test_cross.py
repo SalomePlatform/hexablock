@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_pipes
 def test_pipes () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     ori1 = doc.addVertex ( 0, 0, 0)
     ori2 = doc.addVertex (-5, 0, 5)
@@ -36,7 +36,7 @@ def test_pipes () :
 # ======================================================= test_croix
 def test_croix () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     ori1 = doc.addVertex ( 0, 0, 0)
     ori2 = doc.addVertex (-5, 0, 5)

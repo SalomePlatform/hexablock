@@ -44,12 +44,12 @@ public:
   void purge() throw (SALOME::SALOME_Exception);
   void dump()  throw (SALOME::SALOME_Exception);
 
-  ::CORBA::Long saveVtk(const char* fname) throw (SALOME::SALOME_Exception);
+  ::CORBA::Long saveVtk (const char* fname)    throw (SALOME::SALOME_Exception);
+  ::CORBA::Long save (const char* fileName)    throw (SALOME::SALOME_Exception);
+  ::CORBA::Long setName (const char* fileName) throw (SALOME::SALOME_Exception);
+   char* getName ()                      throw (SALOME::SALOME_Exception);
 
-  char* getFile() throw (SALOME::SALOME_Exception);
-  void setFile(const char* fileName) throw (SALOME::SALOME_Exception);
-  ::CORBA::Boolean isSavedFile() throw (SALOME::SALOME_Exception);
-  ::CORBA::Long saveFile() throw (SALOME::SALOME_Exception);
+
   void setTolerance(::CORBA::Double tol) throw (SALOME::SALOME_Exception);
   ::CORBA::Double getTolerance() throw (SALOME::SALOME_Exception);
   Vertex_ptr addVertex(::CORBA::Double x, ::CORBA::Double y, ::CORBA::Double z) throw (SALOME::SALOME_Exception);

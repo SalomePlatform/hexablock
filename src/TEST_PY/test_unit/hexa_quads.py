@@ -33,7 +33,7 @@ def add_grid (doc, size_x, size_y, size_z) :
 
 # ========================================================== test_hexa_quads_5
 def test_hexa_quads_5 () :
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuads5");
     grid = add_grid (doc, 3, 3, 2)
     vtk.save ()

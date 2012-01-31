@@ -32,10 +32,10 @@ class Document
                                    // Fonctions utilisateur
 public :
                                    // Fonctions globales
-   const char* getFile ()              { return doc_name.c_str() ; }
+   const char* getName ()              { return doc_name.c_str() ; }
    bool        isSaved ()              { return doc_saved ; } 
-   int setFile (const char* filename)  { doc_name = filename ; return HOK ; }
-   int saveFile ();
+   int setName (const char* name)      { doc_name = name ; return HOK ; }
+   int save    (const char* ficxml);
 
    int  getLevel ()                    { return doc_db ; }
    void setLevel (int niv)             { doc_db = niv  ; }
@@ -221,12 +221,12 @@ public :
              bool fill=false);
 
 public:
-    Document (cpchar filename);
+    Document (cpchar name);
    ~Document ();
 
-    int    loadXml ();
-    int    setXml (cpchar flux);
-    cpchar getXml ();
+    int    loadXml (cpchar name);
+    int    setXml  (cpchar flux);
+    cpchar getXml  ();
 
     EltBase* getFirstEltBase (EnumElt type) { return doc_first_elt [type]; }
     EltBase* getLastEltBase  (EnumElt type) { return doc_last_elt  [type]; }

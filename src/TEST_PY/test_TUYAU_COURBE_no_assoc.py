@@ -37,7 +37,7 @@ BREP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/tuyau.brep")
 # CREATION DOCUMENT
 #=============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument ("default")
 
 #=============================
 # CREATION DU MODELE

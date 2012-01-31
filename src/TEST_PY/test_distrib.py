@@ -42,7 +42,7 @@ geompy.addToStudy(sphere, name)
 # Add a new document
 # ------------------
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument ("default")
 
 # fkl: doc.addShape(sphere)
 

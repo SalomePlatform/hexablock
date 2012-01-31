@@ -45,7 +45,7 @@ BREP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/tees.brep")
 #=============================
 # CREATION DOCUMENT
 #=============================
-doc = hexablock.addDocument()
+doc = hexablock.addDocument("cylindres")
 
 #=============================
 # CREATION DU MODELE

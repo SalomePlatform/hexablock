@@ -69,23 +69,17 @@ void Hex::removeDocument (Document* doc)
     delete doc;
 }
 // ======================================================== addDocument
-Document* Hex::addDocument ()
+Document* Hex::addDocument (cpchar nomdoc)
 {
-   char   un_nom [40];
-   cpchar nomdoc = get_temp_name ("HexaTempo%02d", un_nom);
-
    Document* doc = new Document (nomdoc);
-   
    liste_documents.push_back (doc);
    return doc;
 }
 // ======================================================== loadDocument
 Document* Hex::loadDocument (const char* filename)
 {
-   Document* doc = new Document (filename);
-   
-   liste_documents.push_back (doc);
-   doc->loadXml ();
+   Document* doc = addDocument ("xxxx");
+   doc->loadXml (filename);
    return doc;
 }
 END_NAMESPACE_HEXA

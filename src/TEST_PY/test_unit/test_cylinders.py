@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_cylindricals
 def test_cylindricals () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
 
     orig = doc.addVertex (0, 0, 0)
     vz   = doc.addVector (0, 0, 1)

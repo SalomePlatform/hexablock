@@ -76,28 +76,22 @@ HEXA_NS::Document* Document_impl::GetImpl() throw (SALOME::SALOME_Exception)
   return _document_cpp;
 }
 
-
-char* Document_impl::getFile() throw (SALOME::SALOME_Exception)
+::CORBA::Long Document_impl::save(const char* fileName)
+                             throw (SALOME::SALOME_Exception)
 {
-  return CORBA::string_dup (_document_cpp->getFile());
+  ::CORBA::Long ret = _document_cpp->save(fileName);
+  return ret;
 }
 
-void Document_impl::setFile(const char* fileName) throw (SALOME::SALOME_Exception)
+::CORBA::Long Document_impl::setName(const char* name) 
+                             throw (SALOME::SALOME_Exception)
 {
-  _document_cpp->setFile(fileName);
+  ::CORBA::Long ret = _document_cpp->setName(name);
+  return ret;
 }
 
-::CORBA::Boolean Document_impl::isSavedFile() throw (SALOME::SALOME_Exception)
-{
-  return _document_cpp->isSaved();
-}
-
-::CORBA::Long Document_impl::saveFile() throw (SALOME::SALOME_Exception)
-{
-  return _document_cpp->saveFile();
-}
-
-void Document_impl::setTolerance(::CORBA::Double tol) throw (SALOME::SALOME_Exception)
+void Document_impl::setTolerance(::CORBA::Double tol)
+                    throw (SALOME::SALOME_Exception)
 {
   _document_cpp->setTolerance(tol);
 }
@@ -1680,6 +1674,12 @@ char* Document_impl::getBrep () throw (SALOME::SALOME_Exception)
   if (brep == NULL)
       brep = "";
   return CORBA::string_dup (brep);
+}
+// ===================================================== getName
+char* Document_impl::getName () throw (SALOME::SALOME_Exception)
+{
+  const char* name = _document_cpp->getName();
+  return CORBA::string_dup (name);
 }
 // ===================================================== countUsedVertex
 ::CORBA::Long Document_impl::countUsedVertex() 

@@ -37,7 +37,7 @@ import SALOMEDS
 # CREATION DOCUMENT
 #=============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument("default")
 
 #=============================
 # CREATION DU MODELE

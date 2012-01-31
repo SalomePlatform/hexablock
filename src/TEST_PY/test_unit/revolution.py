@@ -38,7 +38,7 @@ def make_grid (doc, nr, na, nl) :
 
 # ========================================================== test_revolution
 def test_revolution () :
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "Revolution");
     nr = 1
     na = 6

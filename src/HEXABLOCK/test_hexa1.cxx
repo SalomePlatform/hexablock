@@ -566,7 +566,6 @@ int test_decoupage (int nbargs, cpchar tabargs[])
 
    ///  doc ->dump ();
    doc ->saveVtk ("decoupe", nvtk);
-   // doc ->saveFile ();
 
    return HOK;
 }
@@ -618,8 +617,7 @@ int test_gen_xml (int nbargs, cpchar tabargs[])
    prop3->setWay (true);
 
    doc ->saveVtk ("mini.vtk");
-   doc ->setFile ("Essai");
-   doc ->saveFile ();
+   doc ->save ("Essai");
 
    return HOK;
 }
@@ -671,7 +669,7 @@ int test_string_xml (int nbargs, cpchar tabargs[])
    prop3->setWay (true);
 
    doc ->saveVtk ("mini.vtk");
-   doc ->setFile ("Essai");
+   doc ->save ("Essai");
 
    cpchar flux = doc ->getXml ();
    Hex::Document* docbis = mon_ex.addDocument ();
@@ -703,8 +701,7 @@ int test_relecture (int nbargs, cpchar tabargs[])
 
    doc ->dump ();
    doc ->saveVtk ("restore.vtk");
-   doc ->setFile ("restore");
-   doc ->saveFile ();
+   doc ->save ("restore");
 
    // doc ->reorderFaces ();
    // doc ->dump ();
@@ -985,8 +982,7 @@ int test_xml_cylinder (int nbargs, cpchar tabargs[])
 
    doc->makePipe     (pipe, vx, nr, na, nl);
    doc ->saveVtk (fic_vtk, nvtk);
-   doc->setFile ("cylindre");
-   doc->saveFile ();
+   doc->save ("cylindre");
 
    return HOK;
 }
@@ -1218,12 +1214,11 @@ int test_disconnect2 (int nbargs, cpchar tabargs[])
        }
 
    doc->saveVtk ("test_disco", nvtk);
-   doc->setFile ("test_disco");
+   doc->save ("test_disco");
    doc->dump ();
    hexa2->dumpFull ();
 
    doc->setLevel (4);
-   doc->saveFile ();
    return HOK;
 }
 // ======================================================== test_disconnect
@@ -1260,8 +1255,7 @@ int test_disconnect1 (int nbargs, cpchar tabargs[])
    // doc->dumpPropagation ();
    // doc->dump  ();
 
-   doc->setFile  ("disco_all");
-   doc->saveFile ();
+   doc->save  ("disco_all");
    return HOK;
 }
 // ======================================================== test_disconnect
@@ -1300,8 +1294,7 @@ int test_disconnect3 (int nbargs, cpchar tabargs[])
    // doc->dumpPropagation ();
    // doc->dump  ();
 
-   doc->setFile  ("disco_all");
-   doc->saveFile ();
+   doc->save  ("disco_all");
    return HOK;
 }
 // ======================================================== test_disconnect
@@ -1392,8 +1385,7 @@ int test_disconnect (int nbargs, cpchar tabargs[])
    // doc->dumpPropagation ();
    // doc->dump  ();
 
-   doc->setFile  ("disco_all");
-   doc->saveFile ();
+   doc->save  ("disco_all");
    return HOK;
 }
 // ======================================================== test_propagation
@@ -1438,8 +1430,7 @@ int test_propagation ()
 
    doc->dump  ();
    doc->saveVtk ("test_propagation.vtk");
-   doc->setFile ("test_propagation");
-   doc->saveFile ();
+   doc->save ("test_propagation");
 
    return HOK;
 }

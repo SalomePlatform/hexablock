@@ -51,7 +51,7 @@ h = 75.0
 #=================================================
 # Creation du document
 #=================================================
-doc = hexablock.addDocument()
+doc = hexablock.addDocument ("default")
 
 #=================================================
 # Creation du tuyau (grille cylindrique) dans le document

@@ -14,7 +14,7 @@ nom = "bielle"
 # Construire le modèle de bloc
 # ============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument ("default")
 
 # Construire les 2 grilles cylindriques
 # -------------------------------------
