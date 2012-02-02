@@ -1,6 +1,6 @@
 # -*- coding: latin-1 -*-
 
-#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+#  Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-# Francis KLOSS - 2011 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
-# ========================================================================================
+# Francis KLOSS - 2011-2012 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
+# =============================================================================================
 
 import salome
 import smesh
@@ -57,10 +57,34 @@ def addLaws(doc, lg, lgmax=True):
             m = (max)
         for e in p.getEdges():
             a = e.getAssociations()
-            l = 0.0
-            for gdf in a:
-                le, su, vo = geompy.BasicProperties(gdf.geomObj)
-                l += le * (gdf.fin - gdf.debut)
+
+            if a == []:
+                vam = e.getVertex(0)
+                vag = vam.getAssociation()
+                if vag == None:
+                    vax = vam.getX()
+                    vay = vam.getY()
+                    vaz = vam.getZ()
+                else:
+                    vax, vay, vaz = geompy.PointCoordinates(vag)
+
+                vbm = e.getVertex(1)
+                vbg = vbm.getAssociation()
+                if vbg == None:
+                    vbx = vbm.getX()
+                    vby = vbm.getY()
+                    vbz = vbm.getZ()
+                else:
+                    vbx, vby, vbz = geompy.PointCoordinates(vbg)
+
+                l = ( (vbx-vax)**2 + (vby-vay)**2 + (vbz-vaz)**2 )**0.5
+
+            else:
+                l = 0.0
+                for gdf in a:
+                    le, su, vo = geompy.BasicProperties(gdf.geomObj)
+                    l += le * (gdf.fin - gdf.debut)
+
             if ( lgmax and l>m ) or ( (not lgmax) and l<m ):
                 m = l
 
@@ -87,19 +111,19 @@ def dump(doc, mesh=None, full=False):
         print "Model dump: number of hexas: ", hn
         for hi in xrange(hn):
             hh = doc.getUsedHexa(hi)
-            print "  hexa: ", hi
+            print "  hexa: ", hi, "name: ", hh.getName()
             for fi in xrange(6):
                 ff = hh.getQuad(fi)
                 fa = ff.getAssociations()
-                print "    quadrangle: ", fi, " associated: ", fa!=[]
+                print "    quadrangle: ", fi, "name: ", ff.getName(), " associated: ", fa!=[]
                 for ei in xrange(4):
                     ee = ff.getEdge(ei)
                     ea = ee.getAssociations()
-                    print "      edge: ", ei, " associated: ", ea!=[]
+                    print "      edge: ", ei, "name: ", ee.getName(), " associated: ", ea!=[]
                     for vi in xrange(2):
                         vv = ee.getVertex(vi)
                         va = vv.getAssociation()
-                        print "        vertex: ", vi, " associated: ", va!=None,
+                        print "        vertex: ", vi, "name: ", vv.getName(), " associated: ", va!=None,
                         print " -> x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ()
 
     print "Model vertices    number: ", doc.countUsedVertex()
@@ -116,7 +140,7 @@ def dump(doc, mesh=None, full=False):
 # Mesh a document
 # ---------------
 
-def mesh(name, doc, dim=3, container="FactoryServer"):
+def mesh(doc, name=None, dim=3, container="FactoryServer"):
     study = salome.myStudy
 
     if type(doc) == type(""):
@@ -135,6 +159,9 @@ def mesh(name, doc, dim=3, container="FactoryServer"):
         fic.write(brep)
         fic.close()
         shape = geompy.ImportBREP(tmpfile)
+
+    if name == None:
+        name = doc.getName()
 
     geompy.addToStudy(shape, name)
     component = salome.lcc.FindOrLoadComponent(container, "SMESH")

@@ -373,7 +373,7 @@ for j in range(N_Propa):
 	Propa.setLaw( Law )# appliquer la loi de discretisation sur tout le modele et generer le maillage
 
 try:
-    mesh = hexablock.mesh("test_INTER_3_CYLINDRE_no_assoc", doc)
+    mesh = hexablock.mesh(doc, "test_INTER_3_CYLINDRE_no_assoc")
 except SALOME.SALOME_Exception, ex:
     print "Mesh computation failed, exception caught:"
     print "    ", ex.details.text

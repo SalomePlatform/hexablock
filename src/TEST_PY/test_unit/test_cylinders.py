@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_cylindricals
 def test_cylindricals () :
 
-    doc  = hexablock.addDocument ("default")
+    doc  = hexablock.addDocument ("rind:hexas")
 
     orig = doc.addVertex (0, 0, 0)
     vz   = doc.addVector (0, 0, 1)
@@ -45,6 +45,6 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("rind:hexas", doc)
+mesh_hexas = hexablock.mesh(doc)
 
 

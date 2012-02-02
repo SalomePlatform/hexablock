@@ -64,7 +64,7 @@ def test_revolution () :
 
 # ========================================================== test_prism
 def test_prism () :
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument("prism")
     vtk  = FileVtk (doc, "prism");
     nr = 1
     na = 6
@@ -96,5 +96,5 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("maillage:hexas", doc)
+mesh_hexas = hexablock.mesh(doc, "maillage:hexas")
 

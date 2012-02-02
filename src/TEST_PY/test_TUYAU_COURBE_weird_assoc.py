@@ -767,7 +767,7 @@ Propa_Y.setLaw( Law_Y )
 Propa_Z.setLaw( Law_Z )
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
-mesh = hexablock.mesh("test_TUYAU_COURBE_weird_assoc", doc)
+mesh = hexablock.mesh(doc, "test_TUYAU_COURBE_weird_assoc")
 
 print "Nombre d hexaedres:"   , mesh.NbHexas()
 print "Nombre de quadrangles:", mesh.NbQuadrangles()

@@ -14,7 +14,7 @@ nom = "bielle"
 # Construire le modèle de bloc
 # ============================
 
-doc = hexablock.addDocument ("default")
+doc = hexablock.addDocument(nom)
 
 # Construire les 2 grilles cylindriques
 # -------------------------------------
@@ -216,7 +216,7 @@ l = doc.addLaw("Uniform2", 40)
 p = doc.getPropagation(11)
 p.setLaw(l)
 
-blocs = hexablock.mesh(nom, doc)
+blocs = hexablock.mesh(doc)
 
 print "nombre de sommets     du modèle de bloc: ", doc.countUsedVertex()
 print "nombre d'arêtes       du modèle de bloc: ", doc.countUsedEdge()

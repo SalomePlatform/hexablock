@@ -42,7 +42,7 @@ def bug_quad2 () :
 # ======================================================= bug_quad3
 def bug_quad3 () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument("quad3")
 
     ori  = doc.addVertex ( 0, 0, 0)
     vz   = doc.addVector ( 0, 0, 1)
@@ -76,7 +76,7 @@ def bug_quad3 () :
 # ======================================================= bug_quad3
 def bug_quad1 () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument("quad1")
     centre     = doc.addVertex(0, 0, 0)
     vecteur_px = doc.addVector(1, 0, 0)
     vecteur_pz = doc.addVector(0, 0, 1)
@@ -106,5 +106,4 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("maillage:hexas", doc)
-
+mesh_hexas = hexablock.mesh(doc, "maillage:hexas")

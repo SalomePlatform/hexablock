@@ -51,7 +51,7 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("Grille:hexas", doc)
+mesh_hexas = hexablock.mesh(doc, "Grille:hexas")
 
 print "Nombre d hexaedres:", mesh_hexas.NbHexas()
 print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()

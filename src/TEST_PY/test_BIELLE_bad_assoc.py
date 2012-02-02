@@ -1069,10 +1069,10 @@ for j in range(N_Propa):
     Propa = doc.getPropagation(j)
     Propa.setLaw( Law )# appliquer la loi de discretisation sur tout le modele et generer le maillage
 
-mesh = hexablock.mesh("test_BIELLE_bad_assoc:hexas", doc)
-#mesh = hexablock.mesh("test_BIELLE_bad_assoc:quads", doc, 2)
-#mesh = hexablock.mesh("test_BIELLE_bad_assoc:edges", doc, 1)
-#mesh = hexablock.mesh("test_BIELLE_bad_assoc:nodes", doc, 0)
+mesh = hexablock.mesh(doc, "test_BIELLE_bad_assoc:hexas")
+#mesh = hexablock.mesh(doc, "test_BIELLE_bad_assoc:quads", 2)
+#mesh = hexablock.mesh(doc, "test_BIELLE_bad_assoc:edges", 1)
+#mesh = hexablock.mesh(doc, "test_BIELLE_bad_assoc:nodes", 0)
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
 print "Nombre d hexaedres:"   , mesh.NbHexas()

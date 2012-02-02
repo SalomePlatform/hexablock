@@ -11,7 +11,7 @@ import geompy
 # ======================================================= test_sphere
 def test_sphere () :
 
-    doc  = hexablock.addDocument ("default")
+    doc  = hexablock.addDocument ("rind")
 
     center   = doc.addVertex (0,0,0)
     radius   = 1
@@ -32,6 +32,6 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("rind:hexas", doc)
+mesh_hexas = hexablock.mesh(doc)
 
 

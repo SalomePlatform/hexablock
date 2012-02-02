@@ -34,7 +34,7 @@ STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
 # CREATION DOCUMENT
 #=============================
 
-doc = hexablock.addDocument()
+doc = hexablock.addDocument("Bielle:hexas")
 
 #=============================
 # MODEL CREATION
@@ -622,7 +622,7 @@ for j in range(doc.countPropagation()):
 #====================================
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
-mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
+mesh_hexas = hexablock.mesh(doc)
 
 ## print "Nombre d hexaedres:", mesh_hexas.NbHexas()
 ## print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()

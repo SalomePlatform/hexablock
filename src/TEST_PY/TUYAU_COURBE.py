@@ -51,7 +51,7 @@ h = 75.0
 #=================================================
 # Creation du document
 #=================================================
-doc = hexablock.addDocument ("default")
+doc = hexablock.addDocument("TUYAU_COURBE")
 
 #=================================================
 # Creation du tuyau (grille cylindrique) dans le document
@@ -749,7 +749,7 @@ Propa_Y.setLaw( Law_Y )
 Propa_Z.setLaw( Law_Z )
 
 print  " --- MAILLAGE HEXAHEDRIQUE --- "
-mesh = hexablock.mesh("TUYAU_COURBE", doc)
+mesh = hexablock.mesh(doc)
 
 print "Nombre d hexaedres:"   , mesh.NbHexas()
 print "Nombre de quadrangles:", mesh.NbQuadrangles()

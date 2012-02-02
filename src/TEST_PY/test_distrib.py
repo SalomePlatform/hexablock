@@ -42,12 +42,12 @@ geompy.addToStudy(sphere, name)
 # Add a new document
 # ------------------
 
-doc = hexablock.addDocument ("default")
+doc = hexablock.addDocument(name)
 
-# fkl: doc.addShape(sphere)
+doc.addShape(sphere)
 
-# Build the model of blocks: a spherical grid
-# -------------------------------------------
+# Build the model of blocks: a catesian grid
+# ------------------------------------------
 
 center = doc.addVertex(cx, cy, cz)
 
@@ -55,13 +55,10 @@ axis_x = doc.addVector(1, 0, 0)
 axis_y = doc.addVector(0, 1, 0)
 axis_z = doc.addVector(0, 0, 1)
 
-#fkl: doc.makeSpherical(center, axis_x, 3, 1.0)
 doc.makeCartesian(center, axis_x, axis_y, axis_z, 5, 4, 3)
 
 # Associate the model of block to the geometry
 # --------------------------------------------
-
-# fkl: to do
 
 # Define group of all hexahedra
 # -----------------------------
@@ -94,7 +91,7 @@ for i in xrange(doc.countPropagation()):
 # Generate the hexehadral mesh on FactoryServer
 # ---------------------------------------------
 
-mesh_1 = hexablock.mesh(name, doc)
+mesh_1 = hexablock.mesh(doc)
 
 print "Number of hexaedra   :", mesh_1.NbHexas()
 print "Number of quadrangles:", mesh_1.NbQuadrangles()
@@ -106,7 +103,7 @@ print "Number de nodes      :", mesh_1.NbNodes()
 
 container = "FooBar"
 
-mesh_2 = hexablock.mesh(name+":"+container, doc, 3, container)
+mesh_2 = hexablock.mesh(doc, name+":"+container, 3, container)
 
 print "Number of hexaedra   :", mesh_2.NbHexas()
 print "Number of quadrangles:", mesh_2.NbQuadrangles()

@@ -104,6 +104,4 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh("rind:hexas", doc)
-
-
+mesh_hexas = hexablock.mesh(doc, "rind:hexas")
