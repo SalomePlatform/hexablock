@@ -304,6 +304,9 @@ namespace HEXABLOCK
         //
         bool removeGroup( const QModelIndex& grp );
 
+        //
+        QModelIndexList getGroupElements( const QModelIndex& iGroup, Group& kind) const;
+
         // 7.4 Boite: éditer un groupe
         void setGroupName( const QModelIndex& grp, const QString& name );
         bool addGroupElement( const QModelIndex& grp, const QModelIndex& elt );
@@ -458,6 +461,8 @@ namespace HEXABLOCK
         virtual Qt::ItemFlags flags(const QModelIndex &index) const;
         virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
+
+        QModelIndexList getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const;
      };
 
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Replace Hexahedron</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -68,7 +68,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>s1</string>
+            <string>Point a</string>
            </property>
           </widget>
          </item>
@@ -86,12 +86,15 @@
            <property name="text">
             <string/>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>s2</string>
+            <string>Point b</string>
            </property>
           </widget>
          </item>
@@ -109,12 +112,15 @@
            <property name="text">
             <string/>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>s3</string>
+            <string>Point c</string>
            </property>
           </widget>
          </item>
@@ -131,6 +137,9 @@
            </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -149,7 +158,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>d1</string>
+            <string>Point a</string>
            </property>
           </widget>
          </item>
@@ -167,12 +176,15 @@
            <property name="text">
             <string/>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>d2</string>
+            <string>Point b</string>
            </property>
           </widget>
          </item>
@@ -190,12 +202,15 @@
            <property name="text">
             <string/>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>d3</string>
+            <string>Point c</string>
            </property>
           </widget>
          </item>
@@ -212,6 +227,9 @@
            </property>
            <property name="text">
             <string/>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>

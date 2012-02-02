@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Pipe Construction</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -41,6 +41,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="4" column="0">
@@ -57,6 +60,9 @@
           <width>127</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

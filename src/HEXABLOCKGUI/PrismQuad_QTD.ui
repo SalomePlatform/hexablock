@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Prism quad(s)</string>
+   <string>Prism Quad(s) Operation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -73,6 +73,9 @@
              <width>127</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>

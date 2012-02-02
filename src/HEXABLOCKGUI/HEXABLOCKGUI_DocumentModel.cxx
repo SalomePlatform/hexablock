@@ -410,6 +410,7 @@ void DocumentModel::fillGroups()
     g = _hexaDocument->getGroup(i);
     std::cout<<"getGroup => "<< i << std::endl;
     gItem = new GroupItem(g);
+    gItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _groupDirItem->appendRow(gItem);
   } 
   std::cout<<"DocumentModel::fillGroups()  end"<<std::endl;
@@ -2703,6 +2704,7 @@ QModelIndex DocumentModel::addGroup( const QString& name, Group kind )
   HEXA_NS::Group* hGroup = _hexaDocument->addGroup( name.toLocal8Bit().constData(), kind );
 
   GroupItem* groupItem = new GroupItem(hGroup);
+  groupItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
   _groupDirItem->appendRow(groupItem);
   iGroup = groupItem->index();
   QString tmp = "/tmp/addGroup.vtk";
@@ -2710,8 +2712,6 @@ QModelIndex DocumentModel::addGroup( const QString& name, Group kind )
 
   return iGroup;
 }
-
-
 
 
 //
@@ -2731,6 +2731,38 @@ bool DocumentModel::removeGroup( const QModelIndex& igrp )
     ret = false;
   }
 }
+
+
+QModelIndexList DocumentModel::getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const
+{
+  QModelIndexList iElements;
+
+  HEXA_NS::Group* g = iGroup.data(HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
+  if ( !g ) return iElements;
+
+  QModelIndexList iFound;
+  QVariant q;
+  HEXA_NS::EltBase* eltBase = NULL;
+  for ( int nr = 0; nr < g->countElement(); ++nr ){
+    eltBase = g->getElement( nr ); std::cout<< "eltBase"<< eltBase << std::endl;
+    kind = g->getKind();
+    switch ( kind ){
+      case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: q = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
+      case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: q = QVariant::fromValue( (HEXA_NS::Quad *)eltBase ); break;
+      case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: q = QVariant::fromValue( (HEXA_NS::Edge *)eltBase ); break;
+      case HEXA_NS::VertexNode: q = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
+    }
+    iFound = match( index(0, 0),
+                    HEXA_DATA_ROLE,
+                    q,
+                    1,
+                    Qt::MatchRecursive );
+    if ( !iFound.isEmpty() )
+      iElements << iFound[0];
+  }
+  return iElements;
+}
+
 
 
 
@@ -3265,7 +3297,6 @@ GroupsModel::~GroupsModel()
 
 
 
-
 Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 {
 //   std::cout<<"GroupsModel::flags()"<<std::endl;
@@ -3290,7 +3321,6 @@ QVariant GroupsModel::headerData ( int section, Qt::Orientation orientation, int
 }
 
 
-
 QStandardItem* GroupsModel::itemFromIndex ( const QModelIndex & index ) const
 {
   QStandardItem *item = NULL;
@@ -3302,10 +3332,15 @@ QStandardItem* GroupsModel::itemFromIndex ( const QModelIndex & index ) const
 }
 
 
-
-
-
-
+QModelIndexList GroupsModel::getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const
+{
+  QModelIndexList elements;
+  DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+  if ( m != NULL ){
+    elements = m->getGroupElements( mapToSource(iGroup), kind );
+  }
+  return elements;
+}
 
 
 MeshModel::MeshModel( QObject * parent ) :

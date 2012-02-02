@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MakeCylinders</string>
+   <string>Cylinders Construction</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -38,6 +38,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -54,6 +57,9 @@
           <width>127</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

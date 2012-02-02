@@ -527,6 +527,135 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 
 
 
+
+
+
+GroupsSelectionModel::GroupsSelectionModel( QAbstractItemModel * model ):
+QItemSelectionModel( model )
+{
+  connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+           this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
+  connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+}
+
+
+GroupsSelectionModel::~GroupsSelectionModel()
+{
+  disconnect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+          this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
+  disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+          this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+}
+
+
+
+SVTK_ViewWindow* GroupsSelectionModel::_getVTKViewWindow()
+{
+  SVTK_ViewWindow* aVtkView = HEXABLOCKGUI::currentVtkView;
+  return aVtkView;
+}
+
+
+void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
+{
+  const GroupsModel* m = dynamic_cast<const GroupsModel *>( model() );
+  if ( m == NULL ) return;
+  SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+  if ( currentVTKViewWindow == NULL ) return;
+  SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
+  if ( selector == NULL ) return;
+
+  // document selection
+  Document_Actor* docActor = NULL;
+  Handle(SALOME_InteractiveObject) docIO;
+  SALOME_ListIO aList;
+
+  // element highlight
+  TColStd_MapOfInteger aMap;
+  QList<int>::const_iterator anIter;
+  int vtkElemsId;
+
+  // data from model
+  int     eltType;
+  QString docEntry;
+
+  QVariant treeVariant        = eltIndex.data( HEXA_TREE_ROLE );
+  QVariant docEntryVariant    = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
+
+  if ( !treeVariant.isValid() || !docEntryVariant.isValid() ){ 
+    INFOS("data from model not valid");
+    return;
+  }
+
+  eltType  = treeVariant.toInt();
+  docEntry = docEntryVariant.toString();
+
+  if ( eltType != GROUP_TREE ){
+    INFOS("bad element type : not a group item" << eltType );
+    return;
+  }
+
+  // Select the document in Salome
+  docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
+  if ( docActor == NULL) return;
+  docIO = docActor->getIO();
+
+  // Highlight in vtk view the element from document
+  DocumentModel::Group kind;
+  QModelIndexList iElements = m->getGroupElements( eltIndex, kind );
+
+  // Set selection mode in VTK view
+  switch (kind){
+  case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: currentVTKViewWindow->SetSelectionMode(VolumeSelection); break;
+  case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: currentVTKViewWindow->SetSelectionMode(FaceSelection);   break;
+  case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: currentVTKViewWindow->SetSelectionMode(EdgeSelection);   break;
+  case HEXA_NS::VertexNode: currentVTKViewWindow->SetSelectionMode(NodeSelection); break;
+  }
+
+  QString eltEntry;
+  foreach( const QModelIndex& iElt, iElements ){
+    eltEntry = iElt.data( HEXA_ENTRY_ROLE ).toString();
+    vtkElemsId = docActor->vtkElemsId[ eltEntry.toInt() ];
+    if ( vtkElemsId > 0 ) aMap.Add( vtkElemsId );
+  }
+
+  selector->AddOrRemoveIndex( docIO, aMap, false );
+  currentVTKViewWindow->highlight( docIO, true, true );
+
+}
+
+
+
+void GroupsSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
+{
+  MESSAGE("GroupsSelectionModel::onSelectionChanged");
+  try {
+    //     if ( _salomeSelectionMgr == NULL ) return;
+    //     _salomeSelectionMgr->clearSelected();
+    //   erasePreview(true);
+    QModelIndexList indexes = selected.indexes();
+    for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
+      MESSAGE( "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() );
+      _highlightGroups( *i_index );
+    }
+
+    // CS_BP todo SALOMEGUI_Swig.cxx:370
+    //   indexes = deselected.indexes();
+    //   for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index )
+    //     _unselectSalome( *i_index);
+  } catch ( ... ) {
+    MESSAGE("Unknown exception was cought !!!");
+  }
+
+}
+
+
+
+
+
+
+
 MeshSelectionModel::MeshSelectionModel( QAbstractItemModel * model ):
 QItemSelectionModel( model )
 {

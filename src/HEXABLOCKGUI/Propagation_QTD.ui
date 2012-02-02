@@ -35,6 +35,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">

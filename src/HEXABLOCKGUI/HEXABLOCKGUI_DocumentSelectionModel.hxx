@@ -101,6 +101,28 @@ namespace HEXABLOCK
     };
 
 
+
+    class GroupsSelectionModel : public QItemSelectionModel
+    {
+      Q_OBJECT
+
+      public:
+        GroupsSelectionModel( QAbstractItemModel * model );
+        virtual ~GroupsSelectionModel();
+
+      protected slots:
+//         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+      private:
+        SVTK_ViewWindow* _getVTKViewWindow();
+        void _highlightGroups( const QModelIndex& eltIndex );
+
+    };
+
+
+
+
     class MeshSelectionModel : public QItemSelectionModel
     {
       Q_OBJECT

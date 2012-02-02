@@ -38,6 +38,7 @@
 
 #include <SALOMEconfig.h>
 
+
 // #include "Resource.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
 
@@ -63,12 +64,47 @@ namespace HEXABLOCK
     class MeshModel;
     class PatternDataSelectionModel;
     class PatternBuilderSelectionModel;
+    class GroupsSelectionModel;
     class MeshSelectionModel;
+
+    class HexaBaseDialog;
+    class VertexDialog;
+    class EdgeDialog;
+    class QuadDialog;
+    class HexaDialog;
+    class VectorDialog;
+    class CylinderDialog;
+    class PipeDialog;
+    class MakeGridDialog;
+    class MakeCylinderDialog;
+    class MakePipeDialog;
+    class MakeCylindersDialog;
+    class MakePipesDialog;
+    class RemoveHexaDialog;
+    class PrismQuadDialog;
+    class JoinQuadDialog;
+    class MergeDialog;
+    class DisconnectDialog;
+    class CutEdgeDialog;
+    class MakeTransformationDialog;
+    class MakeSymmetryDialog;
+    class PerformTransformationDialog;
+    class PerformSymmetryDialog;
+    class VertexAssocDialog;
+    class EdgeAssocDialog;
+    class QuadAssocDialog;
+    class GroupDialog;
+    class LawDialog;
+    class PropagationDialog;
+    class ComputeMeshDialog;
+    class ReplaceHexaDialog;
+    class QuadRevolutionDialog;
+    class MakeHemiSphereDialog;
   }
 }
 
 
-
+class HEXABLOCKGUI_Resource;//SUIT_ResourceMgr;
 class SalomeApp_Study;
 class SalomeApp_Application;
 class SUIT_ViewWindow;
@@ -160,9 +196,12 @@ protected:
   bool createSComponent();
 //   virtual bool isSelectionCompatible();
 
+  void _showDialogBox( HEXABLOCK::GUI::HexaBaseDialog* diag );
+
 
 //   bool _selectFromTree;
   HEXABLOCKGUI_Resource* _myresource;
+//   SUIT_ResourceMgr* _myresource;
   static int _oldStudyId;
   static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;
 //   static SMESH::SMESH_Gen_var             _smeshEngine;
@@ -247,6 +286,40 @@ private:
   QDockWidget *_dwMesh;          // Hexablock meshing edtion
   QDockWidget *_dwObjectBrowser; // Salome study
   QDockWidget *_dwInputPanel;    // user Input
+
+  // Dialog Box ( to keep persistent values )
+  HEXABLOCK::GUI::VertexDialog*                 _vertexDiag;
+  HEXABLOCK::GUI::EdgeDialog*                   _edgeDiag;
+  HEXABLOCK::GUI::QuadDialog*                   _quadDiag;
+  HEXABLOCK::GUI::HexaDialog*                   _hexaDiag;
+  HEXABLOCK::GUI::VectorDialog*                 _vectorDiag;
+  HEXABLOCK::GUI::CylinderDialog*               _cylinderDiag;
+  HEXABLOCK::GUI::PipeDialog*                   _pipeDiag;
+  HEXABLOCK::GUI::MakeGridDialog*               _makeGridDiag;
+  HEXABLOCK::GUI::MakeCylinderDialog*           _makeCylinderDiag;
+  HEXABLOCK::GUI::MakePipeDialog*               _makePipeDiag;
+  HEXABLOCK::GUI::MakeCylindersDialog*          _makeCylindersDiag;
+  HEXABLOCK::GUI::MakePipesDialog*              _makePipesDiag;
+  HEXABLOCK::GUI::RemoveHexaDialog*             _removeHexaDiag;
+  HEXABLOCK::GUI::PrismQuadDialog*              _prismQuadDiag;
+  HEXABLOCK::GUI::JoinQuadDialog*               _joinQuadDiag;
+  HEXABLOCK::GUI::MergeDialog*                  _mergeDiag;
+  HEXABLOCK::GUI::DisconnectDialog*             _disconnectDiag;
+  HEXABLOCK::GUI::CutEdgeDialog*                _cutEdgeDiag;
+  HEXABLOCK::GUI::MakeTransformationDialog*     _makeTransformationDiag;
+  HEXABLOCK::GUI::MakeSymmetryDialog*           _makeSymmetryDiag;
+  HEXABLOCK::GUI::PerformTransformationDialog*  _performTransformationDiag;
+  HEXABLOCK::GUI::PerformSymmetryDialog*        _performSymmetryDiag;
+  HEXABLOCK::GUI::VertexAssocDialog*            _vertexAssocDiag;
+  HEXABLOCK::GUI::EdgeAssocDialog*              _edgeAssocDiag;
+  HEXABLOCK::GUI::QuadAssocDialog*              _quadAssocDiag;
+  HEXABLOCK::GUI::GroupDialog*                  _groupDiag;
+  HEXABLOCK::GUI::LawDialog*                    _lawDiag;
+  HEXABLOCK::GUI::PropagationDialog*            _propagationDiag;
+  HEXABLOCK::GUI::ComputeMeshDialog*            _computeMeshDiag;
+  HEXABLOCK::GUI::ReplaceHexaDialog*            _replaceHexaDiag;
+  HEXABLOCK::GUI::QuadRevolutionDialog*         _quadRevolutionDiag;
+  HEXABLOCK::GUI::MakeHemiSphereDialog*         _makeHemiSphereDiag;
 
   // Actions
   int _menuId;
@@ -336,6 +409,7 @@ private:
   //    SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL      SELECTION_MODEL     SELECTION_MODEL
   HEXABLOCK::GUI::PatternDataSelectionModel    *_patternDataSelectionModel;   // 1..n   selection
   HEXABLOCK::GUI::PatternBuilderSelectionModel *_patternBuilderSelectionModel;// 1..n   selection
+  HEXABLOCK::GUI::GroupsSelectionModel         *_groupsSelectionModel;
   HEXABLOCK::GUI::MeshSelectionModel           *_meshSelectionModel;
 
   //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME

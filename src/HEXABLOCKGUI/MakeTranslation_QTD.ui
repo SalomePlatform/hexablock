@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Translation Operation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -37,6 +37,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -57,6 +60,9 @@
             <width>127</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -84,7 +90,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Help</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

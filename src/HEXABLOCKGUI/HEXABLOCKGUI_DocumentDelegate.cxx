@@ -108,11 +108,10 @@ QWidget *DocumentDelegate::createEditor(QWidget *parent,
         if ( _patternDataSelectionModel ) editor->setPatternDataSelectionModel( _patternDataSelectionModel );
         if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
         if ( _meshSelectionModel ) editor->setMeshSelectionModel( _meshSelectionModel);
-//         QItemSelectionModel*          _groupsSelectionModel;
+//         if ( _groupsSelectionModel ) editor->setGroupsSelectionModel( _groupsSelectionModel );
         _dw->setWidget(editor);
-
         cout << "############## TITLE => " << editor->windowTitle().toStdString() << endl;
-        _dw->setWindowTitle( tr("INPUT PANEL : %1").arg(editor->windowTitle()) );
+        _dw->setWindowTitle( editor->windowTitle() );
 //         connect ( editor, SIGNAL( editingFinished() ), this, SLOT ( commitEditor() ) );
 //         editor->exec();
       }

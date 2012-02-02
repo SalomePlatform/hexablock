@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Join quad(s)</string>
+   <string>Join Quad(s) Operation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -35,7 +35,7 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>QA</string>
+         <string>Quadrangle(s)</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0" rowspan="3">
@@ -84,7 +84,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>QA_1</string>
+         <string>Point a</string>
         </property>
        </widget>
       </item>
@@ -102,12 +102,15 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>QA_2</string>
+         <string>Point b</string>
         </property>
        </widget>
       </item>
@@ -124,6 +127,9 @@
           <width>127</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -145,7 +151,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>QB</string>
+         <string>Quadrangle</string>
         </property>
        </widget>
       </item>
@@ -157,12 +163,15 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>QB_1</string>
+         <string>Point a</string>
         </property>
        </widget>
       </item>
@@ -180,12 +189,15 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>QB_2</string>
+         <string>Point b</string>
         </property>
        </widget>
       </item>
@@ -202,6 +214,9 @@
           <width>127</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

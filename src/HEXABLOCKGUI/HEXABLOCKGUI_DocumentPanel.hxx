@@ -130,6 +130,8 @@ namespace HEXABLOCK
 //           void editingFinished ();
 
         protected:
+          void initLineEdits();
+
           void _allowSelection();
           void _disallowSelection();
 

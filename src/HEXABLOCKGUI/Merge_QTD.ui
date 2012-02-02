@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string> Merge element</string>
+   <string> Merge Operation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -95,6 +95,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -111,6 +114,9 @@
              <width>127</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -135,6 +141,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -151,6 +160,9 @@
              <width>127</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -169,6 +181,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="3" column="0">
@@ -186,6 +201,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -202,6 +220,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="1" column="1">
@@ -212,6 +233,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="2" column="1">
@@ -221,6 +245,9 @@
              <width>127</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -239,6 +266,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="5" column="0">
@@ -256,6 +286,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item row="6" column="0">
@@ -272,6 +305,9 @@
              <width>127</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>

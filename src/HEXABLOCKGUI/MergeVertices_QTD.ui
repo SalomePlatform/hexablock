@@ -37,6 +37,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -57,6 +60,9 @@
             <width>127</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
