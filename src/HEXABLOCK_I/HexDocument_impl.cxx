@@ -1574,6 +1574,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
                             const Edges&            mline, 
                             GEOM::GEOM_Object_ptr   gstart, 
                             ::CORBA::Double         pstart, 
+                            ::CORBA::Boolean        inv, 
                             const Shapes&           gline)
                       throw (SALOME::SALOME_Exception)
 {
@@ -1610,7 +1611,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   printf (" +++ HexDocument_impl.cxx : Appel de associateClosedLine \n");
 
   ::CORBA::Long ier = _document_cpp->associateClosedLine (md_first, md_start, 
-                                         md_line, gg_start, pstart, gg_line);
+                                     md_line, gg_start, pstart, inv, gg_line);
   HexDisplay (ier);
   return ier;
 }

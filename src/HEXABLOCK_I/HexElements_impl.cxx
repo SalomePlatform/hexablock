@@ -144,6 +144,13 @@ char* Elements_impl::getName() throw (SALOME::SALOME_Exception)
    return CORBA::string_dup( _elements_cpp->getName(name) );
 }
 
+// ========================================================= setName
+void Elements_impl::setName(const char* name) 
+     throw (SALOME::SALOME_Exception)
+{
+  _elements_cpp->setName (name);
+}
+
 
 
 

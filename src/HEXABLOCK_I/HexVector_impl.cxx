@@ -69,3 +69,9 @@ char* Vector_impl::getName() throw (SALOME::SALOME_Exception)
    char name[12];
    return CORBA::string_dup( _vector_cpp->getName(name) );
 }
+// ========================================================= setName
+void Vector_impl::setName(const char* name) 
+     throw (SALOME::SALOME_Exception)
+{
+  _vector_cpp->setName (name);
+}

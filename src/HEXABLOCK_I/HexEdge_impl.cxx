@@ -84,6 +84,13 @@ char* Edge_impl::getName() throw (SALOME::SALOME_Exception)
   return CORBA::string_dup( _edge_cpp->getName(name) );
 }
 
+// ========================================================= setName
+void Edge_impl::setName(const char* name) 
+     throw (SALOME::SALOME_Exception)
+{
+  _edge_cpp->setName (name);
+}
+
 
 
 

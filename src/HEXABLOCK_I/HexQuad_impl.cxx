@@ -177,3 +177,9 @@ char* Quad_impl::getName() throw (SALOME::SALOME_Exception)
  char name[12];
  return CORBA::string_dup( _quad_cpp->getName(name) );
 }
+// ========================================================= setName
+void Quad_impl::setName(const char* name) 
+     throw (SALOME::SALOME_Exception)
+{
+  _quad_cpp->setName (name);
+}

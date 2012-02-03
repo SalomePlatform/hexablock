@@ -43,6 +43,7 @@ public:
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);
   char* getName() throw (SALOME::SALOME_Exception);
+  void  setName (const char* name) throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Pipe *_pipe_cpp;

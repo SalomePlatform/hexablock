@@ -186,7 +186,12 @@ char* CrossElements_impl::getName() throw (SALOME::SALOME_Exception)
   return CORBA::string_dup( _crossElements_cpp->getName(name) );
 }
 
-
+// ========================================================= setName
+void CrossElements_impl::setName(const char* name) 
+     throw (SALOME::SALOME_Exception)
+{
+  _crossElements_cpp->setName (name);
+}
 
 // ::CORBA::Long CrossElements_impl::countVertex() throw (SALOME::SALOME_Exception)
 // {
