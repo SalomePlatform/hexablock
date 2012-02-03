@@ -528,7 +528,8 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
    long associateClosedLine (in Vertex mfirst, in Edge mstart, in Edges  mline, 
-                            in Shape  gstart, in double pstart, in Shapes gline)
+                            in Shape  gstart, in double pstart, in boolean inv,
+                            in Shapes gline)
         raises (SALOME::SALOME_Exception);
 
    void setShape (in GEOM::GEOM_Object geom_object_vertex )
