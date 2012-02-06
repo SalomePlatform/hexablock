@@ -118,7 +118,7 @@ void ModelTest::Test_cartesi1 ()
    const int size_z = 8;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
    Hex::Vertex* orig = doc->addVertex (0,0,0);
 
    Hex::Vector*   dir  = doc->addVector (1,1,1);
@@ -163,7 +163,7 @@ void ModelTest::Test_find ()
    const int size_z = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -208,7 +208,7 @@ void ModelTest::Test_joint ()
    const int dimz = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig1 = doc->addVertex (0,0,0);
    Hex::Vector* dir   = doc->addVector (1,1,1);
@@ -260,7 +260,7 @@ void ModelTest::Test_prism ()
    const int dimz = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig1 = doc->addVertex (0,0,0);
    Hex::Vector* dir   = doc->addVector (1,1,1);
@@ -297,7 +297,7 @@ void ModelTest::Test_prism2 ()
     const int dimz = 2;
     
     Hex::Hex mon_ex;
-    Hex::Document* doc = mon_ex.addDocument ();
+    Hex::Document* doc = mon_ex.addDocument ("foo");
     
     Hex::Vertex* orig1 = doc->addVertex (0,0,0);
     Hex::Vector* dir   = doc->addVector (1,1,1);
@@ -340,7 +340,7 @@ void ModelTest::Test_hexa1 ()
    const int size_z = 1;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
    //  Hex::Elements*  grid = 
@@ -359,7 +359,7 @@ void ModelTest::Test_decoupage ()
    const int size_z = 1;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -386,7 +386,7 @@ void ModelTest::Test_gen_xml ()
    const int size_z = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -453,7 +453,7 @@ void ModelTest::Test_clone ()
    const int size_z = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -480,7 +480,7 @@ void ModelTest::Test_separ ()
    const int size_z = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -497,7 +497,7 @@ void ModelTest::Test_separ ()
 // {
 //    
 //    Hex::Hex mon_ex;
-//    Hex::Document* doc = mon_ex.addDocument ();
+//    Hex::Document* doc = mon_ex.addDocument ("foo");
 // 
 //    Hex::Vertex* c2 = doc->addVertex (0,0,0);
 //    Hex::Vector* dz = doc->addVector (0,0,1);
@@ -524,7 +524,7 @@ void ModelTest::Test_grille_cyl ()
 {
    
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
    Hex::Vertex* orig2 = doc->addVertex (10, 0,0);
@@ -563,7 +563,7 @@ void ModelTest::Test_cylinder ()
    cpchar fic_vtk = "cylindre";
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig1 = doc->addVertex (0, 0,0);
    Hex::Vertex* orig2 = doc->addVertex (50,0,0);
@@ -593,7 +593,7 @@ void ModelTest::Test_cylinder ()
 void ModelTest::myTest_croix ()
 {
   Hex::Hex mon_ex;
-  Hex::Document* doc = mon_ex.addDocument ();
+  Hex::Document* doc = mon_ex.addDocument ("foo");
 
 
 //   Hex::Vector* dx1 = doc->addVector( -1, 0, 0 );
@@ -641,7 +641,7 @@ void ModelTest::Test_croix ()
 {
    
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
    Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
@@ -712,7 +712,7 @@ void ModelTest::Test_pipes ()
 {
    
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
    Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
@@ -739,7 +739,7 @@ void ModelTest::Test_lorraine()
 {
    
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
    Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
@@ -818,7 +818,7 @@ void ModelTest::Test_disconnect ()
    const int size_z = 1;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
    Hex::Vertex*   orig2 = doc->addVertex (4,0,0);
@@ -877,7 +877,7 @@ void ModelTest::Test_propagation ()
    const int size_z = 1;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex*   orig = doc->addVertex (0,0,0);
    Hex::Vector*   dir  = doc->addVector (1,1,1);
@@ -924,7 +924,7 @@ void ModelTest::Test_move ()
    const int size_z = 2;
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
@@ -961,7 +961,7 @@ void ModelTest::Test_deux_cyl ()
 {
    
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
 
    Hex::Vertex* orig1 = doc->addVertex (0,0,-5);
    Hex::Vertex* orig2 = doc->addVertex (-5,0,0);
@@ -997,7 +997,7 @@ void ModelTest::Test_transfo ()
    cpchar fic_vtk = "transfo";
 
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Document* doc = mon_ex.addDocument ("foo");
    doc ->setLevel (1);
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
