@@ -201,7 +201,6 @@ void performSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
                             const Edges&            mline, 
                             GEOM::GEOM_Object_ptr   gstart, 
                             ::CORBA::Double         pstart, 
-                            ::CORBA::Boolean        inv,
                             const Shapes&           gline)
                       throw (SALOME::SALOME_Exception);
 
