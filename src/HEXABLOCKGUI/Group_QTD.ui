@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>275</height>
+    <width>248</width>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,29 +89,8 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" rowspan="3">
+        <item row="0" column="0" rowspan="2">
          <widget class="QListWidget" name="eltBase_lw"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="add_pb">
-          <property name="text">
-           <string>add </string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="remove_pb">
-          <property name="text">
-           <string>remove</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="clear_pb">
-          <property name="text">
-           <string>clear</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>

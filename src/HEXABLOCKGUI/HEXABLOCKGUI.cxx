@@ -1858,7 +1858,7 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 void HEXABLOCKGUI::addVertex()
 {
   if ( !_vertexDiag ){
-    _vertexDiag == new VertexDialog(_dwInputPanel);
+    _vertexDiag = new VertexDialog(_dwInputPanel);
   }
   _showDialogBox( _vertexDiag );
 }

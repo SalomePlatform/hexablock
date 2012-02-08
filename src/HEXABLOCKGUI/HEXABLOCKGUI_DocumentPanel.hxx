@@ -519,6 +519,9 @@ namespace HEXABLOCK
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
 
+      protected slots:
+        virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
       private slots:
         void addQuad();
         void removeQuad();
@@ -542,6 +545,9 @@ namespace HEXABLOCK
 
       protected:
         virtual bool eventFilter(QObject *obj, QEvent *event);
+     
+      protected slots:
+        virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
       private slots:
         void addQuad();
@@ -837,10 +843,13 @@ namespace HEXABLOCK
       public slots:
         virtual bool apply();
 
+      protected slots:
+        virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+
       private slots:
-        void addEltBase();
+//         void addEltBase();
         void removeEltBase();
-        void clearEltBase();
+//         void clearEltBase();
         void onKindChanged( int index );
 
       private:

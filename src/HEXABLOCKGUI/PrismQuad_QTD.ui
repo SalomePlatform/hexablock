@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
-    <height>339</height>
+    <width>228</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,29 +26,8 @@
          <string>Quad(s)</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0" rowspan="3">
+         <item row="0" column="0" rowspan="2">
           <widget class="QListWidget" name="quads_lw"/>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="add_pb">
-           <property name="text">
-            <string>Add</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="remove_pb">
-           <property name="text">
-            <string>Remove</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="clear_pb">
-           <property name="text">
-            <string>Clear</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
