@@ -29,6 +29,8 @@ BEGIN_NAMESPACE_HEXA
 static bool db = false;
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
+int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline, 
+                    double pstart, double pend, bool closed, bool inv=false);
 
 // ====================================================== associateOpenedLine
 int Document::associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
@@ -39,7 +41,7 @@ int Document::associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart,
 }
 // ====================================================== associateClosedLine
 int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline, 
-                          Shape*  gstart, double pstart, Shapes& gline)
+                         Shape*  gstart, double pstart, bool inv, Shapes& gline)
 {
    if (vfirst == NULL)
       {
@@ -47,12 +49,14 @@ int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       return HERR;
       }
 
-   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 1.0);
+   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 
+                            1.0, inv);
    return ier;
 }
 // ====================================================== associateClosedLine
 int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline, 
-                    Shape*  gstart, double pstart, Shapes& gline, double pend)
+                    Shape*  gstart, double pstart, Shapes& gline, double pend,
+                    bool inv)
 {
    char buffer [16], cnum [8];
    int  nbseg  = mline.size ();
@@ -63,7 +67,6 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       putError (W_ASSO_LINE4);
       return HERR;
       }
-
                 // Contour ferme : 
                 // Le vertex de depart n'appartient pas a l'edge de depart
    int istart = mstart->index (vfirst);
@@ -199,8 +202,8 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
          }
       }
    
-   int ier = associateCascade (les_edges, &les_orig[0], gstart, gline, pstart, 
-                               pend, closed);
+   int ier = associateShapes (les_edges, &les_orig[0], gstart, gline, pstart, 
+                              pend, closed, inv);
    return ier;
 }
 //

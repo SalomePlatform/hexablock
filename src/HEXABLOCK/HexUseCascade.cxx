@@ -309,7 +309,7 @@ int vertexInLine (int nedge, int nblines, vector<int> &torig,
 // ====================================================== associateCascade
 int Document::associateCascade (Edges& mline, int msens[], Shape* gstart, 
                                 Shapes& gline, double pstart, double pend, 
-                                bool closed)
+                                bool closed, bool inv)
 {
    cout << "____________________________________________"
         << " Document::associateCascade" << endl;

@@ -135,8 +135,7 @@ void Vertex_impl::printName()throw (SALOME::SALOME_Exception)
 
 char* Vertex_impl::getName() throw (SALOME::SALOME_Exception)
 {
-  char name[12];
-  return CORBA::string_dup( _vertex_cpp->getName(name) );
+  return CORBA::string_dup( _vertex_cpp->getName() );
 }
 // ========================================================= setName
 void Vertex_impl::setName(const char* name) 

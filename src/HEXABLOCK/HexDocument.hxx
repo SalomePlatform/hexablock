@@ -166,7 +166,8 @@ public :
    int  associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
                              double pstart, Shapes& gline, double pend);
    int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
-                             Shape*  gstart, double pstart, Shapes& gline);
+                             Shape*  gstart, double pstart, bool inv, 
+                             Shapes& gline);
 
    void   setShape (Shape* forme)           { doc_shape = forme ; }
    Shape* getShape ()                       { return doc_shape  ; }
@@ -265,9 +266,11 @@ private :
 
    Elements* clonerElements (Elements* table, Matrix* matrice);
    int associateCascade (Edges& mline, int msens[], Shape* gstart, 
-                         Shapes& gline, double pstart, double pend, bool clos);
+                         Shapes& gline, double pstart, double pend, bool clos,
+                         bool inv);
    int associateLine (Vertex* mfirst, Edge*  mstart, Edges& mline, 
-                   Shape* gstart, double pstart, Shapes& gline, double pend);
+                      Shape* gstart, double pstart, Shapes& gline, double pend, 
+                      bool inv=false);
 
    // --------------------------------------------------- Evols Hexa3
    Hexa* addHexaQuadsAB   (AnaQuads& strquads);

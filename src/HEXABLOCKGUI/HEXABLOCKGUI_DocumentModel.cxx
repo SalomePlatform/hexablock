@@ -2679,7 +2679,7 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
 
 
     int r = _hexaDocument->associateClosedLine( mfirst, mstart, mline,
-                                                gstart, pstart, gline );
+                                                gstart, pstart, false, gline );
     if ( r == HOK ){
         updateData();
         std::cout << "DocumentModel:: associateClosedLine => OK " << std::endl;

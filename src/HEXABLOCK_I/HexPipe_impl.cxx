@@ -95,8 +95,7 @@ void Pipe_impl::printName() throw (SALOME::SALOME_Exception)
 
 char* Pipe_impl::getName() throw (SALOME::SALOME_Exception)
 {
-  char name[12];
-  return CORBA::string_dup( _pipe_cpp->getName(name) );
+  return CORBA::string_dup( _pipe_cpp->getName() );
 }
 // ========================================================= setName
 void Pipe_impl::setName(const char* name) 

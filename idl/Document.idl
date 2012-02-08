@@ -528,7 +528,7 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
    long associateClosedLine (in Vertex mfirst, in Edge mstart, in Edges  mline, 
-                            in Shape  gstart, in double pstart, 
+                            in Shape  gstart, in double pstart, in boolean inv,
                             in Shapes gline)
         raises (SALOME::SALOME_Exception);
 
