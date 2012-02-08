@@ -114,7 +114,7 @@ static double HEXA_EPSILON  = 1E-6; //1E-3;
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 // ---------------------------------------------------------------------
 class GeomLine
 {
