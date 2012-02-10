@@ -7,6 +7,18 @@ import geompy
 
 #---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 
+#          v9          v10         v11
+#   1       +----e18----+----e19----+
+#   .       |           |           |
+#   .       |           |           |
+#   0      e13          o          e17   
+#   .       |           |           |
+#   .       |           |           |
+#  -1       +----e14----+----e16----+
+#   .      v6          v10          v8
+#   .
+#   +.......-2...........0...........2
+
 global  ed_west, ed_est, ed_nord1, ed_nord2, ed_sud1, ed_sud2
 global  v_sw, v_s , v_se, v_nw, v_n , v_ne
 global  p_w, p_e, p_n, p_s, p_n1, p_n2, p_s1, p_s2, p_nw, p_sw, p_ne, p_se
@@ -114,13 +126,25 @@ def test_asso_closed () :
 # ======================================================= test_asso_closed_inv
 def test_asso_closed_inv () :
 
-    doc = init_globale ("asso_closed")
+    doc = init_globale ("asso_closed_inv")
 
     les_edges = [ ed_sud1, ed_sud2, ed_est, ed_nord1, ed_nord2,  ed_west ]
     les_arcs  = [ arc_s1,  arc_s2,  arc_e,  arc_n1,   arc_n2,    arc_w ]
 
     doc.associateClosedLine (v_s , les_edges[0], les_edges[1:], 
                                    les_arcs [0], 1.0, True, les_arcs[1:])
+    return doc
+
+# ======================================================= test_asso_opened
+def test_asso_opened () :
+
+    doc = init_globale ("asso_opened")
+
+    les_edges = [ ed_sud2, ed_est, ed_nord2 ]
+    les_arcs  = [ arc_s,   arc_e,  arc_n ]
+
+    doc.associateOpenedLine (les_edges[0], les_edges[1:], 
+                             les_arcs [0], 0.5, les_arcs[1:], 0.5)
     return doc
 
 # ================================================================= Begin

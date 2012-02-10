@@ -960,4 +960,11 @@ CrossElements* Document::makePipes (Pipe* pipe1, Pipe* pipe2)
    grille->crossCylinders (pipe1, pipe2, false);
    return grille;
 }
+// ======================================================== setLevel
+void set_debug_asso (bool boule);
+void Document::setLevel (int niv)
+{
+   doc_db = niv;
+   set_debug_asso (niv>0);
+}
 END_NAMESPACE_HEXA

@@ -38,7 +38,7 @@ public :
    int save    (const char* ficxml);
 
    int  getLevel ()                    { return doc_db ; }
-   void setLevel (int niv)             { doc_db = niv  ; }
+   void setLevel (int niv);
 
    Hexa*   getHexa   (int nro);
    Quad*   getQuad   (int nro);
