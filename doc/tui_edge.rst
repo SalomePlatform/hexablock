@@ -7,29 +7,32 @@
 Edges
 =====
 
+Manage the edges of the document.
+
 Add an edge in the document::
 
- 	ed = doc.addEdge(vx_1, vx_2)
+ 	edge_12 = doc.addEdge(vertex_1, vertex_2)
 
-Set of index: 0   1.
+Get the number of all edges in the document::
 
+	 sum_a = doc.countEdge()
 
-Get the number of edges in the document::
+Get the number of edges used only in the model of blocks::
 
-	 ne = doc.countEdge()
+	 sum_u = doc.countUsedEdge()
 
 Get an edge of the document::
 
- 	edg = doc.getEdge(i)
+ 	edge_i = doc.getEdge(i)
 
 Get the vertices of an edge::
 
- 	ver_a = ed.getVertex(0)
- 	ver_b = ed.getVertex(1)
+ 	vertex_a = edge_i.getVertex(0)
+ 	vertex_b = edge_i.getVertex(1)
 
 Find an edge in the document::
 
- 	edg = doc.findEdge(ver1, ver2)
+ 	edge_f = doc.findEdge(vertex_1, vertex_2)
 
 
 GUI command: :ref:`guiedge`

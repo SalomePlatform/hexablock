@@ -6,25 +6,29 @@
 Associate the model of blocks to the geometry
 =============================================
 
-The association of an element of the model of blocks to the geometry
+The association of the model of blocks to the geometry
+proceeds in three steps :
+
+- associate all vertices,
+- associate the needed edges,
+- associate the needed quadrangles.
+
+To facilitate the association of the model to the geometry, a more easy way exists:
+the association of lines taken from the model to lines taken from the geometry.
+
+The interaction for an association of an element of the model of blocks to the geometry
 proceeds in three stages :
 
-- select the model element to associate
-- select the shape of the geometry to associate to
+- select the model element(s) to associate
+- select the shape(s) of the geometry to associate to
 - make the association
-
-The hexablock application enables to associate elements independantly. 
-To facilitate the association of the model
-to the geometry, an alternative way exists: the association of
-vertices and the association of lines can be replaced association by
-lines.
 
 .. _guiassovertex:
 
 Associate to a vertex of the geometry
 =====================================
 
-To associate a vertex of the model of blocks to a point of the geometry in
+To associate a vertex of the model of blocks to a vertex of the geometry in
 the **Main Menu** select **Model -> Make Vertex association**
 
 *todo : plantage salome a l'ouverture de la fenetre de dialogue!!*
@@ -32,7 +36,7 @@ the **Main Menu** select **Model -> Make Vertex association**
 **Arguments:**
 
 - vertex of the model of blocks
-- point of the geometry
+- vertex of the geometry
 
 The dialogue box to associate to a vertex of the geometry is:
 
@@ -44,8 +48,8 @@ The dialogue box to associate to a vertex of the geometry is:
 
 .. _guiassoedge:
 
-Associate to edges or wires of the geometry
-===========================================
+Associate to edge or lines of the geometry
+==========================================
 
 To associate edge(s) of the model of blocks to line(s) of the geometry in
 the **Main Menu** select **Model -> Make Edge association**
@@ -69,8 +73,8 @@ The dialogue box to associate to edges or wires of the geometry is:
 
 .. _guiassoface:
 
-Associate to a face or a shell of the geometry
-==============================================
+Associate to a face of the geometry
+===================================
 
 To associate a quadrangle of the model of blocks to a face of the geometry in
 the **Main Menu** select **Model -> Make Quad association**

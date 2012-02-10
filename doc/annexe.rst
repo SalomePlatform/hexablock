@@ -3,7 +3,7 @@
 .. _annexe:
 
 ======
-Annexe
+Annexe: naming rule to find elements in an hexahedron
 ======
 
 
@@ -14,42 +14,43 @@ Definition of an hexahedron
    :align: center
 
 
-A: plane Z = 0
+Naming rule for the faces of an hexahedron
 
-B: plane Z = 1
+ A: plane Z = 0
 
-C: plane Y = 0
+ B: plane Z = 1
 
-D: plane Y = 1
+ C: plane Y = 0
 
-E: plane X = 0
+ D: plane Y = 1
 
-F: plane X = 1
+ E: plane X = 0
+
+ F: plane X = 1
 
 
 Quadrangles in an hexahedron
 ''''''''''''''''''''''''''''''
 
-Where are the 6 quadrangles in an hexahedron ?
+Naming rule for the 6 quadrangles in an hexahedron
 
+ Q_A or 0: plane Z=0
 
-Q_A or 0: plane Z=0
+ Q_B or 1: plane Z=1
 
-Q_B or 1: plane Z=1
+ Q_C or 2: plane Y=0
 
-Q_C or 2: plane Y=0
+ Q_D or 3: plane Y=1
 
-Q_D or 3: plane Y=1
+ Q_E or 4: plane X=0
 
-Q_E or 4: plane X=0
-
-Q_F or 5: plane X=1
+ Q_F or 5: plane X=1
 
 
 Edges in an hexahedron
 ''''''''''''''''''''''''
 
-Where are the 12 edges in an hexahedron ?
+Naming rule for the 12 edges in an hexahedron
 
  E_AC or 0: planes Z=0 and Y=0
 
@@ -80,7 +81,7 @@ Where are the 12 edges in an hexahedron ?
 Vertices in an hexahedron
 ''''''''''''''''''''''''''''
 
-Where are the 8 vertices in an hexahedron ?
+Naming rule for the 8 vertices in an hexahedron
 
  V_ACE or 0: planes Z=0 and Y=0 and X=0
 
@@ -98,6 +99,3 @@ Where are the 8 vertices in an hexahedron ?
  V_BDE or 6: planes Z=1 and Y=1 and X=0
 
  V_BDF or 7: planes Z=1 and Y=1 and X=1
-
-
-

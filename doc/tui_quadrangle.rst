@@ -7,33 +7,37 @@
 Quadrangles
 ===========
 
+Manage the quadrangles of the document.
+
 Add a quadrangle in the document::
 
- 	q1 = doc.addQuad(ed1, ed2, ed3, ed4)
- 	q2 = doc.addQuadVertices(ver1, ver2, ver3, ver4)
+ 	quad_1 = doc.addQuad(edge_1, edge_2, edge_3, edge_4)
+ 	quad_2 = doc.addQuadVertices(vertex_1, vertex_2, vertex_3, vertex_4)
 
-Set of index: 0	1  2  3.
+Notice: the vertices and edges follow the outline of the quadrangle.
 
-The vertices and edges follow the outline of the quadrangle.
+Get the number of all quadrangles of the document::
 
-Get the number of quadrangles of the document::
+ 	sum_a = doc.countQuad()
 
- 	nq = doc.countQuad()
+Get the number of used quadrangles in the model of blocks::
+
+ 	sum_u = doc.countUsedQuad()
 
 Get a quadrangle of the document::
 
- 	q = doc.getQuad(i)
+ 	quad_i = doc.getQuad(i)
 
 Get an edge of a quadrangle::
 
- 	ed_i = q1.getEdge(0 or 1 or 2 or 3)
+ 	edge_e = quad_i.getEdge(0 or 1 or 2 or 3)
 
 Get a vertex of a quadrangle::
  
-	ve_j = q1.getVertex(0 or 1 or 2 or 3)
+	vertex_v = quad_i.getVertex(0 or 1 or 2 or 3)
  
 Find a quadrangle in the document::
  
-	qua = doc.findQuad(ver1, ver2)
+	quad_f = doc.findQuad(vertex_1, vertex_2)
 
 GUI command: :ref:`guiquadrangles`

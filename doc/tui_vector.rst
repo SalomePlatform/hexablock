@@ -8,22 +8,21 @@ Vector
 
 Add a vector in the document::
 
-	 vec1 = doc.addVector(dx, dy, dz)
-	 vec2 = doc.addVectorVertices(ver1, ver2)
+	 vector_1 = doc.addVector(dx, dy, dz)
+	 vector_2 = doc.addVectorVertices(vertex_1, vertex_2)
 
 Get the values of a vector::
 
- 	dx = vec1.getDX()
- 	dy = vec1.getDY()
- 	dz = vec1.getDZ()
-
+ 	dx = vector_1.getDX()
+ 	dy = vector_1.getDY()
+ 	dz = vector_1.getDZ()
 
 Get the number of vector in the document::
 
-	 nv = doc.countVector()
+	 sum = doc.countVector()
 
 Get a vector of the document::
 
-	 vk = doc.getVector(i)
+	 vector_i = doc.getVector(i)
 
 GUI command: :ref:`guivector`

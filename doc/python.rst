@@ -20,15 +20,15 @@ By the links below you can find sample scripts for all operations provided by He
    tui_vector.rst
    tui_cyl.rst
    tui_pipe.rst
-   tui_remove.rst
+   tui_blocks_for_cyl_pipe.rst
    tui_cartgrid.rst
    tui_cylgrid.rst
    tui_sphergrid.rst
-   tui_blocks_for_cyl_pipe.rst
+   tui_remove.rst
+   tui_cut_hexa.rst
    tui_prism_join_quad.rst
    tui_merge_elmts.rst
    tui_disc_elmts.rst
-   tui_cut_hexa.rst
    tui_make_elmts.rst
    tui_modify_elmts.rst
    tui_asso_quad_to_geom.rst

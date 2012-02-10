@@ -6,22 +6,21 @@
 Document
 ========
 
-Give the file associate to a document::
+Give the name of a document::
 
- 	doc_file = doc.getFile()
+ 	name = doc.getName()
 
-Set the file associate to a document::
+Set the name of a document::
 
- 	doc.setFile(filename)
+ 	doc.setName(name)
 
-Save a document in a file::
+Save a document in a "XML" file::
 
- 	doc.saveFile()
+ 	doc.save(filename)
 
-Say if the document is saved in the file::
+Save the model of blocks of a document in a "VTK" file::
 
- 	is_saved = doc.isSavedFile()
-
+ 	doc.saveVtk(filename)
 
 Set the tolerance need to find element::
 
@@ -30,14 +29,6 @@ Set the tolerance need to find element::
 Get the tolerance::
 
  	tol = doc.getTolerance()
-
-Set the level for messages::
-
-	 doc.setLevel(2)
-
-Get the level for messages::
-
- 	level = doc.getLevel()
 
 
 GUI command: :ref:`guidocument`

@@ -6,22 +6,23 @@
 Hexahedron
 ==========
 
+Manage the hexahedral of the document.
+
 
 Add an hexahedron in the document::
 
-	 h1 = doc.addHexa(q_A, q_B, q_C, q_D, q_E, q_F)
+	 hexa_1 = doc.addHexa(q_A, q_B, q_C, q_D, q_E, q_F)
 
-	 h2 = doc.addHexaVertices(ACE, ACF, ADE, ADF, BCE, BCF, BDE, DBF)
+	 hexa_2 = doc.addHexaVertices(ACE, ACF, ADE, ADF, BCE, BCF, BDE, DBF)
 
-Get the number of hexahedra of the document::
+Notice: the arguments follow the convention explain in :ref:`annexe`
 
-	 nh = doc.countHexa()
+Get the number of all hexahedra of the document::
+
+	 sum_a = doc.countHexa()
 
 Get an hexahedron of the document::
 
- 	hexa = doc.getHexa(i)
+ 	hexa_i = doc.getHexa(i)
 
 GUI command: :ref:`guihexahedron`
-
-
-

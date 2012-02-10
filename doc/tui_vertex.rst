@@ -6,40 +6,40 @@
 Vertices
 ========
 
-Model data are exclusively composed of blocks and sub-sets composing these blocks:
-
-- the set of hexahedra composing the model
-- the set of quadrangles, edges and vertices composing these hexahedra
+Manage the vertices of the model of blocks of a document.
 
 
-Add a new vertex in the document::
+Add a new vertex of the model of blocks in the document::
 
- 	ve = doc.addVertex(x, y, z)
+ 	vertex_1 = doc.addVertex(x, y, z)
 
-Get the number of vertices of the document::
+Get the number of all vertices of the document::
 
- 	sum_v = doc.countVertex()
+ 	sum_a = doc.countVertex()
 
+Get the number of vertices used only by the model of blocks::
+
+ 	sum_u = doc.countUsedVertex()
 
 Get a vertex of the document::
 
- 	v = doc.getVertex(i)
+ 	vertex_i = doc.getVertex(i)
 
 Get the coordinates of a vertex::
 
- 	x = ve.getX()
- 	y = ve.getY()
- 	z = ve.getZ()
+ 	x = vertex_i.getX()
+ 	y = vertex_i.getY()
+ 	z = vertex_i.getZ()
 
 Set the coordinates of a vertex::
 
- 	ve.setX(x1)
- 	ve.setY(y1)
- 	ve.setZ(z1)
+ 	vertex_i.setX(x1)
+ 	vertex_i.setY(y1)
+ 	vertex_i.setZ(z1)
 
 Find a vertex in the document (with a tolerance)::
 
- 	ve = doc.findVertex(x, y, z)
+ 	vertex_f = doc.findVertex(x, y, z)
 
 
 GUI command: :ref:`guivertex`

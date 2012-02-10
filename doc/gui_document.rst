@@ -6,11 +6,20 @@
 Document
 ========
 
-To create a new document in the **Main Menu** select **Object Browser -> New document**.
+To create a new document in the **Main Menu** select **Document -> New document**.
 
-To import a document in the **Main Menu** select **Object Browser -> Import document**.
+To load a document in the **Main Menu** select **Document -> Load document**.
 
-The dialogue box for the import of a document is:
+To save a document in the **Main Menu** select **Document -> Save document**.
+
+A document contains all informations to generate a hexahedral mesh:
+
+- the model of bocks,
+- all associations,
+- all groups,
+- all laws set on propagations.
+
+The dialogue box to load of a document is:
 
 .. image:: _static/gui_import_document.png
    :align: center

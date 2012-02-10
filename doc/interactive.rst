@@ -7,27 +7,37 @@ Using Hexablock with the Graphical User Interface (GUI)
 #######################################################
 
 
-This application is a component of SALOME (like SMESH) and has:
+HEXABLOCK is a component of SALOME with an interactive part and has:
 
-- its own menus and toolboxes
-- its document zone to represent the coordinates
+- its own menus and toolboxes,
+- its document zone to represent all kind of objects (vertices, hexahedral, etc.),
 - its graphic zone to visualize the model and the mesh.
 
 .. image:: _static/interactive.png
    :align: center
 
 
-It provides the toolset allowing to create a large range of geometrical objects and functionnalities:
+It provides the toolset allowing to:
 
-- create basic geometrical objects: point, edge, quadrangle, hexahedra
-- create grid: cartesian, cylindrical, spherical
-- create  a cylinder, a pipe, two intersected cylinders, two intersected pipes, an hemisphere, a rind
-- remove an hexahedron
-- replace hexahedrons
-- disconnect by a point, an edge, a quadrangle
-- join quadrangles by hexahedra, merge quadrangles
-- transform or modify by translation, rotation and other symetries
-- make quad revolution
+- build a model of block:
+   - create basic geometrical objects: point, edge, quadrangle, hexahedra
+   - create grid: cartesian, cylindrical, spherical
+   - create  a cylinder, a pipe, two intersected cylinders, two intersected pipes, an hemisphere, a rind
+   - remove an hexahedron
+   - replace hexahedrons
+   - disconnect by a point, an edge, a quadrangle
+   - join quadrangles by hexahedra, merge quadrangles
+   - transform or modify by translation, rotation and other symetries
+   - make quad revolution
+- associate a model of block to a geometry:
+   - associate vertices of the model of blocks to vertices of a geometry
+   - associate edges of the model of blocks to edges of a geometry
+   - associate quadrangles of the model of blocks to faces of a geometry
+   - associate lines
+- generate a mesh:
+   - define groups
+   - define laws on propagations
+   - generate an hexahedral mesh
 
 
 .. toctree::
@@ -42,16 +52,16 @@ It provides the toolset allowing to create a large range of geometrical objects 
    gui_vector.rst
    gui_cyl.rst
    gui_pipe.rst
+   gui_blocks_for_cyl_pipe.rst
+   creategrids.rst
    gui_hemisphere.rst
    gui_remove.rst
-   creategrids.rst
-   gui_blocks_for_cyl_pipe.rst
+   gui_cut_hexa.rst
    gui_prism_join_quad.rst
    gui_quad_revolution.rst
+   gui_replace_hexa.rst
    gui_merge_elmts.rst
    gui_disc_elmts.rst
-   gui_cut_hexa.rst
-   gui_replace_hexa.rst
    gui_make_elmts.rst
    gui_make_symmetry.rst
    gui_modify_elmts.rst
