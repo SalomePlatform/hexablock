@@ -89,7 +89,6 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexCrossElements_build.cxx \
 	Hex.cxx              \
 	HexDocument_asso.cxx \
-	HexUseCascade.cxx     \
 	HexDocument_quads.cxx
 
 # libHEXABLOCKimpl_la_CPPFLAGS = \

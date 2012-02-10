@@ -24,7 +24,11 @@
 #include "HexElements.hxx"
 #include "HexMatrix.hxx"
 
-static const double Epsil2 = 1e-10;
+static const double Epsil   = 1e-6;
+static const double UnEpsil = 0.999999;
+static const double Epsil2  = 1e-12;
+
+static const double TolAsso = 1e-2;    // Tolerance pour les associations
 
 #ifndef NO_CASCADE
 // CasCade includessdepart
@@ -77,13 +81,8 @@ static const double Epsil2 = 1e-10;
 
 #include <Standard_ConstructionError.hxx>
 #include <gp_Circ.hxx>
-
                                     // Sphere
-//  #include <gp_Ax2.hxx>
-//  #include <gp_Pnt.hxx>
-//  #include <gp_Dir.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
-// #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
 #include <process.h>
@@ -93,19 +92,6 @@ static const double Epsil2 = 1e-10;
 
 #include <stdexcept>
 
-#ifndef EXCEPTION
-#define EXCEPTION(TYPE, MSG) {\
-  std::ostringstream aStream;\
-  aStream<<__FILE__<<"["<<__LINE__<<"]::"<<MSG;\
-  throw TYPE(aStream.str());\
-}
-#endif
-
-#ifdef _DEBUG_
-// static int MYDEBUG = 1;
-#else
-// static int MYDEBUG = 0;
-#endif
 #define MESSAGE(m) cout << m << endl
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
@@ -304,15 +290,20 @@ GeomLine::~GeomLine ()
 void GeomLine::defineLine (Shape* asso, double deb, double fin)
 {
    lig_brep = asso->getBrep ();
-   if (fin>=0.0)
-      {
-      lig_debut = deb;
-      lig_fin   = fin;
-      }
-   else
+   if (fin<0.0)
       {
       lig_debut = asso->debut;
       lig_fin   = asso->fin;
+      }
+   else if (lig_debut >= UnEpsil)
+      {
+      lig_debut = fin;
+      lig_fin   = deb ;
+      }
+   else 
+      {
+      lig_debut = deb;
+      lig_fin   = fin;
       }
 
    geom_inverse = false;
@@ -389,6 +380,7 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 
    if (db)
       {
+      cpchar csens = vorig==V_AVAL ? "(inv)" : "";
       cout << " ++ GeomLine::associate : rg=" << geom_rang 
            << " absc = [ " << start_absc << ", " << end_absc << " ]\n" ;
       cout << "                          " 
@@ -396,7 +388,8 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
            << " smx  = [ " << sm1 << ", " << sm2 << " ]" << endl;
       cout << " Edge = " << edge->getName()
            << " = [" << edge->getVertex(0)->getName() 
-           << ", "   << edge->getVertex(1)->getName()  << " ]" << endl;
+           << ", "   << edge->getVertex(1)->getName()  << " ]" 
+           << csens  << endl;
       }
 
    double para1, para2;
@@ -413,6 +406,23 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 
    para1 = std::max (lig_debut, std::min (lig_fin, para1));
    para2 = std::max (lig_debut, std::min (lig_fin, para2));
+
+   if (para2 < para1 + TolAsso)
+      {
+      if (db) printf (" Asso Line Asso refusee %s -> (%g,%g)\n", 
+              edge->getName(), para1,  para2);
+      return;
+      }
+   else if (para1 >= -TolAsso && para1 <= TolAsso)
+      {
+      if (db) printf (" Asso Line : Parametre 1 arrondi a 0\n");
+      para1 = 0;
+      }
+   else if (para2 >= 1.0-TolAsso && para2 <= 1.0+TolAsso)
+      {
+      if (db) printf (" Asso Line : Parametre 2 arrondi a 1\n");
+      para2 = 1;
+      }
 
 /*****************************
    if (geom_inverse)
@@ -431,57 +441,65 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
            edge->getName(), shape->debut, shape->fin);
 
                                // ---------------Association du vertex 
-   if (sm2 < start_absc || sm2 > end_absc+HEXA_EPSILON)
-      return;
-
-   double alpha = geom_total_length*shape->debut;
+   double param = para1;
+   if (geom_inverse)
+      vorig = 1-vorig;
    for (int nx=V_AMONT ; nx<=V_AVAL ; nx++)
        {
-       Vertex* node = edge->getVertex (nx + vorig - 2*nx*vorig);
-       if (node->getAssociation()==NULL)
+       if (param <= Epsil && param <= 1.0+Epsil)
           {
+          Vertex* node = edge->getVertex (nx + vorig - 2*nx*vorig);
+          if (node->getAssociation()==NULL)
+             {
                                           // .....  Coordonnees du point
 
-          GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
-                                    geom_curve->FirstParameter());
-          double u1       = s1.Parameter ();
-          gp_Pnt pnt_asso = geom_curve->Value (u1);
+             double alpha = geom_total_length*param;
+             GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+                                       geom_curve->FirstParameter());
+             double u1       = s1.Parameter ();
+             gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-          GeomPoint gpoint;
-          gpoint.definePoint (pnt_asso);
-          gpoint.associate (node);
-          Real* ass = gpoint.getCoord();
-          if (db) printf (" Asso Point %s (%g,%g,%g) -> (%g,%g, %g)\n", 
+             GeomPoint gpoint;
+             gpoint.definePoint (pnt_asso);
+             gpoint.associate (node);
+             if (db)
+                {
+                Real* ass = gpoint.getCoord();
+                printf (" Asso Point %s (%g,%g,%g) -> (%g,%g, %g)\n", 
                     node->getName(), node->getX(), node->getY(), node->getZ(),
                     ass[dir_x], ass[dir_y], ass[dir_z]);
-          }
-      else if (db)
-          {
-          GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+                }
+             }
+         else if (db)
+             {
+             double alpha = geom_total_length*param;
+             GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
                                     geom_curve->FirstParameter());
-          double u1       = s1.Parameter ();
-          gp_Pnt pnt_asso = geom_curve->Value (u1);
+             double u1       = s1.Parameter ();
+             gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-          GeomPoint gpoint;
-          gpoint.definePoint (pnt_asso);
-          Real* ass = gpoint.getCoord();
-          // gpoint.associate (node);
-          printf (" Asso point %s (%g,%g,%g) -> (%g,%g, %g)\n", node->getName(),
-                  node->getX(), node->getY(), node->getZ(),
-                  ass[dir_x], ass[dir_y], ass[dir_z]);
+             GeomPoint gpoint;
+             gpoint.definePoint (pnt_asso);
+             Real* ass = gpoint.getCoord();
+             // gpoint.associate (node);
+             printf (" Asso Point %s (%g,%g,%g) -> (%g,%g, %g)\n", 
+                     node->getName(),
+                     node->getX(), node->getY(), node->getZ(),
+                     ass[dir_x], ass[dir_y], ass[dir_z]);
 
-          gpoint.definePoint (node);
-          ass = gpoint.getCoord();
-          printf ("               ignore car deja associe a (%g,%g, %g)\n", 
-                  ass[dir_x], ass[dir_y], ass[dir_z]);
-          HexDisplay (sm1);
-          HexDisplay (sm2);
-          HexDisplay (lig_debut);
-          HexDisplay (lig_fin);
+             gpoint.definePoint (node);
+             ass = gpoint.getCoord();
+             printf ("               ignore car deja associe a (%g,%g, %g)\n", 
+                     ass[dir_x], ass[dir_y], ass[dir_z]);
+             HexDisplay (sm1);
+             HexDisplay (sm2);
+             HexDisplay (lig_debut);
+             HexDisplay (lig_fin);
+             }
           }
-      alpha = geom_total_length*shape->fin; // Pour le point suivant
+      param = para2; // Pour le point suivant
       }
 }
 // ========================================================= majCoord
@@ -508,13 +526,14 @@ void GeomLine::inverser ()
    start_gpoint = end_gpoint;
    end_gpoint   = foo;
 
-   if (lig_debut > 0.0)
+              // Prendre le complementaire de l'intercvale initial
+   if (lig_debut > Epsil && lig_debut < UnEpsil)
       {
       lig_fin  = lig_debut;
       lig_debut = 0;
       cout << " ... inverser : fin = debut = " << lig_fin << endl;
       }
-   else if (lig_fin < 1.0)
+   else if (lig_fin > Epsil && lig_fin < UnEpsil)
       {
       lig_debut = lig_fin;
       lig_fin   = 1;
@@ -889,7 +908,19 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    Real*  extrem    = NULL;
    double abscisse = 0;
    double pfin0    = 1;
-   if (NOT closed && nbshapes==1)
+   if (closed)
+      {
+      if (pstart > UnEpsil)
+         { 
+         inv    = true;
+         pstart = 0;
+         }
+      else if (pstart < Epsil)
+         { 
+         inv    = false;
+         }
+      }
+   else if (nbshapes==1)
       pfin0 = pend;
 
    GeomLine* prems = geom_line[0]  = new GeomLine (gstart, pstart, pfin0);
@@ -943,7 +974,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
            {
            GeomLine*  ligne = buff_line[nb];
            int sens = ligne==NULL ? NOTHING : ligne->findBound (extrem);
-           if (sens != NOTHING);
+           if (sens != NOTHING)
               {
                                  // Derniere ligne si ouverte
               if (NOT closed && nl==nblines-1)
@@ -974,7 +1005,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    int nbedges = mline.size ();
 
    if (db) 
-      cout << "i=============================================================="
+      cout << "=============================================================="
            << endl;
                                     // -------- Menage
    for (int ned=0 ; ned<nbedges ; ned++)
@@ -1050,7 +1081,7 @@ void transfo_brep (string& brep, Matrix* matrice, string& trep)
 void dump_edge (Edge* edge)
 {
 }
-// ====================================================== associateCascade
+// ====================================================== associateShapes
 int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
                      double pstart, double pend, bool closed, bool inv)
 {
