@@ -37,8 +37,11 @@
 
 BEGIN_NAMESPACE_HEXA
 
+#define PermuterEdges(e1,e2) permuter_edges (e1, e2, #e1, #e2)
+void    permuter_edges  (Edge* &e1, Edge* &e2, cpchar n1=NULL, cpchar n2=NULL);
 double* prod_vectoriel (Edge* e1, Edge* e2, double result[]);
-void    permuter_edges  (Edge* &e1, Edge* &e2);
+
+static bool db = false;
 
 // ======================================================== copyDocument
 Document* Document::copyDocument ()
@@ -615,7 +618,7 @@ Hexa* Document::addHexaQuadsABCD (AnaQuads& strquads)
    Quad* q_b = strquads.tab_quads [pos_b];
    Quad* q_c = strquads.tab_quads [pos_c];
    Quad* q_d = strquads.tab_quads [pos_d];
-
+   
    int   na_ac = strquads.inter_edge[pos_a][pos_c]; // Nro dans  q_a de e_ac
    int   nc_ac = strquads.inter_edge[pos_c][pos_a]; // Nro dans  q_c de e_ac
    int   nd_ad = strquads.inter_edge[pos_d][pos_a]; // Nro dans  q_d de e_ad
@@ -633,14 +636,31 @@ Hexa* Document::addHexaQuadsABCD (AnaQuads& strquads)
    Edge*  e_be = q_b->getEdge ((nb_bc + 1) MODULO QUAD4); 
    Edge*  e_bf = q_b->getEdge ((nb_bc + 3) MODULO QUAD4); 
 
+   if (db)
+      {
+      HexDump (q_a);
+      HexDump (q_b);
+      HexDump (q_c);
+      HexDump (q_d);
+
+      HexDump (e_ae);
+      HexDump (e_af);
+      HexDump (e_ce);
+      HexDump (e_cf);
+      HexDump (e_de);
+      HexDump (e_df);
+      HexDump (e_be);
+      HexDump (e_bf);
+      }
+
    if (e_ae->commonVertex (e_ce) == NULL)
-      permuter_edges (e_ce, e_cf);
+      PermuterEdges (e_ce, e_cf);
 
    if (e_ae->commonVertex (e_de) == NULL)
-      permuter_edges (e_de, e_df);
+      PermuterEdges (e_de, e_df);
 
    if (e_ce->commonVertex (e_be) == NULL)
-      permuter_edges (e_be, e_cf);
+      PermuterEdges (e_be, e_bf);
 
    Quad* q_e = new Quad  (e_ae, e_ce, e_be, e_de);
    Quad* q_f = new Quad  (e_af, e_cf, e_bf, e_df);
@@ -755,8 +775,14 @@ double*  prod_vectoriel (Edge* e1, Edge* e2, double prod[])
    return prod;
 }
 // ========================================================= permuter_edges
-void  permuter_edges  (Edge* &e1, Edge* &e2)
+void permuter_edges (Edge* &e1, Edge* &e2, cpchar nm1, cpchar nm2)
 {
+   if (db && nm1!=NULL)
+      {
+      printf (" ... permuter_edges %s = %s et %s = %s\n", 
+                    nm1, e1->getName(), nm2, e2->getName() );
+      }
+
    Edge* foo = e1;
    e1  = e2;
    e2  = foo;

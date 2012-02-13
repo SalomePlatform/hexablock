@@ -864,7 +864,7 @@ int test_asso_line (int nbargs, cpchar tabargs[])
   m_line.push_back (c1->getEdgeJ (nr, 0, 0));
    Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
    ier = doc-> associateClosedLine (m_first, m_start, m_line, 
-                                        gstart,  pstart, gline);
+                                        gstart, pstart, false, gline);
    HexDisplay (ier);
    // doc->dump ();
 
