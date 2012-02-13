@@ -267,11 +267,12 @@ char*  getBrep ()     throw (SALOME::SALOME_Exception);
            throw (SALOME::SALOME_Exception);
 public:
 
-
   ::CORBA::Boolean removeQuad (Quad_ptr quad) 
            throw (SALOME::SALOME_Exception);
   ::CORBA::Boolean removeElements (Elements_ptr bloc) 
            throw (SALOME::SALOME_Exception);
+
+  void setLevel(::CORBA::Long level) throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Document *_document_cpp;

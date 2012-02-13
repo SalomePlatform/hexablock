@@ -1622,11 +1622,15 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
 {
   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()
                        ->geomObjectToShape(geom_object);
+  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object);
 
   string strBrep = shape2string( shape );
   std::cout << "setShape ---------> len(strBrep) = "
             << strBrep.size() << std::endl;
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
+
+  s->ior   = anIOR.in(); 
+  s->ident = geom_object->GetStudyEntry();
 
   std::cout << " ............  Shape creee" << std::endl;
   _document_cpp->setShape (s);
@@ -1636,9 +1640,29 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
 GEOM::GEOM_Object_ptr Document_impl::getShape ()
   throw (SALOME::SALOME_Exception)
 {
-   GEOM::GEOM_Object_var result;
-   return result._retn();
+  HEXA_NS::Shape* s = _document_cpp->getShape ();
+  CORBA::Object_var corbaObj;
+  GEOM::GEOM_Object_var geomObj; // = new GEOM::GEOM_Object;
+
+  if (s != NULL)
+     {
+     if ( !s->ior.empty() )
+        { // geom object from current session
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
+        if ( !CORBA::is_nil( corbaObj ) )
+           {
+           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+           }
+        } 
+      else  // no geom object => we have to built it
+        {
+        geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( s->getBrep() );
+        }
+      }
+  return geomObj._retn();
 }
+
+
 /* ***********************************************************
   GEOM::GEOM_Object_var result; // = new GEOM::GEOM_Object;
 
@@ -2342,7 +2366,12 @@ void Document_impl::performSymmetryPoint (Elements_ptr lIn, Vertex_ptr pIn)
     _document_cpp->performSymmetryPoint (l, p);
   }
 }
-
+// ================================================== setLevel
+void Document_impl::setLevel(::CORBA::Long debug)
+     throw (SALOME::SALOME_Exception)
+{
+    _document_cpp->setLevel (debug);
+}
 // ___________________________________________________________ ini
 
 // HEXA_ORB::HEXA_ORB::Hexas* Document_impl::addCartesian1(HEXA_ORB::Vertex_ptr v, HEXA_ORB::Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz)

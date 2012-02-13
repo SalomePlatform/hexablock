@@ -75,6 +75,10 @@ module HEXABLOCK_ORB
 
     long saveVtk( in string fname );
 
+    void setLevel (in long debug_level )
+      raises (SALOME::SALOME_Exception);
+
+
     /*!
     */
     void setTolerance( in double tol ) raises (SALOME::SALOME_Exception);
