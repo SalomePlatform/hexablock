@@ -27,8 +27,8 @@
             <translation>new_document.png</translation>
         </message>
         <message>
-            <source>ICON_IMPORT_DOCUMENT</source>
-            <translation>import_document.png</translation>
+            <source>ICON_LOAD_DOCUMENT</source>
+            <translation>load_document.png</translation>
         </message>
         <message>
             <source>ICON_SAVE_DOCUMENT</source>

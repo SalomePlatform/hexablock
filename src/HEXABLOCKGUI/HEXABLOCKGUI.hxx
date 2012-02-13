@@ -214,7 +214,7 @@ private slots:
   void test();
 
   void newDocument();
-  void importDocument( const QString &path = QString() );
+  void loadDocument( const QString &path = QString() );
   void saveDocument();
 
   // new

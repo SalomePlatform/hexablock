@@ -107,6 +107,7 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Qt::WindowFlags f ):
   _meshSelectionModel(0),
   _currentObj(0),
   _expectedSelection(-1),
+  _onItemSelectionChanged( false ),
   _applyCloseButton(0),
   _applyButton(0)
 {
@@ -455,6 +456,25 @@ void HexaBaseDialog::onMeshSelectionChanged( const QItemSelection& sel, const QI
     _index[_currentObj] = selected;
   }
 }
+
+
+void HexaBaseDialog::onItemSelectionChanged()
+{
+  std::cout << "HexaDialog::onItemSelectionChanged => " <<  sender() << std::endl; 
+  if (!_patternDataSelectionModel) return;
+
+  QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
+//   if ( !currentListWidget ) return;
+  _onItemSelectionChanged = true;
+  QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
+  foreach ( QListWidgetItem *item, sel ){ //CS to improve
+    QModelIndex i = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
+    _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::Clear );
+    _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::SelectCurrent );
+  }
+  _onItemSelectionChanged = false;
+}
+
 
 
 
@@ -1047,7 +1067,6 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     updateButtonBox();
 //     _applyCloseButton->setEnabled(false);
 //     _applyButton->setEnabled(false);
-
     quads_lw->installEventFilter(this);
     vertices_lw->installEventFilter(this);
 
@@ -1060,7 +1079,7 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
     connect(delQuadShortcut,   SIGNAL(activated()), this, SLOT(deleteQuadItem()));
     connect(delVertexShortcut, SIGNAL(activated()), this, SLOT(deleteVertexItem()));
 
-    connect(quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)));
+    connect( quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
 
 //      void 	currentRowChanged( int currentRow )
     quads_rb->setFocusProxy( quads_lw );
@@ -1071,6 +1090,9 @@ HexaDialog::HexaDialog( QWidget* parent, bool editMode, Qt::WindowFlags f ):
 //     q_or_v_lw->setReadOnly(true);
     connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
   }
+
+  connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()) );
+  connect( vertices_lw, SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()) );
 
   // Default 
   quads_rb->click();
@@ -1088,6 +1110,9 @@ void HexaDialog::clear()
   quads_lw->clear();
   vertices_lw->clear();
 }
+
+
+
 
 bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
 {
@@ -1107,6 +1132,7 @@ bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
 
 void HexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( (_currentObj != quads_lw) and (_currentObj != vertices_lw)  )
@@ -2497,6 +2523,7 @@ PrismQuadDialog::PrismQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlag
 
     setFocusProxy( quads_lw );
   }
+  connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()) );
 
 //   connect(add_pb, SIGNAL(clicked()), this, SLOT(addQuad()));
 //   connect(remove_pb, SIGNAL(clicked()), this, SLOT(removeQuad()));
@@ -2529,6 +2556,7 @@ void PrismQuadDialog::clear()
 
 void PrismQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
   if ( iselections.count() == 0 ) return;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
@@ -2536,10 +2564,10 @@ void PrismQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItem
   QListWidgetItem* item = NULL;
   foreach( const QModelIndex& isel, iselections ){
     item = new QListWidgetItem( isel.data().toString() );
-    item->setData(  Qt::UserRole + 20, QVariant::fromValue<QModelIndex>(isel) );
+    item->setData(  LW_QMODELINDEX_ROLE/*Qt::UserRole + 20*/, QVariant::fromValue<QModelIndex>(isel) );
     quads_lw->addItem(item);
-    int r = quads_lw->count() - 1;
-    quads_lw->setCurrentRow(r);
+//     int r = quads_lw->count() - 1;
+//     quads_lw->setCurrentRow(r);
   }
 }
 
@@ -2634,7 +2662,7 @@ bool PrismQuadDialog::apply()
   QListWidgetItem* item = NULL;
   for ( int r = 0; r < quads_lw->count(); ++r){
     item = quads_lw->item(r);
-    iquad = patternDataModel->mapToSource( item->data(Qt::UserRole + 20).value<QModelIndex>() );
+    iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
     iquads << iquad;
   }
   QModelIndex ivec  = patternBuilderModel->mapToSource( _index[vec_le] );
@@ -2705,6 +2733,7 @@ JoinQuadDialog::JoinQuadDialog( QWidget* parent, bool editMode, Qt::WindowFlags 
     setFocusProxy( quads_lw );
   }
 
+  connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()) );
     
 
 //   _currentObj = quads_lw;
@@ -2725,6 +2754,7 @@ JoinQuadDialog::~JoinQuadDialog()
 
 void JoinQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
 
   if ( iselections.count() == 0 ) return;
@@ -2733,9 +2763,9 @@ void JoinQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
   QListWidgetItem* item = NULL;
   foreach( const QModelIndex& isel, iselections ){
     item = new QListWidgetItem( isel.data().toString() );
-    item->setData(  Qt::UserRole + 20, QVariant::fromValue<QModelIndex>(isel) );
+    item->setData(  LW_QMODELINDEX_ROLE/*Qt::UserRole + 20*/, QVariant::fromValue<QModelIndex>(isel) );
     quads_lw->addItem(item);
-    int r = quads_lw->count() - 1;
+//     int r = quads_lw->count() - 1;
 //     quads_lw->setCurrentRow(r);
   }
 }
@@ -2823,7 +2853,7 @@ bool JoinQuadDialog::apply()
   QListWidgetItem* item = NULL;
   for ( int r = 0; r < quads_lw->count(); ++r){
     item = quads_lw->item(r);
-    iquad = patternDataModel->mapToSource( item->data(Qt::UserRole + 20).value<QModelIndex>() );
+    iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
     if ( iquad.isValid() ) iquads << iquad;
   }
   QModelIndex iquaddest = patternDataModel->mapToSource( _index[quad_dest_le] );
@@ -4057,6 +4087,8 @@ GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent())  ) //
   connect( _mgr,  SIGNAL( currentSelectionChanged() ), this, SLOT( addLine() ) );
   connect( vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
   connect( occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+
+  connect( edges_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()) );
   onWindowActivated ( activeVm );
   initLineEdits();
 }
@@ -4146,6 +4178,7 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 
 void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
 
@@ -4576,6 +4609,9 @@ _value(NULL)
     setFocusProxy( eltBase_lw );
   }
   connect(kind_cb,  SIGNAL(activated(int)), this, SLOT(onKindChanged(int)) );
+
+  connect(eltBase_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()));
+
 //   connect(add_pb, SIGNAL(clicked()), this, SLOT(addEltBase()));
 //   connect(remove_pb, SIGNAL(clicked()), this, SLOT(removeEltBase()));
 //   connect(clear_pb, SIGNAL(clicked()), this, SLOT(clearEltBase()));
@@ -4592,6 +4628,7 @@ GroupDialog::~GroupDialog()
 
 void GroupDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( !_patternDataSelectionModel ) return;
@@ -5165,6 +5202,8 @@ HexaBaseDialog(parent, f)
     setFocusProxy( quads_lw );
   }
 
+  connect(quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()));
+
   initLineEdits();
 }
 
@@ -5191,6 +5230,7 @@ bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 
 void ReplaceHexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
@@ -5321,11 +5361,12 @@ HexaBaseDialog(parent, f)
     connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(delQuadItem()) );
     setFocusProxy( quads_lw );
 
-
     connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()));
     connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()));
 //     connect(clear_pb, SIGNAL(clicked()), this, SLOT(clearQuads()));
   }
+
+  connect(quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelectionChanged()));
 
   initLineEdits();
 }
@@ -5361,6 +5402,8 @@ bool QuadRevolutionDialog::eventFilter(QObject *obj, QEvent *event)
 
 void QuadRevolutionDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _onItemSelectionChanged ) return;
+
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );

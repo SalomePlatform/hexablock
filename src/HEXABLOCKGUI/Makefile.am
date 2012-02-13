@@ -162,7 +162,7 @@ ICONS =  \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
 	resources/new_document.png \
-	resources/import_document.png \
+	resources/load_document.png \
 	resources/save_document.png \
 	resources/add_vertex.png \
 	resources/add_edge.png \

@@ -802,9 +802,9 @@ void HEXABLOCKGUI::createActions()
                                      0, aParent, false, this,  SLOT(newDocument()) );
   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
 
-  _importAct = createAction( _menuId++, tr("Import a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_IMPORT_DOCUMENT" ) ),
-                                            tr("Import document"), tr("Import a document"),
-                                            0, aParent, false, this,  SLOT(importDocument()) );
+  _importAct = createAction( _menuId++, tr("Load a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_LOAD_DOCUMENT" ) ),
+                                            tr("Load document"), tr("Load a document"),
+                                            0, aParent, false, this,  SLOT(loadDocument()) );
   _importAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O); // --- QKeySequence::Open ambiguous in SALOME
 
 
@@ -1788,9 +1788,9 @@ void HEXABLOCKGUI::newDocument()
 
 
 
-void HEXABLOCKGUI::importDocument( const QString &inFile )
+void HEXABLOCKGUI::loadDocument( const QString &inFile )
 {
-  DEBTRACE("HEXABLOCKGUI::importDocument");
+  DEBTRACE("HEXABLOCKGUI::loadDocument");
   QMainWindow *aParent = application()->desktop();
   QString selectedFile;
 

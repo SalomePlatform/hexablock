@@ -159,6 +159,7 @@ namespace HEXABLOCK
           virtual void onPatternDataSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onPatternBuilderSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
           virtual void onMeshSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+          virtual void onItemSelectionChanged();
 
         protected :
 //           void installEventFilter();
@@ -180,6 +181,7 @@ namespace HEXABLOCK
           QObject*                      _currentObj;
 
           int                           _expectedSelection;
+          bool                          _onItemSelectionChanged;
 
           QList<QLineEdit*>  _hexaLineEdits;
           QList<QLineEdit*>  _quadLineEdits;
