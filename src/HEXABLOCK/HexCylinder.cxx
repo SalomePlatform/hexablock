@@ -148,11 +148,11 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
     double py = yc1 + lambda * yv1;
     double pz = zc1 + lambda * zv1;
                                     // Appartenance axe 1er cylindre
-    double lg = c_dir->norme ();
+    double lg = c_dir->getNorm ();
     if (lambda<0 || lambda*lg > c_height)
        return NULL;
                                     // Appartenance axe 2eme cylindre
-    lg = small->c_height / small->c_dir->norme ();
+    lg = small->c_height / small->c_dir->getNorm ();
     if (is_out (px, xc2, xc2+xv2*lg ) || is_out (py, yc2, xc2+yv2*lg ) 
                                       || is_out (pz, zc2, zc2+zv2*lg ))
         return NULL;

@@ -35,6 +35,9 @@ public:
     double getDx ()    { return v_dx ; }
     double getDy ()    { return v_dy ; }
     double getDz ()    { return v_dz ; }
+    double getNorm   ()    { return sqrt (v_dx*v_dx + v_dy*v_dy + v_dz*v_dz); }
+    double getAngleX ();
+
 
 public:
     Vector (Document* doc, double dx=0, double dy=0, double dz=0);
@@ -45,9 +48,7 @@ public:
     double* getCoord (double coord[]);
 
     virtual void saveXml (XmlWriter* xml);
-
-    double norme   ()    { return sqrt (v_dx*v_dx + v_dy*v_dy + v_dz*v_dz); }
-    int    renormer ();
+    int    renormer  ();
     void   vectoriel  (Vector* a, Vector*b);
     void   multiplier (double scal);
     int    calculNormale (double& nx, double& ny, double& nz);
@@ -76,7 +77,7 @@ inline double Vector::getCoord (int dir)
 // ===================================================== renormer
 inline int Vector::renormer() 
 {
-   double dn = norme ();
+   double dn = getNorm ();
    if (dn < 1e-30) 
       return HERR;
 

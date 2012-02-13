@@ -1,3 +1,6 @@
+
+// C++ : Gestion des vecteurs
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Gestion des aretes
-
 #include "HexVector.hxx"
 #include "HexXmlWriter.hxx"
 
@@ -91,6 +92,19 @@ void Vector::saveXml (XmlWriter* xml)
    if (el_name!=buffer) 
        xml->addAttribute ("name", el_name);
    xml->closeMark ();
+}
+// ========================================================= getAngleX
+double Vector::getAngleX ()
+{
+   static const double Epsilon = 1e-6;
+
+   double norme = getNorm ();
+   if (norme < Epsilon)
+      return 0.0;
+
+   double kos = v_dx / norme;
+   double deg = acos(kos) * 180.0 / M_PI;
+   return deg;
 }
 
 END_NAMESPACE_HEXA

@@ -106,7 +106,7 @@ inline int Matrix::defRotation (Vertex* center, Vector* dir, double degres)
 {
    erase();
 
-   double normed = dir->norme ();
+   double normed = dir->getNorm ();
    if (normed< 1e-30)
       return HERR;
 
@@ -172,7 +172,7 @@ inline int Matrix::defSymmetryLine (Vertex* center, Vector* dir)
 {
    erase ();
 
-   double normed = dir->norme ();
+   double normed = dir->getNorm ();
    if (normed< 1e-30)
       return HERR;
 
@@ -224,7 +224,7 @@ inline int Matrix::defSymmetryPlane (Vertex* center, Vector* normale)
 {
    erase ();
 
-   double normed = normale->norme ();
+   double normed = normale->getNorm ();
    if (normed< 1e-30)
       return HERR;
 

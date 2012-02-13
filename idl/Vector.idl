@@ -39,6 +39,9 @@ module HEXABLOCK_ORB
     double getDX() raises (SALOME::SALOME_Exception);
     double getDY() raises (SALOME::SALOME_Exception);
     double getDZ() raises (SALOME::SALOME_Exception);
+
+    double getAngleX () raises (SALOME::SALOME_Exception);
+    double getNorm   () raises (SALOME::SALOME_Exception);
   };
 };
 

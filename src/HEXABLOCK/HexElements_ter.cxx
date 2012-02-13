@@ -180,8 +180,8 @@ int Elements::controlRind (EnumGrid type, Vertex* cx, Vector* vx, Vector* vz,
    if (rhole > rint) 
       return HERR;
 
-   double nvx = vx->norme();
-   double nvz = vz->norme();
+   double nvx = vx->getNorm();
+   double nvz = vz->getNorm();
 
    if (nvx < Epsil1 || nvz <  Epsil1) 
       return HERR;

@@ -64,6 +64,7 @@ void Vector_impl::printName() throw (SALOME::SALOME_Exception)
   _vector_cpp->printName();
 }
 
+// ========================================================= getName
 char* Vector_impl::getName() throw (SALOME::SALOME_Exception)
 {
    return CORBA::string_dup( _vector_cpp->getName() );
@@ -73,4 +74,16 @@ void Vector_impl::setName(const char* name)
      throw (SALOME::SALOME_Exception)
 {
   _vector_cpp->setName (name);
+}
+// ========================================================= getNorm
+::CORBA::Double Vector_impl::getNorm() throw (SALOME::SALOME_Exception)
+{
+  ::CORBA::Double val = _vector_cpp->getNorm();
+  return val;
+}
+// ========================================================= getAngleX
+::CORBA::Double Vector_impl::getAngleX() throw (SALOME::SALOME_Exception)
+{
+  ::CORBA::Double val = _vector_cpp->getAngleX();
+  return val;
 }
