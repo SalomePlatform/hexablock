@@ -88,8 +88,8 @@ def test_lorraine () :
     nl2 = 10
 
     rsmall = 1
-    rmoy   = 2
-    rbig   = 3
+    rmoy   = 3
+    rbig   = 5
 
     cyl1  = doc.addCylinder (ori1, vz, rmoy,   nl1)
     cyl2  = doc.addCylinder (ori2, vx, rsmall, nl2)
@@ -136,7 +136,7 @@ def test_lorraine () :
 
 # ================================================================= Begin
 
-doc = test_double_t  ()
+doc = test_lorraine  ()
 
 law = doc.addLaw("Uniform", 4)
 
