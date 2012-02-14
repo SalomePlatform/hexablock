@@ -167,6 +167,8 @@ namespace HEXABLOCK
           virtual bool eventFilter(QObject *obj, QEvent *event);
 //           HexaBaseModel          *_model;
 //           DocumentSelectionModel *_selectionModel;
+
+
           DocumentModel*       _documentModel;
 //           PatternDataModel*    _patternDataModel;
 //           PatternBuilderModel* _patternBuilderModel;
@@ -181,7 +183,7 @@ namespace HEXABLOCK
           QObject*                      _currentObj;
 
           int                           _expectedSelection;
-          bool                          _onItemSelectionChanged;
+          bool                          _selectionMutex;
 
           QList<QLineEdit*>  _hexaLineEdits;
           QList<QLineEdit*>  _quadLineEdits;

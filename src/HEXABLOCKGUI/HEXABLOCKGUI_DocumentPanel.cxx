@@ -107,7 +107,7 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Qt::WindowFlags f ):
   _meshSelectionModel(0),
   _currentObj(0),
   _expectedSelection(-1),
-  _onItemSelectionChanged( false ),
+  _selectionMutex( false ),
   _applyCloseButton(0),
   _applyButton(0)
 {
@@ -188,7 +188,7 @@ void HexaBaseDialog::initLineEdits()
   QValidator *validator = new QRegExpValidator(rx, this);
 
   foreach(QLineEdit* le,  _hexaLineEdits)
-    le->setValidator(validator);
+    le->setValidator( validator );
   foreach(QLineEdit* le,  _quadLineEdits)
     le->setValidator(validator);
   foreach(QLineEdit* le,  _edgeLineEdits)
@@ -363,6 +363,7 @@ void HexaBaseDialog::setMeshSelectionModel(QItemSelectionModel* s)
 
 void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+  if ( _selectionMutex ) return;
   QModelIndexList l = sel.indexes();
 
   QLineEdit* currentLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
@@ -465,17 +466,15 @@ void HexaBaseDialog::onItemSelectionChanged()
 
   QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
 //   if ( !currentListWidget ) return;
-  _onItemSelectionChanged = true;
   QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
   foreach ( QListWidgetItem *item, sel ){ //CS to improve
     QModelIndex i = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
+    _selectionMutex = true;
     _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::Clear );
     _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::SelectCurrent );
+    _selectionMutex = false;
   }
-  _onItemSelectionChanged = false;
 }
-
-
 
 
 // void HexaBaseDialog::installEventFilter()
@@ -506,7 +505,6 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
 //         std::cout << "$$$$$$$$$$$$$$$$$$$$$ FocusIn" <<std::endl;
         QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(obj);
         if ( lineEdit ){
-//           std::cout << "$$$$$$$$$$$$$$$$$$$$$ lineEdit" <<std::endl;
           if (  _vertexLineEdits.contains( lineEdit ) )
               _setVertexSelectionOnly();
           else if ( _edgeLineEdits.contains( lineEdit ) )
@@ -525,6 +523,14 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
               _setElementsSelectionOnly();
           else if ( _lawLineEdits.contains( lineEdit ) )
               _setLawSelectionOnly();
+
+          if ( _patternDataSelectionModel && _index.contains(lineEdit) ){
+            QModelIndex i = _index[lineEdit];
+            _selectionMutex = true;
+            _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::Clear );
+            _patternDataSelectionModel->setCurrentIndex( i, QItemSelectionModel::SelectCurrent );
+            _selectionMutex = false;
+          }
         }
         _currentObj = obj;
         return false;
@@ -1132,7 +1138,7 @@ bool HexaDialog::eventFilter(QObject *obj, QEvent *event)
 
 void HexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( (_currentObj != quads_lw) and (_currentObj != vertices_lw)  )
@@ -2556,7 +2562,7 @@ void PrismQuadDialog::clear()
 
 void PrismQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
   if ( iselections.count() == 0 ) return;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
@@ -2754,7 +2760,7 @@ JoinQuadDialog::~JoinQuadDialog()
 
 void JoinQuadDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList iselections = _patternDataSelectionModel->selectedIndexes ();
 
   if ( iselections.count() == 0 ) return;
@@ -4178,7 +4184,7 @@ bool EdgeAssocDialog::eventFilter(QObject *obj, QEvent *event)
 
 void EdgeAssocDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
 
@@ -4628,7 +4634,7 @@ GroupDialog::~GroupDialog()
 
 void GroupDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( !_patternDataSelectionModel ) return;
@@ -5230,7 +5236,7 @@ bool ReplaceHexaDialog::eventFilter(QObject *obj, QEvent *event)
 
 void ReplaceHexaDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
   if ( _currentObj != quads_lw ) return HexaBaseDialog::onSelectionChanged( sel, unsel );
@@ -5402,7 +5408,7 @@ bool QuadRevolutionDialog::eventFilter(QObject *obj, QEvent *event)
 
 void QuadRevolutionDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  if ( _onItemSelectionChanged ) return;
+  if ( _selectionMutex ) return;
 
   QModelIndexList l = sel.indexes();
   if ( l.count() == 0 ) return;
