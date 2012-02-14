@@ -123,19 +123,29 @@ def dump(doc, mesh=None, full=False):
                     for vi in xrange(2):
                         vv = ee.getVertex(vi)
                         va = vv.getAssociation()
-                        print "        vertex: ", vi, "name: ", vv.getName(), " associated: ", va!=None,
-                        print " -> x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ()
+                        print "        vertex: ", vi, "name: ", vv.getName(), " associated: ", va!=None
+                        print "          model: x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ()
+                        if va!=None:
+                            x, y, z = geompy.PointCoordinates(va)
+                            print "          assoc: x= ", x, " y= ", y, " z= ", z
 
-    print "Model vertices    number: ", doc.countUsedVertex()
-    print "Model edges       number: ", doc.countUsedEdge()
-    print "Model quadrangles number: ", doc.countUsedQuad()
-    print "Model blocks      number: ", doc.countUsedHexa()
+    uv = doc.countUsedVertex()
+    ue = doc.countUsedEdge()
+    uq = doc.countUsedQuad()
+    uh = doc.countUsedHexa()
+
+    print "Model vertices    number: ", uv
+    print "Model edges       number: ", ue
+    print "Model quadrangles number: ", uq
+    print "Model blocks      number: ", uh
 
     if mesh != None:
         print "Mesh nodes       number: ", mesh.NbNodes()
         print "Mesh segments    number: ", mesh.NbEdges()
         print "Mesh quadrangles number: ", mesh.NbQuadrangles()
         print "Mesh hexas       number: ", mesh.NbHexas()
+
+    return uv, ue, uq, uh
 
 # Mesh a document
 # ---------------
@@ -150,17 +160,11 @@ def mesh(doc, name=None, dim=3, container="FactoryServer"):
         obj = salome.orb.string_to_object(ior.Value())
         doc = obj._narrow(Document)
 
-    brep = doc.getBrep()
-    if brep == "":
+    shape = doc.getShape()
+    if shape == None:
         shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
-    else:
-        tmpfile = "/tmp/hexablock.brep"
-        fic = file(tmpfile, 'w')
-        fic.write(brep)
-        fic.close()
-        shape = geompy.ImportBREP(tmpfile)
 
-    if name == None:
+    if (name == None) or (name == ""):
         name = doc.getName()
 
     geompy.addToStudy(shape, name)
