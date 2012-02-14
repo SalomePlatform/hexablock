@@ -60,6 +60,8 @@ namespace HEXABLOCK
 
         virtual ~DocumentModel();
 
+
+        QString getName();
         void load( const QString& xmlFileName );
         void save( const QString& xmlFileName );
 

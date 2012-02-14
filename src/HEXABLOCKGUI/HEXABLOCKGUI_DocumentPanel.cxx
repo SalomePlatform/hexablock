@@ -5097,7 +5097,7 @@ HexaBaseDialog(parent, f)
     vlg->addWidget(new QLabel("Dimension"));
     vlg->addWidget(new QLabel("Container"));
 
-    _name = new QLineEdit(_hexaDocument->getName());
+    _name = new QLineEdit("Mesh");
     _dim  = new QSpinBox();
     _fact = new QLineEdit("FactoryServer");
 
@@ -5125,6 +5125,12 @@ HexaBaseDialog(parent, f)
 ComputeMeshDialog::~ComputeMeshDialog() {
 }
 
+void ComputeMeshDialog::setDocumentModel(DocumentModel* m)
+{
+  HexaBaseDialog::setDocumentModel(m);
+  _name->setText(_documentModel->getName());
+}
+
 void ComputeMeshDialog::clear()
 {
 }
@@ -5133,9 +5139,9 @@ bool ComputeMeshDialog::apply()
 {
   SUIT_OverrideCursor wc;
 
-  QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
-      .arg( _documentModel->documentEntry() )
+  QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
       .arg( _name->text() )
+      .arg( _documentModel->documentEntry() )
       .arg( _dim->value() )
       .arg( _fact->text() );
   std::cout << "command: " << command.toStdString() << std::endl;

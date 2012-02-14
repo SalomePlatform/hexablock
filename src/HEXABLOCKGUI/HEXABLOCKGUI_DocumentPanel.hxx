@@ -924,6 +924,8 @@ namespace HEXABLOCK
         virtual ~ComputeMeshDialog();
         void clear();
 
+        void setDocumentModel(DocumentModel* m);
+
       public slots:
         virtual bool apply();
 //         virtual void accept();

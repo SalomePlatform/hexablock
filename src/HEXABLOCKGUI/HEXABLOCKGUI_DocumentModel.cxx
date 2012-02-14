@@ -134,6 +134,12 @@ DocumentModel::~DocumentModel()
 }
 
 
+QString DocumentModel::getName()
+{
+  return _hexaDocument->getName();
+
+}
+
 void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 {
   QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
