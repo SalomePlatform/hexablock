@@ -386,6 +386,49 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
   return SalomeApp_Module::deactivateModule( theStudy );
 }
 
+
+
+bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
+{
+
+  DEBTRACE("HEXABLOCKGUI::renameObject");
+
+  bool appRes = SalomeApp_Module::renameObject(entry,name);
+  if( !appRes )
+    return false;
+
+  bool result = false;
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
+
+  if(!appStudy)
+    return result;
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  if(!aStudy)
+    return result;
+
+  _PTR(SObject) obj ( aStudy->FindObjectID(qPrintable(entry)) );
+  _PTR(GenericAttribute) anAttr;
+  if ( obj ){
+    if ( obj->FindAttribute(anAttr, "AttributeName") ){
+      _PTR(AttributeName) aName (anAttr);
+//       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+// 
+//       HEXABLOCK_Gen_i::Document_var aDoc = HEXABLOCK_Gen_i::Document::_narrow( theIOR );
+//       if (!CORBA::is_nil(aDoc)) {
+        aName->SetValue( name.toLatin1().data() ); // rename the SObject
+//         aDoc->setName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+        _currentModel->setName( name/*.toLatin1().data()*/ );
+        result = true;
+    }
+  }
+  return result;
+}
+
+
 // --- Default windows
 void HEXABLOCKGUI::windows( QMap<int, int>& theMap ) const
 {

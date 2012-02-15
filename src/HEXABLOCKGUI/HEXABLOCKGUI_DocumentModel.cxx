@@ -133,11 +133,14 @@ DocumentModel::~DocumentModel()
   delete _hexaFile;
 }
 
+void DocumentModel::setName(const QString& name)
+{
+  _hexaDocument->setName( name.toLocal8Bit().constData() );
+}
 
 QString DocumentModel::getName()
 {
   return _hexaDocument->getName();
-
 }
 
 void DocumentModel::load( const QString& xmlFileName ) // Fill Data
@@ -145,7 +148,9 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
   // _hexaDocument->setFile( tmp.toLocal8Bit().constData() );
   // _hexaDocument->loadXml();
+  std::cout << "AAAAAAAAAA name ->" << _hexaDocument->getName() << std::endl;
   _hexaDocument->loadXml(tmp.toLocal8Bit().constData() );
+  std::cout << "BBBBBBBBB  name ->" << _hexaDocument->getName() << std::endl;
   std::cout << "DocumentModel::load ->" << tmp.toStdString() << std::endl;
   clearAll();
 

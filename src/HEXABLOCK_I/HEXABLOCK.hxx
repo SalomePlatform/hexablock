@@ -164,7 +164,7 @@ public:
   void SetCurrentStudy( SALOMEDS::Study_ptr theStudy );
   int GetCurrentStudyID();
   StudyContext* GetCurrentStudyContext();
-  void SetName( SALOMEDS::SObject_ptr theSObject,
+  std::string /*void */SetName( SALOMEDS::SObject_ptr theSObject,
                 const char*           theName,
                 const char*           theDefaultName );
   int   RegisterObject(CORBA::Object_ptr theObject);

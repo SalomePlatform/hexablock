@@ -299,26 +299,31 @@ static SALOMEDS::SObject_ptr publish(SALOMEDS::Study_ptr   theStudy,
 //function : setName
 //purpose  : 
 //=======================================================================
-void HEXABLOCK_Gen_i::SetName( SALOMEDS::SObject_ptr theSObject,
+std::string HEXABLOCK_Gen_i::SetName( SALOMEDS::SObject_ptr theSObject,
                          const char*           theName,
                          const char*           theDefaultName )
 {
+  std::string attrName;
   if ( !theSObject->_is_nil() ) {
     SALOMEDS::StudyBuilder_var aStudyBuilder = theSObject->GetStudy()->NewBuilder();
     SALOMEDS::GenericAttribute_var anAttr =
       aStudyBuilder->FindOrCreateAttribute( theSObject, "AttributeName" );
     SALOMEDS::AttributeName_var aNameAttr = SALOMEDS::AttributeName::_narrow( anAttr );
     if ( theName && strlen( theName ) != 0 )
-      aNameAttr->SetValue( theName );
+//       aNameAttr->SetValue( theName );
+      attrName = theName;
     else {
       CORBA::String_var curName = CORBA::string_dup( aNameAttr->Value() );
       if ( strlen( curName ) == 0 ) {
         TCollection_AsciiString aName( (char*) theDefaultName );
         aName += TCollection_AsciiString("_") + TCollection_AsciiString( theSObject->Tag() );
-        aNameAttr->SetValue( aName.ToCString() );
+        attrName = aName.ToCString();
+//         aNameAttr->SetValue( aName.ToCString() );
       }
     }
+    aNameAttr->SetValue( attrName.c_str() );
   }
+  return attrName;
 }
 
 //=======================================================================
@@ -742,7 +747,8 @@ SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PublishDoc ( SALOMEDS::Study_ptr     theS
     if ( aDocSO->_is_nil() )
       return aDocSO._retn();
   }
-  SetName( aDocSO, theName, "Doc" );
+  std::string docName = SetName( aDocSO, theName, "Doc" );
+  theDoc->setName( docName.c_str() );
 
   // Add shape reference
 //   GEOM::GEOM_Object_var aShapeObject = theMesh->GetShapeToMesh();

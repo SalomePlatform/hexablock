@@ -144,6 +144,9 @@ public:
  //HEXABLOCK::GUI::DocumentModel*
 
   virtual void initialize( CAM_Application* app);
+
+
+  bool renameObject( const QString& entry, const QString& name);
   virtual void windows( QMap<int, int>& theMap) const;
 //   virtual LightApp_Displayer* displayer();
   virtual QString  engineIOR() const;
