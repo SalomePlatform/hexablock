@@ -357,7 +357,8 @@ int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    
    resize (GR_CYLINDRIC, nr, na, nl);
    cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, true);
+   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl, 
+                         nr, na, nl, true);
    fillGrid ();
    assoCylinder (orig, dir, 360);
    return HOK;

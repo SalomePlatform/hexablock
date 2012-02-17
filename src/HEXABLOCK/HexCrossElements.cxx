@@ -135,10 +135,11 @@ int CrossElements::indVertex (int cyl, int nx, int ny, int nz)
 Hexa* CrossElements::getHexaIJK (int cyl, int nx, int ny, int nz)
 {
    int nro = indHexa (cyl, nx, ny, nz);
-   if (nro<0)
-      return NULL;
 
-   return tab_hexa [nro]; 
+   if (nro >= 0 && tab_hexa[nro]!= NULL &&  tab_hexa[nro]->isHere ())
+      return tab_hexa [nro]; 
+   else
+      return NULL;
 }
 // ====================================================== getQuadIJ
 Quad* CrossElements::getQuadIJ (int cyl, int nx, int ny, int nz)

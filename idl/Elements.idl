@@ -50,6 +50,13 @@ module HEXABLOCK_ORB
   enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
                     HV_MAXI };
 
+  enum EnumVCyl    { V_E, V_NE, V_N, V_NW, V_W, V_SW, V_S, V_SE, CV_MAXI };
+  enum EnumCyl     { CYL_BIG,  CYL_SMALL };
+
+  const long  CYL_BIG_SLICES   = 4;
+  const long  CYL_SMALL_SLICES = 6;
+  const long  CYL_LAYERS       = 2;
+
   interface Elements : Element
   {
       long countVertex() raises (SALOME::SALOME_Exception);

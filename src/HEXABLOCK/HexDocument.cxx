@@ -305,7 +305,7 @@ Hexa* Document::findHexa (Vertex* v1, Vertex* v2)
        }
    return NULL;
 }
-// ======================================================== makeCylinder
+// ======================================================== index_tv
 int index_tv (Vertex* table[], Vertex* elt)
 {
    for (int nro=0; nro<QUAD4; nro++)

@@ -37,10 +37,11 @@
 #include "HexCramer.hxx"
 #include "HexGroup.hxx"
 
+#include <cstdlib>
+
 static int nbr_vtk = 0;
 static cpchar case_name = "hexa";
 static Hex::Document*   docu = NULL;
-
 
 // ======================================================== print_propagations
 void print_propagations (Hex::Document* doc)
@@ -73,6 +74,14 @@ void print_propagations (Hex::Document* doc)
               }
            }
        }
+}
+// ======================================================== save_vtk
+void save_vtk ()
+{
+   if (docu==NULL)
+      return;
+
+   docu->saveVtk (case_name, nbr_vtk);
 }
 // ======================================================== remove_hexa
 void remove_hexa (Hex::Hexa* hexa)
@@ -387,7 +396,6 @@ int test_revolution (int nbargs, cpchar tabargs[])
    Hex::Vertex* ori = doc->addVertex (0,0,0);
    Hex::Vector* vx  = doc->addVector (1,0,0);
    Hex::Vector* vz  = doc->addVector (0,0,1);
-
 
    int dr = 1;
    int da = 360;
@@ -873,7 +881,6 @@ int test_asso_line (int nbargs, cpchar tabargs[])
 // ===================================================== test_cylindrical
 int test_cylindrical (int nbargs, cpchar tabargs[])
 {
-   int    nvtk    = 1;
    cpchar fic_vtk = "cylindre";
 
    Hex::Hex mon_ex;
@@ -905,12 +912,9 @@ int test_cylindrical (int nbargs, cpchar tabargs[])
       HexDisplay (da);
       }
 
-
    // Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, nr, nl);
    // Hex::Elements* grid = doc->makeCylinder (cyl, vx, nr, na, nl);
-   Hex::Elements* grid = doc->makeCylindrical (orig,vx, vz, dr,da,dl, 
-                                               nr,na, nl, true);
-
+   doc->makeCylindrical (orig,vx, vz, dr,da,dl, nr,na, nl, true);
    doc ->saveVtk (fic_vtk, na);
    return HOK;
 }
@@ -927,14 +931,15 @@ int test_cylinder (int nbargs, cpchar tabargs[])
    Hex::Vector* vx   = doc->addVector (1, 0, 0);
    Hex::Vector* vz   = doc->addVector (0, 0, 1);
 
-   int nr = 1;
-   int na = 9;
+   double rayon   = 10;
+   double hauteur = 6;
+
+   int nr = 2;
+   int na = 8;
    int nl = 5;
 
-   Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, nr, nl);
-
-   Hex::Elements* grid = doc->makeCylinder (cyl, vx, nr, na, nl);
-   // nvtk = na;
+   Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, rayon, hauteur);
+   doc->makeCylinder (cyl, vx, nr, na, nl);
    doc ->saveVtk (fic_vtk, nvtk);
    return HOK;
 }
@@ -986,40 +991,102 @@ int test_xml_cylinder (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
+// ===================================================== test_pipe
+int test_pipe (int nbargs, cpchar tabargs[])
+{
+   int    nvtk    = 0;
+   cpchar fic_vtk = "cylindre";
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex* orig1 = doc->addVertex (0, 0,0);
+   Hex::Vector* vx    = doc->addVector (1,0,0);
+   Hex::Vector* vy    = doc->addVector (0,1,0);
+
+   int nr  = 1;
+   int nri = 1;
+   int nre = 2;
+   int na = 2;
+   int nl = 1;
+
+   Hex::Pipe*  pipe = doc->addPipe  (orig1, vx, nri, nre, nl);
+   doc->makePipe     (pipe, vy, nr, na, nl);
+   doc ->saveVtk (fic_vtk, nvtk);
+
+   return HOK;
+}
+// ======================================================== del_hexa
+void del_hexa (Hex::CrossElements* gr, int cyl, int ni, int nj, int nk, int dr)
+{
+   Hex::Hexa* hexa = gr->getHexaIJK (cyl, ni, nj, nk);
+   if (hexa!=NULL)
+      {
+      hexa->remove ();
+      if (dr>1)
+          save_vtk ();
+      }
+}
+// ======================================================== del_tranche
+int del_tranche (Hex::CrossElements* grid, int cyl, int ni, int nk, int dr=1)
+{
+   for (int nj = 0 ; nj < 8 ; nj++)
+        del_hexa (grid, cyl, ni, nj, nk, dr);
+
+   if (dr==1) 	
+      save_vtk ();
+   printf ("del_tranche (g=%d, i=%d, k=%d) : fic = %d\n", 
+                         cyl, ni, nk, nbr_vtk-1);
+   return nbr_vtk;
+}
 // ======================================================== test_croix
 int test_croix (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
+   docu = mon_ex.addDocument ();
 
-   Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
-   Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
-   Hex::Vector* vz   = doc->addVector ( 0,0,1);
-   Hex::Vector* vx   = doc->addVector ( 1,0,0);
+   Hex::Vertex* ori1 = docu->addVertex ( 0,0,0);
+   Hex::Vertex* ori2 = docu->addVertex (-5,0,5);
+   Hex::Vector* vz   = docu->addVector ( 0,0,1);
+   Hex::Vector* vx   = docu->addVector ( 1,0,0);
 
-   int nr1 = 2;
-   int nl1 = 10;
-   int nr2 = 1;
-   int nl2 = 10;
+   double r1 = 2;
+   double r2 = 3;
+   double l2 = 10;
+   double l1 = 10;
 
-   Hex::Cylinder*      cyl1 = doc->addCylinder (ori1, vz, nr1, nl1);
-   Hex::Cylinder*      cyl2 = doc->addCylinder (ori2, vx, nr2, nl2);
-   Hex::CrossElements* grid = doc->makeCylinders (cyl1, cyl2);
+   Hex::Cylinder*      cyl1 = docu->addCylinder (ori1, vz, r1, l1);
+   Hex::Cylinder*      cyl2 = docu->addCylinder (ori2, vx, r2, l2);
+   Hex::CrossElements* grid = docu->makeCylinders (cyl1, cyl2);
 
-   int nvtk=0;
-   doc->saveVtk ("croix", nvtk);
+   case_name = "croix";
+   save_vtk ();
 
-   int nbh = grid->countHexa();
-   for (int nro=nbh-1 ; nro>=0 ; nro--)
-       { 
-       Hex::Hexa* hexa = grid->getHexa (nro);
-       if (hexa!=NULL)
-          {
-          hexa->remove ();
-          doc->saveVtk ("croix", nvtk);
-          }
-       } 
+   del_tranche (grid, 0, 1, 0);
+   del_tranche (grid, 0, 1, 5);
 
+   del_tranche (grid, 1, 1, 0);
+   del_tranche (grid, 1, 1, 3);
+
+   del_tranche (grid, 1, 0, 0);
+   del_tranche (grid, 1, 0, 3);
+                                  // Le trognon
+   del_tranche (grid, 0, 0, 0);
+   del_tranche (grid, 0, 0, 5);
+   del_tranche (grid, 0, 0, 1);
+   del_tranche (grid, 0, 0, 2);
+   del_tranche (grid, 0, 0, 3);
+   del_tranche (grid, 0, 0, 4);
+                                  // Partie critique
+
+   del_tranche (grid, 1, 1, 1, 2);
+
+   del_tranche (grid, 0, 1, 1, 2);
+   del_tranche (grid, 0, 1, 4, 2);
+   del_tranche (grid, 0, 1, 3, 2);
+   del_tranche (grid, 0, 1, 2, 2);
+
+   del_tranche (grid, 1, 1, 2, 2);
    return HOK;
 }
 // ======================================================== test_pipes
@@ -1033,9 +1100,9 @@ int test_pipes (int nbargs, cpchar tabargs[])
    Hex::Vector* vz   = doc->addVector ( 0,0,1);
    Hex::Vector* vx   = doc->addVector ( 1,0,0);
 
-   double h1  =  5, ri1 = 1, re1 = 2;
-// double h1  = 10, ri1 = 1, re1 = 2;
-   double h2  = 10, ri2 = 3, re2 = 4;
+// double h1  =  5, ri1 = 1, re1 = 2;
+   double h1  = 10, ri1 = 1, re1 = 2;
+   double h2  = 10, ri2 = 2, re2 = 3;
 
    Hex::Pipe* pipe1  = doc->addPipe (ori1, vz, ri1, re1, h1);
    Hex::Pipe* pipe2  = doc->addPipe (ori2, vx, ri2, re2, h2);
@@ -1043,51 +1110,41 @@ int test_pipes (int nbargs, cpchar tabargs[])
 
    case_name = "pipe";
    docu      = doc;
-   doc->saveVtk (case_name, nbr_vtk);
+   save_vtk ();
 
-   doc->dump ();
+   del_tranche (grid, 0, 1, 0);
+   del_tranche (grid, 0, 1, 5);
 
-/*******************************************
-   for (int nj=0 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (1, 1, nj, 3));
-   for (int nj=0 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (1, 1, nj, 2));
+   del_tranche (grid, 1, 1, 0);
+   del_tranche (grid, 1, 1, 3);
+                                  // Partie critique
 
-   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 5));
-   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 4));
-   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 1));
-   for (int nj=0 ; nj<4 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 0));
+   del_tranche (grid, 1, 1, 1, 2);
 
-   for (int nj=4 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 5));
-   for (int nj=4 ; nj<8 ; nj++) remove_hexa (grid->getHexaIJK (0, 1, nj, 4));
+   del_tranche (grid, 0, 1, 1, 2);
+   del_tranche (grid, 0, 1, 4, 2);
+   del_tranche (grid, 0, 1, 3, 2);
+   del_tranche (grid, 0, 1, 2, 2);
 
-   // remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NW, 1));
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NE, 1));
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_S , 1));
+   del_tranche (grid, 1, 1, 2, 2);
+   /* ***************************************************
 
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_NE, 0));
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_E,  0));
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_SE, 0));
-   remove_hexa (grid->getHexaIJK (1, 1, Hex::S_S , 0));
-*****************************************************************/
-
-   // remove_hexa (grid->getHexaIJK (1, 1, Hex::S_SW, 1));
-
-   int nbh = grid->countHexa();
-   for (int nro=nbh-1 ; nro>=0 ; nro--)
-       { 
-       Hex::Hexa* hexa = grid->getHexa (nro);
-       if (hexa!=NULL)
-          {
-          if (nbr_vtk==9) 
-             {
-             printf (" ------------------------- Hexaedre nro %d : %d :\n", 
-                     nro, nbr_vtk);
-             hexa->dumpFull ();
-             }
-          hexa->remove ();
-          doc->saveVtk (case_name, nbr_vtk);
-          }
-       } 
-   
+   int nbz [2] =  { 8, 4 };
+   int ni = 1;
+   for (int cyl = 0 ; cyl < 2 ; cyl++)
+       for (int nk = 0 ; nk < nbz[cyl] ; nk++)
+       for (int nj = 0 ; nj < 4 ; nj++)
+           {
+           int jj = nj;
+           if (cyl==0) jj = (jj+6) MODULO 8 ;
+           Hex::Hexa* hexa = grid->getHexaIJK (cyl, ni, jj, nk);
+           if (hexa!=NULL)
+              {
+              hexa->remove ();
+              doc->saveVtk (case_name,  nbr_vtk);
+              }
+           }
+      *************************************************** */
    return HOK;
 }
 // ======================================================== test_lorraine
@@ -1719,6 +1776,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_pipes (nbargs, tabargs);
+   int ier = test_croix (nbargs, tabargs);
    return ier;
 }

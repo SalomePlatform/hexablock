@@ -115,6 +115,9 @@ void CrossElements::createBigCyl ()
    copyVertex (NxExt, S_SE, 2,   NxInt, S_NW, k1);
    copyVertex (NxExt, S_SW, 2,   NxInt, S_SW, k1);
 
+   copyVertex (NxExt, S_SE, 3,   NxInt, S_N,  k1);  // 16/02/2012
+   copyVertex (NxExt, S_SW, 3,   NxInt, S_S,  k1);  // 16/02/2012
+
    copyVertex (NxExt, S_S,  4,   NxInt, S_E,  k1);
    copyVertex (NxExt, S_SE, 4,   NxInt, S_NE, k1);
    copyVertex (NxExt, S_SW, 4,   NxInt, S_SE, k1);
@@ -167,15 +170,38 @@ void CrossElements::createBigCyl ()
    copyVertex (NxExt, S_NW, 1,   NxExt, S_SW, k3);
 
    //------------------------------- Face k3 interne :
+
    copyVertex (NxExt, S_N,  2,   NxInt, S_W,  k3);
    copyVertex (NxExt, S_NE, 2,   NxInt, S_NW, k3);
    copyVertex (NxExt, S_NW, 2,   NxInt, S_SW, k3);
+
+   copyVertex (NxExt, S_NE, 3,   NxInt, S_N,  k3);  // 16/02/2012
+   copyVertex (NxExt, S_NW, 3,   NxInt, S_S,  k3);  // 16/02/2012
 
    copyVertex (NxExt, S_N,  4,   NxInt, S_E,  k3);
    copyVertex (NxExt, S_NE, 4,   NxInt, S_NE, k3);
    copyVertex (NxExt, S_NW, 4,   NxInt, S_SE, k3);
 
    //------------------------------- Remplissage
+
+   if (grid_type == GR_BIPIPE) 
+      {
+      for (int nj=0; nj<S_MAXI ; nj++)
+          {
+          Vertex* node = getVertexIJK (CylBig, NxInt, nj, 0);
+          double  px = node->getX();
+          double  py = node->getY();
+          for (int nk=1; nk<4 ; nk++)
+              {
+              node = getVertexIJK (CylBig, NxInt, nj, nk);
+              if (node != NULL)
+                 {
+                 node -> setX (px);
+                 node -> setY (py);
+                 }
+              }
+          }
+      }
    fillGrid (CylBig); 
 }
 // ====================================================== createLittleCyl
@@ -211,16 +237,17 @@ void CrossElements::createLittleCyl ()
    if (at_left)
       {
       adjustLittleSlice (NxExt, 1, NxExt);
-      adjustLittleSlice (NxInt, 2, NxInt);
-      adjustLittleSlice (NxExt, 2, NxInt);
+      // adjustLittleSlice (NxInt, 2, NxInt);
+      // adjustLittleSlice (NxExt, 2, NxInt);
       }
 
    if (at_right)
       {
       adjustLittleSlice (NxExt, 5, NxExt);
-      adjustLittleSlice (NxExt, 4, NxInt);
-      adjustLittleSlice (NxInt, 4, NxInt);
+      // adjustLittleSlice (NxExt, 4, NxInt);
+      // adjustLittleSlice (NxInt, 4, NxInt);
       }
+
 
    fillGrid (CylSmall);
 }
