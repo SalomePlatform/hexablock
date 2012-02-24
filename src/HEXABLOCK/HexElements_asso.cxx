@@ -24,14 +24,8 @@
 #include "HexElements.hxx"
 #include "HexMatrix.hxx"
 
-static const double Epsil   = 1e-6;
-static const double UnEpsil = 0.999999;
-static const double Epsil2  = 1e-12;
-
-static const double TolAsso = 1e-2;    // Tolerance pour les associations
-
 #ifndef NO_CASCADE
-// CasCade includessdepart
+
 #include <AIS_Shape.hxx>
 
 #include <Precision.hxx>
@@ -83,6 +77,17 @@ static const double TolAsso = 1e-2;    // Tolerance pour les associations
 #include <gp_Circ.hxx>
                                     // Sphere
 #include <BRepPrimAPI_MakeSphere.hxx>
+                                    // Cylindre
+#include <GEOMImpl_CylinderDriver.hxx>
+#include <GEOMImpl_ICylinder.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepAlgoAPI_Section.hxx>
+                                    // Decoupage
+#include <TopExp_Explorer.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+
 
 #ifdef WNT
 #include <process.h>
@@ -95,21 +100,29 @@ static const double TolAsso = 1e-2;    // Tolerance pour les associations
 #define MESSAGE(m) cout << m << endl
 #define Assert(m) if (m!=0) { cout<<" **** Assert "<<m<< endl; exit(101);}
 
-static double HEXA_EPSILON  = 1E-6; //1E-3; 
 
 
 BEGIN_NAMESPACE_HEXA
 
 static bool db = false;
+
+static const double Epsil   = 1e-6;
+static const double UnEpsil = 0.999999;
+static const double Epsil2  = 1e-12;
+
+static const double TolAsso = 1e-2;    // Tolerance pour les associations
+
+void clear_associations (Edge* edge);
+
 // ---------------------------------------------------------------------
-class GeomLine
+class KasLine
 {
 public :
-   GeomLine ();
-   GeomLine (Shape* shape, double deb=-1.0, double fin=-1.0);
-  ~GeomLine ();
+   KasLine ();
+   KasLine (Shape* shape, double deb=-1.0, double fin=-1.0);
+  ~KasLine ();
  
-   int  findBound (Real* point);
+   int  findBound (double* point);
    // void setAbscissa (double total, double& abscisse);
    void inverser ();
    void setBounds (double deb, double fin);
@@ -122,7 +135,10 @@ public :
    void defineLine (Shape* asso, double deb=-1.0, double fin=-1.0);
    void setRank    (int rang, int sens, double& abscisse);
    void associate  (Edge* edge, double sm1, double sm2, int orig=V_AMONT);
+   void assoEdge   (Edge* edge, double pm1, double pm2, int vass=NOTHING);
    void assoPoint  (double alpha, Vertex* node);
+
+   double findParam  (double* point);
 
 private :
    void majCoord ();
@@ -130,6 +146,7 @@ private :
 private :
    string lig_brep;
    double lig_debut, lig_fin;
+   double par_mini,  par_maxi;
 
    bool   geom_inverse; 
    int    geom_rang;
@@ -143,10 +160,10 @@ private :
    BRepAdaptor_Curve* geom_curve;
 };
 // ---------------------------------------------------------------------
-class GeomPoint
+class KasPoint
 {
 public :
-   GeomPoint ();
+   KasPoint ();
  
    double* getCoord () { return g_coord;   }
    bool    isOk  ()    { return is_ok;     }
@@ -155,7 +172,7 @@ public :
    void associate   (Vertex* node);
    void razPoint    ();
    int  definePoint (Vertex* node);
-   void definePoint (Real*   coord);
+   void definePoint (double*   coord);
    void definePoint (gp_Pnt& gpoint);
 
    TopoDS_Vertex& getVertex ()              { return g_vertex;  }
@@ -169,20 +186,50 @@ private :
    gp_Pnt        g_point;
 };
 // ---------------------------------------------------------------------
+class KasCylinders
+{
+public :
+   KasCylinders () { purge () ; }
+  ~KasCylinders () { purge () ; }
+ 
+   int defineCyls (double* borig,  double* bnorm, double* bbase,
+                   double  brayon, double  bhaut,
+                   double* sorig,  double* snorm, double* sbase,
+                   double  srayon, double  shaut);
+   int associate  (Edge* edge);
+
+private :
+   int  anaVertex (Vertex* node, int* tline, double* tpara);
+   void purge ();
+
+private :
+   std::vector <KasLine*> inter_line;
+   bool no_inter;
+};
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+
+static KasLine      current_line;
+static Shape        current_shape ("");
+static KasCylinders current_cyls;
+
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 // ======================================================= Constructeur
-GeomPoint::GeomPoint ()
+KasPoint::KasPoint ()
 {
    razPoint ();
 }
 // ======================================================= razPoint
-void GeomPoint::razPoint ()
+void KasPoint::razPoint ()
 {
    is_ok = false;
    b_rep = "";
    for (int nc=0; nc <DIM3 ; nc++) g_coord [nc] = 0;
 }
 // ======================================================= definePoint (vertex)
-int GeomPoint::definePoint (Vertex* node)
+int KasPoint::definePoint (Vertex* node)
 {
    razPoint ();
 
@@ -213,13 +260,13 @@ int GeomPoint::definePoint (Vertex* node)
    return HOK;
 }
 // ======================================================= definePoint (xyz)
-void GeomPoint::definePoint (Real3 coord)
+void KasPoint::definePoint (Real3 coord)
 {
    gp_Pnt gpoint (coord[dir_x], coord[dir_y], coord[dir_z]);
    definePoint   (gpoint);
 }
 // ======================================================= definePoint (g_pnt)
-void GeomPoint::definePoint (gp_Pnt& gpoint)
+void KasPoint::definePoint (gp_Pnt& gpoint)
 {
    is_ok   = true;
    g_point = gpoint;
@@ -240,14 +287,14 @@ void GeomPoint::definePoint (gp_Pnt& gpoint)
    return;
    if (db)
       {
-      cout << " GeomPoint::definePoint :" << endl;
+      cout << " KasPoint::definePoint :" << endl;
       PutCoord (g_coord);
       }
 }
 // ======================================================= associate
-void GeomPoint::associate (Vertex* node)
+void KasPoint::associate (Vertex* node)
 {
-   // if (db) cout << " ++ GeomPoint::associate " << endl;
+   // if (db) cout << " ++ KasPoint::associate " << endl;
    // if (db) PutName (node);
    if (node==NULL)
       return;
@@ -257,7 +304,7 @@ void GeomPoint::associate (Vertex* node)
 }
 // ---------------------------------------------------------------------
 // ======================================================= Constructeur
-GeomLine::GeomLine ()
+KasLine::KasLine ()
 {
    lig_brep     = "";
    lig_debut    = 0;
@@ -274,20 +321,20 @@ GeomLine::GeomLine ()
    for (int nc=0; nc <DIM3 ; nc++) start_coord [nc] = end_coord [nc] = 0;
 }
 // ========================================================= Constructeur bis
-GeomLine::GeomLine (Shape* asso, double deb, double fin)
+KasLine::KasLine (Shape* asso, double deb, double fin)
 {
    geom_curve  = NULL;
 
    defineLine (asso, deb, fin);
 }
 // ========================================================= Destructeur
-GeomLine::~GeomLine ()
+KasLine::~KasLine ()
 {
    delete geom_curve;
 }
 // ========================================================= defineLine
 // === Creation de la quincaillerie associee a une shape 
-void GeomLine::defineLine (Shape* asso, double deb, double fin)
+void KasLine::defineLine (Shape* asso, double deb, double fin)
 {
    lig_brep = asso->getBrep ();
    if (fin<0.0)
@@ -332,15 +379,15 @@ void GeomLine::defineLine (Shape* asso, double deb, double fin)
    GCPnts_AbscissaPoint s2 (*geom_curve, geom_total_length*lig_fin, 
                              geom_curve->FirstParameter());
 
-   double u1    = s1.Parameter ();
-   double u2    = s2.Parameter ();
-   start_gpoint = geom_curve->Value (u1);
-   end_gpoint   = geom_curve->Value (u2);
+   par_mini     = s1.Parameter ();
+   par_maxi     = s2.Parameter ();
+   start_gpoint = geom_curve->Value (par_mini);
+   end_gpoint   = geom_curve->Value (par_maxi);
    majCoord ();
 
    if (db) 
       {
-      Echo (" ____________________________________  GeomLine::defineLine");
+      Echo (" ____________________________________  KasLine::defineLine");
       HexDisplay (lig_debut);
       HexDisplay (lig_fin);
       HexDisplay (geom_total_length);
@@ -353,23 +400,25 @@ void GeomLine::defineLine (Shape* asso, double deb, double fin)
       }
 }
 // ========================================================= assoPoint
-void GeomLine::assoPoint (double alpha, Vertex* node)
+void KasLine::assoPoint (double alpha, Vertex* node)
 {
    GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
                              geom_curve->FirstParameter());
    double u1       = s1.Parameter ();
    gp_Pnt pnt_asso = geom_curve->Value (u1);
 
-   GeomPoint gpoint;
+   KasPoint gpoint;
    gpoint.definePoint (pnt_asso);
    gpoint.associate   (node);
 
    if (db)
       {
       double* coord = gpoint.getCoord();
-      printf (" ... assoPoint : angle=%g, v=%s (%g,%g,%g) -> (%g, %g, %g)\n", 
-           alpha, node->getName(), node->getX(), node->getY(), node->getZ(), 
-           coord[dir_x], coord[dir_y], coord[dir_z]);
+      printf (" ... assoPoint : v=%s (%g,%g,%g), param=%g\n", 
+           node->getName(), node->getX(), node->getY(), node->getZ(), alpha);
+ 
+      printf ("                   ----> (%g,%g,%g)\n", coord[dir_x], 
+                                         coord[dir_y], coord[dir_z]);
       }
 }
 // ========================================================= arrondir
@@ -385,7 +434,7 @@ void arrondir (double &val)
       }
 }
 // ========================================================= associate
-void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
+void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 {
    if (sm2 < start_absc) return;
    if (sm1 > end_absc)   return;
@@ -409,7 +458,7 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 
    if (db)
       {
-      cout << " ++ GeomLine::associate : rg=" << geom_rang  << "s=" << vorig
+      cout << " ++ KasLine::associate : rg=" << geom_rang  << "s=" << vorig
            << endl;
       cout << " ligpara = [ " << lig_debut << ", " << lig_fin << " ]" << endl;
       cout << " absc    = [ " << start_absc << ", " << end_absc << " ]\n" ;
@@ -423,12 +472,7 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 
    if (lpara2 >= lpara1 + TolAsso)
       {
-      Shape* shape = new Shape (lig_brep);
-      shape->setBounds (lpara1, lpara2);
-      edge ->addAssociation (shape);
-   
-      if (db) printf (" Asso Line %s -> (%g,%g)\n", 
-              edge->getName(), lpara1, lpara2);
+      assoEdge (edge, lpara1, lpara2);
       }
    else if (db)
       {
@@ -458,12 +502,12 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-             GeomPoint gpoint;
+             KasPoint gpoint;
              gpoint.definePoint (pnt_asso);
              gpoint.associate (node);
              if (db)
                 {
-                Real* ass = gpoint.getCoord();
+                double* ass = gpoint.getCoord();
                 printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
                     node->getName(), node->getX(), node->getY(), node->getZ(),
                     ass[dir_x], ass[dir_y], ass[dir_z], param, smx);
@@ -478,9 +522,9 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              gp_Pnt pnt_asso = geom_curve->Value (u1);
 
                                           // .....  Creation d'un vertex Geom
-             GeomPoint gpoint;
+             KasPoint gpoint;
              gpoint.definePoint (pnt_asso);
-             Real* ass = gpoint.getCoord();
+             double* ass = gpoint.getCoord();
              // gpoint.associate (node);
              printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
                      node->getName(),
@@ -497,8 +541,33 @@ void GeomLine::associate (Edge* edge, double sm1, double sm2, int vorig)
       smx   = sm2;
       }
 }
+// ========================================================= assoEdge
+void KasLine::assoEdge (Edge* edge, double para1, double para2, int vass)
+{
+   Shape* shape = new Shape (lig_brep);
+   shape->setBounds (para1, para2);
+   edge ->addAssociation (shape);
+   if (db) printf (" ... Asso Edge %s -> (%g,%g)\n", 
+           edge->getName(), para1, para2);
+
+   double lg = geom_total_length;
+   switch (vass) 
+      {
+      case V_AMONT :
+           assoPoint (para1*lg, edge->getVertex (V_AMONT));
+           break;
+      case V_AVAL  :
+           assoPoint (para2*lg, edge->getVertex (V_AVAL));
+           break;
+      case V_TWO   :
+           assoPoint (para1*lg, edge->getVertex (V_AMONT));
+           assoPoint (para2*lg, edge->getVertex (V_AVAL ));
+           break;
+      default :;
+      }
+}
 // ========================================================= majCoord
-void GeomLine::majCoord ()
+void KasLine::majCoord ()
 {
    start_coord [dir_x] = start_gpoint.X();
    start_coord [dir_y] = start_gpoint.Y();
@@ -509,13 +578,13 @@ void GeomLine::majCoord ()
    end_coord   [dir_z] = end_gpoint.Z();
 }
 // ========================================================= setBounds
-void GeomLine::setBounds (double deb, double fin)
+void KasLine::setBounds (double deb, double fin)
 {
    lig_debut = deb;
    lig_fin   = fin;
 }
 // ========================================================= inverser
-void GeomLine::inverser ()
+void KasLine::inverser ()
 {
    gp_Pnt  foo  = start_gpoint;
    start_gpoint = end_gpoint;
@@ -539,7 +608,7 @@ void GeomLine::inverser ()
    majCoord ();
 }
 // ========================================================= setRank
-void GeomLine::setRank (int nro, int sens, double& abscisse)
+void KasLine::setRank (int nro, int sens, double& abscisse)
 {
    if (sens==V_AVAL)
       inverser ();
@@ -550,7 +619,7 @@ void GeomLine::setRank (int nro, int sens, double& abscisse)
 
    if (db)
       {
-      cout << "GeomLine::setRank : nro = " << nro << " sens="  << sens 
+      cout << "KasLine::setRank : nro = " << nro << " sens="  << sens 
            <<  " = (" << start_absc << ", " << end_absc << ")" << endl;
       }
 }
@@ -561,20 +630,22 @@ inline double carre (double val)
 }
 //
 // ====================================================== same_coords
+inline bool same_coords (gp_Pnt& pa, gp_Pnt& pb)
+{
+   double d2 = carre (pb.X()-pa.X()) + carre (pb.Y()-pa.Y()) 
+                                     + carre (pb.Z()-pa.Z()) ;
+   return d2 < Epsil2;
+}
+// ====================================================== same_coords
 inline bool same_coords (double* pa, double* pb)
 {
 
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
              + carre (pb[dir_z]-pa[dir_z]); 
-/********************************************
-   printf ( " ... same_coords :d2 ((%g,%g,%g), (%g,%g,%g)) = %g\n", 
-           pa[dir_x], pa[dir_y], pa[dir_z], pb[dir_x],
-           pb[dir_y], pb[dir_z],  d2);
-**************************************/
    return d2 < Epsil2;
 }
 // ========================================================= findBound
-int GeomLine::findBound (Real* coord)
+int KasLine::findBound (double* coord)
 {
    if (same_coords (coord, start_coord) )
       return V_AMONT;
@@ -583,6 +654,35 @@ int GeomLine::findBound (Real* coord)
       return V_AVAL;
 
    return NOTHING;
+}
+// ========================================================= findParam
+double KasLine::findParam (double* coord)
+{
+   double umin = 0, umax = 0;
+   gp_Pnt gpoint (coord[dir_x], coord[dir_y], coord[dir_z]);
+   Handle(Geom_Curve) curve = BRep_Tool::Curve (geom_line, umin, umax);
+
+   GeomAPI_ProjectPointOnCurve projector (gpoint, curve);
+   if ( projector.NbPoints() == 0 )
+      return -1.0;
+
+   double param = projector.LowerDistanceParameter();
+   if (param <par_mini || param>par_maxi)
+      {
+      // cout << " Rejet : " << param << " not in (" << par_mini 
+      //                              << ", " << par_maxi << ")" << endl;
+      return -1.0;
+      }
+ 
+   gp_Pnt rpoint = geom_curve->Value (param);
+   if (NOT same_coords (gpoint, rpoint))
+      {
+      //  cout << " Rejet : points differents " << endl;
+      return -1.0;
+      }
+
+   param = (param-par_mini) / (par_maxi-par_mini); 
+   return param;
 }
 // ========================================================= cutAssociation
 void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
@@ -593,12 +693,12 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
    if (nbshapes==0) 
       return;
 
-   std::vector <GeomLine>  tab_gline  (nbshapes);
+   std::vector <KasLine>  tab_gline  (nbshapes);
    
    Vertex* prems = tedges [0]         -> getVertex (V_AMONT);
    Vertex* derns = tedges [nbedges-1] -> getVertex (V_AVAL);
 
-   GeomPoint pnt_first, pnt_last;
+   KasPoint pnt_first, pnt_last;
    pnt_first.definePoint (prems);
    pnt_last .definePoint (derns);
 
@@ -687,8 +787,13 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
        }
    if (db) cout << " +++ End of Elements::cutAssociation" << endl;
 }
-static GeomLine current_line;
-static Shape    current_shape ("");
+// ====================================================== geom_make_brep 
+void geom_make_brep (TopoDS_Shape& shape, string& brep)
+{
+   ostringstream  stream_shape;
+   BRepTools::Write (shape, stream_shape);
+   brep = stream_shape.str();
+}
 // ====================================================== geom_define_line
 void geom_define_line (string& brep)
 {
@@ -709,7 +814,7 @@ void geom_asso_point (Vertex* node)
       return;
    
    Real3 koord = { node->getX(), node->getY(), node->getZ() };
-   GeomPoint  asso_point ;
+   KasPoint  asso_point ;
    asso_point.definePoint (koord);
    asso_point.associate   (node);
 }
@@ -733,9 +838,9 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
    TopoDS_Edge    geom_circ = BRepBuilderAPI_MakeEdge(gp_circ).Edge();
    ostringstream  stream_shape;
    BRepTools::Write(geom_circ, stream_shape);
-
    brep = stream_shape.str();
 
+   // geom_make_brep (geom_circ, brep);
    if (NOT db)
       return;
                              // Impressions de mise au point
@@ -753,9 +858,220 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
                                 geom_curve.FirstParameter());
        double u1    = s1.Parameter ();
        gp_Pnt point = geom_curve.Value (u1);
-       printf ( " ..... pnt%d = (%g, %g, %g)\n", pk, point.X(),
+       if (db) 
+          printf ( " ..... pnt%d = (%g, %g, %g)\n", pk, point.X(),
                                             point.Y(),  point.Z());
        }
+}
+// ====================================================== save_brep
+void save_brep (cpchar nom, string brep)
+{
+    static int compteur = 0;
+    char buff[8];
+
+    compteur ++;
+    sprintf (buff ,"%d", compteur);
+    string name (nom);
+    name += buff;
+    name += ".brep";
+    FILE*    fic = fopen (name.c_str(), "w");
+    fprintf (fic, "%s\n", brep.c_str());
+    fclose  (fic);
+}
+// ====================================================== purge
+void KasCylinders::purge ()
+{
+    no_inter = true;
+    inter_line.clear ();
+}
+// ====================================================== defineCyls 
+int KasCylinders::defineCyls (double* borig,  double* bnorm, double* bbase,
+                              double  brayon, double  bhaut,
+                              double* sorig,  double* snorm, double* sbase,
+                              double  srayon, double  shaut)
+{
+   purge ();
+   if (db)
+      {
+      printf (" ====================== defineCyls\n");
+      printf ("    ----- borig=(%g,%g,%g)\n", borig[0], borig[1], borig[2]);
+      printf ("    ----- bbase=(%g,%g,%g)\n", bbase[0], bbase[1], bbase[2]);
+      printf ("    ----- bnorm=(%g,%g,%g)\n", bnorm[0], bnorm[1], bnorm[2]);
+      printf ("    ----- brayon=%g, bhaut=%g\n", brayon, bhaut);
+      printf ("\n");
+      printf ("    ----- sorig=(%g,%g,%g)\n", sorig[0], sorig[1], sorig[2]);
+      printf ("    ----- sbase=(%g,%g,%g)\n", sbase[0], sbase[1], sbase[2]);
+      printf ("    ----- snorm=(%g,%g,%g)\n", snorm[0], snorm[1], snorm[2]);
+      printf ("    ----- srayon=%g, shaut=%g\n", srayon, shaut);
+      }
+
+                    // --------------------------- Preparation
+   gp_Pnt gpb_orig (borig [dir_x], borig [dir_y], borig [dir_z]);
+   gp_Vec gpb_norm (bnorm [dir_x], bnorm [dir_y], bnorm [dir_z]);
+   gp_Vec gpb_vx   (bbase [dir_x], bbase [dir_y], bbase [dir_z]);
+   gp_Ax2 gpb_axes (gpb_orig, gpb_norm, gpb_vx);
+// gp_Ax2  gp_axes (gp_center, gp_norm, gp_vx);
+
+   BRepPrimAPI_MakeCylinder make_bcyl (gpb_axes, brayon, bhaut);
+   make_bcyl.Build();
+
+   gp_Pnt gps_orig (sorig [dir_x], sorig [dir_y], sorig [dir_z]);
+   gp_Vec gps_vx   (sbase [dir_x], sbase [dir_y], sbase [dir_z]);
+   gp_Vec gps_norm (snorm [dir_x], snorm [dir_y], snorm [dir_z]);
+   gp_Ax2 gps_axes (gps_orig, gps_norm, gpb_vx);
+
+   BRepPrimAPI_MakeCylinder make_scyl (gps_axes, srayon, shaut);
+   make_scyl.Build();
+
+   if (NOT make_bcyl.IsDone())
+      {
+      printf ("defineCyls : Can' build big cylinder\n");
+      return HERR;
+      }
+   else if (NOT make_scyl.IsDone())
+      {
+      printf ("defineCyls : Can' build small cylinder\n");
+      return HERR;
+      }
+                    // --------------------------- Intersection
+
+   TopoDS_Shape cyl_big   = make_bcyl.Shape();
+   TopoDS_Shape cyl_small = make_scyl.Shape();
+
+   BRepAlgoAPI_Section make_inter (cyl_big, cyl_small, false);
+   make_inter.Approximation (true);
+   make_inter.Build();
+
+   if (NOT make_inter.IsDone())
+      {
+      printf ("defineCyls : No intersection\n");
+      return HERR;
+      }
+
+   TopoDS_Shape    cyl_inter = make_inter.Shape();
+   // geom_make_brep (cyl_inter, brep);
+
+                    // --------------------------- Recuperation
+   string crep;
+   Shape shape (crep);
+
+   TopExp_Explorer explo (cyl_inter, TopAbs_EDGE);
+   int nroline = 0;
+   while (explo.More())
+         {
+         TopoDS_Shape ligne = explo.Current();
+         // TopoDS_Edge ligne = explo.Current();
+         explo.Next ();
+
+         cout << "____________________________________ Ligne suivante" << endl;
+         geom_make_brep (ligne, crep);
+         save_brep ("inter", crep);
+         shape.setBrep (crep);
+
+         KasLine* geom_line = new KasLine (&shape);
+         inter_line.push_back (geom_line);
+         nroline ++;
+         }
+   return HOK;
+}
+// ====================================================== anaVertex
+// === Trouve le(s) ligne(s) contenant ce vertex et le(s) parametre(s)
+int KasCylinders::anaVertex (Vertex* node, int* tline, double* tpara)
+{
+   Real3  point; 
+   node->getPoint (point);
+   int nbsol = 0;
+   int nblines = inter_line.size();
+
+   for (int nl=0 ; nl<nblines ; nl++)
+       {
+       double param = inter_line[nl]->findParam (point);
+       if (param>=0)
+          {
+          if (db) 
+              cout << " ... findParam " << node->getName() 
+                   << ", point=(" << point[0] << ", " << point[1] 
+                                 << ", " << point[2] 
+                   << "), nl=" << nl << ", param=" << param << endl;
+          if (nbsol>=2)
+             return nbsol;
+
+          tline [nbsol] = nl;
+          tpara [nbsol] = param;
+          nbsol ++;
+          }
+       }
+
+   if (nbsol==1)
+      {
+      if (tpara[0]<=Epsil)
+         {
+         nbsol ++;
+         tpara[1] = 1.0;
+         tline[1] = tline[0]-1;
+         if (tline[1] <0) tline[1] = nblines-1;
+         }
+      else if (tpara[0]>=UnEpsil)
+         {
+         nbsol ++;
+         tpara[1] = 0;
+         tline[1] = tline[0]+1;
+         if (tline[1] >= nblines) tline[1] = 0;
+         }
+      }
+
+   return nbsol;
+}
+// ====================================================== associate
+// ==== On suppose une orientation correcte
+int KasCylinders::associate (Edge* edge)
+{
+   edge->clearAssociation ();
+
+   double tparam1 [V_TWO], tparam2 [V_TWO];
+   int    tline1  [V_TWO], tline2  [V_TWO];
+   int sol1 = anaVertex (edge->getVertex(V_AMONT), tline1, tparam1);
+   int sol2 = anaVertex (edge->getVertex(V_AVAL),  tline2, tparam2);
+
+   if (sol1==0 || sol2==0)
+      return HERR;
+                                // Ligne commune ? 
+   for (int ns1=0 ; ns1<sol1 ; ns1++)
+       {
+       int nlig = tline1[ns1];
+       for (int ns2=0 ; ns2<sol2 ; ns2++)
+           {
+           if (tline2[ns2] == nlig)
+              {
+              inter_line[nlig]->assoEdge (edge, tparam1[ns1], tparam2[ns2], 2);
+              return HOK;
+              }  
+           }
+       }
+   
+    inter_line[tline1[0]]->assoEdge (edge, tparam1[0],    1.0,  V_AMONT);
+    inter_line[tline2[0]]->assoEdge (edge, 0,      tparam2[0], V_AVAL);
+}
+// ====================================================== geom_create_cylcyl
+int geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
+                        double  bray,  double  bhaut,
+                        double* sorig, double* snorm, double* sbase,
+                        double  sray,  double  shaut)
+{
+   int ier = current_cyls.defineCyls (borig, bnorm, bbase, bray,  bhaut,
+                                      sorig, snorm, sbase, sray,  shaut);
+   return ier;
+}
+// ====================================================== geom_asso_cylcyl
+int geom_asso_cylcyl (Edge* edge)
+{
+   cout << " ___________________________________ geom_asso_cylcyl " 
+        << edge->getName () << " = (" << edge->getVertex(0)->getName () 
+                            << ","  << edge->getVertex(1)->getName () 
+        << ")" << endl;
+
+   int ier = current_cyls.associate (edge);
+   return ier;
 }
 // ====================================================== geom_create_sphere 
 void geom_create_sphere (double* milieu, double radius, string& brep)
@@ -788,7 +1104,7 @@ void geom_dump_asso (Edge* edge)
    edge->getVertex (V_AMONT)-> printName (", ");
    edge->getVertex (V_AVAL) -> printName (")\n");
    
-   GeomPoint asso_point;
+   KasPoint asso_point;
    for (int nro=0 ; nro<V_TWO ; nro++)
        {
        Vertex* vertex = edge->getVertex (nro);
@@ -806,7 +1122,7 @@ void geom_dump_asso (Edge* edge)
        printf ("\n");
        }
 
-   GeomLine asso_line;
+   KasLine asso_line;
    const Shapes&  tshapes = edge->getAssociations ();
    for (int nro=0 ; nro<tshapes.size() ; nro++)
        {
@@ -837,7 +1153,6 @@ void translate_brep (string& brep, double dir[], string& trep)
    gp_Trsf       transfo;
    BRep_Builder  builder;
    TopoDS_Shape  orig;
-   ostringstream stream_shape;
 
    gp_Vec      vecteur       (dir [dir_x], dir [dir_y], dir [dir_z]);
    transfo.SetTranslation    (vecteur);
@@ -849,6 +1164,7 @@ void translate_brep (string& brep, double dir[], string& trep)
    TopLoc_Location  loc_result (transfo * trans_orig);
    TopoDS_Shape     result = orig.Located (loc_result);
 
+   ostringstream stream_shape;
    BRepTools::Write (result, stream_shape);
    trep = stream_shape.str();
 }
@@ -857,7 +1173,6 @@ void transfo_brep (string& brep, Matrix* matrice, string& trep)
 {
    BRep_Builder  builder;
    TopoDS_Shape  shape_orig;
-   ostringstream stream_shape;
    gp_Trsf       transfo;
 
    double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
@@ -871,10 +1186,11 @@ void transfo_brep (string& brep, Matrix* matrice, string& trep)
    BRepBuilderAPI_Transform brep_transfo (shape_orig, transfo, Standard_True);
    TopoDS_Shape result = brep_transfo.Shape();
 
+   ostringstream stream_shape;
    BRepTools::Write (result, stream_shape);
    trep = stream_shape.str();
 }
-// ====================================================== associateShapes
+// ====================================================== clear_associations
 void clear_associations (Edge* edge)
 {
    edge->clearAssociation();
@@ -891,16 +1207,16 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    int nbshapes = gline.size ();
    int nblines  = nbshapes + 1; 
 
-   vector <GeomLine*> buff_line (nblines); // car nblines != 0 
-   vector <GeomLine*> geom_line (nblines);
+   vector <KasLine*> buff_line (nblines); // car nblines != 0 
+   vector <KasLine*> geom_line (nblines);
 
                                     // -------- Bufferisation des shapes
    for (int ns=0 ; ns<nbshapes ; ns++)
-       buff_line [ns] = new GeomLine (gline [ns], 0.0, 1.0);
+       buff_line [ns] = new KasLine (gline [ns], 0.0, 1.0);
 
                                     // -------- Premiere ligne
    int    sdepart  = NOTHING;
-   Real*  extrem    = NULL;
+   double*  extrem    = NULL;
    double abscisse = 0;
    double pfin0    = 1;
    if (closed)
@@ -918,7 +1234,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    else if (nbshapes==1)
       pfin0 = pend;
 
-   GeomLine* prems = geom_line[0]  = new GeomLine (gstart, pstart, pfin0);
+   KasLine* prems = geom_line[0]  = new KasLine (gstart, pstart, pfin0);
 
                           // Ligne fermee : sens impose par l'utilisateur
    if (closed)
@@ -942,7 +1258,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
 
       if (sdepart==NOTHING)
          {
-         printf (" ***************** Erreur dans GeomLine\n");
+         printf (" ***************** Erreur dans KasLine\n");
          printf (" ***************** La ligne ouverte est interrompue\n");
          return HERR;
          }
@@ -967,7 +1283,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
        bool more = true;
        for (int nb=0 ; more && nb<nbshapes ; nb++)
            {
-           GeomLine*  ligne = buff_line[nb];
+           KasLine*  ligne = buff_line[nb];
            int sens = ligne==NULL ? NOTHING : ligne->findBound (extrem);
            if (sens != NOTHING)
               {
@@ -985,13 +1301,13 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
            }
        if (more)
           {
-          printf (" ***************** Erreur dans GeomLine\n");
+          printf (" ***************** Erreur dans KasLine\n");
           return HERR;
           }
        }
-   if (closed && pstart > HEXA_EPSILON)
+   if (closed && pstart > Epsil)
       {
-      GeomLine* ligne = new GeomLine (gstart, 0, pstart);
+      KasLine* ligne = new KasLine (gstart, 0, pstart);
       ligne->setRank   (nblines, sdepart, abscisse);
       geom_line.push_back (ligne);
       }
@@ -1089,6 +1405,13 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
 }
 // ====================================================== set_debug_asso
 void set_debug_asso (bool boule)
+{
+}
+// ====================================================== geom_create_cylcyl
+int geom_create_cylcyl (double* borig* double* bnorm, double* bbase,
+                         double  bray,  double  bhaut,
+                         double* sorig, double* snorm, double* sbase,
+                         double  sray,  double  shaut, string& brep)
 {
 }
 END_NAMESPACE_HEXA

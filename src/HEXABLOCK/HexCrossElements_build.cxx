@@ -38,13 +38,20 @@ BEGIN_NAMESPACE_HEXA
 
 static const int    MaxLevel    = 7;
 static const double epaiss2 = 0.5;
+static const double UnSur2pi = DEMI/M_PI;       
 
 double calcul_centre (Vertex* orig, Vertex* inter); 
 
 void geom_define_line (string& brep);
+void geom_asso_point  (double angle, Vertex* node);
+ 
 void geom_create_circle (double* milieu, double rayon, double* normale, 
                          double* base, string& brep);
-
+int  geom_create_cylcyl (double* borig, double* bnorm, double* bbase, 
+                         double  bray,  double  bhaut, 
+                         double* sorig, double* snorm, double* sbase, 
+                         double  sray,  double  shaut);
+int  geom_asso_cylcyl   (Edge* edge);
 
 // ====================================================== createBigCyl
 void CrossElements::createBigCyl ()
@@ -234,20 +241,6 @@ void CrossElements::createLittleCyl ()
        addSlice (CylSmall, NxExt, nk, px, t_rayext[nk]);
        }
 
-   if (at_left)
-      {
-      adjustLittleSlice (NxExt, 1, NxExt);
-      // adjustLittleSlice (NxInt, 2, NxInt);
-      // adjustLittleSlice (NxExt, 2, NxInt);
-      }
-
-   if (at_right)
-      {
-      adjustLittleSlice (NxExt, 5, NxExt);
-      // adjustLittleSlice (NxExt, 4, NxInt);
-      // adjustLittleSlice (NxInt, 4, NxInt);
-      }
-
 
    fillGrid (CylSmall);
 }
@@ -298,6 +291,20 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    createLittleCyl ();
    createBigCyl    ();
 
+   if (at_left)
+      {
+      adjustLittleSlice (NxExt, 1, NxExt);
+      if (grid_type == GR_BIPIPE) 
+         adjustLittleSlice (NxInt, 2, NxInt);
+      }
+
+   if (at_right)
+      {
+      adjustLittleSlice (NxExt, 5, NxExt);
+      if (grid_type == GR_BIPIPE) 
+         adjustLittleSlice (NxInt, 4, NxInt);
+      }
+
    Vector* iprim = new Vector (cross_cyl1->getDirection());
    Vector* kprim = new Vector (cross_cyl2->getDirection());
    Vector* jprim = new Vector (kprim);
@@ -308,9 +315,30 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
 
    transfoVertices (cross_center, iprim, jprim, kprim);
 
-   Real3 coord;
-   assoCylinder (CylSmall, iprim->getCoord (coord));
-   assoCylinder (CylBig,   kprim->getCoord (coord));
+   Real3 snorm, bnorm;
+   iprim->getCoord (snorm);
+   kprim->getCoord (bnorm);
+   assoCylinder (CylSmall, snorm);
+   assoCylinder (CylBig,   bnorm);
+
+   if (at_left)
+      { 
+      assoIntersection (NxExt, 1, snorm, bnorm);
+      if (grid_type == GR_BIPIPE) 
+         { 
+         assoIntersection (NxInt, 2, snorm, bnorm);
+         }
+      }
+
+   if (at_right)
+      { 
+      assoIntersection (NxExt, NbrSlices1-1, snorm, bnorm);
+      if (grid_type == GR_BIPIPE) 
+         { 
+         assoIntersection (NxInt, NbrSlices1-2, snorm, bnorm);
+         }
+      }
+
    assoResiduelle ();
    return HOK;
 }
@@ -332,7 +360,6 @@ void CrossElements::copyVertex (int i1, int j1, int k1, int i2, int j2, int k2)
 // ===================================================== assoCylinder 
 void CrossElements::assoCylinder (int cyl, double* normal)
 {
-   
    Real3   base, vec1, center, east, west, nordest;
    int nk = 0;
    if (cyl==CylSmall && NOT at_left) 
@@ -434,15 +461,70 @@ void CrossElements::adjustLittleSlice (int ni, int nk, int nibig)
       return;
 
    double grayon2 = cross_rayon[CylBig][nibig] * cross_rayon[CylBig][nibig];
+   double prayon  = cross_rayon[CylSmall][ni];
  
    for (int nj=0;  nj<S_MAXI ; nj++)
        {
-       node = getVertexIJK (CylSmall, ni, nj, nk);
-       double px = node->getX();
-       double py = node->getY();
-       double qx = sqrt (grayon2-py*py);
-       if (px>=0) node->setX ( qx);
-       else       node->setX (-qx);
+       node  = getVertexIJK (CylSmall, ni, nj, nk);
+       double angle = getAngle (CylSmall, nj);
+       double py = prayon * cos (angle);
+       double pz = prayon * sin (angle);
+       double px = sqrt (grayon2-py*py);
+
+       double qx = node->getX();
+       if (qx>=0) node->setX ( px);
+       else       node->setX (-px);
+       node->setY (py);
+       node->setZ (pz);
        }
+}
+// ===================================================== assoIntersection 
+int CrossElements::assoIntersection (int nxs, int nzs, double* snorm, 
+                                                       double* bnorm)
+{
+   Real3  center;
+   Real3  pse, psw, sorig, sbase;
+   Real3  pbe, pbw, borig, bbase;
+   string brep;
+
+   cross_center->getPoint (center);
+   int nz = nzs < 3 ? 0 : NbrSlices1;
+
+   getVertexIJK (CylSmall, nxs, S_E , nz)->getPoint (pse);
+   getVertexIJK (CylSmall, nxs, S_W , nz)->getPoint (psw);
+   getVertexIJK (CylBig,   nxs, S_E , 0) ->getPoint (pbe);
+   getVertexIJK (CylBig,   nxs, S_W , 0) ->getPoint (pbw);
+
+   double srayon = calc_distance (pse, psw)/2;
+   double brayon = calc_distance (pbe, pbw)/2;
+
+   calc_milieu  (psw, pse, sorig);
+   calc_milieu  (pbw, pbe, borig);
+   calc_vecteur (psw, pse, sbase);
+   calc_vecteur (pbw, pbe, bbase);
+
+   double shaut = calc_distance (center, sorig);
+   double bhaut = calc_distance (center, borig)*2;
+   double* orig = nzs < 3 ? sorig : center;       // Pb orientation
+
+   int ier = geom_create_cylcyl (borig, bnorm, bbase, brayon, bhaut, 
+                                  orig, snorm, sbase, srayon, shaut);
+   if (ier != HOK)
+      return ier;
+
+   for (int ny=S_E ; ny<=S_SE ; ny++)
+       {
+       Vertex* node = getVertexIJK (CylSmall, nxs, ny, nzs);
+       if (node!=NULL)
+           node->clearAssociation (); 
+       }
+
+   for (int ny=S_E ; ny<=S_SE ; ny++)
+       {
+       Edge* edge = getEdgeJ (CylSmall, nxs, ny, nzs);
+       geom_asso_cylcyl (edge);
+       }
+
+   return HOK;
 }
 END_NAMESPACE_HEXA

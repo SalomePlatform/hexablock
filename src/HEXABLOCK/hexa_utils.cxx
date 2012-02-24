@@ -1,3 +1,6 @@
+
+// C++ : Fonctions utilitaires de Hexa
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -16,9 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-// C++ : Fonctions utilitaires de Hexa
-
 #include "hexa_base.hxx"
 
 #include <cmath>
@@ -67,6 +67,13 @@ void calc_vecteur  (double pta[], double ptb[], double vab[])
    vab [dir_x] = ptb [dir_x] - pta [dir_x];
    vab [dir_y] = ptb [dir_y] - pta [dir_y];
    vab [dir_z] = ptb [dir_z] - pta [dir_z];
+}
+// ========================================================= calc_milieu
+void calc_milieu  (double pta[], double ptb[], double milieu[])
+{
+   milieu [dir_x] = (ptb [dir_x] + pta [dir_x])/2.0;
+   milieu [dir_y] = (ptb [dir_y] + pta [dir_y])/2.0;
+   milieu [dir_z] = (ptb [dir_z] + pta [dir_z])/2.0;
 }
 // ========================================================= normer_vecteur
 int normer_vecteur (double vect[])

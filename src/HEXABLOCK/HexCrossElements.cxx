@@ -619,7 +619,7 @@ void CrossElements::dump ()
 // ====================================================== dumpVertex
 void CrossElements::dumpVertex ()
 {
-   int sizey [3] = { 1, 4, S_MAXI };
+   int sizey [3] = { 1, S_MAXI, S_MAXI };
 
    for (int cyl=CylSmall ; cyl<=CylBig ; cyl++)
        {

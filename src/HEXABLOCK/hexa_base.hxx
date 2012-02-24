@@ -198,6 +198,7 @@ double* prod_vectoriel (double v1[], double v2[], double v3[]);
 double  calc_norme     (double v1[]);
 double  calc_distance  (double v1[], double v2[]);
 void    calc_vecteur   (double pta[], double ptb[], double vab[]);
+void    calc_milieu    (double pta[], double ptb[], double milieu[]);
 int     normer_vecteur (double v1[]);
 
 END_NAMESPACE_HEXA

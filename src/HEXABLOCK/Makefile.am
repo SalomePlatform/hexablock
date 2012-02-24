@@ -110,7 +110,7 @@ libHEXABLOCKimpl_la_CPPFLAGS = \
 	-I$(top_builddir)/idl
 
 libHEXABLOCKimpl_la_LDFLAGS = \
-	$(CAS_KERNEL) -lTKBRep -lTKPrim -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo \
+	$(CAS_KERNEL) -lTKBRep -lTKPrim -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo  -lTKBool \
 	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics
 
 ####  libHexaBlockimpl_la_CPPFLAGS =  \

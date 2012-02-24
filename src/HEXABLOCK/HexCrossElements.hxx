@@ -100,6 +100,7 @@ private :
    void assoSlice     (int cyl, double* base, double* norm, int nx, int zlice);
    void assoArc    (int cyl, int nx, int ny, int nz, string& brep, double ray);
    void assoBigMiddle (double* base, double* normal, int nzlice);
+   int  assoIntersection (int nx, int nzlice, double* snorm, double* bnorm);
 
 
    double getAngle  (int cyl, int ny);
