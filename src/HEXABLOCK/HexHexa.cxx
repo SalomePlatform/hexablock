@@ -280,12 +280,18 @@ int Hexa::countNodes ()
 // ======================================================= printNodes
 void Hexa::printNodes (pfile vtk, int& compteur)
 {
+   const double minvtk = 1e-30;
+   Real3 koord;
+
    for (int nb=0 ; nb<HV_MAXI ; nb++) 
        if (h_vertex[nb]->getMark()==NO_USED)
           {
-          fprintf (vtk, "%g %g %g\n", h_vertex[nb]->getX(), 
-                                      h_vertex[nb]->getY(), 
-                                      h_vertex[nb]->getZ());
+          h_vertex[nb]->getPoint (koord);
+          for (int nc=dir_x ; nc<=dir_z ; nc++)
+              if (koord [nc] < minvtk &&  koord [nc] > -minvtk)
+                  koord[nc] = 0.0;
+
+          fprintf (vtk, "%g %g %g\n", koord[dir_x], koord[dir_y], koord[dir_z]);
           h_vertex[nb]->setMark (compteur);
           compteur ++;
           }

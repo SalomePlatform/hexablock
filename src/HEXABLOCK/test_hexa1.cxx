@@ -1039,6 +1039,64 @@ int del_tranche (Hex::CrossElements* grid, int cyl, int ni, int nk, int dr=1)
                          cyl, ni, nk, nbr_vtk-1);
    return nbr_vtk;
 }
+// ======================================================== test_croix2
+int test_croix2 (int nbargs, cpchar tabargs[])
+{
+   Hex::Hex mon_ex;
+   docu = mon_ex.addDocument ();
+   docu ->setLevel (1);
+   case_name = "croix";
+
+   Hex::Vertex* ori1 = docu->addVertex ( 0,0,1.03);
+   Hex::Vertex* ori2 = docu->addVertex (-0.129904, 0.075, 0);
+
+   Hex::Vector* dir1 = docu->addVector ( 0,0,-2.05);
+   Hex::Vector* dir2 = docu->addVector ( 0.079696, -0.0460125,  -1.00148e-32);
+
+
+   double r1 = 0.059;
+   double r2 = 0.01095;
+   double l1 = 1.23;
+   double l2 = 0.205123 - r1;
+
+   Hex::Cylinder*      cyl1 = docu->addCylinder (ori1, dir1, r1, l1);
+   Hex::Cylinder*      cyl2 = docu->addCylinder (ori2, dir2, r2, l2);
+
+   // Hex::Elements* gcyl2 = docu->makeCylinder (cyl2, dir1, 2, 8, 6);
+   // gcyl2->saveVtk ("cyl_small.vtk");
+
+   // Hex::Elements* gcyl1 = docu->makeCylinder (cyl1, dir2, 2, 8, 4);
+   // gcyl1->saveVtk ("cyl_big.vtk");
+
+   Hex::CrossElements* grid = docu->makeCylinders (cyl1, cyl2);
+   save_vtk ();
+                                  // Partie critique
+   // del_tranche (grid, 0, 1, 4, 2);
+   // del_tranche (grid, 0, 1, 3, 2);
+   // del_tranche (grid, 0, 1, 2, 2);
+
+   del_tranche (grid, 0, 1, 1);
+
+   del_tranche (grid, 0, 1, 0);
+   del_tranche (grid, 0, 1, 5);
+
+   del_tranche (grid, 1, 1, 0);
+   del_tranche (grid, 1, 1, 3);
+
+   del_tranche (grid, 1, 0, 0);
+   del_tranche (grid, 1, 0, 3);
+                                  // Le trognon
+   del_tranche (grid, 0, 0, 0);
+   del_tranche (grid, 0, 0, 5);
+   del_tranche (grid, 0, 0, 1);
+   del_tranche (grid, 0, 0, 2);  // 30
+   del_tranche (grid, 0, 0, 3);
+   del_tranche (grid, 0, 0, 4);  // 32
+
+   del_tranche (grid, 1, 1, 1, 2);
+   del_tranche (grid, 1, 1, 2, 2);
+   return HOK;
+}
 // ======================================================== test_croix
 int test_croix (int nbargs, cpchar tabargs[])
 {
@@ -1716,7 +1774,7 @@ int test_remove ()
    return HOK;
 }
 // ================================================== init_vec
-void init_vec (Hex::RealVector& tab, double n0, double n1, double n2, 
+void init_vec (Hex::RealVector& tab, double n0=0, double n1=0, double n2=0, 
                double n3=0, double n4=0, double n5=0, double n6=0, 
                double n7=0, double n8=0, double n9=0, double n10=0,
                double n11=0, double n12=0, double n13=0, double n14=0, 
@@ -1758,15 +1816,22 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
    init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5, 
                    5, 10, 15, 20, 25, 30, 35, 40);
    init_vec (tdl, 1, 2, 3 );
-    ****************** */
 
    init_vec (tdr, 1, 1, 1, 1);
    init_vec (tda, 45,45, 45,45, 45,45, 45,45 );
    init_vec (tdl, 1, 1, 1 );
 
+    ****************** */
+
+
+   init_vec (tdr, 1, 2, 1, 2);
+   init_vec (tda, 20, 20, 20 );
+   init_vec (tdl, 1 );
+
    doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
 
    doc->saveVtk ("cylindricals.vtk");
+   doc->dump();
    return HOK;
 }
 int test_quads (int nbargs, cpchar tabargs[]);
@@ -1776,6 +1841,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_croix (nbargs, tabargs);
+   int ier = test_croix2 (nbargs, tabargs);
    return ier;
 }

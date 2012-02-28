@@ -935,7 +935,7 @@ Elements* Document::makeCylinder (Cylinder* cyl, Vector* base, int nr, int na,
                                                                        int nl)
 {
    Elements* grille = new Elements (this);
-   grille->makeCylinder (cyl, base, nr, na, nr);
+   grille->makeCylinder (cyl, base, nr, na, nl);
    return grille;
 }
 // ======================================================== makeCylinders

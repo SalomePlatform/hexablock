@@ -17,8 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ or email 
+//  webmaster.salome@opencascade.com
+
 #include "hexa_base.hxx"
 
 #include <cmath>
@@ -95,5 +96,18 @@ double* prod_vectoriel (double v1[], double v2[], double prod[])
    prod [dir_z] = v1[dir_x] * v2[dir_y] - v2[dir_x] * v1[dir_y];
 
    return prod;
+}
+// ====================================================== carre
+double carre (double val)
+{
+   return val*val;
+}
+// ====================================================== same_coords
+bool same_coords (double* pa, double* pb)
+{
+
+   double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
+             + carre (pb[dir_z]-pa[dir_z]); 
+   return d2 < Epsil2;
 }
 END_NAMESPACE_HEXA

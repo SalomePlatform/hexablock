@@ -201,6 +201,15 @@ void    calc_vecteur   (double pta[], double ptb[], double vab[]);
 void    calc_milieu    (double pta[], double ptb[], double milieu[]);
 int     normer_vecteur (double v1[]);
 
+double carre    (double val);
+bool same_coords (double* pa, double* pb);
+
+
+const double Epsil   = 1e-6;
+const double UnEpsil = 0.999999;
+const double Epsil2  = 1e-12;
+
+
 END_NAMESPACE_HEXA
 
 #endif

@@ -488,7 +488,7 @@ int CrossElements::assoIntersection (int nxs, int nzs, double* snorm,
    string brep;
 
    cross_center->getPoint (center);
-   int nz = nzs < 3 ? 0 : NbrSlices1;
+   int nz = nzs < MiddleSlice1 ? 0 : NbrSlices1;
 
    getVertexIJK (CylSmall, nxs, S_E , nz)->getPoint (pse);
    getVertexIJK (CylSmall, nxs, S_W , nz)->getPoint (psw);
@@ -505,7 +505,7 @@ int CrossElements::assoIntersection (int nxs, int nzs, double* snorm,
 
    double shaut = calc_distance (center, sorig);
    double bhaut = calc_distance (center, borig)*2;
-   double* orig = nzs < 3 ? sorig : center;       // Pb orientation
+   double* orig = nzs < MiddleSlice1 ? sorig : center;    // Pb orientation
 
    int ier = geom_create_cylcyl (borig, bnorm, bbase, brayon, bhaut, 
                                   orig, snorm, sbase, srayon, shaut);
