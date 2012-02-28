@@ -171,6 +171,7 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
        return NULL;
        }
                                     // Intersection des droites
+
     Real3 orig = { xc1 + lambda*xv1, yc1 + lambda*yv1, zc1 + lambda*zv1 };
     Real3 base1, dir1, extr1;
     Real3 base2, dir2, extr2;
@@ -193,17 +194,24 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
     double dextr2 = calc_distance (orig, extr2);
 
     double dmin2  = std::min (dbase2, dextr2);
+    double dmax2  = std::max (dbase2, dextr2);
     double dmax1  = std::max (dbase1, dextr1);
     double coeff  = 1.1;
-
                                     // Appartenance axe petit cylindre
-    if (dmin2 > c_radius)
+    if (dmax2 > small->c_height + c_radius)
        {
        cout << "*** InterCylinders : Petit cylindre trop court" << endl;
        cout << "*** Intersection = (" << orig[0] << ", "  << orig[1] 
                              << ", "  << orig[2] << " )" << endl;
-       cout << "*** distance minimale = " << dmin2 << endl;
+       cout << "*** distance = "  << dmin2 
+            << " > gros rayon + longueur " 
+            << small->c_height + c_radius << endl;
        cout << endl;
+       PutCoord (base2);
+       PutCoord (extr2);
+       PutData(dbase2);
+       PutData(dextr2);
+       PutData(dextr2);
        return NULL;
        }
 
