@@ -1039,62 +1039,112 @@ int del_tranche (Hex::CrossElements* grid, int cyl, int ni, int nk, int dr=1)
                          cyl, ni, nk, nbr_vtk-1);
    return nbr_vtk;
 }
-// ======================================================== test_croix2
-int test_croix2 (int nbargs, cpchar tabargs[])
+// ======================================================== test_joint2
+int test_joint2 (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    docu = mon_ex.addDocument ();
-   docu ->setLevel (1);
-   case_name = "croix";
+   case_name = "pb_joint";
 
-   Hex::Vertex* ori1 = docu->addVertex ( 0,0,1.03);
-   Hex::Vertex* ori2 = docu->addVertex (-0.129904, 0.075, 0);
+   Hex::Vector* vx    = docu->addVector (1, 0, 0);
+   Hex::Vector* vz    = docu->addVector (0, 0, 1);
+   Hex::Vertex* hori  = docu->addVertex (0, 0, 0);
 
-   Hex::Vector* dir1 = docu->addVector ( 0,0,-2.05);
-   Hex::Vector* dir2 = docu->addVector ( 0.079696, -0.0460125,  -1.00148e-32);
+   double da = 360;
+   double dr = 2;
+   double dl = 1;
+   int    nr = 1;
+   int    na = 8;
+   int    nl = 1;
+   bool   fill = true;
 
+   Hex::Elements *bgrid=NULL, *hgrid=NULL;
 
-   double r1 = 0.059;
-   double r2 = 0.01095;
-   double l1 = 1.23;
-   double l2 = 0.205123 - r1;
-
-   Hex::Cylinder*      cyl1 = docu->addCylinder (ori1, dir1, r1, l1);
-   Hex::Cylinder*      cyl2 = docu->addCylinder (ori2, dir2, r2, l2);
-
-   // Hex::Elements* gcyl2 = docu->makeCylinder (cyl2, dir1, 2, 8, 6);
-   // gcyl2->saveVtk ("cyl_small.vtk");
-
-   // Hex::Elements* gcyl1 = docu->makeCylinder (cyl1, dir2, 2, 8, 4);
-   // gcyl1->saveVtk ("cyl_big.vtk");
-
-   Hex::CrossElements* grid = docu->makeCylinders (cyl1, cyl2);
+   hgrid = docu->makeCylindrical (hori, vx,vz, dr,da,dl, nr,na,nl, fill);
+   // docu->dump ();
    save_vtk ();
-                                  // Partie critique
-   // del_tranche (grid, 0, 1, 4, 2);
-   // del_tranche (grid, 0, 1, 3, 2);
-   // del_tranche (grid, 0, 1, 2, 2);
 
-   del_tranche (grid, 0, 1, 1);
+   Hex::Vertex* bori  = docu->addVertex (0, 0, -5);
+   bgrid = docu->makeCylindrical (bori, vx,vz, dr,da,dl, nr,na,nl, fill);
+   save_vtk ();
 
-   del_tranche (grid, 0, 1, 0);
-   del_tranche (grid, 0, 1, 5);
+   Hex::Quads qsource, qdest;
+   printf (" Source = ");
+   for (int ny=0 ; ny< na ; ny++)
+       {
+       Hex::Quad* quad = hgrid->getQuadIJ (0, ny, 0);
+       PrintName (quad);
+       qsource.push_back (quad);
+       }
+   printf ("\n          ");
+   for (int ny=0 ; ny<4 ; ny++)
+       {
+       Hex::Quad* quad = hgrid->getKerHQuad (ny);
+       PrintName (quad);
+       qsource.push_back (quad);
+       }
+   printf ("\n");
 
-   del_tranche (grid, 1, 1, 0);
-   del_tranche (grid, 1, 1, 3);
 
-   del_tranche (grid, 1, 0, 0);
-   del_tranche (grid, 1, 0, 3);
-                                  // Le trognon
-   del_tranche (grid, 0, 0, 0);
-   del_tranche (grid, 0, 0, 5);
-   del_tranche (grid, 0, 0, 1);
-   del_tranche (grid, 0, 0, 2);  // 30
-   del_tranche (grid, 0, 0, 3);
-   del_tranche (grid, 0, 0, 4);  // 32
+   printf (" Cible  = ");
+   for (int ny=0 ; ny< na ; ny++)
+       {
+       Hex::Quad* quad = bgrid->getQuadIJ (0, ny, 1);
+       PrintName (quad);
+       qdest.push_back (quad);
+       }
+   printf ("\n          ");
+   for (int ny=0 ; ny<4 ; ny++)
+       {
+       Hex::Quad* quad = bgrid->getKerHQuad (ny+4);
+       PrintName (quad);
+       qdest.push_back (quad);
+       }
+   printf ("\n");
+   docu ->setLevel (1);
+   Hex::Quad*   cible = bgrid->getQuadIJ    (0, 0, 1);
+   Hex::Vertex* vc1   = bgrid->getVertexIJK (0, 1, 1);
+   Hex::Vertex* vc2   = bgrid->getVertexIJK (1, 1, 1);
 
-   del_tranche (grid, 1, 1, 1, 2);
-   del_tranche (grid, 1, 1, 2, 2);
+   Hex::Vertex* vs1 = hgrid->getVertexIJK (0, 0, 0);
+   Hex::Vertex* vs2 = hgrid->getVertexIJK (1, 0, 0);
+
+   docu->joinQuads (qsource, cible, vs1, vc1, vs2, vc2, 1);
+   save_vtk ();
+
+#if 0
+   Hex::Vertex* gm_v0 = cross_gm->getVertexIJK (CylBig, 2, Hex::S_E,  4);
+   Hex::Vertex* gm_v1 = cross_gm->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
+
+   Hex::Quad*   gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_SW, 4);
+   Hex::Vertex* gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_S,  4);
+   Hex::Vertex* gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_SW, 4);
+
+                                              // Version 2
+                                              // Moche et incomplete
+   //  gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_E, 4);
+   //  gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
+   //  gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_E , 4);
+                                              // Version 3
+                                              // Moche et complete
+   //  gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_NE, 4);
+   //  gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_N , 4);
+   //  gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
+
+
+   gp_v0->setColor (5);
+   gp_v1->setColor (3);
+   gm_v0->setColor (5);
+   gm_v1->setColor (3);
+   save_vtk ();
+
+   gp_q->setColor (4);
+   qsource[0]->setColor (4);
+   save_vtk ();
+
+   docu->joinQuads (qsource,  gp_q, gm_v0, gp_v0, gm_v1, gp_v1,  1);
+   save_vtk ();
+#endif
    return HOK;
 }
 // ======================================================== test_croix
@@ -1841,6 +1891,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_croix2 (nbargs, tabargs);
+   int ier = test_joint2 (nbargs, tabargs);
    return ier;
 }

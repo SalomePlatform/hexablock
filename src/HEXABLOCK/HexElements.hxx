@@ -91,7 +91,7 @@ public:
 
    int  joinQuads (Quads& q0, int nb, Vertex* v1, Vertex* v2, Vertex* v3, 
                    Vertex* v4, Quad* dest);
-   void coupler  (int nro, Quad* other, StrOrient* orient);
+   int coupler  (int nro, Quad* other, StrOrient* orient);
 
    int  prismQuads (Quads& start, Vector* dv, int nb);
    int  cutHexas   (const Edges& edges, int nbcuts);
@@ -156,6 +156,11 @@ public:
    Quad*   repQuadH  (int nh, int nro);
    Quad*   repQuadV  (int nh, int nro);
 
+   virtual Hexa*   getKerHexa   (int nro) { return ker_hexa  [nro] ; }
+   virtual Quad*   getKerHQuad  (int nro) { return ker_hquad [nro] ; }
+   virtual Quad*   getKerVQuad  (int nro) { return ker_vquad [nro] ; }
+   virtual Edge*   getKerHEdge  (int nro) { return ker_hedge [nro] ; }
+   virtual Edge*   getKerVEdge  (int nro) { return ker_vedge [nro] ; }
 
 protected :
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
@@ -229,9 +234,9 @@ protected :
     std::vector<Quad*>   tab_orig;
 
     int size_hx, size_hy, size_hz, size_hplus;
-    int size_qx, size_qy, size_qz, size_qplus;
-    int size_ex, size_ey, size_ez, size_eplus;
-    int size_vx, size_vy, size_vz, size_vplus;
+    int size_qx, size_qy, size_qz, size_qhplus, size_qvplus;
+    int size_ex, size_ey, size_ez, size_ehplus, size_evplus;
+    int size_vx, size_vy, size_vz;
 
     int nbr_hexas, nbr_quads, nbr_edges, nbr_vertex;
     int nbr_orig, nbr_piliers, ker_vertex;
@@ -260,6 +265,10 @@ protected :
 
     int pat_nbedges;
     int pat_nbvertex;
+
+    std::vector<Hexa*>   ker_hexa;
+    std::vector<Quad*>   ker_hquad, ker_vquad;
+    std::vector<Edge*>   ker_hedge, ker_vedge;
 };
 // =================================================== getStrate
 inline Hexa* Elements::getStrate (int couche, EnumHQuad nroface)

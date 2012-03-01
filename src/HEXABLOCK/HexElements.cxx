@@ -44,7 +44,7 @@ Elements::Elements (Document* doc) : EltBase (doc)
    size_qx = size_ex = size_vx = size_hx = 0;
    size_qy = size_ey = size_vy = size_hy = 0;
    size_qz = size_ez = size_vz = size_hz = 0;
-   size_qplus = size_eplus = size_vplus = size_hplus = 0;
+   size_qvplus = size_qhplus = size_ehplus = size_evplus = size_hplus = 0;
 
    nbr_hexas  = nbr_quads  = nbr_edges  = nbr_vertex = 0;
    ker_vertex = 0;
@@ -62,7 +62,7 @@ Elements::Elements (Document* doc, int nx, int ny, int nz) : EltBase (doc)
    size_qx = size_ex = size_vx = size_hx = 0;
    size_qy = size_ey = size_vy = size_hy = 0;
    size_qz = size_ez = size_vz = size_hz = 0;
-   size_qplus = size_eplus = size_vplus = size_hplus = 0;
+   size_qvplus = size_qhplus = size_ehplus = size_evplus = size_hplus = 0;
 
    nbr_hexas  = nbr_quads  = nbr_edges  = nbr_vertex = 0;
    cyl_closed = true;
@@ -85,7 +85,7 @@ Elements::Elements (Elements* orig) : EltBase (orig->el_root)
    size_qx = size_ex = size_vx = size_hx = 0;
    size_qy = size_ey = size_vy = size_hy = 0;
    size_qz = size_ez = size_vz = size_hz = 0;
-   size_qplus = size_eplus = size_vplus = size_hplus = 0;
+   size_qvplus = size_qhplus = size_ehplus = size_evplus = size_hplus = 0;
    nbr_hexas  = nbr_quads  = nbr_edges  = nbr_vertex = 0;
 
    resize (orig->grid_type, orig->size_hx, orig->size_hy, orig->size_hz);
@@ -478,12 +478,14 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
       return HERR;
 
    StrOrient orient (v1, v3, v2, v4);
-   this   ->coupler (0, cible, &orient);
-   orig[0]->coupler (cible, &orient, this);
-   return HOK;
+   int ier =  this   ->coupler (0, cible, &orient);
+   if (ier!=HOK)
+       return HERR;
+   ier = orig[0]->coupler (cible, &orient, this);
+   return ier;
 }
 // ======================================================== coupler
-void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
+int Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
 {
    Quad* orig = tab_orig [nquad];
 
@@ -495,10 +497,6 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
    int n21 = dest->indexVertex (orient->v21);
    int n22 = dest->indexVertex (orient->v22);
    
-   printf ("Quad nro %d : ", nquad);
-   orig->printName (" est couple avec "); 
-   dest->printName (", "); 
-   printf ("Orientation=(%d,%d) (%d,%d)\n", n11, n12, n21, n22);  
                // ---------------- Les 4 sommets initiaux
    Vertex* vorig[QUAD4] = { orient->v11, orient->v12, 
                             orig->getVertex((n11+2) MODULO QUAD4),
@@ -507,14 +505,20 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
    Vertex* vdest[QUAD4] = { orient->v21, orient->v22, 
                             dest->getVertex((n21+2) MODULO QUAD4),
                             dest->getVertex((n22+2) MODULO QUAD4) };
+   if (db)
+      {
+      printf ("Quad nro %d : ", nquad);
+      orig->printName (" est couple avec "); 
+      dest->printName ("\n"); 
+      printf ("Orientation : (");
+      for (int ii=0 ; ii<QUAD4 ; ii++) printf("%s ", vorig[ii]->getName());
+      printf (")\n");
+      printf ("           -> (");
+      for (int ii=0 ; ii<QUAD4 ; ii++) printf("%s ", vdest[ii]->getName());
+      printf (")\n");
+      }
 
                // ---------------- Les sommets + les aretes verticales
-#define Put(e) if (e) { printf ( " ... " #e " = ") ; e->printName("\n"); } \
-   else printf ( " ... " #e " = 0x0\n")
-// ============================
-#define Putn(e,n) { printf ( " ... " #e "[%d] = ",n) ; if(e[n]) e[n]->printName("\n"); \
-   else printf ( "0x0\n")
-
    for (int ns=0 ; ns< QUAD4 ; ns++)
        {
        Vertex* nd1 = vorig[ns];
@@ -547,6 +551,10 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
               int nv  = indVertex (nquad, ns, nh);
               tab_vertex [nv] = nd;
               tab_edge   [nv] = el_root->addEdge (ndp, nd);
+              if (db)
+                 printf (" Edge vertical nro %d = %s = (%s, %s)\n", nv, 
+                         tab_edge[nv]->getName(), 
+                         ndp->getName(), nd->getName());
               }
           }
        else
@@ -591,6 +599,8 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
 
               propagateAssociation (ec, ea, eb);
               tab_quad [nva] = newQuad (ea, eb, ec, ed);
+              if (BadElement (tab_quad [nva]))
+                  return HERR;
               tab_edge [nha] = ea;
               }
           }
@@ -630,7 +640,10 @@ void Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
        ff = tab_quad [indVertex (nquad, E_D, nh)];
 
        tab_hexa [nroHexa(nquad,nh)] = newHexa (fa,fb,fc,fd,fe,ff);
+       if (BadElement (tab_hexa [nroHexa(nquad,nh)]))
+           return HERR;
        }
+   return HOK;
 }
 // ====================================================== makeCartesianNodes
 int Elements::makeCartesianNodes (Vertex* orig, Vector* v1, Vector* v2, 
@@ -953,12 +966,17 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
               int  edh   = (nc+1)*nbcells*QUAD4 + nro*QUAD4;
               qb = newQuad (tab_edge[edh],   tab_edge[edh+1], 
                             tab_edge[edh+2], tab_edge[edh+3]);
+              if (BadElement(qb))
+                  return HERR;
               }
            Quad* qc = tab_quad [quadv];
            Quad* qd = tab_quad [quadv + 2];
            Quad* qe = tab_quad [quadv + 1];
            Quad* qf = tab_quad [quadv + 3];
-           tab_hexa [nc*nbcells + nro] = newHexa (qa, qb, qc, qd, qe, qf);
+           Hexa* hexa = newHexa (qa, qb, qc, qd, qe, qf);
+           if (BadElement(hexa))
+               return HERR;
+           tab_hexa [nc*nbcells + nro] = hexa;
            qa = qb;
            }
        }

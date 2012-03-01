@@ -42,7 +42,7 @@ int geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
                         double  sray,  double  shaut);
 int geom_asso_cylcyl (Edge* edge);
 
-bool same_coords (gp_Pnt& pa, gp_Pnt& pb);
+bool same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsil2=1e-6);
 void save_brep   (cpchar nom, string brep, int& nro);
 void geom_make_brep (TopoDS_Shape& shape, string& brep);
 

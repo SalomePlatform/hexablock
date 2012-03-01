@@ -215,16 +215,25 @@ int Elements::fillGrid ()
 }
 // ====================================================== fillCenter
 // === Remplissage radial
-#define IndElt(nc,nz) (nbrayons*(nz) + nc)
+#define IndElt(nc,nz)   (nbsecteurs*(nz) + nc)
+#define IndVquad(nc,nz) (nbrayons  *(nz-1) + nc)
 void Elements::fillCenter ()
 {
    int nx0 = 0;
    int nbsecteurs = size_hy / 2;
    int nbrayons   = cyl_closed ? nbsecteurs : nbsecteurs + 1;
 
-   vector <Edge*> ker_edge  (nbrayons*size_vz);
-   vector <Quad*> ker_hquad (nbrayons*size_vz);
-   vector <Quad*> ker_vquad (nbrayons*size_vz);
+   size_hplus  = nbsecteurs * size_hz;
+   size_qhplus = nbsecteurs * size_vz;
+   size_qvplus = nbrayons   * size_hz;
+   size_ehplus = nbsecteurs * size_vz;
+   size_evplus = size_hz;
+
+   ker_hexa .resize (size_hplus);
+   ker_hquad.resize (size_qhplus);
+   ker_vquad.resize (size_qvplus);
+   ker_hedge.resize (size_ehplus);
+   ker_vedge.resize (size_evplus);
 
    Vertex* pcenter = NULL;
 
@@ -237,16 +246,16 @@ void Elements::fillCenter ()
            {
            Vertex* vv = getVertexIJK (nx0, 2*nc, nz);
            Edge*   edge = newEdge (center, vv);
-           ker_edge [IndElt(nc,nz)] = edge;
+           ker_hedge [IndElt(nc,nz)] = edge;
            }
                                  //   Quads horizontaux
        for (int nc=0; nc<nbsecteurs ; nc++)
            {
            int nc1  = (nc + 1) MODULO nbrayons;
-           Edge* e1 = ker_edge [IndElt (nc, nz)];
+           Edge* e1 = ker_hedge [IndElt (nc, nz)];
            Edge* e2 = getEdgeJ (nx0, 2*nc,  nz);
            Edge* e3 = getEdgeJ (nx0, 2*nc+1,nz);
-           Edge* e4 = ker_edge [IndElt (nc1, nz)];
+           Edge* e4 = ker_hedge [IndElt (nc1, nz)];
 
            ker_hquad [IndElt (nc,nz)] = newQuad (e1, e2, e3, e4);
            if (debug()) 
@@ -259,18 +268,18 @@ void Elements::fillCenter ()
        if (nz>0)
           {
                                  //   Edges verticaux + cloisons interieures
-          Edge*   pilier = newEdge (pcenter, center);
+          Edge* pilier = ker_vedge [nz-1] = newEdge (pcenter, center);
 
           for (int nc=0 ; nc<nbrayons ; nc++)
               {
-              Edge* e1 = ker_edge [IndElt (nc, nz)];
+              Edge* e1 = ker_hedge [IndElt (nc, nz)];
               Edge* e2 = getEdgeK (nx0, 2*nc,  nz-1);
-              Edge* e3 = ker_edge [IndElt (nc, nz-1)];
-              ker_vquad [IndElt (nc,nz)] = newQuad (e1, e2, e3, pilier);
+              Edge* e3 = ker_hedge [IndElt (nc, nz-1)];
+              ker_vquad [IndVquad (nc,nz)] = newQuad (e1, e2, e3, pilier);
               if (debug()) 
                  {
 	         printf ("vquad (%d,%d) = ", nc, nz);
-                 ker_vquad [IndElt (nc,nz)]->dumpPlus();
+                 ker_vquad [IndVquad (nc,nz)]->dumpPlus();
                  }
               }
                                  //   Hexas
@@ -282,11 +291,11 @@ void Elements::fillCenter ()
               Quad* qa = ker_hquad [IndElt (nc, nz-1)];
               Quad* qb = ker_hquad [IndElt (nc, nz)];
 
-              Quad* qc = ker_vquad [IndElt (nc, nz)];
+              Quad* qc = ker_vquad [IndVquad (nc, nz)];
               Quad* qd = getQuadJK (nx0, 2*nc+1, nz-1);
 
               Quad* qe = getQuadJK (nx0, 2*nc,   nz-1);
-              Quad* qf = ker_vquad [IndElt (nc1,  nz)];
+              Quad* qf = ker_vquad [IndVquad (nc1,  nz)];
 
               if (debug()) 
                  {
@@ -300,6 +309,7 @@ void Elements::fillCenter ()
                  }
               Hexa* cell = newHexa (qa, qb, qc, qd, qe, qf);
               tab_hexa.push_back (cell);
+              ker_hexa [IndElt (nc,  nz-1)] = cell;
               }
           }
        pcenter = center;

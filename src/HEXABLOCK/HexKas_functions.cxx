@@ -29,11 +29,11 @@
 BEGIN_NAMESPACE_HEXA
 
 // ====================================================== same_coords
-bool same_coords (gp_Pnt& pa, gp_Pnt& pb)
+bool same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsilon)
 {
    double d2 = carre (pb.X()-pa.X()) + carre (pb.Y()-pa.Y()) 
                                      + carre (pb.Z()-pa.Z()) ;
-   return d2 < Epsil2;
+   return d2 < epsilon;
 }
 // ====================================================== save_brep
 void save_brep (cpchar nom, string brep, int& compteur)

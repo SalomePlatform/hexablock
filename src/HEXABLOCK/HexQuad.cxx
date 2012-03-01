@@ -217,7 +217,7 @@ Quad* Quad::getBrother (StrOrient* orient)
    orient->v22 = q_vertex [n22];
 
    Edge* arete  = findEdge (orient->v21, orient->v22);
-   arete->printName("\n");
+   // arete->printName("\n");
 
    int nbfreres = arete->getNbrParents ();
 
@@ -305,8 +305,12 @@ int Quad::coupler (Quad* other, StrOrient* orient, Elements* table)
 
               int nro = next->getMark ();
               Quad* beauf = other->getBrother (&new_ori);
-              table->coupler (nro, beauf, &new_ori);
-              next->coupler (beauf, &new_ori, table);
+              int ier = table->coupler (nro, beauf, &new_ori);
+              if (ier != HOK)
+                 return ier;
+              ier = next->coupler (beauf, &new_ori, table);
+              if (ier != HOK)
+                 return ier;
               }
            }
        }

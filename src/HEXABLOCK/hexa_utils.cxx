@@ -103,11 +103,11 @@ double carre (double val)
    return val*val;
 }
 // ====================================================== same_coords
-bool same_coords (double* pa, double* pb)
+bool same_coords (double* pa, double* pb, double epsilon)
 {
 
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
              + carre (pb[dir_z]-pa[dir_z]); 
-   return d2 < Epsil2;
+   return d2 < epsilon;
 }
 END_NAMESPACE_HEXA

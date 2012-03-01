@@ -32,6 +32,7 @@
 #define PutName(x) { printf(#x " = "); if (x) x->printName("\n"); else printf("NULL\n"); }
 
 #define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
+#define BadElement(elt) (elt)==NULL || (elt)->isBad()
 #define ABR_TYPES  "xveqhw????"
 
 BEGIN_NAMESPACE_HEXA
@@ -52,6 +53,7 @@ public :
    virtual void    setError    (int kod=HERR)  { el_status = kod; }
    virtual int     getError    ()              { return el_status; }
    virtual bool    isValid     ()              { return el_status==HOK; }
+   virtual bool    isBad       ()              { return el_status!=HOK; }
 
    virtual void    setAssociation (Shape* forme)  { el_assoc = forme ; }
    virtual void    clearAssociation ()            { el_assoc = NULL  ; }

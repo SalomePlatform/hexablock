@@ -201,8 +201,8 @@ void    calc_vecteur   (double pta[], double ptb[], double vab[]);
 void    calc_milieu    (double pta[], double ptb[], double milieu[]);
 int     normer_vecteur (double v1[]);
 
-double carre    (double val);
-bool same_coords (double* pa, double* pb);
+double carre       (double val);
+bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
 
 
 const double Epsil   = 1e-6;

@@ -657,7 +657,9 @@ Elements* Document::joinQuads (Quads& start, Quad* dest, Vertex* v1,
 
    update ();
    Elements*  joint = new Elements (this);
-   joint->joinQuads (start, nb, v1, v2, v3, v4, dest);
+   int ier = joint->joinQuads (start, nb, v1, v2, v3, v4, dest);
+   if (ier !=HOK)
+      printf ("\n ****\n **** Error in joinQuad(s)\n ****\n");
    return joint;
 }
 // ======================================================== joinQuad

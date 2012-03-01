@@ -32,7 +32,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 
 // --------------------------------------------------------
 struct PatQuad
