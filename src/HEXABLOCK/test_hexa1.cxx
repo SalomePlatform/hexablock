@@ -1061,7 +1061,7 @@ int test_joint2 (int nbargs, cpchar tabargs[])
    Hex::Elements *bgrid=NULL, *hgrid=NULL;
 
    hgrid = docu->makeCylindrical (hori, vx,vz, dr,da,dl, nr,na,nl, fill);
-   // docu->dump ();
+   docu->dump ();
    save_vtk ();
 
    Hex::Vertex* bori  = docu->addVertex (0, 0, -5);
@@ -1102,7 +1102,7 @@ int test_joint2 (int nbargs, cpchar tabargs[])
        }
    printf ("\n");
    docu ->setLevel (1);
-   Hex::Quad*   cible = bgrid->getQuadIJ    (0, 0, 1);
+   Hex::Quad*   cible = bgrid->getQuadIJ    (0, 1, 1);
    Hex::Vertex* vc1   = bgrid->getVertexIJK (0, 1, 1);
    Hex::Vertex* vc2   = bgrid->getVertexIJK (1, 1, 1);
 
@@ -1112,39 +1112,6 @@ int test_joint2 (int nbargs, cpchar tabargs[])
    docu->joinQuads (qsource, cible, vs1, vc1, vs2, vc2, 1);
    save_vtk ();
 
-#if 0
-   Hex::Vertex* gm_v0 = cross_gm->getVertexIJK (CylBig, 2, Hex::S_E,  4);
-   Hex::Vertex* gm_v1 = cross_gm->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
-
-   Hex::Quad*   gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_SW, 4);
-   Hex::Vertex* gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_S,  4);
-   Hex::Vertex* gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_SW, 4);
-
-                                              // Version 2
-                                              // Moche et incomplete
-   //  gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_E, 4);
-   //  gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
-   //  gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_E , 4);
-                                              // Version 3
-                                              // Moche et complete
-   //  gp_q  = cross_gp->getQuadIJ    (CylBig, 1, Hex::S_NE, 4);
-   //  gp_v0 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_N , 4);
-   //  gp_v1 = cross_gp->getVertexIJK (CylBig, 2, Hex::S_NE, 4);
-
-
-   gp_v0->setColor (5);
-   gp_v1->setColor (3);
-   gm_v0->setColor (5);
-   gm_v1->setColor (3);
-   save_vtk ();
-
-   gp_q->setColor (4);
-   qsource[0]->setColor (4);
-   save_vtk ();
-
-   docu->joinQuads (qsource,  gp_q, gm_v0, gp_v0, gm_v1, gp_v1,  1);
-   save_vtk ();
-#endif
    return HOK;
 }
 // ======================================================== test_croix
@@ -1371,12 +1338,14 @@ int test_disconnect2 (int nbargs, cpchar tabargs[])
    HexDisplay (disco_edges->countHexa());
 
    // hexa2->transform (&matrice);
+ /**********************************
    for (int ns=0; ns<disco_edges->countVertex(); ns++)
        {
        Hex::Vertex* sommet = disco_edges->getVertex(ns);
        sommet->setX (sommet->getX()+0.5);
        sommet->setY (sommet->getY()+0.5);
        }
+   ********************************* */
 
    doc->saveVtk ("test_disco", nvtk);
    doc->save ("test_disco");
@@ -1414,7 +1383,7 @@ int test_disconnect1 (int nbargs, cpchar tabargs[])
 
    doc->saveVtk ("test_disco", nvtk);
    doc->disconnectQuad (hexa1, quad);
-   hexa1 ->transform (&matrice);
+   // hexa1 ->transform (&matrice);
    doc->saveVtk ("test_disco", nvtk);
 
    // doc->dumpPropagation ();
@@ -1453,7 +1422,7 @@ int test_disconnect3 (int nbargs, cpchar tabargs[])
    doc->saveVtk ("test_disco", nvtk);
 
    doc->disconnectVertex (hexa1, vertex);
-   hexa1->transform (&matrice);
+   // hexa1->transform (&matrice);
    doc->saveVtk ("test_disco", nvtk);
 
    // doc->dumpPropagation ();
@@ -1466,6 +1435,7 @@ int test_disconnect3 (int nbargs, cpchar tabargs[])
 // ==== Les 3 disconnect
 void contraction (Hex::Hexa* hexa, Hex::Elements* grid)
 {
+   return;
    Hex::Real3 cg = { 0, 0, 0 };
 
    for (int nro=0; nro<Hex::HV_MAXI ; nro++)

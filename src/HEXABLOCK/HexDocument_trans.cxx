@@ -239,26 +239,6 @@ void Document::dumpPropagation ()
 // ----------------------------------------------------------------------
 // ------------ reorderFaces
 // ----------------------------------------------------------------------
-// ========================================================= def_vecteur
-void def_vecteur (double pa[], double pb[], double vect[])
-{
-   for (int nc=0 ; nc<DIM3 ; nc++) 
-        vect [nc] = pb [nc] - pa [nc];
-}
-// ========================================================= produit_mixte
-double produit_mixte (double vi[], double vj[], double vk[])
-{
-   double pmixte = 0;
-
-   for (int nc=0 ; nc<DIM3 ; nc++) 
-       {
-       int nc1 = (nc + 1) MODULO DIM3;
-       int nc2 = (nc + 2) MODULO DIM3;
-       pmixte +=  vk[nc] * (vi [nc1] * vj [nc2] - vj [nc1] * vi [nc2]);
-       }
-
-   return pmixte;
-}
 // ========================================================= reorderFaces
 // ==== Ordonner les faces externes
 void Document::reorderFaces ()
@@ -280,11 +260,11 @@ void Document::reorderFaces ()
           quad->getVertex (1) -> getPoint (pi);
           quad->getVertex (3) -> getPoint (pj);
 
-          def_vecteur (orig, pi, vi);
-          def_vecteur (orig, pj, vj);
-          def_vecteur (orig, cg, vk);
+          calc_vecteur (orig, pi, vi);
+          calc_vecteur (orig, pj, vj);
+          calc_vecteur (orig, cg, vk);
 
-          double pmixte = produit_mixte (vi, vj, vk);
+          double pmixte = prod_mixte (vi, vj, vk);
           if (pmixte > ZEROR)  
              quad->inverser ();
           

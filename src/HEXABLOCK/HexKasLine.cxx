@@ -65,6 +65,7 @@ void arrondir (double &val);
 // ======================================================= Constructeur
 KasLine::KasLine ()
 {
+   db = on_debug ();
    lig_brep     = "";
    lig_debut    = 0;
    lig_fin      = 1;
@@ -82,8 +83,8 @@ KasLine::KasLine ()
 // ========================================================= Constructeur bis
 KasLine::KasLine (Shape* asso, double deb, double fin)
 {
+   db = on_debug ();
    geom_curve  = NULL;
-
    defineLine (asso, deb, fin);
 }
 // ========================================================= Destructeur

@@ -25,6 +25,8 @@
 #include "HexVector.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
+#include "HexHexa.hxx"
+#include "HexMatrix.hxx"
 #include "HexShape.hxx"
 #include "HexGlobale.hxx"
 
@@ -603,6 +605,20 @@ void Elements::assoResiduelle ()
    for (int nv=0 ; nv<nbre ; nv++)
        {
        geom_asso_point (tab_vertex [nv]);
+       }
+}
+// ====================================================== assoResiduelle
+void Elements::moveDisco (Hexa* hexa)
+{
+   Real3  center;
+   Matrix matrix;
+   hexa->getCenter (center);
+   matrix.defScale (center, 0.55);
+
+   int nbre = tab_vertex.size();
+   for (int nv=0 ; nv<nbre ; nv++)
+       {
+       matrix.perform (tab_vertex [nv]);
        }
 }
 END_NAMESPACE_HEXA

@@ -589,6 +589,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
        if (make_quad[nro])
           nouveaux->addQuad (new_opp_quad [nro]);
        }
+   nouveaux->moveDisco (this);
    return nouveaux;
 }
 // ========================================================= disconnectEdge 
@@ -700,6 +701,7 @@ Elements* Hexa::disconnectEdge (Edge* arete)
       dumpFull ();
       }
 
+   nouveaux->moveDisco (this);
    return nouveaux;
 }
 // ========================================================= disconnectVertex 
@@ -778,6 +780,7 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
       dumpFull ();
       }
 
+   nouveaux->moveDisco (this);
    return nouveaux;
 }
 // ========================================================= getBase 

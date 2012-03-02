@@ -162,6 +162,8 @@ public:
    virtual Edge*   getKerHEdge  (int nro) { return ker_hedge [nro] ; }
    virtual Edge*   getKerVEdge  (int nro) { return ker_vedge [nro] ; }
 
+   void moveDisco (Hexa* hexa);
+
 protected :
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
    void assoCylinder   (Vertex* center, Vector* vz, double rayon);

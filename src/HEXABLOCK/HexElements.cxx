@@ -420,6 +420,7 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
    resize (GR_JOINT, orig.size(), nb);
 
    el_root->markAll (IS_NONE);
+   db = el_root->debug ();
    
    gr_hauteur  = nb;
    nbr_orig = orig.size();

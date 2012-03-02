@@ -36,6 +36,7 @@ public:
     Matrix ();
     int defTranslation   (Vector* depl);
     int defScale         (Vertex* center, double scale);
+    int defScale         (double* center, double scale);
     int defRotation      (Vertex* center, Vector* depl, double degres);
     int defSymmetryPoint (Vertex* center);
     int defSymmetryLine  (Vertex* center, Vector* dir);
@@ -91,15 +92,29 @@ inline int Matrix::defTranslation (Vector* boulevard)
    return HOK;
 }
 // ========================================================= defScale
-inline int Matrix::defScale (Vertex* center, double scale)
+inline int Matrix::defScale (double* center, double scale)
 {
    erase();
    mat11 = mat22 = mat33 = scale;
 
-   mat14 = (1-scale) * center->getX ();
-   mat24 = (1-scale) * center->getY ();
-   mat34 = (1-scale) * center->getZ ();
+   mat14 = (1-scale) * center[dir_x];
+   mat24 = (1-scale) * center[dir_y];
+   mat34 = (1-scale) * center[dir_z];
+
    return HOK;
+}
+// ========================================================= defScale
+inline int Matrix::defScale (Vertex* center, double scale)
+{
+   if (center==NULL)
+      {
+      erase();
+      return HERR;
+      }
+
+   Real3 coord;
+   int ier = defScale (center->getPoint (coord ), scale);
+   return ier;
 }
 // ========================================================= defRotation
 inline int Matrix::defRotation (Vertex* center, Vector* dir, double degres)

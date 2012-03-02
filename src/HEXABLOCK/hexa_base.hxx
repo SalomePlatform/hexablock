@@ -195,6 +195,8 @@ pchar   get_temp_name (cpchar format, pchar nomfic);
 
 double  prod_scalaire  (double v1[], double v2[]);
 double* prod_vectoriel (double v1[], double v2[], double v3[]);
+double  prod_mixte     (double vi[], double vj[], double vk[]);
+
 double  calc_norme     (double v1[]);
 double  calc_distance  (double v1[], double v2[]);
 void    calc_vecteur   (double pta[], double ptb[], double vab[]);
@@ -204,6 +206,8 @@ int     normer_vecteur (double v1[]);
 double carre       (double val);
 bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
 
+bool   on_debug();
+int    niv_debug();
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;

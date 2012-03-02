@@ -22,11 +22,27 @@
 
 #include "hexa_base.hxx"
 
+#include <cstdlib>
 #include <cmath>
 #include <sys/stat.h>
 
 BEGIN_NAMESPACE_HEXA
 
+static int debug_level = NOTHING;
+
+// ========================================================= prod_scalaire
+bool on_debug ()
+{
+   if (debug_level == NOTHING)
+      {
+      cpchar rep = getenv ("HEXA_DB");
+      if (rep!=NULL)
+          debug_level = atoi (rep);
+      debug_level = std::max (debug_level, 0); 
+      }
+   return debug_level > 0;
+    
+}
 // ======================================================== get_temp_name
 pchar get_temp_name (cpchar format, pchar nomfic)
 {
@@ -109,5 +125,19 @@ bool same_coords (double* pa, double* pb, double epsilon)
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
              + carre (pb[dir_z]-pa[dir_z]); 
    return d2 < epsilon;
+}
+// ========================================================= prod_mixte
+double prod_mixte (double vi[], double vj[], double vk[])
+{
+   double pmixte = 0;
+
+   for (int nc=0 ; nc<DIM3 ; nc++) 
+       {
+       int nc1 = (nc + 1) MODULO DIM3;
+       int nc2 = (nc + 2) MODULO DIM3;
+       pmixte +=  vk[nc] * (vi [nc1] * vj [nc2] - vj [nc1] * vi [nc2]);
+       }
+
+   return pmixte;
 }
 END_NAMESPACE_HEXA
