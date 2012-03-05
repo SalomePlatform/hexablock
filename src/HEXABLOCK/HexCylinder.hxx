@@ -39,6 +39,7 @@ public :
     Cylinder (Vertex* b, Vector* v, double r, double h);
     virtual ~Cylinder () {}
 
+    int interCylinder (Cylinder* small, bool& left, bool& right, double* sol);
     Vertex* interCylinder (Cylinder* other, bool& left, bool& right);
     void saveXml (XmlWriter* xml);
     virtual double  getInternalRadius () { return 0; }

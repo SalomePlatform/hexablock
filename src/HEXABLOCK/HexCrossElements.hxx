@@ -27,7 +27,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-enum { CylSmall=0, CylBig=1, NbrSlices1=6, NbrSlices2=4, NxInt=1, NxExt=2 };
+enum { NbrSlices1=6, NbrSlices2=4 };
 enum { SizeRay=3, BiCyl=2};
 enum { NbrVSlices1=NbrSlices1+1, NbrVSlices2=NbrSlices2+1};
 enum { MiddleSlice1=NbrSlices1/2};

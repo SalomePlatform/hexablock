@@ -131,9 +131,27 @@ Element_ptr Group_impl::getElement(::CORBA::Long index) throw (SALOME::SALOME_Ex
 }
 
 
-::CORBA::Long Group_impl::removeElement(::CORBA::Long index) throw (SALOME::SALOME_Exception)
+::CORBA::Long Group_impl::removeElement(Element_ptr eIn) 
+                          throw (SALOME::SALOME_Exception)
 {
-  return _group_cpp->removeElement(index);
+  Vertex_impl* vInServant = ::DownCast<Vertex_impl*>( eIn );
+  Edge_impl*   eInServant = ::DownCast<Edge_impl*  >( eIn );
+  Quad_impl*   qInServant = ::DownCast<Quad_impl*  >( eIn );
+  Hexa_impl*   hInServant = ::DownCast<Hexa_impl*  >( eIn );
+
+  ASSERT( vInServant or eInServant or qInServant or hInServant );
+  HEXA_NS::EltBase* elt = NULL;
+  if (vInServant != NULL)
+       elt = vInServant->GetImpl();
+  else if (eInServant != NULL) 
+       elt = eInServant->GetImpl();
+  else if (qInServant != NULL)
+       elt = qInServant->GetImpl();
+  else if (hInServant != NULL)
+       elt = hInServant->GetImpl();
+
+  ::CORBA::Long ier = _group_cpp->removeElement (elt);
+  return ier;
 }
 
 void Group_impl::clearElement() throw (SALOME::SALOME_Exception)

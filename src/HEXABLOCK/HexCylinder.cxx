@@ -92,6 +92,19 @@ double norme (double px, double py, double pz)
 // ======================================================== interCylinder
 Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
 {
+   Real3 orig;
+   int ier = interCylinder (small, left, right, orig);
+   if (ier!=HOK)
+       return NULL;
+
+    Vertex* sol = new Vertex (c_base->dad(), orig[0],  orig[1],  orig[2]);
+    return sol;
+}
+///             
+// ======================================================== interCylinder
+int Cylinder::interCylinder (Cylinder* small, bool& left, bool& right, 
+                             double* orig)
+{
     left = right = true;
     if (el_root->debug ())
        {
@@ -150,7 +163,7 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
 	   else if (rdiffers (kk, lambda))
               {
               cout << "*** InterCylinders : Solutions incompatibles " << endl;
-              return NULL;
+              return HERR;
               }
                                       // equation O*lamda = 0 : ignoree
 	// else ....
@@ -159,7 +172,7 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
 	else if (rdiffers (nxyz [dd], ZEROR)) 
            {
            cout << "*** InterCylinders : intersection vide " << endl;
-           return NULL;
+           return HERR;
            }
         }
 
@@ -168,11 +181,13 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
        {
        HexDisplay (prems);
        cout << "*** InterCylinders : intersection non trouvee " << endl;
-       return NULL;
+       return HERR;
        }
                                     // Intersection des droites
+    orig [dir_x] = xc1 + lambda*xv1;
+    orig [dir_y] = yc1 + lambda*yv1;
+    orig [dir_z] = zc1 + lambda*zv1;
 
-    Real3 orig = { xc1 + lambda*xv1, yc1 + lambda*yv1, zc1 + lambda*zv1 };
     Real3 base1, dir1, extr1;
     Real3 base2, dir2, extr2;
 
@@ -212,7 +227,7 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
        PutData(dbase2);
        PutData(dextr2);
        PutData(dextr2);
-       return NULL;
+       return HERR;
        }
 
     left  = dbase2 > c_radius*coeff;
@@ -225,17 +240,16 @@ Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
                              << ", "  << orig[2] << " )" << endl;
        cout << "*** distance maximale = " << dmax1 << endl;
        cout << endl;
-       return NULL;
+       return HERR;
        }
 
-    Vertex* sol = new Vertex (c_base->dad(), orig[0],  orig[1],  orig[2]);
     if (el_root->debug ())
        {
-       HexDump    (sol);
+       PutCoord   (orig);
        HexDisplay (left);
        HexDisplay (right);
        }
-    return  sol;
+    return  HOK;
 }
 // ======================================================== is_out
 bool is_out (double val, double v1, double v2)

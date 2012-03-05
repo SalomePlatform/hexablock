@@ -147,6 +147,8 @@ enum EnumHEdge   {E_AC, E_AD, E_BC, E_BD,
 enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
                   HV_MAXI };
 
+enum { CylSmall=0, CylBig=1, NxInt=1, NxExt=2 };
+
 class Document;
 class EltBase;
 

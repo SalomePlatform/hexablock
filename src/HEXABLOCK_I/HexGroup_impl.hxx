@@ -41,7 +41,7 @@ class Group_impl : public POA_HEXABLOCK_ORB::Group,
     ::CORBA::Long addElement(Element_ptr e) throw (SALOME::SALOME_Exception);
     ::CORBA::Long countElement() throw (SALOME::SALOME_Exception);
     Element_ptr getElement(::CORBA::Long index) throw (SALOME::SALOME_Exception);
-    ::CORBA::Long removeElement(::CORBA::Long index) throw (SALOME::SALOME_Exception);
+    ::CORBA::Long removeElement(Element_ptr elt) throw (SALOME::SALOME_Exception);
     void clearElement() throw (SALOME::SALOME_Exception);
 
 private:

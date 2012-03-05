@@ -37,6 +37,8 @@ public :
    cpchar    getName ()                    { return grp_name.c_str () ; }
    EnumGroup getKind ()                    { return grp_kind ; }
    int       addElement    (EltBase* elt);
+   int       removeElement (EltBase* elt);
+   int       findElement   (EltBase* elt);
    int       removeElement (int nro);
    EltBase*  getElement    (int nro)       { return grp_table [nro] ; }
    int       countElement  ()              { return grp_table.size () ; }

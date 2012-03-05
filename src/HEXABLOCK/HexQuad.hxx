@@ -72,7 +72,6 @@ public:
     int   indexVertex (Vertex* elt);
     int   indexEdge   (Edge*   elt);
 
-    int   getOrientation (Vertex* v1, Vertex* v2, int &n1, int& n2);
     int   accoupler (Quad* other, StrOrient* orient);
     int   coupler (Quad* other, StrOrient* orient, Elements* table);
 

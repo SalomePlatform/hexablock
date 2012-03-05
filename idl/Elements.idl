@@ -108,6 +108,8 @@ module HEXABLOCK_ORB
   const long V_S  = 6;
   const long V_SE = 7;
   const long CV_MAXI = 8;
+  const long CV_MAXI_EXT = 8;
+  const long CV_MAXI_INT = 4;
 
   const long CYL_SMALL = 0;
   const long CYL_BIG   = 1;

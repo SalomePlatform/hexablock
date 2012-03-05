@@ -56,7 +56,7 @@ module HEXABLOCK_ORB
           raises (SALOME::SALOME_Exception);
         Element getElement( in long index )
           raises (SALOME::SALOME_Exception);
-        long removeElement( in long index )
+        long removeElement( in Element elt )
             raises (SALOME::SALOME_Exception);
         void clearElement()
             raises (SALOME::SALOME_Exception);

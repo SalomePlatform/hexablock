@@ -62,6 +62,16 @@ int Group::addElement (EltBase* elt)
    grp_table.push_back (elt);
    return HOK;
 }
+// ======================================================== findElement
+int Group::findElement (EltBase* elt)
+{
+   int nbelts = grp_table.size ();
+   for (int nro=0 ; nro < nbelts ; nro++)
+       if (grp_table[nro]==elt)
+          return nro;
+       
+   return NOTHING;
+}
 // ======================================================== removeElement
 int Group::removeElement (int nro)
 {
@@ -72,6 +82,13 @@ int Group::removeElement (int nro)
  
    grp_table.erase (grp_table.begin() + nro);
    return HOK;
+}
+// ======================================================== removeElement
+int Group::removeElement (EltBase* elt)
+{
+   int nro = findElement (elt);
+   int ier = removeElement (nro);
+   return ier;
 }
 // ======================================================== saveXml
 void Group::saveXml (XmlWriter* xml)
