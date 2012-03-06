@@ -1,140 +1,151 @@
 # -*- coding: latin-1 -*-
 
-# Francis KLOSS - 2011 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
-# ========================================================================================
+# Francis KLOSS : 2011-2012 : CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
+# =============================================================================================
+
+import math
 
 import geompy
 import hexablock
 
-# Définir les paramètres
-# ----------------------
-
-nom = "bielle"
-
 # Construire le modèle de bloc
 # ============================
 
-doc = hexablock.addDocument(nom)
+doc = hexablock.addDocument("bielle")
 
 # Construire les 2 grilles cylindriques
 # -------------------------------------
 
-centre_a = doc.addVertex(0, 0, 0)
-centre_b = doc.addVertex(6, 0, 0)
+centre_pb = doc.addVertex(0, 0, 0)
+centre_gb = doc.addVertex(7, 0, 0)
 
-vecteur_a = doc.addVector(1, 1, 0)
+angle_px   = math.pi / 3
+vecteur_px = doc.addVector(math.cos(angle_px), math.sin(angle_px), 0)
+vecteur_gx = doc.addVector(1, 0, 0)
+
 vecteur_z = doc.addVector(0, 0, 1)
-vecteur_b = doc.addVector(6, 0, 0)
 
-grille_a = doc.makeCylindrical(centre_a, vecteur_a, vecteur_z,  1, 360, 1,  1, 4, 1,  False)
-
-### grille_b = doc.makeTranslation(grille_a, vecteur_b)
-grille_b = doc.makeCylindrical(centre_b, vecteur_a, vecteur_z,  2, 360, 1,  1, 4, 1,  False)
-
-grilles = [ grille_a, grille_b ]
+grille_p = doc.makeCylindrical(centre_pb, vecteur_px, vecteur_z,  1, 360, 1,  1, 3, 1,  False)
+grille_g = doc.makeCylindrical(centre_gb, vecteur_gx, vecteur_z,  1, 360, 1,  1, 3, 1,  False)
 
 # Relier les 2 grilles
 # --------------------
 
-quad_a = grille_a.getQuadJK(1, 3, 0)
-quad_b = grille_b.getQuadJK(1, 1, 0)
+quad_p = grille_p.getQuadJK(1, 2, 0)
+quad_g = grille_g.getQuadJK(1, 1, 0)
 
-point_a1 = grille_a.getVertexIJK(1, 0, 0)
-point_a2 = grille_a.getVertexIJK(1, 3, 0)
+point_p1 = grille_p.getVertexIJK(1, 0, 0)
+point_p2 = grille_p.getVertexIJK(1, 2, 0)
 
-point_b1 = grille_b.getVertexIJK(1, 1, 0)
-point_b2 = grille_b.getVertexIJK(1, 2, 0)
+point_g1 = grille_g.getVertexIJK(1, 1, 0)
+point_g2 = grille_g.getVertexIJK(1, 2, 0)
 
-prisme = doc.joinQuad(quad_a, quad_b,  point_a1, point_b1,  point_a2, point_b2,  3)
+prisme = doc.joinQuad(quad_p, quad_g,  point_p1, point_g1,  point_p2, point_g2,  3)
+
+# Charger la géométrie
+# ====================
+
+bielle = geompy.ImportSTEP("bielle.stp")
+
+# Sélectionner des sous-parties de la géométrie
+# ---------------------------------------------
+
+sommets = geompy.SubShapeAllSortedCentres(bielle, geompy.ShapeType["VERTEX"])
+
+sommets_petit = [  6,  8,  7,  9 ]
+sommets_grand = [ 10, 12, 11, 13 ]
+
+aretes = geompy.SubShapeAllSortedCentres(bielle, geompy.ShapeType["EDGE"])
+
+aretes_petit = [  7,  9,  8, 10 ]
+aretes_grand = [ 19, 21, 20, 22 ]
+
+ga_pbcd = aretes[ 0]
+ga_pbe  = aretes[ 2]
+
+ga_phcd = aretes[ 1]
+ga_phe  = aretes[ 3]
+
+ga_gbcd = aretes[27]
+ga_gbe  = aretes[25]
+
+ga_ghcd = aretes[28]
+ga_ghe  = aretes[26]
 
 # Associer le modèle de bloc avec la géométrie
 # ============================================
 
-# Charger la géométrie à associer
-# -------------------------------
-
-bielle = geompy.ImportSTEP("crank.stp")
-
 doc.setShape(bielle)
 
-# Extraire les subshapes de la géométrie
+# Associer les cercles extérieurs
+# -------------------------------
+
+def cercle(grille, k, ge, p):
+    ms  = grille.getVertexIJK(0, 0, k)
+
+    ma1 = grille.getEdgeJ(0, 2, k)
+    ma2 = grille.getEdgeJ(0, 1, k)
+    ma3 = grille.getEdgeJ(0, 0, k)
+
+    doc.associateClosedLine(ms, ma1, [ ma2, ma3 ], ge, p, False, [])
+
+cercle(grille_p, 0, ga_pbe, 5.0/6)
+cercle(grille_p, 1, ga_phe, 5.0/6)
+
+cercle(grille_g, 0, ga_gbe, 0)
+cercle(grille_g, 1, ga_ghe, 0)
+
+# Associer les arcs extérieurs (excentrés)
+# ----------------------------------------
+
+def arc(grille, i1, i2, k, ge):
+    ma1 = grille.getEdgeJ(1, i1, k)
+    ma2 = grille.getEdgeJ(1, i2, k)
+
+    doc.associateOpenedLine(ma1, [ ma2 ], ge, 0, [], 1)
+
+arc(grille_p, 1, 0, 0, ga_pbcd)
+arc(grille_p, 1, 0, 1, ga_phcd)
+
+arc(grille_g, 0, 2, 0, ga_gbcd)
+arc(grille_g, 0, 2, 1, ga_ghcd)
+
+# Associer les sommets des arcs de cercle de raccord
+# --------------------------------------------------
+
+hm = prisme.getHexa(1)
+for i in xrange(0, 4):
+  vm = hm.getVertex(i)
+  ga = sommets[ sommets_petit[i] ]
+  vm.setAssociation(ga)
+
+hm = prisme.getHexa(2)
+for i in xrange(0, 4):
+  vm = hm.getVertex(i)
+  ga = sommets[ sommets_grand[i] ]
+  vm.setAssociation(ga)
+
+# Associer les arcs de cercle de raccord
 # --------------------------------------
 
-g_vertices = geompy.SubShapeAllSortedCentres(bielle, geompy.ShapeType["VERTEX"])
-g_edges    = geompy.SubShapeAllSortedCentres(bielle, geompy.ShapeType["EDGE"  ])
+hm = prisme.getHexa(0)
+for i in xrange(0, 4):
+  em = hm.getEdge(i+8)
+  ga = aretes[ aretes_petit[i] ]
+  em.addAssociation(ga, 0, 1)
 
-sommets = [ [ 8, 6, 9, 7 ], [ 12, 10, 13, 11 ] ]
+hm = prisme.getHexa(2)
+for i in xrange(0, 4):
+  em = hm.getEdge(i+8)
+  ga = aretes[ aretes_grand[i] ]
+  em.addAssociation(ga, 0, 1)
 
-cercles = [ [2, 3], [25, 26] ]
-arcs_gr = [ [0, 1], [27, 28] ]
-arcs_pe = [ [ 9, 7,  10, 8 ], [ 21, 19,  22, 20 ] ]
+# Arrondir des associations implicites cylindriques
+# -------------------------------------------------
 
-# Réparer l'association par ligne fermée
-# --------------------------------------
-
-def reparer(cercle, grille):
-  import math
-
-  k = geompy.KindOfShape(cercle)
-
-  centre = geompy.MakeVertex(k[1], k[2], k[3])
-  axe    = geompy.MakePrismDXDYDZ(centre,  k[4], k[5], k[6])
-  angle  = [ +math.pi/4, -math.pi/4 ][grille]
-
-  if grille==1:
-    axeY   = geompy.MakePrismDXDYDZ(centre, 0, 1, 0)
-    cercle = geompy.MakeRotation(cercle, axeY, math.pi)
-
-  return geompy.MakeRotation(cercle, axe, angle)
-
-# Associer les 4 cercles intérieurs
-# ---------------------------------
-
-for k in xrange(0, 2):
-  for g in xrange(0, 2):
-    grille = grilles[g]
-    ve = grille.getVertexIJK(0, g, k)
-    le = [ grille.getEdgeJ(0, j, k) for j in xrange(0, 4) ]
-    ed = reparer( g_edges[ cercles[g][k] ], g )
-    doc.associateClosedLine(ve, le[0], le[1:], ed, 0.0, [])
-
-# Associer les 4 grands arcs de cercle extérieurs
-# -----------------------------------------------
-
-for k in xrange(0, 2):
-  for g in xrange(0, 2):
-    grille = grilles[g]
-    le = [ grille.getEdgeJ(1, j, k) for j in [ [0, 1, 2], [2, 3, 0] ][g] ]
-    ed = g_edges[ arcs_gr[g][k] ]
-    doc.associateOpenedLine(le[0], le[1:], ed, 0, [], 1)
-
-# Associer les 8 sommets des petits arcs de cercle extérieurs
-# -----------------------------------------------------------
-
-for g, h in [ [0, 1], [1, 2] ]:
-  hexa = prisme.getHexa(h)
-  for vi in xrange(0, 4):
-    vm = hexa.getVertex(vi)
-    vg = g_vertices[ sommets[g][vi] ]
-    vm.setAssociation(vg)
-
-# Associer les 8 petits arcs de cercle extérieurs
-# -----------------------------------------------
-
-for g, h in [ [0, 0], [1, 2] ]:
-  hexa = prisme.getHexa(h)
-  for ei in xrange(0, 4):
-    em = hexa.getEdge(ei+8)
-    eg = g_edges[ arcs_pe[g][ei] ]
-    em.clearAssociation()
-    em.addAssociation(eg, 0, 1)
-
-# Associer 4 arcs nouveaux qui complétent les 4 grands arcs de cercle extérieurs
-# ------------------------------------------------------------------------------
-
-for h, ei, ech in [ [0, 0, 0.9], [0, 1, 0.9],  [2, 2, 0.85], [2, 3, 0.85] ]:
-  hexa = prisme.getHexa(h)
-  em = hexa.getEdge(ei)
+for h, i, ech in [ [0, 0, 0.95], [0, 1, 0.95],  [2, 2, 0.85], [2, 3, 0.85] ]:
+  hm = prisme.getHexa(h)
+  em = hm.getEdge(i)
   va = em.getVertex(0).getAssociation()
   vb = em.getVertex(1).getAssociation()
   vax, vay, vaz = geompy.PointCoordinates(va)
@@ -153,77 +164,69 @@ for h, ei, ech in [ [0, 0, 0.9], [0, 1, 0.9],  [2, 2, 0.85], [2, 3, 0.85] ]:
 # Définir 5 groupes de faces
 # --------------------------
 
-groupe_trou_p  = doc.addQuadGroup("Trou_petit")
-groupe_trou_g  = doc.addQuadGroup("Trou_grand")
+groupe_petit   = doc.addQuadGroup("Petit")
+groupe_grand   = doc.addQuadGroup("Grand")
 groupe_bas     = doc.addQuadGroup("Bas")
 groupe_haut    = doc.addQuadGroup("Haut")
 groupe_contour = doc.addQuadGroup("Contour")
 
-for i in xrange(4):
-  groupe_trou_p.addElement(grille_a.getQuadJK(0, i, 0))
-  groupe_trou_g.addElement(grille_b.getQuadJK(0, i, 0))
-
-  groupe_bas.addElement( grille_a.getQuadIJ(0, i, 0))
-  groupe_bas.addElement( grille_b.getQuadIJ(0, i, 0))
-  groupe_haut.addElement(grille_a.getQuadIJ(0, i, 1))
-  groupe_haut.addElement(grille_b.getQuadIJ(0, i, 1))
+# Constituer les groupes petit et grand
+# -------------------------------------
 
 for i in xrange(3):
-  groupe_contour.addElement(grille_a.getQuadJK(1, i, 0))
+  groupe_petit.addElement( grille_p.getQuadJK(0, i, 0) )
+  groupe_grand.addElement( grille_g.getQuadJK(0, i, 0) )
 
-for i in [0, 2, 3]:
-  groupe_contour.addElement(grille_b.getQuadJK(1, i, 0))
+# Constituer les groupes bas et haut
+# ----------------------------------
 
-for i in xrange(0, 3):
+for i in xrange(3):
+  groupe_bas.addElement(  grille_p.getQuadIJ(0, i, 0) )
+  groupe_bas.addElement(  grille_g.getQuadIJ(0, i, 0) )
+
+  groupe_haut.addElement( grille_p.getQuadIJ(0, i, 1) )
+  groupe_haut.addElement( grille_g.getQuadIJ(0, i, 1) )
+
+for i in xrange(3):
   h = prisme.getHexa(i)
 
-  q = h.getQuad(2)
-  groupe_bas.addElement(q)
+  groupe_bas.addElement(  h.getQuad(2) )
+  groupe_haut.addElement( h.getQuad(3) )
 
-  q = h.getQuad(3)
-  groupe_haut.addElement(q)
+# Constituer le groupe contour
+# ----------------------------
 
-  q = h.getQuad(4)
-  groupe_contour.addElement(q)
-  q = h.getQuad(5)
-  groupe_contour.addElement(q)
+for i in xrange(2):
+  groupe_contour.addElement( grille_p.getQuadJK(1, i, 0) )
+
+for i in [0, 2]:
+  groupe_contour.addElement( grille_g.getQuadJK(1, i, 0) )
+
+for i in xrange(3):
+  h = prisme.getHexa(i)
+
+  groupe_contour.addElement( h.getQuad(4) )
+  groupe_contour.addElement( h.getQuad(5) )
 
 # Définir 3 groupes de volumes
 # ----------------------------
 
-groupe_cyli_p = doc.addHexaGroup("Cylindre_petit")
-groupe_cyli_g = doc.addHexaGroup("Cylindre_grand")
+groupe_petit  = doc.addHexaGroup("Petit")
+groupe_grand  = doc.addHexaGroup("Grand")
 groupe_prisme = doc.addHexaGroup("Prisme")
 
-for i in xrange(4):
-  groupe_cyli_p.addElement(grille_a.getHexa(i))
-  groupe_cyli_g.addElement(grille_b.getHexa(i))
+for i in xrange(3):
+  groupe_petit.addElement( grille_p.getHexa(i) )
+  groupe_grand.addElement( grille_g.getHexa(i) )
 
 for i in xrange(3):
-  groupe_prisme.addElement(prisme.getHexa(i))
+  groupe_prisme.addElement( prisme.getHexa(i) )
 
 # Mailler le modèle de bloc avec association
 # ------------------------------------------
 
-l = doc.addLaw("Uniform1", 17)
-n = doc.countPropagation()
-
-for i in xrange(n):
-  p = doc.getPropagation(i)
-  p.setLaw(l)
-
-l = doc.addLaw("Uniform2", 40)
-p = doc.getPropagation(11)
-p.setLaw(l)
+hexablock.addLaws(doc, 0.003, True)
 
 blocs = hexablock.mesh(doc)
 
-print "nombre de sommets     du modèle de bloc: ", doc.countUsedVertex()
-print "nombre d'arêtes       du modèle de bloc: ", doc.countUsedEdge()
-print "nombre de quadrangles du modèle de bloc: ", doc.countUsedQuad()
-print "nombre de blocs       du modèle de bloc: ", doc.countUsedHexa()
-
-print "Nombre de noeuds      du maillage: ", blocs.NbNodes()
-print "Nombre de segments    du maillage: ", blocs.NbEdges()
-print "Nombre de quadrangles du maillage: ", blocs.NbQuadrangles()
-print "Nombre d'hexaèdres    du maillage: ", blocs.NbHexas()
+muv, mue, muq, muh = hexablock.dump(doc, blocs)
