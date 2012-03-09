@@ -55,7 +55,7 @@ public :
    virtual bool    isValid     ()              { return el_status==HOK; }
    virtual bool    isBad       ()              { return el_status!=HOK; }
 
-   virtual void    setAssociation (Shape* forme)  { el_assoc = forme ; }
+   virtual void    setAssociation (Shape* forme);
    virtual void    clearAssociation ()            { el_assoc = NULL  ; }
    virtual void    duplicate ()                   {}
    virtual Shape*  getAssociation ()              { return el_assoc  ; }

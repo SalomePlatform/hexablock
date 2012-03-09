@@ -92,7 +92,7 @@ void Edge::propager (Propagation* prop, int groupe, int sens)
        Quad* quad = getParent (nq);
        if (quad!=NULL && quad->hasParents())
           {
-          if (debug (1))
+          if (debug (6))
              {
              printf ("Prop : niv=%d edge=", niveau);
              printName ();
@@ -202,6 +202,29 @@ void Edge::dumpPlus ()
           printf (" NULL\n");
           }
        }
+}
+// ========================================================== addAssociation
+int Edge::addAssociation (Shape* forme)
+{
+   if (forme == NULL)
+      {
+      if (el_root->debug ())
+          cout << "  Edge " << el_name << " addAssociation of NULL ignored"
+               << endl;
+      return HERR;
+      }
+
+   tab_assoc.push_back (forme);
+   if (el_root->debug (2))
+      cout << "  Edge " << el_name << " addAssociation" << endl;
+
+   return HOK;
+}
+// ========================================================== setAssociation
+void Edge::setAssociation (Shape* forme)
+{
+   clearAssociation ();
+   addAssociation (forme);
 }
 END_NAMESPACE_HEXA
 

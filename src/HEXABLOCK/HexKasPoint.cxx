@@ -47,6 +47,7 @@ static bool db = false;
 // ======================================================= Constructeur
 KasPoint::KasPoint ()
 {
+   db = on_debug();
    razPoint ();
 }
 // ======================================================= razPoint
@@ -112,7 +113,6 @@ void KasPoint::definePoint (gp_Pnt& gpoint)
    g_coord [dir_y] = g_point.Y();
    g_coord [dir_z] = g_point.Z();
 
-   return;
    if (db)
       {
       cout << " KasPoint::definePoint :" << endl;
@@ -122,8 +122,8 @@ void KasPoint::definePoint (gp_Pnt& gpoint)
 // ======================================================= associate
 void KasPoint::associate (Vertex* node)
 {
-   // if (db) cout << " ++ KasPoint::associate " << endl;
-   // if (db) PutName (node);
+   if (db) cout << " ++ KasPoint::associate " << endl;
+   if (db) PutName (node);
    if (node==NULL)
       return;
 

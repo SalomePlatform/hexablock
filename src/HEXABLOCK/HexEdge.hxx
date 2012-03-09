@@ -34,6 +34,12 @@ public:
     bool    getWay ()              { return e_way ; }
 
 public:
+    virtual void saveXml (XmlWriter* xml);
+    virtual void replaceVertex (Vertex* old, Vertex* nouveau);
+    virtual void clearAssociation  ()      { tab_assoc.clear() ; }
+    virtual void setAssociation (Shape* forme); 
+    int    addAssociation (Shape* forme); 
+
     Edge (Vertex* va, Vertex* vb);
     Edge (Edge* other);
     int  anaMerge  (Vertex* orig, Vertex* couple[]);
@@ -48,7 +54,7 @@ public:
     virtual void dump ();
     void         dumpPlus ();
     void         dumpAsso ();
-    virtual void saveXml (XmlWriter* xml);
+
     virtual void majReferences();
 
     int  inter (Edge* other, int& nother);
@@ -66,10 +72,7 @@ public:
 
     void setScalar (double valeur);
     void setColor  (double valeur)          { setScalar (valeur) ; }
-    virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
-    virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
-    int   addAssociation (Shape* forme); 
     const Shapes & getAssociations ()       { return tab_assoc ;  }
 
     virtual void duplicate ();
@@ -88,13 +91,6 @@ private:
 };
 
 // ----------------------------------------------- Inlining
-// ========================================================== addAssociation
-inline int Edge::addAssociation (Shape* forme)
-{
-   if (forme != NULL)
-       tab_assoc.push_back (forme);
-   return HOK;
-}
 // =============================================================== getVertex
 inline Vertex* Edge::getVertex(int nro) 
 {

@@ -58,6 +58,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
                     Shape*  gstart, double pstart, Shapes& gline, double pend,
                     bool inv)
 {
+   db = on_debug ();
    char buffer [16], cnum [8];
    int  nbseg  = mline.size ();
    bool closed = vfirst != NULL;

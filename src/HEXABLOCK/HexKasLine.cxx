@@ -211,7 +211,8 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
       cout << " ligpara = [ " << lig_debut << ", " << lig_fin << " ]" << endl;
       cout << " absc    = [ " << start_absc << ", " << end_absc << " ]\n" ;
 
-      cout << " Edge    = [ " << segment[0]->getName() << ", " 
+      cout << " Edge    = " << edge->getName() << 
+	              " = [ " << segment[0]->getName() << ", " 
            << ","             << segment[1]->getName() << endl;
       cout << " smx     = [ " << sm1    << ", " << sm2    << " ]" << endl;
       cout << " vparam  = [ " << vpara1 << ", " << vpara2 << " ]" << endl;

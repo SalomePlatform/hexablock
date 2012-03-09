@@ -67,6 +67,7 @@ public :
    void    duplicate (Document* doc);
 
    static Vertex* createMiddle (Vertex* left, Vertex* right);
+   bool   definedBy (double px, double py, double pz, double eps2=1e-4);
 
 private :
     double v_x;
@@ -171,6 +172,12 @@ inline void Vertex::duplicate (Document* cible)
 {
    v_clone = new Vertex (cible, v_x, v_y, v_z);
    v_clone->v_scalar = v_scalar;
+}
+// ========================================================= duplicate 
+inline bool Vertex::definedBy (double px, double py, double pz, double eps2)
+{
+   double dist2 = carre (v_x-px) + carre (v_y-py) + carre (v_z-pz);
+   return dist2 < eps2;
 }
 END_NAMESPACE_HEXA
 #endif

@@ -140,4 +140,18 @@ double prod_mixte (double vi[], double vj[], double vk[])
 
    return pmixte;
 }
+// ========================================================= fatal_error
+void fatal_error (cpchar format, cpchar info1, cpchar info2)
+{
+   char     buffer [240];
+   sprintf (buffer, format, info1, info2);
+   printf ("****\n");
+   printf ("**** %s\n", buffer);
+   printf ("****\n");
+#ifdef NO_CASCADE
+   printf ("                ............ Erreur fatale\n");
+   exit (94);
+#endif
+   printf ("\n");
+}
 END_NAMESPACE_HEXA

@@ -502,7 +502,7 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
    calc_vecteur (vo2->getPoint (pa), vd2->getPoint (pb), vdir2);
 
    double dd = calc_distance (vdir1, vdir2);
-   bool para = dd < 1.0e-6;
+   bool para = dd < 1.0e-3;
 
    if (para && on_edge)
       {
@@ -607,7 +607,7 @@ void Elements::assoResiduelle ()
        geom_asso_point (tab_vertex [nv]);
        }
 }
-// ====================================================== assoResiduelle
+// ====================================================== moveDisco
 void Elements::moveDisco (Hexa* hexa)
 {
    Real3  center;

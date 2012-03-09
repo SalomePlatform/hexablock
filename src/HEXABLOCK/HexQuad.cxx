@@ -88,7 +88,7 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
       HexDump (q_vertex[3]);
 
       printf (" +++++++++++++++++++++++++++++++++++++++++++ \n");
-      // exit (1);
+      fatal_error ("Quadrangle impossible");
       }
 
    majReferences ();

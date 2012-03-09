@@ -522,6 +522,8 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
 void set_debug_asso (bool boule)
 {
    db = boule;
+   if (db)
+       printf (" ... Traces actives dans  HexAssoElements_asso.cxx\n");
 }
 END_NAMESPACE_HEXA
       

@@ -194,6 +194,7 @@ typedef double Real3 [DIM3];
                         // Quelques fonctions :
 
 pchar   get_temp_name (cpchar format, pchar nomfic);
+void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
 
 double  prod_scalaire  (double v1[], double v2[]);
 double* prod_vectoriel (double v1[], double v2[], double v3[]);

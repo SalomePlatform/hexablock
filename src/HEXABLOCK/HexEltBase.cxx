@@ -131,5 +131,14 @@ void EltBase::printName  (cpchar sep)
 
    printf ("%s%s", getName(nom), sep);
 }
+// ========================================================= setAssociation
+void EltBase::setAssociation (Shape* forme)
+{
+   el_assoc = forme;
+
+   if (el_root->debug (2))
+       cout << "  Vertex " << el_name << " : setAssociation" << endl;
+}
+
 END_NAMESPACE_HEXA
 

@@ -168,6 +168,10 @@ int Document::parseXml (XmlTree& xml)
    map <std::string, Vector*> t_vector;
    vector <string> tname;
 
+   const  string& name = xml.findValue ("name");
+   if (name != "")
+       doc_name = name;
+
    XmlTree* rubrique = xml.findChild ("ListVertices");
    int nbrelts       = rubrique->getNbrChildren ();
 
@@ -353,11 +357,11 @@ int Document::parseXml (XmlTree& xml)
        {
        XmlTree*  ndgroup = rubrique->getChild (nro);
        XmlTree*  node    = ndgroup ->getChild (0);
-       const  string& name  = node->findValue ("name");
+       const  string& nom   = node->findValue ("name");
        const  string& ckind = node->findValue ("kind");
 
        EnumGroup kind   = Group::getKind (ckind);
-       Group*    groupe = addGroup (name.c_str(), kind);
+       Group*    groupe = addGroup (nom.c_str(), kind);
        EnumElt   type   = groupe->getTypeElt ();
 
        nbrelts = ndgroup->getNbrChildren ();
@@ -398,7 +402,7 @@ cpchar Document::getXml ()
 
    return doc_xml->getXml ();
 }
-// =====================================================HexDocument_Xml=== genXml
+// ======================================================== genXml
 int Document::genXml (cpchar filename)
 {
                                        // -- 1) Raz numerotation precedente

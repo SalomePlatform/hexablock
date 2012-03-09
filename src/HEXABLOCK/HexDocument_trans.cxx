@@ -244,9 +244,7 @@ void Document::dumpPropagation ()
 void Document::reorderFaces ()
 {
    majReferences ();
-   // markAll (NO_USED, EL_QUAD);
-   double cg [DIM3], orig[DIM3], pi[DIM3], pj [DIM3];
-   double vi[DIM3], vj[DIM3], vk[DIM3];
+   Real3 cg, orig, pi, pj, vi, vj, vk;
 
    for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
                  elt = elt->next())
@@ -267,8 +265,6 @@ void Document::reorderFaces ()
           double pmixte = prod_mixte (vi, vj, vk);
           if (pmixte > ZEROR)  
              quad->inverser ();
-          
-          HexDisplay (pmixte); 
           }
        }
 
