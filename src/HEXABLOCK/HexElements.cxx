@@ -52,6 +52,8 @@ Elements::Elements (Document* doc) : EltBase (doc)
    cyl_fill   = false;
    grid_nocart = true;
    cyl_dispo  = CYL_NOFILL;
+   revo_lution = false;
+   prism_vec   = false;
 }
 // ====================================================== Constructeur
 Elements::Elements (Document* doc, int nx, int ny, int nz) : EltBase (doc)

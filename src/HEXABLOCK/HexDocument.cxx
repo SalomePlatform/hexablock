@@ -649,6 +649,16 @@ Elements* Document::prismQuads (Quads& tstart, Vector* dir, int nb)
    prisme->prismQuads (tstart, dir, nb);
    return prisme;
 }
+// ======================================================== prismQuadsVec
+Elements* Document::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
+                                   int crit)
+{
+   if (tlen.size()<=0) return NULL;
+
+   Elements*  prisme = new Elements (this);
+   prisme->prismQuadsVec (tstart, dir, tlen, crit);
+   return prisme;
+}
 // ======================================================== joinQuads
 Elements* Document::joinQuads (Quads& start, Quad* dest, Vertex* v1, 
 		               Vertex* v2, Vertex* v3, Vertex* v4, int nb)

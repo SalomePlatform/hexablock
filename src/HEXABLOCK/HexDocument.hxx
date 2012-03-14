@@ -79,6 +79,7 @@ public :
 
    Elements* prismQuad  (Quad*  start, Vector* dv, int nb);
    Elements* prismQuads (Quads& start, Vector* dv, int nb);
+   Elements* prismQuadsVec (Quads& start, Vector* dv, RealVector& th, int k=0);
 
    Elements* joinQuad  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,  
                                       Vertex* v3, Vertex* v4, int nb);

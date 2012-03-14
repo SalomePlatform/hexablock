@@ -284,7 +284,7 @@ int test_joint (int nbargs, cpchar tabargs[])
    return HOK;
 }
 // ======================================================== test_prism
-int test_prism ()
+int test_prism (int nbargs, cpchar tabargs[])
 {
    const int dimx = 11;
    const int dimy = 11;
@@ -293,28 +293,53 @@ int test_prism ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
-   Hex::Vector* dir   = doc->addVector (1,1,1);
+   Hex::Vertex* orig1 = doc->addVertex ( 0,0,0);
+   Hex::Vector* dir1  = doc->addVector ( 1,1,1);
+   Hex::Vector* dir2  = doc->addVector ( 1,1,-1);
 
-   Hex::Elements* grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
+   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir1, dimx,dimy,dimz);
 
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
-   Hex::Quads liste;
+   Hex::Quads liste1, liste2;
 
-   liste.push_back (prems);
+   liste1.push_back (grid1->getQuadIJ (mx, my, dimz)); 
+   liste2.push_back (grid1->getQuadIJ (mx, my, 0)); 
    for (int nx=0; nx<dimx; nx++)
        if (nx!=mx) 
-          liste.push_back (grid1->getQuadIJ (nx, my, dimz)); 
+          {
+          liste1.push_back (grid1->getQuadIJ (nx, my, dimz)); 
+          liste2.push_back (grid1->getQuadIJ (nx, my, 0)); 
+          }
 
    for (int ny=0; ny<dimy; ny++)
        if (ny!=my) 
-          liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
+          {
+          liste1.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
+          liste2.push_back (grid1->getQuadIJ (mx, ny, 0)); 
+          }
 
+   Hex::RealVector tlen;
+   double dh = 2;
+   for (int nro=0; nro<5; nro++)
+       {
+       dh = 2*dh + 1;
+       tlen.push_back (dh);
+       }
+   
    doc->saveVtk ("prisme1.vtk");
-   /* Hex::Elements* prisme = */ doc->prismQuads  (liste, dir, 5);
+   Hex::Elements* prisme2 = doc->prismQuads    (liste2, dir2, 5);
    doc->saveVtk ("prisme2.vtk");
+
+   Hex::Elements* prisme1 = doc->prismQuadsVec (liste1, dir1, tlen, 0);
+   doc->saveVtk ("prisme3.vtk");
+
+   PutData (liste1.size());
+   PutData (tlen.size());
+   PutData (prisme1->countHexa());
+   PutData (prisme1->countQuad());
+   PutData (prisme1->countEdge());
+   PutData (prisme1->countVertex());
 
    return HOK;
 }
@@ -357,7 +382,7 @@ int test_revolution9 (int nbargs, cpchar tabargs[])
           }
 
    Hex::Vertex* center = doc->addVertex (0, -10, 0);
-   Hex::Vector* axis   = doc->addVector (1, 0, 0);
+   Hex::Vector* axis   = doc->addVector (1,   0, 0);
    Hex::RealVector  angles;
 
    Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);

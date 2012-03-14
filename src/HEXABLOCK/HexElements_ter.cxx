@@ -65,15 +65,20 @@ int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
    tab_pilier.clear ();
    tab_vertex.clear ();
 
-   revo_lution = true;
-   revo_axis   = axis;
-   revo_center = center;
-   revo_angle  = angles;
+   revo_lution  = true;
+   prism_vec    = false;
+   revo_axis    = axis;
+   revo_center  = center;
+   gen_values = angles;
 
    for (int nro=0 ; nro<nbcells ; nro++)
        {
-       pushHexas (nro, start[nro], nbiter);
+       prismHexas (nro, start[nro], nbiter);
        }
+   nbr_hexas  = tab_hexa.size ();
+   nbr_edges  = tab_edge.size ();
+   nbr_quads  = tab_quad.size ();
+   nbr_vertex = tab_vertex.size ();
    return HOK;
 }
 // ====================================================== makeRind
@@ -544,8 +549,7 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
    if (orig==NULL || dest==NULL || dir==NULL)
       return HERR;
 
-   if (revo_lution)
-       revo_matrix.defRotation (revo_center, revo_axis, revo_angle[nh]);
+   updateMatrix (nh);
  
    const Shapes& tab_shapes = orig->getAssociations ();
    const Shapes& tab_dest   = dest->getAssociations ();
@@ -574,7 +578,7 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
              {
              string brep   = shape->getBrep();
              //   translate_brep (brep, vdir, trep);
-             transfo_brep (brep, &revo_matrix, trep);
+             transfo_brep (brep, &gen_matrix, trep);
              Shape* tshape = new Shape (trep);
              tshape->setBounds (shape->debut, shape->fin);
              dest->addAssociation (tshape);
@@ -589,7 +593,7 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
           {
           string brep   = shape->getBrep();
           //  translate_brep (brep, vdir, trep);
-          transfo_brep (brep, &revo_matrix, trep);
+          transfo_brep (brep, &gen_matrix, trep);
           Shape* tshape = new Shape (trep);
           vd1->setAssociation (tshape);
           }

@@ -94,6 +94,8 @@ public:
    int coupler  (int nro, Quad* other, StrOrient* orient);
 
    int  prismQuads (Quads& start, Vector* dv, int nb);
+   int  prismQuadsVec (Quads& start, Vector* dv, RealVector& tlen, int crit);
+
    int  cutHexas   (const Edges& edges, int nbcuts);
 
    void setVertex (Vertex* node, int nx, int ny, int nz);
@@ -165,6 +167,7 @@ public:
    void moveDisco (Hexa* hexa);
 
 protected :
+                                        // Evols Hexa3 
    void cutAssociation (Shapes& tshapes, Edges& tedges, bool exist=true);
    void assoCylinder   (Vertex* center, Vector* vz, double rayon);
    void assoCylinders  (Vertex* center, Vector* vz, double ray, RealVector& ta);
@@ -179,7 +182,9 @@ protected :
    int  propagateAssociation (Edge* orig, Edge* dest, Edge* dir1);
    int  prismAssociation     (Edge* orig, Edge* dest, int nh, Edge* dir);
 
-              // Fin evols Hexa3 
+                                        // Evols Hexa4 
+   void  updateMatrix (int hauteur);
+
 protected :
  
    int   fillGrid ();
@@ -188,7 +193,7 @@ protected :
    void  fillCenter6   ();
    void  fillCenterOdd ();
 
-   int  pushHexas (int nro, Quad* sol, int hauteur);
+   int  prismHexas (int nro, Quad* sol, int hauteur);
 
    void setVertex (int nx, int ny, int nz, double px, double py, double pz);
    void setEdge   (Edge*   edge, EnumCoord dir, int nx, int ny, int nz);
@@ -252,11 +257,15 @@ protected :
     EnumCyl  cyl_dispo;          // Type de remplissage
 
                                  // Evols Hexa3
-    bool           revo_lution;  // Number 9 ...
-    Vertex*        revo_center;
-    Vector*        revo_axis;
-    vector<double> revo_angle;
-    Matrix         revo_matrix;
+    bool       revo_lution;  // Number 9 ...
+    Vertex*    revo_center;
+    Vector*    revo_axis;
+
+    RealVector gen_values;    // Angle pour la revolution
+    Matrix     gen_matrix;
+                                 // Evols Hexa4
+    bool       prism_vec ; 
+    Real3      prism_dir;
 
 //  EnumGrid grid_type;   // deja la
     bool    grid_nocart;   // Grille non cartesienne : no acces aux getTrucIJK

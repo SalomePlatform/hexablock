@@ -1990,6 +1990,46 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
 
    return result;
 }
+// ===================================================== prismQuadsVec
+Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir, 
+                                    const RealVector &thaut, ::CORBA::Long opt)
+           throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
+   Vector_impl* v_dir  = ::DownCast<Vector_impl*> (dir);
+
+   ASSERT (v_dir);
+
+   if (v_dir==NULL)
+      return result;
+
+   HEXA_NS::Quads t_start;
+   for ( int nq = 0; nq < start.length(); nq++) 
+       {
+       Quad_impl* v_quad = ::DownCast<Quad_impl*> (start[nq]);
+       ASSERT( v_quad );
+       HEXA_NS::Quad* i_quad = v_quad->GetImpl();
+       t_start.push_back(i_quad);
+       }
+
+   std::vector <CORBA::Double> t_haut;
+   for ( int na = 0; na < thaut.length(); na++) 
+       {
+       CORBA::Double alpha = thaut[na];
+       t_haut.push_back (alpha);
+       }
+
+   HEXA_NS::Vector*   i_dir  = v_dir  ->GetImpl();
+   HEXA_NS::Elements* i_elts = _document_cpp->prismQuadsVec (t_start, 
+                                 i_dir, t_haut, opt);
+   if (i_elts != NULL)
+      {
+      Elements_impl* servantCorba = new Elements_impl(i_elts);
+      result = servantCorba->_this();
+      }
+
+   return result;
+}
 // ===================================================== makeSphere
 
 Elements_ptr Document_impl::replace (const Quads& pattern, 

@@ -210,16 +210,58 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
    tab_vertex.clear ();
 
    revo_lution = false;
-   revo_matrix.defTranslation (dir);
+   prism_vec   = false;
+   gen_matrix.defTranslation (dir);
 
    for (int nro=0 ; nro<nbcells ; nro++)
        {
-       pushHexas (nro, tstart[nro], nbiter);
+       prismHexas (nro, tstart[nro], nbiter);
        }
+   nbr_hexas  = tab_hexa.size ();
+   nbr_edges  = tab_edge.size ();
+   nbr_quads  = tab_quad.size ();
+   nbr_vertex = tab_vertex.size ();
    return HOK;
 }
-// ====================================================== pushHexas
-int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
+// ====================================================== prismQuadsVec
+int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen, 
+                             int mode)
+{
+   int nbiter = tlen.size();
+   if (nbiter==0)
+      return HERR;
+
+   el_root->markAll (NO_USED);
+   int nbcells   = tstart.size ();
+   nbr_vertex    = 0;
+   nbr_edges     = 0;
+
+   nbr_hexas = nbcells*nbiter;
+
+   tab_hexa.resize (nbr_hexas);
+   tab_quad.clear ();          // verticaux
+   tab_edge.clear ();
+   tab_pilier.clear ();
+   tab_vertex.clear ();
+
+   revo_lution = false;
+   prism_vec   = true;
+   dir->getCoord  (prism_dir);
+   normer_vecteur (prism_dir);
+   gen_values = tlen;
+
+   for (int nro=0 ; nro<nbcells ; nro++)
+       {
+       prismHexas (nro, tstart[nro], nbiter);
+       }
+   nbr_hexas  = tab_hexa.size ();
+   nbr_edges  = tab_edge.size ();
+   nbr_quads  = tab_quad.size ();
+   nbr_vertex = tab_vertex.size ();
+   return HOK;
+}
+// ====================================================== prismHexas
+int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
 {
    int ind_node [QUAD4];
    string c_rep;
@@ -270,19 +312,15 @@ int  Elements::pushHexas (int nro, Quad* qbase, int hauteur)
           for (int nh=0 ; nh<hauteur ; nh++)
               {
               nd1 = el_root->addVertex (nd0->getX(), nd0->getY(), nd0->getZ());
-              if (revo_lution)
-                 {
-                 revo_matrix.defRotation (revo_center, revo_axis, 
-                                          revo_angle[nh]);
-                 }
-              revo_matrix.perform  (nd1);
+              updateMatrix (nh);
+              gen_matrix.perform   (nd1);
               tab_vertex.push_back (nd1);
               Edge* pilier = newEdge (nd0, nd1);
               tab_pilier.push_back (pilier);
               if (revo_lution)
                  {
                  double alpha = beta;
-                 beta = alpha + revo_angle[nh]; 
+                 beta = alpha + gen_values[nh]; 
                  Shape* shape = new Shape (c_rep);
                  shape->setBounds (alpha/360, beta/360);
                  pilier->addAssociation (shape);
@@ -377,6 +415,23 @@ int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    fillGrid ();
    assoCylinder (orig, dir, 360);
    return HOK;
+}
+// ====================================================== updateMatrix
+void Elements::updateMatrix (int hauteur)
+{
+   if (revo_lution)
+      {
+      gen_matrix.defRotation (revo_center, revo_axis, gen_values[hauteur]);
+      }
+   else if (prism_vec)
+      {
+      double h0 = hauteur>0 ?  gen_values[hauteur-1] : 0;
+      double dh = gen_values[hauteur] - h0;
+      Real3 decal;
+      for (int nc=dir_x ; nc<=dir_z ; nc++)
+          decal [nc] = prism_dir [nc]*dh; 
+      gen_matrix.defTranslation (decal);
+      }
 }
 
 END_NAMESPACE_HEXA

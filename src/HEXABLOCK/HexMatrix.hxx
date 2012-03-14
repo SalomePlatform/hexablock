@@ -35,6 +35,7 @@ class Matrix
 public:
     Matrix ();
     int defTranslation   (Vector* depl);
+    int defTranslation   (double* depl);
     int defScale         (Vertex* center, double scale);
     int defScale         (double* center, double scale);
     int defRotation      (Vertex* center, Vector* depl, double degres);
@@ -79,7 +80,7 @@ inline int Matrix::perform (Vertex* noeud)
    noeud->setCoord (px, py, pz);
    return HOK;
 }
-// ========================================================= defTranlation
+// ========================================================= defTranslation
 inline int Matrix::defTranslation (Vector* boulevard)
 {
    erase();
@@ -89,6 +90,17 @@ inline int Matrix::defTranslation (Vector* boulevard)
    mat24 = boulevard->getDy ();
    mat34 = boulevard->getDz ();
 
+   return HOK;
+}
+// ========================================================= defTranslation (2)
+inline int Matrix::defTranslation (double* decal)
+{
+   erase();
+   mat11 = mat22 = mat33 = 1.0;
+
+   mat14 = decal [dir_x];
+   mat24 = decal [dir_y];
+   mat34 = decal [dir_z];
    return HOK;
 }
 // ========================================================= defScale

@@ -85,12 +85,37 @@ def test_prism () :
     vtk.save ()
     return doc
 
+# ========================================================== test_prism
+def test_prism_vec () :
+    doc  = hexablock.addDocument("prism_vec")
+    vtk  = FileVtk (doc, "prism_vec");
+    nr = 1
+    na = 6
+    nl = 1
+    grid = make_grid (doc, nr, na, nl)
+    vtk.save ()
+
+    liste = [ ]
+    for nx in range (nr) :
+        for ny in range (na) :
+            cell = grid.getQuadIJ (nx, ny, nl)
+            print " ... cell = ", cell
+            liste.append (cell);
+
+    axis = doc.addVector (1, 1, 1);
+    hauteurs = [1, 3, 7, 15]
+
+    bloc = doc.prismQuadsVec (liste, axis, hauteurs, 0)
+    vtk.save ()
+    return doc
+
 # ================================================================= Begin
 
-doc = test_revolution ()
+###  doc = test_revolution ()
 ###  doc = test_prism ()
+doc = test_prism_vec ()
 
-law = doc.addLaw("Uniform", 2)
+law = doc.addLaw("Uniform", 3)
 
 for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)

@@ -270,7 +270,7 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
     /*!
-        2 Cylindres en T dÃ©coupÃ©s en blocs
+        2 Cylindres en T decoupes en blocs
     */
     CrossElements makeCylinders( in Cylinder c1, in Cylinder c2 )
       raises (SALOME::SALOME_Exception);//CS_NEW CS_NOT_SPEC
@@ -288,8 +288,11 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
     Elements prismQuads( in Quads qds, in Vector v, in long nb )
-        raises (SALOME::SALOME_Exception); //CS_NEW
+        raises (SALOME::SALOME_Exception);
 
+    Elements prismQuadsVec (in Quads qds, in Vector v, in RealVector thaut, 
+                            in long opt )
+        raises (SALOME::SALOME_Exception);
 
     Elements joinQuad( in Quad qa, in Quad qb,
                        in Vertex va1, in Vertex vb1,

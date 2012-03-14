@@ -107,8 +107,13 @@ public:
 
    Elements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2) throw (SALOME::SALOME_Exception);
 
-  Elements_ptr prismQuad(Quad_ptr qd, Vector_ptr v, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
-  Elements_ptr prismQuads(const Quads& qds, Vector_ptr v, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
+  Elements_ptr prismQuad(Quad_ptr qd, Vector_ptr v, ::CORBA::Long nb)
+               throw (SALOME::SALOME_Exception);
+  Elements_ptr prismQuads(const Quads& qds, Vector_ptr v, ::CORBA::Long nb)
+               throw (SALOME::SALOME_Exception);
+  Elements_ptr prismQuadsVec(const Quads& qds, Vector_ptr v, 
+                             const RealVector &thaut, ::CORBA::Long opt)
+               throw (SALOME::SALOME_Exception);
 
   Elements_ptr joinQuad(Quad_ptr qa, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
   Elements_ptr joinQuads(const Quads& qds, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
