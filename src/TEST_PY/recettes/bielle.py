@@ -77,6 +77,14 @@ ga_ghe  = aretes[26]
 
 doc.setShape(bielle)
 
+# Netoyer les associations implicites du prisme
+# ---------------------------------------------
+
+for i in xrange( prisme.countEdge() ):
+  em = prisme.getEdge(i)
+  if em != None:
+    em.clearAssociation()
+
 # Associer les cercles extérieurs
 # -------------------------------
 
