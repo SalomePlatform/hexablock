@@ -54,6 +54,7 @@ public:
 
    virtual ~Elements () {}
    virtual void remove ();
+   virtual void clearAssociation ();
 
    Hexa*   getStrate (int couche, EnumHQuad face);
 

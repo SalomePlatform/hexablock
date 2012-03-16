@@ -44,43 +44,6 @@ void geom_asso_point (Vertex* node);
 
 static bool db=false;
 
-// ======================================================== revolutionQuads
-int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                               RealVector &angles)
-{
-   int nbiter = angles.size();
-   if (center==NULL  || axis==NULL || nbiter==0)
-      return HERR;
-
-   el_root->markAll (NO_USED);
-   int nbcells   = start.size ();
-   nbr_vertex    = 0;
-   nbr_edges     = 0;
-
-   nbr_hexas   = nbcells*nbiter;
-
-   tab_hexa.resize (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   revo_lution  = true;
-   prism_vec    = false;
-   revo_axis    = axis;
-   revo_center  = center;
-   gen_values = angles;
-
-   for (int nro=0 ; nro<nbcells ; nro++)
-       {
-       prismHexas (nro, start[nro], nbiter);
-       }
-   nbr_hexas  = tab_hexa.size ();
-   nbr_edges  = tab_edge.size ();
-   nbr_quads  = tab_quad.size ();
-   nbr_vertex = tab_vertex.size ();
-   return HOK;
-}
 // ====================================================== makeRind
 int Elements::makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz, 
                         double radext, double radint, double radhole, 
@@ -239,6 +202,9 @@ void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle,
    int    na      = t_angles.size();
    bool   regul   = na == 0;
    double alpha   = angle/size_hy;
+                  // On n'associe pas la couche la plus interne
+                  // Si le cylindre est plein.
+   int    nx0     = cyl_fill ? 1 : 0; 
 
    string brep;
    Real3 vk = { normal->getDx(), normal->getDy(), normal->getDz() };
@@ -246,7 +212,7 @@ void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle,
 
    for (int nz=0 ; nz<size_vz ; nz++)
        {
-       for (int nx=0 ; nx<size_vx ; nx++)
+       for (int nx=nx0 ; nx<size_vx ; nx++)
            {
            Vertex* pm = getVertexIJK (nx, 0, nz); 
            Real3   om = { pm->getX() - ori->getX(), 

@@ -111,6 +111,11 @@ public:
     Quad* findQuad             (Edge* e1, Edge* e2);
     Edge* findEdge             (Vertex* v1, Vertex* v2);
 
+    int   findQuad   (Quad*   element);
+    int   findEdge   (Edge*   element);
+    int   findVertex (Vertex* element);
+
+
 private:
     friend class Cloner;
     void  OrdonnerAretes ();    // obsolete ?
@@ -124,10 +129,6 @@ private:
 
     void  controlerArete (int arete, int face1, int face2);
     void  controlerSommet (int node, int arete1, int arete2, int arete3);
-
-    int   findQuad   (Quad*   element);
-    int   findEdge   (Edge*   element);
-    int   findVertex (Vertex* element);
 
     int   findOpposedQuad (Quad* face, Edge* arete);
 

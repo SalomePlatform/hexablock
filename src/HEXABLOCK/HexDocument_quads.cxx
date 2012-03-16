@@ -17,13 +17,14 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
+
 #include "HexDocument.hxx"
 
 #include <cmath>
+#include <map>
 
-#include "HexEltBase.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
@@ -757,6 +758,269 @@ Elements* Document::replace (Quads& pattern, Vertex* p1, Vertex* c1,
       }
    return    t_hexas;
 }
+// ========================================================= print_replace
+void print_replace (Edge* zig, Edge*  zag)
+{
+   cout << zig->getName() << " = (" << zig->getVertex(0)->getName() 
+        << ", " << zig->getVertex(1)->getName() << ") est remplace par ";
+
+   cout << zag->getName() << " = (" << zag->getVertex(0)->getName() 
+        << ", " << zag->getVertex(1)->getName() << ")" << endl;
+}
+// ========================================================= disconnectEdges
+Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
+{
+   int nbedges = tedges.size();
+   int nbhexas = thexas.size();
+
+   if (nbhexas != nbedges) 
+      {
+      cout << " **** Error in Document::disconnectEdges\n" << endl;
+      cout << " **** Number of Edges and number of Hexas are different\n" 
+           << endl;
+      return NULL;
+      }
+   else if (nbhexas==1)
+      {
+      Elements* grille = disconnectEdge (thexas[0], tedges[0]);
+      return    grille;
+      }
+
+   for (int nro=0 ; nro<nbedges ; nro++)
+       {
+       if (BadElement (tedges[0]))
+          {
+          cout << " **** Eddge number " << nro+1 << " is incorrect"
+               << endl;
+          return NULL;
+          }
+       if (BadElement (thexas[0]))
+          {
+          cout << " **** Hexa number " << nro+1 << " is incorrect"
+               << endl;
+          return NULL;
+          }
+       }
+
+   for (int nro=0 ; nro<nbhexas ; nro++)
+       {
+       int ned = thexas[nro]->findEdge (tedges[nro]);
+       if (ned==NOTHING)
+          {
+          cout << " **** Edge number " << nro+1 
+               << " doesnt belong to correspondant hexa" << endl;
+          return NULL;
+          }
+       }
+
+   vector <Vertex*> tvertex (nbedges+1);
+
+   for (int nro=1 ; nro<nbedges ; nro++)
+       {
+       tvertex[nro] = tedges[nro]->commonVertex (tedges[nro-1]);
+       if (tvertex[nro]==NULL)
+          {
+          cout << " **** Edge number " << nro 
+               << " doesnt intesect next edge" << endl;
+          return NULL;
+          }
+       }
+
+   int nv0 = tedges[0]        ->inter (tedges[1]);
+   int nvn = tedges[nbedges-1]->inter (tedges[nbedges-2]);
+   tvertex [0]       = tedges[0]        ->getVertex (1-nv0); 
+   tvertex [nbedges] = tedges[nbedges-1]->getVertex (1-nvn); 
+
+   for (int nro=0 ; nro<nbhexas ; nro++)
+       {
+       int ned = thexas[nro]->findEdge (tedges[nro]);
+       if (ned==NOTHING)
+          {
+          cout << " **** Edge number " << nro+1 
+               << " doesnt belong to correspondant hexa" << endl;
+          return NULL;
+          }
+       }
+                      // Fin des controles, on peut y aller ...
+
+   map <Edge*, int> state_edge;
+   map <Quad*, int> state_quad;
+   enum { UNDEFINED, REPLACED, AS_IS };
+
+   map <Vertex*, Vertex*> new_vertex;
+   map <Edge*,   Edge*>   new_edge;
+   map <Quad*,   Quad*>   new_quad;
+
+   map <Vertex*, Vertex*> :: iterator it_vertex;
+   map <Edge*,   Edge*>   :: iterator it_edge;
+   map <Quad*,   Quad*>   :: iterator it_quad;
+
+#define VertexIsNew(v) (it_vertex=new_vertex.find(v))!=new_vertex.end()
+
+   Elements* nouveaux  = new Elements (this);
+   Vertex*   node1     = NULL;
+
+   for (int nro=0 ; nro<=nbedges ; nro++)
+       {
+       Vertex* node0 = node1;
+       node1 = new Vertex (tvertex[nro]);
+       nouveaux->addVertex  (node1);
+       new_vertex [tvertex[nro]] = node1;
+       if (db)
+          {
+          cout << nro << " : "         << tvertex[nro]->getName() 
+               << " est remplace par " << node1->getName() << endl;
+          }
+
+       if (nro>0)
+          {
+          Edge* edge = new Edge (node0, node1);
+          nouveaux->addEdge  (edge);
+          new_edge   [tedges[nro-1]] = edge;
+          state_edge [tedges[nro-1]] = REPLACED;
+          if (db)
+             print_replace (tedges[nro-1], edge);
+
+          }
+       }
+
+   if (db)
+      cout << "_____________________________ Autres substitutions" << endl;
+
+   // Un edge non remplace, qui contient un vertex remplace
+   //         commun a plus de 2 faces (donc appartenant a un autre hexa)
+   //         doit etre duplique
+
+   for (int nro=0 ; nro<nbhexas ; nro++)
+       {
+       Hexa* hexa = thexas [nro]; 
+       for (int nro=0 ; nro<HE_MAXI ; nro++)
+           {
+           Edge* edge = hexa->getEdge (nro);
+           if (state_edge[edge]==UNDEFINED)
+              {
+              Vertex* v1 = edge->getVertex (V_AMONT);
+              Vertex* v2 = edge->getVertex (V_AVAL);
+              int etat = REPLACED;
+              if (VertexIsNew (v1))
+                 v1 = new_vertex [v1];
+              else if (VertexIsNew (v2))
+                 v2 = new_vertex [v2];
+              else
+                 etat = AS_IS;
+
+              if (etat==REPLACED)
+                 {
+                 Edge* arete = new Edge (v1, v2);
+                 new_edge   [edge] = arete;
+                 nouveaux->addEdge  (arete);
+                 if (db)
+                    print_replace (edge, arete);
+                 }
+              state_edge [edge] = etat;
+              }
+           }
+       }
+
+   // Un quad non remplace, qui contient un edge remplace 
+   //         commun a plus de 2 Hexas
+   //         doit etre duplique
+
+   for (int nro=0 ; nro<nbhexas ; nro++)
+       {
+       Hexa* hexa = thexas [nro]; 
+       for (int nro=0 ; nro<HQ_MAXI ; nro++)
+           {
+           Quad* quad = hexa->getQuad (nro);
+           if (state_quad[quad]==UNDEFINED)
+              {
+              Edge* ted [QUAD4];
+              int etat = AS_IS;
+              for (int ned=0 ; ned < QUAD4 ; ned++)
+                  {
+                  Edge* edge = quad->getEdge (ned);
+                  if (state_edge [edge]==AS_IS)
+                      ted[ned] = edge;
+                  else 
+                      {
+                      ted[ned] = new_edge[edge];
+                      etat = REPLACED;
+                      }
+                  }
+              if (etat==REPLACED)
+                 {
+                 Quad* face = new Quad (ted[0], ted[1], ted[2], ted[3]);
+                 new_quad   [quad] = face;
+                 nouveaux->addQuad  (face);
+                 }
+              state_quad [quad] = etat;
+              }
+           }
+       }
+
+   for (int nro=0 ; nro<nbhexas ; nro++)
+       {
+       Hexa* hexa = thexas [nro]; 
+       for (it_quad=new_quad.begin(); it_quad != new_quad.end() ; ++it_quad)
+           {
+           Quad* pile = it_quad->first;
+           Quad* face = it_quad->second;
+           hexa->replaceQuad (pile, face);
+           }
+
+       for (it_edge=new_edge.begin(); it_edge != new_edge.end() ; ++it_edge)
+           {
+           Edge* zig = it_edge->first;
+           Edge* zag = it_edge->second;
+           hexa->replaceEdge (zig, zag);
+           }
+
+       for (it_vertex=new_vertex.begin(); 
+            it_vertex != new_vertex.end() ; ++it_vertex)
+           {
+           Vertex* flip = it_vertex->first;
+           Vertex* flop = it_vertex->second;
+           hexa->replaceVertex (flip, flop);
+           }
+       }
+         
+   Real3  center0, center1; 
+   Matrix matrix;
+   Hexa*  hexa0 = NULL;
+   Hexa*  hexa1 = NULL;
+   for (int nro=0 ; nro<=nbhexas ; nro++)
+       {
+       hexa0 = hexa1;
+       if (nro==0)
+          {
+          hexa1 = thexas [nro]; 
+          hexa1->getCenter (center1);
+          }
+       else if (nro==nbhexas)
+          {
+          hexa1->getCenter (center1);
+          }
+       else 
+          {
+          hexa1 = thexas [nro]; 
+          hexa0->getCenter (center0);
+          hexa1->getCenter (center1);
+          for (int nc=0 ; nc<DIM3 ; nc++)
+              center1[nc] = (center0[nc] + center1[nc])/2;
+          }
+
+       Vertex* node  = nouveaux->getVertex (nro);
+       matrix.defScale (center1, 0.55);
+       matrix.perform  (node);
+       }
+
+   return nouveaux;
+}
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 // ========================================================= prod_vectoriel
 double*  prod_vectoriel (Edge* e1, Edge* e2, double prod[])
 {

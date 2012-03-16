@@ -27,6 +27,7 @@
 #include "GEOM_Gen.idl"
 
 #include "Edge.idl"
+#include "Hexa.idl"
 
 /*!  \ingroup EXAMPLES
 
@@ -371,26 +372,19 @@ module HEXABLOCK_ORB
 
 
     /*!
-        DÃ©connecter des Ã©lÃ©ments du modÃ¨le
+        Deconnecter des elements du modele
     */
-    Elements disconnectQuad( in Hexa h, in Quad q )  //CS_NOT_SPEC
-//     long disconnectQuad( in Hexa h, in Quad q )//CS_NOT_SPEC
-//         raises (SALOME::SALOME_Exception);
-//     Quad disconnectQuad( in Hexa h, in Quad q )//CS_NOT_SPEC
+    Elements disconnectQuad( in Hexa h, in Quad q ) 
         raises (SALOME::SALOME_Exception);
 
-    Elements disconnectEdge( in Hexa h, in Edge e )//CS_NOT_SPEC
+    Elements disconnectEdge( in Hexa h, in Edge e )
 	raises (SALOME::SALOME_Exception);
-//     Elements disconnectEdge( in Hexa h, in Edge e )
-//     long disconnectEdge( in Hexa h, in Edge e ) 
-//     Edge disconnectEdge( in Hexa h, in Edge e ) //CS_NOT_SPEC
-//         raises (SALOME::SALOME_Exception);
 
-    Elements disconnectVertex( in Hexa h, in Vertex v )//CS_NOT_SPEC
-//     long disconnectVertex( in Hexa h, in Vertex v )
-//     Vertex disconnectVertex( in Hexa h, in Vertex v ) //CS_NOT_SPEC
+    Elements disconnectVertex( in Hexa h,  in Vertex v )
         raises (SALOME::SALOME_Exception);
 
+    Elements disconnectEdges( in Hexas th, in Edges te )
+	raises (SALOME::SALOME_Exception);
 
     /*!
         Couper des hexaÃ¨dres du modÃ¨le

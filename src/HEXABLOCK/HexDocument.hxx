@@ -128,9 +128,10 @@ public :
    void   setTolerance (double tol) { doc_tolerance = std::max (tol, 0.0); }
    double getTolerance ()           { return doc_tolerance; }
 
-   Elements* disconnectQuad   (Hexa* maille, Quad*   face);
-   Elements* disconnectEdge   (Hexa* maille, Edge*   arete);
-   Elements* disconnectVertex (Hexa* maille, Vertex* noeud);
+   Elements* disconnectQuad   (Hexa*  maille, Quad*   face);
+   Elements* disconnectEdge   (Hexa*  maille, Edge*   arete);
+   Elements* disconnectVertex (Hexa*  maille, Vertex* noeud);
+   Elements* disconnectEdges  (Hexas& thexas, Edges&  edges);
 
    Elements* cut (Edge* edge, int nbcuts);
 

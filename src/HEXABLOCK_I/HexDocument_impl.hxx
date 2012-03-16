@@ -118,30 +118,22 @@ public:
   Elements_ptr joinQuad(Quad_ptr qa, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
   Elements_ptr joinQuads(const Quads& qds, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2, ::CORBA::Long nb) throw (SALOME::SALOME_Exception);
 
-//CS_NOT_SPEC
-//   Elements_ptr mergeQuads(Quad_ptr qa, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2) throw (SALOME::SALOME_Exception);
-//   Elements_ptr mergeEdges(Edge_ptr e1, Edge_ptr e2, Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
-//   Elements_ptr mergeVertices(Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
-
-
   ::CORBA::Long mergeQuads(Quad_ptr qa, Quad_ptr qb, Vertex_ptr va1, Vertex_ptr vb1, Vertex_ptr va2, Vertex_ptr vb2) throw (SALOME::SALOME_Exception);
   ::CORBA::Long mergeEdges(Edge_ptr e1, Edge_ptr e2, Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
   ::CORBA::Long mergeVertices(Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
 
-  Elements_ptr disconnectQuad(Hexa_ptr h, Quad_ptr q) throw (SALOME::SALOME_Exception);
-//   Elements_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e) throw (SALOME::SALOME_Exception);
-//   Elements_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v) throw (SALOME::SALOME_Exception);
-//   ::CORBA::Long disconnectQuad(Hexa_ptr h, Quad_ptr q) throw (SALOME::SALOME_Exception);
-//   Quad_ptr disconnectQuad(Hexa_ptr h, Quad_ptr q) throw (SALOME::SALOME_Exception);
-//   ::CORBA::Long disconnectEdge(Hexa_ptr h, Edge_ptr e) throw (SALOME::SALOME_Exception);
-//   Edge_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e) throw (SALOME::SALOME_Exception);
-  Elements_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e) throw (SALOME::SALOME_Exception);
-//   ::CORBA::Long disconnectVertex(Hexa_ptr h, Vertex_ptr v) throw (SALOME::SALOME_Exception);
-  Elements_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v) throw (SALOME::SALOME_Exception);
-//   Vertex_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v) throw (SALOME::SALOME_Exception);
+  Elements_ptr disconnectQuad(Hexa_ptr h, Quad_ptr q) 
+               throw (SALOME::SALOME_Exception);
+  Elements_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e) 
+               throw (SALOME::SALOME_Exception);
+  Elements_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v) 
+               throw (SALOME::SALOME_Exception);
+
+  Elements_ptr disconnectEdges(const Hexas& th, const Edges& e) 
+               throw (SALOME::SALOME_Exception);
 
   Elements_ptr cut(Edge_ptr e, ::CORBA::Long nb_of_cuts) throw (SALOME::SALOME_Exception);
-//   Elements_ptr makeTranslation(Element_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);//CS_Bruno
+
   Elements_ptr makeTranslation(Elements_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);
 
 Elements_ptr makeRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, 

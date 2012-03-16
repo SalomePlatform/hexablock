@@ -327,12 +327,12 @@ int test_prism (int nbargs, cpchar tabargs[])
        tlen.push_back (dh);
        }
    
+   const int nbiter = 5;
    doc->saveVtk ("prisme1.vtk");
-   Hex::Elements* prisme2 = doc->prismQuads    (liste2, dir2, 5);
+   Hex::Elements* prisme2 = doc->prismQuads    (liste2, dir2, nbiter);
    doc->saveVtk ("prisme2.vtk");
 
    Hex::Elements* prisme1 = doc->prismQuadsVec (liste1, dir1, tlen, 0);
-   doc->saveVtk ("prisme3.vtk");
 
    PutData (liste1.size());
    PutData (tlen.size());
@@ -340,7 +340,14 @@ int test_prism (int nbargs, cpchar tabargs[])
    PutData (prisme1->countQuad());
    PutData (prisme1->countEdge());
    PutData (prisme1->countVertex());
+   
+   for (int nro=0 ; nro <nbiter  ; nro++)
+       {
+       Hex::Hexa* cell = prisme2-> getHexa (nbiter+nro);
+       cell->setScalar (5);
+       }
 
+   doc->saveVtk ("prisme3.vtk");
    return HOK;
 }
 // ======================================================== test_revolution9
@@ -1380,6 +1387,51 @@ int test_disconnect2 (int nbargs, cpchar tabargs[])
    doc->setLevel (4);
    return HOK;
 }
+// ======================================================== test_disconnect4
+// === Disconnect Edges
+int test_disconnect4 (int nbargs, cpchar tabargs[])
+{
+   const int size_x = 2;
+   const int size_y = 2;
+   const int size_z = 5;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+
+   Hex::Vertex*   orig2 = doc->addVertex (0,0,0);
+   Hex::Vector*   dir   = doc->addVector (1,1,1);
+   Hex::Elements* grid2 = doc->makeCartesian (orig2, dir, size_x,size_y,size_z);
+
+   // doc->dump ();
+
+   int nvtk = 0;
+   doc->setLevel (1);
+
+   Hex::Hexas t_hexas;
+   Hex::Edges t_edges;
+   for (int nk=1 ; nk< size_z-1; nk++)
+       {
+       Hex::Hexa* hexa2 = grid2->getHexaIJK (1,1,nk);
+       Hex::Edge* edge  = grid2->getEdgeK   (1,2,nk);
+
+       hexa2->setScalar  (2);
+       edge->setScalar   (5);
+       t_hexas.push_back (hexa2);
+       t_edges.push_back (edge);
+
+       doc->setLevel (4);
+
+       }
+
+   doc->saveVtk ("test_disco", nvtk);
+   Hex::Elements* disco_edges =  doc->disconnectEdges (t_hexas, t_edges);
+   doc->saveVtk ("test_disco", nvtk);
+   // doc->dump ();
+   // hexa2->dumpFull ();
+
+   doc->setLevel (4);
+   return HOK;
+}
 // ======================================================== test_disconnect
 // ==== Disconnect Quad
 int test_disconnect1 (int nbargs, cpchar tabargs[])
@@ -1417,7 +1469,7 @@ int test_disconnect1 (int nbargs, cpchar tabargs[])
    doc->save  ("disco_all");
    return HOK;
 }
-// ======================================================== test_disconnect
+// ======================================================== test_disconnect3
 // ==== disconnectVertex
 int test_disconnect3 (int nbargs, cpchar tabargs[])
 {
@@ -1456,8 +1508,7 @@ int test_disconnect3 (int nbargs, cpchar tabargs[])
    doc->save  ("disco_all");
    return HOK;
 }
-// ======================================================== test_disconnect
-// ==== Les 3 disconnect
+// ======================================================== contraction
 void contraction (Hex::Hexa* hexa, Hex::Elements* grid)
 {
    return;
@@ -1527,19 +1578,19 @@ int test_disconnect (int nbargs, cpchar tabargs[])
    Hex::Elements* dq = doc->disconnectQuad (hexa1, quad);
    // doc->performTranslation (dq, ecart);
    //      hexa1 ->transform (&matrice);
-   contraction  (hexa1, dq) ;
+   // contraction  (hexa1, dq) ;
    doc->saveVtk ("test_disco", nvtk);
 
    Hex::Elements* de = doc->disconnectEdge (hexa2, edge);
    // doc->performTranslation (de, ecart);
    //      hexa2->transform (&matrice);
-   contraction  (hexa2, de) ;
+   // contraction  (hexa2, de) ;
    doc->saveVtk ("test_disco", nvtk);
 
    Hex::Elements* dv = doc->disconnectVertex (hexa3, vertex);
    // doc->performTranslation (dv, ecart);
    //      hexa3->transform (&matrice);
-   contraction  (hexa3, dv) ;
+   // contraction  (hexa3, dv) ;
    doc->saveVtk ("test_disco", nvtk);
 
    // doc->dumpPropagation ();

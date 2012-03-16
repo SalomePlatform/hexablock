@@ -986,4 +986,41 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
        }
    return HOK;
 }
+// ====================================================== clearAssociation
+void Elements::clearAssociation  ()
+{
+   int nbelts = tab_vertex.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       {
+       Vertex* elt = tab_vertex[nro];
+       if (elt != NULL && elt->isValid())
+           elt->clearAssociation ();
+       }
+
+   nbelts = tab_edge.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       {
+       Edge* elt = tab_edge[nro];
+       if (elt != NULL && elt->isValid())
+           elt->clearAssociation ();
+       }
+
+   nbelts = tab_quad.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       {
+       Quad* elt = tab_quad[nro];
+       if (elt != NULL && elt->isValid())
+           elt->clearAssociation ();
+       }
+
+/* ***********************************************
+   nbelts = tab_hexa.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       {
+       Hexa* elt = tab_hexa[nro];
+       if (elt != NULL && elt->isValid())
+           elt->clearAssociation ();
+       }
+   *********************************************** */
+}
 END_NAMESPACE_HEXA

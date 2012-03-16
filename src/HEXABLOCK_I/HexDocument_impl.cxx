@@ -1097,9 +1097,8 @@ Elements_ptr Document_impl::joinQuads(const Quads& qdsIn, Quad_ptr qbIn, Vertex_
 }
 
 
-Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) throw (SALOME::SALOME_Exception)
-// ::CORBA::Long Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) throw (SALOME::SALOME_Exception)
-// Quad_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) throw (SALOME::SALOME_Exception)
+Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) 
+             throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
 //   Quad_ptr result = Quad::_nil();
@@ -1118,19 +1117,12 @@ Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) thro
        Elements_impl* servantCorba = new Elements_impl(elements);
        result = servantCorba->_this();
     }
-//     HEXA_NS::Quad* qOut = _document_cpp->disconnectQuad(h, q);
-//     if (qOut != NULL ){
-// 	Quad_impl* servantCorba = new Quad_impl(qOut);
-// 	result = servantCorba->_this();
-//     }
   }
   return result;
 }
 
-
-// Edge_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) throw (SALOME::SALOME_Exception)
-// ::CORBA::Long Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) throw (SALOME::SALOME_Exception)
-Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) throw (SALOME::SALOME_Exception)
+Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) 
+             throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
 
@@ -1149,18 +1141,12 @@ Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) thro
       Elements_impl* servantCorba = new Elements_impl(r);
       result = servantCorba->_this();
     }
-
-//     HEXA_NS::Edge* r = _document_cpp->disconnectEdge(h, e);
-//     Edge_impl* servantCorba = new Edge_impl(r);
-//     return servantCorba->_this();
-
-//     return _document_cpp->disconnectEdge(h, e);
   }
   return result;
 }
 
-// Vertex_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn) throw (SALOME::SALOME_Exception)
-Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn) throw (SALOME::SALOME_Exception)
+Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn) 
+             throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
 
@@ -1179,16 +1165,48 @@ Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn) th
       Elements_impl* servantCorba = new Elements_impl(r);
       result = servantCorba->_this();
     }
-//     HEXA_NS::Vertex* r = _document_cpp->disconnectVertex(h, v);
-//     Vertex_impl* servantCorba = new Vertex_impl(r);
-//     return servantCorba->_this();
-// //     return _document_cpp->disconnectVertex(h, v);
   }
 
   return result;
 }
+// ====================================================== disconnectEdges
+Elements_ptr Document_impl::disconnectEdges (const Hexas& hexas_in, 
+                                             const Edges& edges_in) 
+             throw (SALOME::SALOME_Exception)
+{
+   Elements_ptr result = Elements::_nil();
 
-Elements_ptr Document_impl::cut(Edge_ptr eIn, ::CORBA::Long nb_of_cuts) throw (SALOME::SALOME_Exception)
+   std::vector <HEXA_NS::Hexa*> tab_hexas;
+   for (int i = 0; i < hexas_in.length(); i++) 
+       {
+       Hexa_impl* im_hexa = ::DownCast<Hexa_impl*> ( hexas_in[i] );
+       ASSERT( im_hexa );
+       HEXA_NS::Hexa* un_hexa = im_hexa->GetImpl();
+       tab_hexas.push_back (un_hexa);
+       }
+
+   std::vector <HEXA_NS::Edge*> tab_edges;
+   for (int i = 0; i < edges_in.length(); i++) 
+       {
+       Edge_impl* im_edge = ::DownCast<Edge_impl*> ( edges_in[i] );
+       ASSERT( im_edge );
+       HEXA_NS::Edge* un_edge = im_edge->GetImpl();
+       tab_edges.push_back (un_edge);
+       }
+
+   HEXA_NS::Elements* r = _document_cpp->disconnectEdges (tab_hexas, tab_edges);
+
+   if ( r!= NULL )
+      {
+      Elements_impl* servantCorba = new Elements_impl (r);
+      result = servantCorba->_this();
+      }
+
+  return result;
+}
+// ====================================================== cut
+Elements_ptr Document_impl::cut(Edge_ptr eIn, ::CORBA::Long nb_of_cuts) 
+                            throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
 
@@ -2412,65 +2430,3 @@ void Document_impl::setLevel(::CORBA::Long debug)
 {
     _document_cpp->setLevel (debug);
 }
-// ___________________________________________________________ ini
-
-// HEXA_ORB::HEXA_ORB::Hexas* Document_impl::addCartesian1(HEXA_ORB::Vertex_ptr v, HEXA_ORB::Vector_ptr v1, ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz, ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz)
-//     throw (SALOME::SALOME_Exception)
-// {
-//   HEXA_ORB::HEXA_ORB::Hexas* servantGrid = new HEXA_ORB::HEXA_ORB::Hexas;
-// 
-// //   std::cout<<"v->x()"<< v->x() << std::endl;
-// //   std::cout<<"v->y()"<< v->y() << std::endl;
-// //   std::cout<<"v->z()"<< v->z() << std::endl;
-// //   
-// //   std::cout<<"v1->dx()"<< v1->dx() << std::endl;
-// //   std::cout<<"v1->dy()"<< v1->dy() << std::endl;
-// //   std::cout<<"v1->dz()"<< v1->dz() << std::endl;
-// // 
-// //   HEXA_NS::Vertex* tmpVertex = _document_cpp->vertex( v->x(), v->y(), v->z() );
-// // //   HEXA_NS::Vertex* tmpVertex = new HEXA_NS::Vertex(_document_cpp, v->x(), v->y(), v->z() );
-// //   std::cout<<"tmpVertex OK"<<std::endl;../saved/mains/
-
-// // 
-// // 
-// //   HEXA_NS::Vector* tmpVector = _document_cpp->vector( v1->dx(), v1->dy(), v1->dz() );
-// // //   HEXA_NS::Vector* tmpVector = new HEXA_NS::Vector(_document_cpp, v1->dx(), v1->dy(), v1->dz() );
-// //   std::cout<<"tmpVector OK"<<std::endl;
-// // 
-// // //   HEXA_NS::HEXA_ORB::Hexas* grid = _document_cpp->cartesian( tmpVertex, tmpVector, px, py, pz, mx, my, mz );
-// //   std::cout<<"px->"<<px<<std::endl;
-// //   std::cout<<"py->"<<py<<std::endl;
-// //   std::cout<<"pz->"<<pz<<std::endl;
-// // ../saved/mains/
-
-// //   HEXA_NS::HEXA_ORB::Hexas* grid = _document_cpp->cartesian( tmpVertex, tmpVector, px, py, pz);
-// //   std::cout<<"grid OK"<<std::endl;
-// //   tmpVertex->remove();
-// //   std::cout<<"tmpVertex->remove() OK"<<std::endl;
-// //   tmpVector->remove();
-// //   std::cout<<"tmpVector->remove() OK"<<std::endl;
-// // 
-// // 
-// // 
-// //   HEXA_NS::Hexa *oneHexa = grid->getHexa (0,0,0);
-// //   std::cout<<"grid->getHexa  OK"<<std::endl;
-// // 
-// //   Hexa_impl *servantHexa = new Hexa_impl( oneHexa );
-// //   (*servantGrid)[ 0 ] = servantHexa->_this();
-// // 
-// // // ../saved/mains/
-
-// // //   CORBA::ULong i = 0;
-// // //   for (int nz=0; nz<pz ; nz++){
-// // //     for (int ny=nz+1; ny<py-nz-1 ; ny++){
-// // //       for (int nx=nz+1; nx<px-nz-1 ; nx++){
-// // //         HEXA_NS::Hexa *oneHexa = grid->getHexa (nx, ny, nz);
-// // // //         oneHexa->remove (); CS_TODO ? (not)
-// // //         Hexa_impl *servantHexa = new Hexa_impl( oneHexa );
-// // //         (*servantGrid)[ i++ ] = servantHexa->_this();
-// // //       }
-// // //     }
-// // //   }
-//   return servantGrid;
-// }
-

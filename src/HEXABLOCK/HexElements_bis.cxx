@@ -193,6 +193,40 @@ void Elements::remove ()
        if (tab_hexa[nh] != NULL)
            tab_hexa[nh]->remove();
 }
+// ====================================================== makeCylinder
+int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
+{
+   Vertex* orig = cyl->getBase ();
+   Vector* dir  = cyl->getDirection ();
+   double  ray  = cyl->getRadius ();
+   double  haut = cyl->getHeight ();
+   
+   resize (GR_CYLINDRIC, nr, na, nl);
+   cyl_closed = true;
+   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl, 
+                         nr, na, nl, true);
+   fillGrid ();
+   assoCylinder (orig, dir, 360);
+   return HOK;
+}
+// ====================================================== makePipe
+int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
+{
+   Vertex* orig = cyl->getBase ();
+   Vector* dir  = cyl->getDirection ();
+   double  ray  = cyl->getRadius ();
+   double  haut = cyl->getHeight ();
+   
+   resize (GR_CYLINDRIC, nr, na, nl);
+   cyl_closed = true;
+   makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, false);
+   fillGrid ();
+   assoCylinder (orig, dir, 360);
+   return HOK;
+}
+// 
+// ---------------------------------------- prism Quads
+//
 // ====================================================== prismQuads
 int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
 {
@@ -253,6 +287,43 @@ int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
    for (int nro=0 ; nro<nbcells ; nro++)
        {
        prismHexas (nro, tstart[nro], nbiter);
+       }
+   nbr_hexas  = tab_hexa.size ();
+   nbr_edges  = tab_edge.size ();
+   nbr_quads  = tab_quad.size ();
+   nbr_vertex = tab_vertex.size ();
+   return HOK;
+}
+// ======================================================== revolutionQuads
+int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
+                               RealVector &angles)
+{
+   int nbiter = angles.size();
+   if (center==NULL  || axis==NULL || nbiter==0)
+      return HERR;
+
+   el_root->markAll (NO_USED);
+   int nbcells   = start.size ();
+   nbr_vertex    = 0;
+   nbr_edges     = 0;
+
+   nbr_hexas   = nbcells*nbiter;
+
+   tab_hexa.resize (nbr_hexas);
+   tab_quad.clear ();          // verticaux
+   tab_edge.clear ();
+   tab_pilier.clear ();
+   tab_vertex.clear ();
+
+   revo_lution  = true;
+   prism_vec    = false;
+   revo_axis    = axis;
+   revo_center  = center;
+   gen_values = angles;
+
+   for (int nro=0 ; nro<nbcells ; nro++)
+       {
+       prismHexas (nro, start[nro], nbiter);
        }
    nbr_hexas  = tab_hexa.size ();
    nbr_edges  = tab_edge.size ();
@@ -385,37 +456,6 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
        }
    return HOK;
 }
-// ====================================================== makeCylinder
-int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
-{
-   Vertex* orig = cyl->getBase ();
-   Vector* dir  = cyl->getDirection ();
-   double  ray  = cyl->getRadius ();
-   double  haut = cyl->getHeight ();
-   
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl, 
-                         nr, na, nl, true);
-   fillGrid ();
-   assoCylinder (orig, dir, 360);
-   return HOK;
-}
-// ====================================================== makePipe
-int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
-{
-   Vertex* orig = cyl->getBase ();
-   Vector* dir  = cyl->getDirection ();
-   double  ray  = cyl->getRadius ();
-   double  haut = cyl->getHeight ();
-   
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, false);
-   fillGrid ();
-   assoCylinder (orig, dir, 360);
-   return HOK;
-}
 // ====================================================== updateMatrix
 void Elements::updateMatrix (int hauteur)
 {
@@ -433,5 +473,4 @@ void Elements::updateMatrix (int hauteur)
       gen_matrix.defTranslation (decal);
       }
 }
-
 END_NAMESPACE_HEXA
