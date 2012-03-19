@@ -239,6 +239,7 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
 
    tab_hexa.resize (nbr_hexas);
    tab_quad.clear ();          // verticaux
+   ker_hquad.clear ();         // Horizontaux
    tab_edge.clear ();
    tab_pilier.clear ();
    tab_vertex.clear ();
@@ -251,10 +252,8 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
        {
        prismHexas (nro, tstart[nro], nbiter);
        }
-   nbr_hexas  = tab_hexa.size ();
-   nbr_edges  = tab_edge.size ();
-   nbr_quads  = tab_quad.size ();
-   nbr_vertex = tab_vertex.size ();
+
+   endPrism ();
    return HOK;
 }
 // ====================================================== prismQuadsVec
@@ -274,6 +273,7 @@ int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
 
    tab_hexa.resize (nbr_hexas);
    tab_quad.clear ();          // verticaux
+   ker_hquad.clear ();         // Horizontaux
    tab_edge.clear ();
    tab_pilier.clear ();
    tab_vertex.clear ();
@@ -288,10 +288,8 @@ int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
        {
        prismHexas (nro, tstart[nro], nbiter);
        }
-   nbr_hexas  = tab_hexa.size ();
-   nbr_edges  = tab_edge.size ();
-   nbr_quads  = tab_quad.size ();
-   nbr_vertex = tab_vertex.size ();
+
+   endPrism ();
    return HOK;
 }
 // ======================================================== revolutionQuads
@@ -311,6 +309,7 @@ int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
 
    tab_hexa.resize (nbr_hexas);
    tab_quad.clear ();          // verticaux
+   ker_hquad.clear ();         // Horizontaux
    tab_edge.clear ();
    tab_pilier.clear ();
    tab_vertex.clear ();
@@ -325,10 +324,8 @@ int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
        {
        prismHexas (nro, start[nro], nbiter);
        }
-   nbr_hexas  = tab_hexa.size ();
-   nbr_edges  = tab_edge.size ();
-   nbr_quads  = tab_quad.size ();
-   nbr_vertex = tab_vertex.size ();
+
+   endPrism ();
    return HOK;
 }
 // ====================================================== prismHexas
@@ -452,6 +449,7 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
 
 // *** tab_hexa [nh*hauteur + nro] = newHexa (qa, qb, qc, qd, qe, qf); Abu 
        tab_hexa [nro*hauteur + nh] = newHexa (qa, qb, qc, qd, qe, qf);
+       ker_hquad.push_back (qb);
        qa = qb;
        }
    return HOK;
@@ -472,5 +470,22 @@ void Elements::updateMatrix (int hauteur)
           decal [nc] = prism_dir [nc]*dh; 
       gen_matrix.defTranslation (decal);
       }
+}
+// ====================================================== endPrism
+void Elements::endPrism ()
+{
+   int nbelts = ker_hquad.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       tab_quad.push_back (ker_hquad[nro]);
+
+   nbelts = tab_pilier.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       tab_edge.push_back (tab_pilier[nro]);
+
+
+   nbr_hexas  = tab_hexa.size ();
+   nbr_edges  = tab_edge.size ();
+   nbr_quads  = tab_quad.size ();
+   nbr_vertex = tab_vertex.size ();
 }
 END_NAMESPACE_HEXA

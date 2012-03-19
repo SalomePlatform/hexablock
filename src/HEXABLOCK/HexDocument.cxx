@@ -972,11 +972,29 @@ CrossElements* Document::makePipes (Pipe* pipe1, Pipe* pipe2)
    grille->crossCylinders (pipe1, pipe2, false);
    return grille;
 }
+// ======================================================== setName
+int Document::setName (const char* name)
+{
+   doc_name = name ;
+   return HOK ;
+}
+
 // ======================================================== setLevel
-void set_debug_asso (bool boule);
+
+#undef _TEST_BIC
+class BiCylinder;
+
+BiCylinder* test_bicylinder (Document* docu, int option);
+void        set_debug_asso  (bool boule);
+
 void Document::setLevel (int niv)
 {
    doc_db = niv;
    set_debug_asso (niv>0);
+
+#ifdef _TEST_BIC
+   if (niv >=90 && niv <=99)
+      test_bicylinder (this, niv-90);
+#endif
 }
 END_NAMESPACE_HEXA

@@ -275,14 +275,11 @@ void HEXABLOCK_Gen_i::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
 
 Document_ptr HEXABLOCK_Gen_i::addDocument(const char* name)
 {
-//     MESSAGE("ADD1");
-//     HEXA_NS::Document *doc=_engine_cpp->addDocument();
-//     MESSAGE("ADD2");
-//     Document_impl *servantCorba=new Document_impl( GetPOA(), doc);
-//     MESSAGE("ADD3");
-//     return servantCorba->_this();
+   // HEXA_NS::Document *doc=_engine_cpp->addDocument (name);
+   // Document_impl *servantCorba=new Document_impl( GetPOA(), doc);
+   // return servantCorba->_this();
 
-    return createDocInStudy(name);
+   return createDocInStudy(name);
 }
 
 

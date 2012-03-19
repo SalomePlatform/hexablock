@@ -747,8 +747,8 @@ SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PublishDoc ( SALOMEDS::Study_ptr     theS
     if ( aDocSO->_is_nil() )
       return aDocSO._retn();
   }
-  std::string docName = SetName( aDocSO, theName, theDoc->getName()/*"Doc"*/ );
-  theDoc->setName( docName.c_str() );
+  std::string docName = SetName( aDocSO, theName, theDoc->getName()); // Bph 
+  // theDoc->setName( docName.c_str() );                              // Abu
 
   // Add shape reference
 //   GEOM::GEOM_Object_var aShapeObject = theMesh->GetShapeToMesh();

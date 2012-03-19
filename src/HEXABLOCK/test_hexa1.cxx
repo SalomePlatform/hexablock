@@ -1409,7 +1409,7 @@ int test_disconnect4 (int nbargs, cpchar tabargs[])
 
    Hex::Hexas t_hexas;
    Hex::Edges t_edges;
-   for (int nk=1 ; nk< size_z-1; nk++)
+   for (int nk=0 ; nk< size_z; nk++)
        {
        Hex::Hexa* hexa2 = grid2->getHexaIJK (1,1,nk);
        Hex::Edge* edge  = grid2->getEdgeK   (1,2,nk);

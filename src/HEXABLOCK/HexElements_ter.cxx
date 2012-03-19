@@ -202,9 +202,6 @@ void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle,
    int    na      = t_angles.size();
    bool   regul   = na == 0;
    double alpha   = angle/size_hy;
-                  // On n'associe pas la couche la plus interne
-                  // Si le cylindre est plein.
-   int    nx0     = cyl_fill ? 1 : 0; 
 
    string brep;
    Real3 vk = { normal->getDx(), normal->getDy(), normal->getDz() };
@@ -212,7 +209,7 @@ void Elements::assoCylinders (Vertex* ori, Vector* normal, double angle,
 
    for (int nz=0 ; nz<size_vz ; nz++)
        {
-       for (int nx=nx0 ; nx<size_vx ; nx++)
+       for (int nx=0 ; nx<size_vx ; nx++)
            {
            Vertex* pm = getVertexIJK (nx, 0, nz); 
            Real3   om = { pm->getX() - ori->getX(), 

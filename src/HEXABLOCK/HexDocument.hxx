@@ -34,7 +34,7 @@ public :
                                    // Fonctions globales
    const char* getName ()              { return doc_name.c_str() ; }
    bool        isSaved ()              { return doc_saved ; } 
-   int setName (const char* name)      { doc_name = name ; return HOK ; }
+   int setName (const char* name);
    int save    (const char* ficxml);
 
    int  getLevel ()                    { return doc_db ; }

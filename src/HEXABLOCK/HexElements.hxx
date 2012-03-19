@@ -185,6 +185,7 @@ protected :
 
                                         // Evols Hexa4 
    void  updateMatrix (int hauteur);
+   void  endPrism ();
 
 protected :
  
@@ -253,7 +254,7 @@ protected :
     int   gr_hauteur;            // Joint
     int   nbr_secteurs;          // Cyl
 
-    bool     cyl_closed;         // Angre = 180 degres
+    bool     cyl_closed;         // Angle = 180 degres
     bool     cyl_fill;           // Interieur rempli
     EnumCyl  cyl_dispo;          // Type de remplissage
 
