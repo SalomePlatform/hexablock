@@ -725,7 +725,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 //   _patternDataTreeView->setMinimumHeight(DW_MINIMUM_WIDTH); 
 
   _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers/*QAbstractItemView::DoubleClicked*/);
-  _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection);//QAbstractItemView::DoubleClicked, QAbstractItemView::SelectedClicked)
+  _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection/*QAbstractItemView::MultiSelection*/);//);//QAbstractItemView::DoubleClicked, QAbstractItemView::SelectedClicked)
   _patternDataTreeView->setItemDelegate(_treeViewDelegate);
 
 
@@ -772,6 +772,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   _meshTreeView = new QTreeView(_dwMesh);
   //   _meshTreeView->setMinimumHeight(DW_MINIMUM_WIDTH);
   _meshTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+  _meshTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
   _meshTreeView->setItemDelegate(_treeViewDelegate);
   _dwMesh->setWidget(_meshTreeView);
   _meshTreeView->show();
@@ -1362,27 +1363,28 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
 
     _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
-    _patternDataTreeView->setEditTriggers(QAbstractItemView::EditKeyPressed/*QAbstractItemView::AllEditTriggers*/ /*QAbstractItemView::NoEditTriggers*/);
+    _patternDataTreeView->setEditTriggers(/*QAbstractItemView::EditKeyPressed*/QAbstractItemView::AllEditTriggers /*QAbstractItemView::NoEditTriggers*/);
 
     _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
     _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     _groupsTreeView->setSelectionModel(_groupsSelectionModel);
-//     _groupsTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _groupsTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     _meshTreeView->setSelectionModel( _meshSelectionModel );
+    _meshTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
 
     // delegate for edition
     _treeViewDelegate->setDocumentModel( _currentModel );
     _treeViewDelegate->setPatternDataSelectionModel( _patternDataSelectionModel );
     _treeViewDelegate->setPatternBuilderSelectionModel( _patternBuilderSelectionModel );
-    _treeViewDelegate->setGroupSelectionModel( _groupsTreeView->selectionModel() );
-    _treeViewDelegate->setMeshSelectionModel( _meshTreeView->selectionModel() );
+    _treeViewDelegate->setGroupsSelectionModel( _groupsSelectionModel /*_groupsTreeView->selectionModel()*/ );
+    _treeViewDelegate->setMeshSelectionModel( _meshSelectionModel/*_meshTreeView->selectionModel()*/ );
 
     currentVtkView = dynamic_cast<SVTK_ViewWindow*>( _currentGraphicView->get_SUIT_ViewWindow() );
-
   }
+
   showPatternMenus(true);
 }
 
@@ -1523,9 +1525,9 @@ int nl = 3;
 
 }
 
+
 void HEXABLOCKGUI::test_make_elmts_transform()
 {
-
 
 int size_x = 1;
 int size_y = 1;
@@ -1797,17 +1799,17 @@ void HEXABLOCKGUI::newDocument()
 
   _currentGraphicView->setSelectionModel(_patternDataSelectionModel);
   _patternDataTreeView->setSelectionModel(_patternDataSelectionModel);
-//   _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection); QAbstractItemView::MultiSelection //CS_TEST
+  _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection); //QAbstractItemView::MultiSelection //CS_TEST
   _patternBuilderTreeView->setSelectionModel(_patternBuilderSelectionModel);
   _groupsTreeView->setSelectionModel(_groupsSelectionModel);
   _meshTreeView->setSelectionModel(_meshSelectionModel);
+  _meshTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
 
   _treeViewDelegate->setDocumentModel( _currentModel );
   _treeViewDelegate->setPatternDataSelectionModel( _patternDataSelectionModel );
   _treeViewDelegate->setPatternBuilderSelectionModel( _patternBuilderSelectionModel );
-  _treeViewDelegate->setGroupSelectionModel( _groupsTreeView->selectionModel() );
-  _treeViewDelegate->setMeshSelectionModel( _meshTreeView->selectionModel() );
-
+  _treeViewDelegate->setGroupsSelectionModel( _groupsSelectionModel/*_groupsTreeView->selectionModel()*/ );
+  _treeViewDelegate->setMeshSelectionModel( _meshSelectionModel/*_meshTreeView->selectionModel()*/ );
 
   // salome view/object browser/model management
   _documentModels[ suitVW ] = _currentModel;
@@ -1817,6 +1819,7 @@ void HEXABLOCKGUI::newDocument()
 
   _salomeViewWindows[docEntry] = suitVW;
   currentVtkView = dynamic_cast<SVTK_ViewWindow*>( _currentGraphicView->get_SUIT_ViewWindow() );
+  currentVtkView->raise();
 //   showDockWidgets(true);
 //   showPatternMenus
 //   _dwPattern->setVisible(true);
@@ -1827,6 +1830,25 @@ void HEXABLOCKGUI::newDocument()
 //   test_make_elmts_transform();
   showAllMenus();
   getApp()->updateObjectBrowser();
+
+}
+
+
+void HEXABLOCKGUI::slot_modelChanged(const QModelIndex &topLeft, const QModelIndex  &bottomRight)
+{
+  std::cout << "HHHHHHHHHHHHHHHHHH  Model changed." << std::endl;
+  std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
+  std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+
+  _patternDataTreeView->openPersistentEditor( topLeft );
+ 
+//   // Make the combo boxes always displayed.
+//   for ( int i = 0; i < _currentModel->rowCount(); ++i )
+//     {
+//       QModelIndex ind = _currentModel->index(i);
+//     _patternDataTreeView->openPersistentEditor( ind );
+//     std::cout << "ind" << ind.data() << std::endl;
+//     }
 }
 
 
@@ -1853,7 +1875,10 @@ void HEXABLOCKGUI::loadDocument( const QString &inFile )
   if (! selectedFile.isEmpty()){
     newDocument();
     _currentModel->load(selectedFile);
+    renameObject( _currentModel->documentEntry(), _currentModel->getName() );
   }
+
+
 }
 void HEXABLOCKGUI::saveDocument()
 {
@@ -1891,7 +1916,8 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
-  diag->setMeshSelectionModel(_meshTreeView->selectionModel());
+  diag->setGroupsSelectionModel(_groupsSelectionModel);
+  diag->setMeshSelectionModel(_meshSelectionModel/*_meshTreeView->selectionModel()*/);
   diag->setFocus();
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle(diag->windowTitle());
@@ -1901,7 +1927,7 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 void HEXABLOCKGUI::addVertex()
 {
   if ( !_vertexDiag ){
-    _vertexDiag = new VertexDialog(_dwInputPanel);
+    _vertexDiag = new VertexDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _vertexDiag );
 }
@@ -1909,7 +1935,7 @@ void HEXABLOCKGUI::addVertex()
 void HEXABLOCKGUI::addEdge()
 {
   if ( !_edgeDiag ){
-    _edgeDiag = new EdgeDialog( _dwInputPanel, true );
+    _edgeDiag = new EdgeDialog( _dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _edgeDiag );
 }
@@ -1920,7 +1946,7 @@ void HEXABLOCKGUI::addEdge()
 void HEXABLOCKGUI::addQuad()
 {
   if ( !_quadDiag ){
-    _quadDiag = new QuadDialog(_dwInputPanel, true);
+    _quadDiag = new QuadDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _quadDiag );
 }
@@ -1928,7 +1954,7 @@ void HEXABLOCKGUI::addQuad()
 void HEXABLOCKGUI::addHexa()
 {
   if ( !_hexaDiag ){
-    _hexaDiag = new HexaDialog(_dwInputPanel, true);
+    _hexaDiag = new HexaDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _hexaDiag );
 }
@@ -1936,7 +1962,7 @@ void HEXABLOCKGUI::addHexa()
 void HEXABLOCKGUI::addVector()
 {
   if ( !_vectorDiag ){
-    _vectorDiag = new VectorDialog(_dwInputPanel, true);
+    _vectorDiag = new VectorDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _vectorDiag );
 }
@@ -1944,7 +1970,7 @@ void HEXABLOCKGUI::addVector()
 void HEXABLOCKGUI::addCylinder()
 {
   if ( !_cylinderDiag ){
-    _cylinderDiag = new CylinderDialog(_dwInputPanel, true);
+    _cylinderDiag = new CylinderDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _cylinderDiag );
 }
@@ -1953,7 +1979,7 @@ void HEXABLOCKGUI::addCylinder()
 void HEXABLOCKGUI::addPipe()
 { 
   if ( !_pipeDiag){
-    _pipeDiag = new PipeDialog(_dwInputPanel, true);
+    _pipeDiag = new PipeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _pipeDiag );
 }
@@ -1962,7 +1988,7 @@ void HEXABLOCKGUI::addPipe()
 void HEXABLOCKGUI::makeGrid()
 { 
   if ( !_makeGridDiag ){
-    _makeGridDiag = new MakeGridDialog(_dwInputPanel, true);
+    _makeGridDiag = new MakeGridDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeGridDiag );
 }
@@ -1971,7 +1997,7 @@ void HEXABLOCKGUI::makeGrid()
 void HEXABLOCKGUI::makeCylinder()
 {
   if ( !_makeCylinderDiag ){
-    _makeCylinderDiag = new MakeCylinderDialog(_dwInputPanel, true);
+    _makeCylinderDiag = new MakeCylinderDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeCylinderDiag );
 }
@@ -1979,7 +2005,7 @@ void HEXABLOCKGUI::makeCylinder()
 void HEXABLOCKGUI::makePipe()
 {
   if ( !_makePipeDiag ){
-    _makePipeDiag = new MakePipeDialog(_dwInputPanel, true);
+    _makePipeDiag = new MakePipeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makePipeDiag );
 }
@@ -1987,7 +2013,7 @@ void HEXABLOCKGUI::makePipe()
 void HEXABLOCKGUI::makeCylinders()
 {
   if ( !_makeCylindersDiag ){
-    _makeCylindersDiag = new MakeCylindersDialog(_dwInputPanel, true);
+    _makeCylindersDiag = new MakeCylindersDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeCylindersDiag );
 }
@@ -1995,7 +2021,7 @@ void HEXABLOCKGUI::makeCylinders()
 void HEXABLOCKGUI::makePipes()
 {
   if ( !_makePipesDiag ){
-    _makePipesDiag = new MakePipesDialog(_dwInputPanel, true);
+    _makePipesDiag = new MakePipesDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makePipesDiag );
 }
@@ -2004,7 +2030,7 @@ void HEXABLOCKGUI::makePipes()
 void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
 {
   if ( !_makeHemiSphereDiag ){
-    _makeHemiSphereDiag = new MakeHemiSphereDialog(_dwInputPanel, true);
+    _makeHemiSphereDiag = new MakeHemiSphereDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeHemiSphereDiag );
 }
@@ -2013,7 +2039,7 @@ void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
 void HEXABLOCKGUI::removeHexa()
 {
   if ( !_removeHexaDiag ){
-    _removeHexaDiag = new RemoveHexaDialog(_dwInputPanel, true);
+    _removeHexaDiag = new RemoveHexaDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _removeHexaDiag );
 }
@@ -2022,7 +2048,7 @@ void HEXABLOCKGUI::removeHexa()
 void HEXABLOCKGUI::prismQuad()
 {
   if ( !_prismQuadDiag ){
-    _prismQuadDiag = new PrismQuadDialog(_dwInputPanel, true);
+    _prismQuadDiag = new PrismQuadDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _prismQuadDiag );
 }
@@ -2031,7 +2057,7 @@ void HEXABLOCKGUI::prismQuad()
 void HEXABLOCKGUI::joinQuad()
 {
   if ( !_joinQuadDiag ){
-    _joinQuadDiag = new JoinQuadDialog(_dwInputPanel, true);
+    _joinQuadDiag = new JoinQuadDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _joinQuadDiag );
 }
@@ -2039,7 +2065,7 @@ void HEXABLOCKGUI::joinQuad()
 void HEXABLOCKGUI::merge()
 {
   if ( !_mergeDiag ){
-    _mergeDiag = new MergeDialog(_dwInputPanel, true);
+    _mergeDiag = new MergeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _mergeDiag );
 }
@@ -2047,7 +2073,7 @@ void HEXABLOCKGUI::merge()
 void HEXABLOCKGUI::disconnectElts()
 {
   if ( !_disconnectDiag ){
-    _disconnectDiag = new DisconnectDialog(_dwInputPanel, true);
+    _disconnectDiag = new DisconnectDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _disconnectDiag );
 }
@@ -2055,7 +2081,7 @@ void HEXABLOCKGUI::disconnectElts()
 void HEXABLOCKGUI::cutEdge()
 {
   if ( !_cutEdgeDiag ){
-    _cutEdgeDiag = new CutEdgeDialog(_dwInputPanel, true);
+    _cutEdgeDiag = new CutEdgeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _cutEdgeDiag );
 }
@@ -2063,7 +2089,7 @@ void HEXABLOCKGUI::cutEdge()
 void HEXABLOCKGUI::makeTransformation()
 {
   if ( !_makeTransformationDiag ){
-    _makeTransformationDiag = new MakeTransformationDialog(_dwInputPanel, true);
+    _makeTransformationDiag = new MakeTransformationDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeTransformationDiag );
 }
@@ -2072,7 +2098,7 @@ void HEXABLOCKGUI::makeTransformation()
 void HEXABLOCKGUI::makeSymmetry()
 {
   if ( !_makeSymmetryDiag ){
-    _makeSymmetryDiag = new MakeSymmetryDialog(_dwInputPanel, true);
+    _makeSymmetryDiag = new MakeSymmetryDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _makeSymmetryDiag );
 }
@@ -2081,7 +2107,7 @@ void HEXABLOCKGUI::makeSymmetry()
 void HEXABLOCKGUI::performTransformation()
 {
   if ( !_performTransformationDiag ){
-    _performTransformationDiag = new PerformTransformationDialog(_dwInputPanel, true);
+    _performTransformationDiag = new PerformTransformationDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _performTransformationDiag );
 }
@@ -2090,7 +2116,7 @@ void HEXABLOCKGUI::performTransformation()
 void HEXABLOCKGUI::performSymmetry()
 {
   if ( !_performSymmetryDiag ){
-    _performSymmetryDiag = new PerformSymmetryDialog(_dwInputPanel, true);
+    _performSymmetryDiag = new PerformSymmetryDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _performSymmetryDiag );
 }
@@ -2099,7 +2125,7 @@ void HEXABLOCKGUI::performSymmetry()
 void HEXABLOCKGUI::replaceHexa()    // NEW HEXA3
 {
   if ( !_replaceHexaDiag ){
-    _replaceHexaDiag = new ReplaceHexaDialog(_dwInputPanel, true);
+    _replaceHexaDiag = new ReplaceHexaDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _replaceHexaDiag );
 }
@@ -2108,7 +2134,7 @@ void HEXABLOCKGUI::replaceHexa()    // NEW HEXA3
 void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
 {
   if ( !_quadRevolutionDiag ){
-    _quadRevolutionDiag = new QuadRevolutionDialog(_dwInputPanel, true);
+    _quadRevolutionDiag = new QuadRevolutionDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _quadRevolutionDiag );
 }
@@ -2117,7 +2143,7 @@ void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
 void HEXABLOCKGUI::assocVertex()
 {
   if ( !_vertexAssocDiag ){
-    _vertexAssocDiag = new VertexAssocDialog(_dwInputPanel, true);
+    _vertexAssocDiag = new VertexAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _vertexAssocDiag );
 }
@@ -2125,7 +2151,7 @@ void HEXABLOCKGUI::assocVertex()
 void HEXABLOCKGUI::assocEdge()
 {
   if ( !_edgeAssocDiag ){
-    _edgeAssocDiag = new EdgeAssocDialog(_dwInputPanel, true);
+    _edgeAssocDiag = new EdgeAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _edgeAssocDiag );
 }
@@ -2133,7 +2159,7 @@ void HEXABLOCKGUI::assocEdge()
 void HEXABLOCKGUI::assocQuad()
 {
   if ( !_quadAssocDiag ){
-    _quadAssocDiag = new QuadAssocDialog(_dwInputPanel, true);
+    _quadAssocDiag = new QuadAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _quadAssocDiag );
 }
@@ -2142,7 +2168,7 @@ void HEXABLOCKGUI::assocQuad()
 void HEXABLOCKGUI::addGroup()
 {
   if ( !_groupDiag ){
-    _groupDiag = new GroupDialog(_dwInputPanel, true);
+    _groupDiag = new GroupDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _groupDiag );
 }
@@ -2177,7 +2203,7 @@ void HEXABLOCKGUI::removeGroup()
 void HEXABLOCKGUI::addLaw()
 {
   if ( !_lawDiag ){
-    _lawDiag = new LawDialog(_dwInputPanel, true);
+    _lawDiag = new LawDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _lawDiag );
 }
@@ -2186,9 +2212,11 @@ void HEXABLOCKGUI::removeLaw()
 {
   bool removeLawOK = false;
 
-  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+//   QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+//   QModelIndexList l = meshSelectionModel->selectedIndexes();
 
-  QModelIndexList l = meshSelectionModel->selectedIndexes();
+  QModelIndexList l = _meshSelectionModel->selectedIndexes();
+
   foreach( const QModelIndex& selected, l ){
     if ( selected.data(HEXA_TREE_ROLE) == LAW_TREE ){
       QModelIndex selected = _meshModel->mapToSource( selected );
@@ -2215,16 +2243,18 @@ void HEXABLOCKGUI::setPropagation()
 {
   if (!_dwInputPanel) return;
 
-  QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
-  QModelIndexList l = meshSelectionModel->selectedIndexes();
+//   QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
+//   QModelIndexList l = meshSelectionModel->selectedIndexes();
+  QModelIndexList l = _meshSelectionModel->selectedIndexes();
+
   foreach( const QModelIndex& selected, l ){
     if ( selected.data(HEXA_TREE_ROLE) == PROPAGATION_TREE ){
 //       QModelIndex selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
       HEXA_NS::Propagation* p = selected.data(HEXA_DATA_ROLE).value<HEXA_NS::Propagation *>();
-      PropagationDialog* diag = new PropagationDialog(_dwInputPanel, true);
+      PropagationDialog* diag = new PropagationDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
       diag->setDocumentModel(_currentModel);
-      diag->setMeshSelectionModel(meshSelectionModel);
+      diag->setMeshSelectionModel(_meshSelectionModel);
       diag->setValue(p);
       diag->setFocus();
       _dwInputPanel->setWidget(diag);
@@ -2243,7 +2273,7 @@ void HEXABLOCKGUI::setPropagation()
 void HEXABLOCKGUI::computeMesh()
 {
   if ( !_computeMeshDiag ){
-    _computeMeshDiag = new ComputeMeshDialog(_dwInputPanel, true);
+    _computeMeshDiag = new ComputeMeshDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
   _showDialogBox( _computeMeshDiag );
 }

@@ -69,6 +69,10 @@ namespace HEXABLOCK
         void setHexaSelection();
         void setAllSelection();
 
+        // 
+        QModelIndex  indexBy( int role, const QString&  value );
+        QModelIndex  indexBy( int role, const QVariant& var );
+
         //Salome
         void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
         void SetSelectionMode( Selection_Mode theMode );
@@ -109,6 +113,8 @@ namespace HEXABLOCK
       public:
         GroupsSelectionModel( QAbstractItemModel * model );
         virtual ~GroupsSelectionModel();
+
+        QModelIndex  indexBy( int role, const QVariant& var );
 
       protected slots:
 //         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );

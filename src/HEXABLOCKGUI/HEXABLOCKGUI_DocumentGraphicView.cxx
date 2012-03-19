@@ -24,6 +24,9 @@
 #include <iostream>
 
 #include <math.h>
+
+#include "utilities.h"
+
 #include <QtGui>
 
 
@@ -317,14 +320,16 @@ DocumentGraphicView::~DocumentGraphicView()
 
 void DocumentGraphicView::onPatternDatachanged()
 {
-  std::cout << "DocumentGraphicView::onPatternDatachanged " <<std::endl;
+  MESSAGE("DocumentGraphicView::onPatternDatachanged(){");
   update();
+  MESSAGE("}");
 }
 
 
 void DocumentGraphicView::update()
 {
-  std::cout << "DocumentGraphicView::update()" << std::endl;
+  MESSAGE("DocumentGraphicView::update(){");
+
   SVTK_ViewWindow*    theVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
   PatternDataModel*   theModel         = dynamic_cast<PatternDataModel *>( model() );
   HEXA_NS::Document*  theDocumentImpl  = theModel->documentImpl();
@@ -334,9 +339,10 @@ void DocumentGraphicView::update()
     theVTKViewWindow->RemoveActor( _documentActor );
     _documentActor->Delete();
 //     delete _documentActor;
-    std::cout << "DocumentGraphicView::update() REMOVE PREVIOUS ACTOR" << std::endl;
+    std::cout << "* remove previous actor" << std::endl;
   }
 
+  std::cout << "* create new actor" << std::endl;
   _documentActor = new Document_Actor( theDocumentImpl, theDocumentEntry );
   // display HEXABLOCK document model
   theVTKViewWindow->AddActor( _documentActor );
@@ -346,6 +352,7 @@ void DocumentGraphicView::update()
   // myVTKViewWindow->SetSelectionMode( ActorSelection );
   // theVTKViewWindow->SetSelectionMode( NodeSelection );
   // myVTKViewWindow->SetSelectionMode( FaceSelection );
+  MESSAGE("}");
 }
 
 
@@ -359,13 +366,16 @@ void DocumentGraphicView::update()
 
 QModelIndex DocumentGraphicView::indexAt(const QPoint &point) const
 {
-  std::cout << "CS_BP DocumentGraphicView::indexAt "<<std::endl;
+  MESSAGE("DocumentGraphicView::indexAt(){");
+  MESSAGE("}");
   return QModelIndex();
 }
 
 void DocumentGraphicView::scrollTo(const QModelIndex &index, ScrollHint)
 {
-    std::cout << "CS_BP DocumentGraphicView::scrollTo "<<std::endl;
+  MESSAGE("DocumentGraphicView::scrollTo(){");
+  MESSAGE("*  item   is: " << index.data().toString().toStdString());
+  MESSAGE("}");
 }
 
 /*
@@ -373,28 +383,35 @@ void DocumentGraphicView::scrollTo(const QModelIndex &index, ScrollHint)
 */
 QRect DocumentGraphicView::visualRect(const QModelIndex &index) const
 {
-    std::cout << "CS_BP DocumentGraphicView::visualRect "<<std::endl;
+    MESSAGE("DocumentGraphicView::visualRect(){");
+    MESSAGE("*  item   is: " << index.data().toString().toStdString());
+    MESSAGE("}");
     return QRect();
 }
 
 // PROTECTED :
 int DocumentGraphicView::horizontalOffset() const
 {
-    std::cout << "CS_BP DocumentGraphicView::horizontalOffset "<<std::endl;
+    MESSAGE("DocumentGraphicView::horizontalOffset(){");
+    MESSAGE("}");
     return horizontalScrollBar()->value();
 }
 
-bool DocumentGraphicView::isIndexHidden(const QModelIndex & /*index*/) const
+bool DocumentGraphicView::isIndexHidden(const QModelIndex &index) const
 {
-    std::cout << "CS_BP DocumentGraphicView::isIndexHidden "<<std::endl;
+    MESSAGE("DocumentGraphicView::isIndexHidden(){");
+    MESSAGE("*  item   is: " << index.data().toString().toStdString());
+    MESSAGE("}");
     return false;
 }
 
 QModelIndex DocumentGraphicView::moveCursor(QAbstractItemView::CursorAction cursorAction,
                                             Qt::KeyboardModifiers /*modifiers*/)
 {
-    std::cout << "CS_BP DocumentGraphicView::moveCursor "<<std::endl;
+    MESSAGE("DocumentGraphicView::moveCursor(){");
     QModelIndex current = currentIndex();
+    MESSAGE("*  current  is: " << current.data(Qt::DisplayRole).toString().toStdString());
+    MESSAGE("}");
     return current;
 }
 
@@ -403,13 +420,15 @@ QModelIndex DocumentGraphicView::moveCursor(QAbstractItemView::CursorAction curs
 */
 void DocumentGraphicView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
 {
-    std::cout << "CS_BP DocumentGraphicView::setSelection "<<std::endl;
+    MESSAGE("DocumentGraphicView::setSelection(){");
+    MESSAGE("}");
 }
 
 
 int DocumentGraphicView::verticalOffset() const
 {
-    std::cout << "CS_BP DocumentGraphicView::verticalOffset "<<std::endl;
+    MESSAGE("DocumentGraphicView::verticalOffset(){");
+    MESSAGE("}");
     return verticalScrollBar()->value();
 }
 
@@ -418,7 +437,8 @@ int DocumentGraphicView::verticalOffset() const
 */
 QRegion DocumentGraphicView::visualRegionForSelection(const QItemSelection &selection) const
 {
-    std::cout << "CS_BP DocumentGraphicView::visualRegionForSelection "<<std::endl;
+    MESSAGE("DocumentGraphicView::visualRegionForSelection(){");
+    MESSAGE("}");
     return QRegion();
 }
 
@@ -430,56 +450,78 @@ QRegion DocumentGraphicView::visualRegionForSelection(const QItemSelection &sele
 ********************************************************************************/
 void DocumentGraphicView::closeEditor ( QWidget * editor, QAbstractItemDelegate::EndEditHint hint )
 { 
-  std::cout << "DocumentGraphicView::closeEditor" << std::endl; 
+  MESSAGE("DocumentGraphicView::closeEditor(){");
+  MESSAGE("*  hint is: " << hint);
+  MESSAGE("}");
 }
 
 void DocumentGraphicView::commitData ( QWidget * editor )
 { 
-  std::cout << "DocumentGraphicView::commitData" << std::endl; 
+  MESSAGE("DocumentGraphicView::commitData(){");
+  MESSAGE("}");
 }
 
-void DocumentGraphicView::currentChanged ( const QModelIndex & current, const QModelIndex & previous )
+void DocumentGraphicView::currentChanged( const QModelIndex & current, const QModelIndex & previous )
 { 
-  std::cout << "DocumentGraphicView::currentChanged" << std::endl; 
+  MESSAGE("DocumentGraphicView::currentChanged(){");
+  MESSAGE("*  current  is: " << current.data().toString().toStdString());
+  MESSAGE("*  previous is: " << previous.data().toString().toStdString());
+  MESSAGE("}");
+//   openPersistentEditor( current );
   _currentChanged = true;
 }
 
 void DocumentGraphicView::dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight )
 { 
-  std::cout << "DocumentGraphicView::dataChanged" << std::endl;
-  std::cout << "topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
-  std::cout << "bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  MESSAGE("DocumentGraphicView::dataChanged(){");
+  MESSAGE("*  topLeft     is: " << topLeft.data().toString().toStdString());
+  MESSAGE("*  bottomRight is: " << bottomRight.data().toString().toStdString());
+  MESSAGE("}");
   update();
-//   if ( !_currentChanged )
-//     update(); //CS_TEST
-
   _currentChanged = false;
 //   updateObject(topLeft);
 }
 
 void DocumentGraphicView::editorDestroyed ( QObject * editor )
 { 
-  std::cout << "DocumentGraphicView::editorDestroyed" << std::endl; 
+  MESSAGE("DocumentGraphicView::editorDestroyed(){");
+  MESSAGE("}");
 }
 
 void DocumentGraphicView::rowsAboutToBeRemoved ( const QModelIndex & parent, int start, int end )
 { 
-  std::cout << "DocumentGraphicView::rowsAboutToBeRemoved" << std::endl; 
+  MESSAGE("DocumentGraphicView::rowsAboutToBeRemoved (){");
+  MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
+  MESSAGE("*  start     is: " << start);
+  MESSAGE("*  end       is: " << end);
+  MESSAGE("}");
 }
 
 void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
 { 
-//   std::cout << "DocumentGraphicView::rowsInserted  :  " << parent.data().toString().toStdString() << std::endl;
+  MESSAGE("DocumentGraphicView::rowsInserted(){");
+  MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
+  MESSAGE("*  start     is: " << start);
+  MESSAGE("*  end       is: " << end);
+  MESSAGE("}");
 }
 
-void DocumentGraphicView::selectionChanged ( const QItemSelection & selected, const QItemSelection & deselected )
+void DocumentGraphicView::selectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 { 
-//   std::cout << "DocumentGraphicView::selectionChanged" << std::endl; 
+  MESSAGE("DocumentGraphicView::selectionChanged(){");
+  foreach( const QModelIndex& isel, selected.indexes() ){
+    MESSAGE("*  selected : " << isel.data().toString().toStdString());
+  }
+  foreach( const QModelIndex& iunsel, deselected.indexes() ){
+    MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
+  }
+  MESSAGE("}");
 }
 
 void DocumentGraphicView::updateGeometries ()
 { 
-//   std::cout << "DocumentGraphicView::updateGeometries " << std::endl; 
+  MESSAGE("DocumentGraphicView::updateGeometries (){");
+  MESSAGE("}");
 }
 
 

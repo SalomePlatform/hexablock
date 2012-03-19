@@ -59,6 +59,8 @@ Q_DECLARE_METATYPE( HEXA_NS::Group* );
 Q_DECLARE_METATYPE( HEXA_NS::Law* );
 Q_DECLARE_METATYPE( HEXA_NS::Propagation* );
 
+
+
 // Q_DECLARE_METATYPE( QList<HEXA_NS::Shape*> ); // association
 
 namespace HEXABLOCK
@@ -83,7 +85,7 @@ namespace HEXABLOCK
 
     };
 
-    enum { 
+    enum HexaTreeRole { 
       VERTEX_TREE = 10,
       EDGE_TREE,
       QUAD_TREE,

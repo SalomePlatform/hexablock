@@ -211,6 +211,8 @@ protected:
   static GEOM::GEOM_Gen_var               _geomEngine;
 private slots:
 
+  void slot_modelChanged(const QModelIndex &topLeft, const QModelIndex  &bottomRight);
+
   void treeContextMenu(const QPoint& aPosition);
 
   void test_association();

@@ -351,10 +351,10 @@ namespace HEXABLOCK
 // (idem création)
 
 
-
+      // tools
       HEXA_NS::Document* documentImpl();
       QString            documentEntry();
-      
+//       QModelIndex        indexBy( int role, const QString& value );
 
       signals:
         void patternDataChanged();

@@ -21,6 +21,7 @@
 #include <map>
 
 
+#include "utilities.h"
 
 #include <QtxWorkstack.h>
 #include <STD_TabDesktop.h>
@@ -124,6 +125,7 @@ PatternDataSelectionModel::~PatternDataSelectionModel()
 
 void PatternDataSelectionModel::setVertexSelection()
 {
+  MESSAGE("PatternDataSelectionModel::setVertexSelection(){");
   SetSelectionMode(NodeSelection);
 // //  NodeSelection,
 // //  CellSelection,
@@ -133,30 +135,71 @@ void PatternDataSelectionModel::setVertexSelection()
 // //  VolumeSelection,
 // //  ActorSelection };
   _selectionFilter = VERTEX_TREE;
+  MESSAGE("}");
 }
 
 void PatternDataSelectionModel::setEdgeSelection()
 {
+  MESSAGE("PatternDataSelectionModel::setEdgeSelection(){");
   SetSelectionMode(EdgeSelection);
   _selectionFilter = EDGE_TREE;
+  MESSAGE("}");
 }
 
 void PatternDataSelectionModel::setQuadSelection()
 {
+  MESSAGE("PatternDataSelectionModel::setQuadSelection(){");
   SetSelectionMode(FaceSelection);
   _selectionFilter = QUAD_TREE;
+  MESSAGE("}");
 }
 
 void PatternDataSelectionModel::setHexaSelection()
 {
+  MESSAGE("PatternDataSelectionModel::setHexaSelection(){");
   SetSelectionMode(VolumeSelection);
   _selectionFilter = HEXA_TREE;
+  MESSAGE("}");
 }
 
 
 void PatternDataSelectionModel::setAllSelection()
 {
+  MESSAGE("PatternDataSelectionModel::setAllSelection(){");
   _selectionFilter = -1;
+  MESSAGE("}");
+}
+
+
+QModelIndex PatternDataSelectionModel::indexBy( int role, const QString& value )
+{
+  QModelIndex eltIndex; // element (vertex, edge, quad) of model
+  const QAbstractItemModel* theModel = model();
+  if ( !theModel ) return eltIndex;
+  QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
+                                          role,
+                                          value,
+                                          1,
+                                          Qt::MatchRecursive | Qt::MatchContains );//Qt::MatchFixedString );
+  if ( theIndexes.count()>0 )
+    eltIndex = theIndexes[0] ;
+  return eltIndex;
+}
+
+
+QModelIndex PatternDataSelectionModel::indexBy( int role, const QVariant& var )
+{
+  QModelIndex eltIndex; // element (vertex, edge, quad) of model
+  const QAbstractItemModel* theModel = model();
+  if ( !theModel ) return eltIndex;
+  QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
+                                          role,
+                                          var,
+                                          1,
+                                          Qt::MatchRecursive /*| Qt::MatchContains*/ );//Qt::MatchFixedString );
+  if ( theIndexes.count()>0 )
+    eltIndex = theIndexes[0] ;
+  return eltIndex;
 }
 
 
@@ -169,11 +212,13 @@ void PatternDataSelectionModel::setSalomeSelectionMgr( LightApp_SelectionMgr* mg
 
 void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 {
+  MESSAGE("PatternDataSelectionModel::SetSelectionMode(){");
   SVTK_ViewWindow* aVTKViewWindow = _getVTKViewWindow();
 //   aViewWindow->clearFilters();
 //   _salomeSelectionMgr->clearFilters();
   if ( aVTKViewWindow )
     aVTKViewWindow->SetSelectionMode( theMode );
+  MESSAGE("}");
 }
 
 
@@ -195,15 +240,26 @@ void  PatternDataSelectionModel::SetSelectionMode(Selection_Mode theMode)
 //         -Face: idem vertex
 void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
 {
+  MESSAGE("PatternDataSelectionModel::onCurrentChanged(){");
+  MESSAGE("*  current  : " << current.data().toString().toStdString());
+  MESSAGE("*  previous : " << previous.data().toString().toStdString());
 //   _selectSalome( current, true );
 //   _selectSalome( previous, false );
+  MESSAGE("}");
 }
 
 
 
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  MESSAGE("PatternDataSelectionModel::onSelectionChanged");
+  MESSAGE("PatternDataSelectionModel::onSelectionChanged(){");
+  foreach( const QModelIndex& isel, selected.indexes() ){
+    MESSAGE("*  selected : " << isel.data().toString().toStdString());
+  }
+  foreach( const QModelIndex& iunsel, deselected.indexes() ){
+    MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
+  }
+
   _theModelSelectionChanged = true;
   try {
     if ( _salomeSelectionMgr == NULL ) return;
@@ -225,24 +281,27 @@ void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selec
     MESSAGE("Unknown exception was cought !!!");
   }
   _theModelSelectionChanged = false;
+
+  MESSAGE("}");
 }
 
 
 void PatternDataSelectionModel::salomeSelectionChanged()
 {
-  MESSAGE("PatternDataSelectionModel::salomeSelectionChanged");
+  MESSAGE("PatternDataSelectionModel::salomeSelectionChanged(){");
   try {
     QModelIndex toSelect;
 
     if ( _salomeSelectionMgr == NULL ) return;
     SALOME_ListIO salomeSelected;
   //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
-    _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false ); 
+    _salomeSelectionMgr->selectedObjects( salomeSelected, NULL, false );
     if ( salomeSelected.IsEmpty() ){
+      MESSAGE("*  salomeSelected.IsEmpty()");
       clearSelection();
       return;
     }
-  
+
     Handle(SALOME_InteractiveObject) anIObject;
     SALOME_ListIteratorOfListIO it(salomeSelected);
     for( ; it.More(); it.Next()){
@@ -250,11 +309,16 @@ void PatternDataSelectionModel::salomeSelectionChanged()
       toSelect = _geomSelectionChanged( anIObject );// is it comming from GEOM?
       if ( !toSelect.isValid() ){
         toSelect = _vtkSelectionChanged( anIObject ); ;// or VTK?...
+        if ( toSelect.isValid() )
+          MESSAGE("*  OK : selection from VTK");
+      } else {
+        MESSAGE("*  OK : selection from GEOM");
       }
     }
   } catch ( ... ) {
-    MESSAGE("Unknown exception was cought !!!");
+    MESSAGE("*  Unknown exception was cought !!!");
   }
+  MESSAGE("}");
 }
 
 SVTK_ViewWindow* PatternDataSelectionModel::_getVTKViewWindow()
@@ -321,6 +385,8 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 // 1 quad   -> n faces
 void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs )
 {
+  MESSAGE("PatternDataSelectionModel::_highlightGEOM( entrySubIDs ){");
+
   OCCViewer_ViewWindow*  occView = _getOCCViewWindow();
   if ( occView == NULL ) return;
   SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>( occView->getViewManager()->getViewModel() ); 
@@ -358,11 +424,14 @@ void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  
     }
   }
 
+  MESSAGE("}");
 }
 
 
 void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 {
+  MESSAGE("PatternDataSelectionModel::_highlightGEOM( anEltIndex ){");
+  MESSAGE("*  item   is: " << anEltIndex.data().toString().toStdString());
   // getting association(s) from model
   QList<DocumentModel::GeomObj> assocs;
   QMultiMap< QString, int >     assocEntrySubIDs;
@@ -377,12 +446,16 @@ void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
     assocEntrySubIDs.insert( anAssoc.entry, anAssoc.subid.toInt() );
 
   _highlightGEOM( assocEntrySubIDs );
+  MESSAGE("}");
 }
 
 
 
 void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 {
+  MESSAGE("PatternDataSelectionModel::_selectVTK( eltIndex ){");
+  MESSAGE("*  item   is: " << eltIndex.data().toString().toStdString());
+
   SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
   if ( currentVTKViewWindow == NULL ) return;
   SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
@@ -439,12 +512,15 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 //     }
   selector->AddOrRemoveIndex( docIO, aMap, false );
   currentVTKViewWindow->highlight( docIO, true, true );
+
+  MESSAGE("}");
 }
 
 
 
 QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
+  MESSAGE("PatternDataSelectionModel::_geomSelectionChanged(){");
   QModelIndex eltIndex;// the element of the model which is associated to the geom object and that is to be selected
 
   bool fromGEOM = ( strcmp("GEOM", anIObject->getComponentDataType()) == 0 );
@@ -469,7 +545,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
         //       select( newIndex, QItemSelectionModel::ClearAndSelect );
         //       select( newIndex, QItemSelectionModel::SelectCurrent );
 //         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
-        setCurrentIndex( eltIndex, QItemSelectionModel::Clear );
+        setCurrentIndex( eltIndex, QItemSelectionModel::Clear );  //CS_TEST
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
         _theGeomSelectionChanged = false;
       } else {
@@ -477,6 +553,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
       }
     }
 
+  MESSAGE("}");
   return eltIndex;
 }
 
@@ -484,6 +561,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
 
 QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
+  MESSAGE("PatternDataSelectionModel::_vtkSelectionChanged(){");
   QModelIndex anIOIndex;// // the element of the model which is associated to the Interactive object and that is to be selected
 
   bool fromVTK  = ( strcmp("HEXABLOCK", anIObject->getComponentDataType()) == 0 );
@@ -514,13 +592,14 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
-    setCurrentIndex( anIOIndex, QItemSelectionModel::Clear );
+//     setCurrentIndex( anIOIndex, QItemSelectionModel::Clear );
     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
     _theVtkSelectionChanged = false;
   } else {
     clearSelection();
   }
 
+  MESSAGE("}");
   return anIOIndex;
 }
 
@@ -548,6 +627,23 @@ GroupsSelectionModel::~GroupsSelectionModel()
           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
 }
 
+
+
+
+QModelIndex GroupsSelectionModel::indexBy( int role, const QVariant& var )
+{
+  QModelIndex eltIndex; // element (vertex, edge, quad) of model
+  const QAbstractItemModel* theModel = model();
+  if ( !theModel ) return eltIndex;
+  QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
+                                          role,
+                                          var,
+                                          1,
+                                          Qt::MatchRecursive /*| Qt::MatchContains*/ );//Qt::MatchFixedString );
+  if ( theIndexes.count()>0 )
+    eltIndex = theIndexes[0] ;
+  return eltIndex;
+}
 
 
 SVTK_ViewWindow* GroupsSelectionModel::_getVTKViewWindow()

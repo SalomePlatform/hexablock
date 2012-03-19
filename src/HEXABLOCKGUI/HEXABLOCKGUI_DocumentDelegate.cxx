@@ -19,6 +19,11 @@
 //
 #include <iostream>
 #include <QtGui>
+
+
+#include "utilities.h"
+
+
 #include "HEXABLOCKGUI_DocumentDelegate.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
@@ -36,227 +41,332 @@ DocumentDelegate::DocumentDelegate(QDockWidget *dw, QObject *parent)
       _groupsSelectionModel(0),
       _meshSelectionModel(0)
 {
-// void QAbstractItemDelegate::closeEditor ( QWidget * editor, QAbstractItemDelegate::EndEditHint hint = NoHint )
-
-connect( this, SIGNAL( closeEditor ( QWidget *, QAbstractItemDelegate::EndEditHint ) ),
-         this, SLOT( onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint ) ) );
-// 
-// connect( this, SIGNAL( commitData ( QWidget * ) ),
-//          this, SLOT( onCommitData ( QWidget * ) ) );
-
-//     emit commitData ( dw );
-
+//   connect( this, SIGNAL( closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint) ),
+//            this, SLOT( onCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint) ) );
+//   connect( this, SIGNAL( commitData ( QWidget * ) ),
+//            this, SLOT( onCommitData ( QWidget * ) ) );
 }
 
 
+// void DocumentDelegate::commitEditor()
+// {
+//   MESSAGE("DocumentDelegate::commitEditor(){")
+//   MESSAGE("*  sender is: " << sender() );
+//   QWidget* editor = qobject_cast<QWidget*>(sender());
+//   emit commitData(editor);
+// //   emit closeEditor(editor);
+//   MESSAGE("}");
+// }
 
-
-void DocumentDelegate::commitEditor()
+QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
+                                         const QStyleOptionViewItem &option,
+                                         const QModelIndex          &index ) const
 {
-  QWidget* editor = qobject_cast<QWidget*>(sender());
-  cout << "*********************** CS_BP DocumentDelegate::commitEditor BEGIN"<< editor << endl;
-  cout << "COMMITEDITOR COMMITEDITOR COMMITEDITOR COMMITEDITOR COMMITEDITOR  COMMITEDITOR  COMMITEDITOR  "<< editor << endl;
-  emit commitData(editor);
-//   emit closeEditor(editor);
-}
+  MESSAGE("DocumentDelegate::createEditor(){");
+  MESSAGE("*  parent is: " << parent);
+  MESSAGE("*  _dw    is: " << _dw);
+  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
 
-QWidget *DocumentDelegate::createEditor(QWidget *parent,
-    const QStyleOptionViewItem &option,
-    const QModelIndex &index) const
-{
-    cout << "*********************** CS_BP DocumentDelegate::createEditor BEGIN"<<endl;
-//     cout << "*********************** parent"<< parent << endl;
-//     cout << "*********************** _dw "  << _dw    << endl;
-//     QWidget *editor = 0;
-    HexaBaseDialog *editor = 0;
-    QStandardItem  *item = 0;
-    // CS_TODO : simplification?
-    const QSortFilterProxyModel *pmodel = dynamic_cast<const QSortFilterProxyModel *>( index.model() );
-    if ( pmodel ){
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( pmodel->sourceModel() );
-      if ( model ){
-        item = model->itemFromIndex(pmodel->mapToSource(index));
-      }
-    } else {
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( index.model() );
-      if ( model ){
-        item = model->itemFromIndex(index);
-      }
-    }
+  HexaBaseDialog *editor = 0;
 
-    if ( item ){
-//       cout << "*********************** item "<< item->type() << endl;
-      if ( item->data().isValid() )
-        cout << "***************   item " << item->data(Qt::DisplayRole).toString().toStdString() << endl;
-      switch ( item->type() ){
-        case VERTEXITEM : editor = new VertexDialog(parent);   break;
-        case EDGEITEM :   editor = new EdgeDialog(parent);     break;
-        case QUADITEM :   editor = new QuadDialog(parent);     break;
-        case HEXAITEM :   editor = new HexaDialog(parent);     break;
-        case VECTORITEM : editor = new VectorDialog(parent);   break;
-        case CYLINDERITEM : editor = new CylinderDialog(parent);   break;
-        case PIPEITEM :     editor = new PipeDialog(parent);       break;
-//         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
-//         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
-        case GROUPITEM :          editor = new GroupDialog(parent);   break;
-        case LAWITEM :            editor = new LawDialog(parent);     break;
-        case PROPAGATIONITEM :    editor = new PropagationDialog(parent); break;
-      }
-      if ( editor ){
-//         cout << "*********************** editor "<<endl;
-        if ( _documentModel ) editor->setDocumentModel( _documentModel );
-        if ( _patternDataSelectionModel ) editor->setPatternDataSelectionModel( _patternDataSelectionModel );
-        if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
-        if ( _meshSelectionModel ) editor->setMeshSelectionModel( _meshSelectionModel);
-//         if ( _groupsSelectionModel ) editor->setGroupsSelectionModel( _groupsSelectionModel );
-        _dw->setWidget(editor);
-        cout << "############## TITLE => " << editor->windowTitle().toStdString() << endl;
-        _dw->setWindowTitle( editor->windowTitle() );
+  switch ( index.data(HEXA_TREE_ROLE).toInt() ){
+    case VERTEX_TREE :   editor = new VertexDialog(parent, HexaBaseDialog::UPDATE_MODE);   break;
+    case EDGE_TREE :     editor = new EdgeDialog(parent, /*HexaBaseDialog::NEW_MODE*/HexaBaseDialog::INFO_MODE);     break;
+    case QUAD_TREE :     editor = new QuadDialog(parent, HexaBaseDialog::INFO_MODE);     break;
+    case HEXA_TREE :     editor = new HexaDialog(parent, HexaBaseDialog::INFO_MODE);     break;
+    case VECTOR_TREE :   editor = new VectorDialog(parent, HexaBaseDialog::INFO_MODE);   break;
+    case CYLINDER_TREE : editor = new CylinderDialog(parent, HexaBaseDialog::INFO_MODE);   break;
+    case PIPE_TREE :     editor = new PipeDialog(parent, HexaBaseDialog::INFO_MODE);       break;
+  //   case ELEMENTS_TREE :  break;
+  //   case CROSSELEMENTS_TREE : break;
+    case GROUP_TREE       : editor = new GroupDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
+    case LAW_TREE         : editor = new LawDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
+    case PROPAGATION_TREE : editor = new PropagationDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
+  }
+  if ( editor ){
+    if ( _documentModel )                editor->setDocumentModel( _documentModel );
+    if ( _patternDataSelectionModel )    editor->setPatternDataSelectionModel( _patternDataSelectionModel );
+    if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
+    if ( _groupsSelectionModel )         editor->setGroupsSelectionModel( _groupsSelectionModel );
+    if ( _meshSelectionModel )           editor->setMeshSelectionModel( _meshSelectionModel);
+    _dw->setWidget( editor );
+    _dw->setWindowTitle( editor->windowTitle() );
 //         connect ( editor, SIGNAL( editingFinished() ), this, SLOT ( commitEditor() ) );
 //         editor->exec();
-      }
-    }
+//         editor->show();
+//     editor->raise();
+// ->setFocus();
+  }
 
-//     editor->exec();
-//     editor->show();
-//     cout << "*********************** CS_BP DocumentDelegate::createEditor END "<<editor<< endl;
-    return editor;
-//     return new QLineEdit( parent );
+  MESSAGE("}");
+  return editor;
+//   return new QLineEdit(parent);
 }
-
 
 
 void DocumentDelegate::setEditorData( QWidget *editor,
                                       const QModelIndex &index) const
 {
-  cout << "*********************** CS_BP DocumentDelegate::setEditorData BEGIN "<< editor << endl;
-    QStandardItem  *item = 0;
-    // CS_TODO : simplification?
-    const QSortFilterProxyModel *pmodel = dynamic_cast<const QSortFilterProxyModel *>( index.model() );
-    if ( pmodel ){
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( pmodel->sourceModel() );
-      if ( model ){
-        cout << "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ"<< endl;
-        item = model->itemFromIndex(pmodel->mapToSource(index));
-      }
-    } else {
-      const QStandardItemModel *model = dynamic_cast<const QStandardItemModel *>( index.model() );
-      if ( model ){
-        item = model->itemFromIndex(index);
-      }
-    }
+  MESSAGE("DocumentDelegate::setEditorData(){");
+  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
 
-    if ( item ){
-//       cout << "item " << item->type() << endl;
-      if ( item->data().isValid() )
-        cout << "***************   item " << item->data(Qt::DisplayRole).toString().toStdString() << endl;
-      switch ( item->type() ){
-        case VERTEXITEM : {
-//               HEXA_NS::Vertex *value = index.model()->data(index, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
-              HEXA_NS::Vertex *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
-              VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
-              vertexEditor->setValue(value);
-//               vertexEditor->setIndex(index);
-//               vertexEditor->exec();
-        }
-        break;
-        case EDGEITEM : {
-              HEXA_NS::Edge *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
-              EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
-              edgeEditor->setValue(value);
-        }
-        break;
-        case QUADITEM : {
-              HEXA_NS::Quad *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
-              QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
-              quadEditor->setValue(value);
-        }
-        break;
-        case HEXAITEM : {
-              HEXA_NS::Hexa *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Hexa* >();
-              HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
-              hexaEditor->setValue(value);
-        }
-        break;
-        case VECTORITEM : {
-              HEXA_NS::Vector *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Vector* >();
-              VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
-              vectorEditor->setValue(value);
-        }
-        break;
-        case CYLINDERITEM : {
-              HEXA_NS::Cylinder *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Cylinder* >();
-              CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
-              cylinderEditor->setValue(value);
-        }
-        break;
-        case PIPEITEM : {
-              HEXA_NS::Pipe *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Pipe* >();
-              PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
-              pipeEditor->setValue(value);
-        }
-        break;
+//   HexaBaseDialog* editor = dynamic_cast<HexaBaseDialog*>( editor );
+
+  switch ( index.data(HEXA_TREE_ROLE).toInt() ){
+    case VERTEX_TREE : {
+      HEXA_NS::Vertex *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
+      VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
+      vertexEditor->setValue(value);
+    }
+    break;
+    case EDGE_TREE : {
+      HEXA_NS::Edge *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
+      EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
+      edgeEditor->setValue(value);
+    }
+    break;
+    case QUAD_TREE : {
+      HEXA_NS::Quad *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
+      QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
+      quadEditor->setValue(value);
+    }
+    break;
+    case HEXA_TREE : {
+      HEXA_NS::Hexa *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Hexa* >();
+      HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
+      hexaEditor->setValue(value);
+    }
+    break;
+    case VECTOR_TREE : {
+      HEXA_NS::Vector *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vector* >();
+      VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
+      vectorEditor->setValue(value);
+    }
+    break;
+    case CYLINDER_TREE : {
+      HEXA_NS::Cylinder *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Cylinder* >();
+      CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
+      cylinderEditor->setValue(value);
+    }
+    break;
+    case PIPE_TREE : {
+      HEXA_NS::Pipe *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Pipe* >();
+      PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
+      pipeEditor->setValue(value);
+    }
+    break;
 //         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
 //         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
-        case GROUPITEM :{
-              HEXA_NS::Group *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
-              GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
-              groupEditor->setValue(value);
-        }
-        break;
-        case LAWITEM : {
-              HEXA_NS::Law *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Law* >();
-              LawDialog *lawEditor = static_cast<LawDialog*>(editor);
-              lawEditor->setValue(value);
-        }
-        break;
-        case PROPAGATIONITEM : {
-              HEXA_NS::Propagation *value = item->data( HEXA_DATA_ROLE ).value< HEXA_NS::Propagation* >();
-              PropagationDialog *propagationEditor = static_cast<PropagationDialog*>(editor);
-              propagationEditor->setValue(value);
-        }
-        break;
-      }
+    case GROUP_TREE :{
+      HEXA_NS::Group *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
+      GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
+      groupEditor->setValue(value);
     }
+    break;
+    case LAW_TREE : {
+      HEXA_NS::Law *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Law* >();
+      LawDialog *lawEditor = static_cast<LawDialog*>(editor);
+      lawEditor->setValue(value);
+    }
+    break;
+    case PROPAGATION_TREE : {
+      HEXA_NS::Propagation *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Propagation* >();
+      PropagationDialog *propagationEditor = static_cast<PropagationDialog*>(editor);
+      propagationEditor->setValue(value);
+    }
+    break;
+  }
+
 // editor->show();
 //  editor->exec();
-cout << "*********************** CS_BP DocumentDelegate::setEditorData END"<< editor << endl;
+  MESSAGE("}");
 }
 
+// void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
+//                                      const QModelIndex &index) const
+// {
+//     cout << "//////////////////// CS_BP DocumentDelegate::setModelData BEGIN "<< editor << endl;
+// // //     QStandardItem  *item = 0;
+// // //     QItemDelegate::setModelData( editor, model,index);
+// // 
+// // //     // CS_TODO : simplification?
+// //     QSortFilterProxyModel *pmodel = dynamic_cast<QSortFilterProxyModel *>( model );
+// //     if ( pmodel ){
+// //       QStandardItemModel *smodel = dynamic_cast<QStandardItemModel *>( pmodel->sourceModel() );
+// //       if ( smodel ){
+// // //         item = smodel->itemFromIndex(index);
+// //         QItemDelegate::setModelData( editor, smodel, pmodel->mapToSource(index));
+// //       }
+// //     } else {
+// //       QStandardItemModel *smodel = dynamic_cast<QStandardItemModel *>( model );
+// //       if ( smodel ){
+// // //         item = smodel->itemFromIndex(index);
+// //         QItemDelegate::setModelData( editor, model,index);
+// //       }
+// //     }
+// //   QItemDelegate::setModelData( editor, model, index);
+//   cout << "//////////////////// CS_BP DocumentDelegate::setModelData END"<< editor << endl;    
+// 
+// }
 
 
-
-
-
-
-
-void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
+void DocumentDelegate::setModelData( QWidget *editor, 
+                                     QAbstractItemModel *model,
                                      const QModelIndex &index) const
 {
-    cout << "//////////////////// CS_BP DocumentDelegate::setModelData BEGIN "<< editor << endl;
-//     QStandardItem  *item = 0;
-//     QItemDelegate::setModelData( editor, model,index);
-
-//     // CS_TODO : simplification?
-//     QSortFilterProxyModel *pmodel = dynamic_cast<QSortFilterProxyModel *>( model );
-//     if ( pmodel ){
-//       QStandardItemModel *smodel = dynamic_cast<QStandardItemModel *>( pmodel->sourceModel() );
-//       if ( smodel ){
-// //         item = smodel->itemFromIndex(index);
-//         QItemDelegate::setModelData( editor, smodel, pmodel->mapToSource(index));
-//       }
-//     } else {
-//       QStandardItemModel *smodel = dynamic_cast<QStandardItemModel *>( model );
-//       if ( smodel ){
-// //         item = smodel->itemFromIndex(index);
-//         QItemDelegate::setModelData( editor, model,index);
-//       }
-//     }
-//   QItemDelegate::setModelData( editor, model, index);
-  cout << "//////////////////// CS_BP DocumentDelegate::setModelData END"<< editor << endl;    
-
+//   cout <<" XXXXXXXXXXXXXX setModelData editor => " << editor << endl;
+  MESSAGE("DocumentDelegate::setModelData(){");
+  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
+//   HexaDialog *hexaEditor = qobject_cast<HexaDialog*>(editor);
+// //   PipeDialog *qtcast = qobject_cast<PipeDialog*>(editor);
+// //   PipeDialog *cppcast = dynamic_cast<PipeDialog*>(editor);
+// 
+//   if  ( hexaEditor ){
+//     HEXA_NS::Hexa *value  = hexaEditor->getValue();
+//     cout << "XXXXXXXXXXX DocumentDelegate::setModelData value  "<< value  << endl;
+//     model->setData( index, QVariant::fromValue( value ), HEXA_DATA_ROLE );
+//     model->setData( index, value->getName(), Qt::DisplayRole/*Qt::EditRole*/ );
+//     model->setData( index, QString::number( reinterpret_cast<intptr_t>(value) ), HEXA_ENTRY_ROLE ); 
+//   }
+//   editor->show();
+//   editor->raise();
+  
+//   cout << "AAAAAAA _dw"<< _dw<< endl;
+//   cout << "AAAAAAA _dw->widget()"<< _dw->widget() << endl;
+//   cout << "AAAAAAA isVisible"<< _dw->isVisible() << endl;
+//   cout << "AAAAAAA editor isVisible"<< editor->isVisible() << endl;
+// //   editor = new HexaDialog();
+//   _dw->setWindowTitle( "HOOOOOOOOOO" );
+//   _dw->setWidget(editor);
+//   _dw->setVisible(false);
+// //   editor->raise();
+//   _dw->raise();
+//   _dw->setVisible(true);
+//   cout << "BBBBBBB _dw"<< _dw<< endl;
+//   cout << "BBBBBBB _dw->widget()"<< _dw->widget() << endl;
+//   cout << "BBBBBBB isVisible"<< _dw->isVisible() << endl;
+//   cout << "BBBBBBB editor isVisible"<< editor->isVisible() << endl;
+  
+//               HEXA_NS::Quad *value   = quadEditor->getValue();
+//               model->setData(index, QVariant::fromValue( value ), HEXA_DATA_ROLE);
+  MESSAGE("}");
 }
 
+
+
+
+
+void DocumentDelegate::updateEditorGeometry(  QWidget *editor,
+                                              const QStyleOptionViewItem &option,
+                                              const QModelIndex &index ) const
+{
+
+  MESSAGE("DocumentDelegate::updateEditorGeometry(){");
+  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
+//   cout << "CS_BP option.rect.size()"<<option.rect.size()<<endl;
+  MESSAGE("*  option.rect.width() is: " << option.rect.width() << option.rect.width() );
+  MESSAGE("*  option.rect.x()     is: " << option.rect.x() << option.rect.x() );
+  MESSAGE("*  option.rect.y()     is: " << option.rect.y() << option.rect.y() );
+//   editor->setGeometry(option.rect);
+  editor->show();
+//   editor->raise();
+  MESSAGE("}");
+}
+
+
+
+
+
+void DocumentDelegate::setDocumentModel( DocumentModel* m )
+{
+  _documentModel = m;
+}
+
+void DocumentDelegate::setPatternDataSelectionModel( PatternDataSelectionModel* s )
+{
+  _patternDataSelectionModel = s;
+}
+
+void DocumentDelegate::setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s )
+{
+  _patternBuilderSelectionModel = s;
+}
+
+void DocumentDelegate::setGroupsSelectionModel( GroupsSelectionModel* s )
+{
+  _groupsSelectionModel = s ;
+}
+
+void DocumentDelegate::setMeshSelectionModel( QItemSelectionModel* s )
+{
+  _meshSelectionModel = s;
+}
+
+
+
+bool DocumentDelegate::editorEvent ( QEvent                     *event,
+                                     QAbstractItemModel         *model,
+                                     const QStyleOptionViewItem &option,
+                                     const QModelIndex          &index )
+{
+  MESSAGE("DocumentDelegate::editorEvent(){");
+  MESSAGE("*  item   is: " << index.data().toString().toStdString());
+  MESSAGE("*  event  is: " << event->type() );
+
+  Qt::ItemFlags flags = model->flags(index);
+  if ( flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) ){
+    MESSAGE("*  you can select it ");
+  } else {
+    MESSAGE("*  you cannot select it ");
+  }
+
+
+  
+//   bool r;
+//   if ( event->type() == 3 ){
+//     r = true;
+//   } else {
+//     r = QItemDelegate::editorEvent ( event, model, option, index );
+//   }
+//   MESSAGE("*  result  is: " << r );
+//   MESSAGE("}");
+//   return r;
+
+  return QItemDelegate::editorEvent ( event, model, option, index );
+}
+
+// void DocumentDelegate::onCloseEditor( QWidget *w, QAbstractItemDelegate::EndEditHint h)
+// {
+//   MESSAGE("DocumentDelegate::onCloseEditor(){");
+//   MESSAGE("}");
+// }
+// 
+// 
+// void DocumentDelegate::onCommitData ( QWidget * editor )
+// {
+//   MESSAGE("DocumentDelegate::onCommitData(){");
+//   MESSAGE("}");
+// }
+
+
+// connect( this, SIGNAL( commitData ( QWidget * ) ),
+//          this, SLOT( onCommitData ( QWidget * ) ) );
+
+
+// // virtual bool 	eventFilter ( QObject * editor, QEvent * event )
+// // {
+// // //   std::cout << "eventFilter  eventFilter " << event->type() << std::endl;
+// // //   std::cout << std::endl;
+// // 
+// //  if (event->type() == QEvent::FocusOut) {
+// // //              QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+// // //              qDebug() << "Ate key press" << keyEvent->key();
+// // //              return true;
+// // return false;
+// //          } else {
+// //               return QItemDelegate::eventFilter ( editor, event );
+// // //              return false;
+// //          }
 
 
 
@@ -359,42 +469,3 @@ void DocumentDelegate::setModelData( QWidget *editor, QAbstractItemModel *model,
 //   editor->show();
 //   cout << "*********************** CS_BP DocumentDelegate::setModelData END "<< editor << endl;
 // }
-
-
-void DocumentDelegate::updateEditorGeometry(QWidget *editor,
-    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
-{
-    cout << "CS_BP updateEditorGeometry"<<editor<<endl;
-    editor->show();
-//     editor->setGeometry(option.rect);
-}
-
-
-
-
-
-void DocumentDelegate::setDocumentModel( DocumentModel* m )
-{
-  _documentModel = m;
-}
-
-void DocumentDelegate::setPatternDataSelectionModel( PatternDataSelectionModel* s )
-{
-  _patternDataSelectionModel = s;
-}
-
-void DocumentDelegate::setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s )
-{
-  _patternBuilderSelectionModel = s;
-}
-
-void DocumentDelegate::setGroupSelectionModel( QItemSelectionModel* s )
-{
-  _groupsSelectionModel = s ;
-}
-
-void DocumentDelegate::setMeshSelectionModel( QItemSelectionModel* s )
-{
-  _meshSelectionModel = s;
-}
-

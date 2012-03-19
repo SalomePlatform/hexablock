@@ -55,6 +55,9 @@
            <property name="whatsThis">
             <string/>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::MultiSelection</enum>
+           </property>
           </widget>
          </item>
         </layout>

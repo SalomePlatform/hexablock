@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <string>
 
+#include "utilities.h"
+
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 
@@ -172,16 +174,12 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 void DocumentModel::save( const QString& xmlFileName )
 {
 //   std::cout << "DocumentModel::save ->" << xmlFileName.toStdString() << std::endl;
-
   std::cout << "DocumentModel::save _hexaDocument->" << _hexaDocument << std::endl;
-
-
   QString noSuffix = xmlFileName.section('.', 0, 0);
   std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
   // _hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );   // Abu
   // _hexaDocument->saveFile();   // Abu
   _hexaDocument->save( noSuffix.toLocal8Bit().constData() );
-
 }
 
 void DocumentModel::updateData()
@@ -206,9 +204,7 @@ void DocumentModel::clearAll()
   clearMesh();
   //dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight )
   //CS_TODO : todo : association, groups, mesh
-
 }
-
 
 void DocumentModel::clearData()
 {
@@ -496,47 +492,64 @@ void DocumentModel::fillMesh()
 //     flags = item->flags();
 //   }
 // 
-// 
 //   return flags;
 // }
 
+
+
+// Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
+// {
+//   Qt::ItemFlags flags;
+// 
+//   if (!index.isValid()) return Qt::ItemIsEnabled;
+//   QStandardItem *item = itemFromIndex ( index );
+//   if ( _disallowEdition ){
+//     flags = Qt::ItemFlags( ~Qt::ItemIsEditable );
+//   } else {
+//     flags = item->flags();
+//   }
+// 
+//   return flags;
+// }
 
 
 Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags flags;
 
-//   std::cout<<"flags ===> "<< index.data().toString().toStdString() << std::endl;
+  if (!index.isValid()) return Qt::ItemIsEnabled;
 
-  if (!index.isValid()){
-      std::cout<<"!index.isValid()"<<std::endl;
-      return Qt::ItemIsEnabled;
-  }
-  QStandardItem *item = itemFromIndex ( index );
   if ( _disallowEdition ){
-    flags = Qt::ItemFlags( ~Qt::ItemIsEditable );
-//     std::cout<<"_disallowEdition"<< std::endl;
+    return QAbstractItemModel::flags(index) | Qt::ItemFlags( ~Qt::ItemIsEditable );
   } else {
-    flags = item->flags();
-//     flags = Qt::ItemFlags( Qt::ItemIsEditable );
-//     std::cout<<"allowEdition"<< std::endl;
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
   }
-//   std::cout<<"flags"<< flags << std::endl;
 
-  return flags;
 }
+
+
+
+ 
+
+     
+
+
+
+
 
 
 void DocumentModel::allowEdition()
 {
-//   std::cout<<"allowEdition "<< this << std::endl;
+  MESSAGE("DocumentModel::allowEdition(){");
   _disallowEdition = false;
+  MESSAGE("}");
 }
 
 void DocumentModel::disallowEdition()
 {
-//   std::cout<<"disallowEdition "<< this << std::endl;
+  MESSAGE("DocumentModel::disallowEdition (){");
   _disallowEdition = true;
+  MESSAGE("}");
 }
 
 
@@ -2963,6 +2976,18 @@ QString DocumentModel::documentEntry()
   return _entry;
 }
 
+// QModelIndex DocumentModel::indexBy( int role, const QString& value )
+// {
+//   QModelIndex eltIndex; // element (vertex, edge, quad) of model
+//   QModelIndexList theIndexes = match( index(0, 0),
+//                                       role,
+//                                       value,
+//                                       1,
+//                                       Qt::MatchRecursive | Qt::MatchContains );//Qt::MatchFixedString );
+//   if ( theIndexes.count()>0 )
+//     eltIndex = theIndexes[0] ;
+//   return eltIndex;
+// }
 
 
 // 8.3 Boite: éditer une loi  CS_TODO
@@ -3013,13 +3038,21 @@ QString PatternDataModel::documentEntry()
 
 Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const
 {
-//   std::cout<<"PatternDataModel::flags()"<<std::endl;
+//   MESSAGE("PatternDataModel::flags() "<< index.data().toString().toStdString() );
   Qt::ItemFlags flags;
 
   DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
   if ( m != NULL ){
     flags = m->flags( mapToSource(index) );
   }
+
+//   if ( flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) ){
+//     MESSAGE("*  you can select "<< index.data().toString().toStdString() );
+//   } else {
+//     MESSAGE("*  you cannot select  "<< index.data().toString().toStdString() );
+//   }
+
+//   MESSAGE("}");
   return flags;
 }
 
@@ -3310,13 +3343,22 @@ GroupsModel::~GroupsModel()
 
 Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 {
-//   std::cout<<"GroupsModel::flags()"<<std::endl;
+//   MESSAGE("GroupsModel::flags() "<< index.data().toString().toStdString() );
   Qt::ItemFlags flags;
 
   DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
   if ( m != NULL ){
+//     MESSAGE("*  ( m != NULL ) "<< index.data().toString().toStdString() );
     flags = m->flags( mapToSource(index) );
+  } else {
+//     MESSAGE("*  ( m is NULL ) "<< index.data().toString().toStdString() );
   }
+//   if ( flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) ){
+//     MESSAGE("*  flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) "<< index.data().toString().toStdString() );
+//   } else {
+//     MESSAGE("*  flags is not Qt::ItemFlags( ~Qt::ItemIsEditable ) "<< index.data().toString().toStdString() );
+//   }
+//   MESSAGE("}");
   return flags;
 }
 
@@ -3375,13 +3417,22 @@ MeshModel::~MeshModel()
 
 Qt::ItemFlags MeshModel::flags(const QModelIndex &index) const
 {
-//   std::cout<<"MeshModel::flags()"<<std::endl;
+//   MESSAGE("MeshModel::flags() "<< index.data().toString().toStdString() );
   Qt::ItemFlags flags;
 
   DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
   if ( m != NULL ){
+//     MESSAGE("*  ( m != NULL ) "<< index.data().toString().toStdString() );
     flags = m->flags( mapToSource(index) );
+  } else {
+//     MESSAGE("*  ( m is NULL ) "<< index.data().toString().toStdString() );
   }
+//   if ( flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) ){
+//     MESSAGE("*  you can select "<< index.data().toString().toStdString() );
+//   } else {
+//     MESSAGE("*  you cannot select  "<< index.data().toString().toStdString() );
+//   }
+//   MESSAGE("}");
   return flags;
 }
 

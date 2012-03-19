@@ -45,17 +45,20 @@ namespace HEXABLOCK
       
       public:
           DocumentDelegate( QDockWidget *dw, QObject *parent = 0);
-      
-          QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                const QModelIndex &index) const;
-      
-          void setEditorData(QWidget *editor, const QModelIndex &index) const;
-          void setModelData(QWidget *editor, QAbstractItemModel *model,
-                            const QModelIndex &index) const;
-      
-          void updateEditorGeometry(QWidget *editor,
-              const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+          QWidget *createEditor( QWidget *parent,
+                                 const QStyleOptionViewItem &option,
+                                 const QModelIndex &index) const;
+
+          void setEditorData( QWidget *editor, const QModelIndex &index) const;
+
+          void setModelData( QWidget            *editor,
+                             QAbstractItemModel *model,
+                             const QModelIndex  &index ) const;
+
+          void updateEditorGeometry( QWidget *editor,
+                                     const QStyleOptionViewItem &option,
+                                     const QModelIndex &index ) const;
 
          // can be used by editor
           void setDocumentModel( DocumentModel* m );
@@ -63,56 +66,27 @@ namespace HEXABLOCK
           //  selection
           void setPatternDataSelectionModel( PatternDataSelectionModel* s );
           void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
-          void setGroupSelectionModel( QItemSelectionModel* s );
+          void setGroupsSelectionModel( /*QItemSelectionModel**/ GroupsSelectionModel* s );
           void setMeshSelectionModel( QItemSelectionModel* s );
 
-
-//CS_TEST
-virtual bool 	editorEvent ( QEvent * event, QAbstractItemModel * model, const QStyleOptionViewItem & option, const QModelIndex & index ){
-  std::cout << "editorEvent editorEvent " << event->type() << std::endl;
-//   std::cout << "Type => "<< event->type() << std::endl;
-  return QItemDelegate::editorEvent ( event, model, option, index );
-}
-// // virtual bool 	eventFilter ( QObject * editor, QEvent * event )
-// // {
-// // //   std::cout << "eventFilter  eventFilter " << event->type() << std::endl;
-// // //   std::cout << std::endl;
-// // 
-// //  if (event->type() == QEvent::FocusOut) {
-// // //              QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-// // //              qDebug() << "Ate key press" << keyEvent->key();
-// // //              return true;
-// // return false;
-// //          } else {
-// //               return QItemDelegate::eventFilter ( editor, event );
-// // //              return false;
-// //          }
-// // 
-// //   
-// // }
-//CS_TEST
+          virtual bool editorEvent ( QEvent * event, 
+                                     QAbstractItemModel * model, 
+                                     const QStyleOptionViewItem & option, 
+                                     const QModelIndex & index );
 
       public slots:
-          void onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint)
-          {
-            std::cout << " onCloseEditor onCloseEditor onCloseEditor onCloseEditor" << std::endl;
-          }
+//           void onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint);
+//           void onCommitData ( QWidget * editor );
 
-          void onCommitData ( QWidget * editor )
-          {
-            std::cout << " onCommitData onCommitData onCommitData onCommitData" << std::endl;
-          }
-      
       private:
-          QDockWidget *_dw;
-
+          QDockWidget *_dw; // editor's container 
 
           // can be used by editor
           DocumentModel*                _documentModel;
 
           PatternDataSelectionModel*    _patternDataSelectionModel;
           PatternBuilderSelectionModel* _patternBuilderSelectionModel;
-          QItemSelectionModel*          _groupsSelectionModel;
+          GroupsSelectionModel*         _groupsSelectionModel; 
           QItemSelectionModel*          _meshSelectionModel;
 
       private slots:
