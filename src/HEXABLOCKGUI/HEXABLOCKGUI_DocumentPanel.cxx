@@ -31,7 +31,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <PyConsole_Console.h>
-
+#include <SalomeApp_Tools.h>
 
 #include <Standard_GUID.hxx>
 #include <TDF_Label.hxx>
@@ -60,10 +60,19 @@
 
 #include <SUIT_ResourceMgr.h>
 
+
+// #include <GeometryGUI.h>
+
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 #include <BasicGUI_PointDlg.h>
 
+
+
+
+#include "GEOMBase_Helper.h"
+#include "GEOMBase.h"
+#include "GEOM_Operation.h"
 
 
 #define VERTEX_COORD_MIN -1000000
@@ -112,6 +121,7 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags
   _applyCloseButton(0),
   _applyButton(0)
 {
+  MESSAGE("HexaBaseDialog::HexaBaseDialog() dynamic_cast<SUIT_Desktop*>(parent->parent()) =>" << dynamic_cast<SUIT_Desktop*>(parent->parent()) );
   _strHexaWidgetType[VERTEX_TREE] = tr( "VERTEX" );
   _strHexaWidgetType[EDGE_TREE]   = tr( "EDGE" );
   _strHexaWidgetType[QUAD_TREE]   = tr( "QUAD" );
@@ -186,6 +196,7 @@ void HexaBaseDialog::_initViewManager()
 
 bool HexaBaseDialog::apply()
 {
+  MESSAGE("HexaBaseDialog::apply()");
   QModelIndex iNew;
   bool applied = apply(iNew);
   if ( applied ){
@@ -343,6 +354,10 @@ bool HexaBaseDialog::_allowOCCSelection( QObject* obj )
   HEXABLOCKGUI::currentOccView->raise();
   wType = v.value<GeomWidgetType>();
   MESSAGE("*  GeomWidgetType property is " << wType );
+  MESSAGE("*  TopAbs_VERTEX           is " << TopAbs_VERTEX );
+  MESSAGE("*  TopAbs_EDGE             is " << TopAbs_EDGE );
+  MESSAGE("*  TopAbs_FACE             is " << TopAbs_FACE );
+
   globalSelection(); // close local contexts, if any                 
   localSelection(GEOM::GEOM_Object::_nil(), wType/*TopAbs_EDGE*/);
   return true;
@@ -778,7 +793,7 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
     index = v.value<QModelIndex>();
     _selectionMutex = true;
     MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
-//     selector->select( index, QItemSelectionModel::Clear );
+    selector->select( index, QItemSelectionModel::Clear );
     selector->select( index, QItemSelectionModel::Select );
     _selectionMutex = false;
   }
@@ -821,6 +836,7 @@ VertexDialog::VertexDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
   _helpFileName = "gui_vertex.html";
   setupUi( this );
   _initWidget(editmode);
+//   setFocusProxy( name_le );
 
   if ( editmode  == NEW_MODE ){
     setWindowTitle( tr("Vertex Construction") );
@@ -843,6 +859,8 @@ void VertexDialog::_initInputWidget( Mode editmode )
 
   setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
   installEventFilter(this);
+  name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+  name_le->installEventFilter(this);
 
   connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
@@ -854,6 +872,7 @@ void VertexDialog::clear()
 
 void VertexDialog::setValue(HEXA_NS::Vertex* v)
 {
+  MESSAGE("*  setValue : " << v);
   //0) Name
   name_le->setText( v->getName() );
 
@@ -862,8 +881,10 @@ void VertexDialog::setValue(HEXA_NS::Vertex* v)
   y_spb->setValue( v->getY() );
   z_spb->setValue( v->getZ() );
 
+  MESSAGE("*  _patternDataSelectionModel  : " << _patternDataSelectionModel );
   if ( _patternDataSelectionModel ){
     QModelIndex iv = _patternDataSelectionModel->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
+    MESSAGE("*  selecting the element : " << iv.data().toString().toStdString());
 
     setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
     name_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
@@ -899,7 +920,7 @@ bool VertexDialog::apply(QModelIndex& result)
   if ( _editMode == UPDATE_MODE){ 
     QVariant v = property("QModelIndex");
     if ( v.isValid() ){
-      iVertex = v.value<QModelIndex>();
+      iVertex = patternDataModel->mapToSource( v.value<QModelIndex>() );
       if ( iVertex.isValid() )
         isOk = _documentModel->updateVertex( iVertex, newX, newY, newZ );
     }
@@ -1928,6 +1949,12 @@ void PipeDialog::_initInputWidget( Mode editmode )
   vex_le->installEventFilter(this);
   vec_le->installEventFilter(this);
 
+  if ( editmode == INFO_MODE ){
+    ir_spb->setReadOnly(true);
+    er_spb->setReadOnly(true);
+    h_spb->setReadOnly(true);
+  }
+
   connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
 
@@ -2564,7 +2591,7 @@ MakePipesDialog::MakePipesDialog( QWidget* parent, Mode editmode, Qt::WindowFlag
   _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipes";
   setupUi( this );
   _initWidget(editmode);
-  setFocusProxy( pipe1_le );
+//   setFocusProxy( pipe1_le );
 }
 
 MakePipesDialog::~MakePipesDialog()
@@ -2609,7 +2636,7 @@ bool MakePipesDialog::apply(QModelIndex& result)
 
   if ( ipipe1.isValid()
     && ipipe2.isValid() ){
-    iCrossElts = _documentModel->makeCylinders( ipipe1, ipipe2 );
+    iCrossElts = _documentModel->makePipes( ipipe1, ipipe2 );
   }
   if ( !iCrossElts.isValid() ){
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPES" ) );
@@ -3857,6 +3884,12 @@ bool PerformSymmetryDialog::apply(QModelIndex& result)
 MyBasicGUI_PointDlg::MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w, bool b, Qt::WindowFlags f ):
   BasicGUI_PointDlg( g, w, b, f)
 {
+//   newVertex->nullify();
+  newVertex = NULL;
+  buttonOk()->hide();
+  buttonApply()->hide();
+  buttonCancel()->hide();
+  buttonHelp()->hide();
   disconnect( buttonHelp(),  SIGNAL( clicked() ),
               this,          SLOT( ClickOnHelp() ) );
 }
@@ -3864,6 +3897,84 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w, bool b, Qt
 MyBasicGUI_PointDlg::~MyBasicGUI_PointDlg()
 {
 }
+
+
+QString MyBasicGUI_PointDlg::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
+{
+  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX MyBasicGUI_PointDlg::addInStudy ");
+//   if ( !hasCommand() )
+//     return QString();
+// 
+//   _PTR(Study) aStudy = getStudy()->studyDS();
+//   if ( !aStudy || theObj->_is_nil() )
+//     return QString();
+// 
+// //   SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
+// 
+// 
+//   SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+//   CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
+//   SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
+//   int aStudyID = aStudy->StudyId();
+//   SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
+//   
+//   SALOMEDS::Study_var aStudyDS = aDSStudy._retn();
+// 
+// 
+// 
+// 
+// 
+//   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
+// 
+//   SALOMEDS::SObject_var aSO =
+//     getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
+// 
+//   QString anEntry;
+//   if ( !aSO->_is_nil() )
+//     anEntry = aSO->GetID();
+// 
+//   // Each dialog is responsible for this method implementation,
+//   // default implementation does nothing
+//   restoreSubShapes(aStudyDS, aSO);
+//   aSO->UnRegister();
+
+  newVertexEntry = BasicGUI_PointDlg::addInStudy( theObj, theName );
+  newVertex      = theObj;
+
+  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX BasicGUI_PointDlg::addInStudy theName =>"<<theName );
+
+  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX BasicGUI_PointDlg::addInStudy newVertexEntry =>"<< newVertexEntry.toStdString() );
+
+  return newVertexEntry;
+}
+
+
+// bool  MyBasicGUI_PointDlg::ClickOnApply()
+// {
+// //   return BasicGUI_PointDlg::ClickOnApply();
+//   if (!onAccept())
+//     return false;
+// 
+//   initName();
+// 
+//   globalSelection(); // close local contexts, if any
+// 
+//   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+// 
+// //   SelectionIntoArgument();
+// 
+//   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX/*TopAbs_SHAPE*/);
+//   TopoDS_Shape aShape;
+// 
+//   if ( aSelectedObject ){
+//     MESSAGE("MyBasicGUI_PointDlg::ClickOnApply aSelectedObject");
+//   } else {
+//     MESSAGE("MyBasicGUI_PointDlg::ClickOnApply no aSelectedObject");
+//   }
+// //   ConstructorsClicked(getConstructorId());
+//   return true;
+// }
+
 
 QPushButton* MyBasicGUI_PointDlg::buttonCancel() const
 { 
@@ -3886,6 +3997,211 @@ QPushButton* MyBasicGUI_PointDlg::buttonHelp() const
 }
 
 
+// bool MyBasicGUI_PointDlg::execute( ObjectList& objects )
+// {
+//   MESSAGE("MyBasicGUI_PointDlg::execute( ObjectList& objects ) ");
+//   bool res = BasicGUI_PointDlg::execute( objects );
+// 
+//   TopoDS_Shape aShape;
+//   /*GEOM::GeomObjPtr anObject */vertexBuilded = objects.front();
+//   GEOMBase::GetShape(vertexBuilded.get(), aShape);
+// 
+//   std::string name  = GEOMBase::GetName( vertexBuilded.get() ).toStdString();
+//   std::string entry = vertexBuilded->GetStudyEntry();
+//   std::string brep  = shape2string( aShape );
+// 
+//   MESSAGE( "objects.size()  => " << objects.size() );
+//   MESSAGE( "name            => " << name );
+//   MESSAGE( "entry           => " << entry );
+//   MESSAGE( "brep            => " << brep );
+//   return res;
+// }
+// 
+// void MyBasicGUI_PointDlg::addSubshapesToStudy()
+// {
+//   MESSAGE("MyBasicGUI_PointDlg::addSubshapesToStudy() ");
+//   BasicGUI_PointDlg::addSubshapesToStudy();
+// 
+// //  switch (getConstructorId()) {
+// //   case GEOM_POINT_REF:
+// //     GEOMBase::PublishSubObject(myRefPoint.get());
+// //     break;
+// //   case GEOM_POINT_EDGE:
+// //     GEOMBase::PublishSubObject(myEdge.get());
+// //     break;
+// //   case GEOM_POINT_INTINT:
+// //     GEOMBase::PublishSubObject(myLine1.get());
+// //     GEOMBase::PublishSubObject(myLine2.get());
+// //     break;
+// //   case GEOM_POINT_SURF:
+// //     GEOMBase::PublishSubObject(myFace.get());
+// //     break;
+// //   default:
+// //     break;
+// //   }
+// }
+
+
+
+
+
+// QString MyBasicGUI_PointDlg::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
+// {
+//   MESSAGE("MyBasicGUI_PointDlg::addInStudy() " << theName );
+// 
+//   TopoDS_Shape aShape;  
+//   GEOMBase::GetShape(theObj, aShape);
+// 
+//   std::string name  = GEOMBase::GetName( theObj ).toStdString();
+//   std::string entry = theObj->GetStudyEntry();
+//   std::string brep  = shape2string( aShape );
+//   MESSAGE( "name            => " << name );
+//   MESSAGE( "entry           => " << entry );
+//   MESSAGE( "brep            => " << brep );
+//   return BasicGUI_PointDlg::addInStudy( theObj, theName );
+// }
+
+// QString MyBasicGUI_PointDlg::getEntry( GEOM::GEOM_Object_ptr object ) const
+// {
+//   MESSAGE("MyBasicGUI_PointDlg::getEntry() ");
+//   SalomeApp_Study* study = getStudy();
+//   MESSAGE("1)       study" << study );
+//   if ( study )  {
+//     QString objIOR = GEOMBase::GetIORFromObject( object );
+//     MESSAGE("2)       objIOR" << objIOR.toStdString() );
+//     if ( objIOR != "" ) {
+//       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( objIOR.toLatin1().constData() ) );
+//       if ( SO ){
+//         MESSAGE("3)       SO " << SO  );
+//         return QString::fromStdString(SO->GetID());
+//       }
+//     }
+//   }
+//   return "";
+// }
+
+
+
+
+bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransaction )
+{
+  MESSAGE("MyBasicGUI_PointDlg::onAccept()");
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( !appStudy ) return false;
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
+  if ( aLocked ) {
+    MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
+    SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr("WRN_STUDY_LOCKED"),
+                               QObject::tr("BUT_OK") );
+    return false;
+  }
+
+  QString msg;
+  if ( !isValid( msg ) ) {
+    showError( msg );
+    return false;
+  }
+
+  erasePreview( false );
+
+  bool result = false;
+
+  try {
+    if ( ( !publish && !useTransaction ) || openCommand() ) {
+      SUIT_OverrideCursor wc;
+      SUIT_Session::session()->activeApplication()->putInfo( "" );
+      ObjectList objects;
+      if ( !execute( objects ) || !getOperation()->IsDone() ) {
+        wc.suspend();
+        abortCommand();
+        showError();
+      }
+      else {
+        addSubshapesToStudy(); // add Subshapes if local selection
+        const int nbObjs = objects.size();
+        QStringList anEntryList;
+        int aNumber = 1;
+        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+          GEOM::GEOM_Object_var obj=*it;
+          if ( publish ) {
+            QString aName = getNewObjectName();
+            if ( nbObjs > 1 ) {
+              if (aName.isEmpty())
+                aName = getPrefix(obj);
+              if (nbObjs <= 30) {
+                // Try to find a unique name
+                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
+              } else {
+                // Don't check name uniqueness in case of numerous objects
+                aName = aName + "_" + QString::number(aNumber++);
+              }
+            } else {
+              // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+              if ( aName.isEmpty() )
+                aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+            }
+            anEntryList << addInStudy( obj, aName.toLatin1().constData() );
+
+            MESSAGE("AAAAAAAAAAAAAAAA anEntryList "<< anEntryList[0].toStdString() );
+            // updateView=false
+            display( obj, false );
+#ifdef WITHGENERICOBJ
+            // obj has been published in study. Its refcount has been incremented.
+            // It is safe to decrement its refcount
+            // so that it will be destroyed when the entry in study will be removed
+            obj->UnRegister();
+#endif
+          }
+          else {
+            // asv : fix of PAL6454. If publish==false, then the original shape
+            // was modified, and need to be re-cached in GEOM_Client before redisplay
+//             clearShapeBuffer( obj );
+            // withChildren=true, updateView=false
+            redisplay( obj, true, false );
+          }
+        }
+
+        MESSAGE("1");
+        if ( nbObjs ) {
+          MESSAGE("2");
+          commitCommand();
+          updateObjBrowser();
+          if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
+            MESSAGE("3");
+            if( LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp ) ){
+              MESSAGE("4");
+              aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
+            }
+            anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
+          }
+          result = true;
+        }
+        else
+          abortCommand();
+      }
+    }
+  }
+  catch( const SALOME::SALOME_Exception& e ) {
+    SalomeApp_Tools::QtCatchCorbaException( e );
+    abortCommand();
+  }
+
+  updateViewer();
+
+  return result;
+}
+
+
+
+
+// GEOM::GeomObjPtr MyBasicGUI_PointDlg::getSelected( TopAbs_ShapeEnum type )
+// {
+//   return BasicGUI_PointDlg::getSelected( type );
+// }
 
 VertexAssocDialog::VertexAssocDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 HexaBaseDialog(parent, editmode, f)
@@ -3948,11 +4264,16 @@ void VertexAssocDialog::_initInputWidget( Mode editmode )
 
 QDialogButtonBox* VertexAssocDialog::_initButtonBox( Mode editmode )
 {
+//   _nested->buttonOk()->hide();
+//   _nested->buttonApply()->hide();
+//   _nested->buttonCancel()->hide();
+//   _nested->buttonHelp()->hide();
   connect( _nested->buttonOk(),      SIGNAL(clicked()), this, SLOT(accept()) );
   connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
   connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
   connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
 }
+
 
 void VertexAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
 {
@@ -3974,7 +4295,7 @@ void VertexAssocDialog::clear()
 
 bool VertexAssocDialog::apply(QModelIndex& result)
 {
-  std::cout << "VertexAssocDialog::accept"<< std::endl;
+  MESSAGE("VertexAssocDialog::apply");
   SUIT_OverrideCursor wc;
 
   if ( !_documentModel )             return false;
@@ -3986,10 +4307,29 @@ bool VertexAssocDialog::apply(QModelIndex& result)
   QModelIndex iVertex = patternDataModel->mapToSource( _index[_vertex_le] );
   if ( !iVertex.isValid() ) return false;
 
-  GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_SHAPE/*TopAbs_VERTEX*/);
+//   globalSelection(); // close local contexts, if any
+//   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+
+  if (! _nested->onAccept())
+    return false;
+//   _nested->ClickOnApply();
+
+//   GEOM::GeomObjPtr aSelectedObject = _nested->getSelected(TopAbs_VERTEX); //CS_TEST
+  std::string testName  = GEOMBase::GetName( _nested->newVertex ).toStdString();
+//   std::string testEntry = _nested->getEntry( _nested->newVertex ).toStdString();
+
+  MESSAGE("NAME   is : "<<testName);
+//   MESSAGE("ENTRY  is : "<<testEntry);
+
+  GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX/*TopAbs_SHAPE*/);
   TopoDS_Shape aShape;
 
-  if ( aSelectedObject )  MESSAGE("aSelectedObject");
+  if ( aSelectedObject ){
+    MESSAGE("aSelectedObject");
+  } else {
+    MESSAGE("no aSelectedObject");
+  }
+
   if ( GEOMBase::GetShape(aSelectedObject.get(), aShape)  )  MESSAGE("GEOMBase::GetShape(aSelectedObject.get(), aShape) ");
   if ( !aShape.IsNull() )  MESSAGE("!aShape.IsNull()");
 
@@ -3998,6 +4338,7 @@ bool VertexAssocDialog::apply(QModelIndex& result)
     aPoint.name  = GEOMBase::GetName( aSelectedObject.get() );
     aPoint.entry = aSelectedObject->GetStudyEntry();
     aPoint.brep  = shape2string( aShape ).c_str();
+    MESSAGE(" brep => " << aPoint.brep.toStdString() );
 
     _documentModel->addAssociation( iVertex, aPoint );
 
@@ -4118,6 +4459,9 @@ GEOM::GEOM_IOperations_ptr EdgeAssocDialog::createOperation()
 
 bool EdgeAssocDialog::execute(ObjectList& objects)
 {
+  MESSAGE("execute(){");
+  MESSAGE("*    objects.size()" << objects.size() );
+
   bool res = false;
 
   GEOM::GEOM_Object_var anObj;
@@ -4129,25 +4473,30 @@ bool EdgeAssocDialog::execute(ObjectList& objects)
     objects.push_back(anObj._retn());
     res = true;
   }
+  MESSAGE("}execute()");
   return res;
 }
 
 
 void EdgeAssocDialog::pstartChanged( double val )
 {
+  MESSAGE("pstartChanged("<<val<<") { ");
   if ( _firstLine->_is_nil() ) return;
   _currentLine = _firstLine;
   _currentParameter = pstart_spb->value();
   displayPreview(true);
+  MESSAGE("}pstartChanged()");
 }
 
 
 void EdgeAssocDialog::pendChanged( double val )
 {
+  MESSAGE("pendChanged("<<val<<") { ");
   if ( _lastLine->_is_nil() ) return;
   _currentLine      = _lastLine;
   _currentParameter = pend_spb->value();
   displayPreview(true);
+  MESSAGE("}pendChanged()");
 }
 
 
@@ -4194,6 +4543,8 @@ void EdgeAssocDialog::onCurrentSelectionChanged()
     std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
     std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
     std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
+    std::cout << "aLine.brep"  << aLine.brep.toStdString() << std::endl;
+
 
     item  = new QListWidgetItem( aLine.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
@@ -4235,6 +4586,8 @@ bool EdgeAssocDialog::apply(QModelIndex& result)
     item = lines_lw->item(r);
     aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
 //     std::cout << " line added : " << aLine.name.toStdString() << std::endl;
+    MESSAGE(" assocs => " << aLine.name.toStdString() );
+    MESSAGE(" assocs => " << aLine.brep.toStdString() );
     assocs << aLine;
   }
 
@@ -4354,6 +4707,7 @@ void QuadAssocDialog::onCurrentSelectionChanged()
     std::cout << "aFace.name"  << aFace.name.toStdString()  << std::endl;
     std::cout << "aFace.entry" << aFace.entry.toStdString() << std::endl;
     std::cout << "aFace.subid" << aFace.subid.toStdString() << std::endl;
+    std::cout << "aFace.brep"  << aFace.brep.toStdString() << std::endl;
 
     item  = new QListWidgetItem( aFace.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aFace) );
@@ -4420,7 +4774,13 @@ _value(NULL)
   _helpFileName = "gui_groups.html#add-group";
   setupUi( this );
   _initWidget(editmode);
-//   setFocusProxy( eltBase_lw );
+  setFocusProxy( name_le/*eltBase_lw */);
+
+  if ( editmode  == NEW_MODE ){
+    setWindowTitle( tr("Group Construction") );
+  } else if ( editmode == UPDATE_MODE ){
+    setWindowTitle( tr("Group Modification") );
+  }
 }
 
 
@@ -4623,6 +4983,11 @@ LawDialog::LawDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
   _helpFileName = "gui_discret_law.html#add-law";
   setupUi( this );
   _initWidget(editmode);
+  if ( editmode  == NEW_MODE ){
+    setWindowTitle( tr("Law Construction") );
+  } else if ( editmode == UPDATE_MODE ){
+    setWindowTitle( tr("Law Modification") );
+  }
 }
 
 LawDialog::~LawDialog()
@@ -5127,6 +5492,7 @@ HexaBaseDialog(parent, editmode, f)
 QuadRevolutionDialog::~QuadRevolutionDialog()
 {
 }
+
 
 void QuadRevolutionDialog::_initInputWidget( Mode editmode )
 {

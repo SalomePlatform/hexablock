@@ -1552,6 +1552,46 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
   HEXA_NS::Pipe* hPipe1  = data(ipipe1, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
   HEXA_NS::Pipe* hPipe2  = data(ipipe2, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
 
+
+//   MESSAGE("DocumentModel::makePipes( "<< ipipe1.data().toString().toStdString() << ","<< ipipe2.data().toString().toStdString() );
+// 
+//   HEXA_NS::Vertex* b1 = hPipe1->getBase();
+//   HEXA_NS::Vector* d1 = hPipe1->getDirection();
+//   MESSAGE("pipe1 vertex is  " << b1->getName()
+//                               <<"("<< b1->getX()
+//                               <<","<< b1->getY()
+//                               <<","<< b1->getZ()<<")"
+//           );
+//   MESSAGE("pipe1 vector is  " << d1->getName()
+//                               <<"("<< d1->getDx()
+//                               <<","<< d1->getDy()
+//                               <<","<< d1->getDz()<<")"
+//           );
+//   MESSAGE("pipe1 ir is  " << hPipe1->getInternalRadius());
+//   MESSAGE("pipe1 er is  " << hPipe1->getRadius());
+//   MESSAGE("pipe1 h  is  " << hPipe1->getHeight());
+// 
+// 
+//   HEXA_NS::Vertex* b2 = hPipe2->getBase();
+//   HEXA_NS::Vector* d2 = hPipe2->getDirection();
+//   MESSAGE("pipe2 vertex is  " << b2->getName()
+//                               <<"("<< b2->getX()
+//                               <<","<< b2->getY()
+//                               <<","<< b2->getZ()<<")"
+//           );
+//   MESSAGE("pipe2 vector is  " << d2->getName()
+//                               <<"("<< d2->getDx()
+//                               <<","<< d2->getDy()
+//                               <<","<< d2->getDz()<<")"
+//           );
+//   MESSAGE("pipe2 vertex is  " << hPipe2->getBase()->getName() );
+//   MESSAGE("pipe2 vector is  " << hPipe2->getDirection()->getName());
+//   MESSAGE("pipe2 ir is  " << hPipe2->getInternalRadius());
+//   MESSAGE("pipe2 er is  " << hPipe2->getRadius());
+//   MESSAGE("pipe2 h  is  " << hPipe2->getHeight());
+
+
+
   HEXA_NS::CrossElements* hCrossElts = _hexaDocument->makePipes( hPipe1, hPipe2 );
   
   if ( hCrossElts->isValid() ){
@@ -1560,7 +1600,7 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
     _crossElementsDirItem->appendRow(crossElts);
     iCrossElts = crossElts->index();
     QString tmp = "/tmp/makePipes.vtk";
-    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+    _hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
     delete hCrossElts;
   }

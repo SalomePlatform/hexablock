@@ -767,6 +767,26 @@ namespace HEXABLOCK
       QPushButton* buttonOk() const;
       QPushButton* buttonApply() const;
       QPushButton* buttonHelp() const;
+
+//       GEOM::GeomObjPtr vertexBuilded;
+      GEOM::GEOM_Object_ptr newVertex;
+      QString               newVertexEntry;
+//       QString getEntry( GEOM::GEOM_Object_ptr object ) const;
+
+//       bool  ClickOnApply();
+      bool onAccept( const bool publish = true, const bool useTransaction = true );
+
+    protected:
+//       virtual bool execute( ObjectList& objects );
+//       virtual void addSubshapesToStudy();
+
+      QString addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName );
+    
+  
+//       bool onAccept( const bool publish = true, const bool useTransaction = true );
+
+//     private:
+//       GEOM::GeomObjPtr vertexBuilded;
   };
 
 
@@ -786,6 +806,9 @@ namespace HEXABLOCK
         void _initInputWidget( Mode editmode );
         QDialogButtonBox* _initButtonBox( Mode editmode );
         void _raiseCurrentOccView();
+
+
+        QString addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName );
 
       protected slots:
         void onWindowActivated(SUIT_ViewManager* vm);

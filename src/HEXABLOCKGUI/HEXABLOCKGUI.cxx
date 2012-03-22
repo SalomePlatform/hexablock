@@ -375,6 +375,10 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
   
 
+  if ( HEXABLOCKGUI::currentVtkView ){
+    HEXABLOCKGUI::currentVtkView->SetSelectionMode( ActorSelection ); //default selectionMode
+  }
+
 //   if ( _patternDataSelectionModel ){
 //     delete _patternDataSelectionModel;
 //     _patternDataSelectionModel = NULL;
@@ -2152,6 +2156,7 @@ void HEXABLOCKGUI::assocEdge()
 {
   if ( !_edgeAssocDiag ){
     _edgeAssocDiag = new EdgeAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
+    _edgeAssocDiag->setGeomEngine( _geomEngine );
   }
   _showDialogBox( _edgeAssocDiag );
 }
