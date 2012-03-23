@@ -25,7 +25,66 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/XmlOutputter.h>
 
-int main(int argc, char* argv[])
+#include "test_unit.hxx"
+
+#define TestUnit(call) cout << barre << " .... Essai de " #call << endl; \
+                       call(nbargs,tabargs) ; if (ier!=0) return ier
+// ============================================================== Main
+int main (int nbargs, cpchar tabargs [])
+{
+   int ier;
+   cpchar barre = "=====================================================";
+
+   TestUnit (test_sphere );
+   TestUnit (test_joint );
+   TestUnit (test_prism );
+   TestUnit (test_revolution9 );
+   TestUnit (test_revolution );
+   TestUnit (test_coude );
+   TestUnit (test_count );
+   TestUnit (test_decoupage );
+   TestUnit (test_gen_xml );
+   TestUnit (test_string_xml );
+   ///   TestUnit (test_relecture );
+   TestUnit (test_spherical);
+   TestUnit (test_grille_cyl );
+   TestUnit (test_asso_line );
+   TestUnit (test_cylindrical );
+   TestUnit (test_cylinder );
+   TestUnit (test_xml_cylinder );
+   TestUnit (test_pipe );
+   TestUnit (test_joint2 );
+   TestUnit (test_croix );
+   TestUnit (test_pipes );
+   TestUnit (test_lorraine);
+   TestUnit (test_disconnect2 );
+   TestUnit (test_disconnect4 );
+   TestUnit (test_disconnect1 );
+   TestUnit (test_disconnect3 );
+   TestUnit (test_disconnect );
+   TestUnit (test_transfo2 );
+   TestUnit (test_transfo );
+   TestUnit (test_copy_document );
+   TestUnit (test_cylindricals );
+   TestUnit (test_hexa );
+                 // Dans test_quads
+   TestUnit (test_hexa_quads_5 );
+   TestUnit (test_hexa_quads_ab );
+   TestUnit (test_hexa_quads_ac );
+   TestUnit (test_hexa_quads_ace );
+   TestUnit (test_hexa_quads_acd );
+   TestUnit (test_hexa_quads_abcd );
+   TestUnit (test_hexa_quads_abce );
+   TestUnit (test_cramer );
+   TestUnit (test_hexa_quads_ac1 );
+   TestUnit (test_asso_grid );
+   TestUnit (test_piquage );
+   TestUnit (test_replace );
+   TestUnit (test_hemispheres );
+   TestUnit (test_quads );
+}
+// ============================================================== main-type
+int main_standard (int argc, char* argv[])
 {
 	// Retrieve test path from command line first argument. Default to "" which resolve
 	// to the top level suite.
