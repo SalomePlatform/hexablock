@@ -65,7 +65,7 @@ private :
    void majCoord ();
 
 private :
-   string lig_brep;
+   string lig_brep,  lig_ident, lig_ior;
    double lig_debut, lig_fin;
    double par_mini,  par_maxi;
 

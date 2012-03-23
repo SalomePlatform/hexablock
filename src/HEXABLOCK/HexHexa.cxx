@@ -936,6 +936,10 @@ void Hexa::dump ()
    for (int nro=0; nro<HV_MAXI ; nro++)
         PrintName (h_vertex[nro]);
    printf (")\n");
+   Real3 cg; 
+   getCenter (cg);
+   printf ("cg    = (%g, %g, %g)\n", cg[0], cg[1], cg[2]);
+
 }
 // ======================================================== dumpPlus
 void Hexa::dumpPlus ()

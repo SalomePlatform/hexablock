@@ -31,13 +31,22 @@ class Shape
 {
 public :
     Shape (string brep);
-    string getBrep ()  { return b_rep; }
+    string getBrep  () { return b_rep; }
+    string getName  () { return ident; }
+    string getIor   () { return ior; }
+
+    double getStart () { return debut;  }
+    double getEnd   () { return fin;   }
+    void   getBounds (double& pdeb, double& pfin)  { pdeb=debut ; pfin = fin; }
 
     void  setBrep   (string brep)               { b_rep = brep; }
     void  setName   (string name)               { ident = name; }
+    void  setIor    (string val)                { ior   = val; }
+
     void  setBounds (double pdeb, double pfin)  { debut = pdeb ; fin = pfin; }
     void  setStart  (double val)                { debut = val ; }
     void  setEnd    (double val)                { fin   = val ; }
+
     void  saveXml   (XmlWriter* xml);
 
 public :

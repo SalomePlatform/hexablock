@@ -250,22 +250,8 @@ void Document::reorderFaces ()
                  elt = elt->next())
        {
        Quad* quad = static_cast <Quad*> (elt);
-       if (quad!=NULL && quad->isHere() && quad->getNbrParents()==1) 
-          {
-          Hexa* hexa = quad->getParent(0);
-          hexa->getCenter (cg);
-          quad->getVertex (0) -> getPoint (orig);
-          quad->getVertex (1) -> getPoint (pi);
-          quad->getVertex (3) -> getPoint (pj);
-
-          calc_vecteur (orig, pi, vi);
-          calc_vecteur (orig, pj, vj);
-          calc_vecteur (orig, cg, vk);
-
-          double pmixte = prod_mixte (vi, vj, vk);
-          if (pmixte > ZEROR)  
-             quad->inverser ();
-          }
+       if (quad!=NULL && quad->isHere())
+           quad->setOrientation ();
        }
 
 }

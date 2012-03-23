@@ -17,7 +17,8 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
 #include "HexQuad.hxx"
 
@@ -39,6 +40,7 @@ Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
    q_vertex [E_C] = vc;
    q_vertex [E_D] = vd;
    q_clone        = NULL;
+   q_orientation  = Q_UNDEFINED;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
@@ -56,7 +58,8 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
    q_edge [E_B] = eb;
    q_edge [E_C] = ec;
    q_edge [E_D] = ed;
-   q_clone      = NULL;
+   q_clone       = NULL;
+   q_orientation = Q_UNDEFINED;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
@@ -102,6 +105,8 @@ Quad::Quad (Quad* other)
        q_edge   [nro] = NULL;
        q_vertex [nro] = NULL;
        }
+   q_orientation = Q_UNDEFINED;
+   q_clone       = NULL;
 }
 // ========================================================= majReferences 
 void Quad::majReferences ()
@@ -363,7 +368,7 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
 
    return NULL;
 }
-// ========================================================= getParent 
+// ========================================================= saveXml
 void Quad::saveXml (XmlWriter* xml)
 {
    char buffer[12];
@@ -437,12 +442,12 @@ void Quad::dump ()
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
         PrintName (q_edge[nro]);
-   printf (")\n" );
+   printf (")\n");
 
-   printf ("        (" );
+   printf ("        (");
    for (int nro=0 ; nro<QUAD4 ; nro++)
         PrintName (q_vertex[nro]);
-   printf (")" );
+   printf (")");
 
    dumpRef ();
 }
@@ -498,5 +503,51 @@ Edge* Quad::getPerpendicular (Edge* arete, Vertex* node)
       return perp;
    else
       return NULL;
+}
+// ======================================================== setOrientation
+void Quad::setOrientation ()
+{
+    static cpchar t_ori[] = {"Q_INSIDE", "Q_DIR_OUT", "Q_DIR_IN", "Q_UNDEF"};
+    q_orientation = Q_INSIDE;
+    if (getNbrParents() != 1)
+       return;
+  
+    Real3 cg, orig, pi, pj, vi, vj, vk;
+
+    Hexa* hexa = getParent(0);
+    hexa->getCenter (cg);
+
+/********************************************************************
+    printName (" = ");
+
+    for (int np=0 ; np < QUAD4 ; np++)
+        {
+        q_vertex [np        ] -> getPoint (orig);
+        q_vertex [(np+1) % 4] -> getPoint (pi);
+        q_vertex [(np+3) % 4] -> getPoint (pj);
+
+        calc_vecteur (orig, pi, vi);
+        calc_vecteur (orig, pj, vj);
+        calc_vecteur (orig, cg, vk);
+        double pmixte = prod_mixte (vi, vj, vk);
+        q_orientation = pmixte > ZEROR ? Q_DIR_OUT : Q_DIR_IN;
+        if (pmixte>0) printf (">");
+           else       printf ("<");
+        }
+
+    printf ("\n");
+    return;
+  ******************************************************************* */
+    q_vertex [0] -> getPoint (orig);
+    q_vertex [1] -> getPoint (pi);
+    q_vertex [3] -> getPoint (pj);
+
+    calc_vecteur (orig, pi, vi);
+    calc_vecteur (orig, pj, vj);
+    calc_vecteur (cg, orig, vk);
+
+    double pmixte = prod_mixte (vi, vj, vk);
+    q_orientation = pmixte > ZEROR ? Q_DIR_OUT : Q_DIR_IN;
+    printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
 }
 END_NAMESPACE_HEXA

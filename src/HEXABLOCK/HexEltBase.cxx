@@ -139,6 +139,30 @@ void EltBase::setAssociation (Shape* forme)
    if (el_root->debug (2))
        cout << "  Vertex " << el_name << " : setAssociation" << endl;
 }
+// ========================================================= dumpRef 
+void EltBase::dumpRef ()
+{
+   int nbp = el_parent.size();
+   bool prems = true;
+
+   if (nbp==0)
+      {
+      printf ("\n");
+      }
+
+   for (int nro=0 ; nro<nbp ; nro++)	      
+       {
+       if (el_parent[nro]->isHere ())
+          {
+          if (prems) 
+              printf ("\t isin ");
+          prems = false;
+          el_parent[nro]->printName(", ");
+          }
+       }
+
+   printf ("\n");
+}
 
 END_NAMESPACE_HEXA
 

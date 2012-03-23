@@ -644,7 +644,8 @@ void Document::dump ()
        for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
                      elt = elt->next())
            {
-           elt->dump ();
+           if (elt->isHere())
+               elt->dump ();
            }
        }
 

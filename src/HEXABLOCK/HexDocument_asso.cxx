@@ -1,5 +1,5 @@
 
-// C++ : La clase principale de Hexa
+// C++ : Associatiosn dans le document
 
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
@@ -207,7 +207,6 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
                               pend, closed, inv);
    return ier;
 }
-//
 // ====================================================== vertexInLine
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens)
 {
@@ -227,6 +226,19 @@ int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens)
        }
  
    return NOTHING;
+}
+// ====================================================== vertexInLine
+void Document::clearAssociation ()
+{
+   for (int nat=EL_VERTEX ; nat<=EL_QUAD ; nat++)
+       {
+       for (EltBase* elt = doc_first_elt[nat]->next (); elt!=NULL;
+                     elt = elt->next())
+           {
+           if (elt!=NULL && elt->isHere())
+              elt->clearAssociation ();
+           }
+       }
 }
 
 END_NAMESPACE_HEXA

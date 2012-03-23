@@ -223,6 +223,7 @@ public :
              RealVector& tdr, RealVector& tda, RealVector& tdh, 
              bool fill=false);
 
+   void clearAssociation ();
 public:
     Document (cpchar name);
    ~Document ();

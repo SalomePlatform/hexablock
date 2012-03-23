@@ -126,19 +126,7 @@ inline void EltBase::dump ()
    printf ("Elt%d  Nro=%04d", el_type, el_id);
    dumpRef() ; 
 }
-// ========================================================= dumpRef 
-inline void EltBase::dumpRef ()
-{
-   int nbp = el_parent.size();
 
-   if (nbp>0)
-      {
-      printf ("\t isin ");
-      for (int nro=0 ; nro<nbp ; nro++)	      
-          el_parent[nro]->printName(", ");
-      }
-    printf ("\n");
-}
 // ========================================================= getFather 
 inline EltBase* EltBase::getFather  (int nro)
 {

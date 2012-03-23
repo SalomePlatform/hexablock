@@ -96,7 +96,10 @@ KasLine::~KasLine ()
 // === Creation de la quincaillerie associee a une shape 
 void KasLine::defineLine (Shape* asso, double deb, double fin)
 {
-   lig_brep = asso->getBrep ();
+   lig_brep  = asso->getBrep ();
+   lig_ident = asso->getName ();
+   lig_ior   = asso->getIor  ();
+
    if (fin<0.0)
       {
       lig_debut = asso->debut;
@@ -294,8 +297,12 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 void KasLine::assoEdge (Edge* edge, double para1, double para2, int vass)
 {
    Shape* shape = new Shape (lig_brep);
+   shape->setName   (lig_ident);
+   shape->setIor    (lig_ior);
    shape->setBounds (para1, para2);
+
    edge ->addAssociation (shape);
+
    if (db) printf (" ... Asso Edge %s -> (%g,%g)\n", 
            edge->getName(), para1, para2);
 

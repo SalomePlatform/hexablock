@@ -989,12 +989,16 @@ void        set_debug_asso  (bool boule);
 
 void Document::setLevel (int niv)
 {
-   doc_db = niv;
-   set_debug_asso (niv>0);
-
+   if (niv == 747)
+      clearAssociation ();
 #ifdef _TEST_BIC
    if (niv >=90 && niv <=99)
       test_bicylinder (this, niv-90);
 #endif
+   else
+      {
+      doc_db = niv;
+      set_debug_asso (niv>0);
+      }
 }
 END_NAMESPACE_HEXA

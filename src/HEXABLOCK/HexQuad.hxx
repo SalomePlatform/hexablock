@@ -1,3 +1,6 @@
+
+// class : Les Quadrangles
+
 //  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
 //  This library is free software; you can redistribute it and/or
@@ -14,11 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
-
-// class : Les Quadrangles
-
 #ifndef __QUAD_H
 #define __QUAD_H
 
@@ -92,13 +93,14 @@ public:
     virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
     int   addAssociation (Shape* forme); 
     const Shapes& getAssociations ()        { return tab_assoc ; }
-    void  inverser ();
 
     virtual void duplicate ();
     Quad* getClone ()               {  return q_clone ; }
 
     Edge* getOpposEdge     (Edge* arete);   // Version simplifiee 
     Edge* getPerpendicular (Edge* arete, Vertex* node); 
+    int   getOrientation ()            { return q_orientation; }
+    void  setOrientation ();
 
 private:
     friend class Cloner;
@@ -108,6 +110,7 @@ private:
     Edge*   q_edge   [QUAD4];
     Vertex* q_vertex [QUAD4];
     Quad*   q_clone;
+    int     q_orientation; 
 
     Shapes tab_assoc;
 };
@@ -217,21 +220,10 @@ inline void Quad::setScalar  (double val)
    for (int n1=0 ; n1< QUAD4 ; n1++)
        q_vertex[n1] -> setScalar (val);
 }
-
-// =============================================================== inverser
-inline void Quad::inverser ()
-{
-   Vertex*   vx = q_vertex [1]; 
-   q_vertex [1] = q_vertex [3]; 
-   q_vertex [3] = vx;
-
-   Edge*   ex = q_edge [1]; 
-   q_edge [1] = q_edge [3]; 
-   q_edge [3] = ex;
-}
 // =============================================================== duplicate
 inline void Quad::duplicate  ()
 {
+   q_orientation  = Q_UNDEFINED;
    q_clone = new Quad (GetClone (q_edge [E_A]), 
                        GetClone (q_edge [E_B]), 
                        GetClone (q_edge [E_C]), 
