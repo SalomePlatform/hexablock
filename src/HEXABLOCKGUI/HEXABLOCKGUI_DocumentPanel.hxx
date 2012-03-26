@@ -763,30 +763,18 @@ namespace HEXABLOCK
       MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w = 0, bool b= false, Qt::WindowFlags f= 0 );
       virtual ~MyBasicGUI_PointDlg();
   
-      QPushButton* buttonCancel() const;
-      QPushButton* buttonOk() const;
-      QPushButton* buttonApply() const;
-      QPushButton* buttonHelp() const;
-
-//       GEOM::GeomObjPtr vertexBuilded;
-      GEOM::GEOM_Object_ptr newVertex;
-      QString               newVertexEntry;
-//       QString getEntry( GEOM::GEOM_Object_ptr object ) const;
-
-//       bool  ClickOnApply();
+//       QPushButton* buttonCancel() const;
+//       QPushButton* buttonOk() const;
+//       QPushButton* buttonApply() const;
+//       QPushButton* buttonHelp() const;
       bool onAccept( const bool publish = true, const bool useTransaction = true );
 
-    protected:
-//       virtual bool execute( ObjectList& objects );
-//       virtual void addSubshapesToStudy();
+      void showEvent( QShowEvent * event );
 
-      QString addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName );
-    
-  
-//       bool onAccept( const bool publish = true, const bool useTransaction = true );
-
-//     private:
-//       GEOM::GeomObjPtr vertexBuilded;
+      GEOM::GEOM_Object_ptr newVertex;
+      QString               newVertexEntry;
+      QString               newVertexName;
+      QString               newVertexBrep;
   };
 
 
@@ -804,7 +792,7 @@ namespace HEXABLOCK
 
       protected:
         void _initInputWidget( Mode editmode );
-        QDialogButtonBox* _initButtonBox( Mode editmode );
+//         QDialogButtonBox* _initButtonBox( Mode editmode );
         void _raiseCurrentOccView();
 
 

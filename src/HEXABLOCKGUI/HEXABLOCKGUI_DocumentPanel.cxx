@@ -144,6 +144,8 @@ HexaBaseDialog::~HexaBaseDialog()
 {
 //   _mgr->clearSelectionCache();
 //   _mgr->clearSelected();
+  globalSelection();
+  erasePreview();
 }
 
 QDialogButtonBox* HexaBaseDialog::_initButtonBox( Mode editmode )
@@ -297,6 +299,7 @@ void HexaBaseDialog::_disallowSelection()
 bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
 {
   MESSAGE("HexaBaseDialog::_allowModelSelection(){");
+  if ( !_patternDataSelectionModel ) return false;
   bool isOk = false;
 
   HexaWidgetType wType;
@@ -3890,6 +3893,9 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w, bool b, Qt
   buttonApply()->hide();
   buttonCancel()->hide();
   buttonHelp()->hide();
+
+  emit constructorsClicked(0);
+
   disconnect( buttonHelp(),  SIGNAL( clicked() ),
               this,          SLOT( ClickOnHelp() ) );
 }
@@ -3898,189 +3904,35 @@ MyBasicGUI_PointDlg::~MyBasicGUI_PointDlg()
 {
 }
 
+// QPushButton* MyBasicGUI_PointDlg::buttonCancel() const
+// { 
+//   return BasicGUI_PointDlg::buttonCancel();
+// }
+// 
+// QPushButton* MyBasicGUI_PointDlg::buttonOk() const
+// { 
+//   return BasicGUI_PointDlg::buttonOk();
+// }
+// 
+// QPushButton* MyBasicGUI_PointDlg::buttonApply() const
+// { 
+//   return BasicGUI_PointDlg::buttonApply();
+// }
+// 
+// QPushButton* MyBasicGUI_PointDlg::buttonHelp() const
+// { 
+//   return BasicGUI_PointDlg::buttonHelp();
+// }
 
-QString MyBasicGUI_PointDlg::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
+
+void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
 {
-  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX MyBasicGUI_PointDlg::addInStudy ");
-//   if ( !hasCommand() )
-//     return QString();
-// 
-//   _PTR(Study) aStudy = getStudy()->studyDS();
-//   if ( !aStudy || theObj->_is_nil() )
-//     return QString();
-// 
-// //   SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
-// 
-// 
-//   SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
-//   CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
-//   SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
-//   int aStudyID = aStudy->StudyId();
-//   SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
-//   
-//   SALOMEDS::Study_var aStudyDS = aDSStudy._retn();
-// 
-// 
-// 
-// 
-// 
-//   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
-// 
-//   SALOMEDS::SObject_var aSO =
-//     getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
-// 
-//   QString anEntry;
-//   if ( !aSO->_is_nil() )
-//     anEntry = aSO->GetID();
-// 
-//   // Each dialog is responsible for this method implementation,
-//   // default implementation does nothing
-//   restoreSubShapes(aStudyDS, aSO);
-//   aSO->UnRegister();
+  MESSAGE("MyBasicGUI_PointDlg::showEvent(){");
 
-  newVertexEntry = BasicGUI_PointDlg::addInStudy( theObj, theName );
-  newVertex      = theObj;
-
-  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX BasicGUI_PointDlg::addInStudy theName =>"<<theName );
-
-  MESSAGE("XXXXXXXXXXXXXXXXXXXXXX BasicGUI_PointDlg::addInStudy newVertexEntry =>"<< newVertexEntry.toStdString() );
-
-  return newVertexEntry;
+  emit constructorsClicked(0);
+  QDialog::showEvent ( event );
+  MESSAGE("}");
 }
-
-
-// bool  MyBasicGUI_PointDlg::ClickOnApply()
-// {
-// //   return BasicGUI_PointDlg::ClickOnApply();
-//   if (!onAccept())
-//     return false;
-// 
-//   initName();
-// 
-//   globalSelection(); // close local contexts, if any
-// 
-//   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
-// 
-// //   SelectionIntoArgument();
-// 
-//   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX/*TopAbs_SHAPE*/);
-//   TopoDS_Shape aShape;
-// 
-//   if ( aSelectedObject ){
-//     MESSAGE("MyBasicGUI_PointDlg::ClickOnApply aSelectedObject");
-//   } else {
-//     MESSAGE("MyBasicGUI_PointDlg::ClickOnApply no aSelectedObject");
-//   }
-// //   ConstructorsClicked(getConstructorId());
-//   return true;
-// }
-
-
-QPushButton* MyBasicGUI_PointDlg::buttonCancel() const
-{ 
-  return BasicGUI_PointDlg::buttonCancel();
-}
-
-QPushButton* MyBasicGUI_PointDlg::buttonOk() const
-{ 
-  return BasicGUI_PointDlg::buttonOk();
-}
-
-QPushButton* MyBasicGUI_PointDlg::buttonApply() const
-{ 
-  return BasicGUI_PointDlg::buttonApply();
-}
-
-QPushButton* MyBasicGUI_PointDlg::buttonHelp() const
-{ 
-  return BasicGUI_PointDlg::buttonHelp();
-}
-
-
-// bool MyBasicGUI_PointDlg::execute( ObjectList& objects )
-// {
-//   MESSAGE("MyBasicGUI_PointDlg::execute( ObjectList& objects ) ");
-//   bool res = BasicGUI_PointDlg::execute( objects );
-// 
-//   TopoDS_Shape aShape;
-//   /*GEOM::GeomObjPtr anObject */vertexBuilded = objects.front();
-//   GEOMBase::GetShape(vertexBuilded.get(), aShape);
-// 
-//   std::string name  = GEOMBase::GetName( vertexBuilded.get() ).toStdString();
-//   std::string entry = vertexBuilded->GetStudyEntry();
-//   std::string brep  = shape2string( aShape );
-// 
-//   MESSAGE( "objects.size()  => " << objects.size() );
-//   MESSAGE( "name            => " << name );
-//   MESSAGE( "entry           => " << entry );
-//   MESSAGE( "brep            => " << brep );
-//   return res;
-// }
-// 
-// void MyBasicGUI_PointDlg::addSubshapesToStudy()
-// {
-//   MESSAGE("MyBasicGUI_PointDlg::addSubshapesToStudy() ");
-//   BasicGUI_PointDlg::addSubshapesToStudy();
-// 
-// //  switch (getConstructorId()) {
-// //   case GEOM_POINT_REF:
-// //     GEOMBase::PublishSubObject(myRefPoint.get());
-// //     break;
-// //   case GEOM_POINT_EDGE:
-// //     GEOMBase::PublishSubObject(myEdge.get());
-// //     break;
-// //   case GEOM_POINT_INTINT:
-// //     GEOMBase::PublishSubObject(myLine1.get());
-// //     GEOMBase::PublishSubObject(myLine2.get());
-// //     break;
-// //   case GEOM_POINT_SURF:
-// //     GEOMBase::PublishSubObject(myFace.get());
-// //     break;
-// //   default:
-// //     break;
-// //   }
-// }
-
-
-
-
-
-// QString MyBasicGUI_PointDlg::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
-// {
-//   MESSAGE("MyBasicGUI_PointDlg::addInStudy() " << theName );
-// 
-//   TopoDS_Shape aShape;  
-//   GEOMBase::GetShape(theObj, aShape);
-// 
-//   std::string name  = GEOMBase::GetName( theObj ).toStdString();
-//   std::string entry = theObj->GetStudyEntry();
-//   std::string brep  = shape2string( aShape );
-//   MESSAGE( "name            => " << name );
-//   MESSAGE( "entry           => " << entry );
-//   MESSAGE( "brep            => " << brep );
-//   return BasicGUI_PointDlg::addInStudy( theObj, theName );
-// }
-
-// QString MyBasicGUI_PointDlg::getEntry( GEOM::GEOM_Object_ptr object ) const
-// {
-//   MESSAGE("MyBasicGUI_PointDlg::getEntry() ");
-//   SalomeApp_Study* study = getStudy();
-//   MESSAGE("1)       study" << study );
-//   if ( study )  {
-//     QString objIOR = GEOMBase::GetIORFromObject( object );
-//     MESSAGE("2)       objIOR" << objIOR.toStdString() );
-//     if ( objIOR != "" ) {
-//       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( objIOR.toLatin1().constData() ) );
-//       if ( SO ){
-//         MESSAGE("3)       SO " << SO  );
-//         return QString::fromStdString(SO->GetID());
-//       }
-//     }
-//   }
-//   return "";
-// }
-
-
 
 
 bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransaction )
@@ -4146,7 +3998,17 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
             }
             anEntryList << addInStudy( obj, aName.toLatin1().constData() );
 
-            MESSAGE("AAAAAAAAAAAAAAAA anEntryList "<< anEntryList[0].toStdString() );
+            newVertex      = obj;
+            newVertexEntry = anEntryList[0];
+            TopoDS_Shape aShape;
+            GEOMBase::GetShape( newVertex, aShape );
+            if ( !aShape.IsNull() ){
+              MESSAGE("!aShape.IsNull()");
+              newVertexName = GEOMBase::GetName( newVertex );
+              MESSAGE("newVertexName "<< newVertexName.toStdString());
+              newVertexBrep = shape2string( aShape ).c_str();
+            }
+
             // updateView=false
             display( obj, false );
 #ifdef WITHGENERICOBJ
@@ -4165,15 +4027,11 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
           }
         }
 
-        MESSAGE("1");
         if ( nbObjs ) {
-          MESSAGE("2");
           commitCommand();
           updateObjBrowser();
           if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
-            MESSAGE("3");
             if( LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp ) ){
-              MESSAGE("4");
               aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
             }
             anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
@@ -4197,12 +4055,6 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
 
 
 
-
-// GEOM::GeomObjPtr MyBasicGUI_PointDlg::getSelected( TopAbs_ShapeEnum type )
-// {
-//   return BasicGUI_PointDlg::getSelected( type );
-// }
-
 VertexAssocDialog::VertexAssocDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 HexaBaseDialog(parent, editmode, f)
 {
@@ -4216,7 +4068,9 @@ HexaBaseDialog(parent, editmode, f)
   layout->addLayout(up);
   layout->addLayout(down);
   QWidget* d = dynamic_cast<SUIT_Desktop*>(parent->parent());//SUIT_Session::session()->activeApplication()->desktop() ;
+//   QWidget* d = SUIT_Session::session()->activeApplication()->desktop();
   _nested = new MyBasicGUI_PointDlg( NULL, d );
+  
   QGroupBox *GroupBoxName = new QGroupBox();//DlgRef_Skeleton_QTD);
   GroupBoxName->setObjectName(QString::fromUtf8("GroupBoxName"));
 //         sizePolicy.setHeightForWidth(GroupBoxName->sizePolicy().hasHeightForWidth());
@@ -4237,7 +4091,7 @@ HexaBaseDialog(parent, editmode, f)
   up->addWidget( GroupBoxName );
   down->addWidget( _nested );
 
-  setFocusProxy( _vertex_le );
+//   setFocusProxy( _vertex_le );
 
   _initWidget(editmode);
   _initViewManager();
@@ -4262,17 +4116,13 @@ void VertexAssocDialog::_initInputWidget( Mode editmode )
   _vertex_le->setValidator( validator );
 }
 
-QDialogButtonBox* VertexAssocDialog::_initButtonBox( Mode editmode )
-{
-//   _nested->buttonOk()->hide();
-//   _nested->buttonApply()->hide();
-//   _nested->buttonCancel()->hide();
-//   _nested->buttonHelp()->hide();
-  connect( _nested->buttonOk(),      SIGNAL(clicked()), this, SLOT(accept()) );
-  connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
-  connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
-  connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
-}
+// QDialogButtonBox* VertexAssocDialog::_initButtonBox( Mode editmode )
+// {
+//   connect( _nested->buttonOk(),      SIGNAL(clicked()), this, SLOT(accept()) );
+//   connect( _nested->buttonApply(),   SIGNAL(clicked()), this, SLOT(apply())  );
+//   connect( _nested->buttonCancel(),  SIGNAL(clicked()), this, SLOT(reject()) );
+//   connect( _nested->buttonHelp(),    SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
+// }
 
 
 void VertexAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
@@ -4305,46 +4155,18 @@ bool VertexAssocDialog::apply(QModelIndex& result)
   _currentObj = NULL;
 
   QModelIndex iVertex = patternDataModel->mapToSource( _index[_vertex_le] );
-  if ( !iVertex.isValid() ) return false;
-
-//   globalSelection(); // close local contexts, if any
-//   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
-
-  if (! _nested->onAccept())
-    return false;
-//   _nested->ClickOnApply();
-
-//   GEOM::GeomObjPtr aSelectedObject = _nested->getSelected(TopAbs_VERTEX); //CS_TEST
-  std::string testName  = GEOMBase::GetName( _nested->newVertex ).toStdString();
-//   std::string testEntry = _nested->getEntry( _nested->newVertex ).toStdString();
-
-  MESSAGE("NAME   is : "<<testName);
-//   MESSAGE("ENTRY  is : "<<testEntry);
-
-  GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_VERTEX/*TopAbs_SHAPE*/);
-  TopoDS_Shape aShape;
-
-  if ( aSelectedObject ){
-    MESSAGE("aSelectedObject");
-  } else {
-    MESSAGE("no aSelectedObject");
-  }
-
-  if ( GEOMBase::GetShape(aSelectedObject.get(), aShape)  )  MESSAGE("GEOMBase::GetShape(aSelectedObject.get(), aShape) ");
-  if ( !aShape.IsNull() )  MESSAGE("!aShape.IsNull()");
-
-  if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
+  if ( iVertex.isValid() and _nested->onAccept() ){
+    //   GEOM::GeomObjPtr aSelectedObject = _nested->getSelected(TopAbs_VERTEX);
     DocumentModel::GeomObj aPoint;
-    aPoint.name  = GEOMBase::GetName( aSelectedObject.get() );
-    aPoint.entry = aSelectedObject->GetStudyEntry();
-    aPoint.brep  = shape2string( aShape ).c_str();
-    MESSAGE(" brep => " << aPoint.brep.toStdString() );
-
+    aPoint.name  = _nested->newVertexName;
+    aPoint.entry = _nested->newVertexEntry;
+    aPoint.brep  = _nested->newVertexBrep;
+    MESSAGE(" aPoint.name"  <<  aPoint.name.toStdString() );
+    MESSAGE(" aPoint.entry" <<  aPoint.entry.toStdString() );
+    MESSAGE(" aPoint.brep"  <<  aPoint.brep.toStdString() );
     _documentModel->addAssociation( iVertex, aPoint );
-
     // to select/highlight result
     result = patternDataModel->mapFromSource(iVertex);
-
     return true;
   } else  {
     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE VERTEX ASSOCIATION" ) );
