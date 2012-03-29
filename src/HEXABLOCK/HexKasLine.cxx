@@ -105,7 +105,7 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
       lig_debut = asso->debut;
       lig_fin   = asso->fin;
       }
-   else if (lig_debut >= UnEpsil)
+   else if (deb >= UnEpsil)
       {
       lig_debut = fin;
       lig_fin   = deb ;
@@ -151,6 +151,8 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
    if (db) 
       {
       Echo (" ____________________________________  KasLine::defineLine");
+      HexDisplay (deb);
+      HexDisplay (fin);
       HexDisplay (lig_debut);
       HexDisplay (lig_fin);
       HexDisplay (geom_total_length);
@@ -228,8 +230,8 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
       }
    else if (db)
       {
-      if (db) printf (" Asso Line refusee %s -> (%g,%g)\n", 
-              edge->getName(), lpara1, lpara2);
+      printf (" Asso Line refusee %s -> (%g,%g)\n", edge->getName(),
+                                                    lpara1, lpara2);
       }
 
                                // ---------------Association du vertex 

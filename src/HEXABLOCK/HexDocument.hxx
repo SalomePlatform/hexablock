@@ -248,7 +248,9 @@ public:
     void  majReferences  ();                  // M.A.J relation "utilise par"
     void  update ()            { if (maj_connection) majReferences (); }
     bool  debug (int niv=0)    { return doc_db > niv ; }
+
     void  reorderFaces ();
+    void  reorderQuads ();
 
 public:
    Globale* glob;

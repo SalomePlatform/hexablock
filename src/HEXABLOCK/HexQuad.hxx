@@ -100,7 +100,8 @@ public:
     Edge* getOpposEdge     (Edge* arete);   // Version simplifiee 
     Edge* getPerpendicular (Edge* arete, Vertex* node); 
     int   getOrientation ()            { return q_orientation; }
-    void  setOrientation ();
+    int   setOrientation ();
+    void  setOrientation (int ori);
 
 private:
     friend class Cloner;

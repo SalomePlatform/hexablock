@@ -504,13 +504,20 @@ Edge* Quad::getPerpendicular (Edge* arete, Vertex* node)
    else
       return NULL;
 }
+static cpchar t_ori[] = {"Q_INSIDE", "Q_DIRECT", "Q_INVERSE", "Q_UNDEF"};
 // ======================================================== setOrientation
-void Quad::setOrientation ()
+void Quad::setOrientation (int ori)
 {
-    static cpchar t_ori[] = {"Q_INSIDE", "Q_DIR_OUT", "Q_DIR_IN", "Q_UNDEF"};
+    q_orientation = ori;
+    if (ori==Q_DIRECT || ori==Q_INVERSE)
+       printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
+}
+// ======================================================== setOrientation
+int Quad::setOrientation ()
+{
     q_orientation = Q_INSIDE;
     if (getNbrParents() != 1)
-       return;
+       return q_orientation;
   
     Real3 cg, orig, pi, pj, vi, vj, vk;
 
@@ -530,7 +537,7 @@ void Quad::setOrientation ()
         calc_vecteur (orig, pj, vj);
         calc_vecteur (orig, cg, vk);
         double pmixte = prod_mixte (vi, vj, vk);
-        q_orientation = pmixte > ZEROR ? Q_DIR_OUT : Q_DIR_IN;
+        q_orientation = pmixte > ZEROR ? Q_DIRECT : Q_INVERSE;
         if (pmixte>0) printf (">");
            else       printf ("<");
         }
@@ -547,7 +554,8 @@ void Quad::setOrientation ()
     calc_vecteur (cg, orig, vk);
 
     double pmixte = prod_mixte (vi, vj, vk);
-    q_orientation = pmixte > ZEROR ? Q_DIR_OUT : Q_DIR_IN;
+    q_orientation = pmixte > ZEROR ? Q_DIRECT : Q_INVERSE;
     printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
+    return q_orientation;
 }
 END_NAMESPACE_HEXA

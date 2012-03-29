@@ -76,7 +76,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
+static bool db = true;
 
 static KasBiCylinder current_bicyl;
 

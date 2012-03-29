@@ -86,6 +86,7 @@ static Shape        current_shape ("");
 // ========================================================= cutAssociation
 void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
 {
+   db = on_debug ();
    char foo[18];
    int nbedges  = tedges.size();
    int nbshapes = tshapes.size ();
@@ -214,6 +215,7 @@ void geom_asso_point (Vertex* node)
 void geom_create_circle (double* milieu, double rayon, double* normale, 
                          double* base, string& brep)
 {
+   db = on_debug ();
    if (db) printf ("geom_create_circle c=(%g,%g,%g), r=%g\n", 
                     milieu[0], milieu[1], milieu[2], rayon);
    if (db) printf ("    -------- base=(%g,%g,%g)\n", base[0], base[1], base[2]);
@@ -273,7 +275,8 @@ void geom_create_sphere (double* milieu, double radius, string& brep)
 // ====================================================== geom_dump_asso
 void geom_dump_asso (Edge* edge)
 {
-   printf (" _____________________ dump_edge :\n");
+   printf (" %s dump_edge :\n",
+           "_______________________________________________________________");
    if (edge==NULL || NOT edge->isHere ())
       {
       printf ("*** deleted ***)\n");
@@ -383,7 +386,8 @@ void clear_associations (Edge* edge)
 int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline, 
                     double pstart, double pend, bool closed, bool inv)
 {
-   cout << "____________________________________________"
+   db = on_debug ();
+   if (db) cout << "____________________________________________"
         << " associateShapes" << endl;
 
    int nbshapes = gline.size ();
