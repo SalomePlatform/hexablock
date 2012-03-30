@@ -27,8 +27,12 @@
 
 #include "test_unit.hxx"
 
-#define TestUnit(call) cout << barre << " .... Essai de " #call << endl; \
-                       call(nbargs,tabargs) ; if (ier!=0) return ier
+#define TestUnit(call) display(#call); ier=call(nbargs,tabargs); display(ier)
+
+static cpchar test_name = "Unknown";
+static void display (cpchar name);
+static void display (int ier);
+
 // ============================================================== Main
 int main (int nbargs, cpchar tabargs [])
 {
@@ -47,8 +51,7 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_string_xml );
    ///   TestUnit (test_relecture );
    TestUnit (test_spherical);
-   TestUnit (test_grille_cyl );
-   TestUnit (test_asso_line );
+   // TestUnit (test_grille_cyl );   TODO : Correction Abu (en cours)
    TestUnit (test_cylindrical );
    TestUnit (test_cylinder );
    TestUnit (test_xml_cylinder );
@@ -122,4 +125,24 @@ int main_standard (int argc, char* argv[])
 	file.close();
 	
 	return result.wasSuccessful() ? 0 : 1;
+}
+// ============================================================= display name
+void display (cpchar nom)
+{
+   test_name = nom;
+   cout << endl;
+   cout << "========================================= Run "
+        << test_name << endl;
+}
+// ============================================================= display ier
+void display (int result)
+{
+   cout << ".........................................."
+        << " End of " << test_name;
+   if (result==0)
+      cout << ", Successfull";
+   else 
+      cout << ", Code error = " << result;
+   cout << endl;
+   
 }
