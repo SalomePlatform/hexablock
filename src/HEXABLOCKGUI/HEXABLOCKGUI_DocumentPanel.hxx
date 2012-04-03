@@ -70,18 +70,15 @@
 #include "ui_MakeHemiSphere_QTD.h"
 
 
+#include "MyGEOMBase_Helper.hxx"
+
+
 
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
 #include "HexHexa.hxx"
-// #include <QItemDelegate>
-// #include <QModelIndex>
-// #include <QObject>
-// #include <QSize>
-// #include <QSpinBox>
-// #include <QDockWidget>
-// #include <QItemSelectionModel>
+
 
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
@@ -89,22 +86,19 @@
 
 #include "klinkitemselectionmodel.hxx"
 
-#include <GEOMBase_Helper.h>
-#include "BasicGUI_PointDlg.h"
+
 
 Q_DECLARE_METATYPE(QModelIndex); 
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
 
+// class MyBasicGUI_PointDlg;
 
 namespace HEXABLOCK
 {
   namespace GUI
   {
-
-
-
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog, 
-                                                             public GEOMBase_Helper
+                                                             public MyGEOMBase_Helper
     {
         Q_OBJECT
 
@@ -140,7 +134,7 @@ namespace HEXABLOCK
           virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s );
           virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
           virtual void setGroupsSelectionModel( GroupsSelectionModel* s );
-          virtual void setMeshSelectionModel( QItemSelectionModel* s );
+          virtual void setMeshSelectionModel( MeshSelectionModel* s );
 
         public slots:
           virtual bool apply();
@@ -184,8 +178,8 @@ namespace HEXABLOCK
           // user selection
           PatternDataSelectionModel*    _patternDataSelectionModel;
           PatternBuilderSelectionModel* _patternBuilderSelectionModel;
-          GroupsSelectionModel*         _groupsSelectionModel; /*QItemSelectionModel* */
-          QItemSelectionModel*          _meshSelectionModel;
+          GroupsSelectionModel*         _groupsSelectionModel;
+          MeshSelectionModel*           _meshSelectionModel;
 
           QMap<QObject*, QModelIndex>   _index;
           QObject*                      _currentObj;
@@ -755,59 +749,7 @@ namespace HEXABLOCK
    };
 
 
-
-
-  class MyBasicGUI_PointDlg : public BasicGUI_PointDlg
-  {
-    public:
-      MyBasicGUI_PointDlg( GeometryGUI* g, QWidget* w = 0, bool b= false, Qt::WindowFlags f= 0 );
-      virtual ~MyBasicGUI_PointDlg();
-  
-//       QPushButton* buttonCancel() const;
-//       QPushButton* buttonOk() const;
-//       QPushButton* buttonApply() const;
-//       QPushButton* buttonHelp() const;
-      bool onAccept( const bool publish = true, const bool useTransaction = true );
-
-      void showEvent( QShowEvent * event );
-
-      GEOM::GEOM_Object_ptr newVertex;
-      QString               newVertexEntry;
-      QString               newVertexName;
-      QString               newVertexBrep;
-  };
-
-
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexAssocDialog : public HexaBaseDialog
-  {
-      Q_OBJECT
-
-      public:
-        VertexAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );
-        virtual ~VertexAssocDialog();
-        void clear();
-
-      public slots:
-        virtual bool apply(QModelIndex& result);
-
-      protected:
-        void _initInputWidget( Mode editmode );
-//         QDialogButtonBox* _initButtonBox( Mode editmode );
-        void _raiseCurrentOccView();
-
-
-        QString addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName );
-
-      protected slots:
-        void onWindowActivated(SUIT_ViewManager* vm);
-
-      private:
-        // the dialog box contains : 
-        //1)vertex selection from HEXABLOCK 
-        QLineEdit*            _vertex_le;
-        //2)point construction in GEOM
-        MyBasicGUI_PointDlg*  _nested;
-  };
+//   typedef class MyBasicGUI_PointDlg VertexAssocDialog;
 
 
 

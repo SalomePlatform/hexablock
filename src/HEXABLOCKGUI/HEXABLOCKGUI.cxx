@@ -81,9 +81,9 @@
 
 #include <OCCViewer_ViewManager.h>
 
+
 #include <QtxPopupMgr.h>
 
-// #include <BasicGUI_PointDlg.h>
 
 #include "Resource.hxx"
 // #include "QtGuiContext.hxx"
@@ -101,6 +101,7 @@
 
 #include <HEXABLOCK_version.h>
 
+#include "MyBasicGUI_PointDlg.hxx"
 
 // #include CORBA_CLIENT_HEADER(HEXABLOCKPlugin_Algorithm)
 
@@ -394,9 +395,7 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 
 bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
 {
-
   DEBTRACE("HEXABLOCKGUI::renameObject");
-
   bool appRes = SalomeApp_Module::renameObject(entry,name);
   if( !appRes )
     return false;
@@ -1417,6 +1416,8 @@ void HEXABLOCKGUI::showDockWidgets(bool isVisible)
   if (_dwInputPanel) _dwInputPanel->setVisible(isVisible);
   if (_dwInputPanel) _dwInputPanel->toggleViewAction()->setVisible(isVisible);
 
+  QWidget* w = _dwInputPanel->widget();
+  if (w) w->show();
 //   if ( isVisible ) _dwObjectBrowser->raise();//_dwPattern->raise();
 }
 
@@ -1922,9 +1923,13 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   diag->setGroupsSelectionModel(_groupsSelectionModel);
   diag->setMeshSelectionModel(_meshSelectionModel/*_meshTreeView->selectionModel()*/);
-  diag->setFocus();
+//   diag->setFocus();
+//   diag->show();
+  QWidget* w = _dwInputPanel->widget();
+  if (w) w->hide();
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle(diag->windowTitle());
+  diag->show();
 }
 
 
@@ -2144,13 +2149,30 @@ void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
 }
 
 
+// void HEXABLOCKGUI::assocVertex()
+// {
+//   if ( !_vertexAssocDiag ){
+//     _vertexAssocDiag = new VertexAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
+//   }
+//   _showDialogBox( vertexAssocDiag );
+// }
+
+
 void HEXABLOCKGUI::assocVertex()
 {
-  if ( !_vertexAssocDiag ){
-    _vertexAssocDiag = new VertexAssocDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
+ MESSAGE("HEXABLOCKGUI::assocVertex()");
+ QWidget* d = dynamic_cast<SUIT_Desktop*>(_dwInputPanel->parent());
+  if ( !_vertexAssocDiag  ){
+    _vertexAssocDiag  = new VertexAssocDialog( NULL, d );
   }
-  _showDialogBox( _vertexAssocDiag );
+  _vertexAssocDiag->setDocumentModel(_currentModel);
+  _vertexAssocDiag->setPatternDataSelectionModel(_patternDataSelectionModel);
+  _dwInputPanel->setWidget(_vertexAssocDiag);
+  _dwInputPanel->setWindowTitle(_vertexAssocDiag->windowTitle());
+  _vertexAssocDiag->show();
 }
+ 
+
 
 void HEXABLOCKGUI::assocEdge()
 {

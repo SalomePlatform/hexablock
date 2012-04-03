@@ -463,20 +463,20 @@ void DocumentGraphicView::commitData ( QWidget * editor )
 
 void DocumentGraphicView::currentChanged( const QModelIndex & current, const QModelIndex & previous )
 { 
-  MESSAGE("DocumentGraphicView::currentChanged(){");
-  MESSAGE("*  current  is: " << current.data().toString().toStdString());
-  MESSAGE("*  previous is: " << previous.data().toString().toStdString());
-  MESSAGE("}");
+//   MESSAGE("DocumentGraphicView::currentChanged(){");
+//   MESSAGE("*  current  is: " << current.data().toString().toStdString());
+//   MESSAGE("*  previous is: " << previous.data().toString().toStdString());
+//   MESSAGE("}");
 //   openPersistentEditor( current );
   _currentChanged = true;
 }
 
 void DocumentGraphicView::dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight )
 { 
-  MESSAGE("DocumentGraphicView::dataChanged(){");
-  MESSAGE("*  topLeft     is: " << topLeft.data().toString().toStdString());
-  MESSAGE("*  bottomRight is: " << bottomRight.data().toString().toStdString());
-  MESSAGE("}");
+//   MESSAGE("DocumentGraphicView::dataChanged(){");
+//   MESSAGE("*  topLeft     is: " << topLeft.data().toString().toStdString());
+//   MESSAGE("*  bottomRight is: " << bottomRight.data().toString().toStdString());
+//   MESSAGE("}");
   update();
   _currentChanged = false;
 //   updateObject(topLeft);
@@ -490,20 +490,20 @@ void DocumentGraphicView::editorDestroyed ( QObject * editor )
 
 void DocumentGraphicView::rowsAboutToBeRemoved ( const QModelIndex & parent, int start, int end )
 { 
-  MESSAGE("DocumentGraphicView::rowsAboutToBeRemoved (){");
-  MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
-  MESSAGE("*  start     is: " << start);
-  MESSAGE("*  end       is: " << end);
-  MESSAGE("}");
+//   MESSAGE("DocumentGraphicView::rowsAboutToBeRemoved (){");
+//   MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
+//   MESSAGE("*  start     is: " << start);
+//   MESSAGE("*  end       is: " << end);
+//   MESSAGE("}");
 }
 
 void DocumentGraphicView::rowsInserted ( const QModelIndex & parent, int start, int end )
 { 
-  MESSAGE("DocumentGraphicView::rowsInserted(){");
-  MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
-  MESSAGE("*  start     is: " << start);
-  MESSAGE("*  end       is: " << end);
-  MESSAGE("}");
+//   MESSAGE("DocumentGraphicView::rowsInserted(){");
+//   MESSAGE("*  parent    is: " << parent.data(Qt::DisplayRole).toString().toStdString());
+//   MESSAGE("*  start     is: " << start);
+//   MESSAGE("*  end       is: " << end);
+//   MESSAGE("}");
 }
 
 void DocumentGraphicView::selectionChanged( const QItemSelection & selected, const QItemSelection & deselected )

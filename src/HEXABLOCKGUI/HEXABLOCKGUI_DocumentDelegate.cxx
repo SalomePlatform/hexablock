@@ -81,7 +81,7 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   //   case CROSSELEMENTS_TREE : break;
     case GROUP_TREE       : editor = new GroupDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
     case LAW_TREE         : editor = new LawDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
-    case PROPAGATION_TREE : editor = new PropagationDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
+    case PROPAGATION_TREE : editor = new PropagationDialog(parent, HexaBaseDialog::INFO_MODE); break;
   }
   if ( editor ){
     if ( _documentModel )                editor->setDocumentModel( _documentModel );
@@ -89,13 +89,16 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
     if ( _groupsSelectionModel )         editor->setGroupsSelectionModel( _groupsSelectionModel );
     if ( _meshSelectionModel )           editor->setMeshSelectionModel( _meshSelectionModel);
+
+//     QWidget* w = _dw->widget();
+//     if (w) w->close();
     _dw->setWidget( editor );
     _dw->setWindowTitle( editor->windowTitle() );
 //         connect ( editor, SIGNAL( editingFinished() ), this, SLOT ( commitEditor() ) );
 //         editor->exec();
-//         editor->show();
+//     editor->show();
 //     editor->raise();
-// ->setFocus();
+//     editor->setFocus();
   }
 
   MESSAGE("}");
@@ -177,7 +180,7 @@ void DocumentDelegate::setEditorData( QWidget *editor,
     break;
   }
 
-// editor->show();
+//   editor->setFocus();
 //  editor->exec();
   MESSAGE("}");
 }
@@ -297,7 +300,7 @@ void DocumentDelegate::setGroupsSelectionModel( GroupsSelectionModel* s )
   _groupsSelectionModel = s ;
 }
 
-void DocumentDelegate::setMeshSelectionModel( QItemSelectionModel* s )
+void DocumentDelegate::setMeshSelectionModel( MeshSelectionModel* s )
 {
   _meshSelectionModel = s;
 }

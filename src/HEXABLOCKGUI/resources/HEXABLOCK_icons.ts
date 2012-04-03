@@ -158,5 +158,39 @@
             <source>ICON_COMPUTE_MESH</source>
             <translation>compute_mesh.png</translation>
         </message>
+
+        <message>
+            <source>ICON_DLG_POINT</source>
+            <translation>point2.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_POINT_EDGE</source>
+            <translation>pointonedge.png</translation>
+        </message>
+        <message>
+            <source>ICON_SELECT</source>
+            <translation>select1.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_POINT_REF</source>
+            <translation>point3.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_POINT_LINES</source>
+            <translation>point_line_intersection.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_POINT_FACE</source>
+            <translation>pointonface.png</translation>
+        </message>
+        <message>
+            <source>ICO_LINE</source>
+            <translation>line.png</translation>
+        </message>
+        <message>
+            <source>ICO_WIRE</source>
+            <translation>build_wire.png</translation>
+        </message>
+
     </context>
 </TS>

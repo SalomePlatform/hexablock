@@ -32,6 +32,8 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # salomeresdir = $(prefix)/share/salome/resources/@MODULE_NAME@
 
+SUBDIRS = MyDlgRef
+
 # header files 
 salomeinclude_HEADERS = \
 	HEXABLOCKGUI_Export.hxx \
@@ -68,7 +70,13 @@ dist_libHEXABLOCK_la_SOURCES = \
     kmodelindexproxymapper.hxx \
     kmodelindexproxymapper.cxx \
     klinkitemselectionmodel.hxx \
-    klinkitemselectionmodel.cxx
+    klinkitemselectionmodel.cxx \
+    MyGEOMBase_Helper.hxx \
+    MyGEOMBase_Helper.cxx \
+    MyGEOMBase_Skeleton.hxx \
+    MyGEOMBase_Skeleton.cxx \
+    MyBasicGUI_PointDlg.hxx \
+    MyBasicGUI_PointDlg.cxx
 
 
 UIC_FILES = \
@@ -112,7 +120,9 @@ MOC_FILES = \
     HEXABLOCKGUI_DocumentSelectionModel_moc.cxx \
     HEXABLOCKGUI_DocumentModel_moc.cxx \
     kmodelindexproxymapper_moc.cxx \
-    klinkitemselectionmodel_moc.cxx
+    klinkitemselectionmodel_moc.cxx \
+    MyBasicGUI_PointDlg_moc.cxx \
+    MyGEOMBase_Skeleton_moc.cxx
 
 nodist_libHEXABLOCK_la_SOURCES = $(MOC_FILES) \
 			$(UIC_FILES)
@@ -132,12 +142,15 @@ libHEXABLOCK_la_CXXFLAGS = \
 	-I$(srcdir)/../HEXABLOCK \
 	-I$(srcdir)/../HEXABLOCK_I \
 	-I$(top_builddir) \
+	-I$(srcdir)/../HEXABLOCKGUI/MyDlgRef \
+	-I$(top_builddir)/src/HEXABLOCKGUI/MyDlgRef \
 	-I../../idl \
 	$(qt4_cppflags) \
 	$(qsci4_cppflags)
 
 
 libHEXABLOCK_la_LDFLAGS  = \
+	./MyDlgRef/libMyDlgRef.la \
 	../../idl/libSalomeIDLHEXABLOCK.la \
 	../HEXABLOCK_I/libHEXABLOCKEngine.la \
 	../HEXABLOCK/libHEXABLOCKimpl.la \
@@ -194,8 +207,15 @@ ICONS =  \
 	resources/add_law.png \
 	resources/remove_law.png \
 	resources/set_propagation.png \
-	resources/compute_mesh.png
-
+	resources/compute_mesh.png \
+        resources/point2.png \
+	resources/pointonedge.png \
+	resources/select1.png \
+	resources/point3.png \
+	resources/point_line_intersection.png  \
+        resources/pointonface.png \
+	resources/line.png \
+	resources/build_wire.png
 
 QMFILES = \
 	HEXABLOCK_msg_en.qm \

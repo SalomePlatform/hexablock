@@ -90,7 +90,7 @@ EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
 //   char pName[12];
 //   QString name = _hexaEdge->getName(pName);
   QString name = _hexaEdge->getName();
-  std::cout << "EdgeItem name : "<<  name.toStdString() << std::endl;
+//   std::cout << "EdgeItem name : "<<  name.toStdString() << std::endl;
   setText(name);
   setData( EDGE_TREE, HEXA_TREE_ROLE );
   setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );

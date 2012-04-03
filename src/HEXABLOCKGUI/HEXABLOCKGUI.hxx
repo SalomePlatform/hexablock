@@ -27,6 +27,7 @@
 #include <QModelIndex>
 #include <QDockWidget>
 
+
 #include "klinkitemselectionmodel.hxx"
 
 #include <OB_Browser.h>
@@ -39,10 +40,13 @@
 #include <SALOMEconfig.h>
 
 
+// #include "MyBasicGUI_PointDlg.hxx"
 // #include "Resource.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
 
 #include "GEOMGUI_OCCSelector.h"
+
+
 
 
 #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)
@@ -90,7 +94,7 @@ namespace HEXABLOCK
     class MakeSymmetryDialog;
     class PerformTransformationDialog;
     class PerformSymmetryDialog;
-    class VertexAssocDialog;
+    typedef class MyBasicGUI_PointDlg VertexAssocDialog;
     class EdgeAssocDialog;
     class QuadAssocDialog;
     class GroupDialog;
@@ -102,7 +106,6 @@ namespace HEXABLOCK
     class MakeHemiSphereDialog;
   }
 }
-
 
 class HEXABLOCKGUI_Resource;//SUIT_ResourceMgr;
 class SalomeApp_Study;
@@ -325,6 +328,7 @@ private:
   HEXABLOCK::GUI::ReplaceHexaDialog*            _replaceHexaDiag;
   HEXABLOCK::GUI::QuadRevolutionDialog*         _quadRevolutionDiag;
   HEXABLOCK::GUI::MakeHemiSphereDialog*         _makeHemiSphereDiag;
+
 
   // Actions
   int _menuId;

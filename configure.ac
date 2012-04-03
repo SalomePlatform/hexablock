@@ -352,6 +352,7 @@ AC_OUTPUT([ \
   HEXABLOCK_version.h \
   src/Makefile \
   src/HEXABLOCKGUI/Makefile \
+  src/HEXABLOCKGUI/MyDlgRef/Makefile \
   src/HEXABLOCKGUI/resources/HEXABLOCKCatalog.xml \
   src/HEXABLOCKGUI/resources/SalomeApp.xml \
   src/HEXABLOCK/Makefile \

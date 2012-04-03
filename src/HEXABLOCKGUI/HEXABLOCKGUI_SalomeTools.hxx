@@ -28,7 +28,7 @@
 
 
 #include "GEOM_Client.hxx"
-#include "GEOMBase_Helper.h"
+// #include "GEOMBase_Helper.h"
 #include "GEOM_Displayer.h"
 
 

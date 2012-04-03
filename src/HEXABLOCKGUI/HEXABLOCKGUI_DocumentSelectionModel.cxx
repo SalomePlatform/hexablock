@@ -66,7 +66,7 @@
 
 
 #include "GEOMBase.h"
-#include "GEOMBase_Helper.h"
+#include "MyGEOMBase_Helper.hxx"
 
 
 
@@ -96,7 +96,7 @@ using namespace HEXABLOCK::GUI;
 
 PatternDataSelectionModel::PatternDataSelectionModel( QAbstractItemModel * model ):
 QItemSelectionModel( model ),
-GEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
+MyGEOMBase_Helper( SUIT_Session::session()->activeApplication()->desktop() ),
 _theModelSelectionChanged(false),
 _theVtkSelectionChanged(false),
 _theGeomSelectionChanged(false),
@@ -118,8 +118,9 @@ PatternDataSelectionModel::~PatternDataSelectionModel()
   disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
 
-  if ( _salomeSelectionMgr )
-    disconnect( _salomeSelectionMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
+//   if ( _salomeSelectionMgr )
+//     disconnect( _salomeSelectionMgr, SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
+  disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL( currentSelectionChanged() ), this, SLOT( salomeSelectionChanged() ) );
 }
 
 
@@ -353,6 +354,7 @@ QModelIndex PatternDataSelectionModel::_indexOf( const QString& anEntry, int rol
 
 void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow )
 {
+  MESSAGE("PatternDataSelectionModel::_setVTKSelectionMode( "<< eltIndex.data().toString().toStdString() << " ," << vtkViewWindow << " )");
   QVariant treeVariant = eltIndex.data( HEXA_TREE_ROLE );
   if ( !treeVariant.isValid() ) return;
   int eltType = treeVariant.toInt();
@@ -361,15 +363,15 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 
   switch ( eltType ){
     case VERTEX_TREE :
-    case VERTEX_DIR_TREE : vtkViewWindow->SetSelectionMode(NodeSelection);     break;
+    case VERTEX_DIR_TREE : vtkViewWindow->SetSelectionMode(NodeSelection); MESSAGE("VERTEX"); break;
     case EDGE_TREE :
-    case EDGE_DIR_TREE :   vtkViewWindow->SetSelectionMode(EdgeSelection);     break;
+    case EDGE_DIR_TREE :   vtkViewWindow->SetSelectionMode(EdgeSelection); MESSAGE("EDGE");     break;
     case QUAD_TREE :
-    case QUAD_DIR_TREE :   vtkViewWindow->SetSelectionMode(FaceSelection);     break;
+    case QUAD_DIR_TREE :   vtkViewWindow->SetSelectionMode(FaceSelection); MESSAGE("QUAD");     break;
     case HEXA_TREE :
-    case HEXA_DIR_TREE :   vtkViewWindow->SetSelectionMode(VolumeSelection);   break;
+    case HEXA_DIR_TREE :   vtkViewWindow->SetSelectionMode(VolumeSelection); MESSAGE("HEXA");   break;
     case PROPAGATION_TREE :
-    case PROPAGATION_DIR_TREE :   vtkViewWindow->SetSelectionMode(EdgeSelection);   break;
+    case PROPAGATION_DIR_TREE :   vtkViewWindow->SetSelectionMode(EdgeSelection); MESSAGE("PROPAGATION");   break;
 //  CellSelection,
 //  EdgeOfCellSelection,
 //  VolumeSelection,
@@ -385,7 +387,7 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 // 1 quad   -> n faces
 void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs )
 {
-  MESSAGE("PatternDataSelectionModel::_highlightGEOM( entrySubIDs ){");
+  MESSAGE("PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs ){");
 
   OCCViewer_ViewWindow*  occView = _getOCCViewWindow();
   if ( occView == NULL ) return;
@@ -399,18 +401,22 @@ void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  
   erasePreview(true);
   foreach ( QString entry, entrySubIDs.keys() ){
     _PTR(SObject) aSChild = aStudy->FindObjectID( entry.toStdString() );
+    MESSAGE("*    entry => "<< entry.toStdString());
     aCorbaObj = corbaObj( aSChild );
     aGeomObj = GEOM::GEOM_Object::_narrow( aCorbaObj );
     if ( !CORBA::is_nil(aGeomObj) ){
+      MESSAGE("*  !CORBA::is_nil(aGeomObj)");
       QString objIOR = GEOMBase::GetIORFromObject( aGeomObj._retn() );
       Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape( objIOR );//, true );
       if ( !aSh.IsNull() ){
+        MESSAGE("*  !aSh.IsNull() ");
         TColStd_IndexedMapOfInteger anIndexes;
         foreach ( int subid, entrySubIDs.values(entry) ){
           if ( subid != -1 ) 
             anIndexes.Add( subid );
         }
         if ( anIndexes.Extent() > 0 ){ // if it's a sub-shape
+          MESSAGE("*  a sub-shape");
           aSh->highlightSubShapes( anIndexes, true );
           soccViewer->Repaint();
         } else {  // or a main shape
@@ -418,6 +424,8 @@ void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  
 //           getDisplayer()->SetDisplayMode(0);
 //           soccViewer->setColor( aSh->getIO(), QColor( Qt::red ), true );
 //           soccViewer->switchRepresentation( aSh->getIO(), 2 );
+          MESSAGE("*  a main shape");
+//           globalSelection();
           soccViewer->highlight( aSh->getIO(), true, true );
         }
       }
@@ -430,8 +438,7 @@ void PatternDataSelectionModel::_highlightGEOM( const QMultiMap<QString, int>&  
 
 void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 {
-  MESSAGE("PatternDataSelectionModel::_highlightGEOM( anEltIndex ){");
-  MESSAGE("*  item   is: " << anEltIndex.data().toString().toStdString());
+  MESSAGE("PatternDataSelectionModel::_highlightGEOM(" << anEltIndex.data().toString().toStdString() << ")");
   // getting association(s) from model
   QList<DocumentModel::GeomObj> assocs;
   QMultiMap< QString, int >     assocEntrySubIDs;
@@ -453,9 +460,7 @@ void PatternDataSelectionModel::_highlightGEOM( const QModelIndex & anEltIndex )
 
 void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 {
-  MESSAGE("PatternDataSelectionModel::_selectVTK( eltIndex ){");
-  MESSAGE("*  item   is: " << eltIndex.data().toString().toStdString());
-
+  MESSAGE("PatternDataSelectionModel::_selectVTK( "<< eltIndex.data().toString().toStdString() << ")");
   SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
   if ( currentVTKViewWindow == NULL ) return;
   SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
@@ -512,6 +517,7 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
 //     }
   selector->AddOrRemoveIndex( docIO, aMap, false );
   currentVTKViewWindow->highlight( docIO, true, true );
+
 
   MESSAGE("}");
 }
@@ -592,7 +598,7 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
 //     setCurrentIndex( anIOIndex, QItemSelectionModel::ClearAndSelect );
-//     setCurrentIndex( anIOIndex, QItemSelectionModel::Clear );
+    setCurrentIndex( anIOIndex, QItemSelectionModel::Clear );
     setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
     _theVtkSelectionChanged = false;
   } else {
@@ -768,6 +774,22 @@ MeshSelectionModel::~MeshSelectionModel()
           this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
   disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+}
+
+
+QModelIndex MeshSelectionModel::indexBy( int role, const QVariant& var )
+{
+  QModelIndex eltIndex; // element (vertex, edge, quad) of model
+  const QAbstractItemModel* theModel = model();
+  if ( !theModel ) return eltIndex;
+  QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
+                                          role,
+                                          var,
+                                          1,
+                                          Qt::MatchRecursive /*| Qt::MatchContains*/ );//Qt::MatchFixedString );
+  if ( theIndexes.count()>0 )
+    eltIndex = theIndexes[0] ;
+  return eltIndex;
 }
 
 

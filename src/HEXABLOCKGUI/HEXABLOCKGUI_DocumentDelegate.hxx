@@ -67,7 +67,7 @@ namespace HEXABLOCK
           void setPatternDataSelectionModel( PatternDataSelectionModel* s );
           void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
           void setGroupsSelectionModel( /*QItemSelectionModel**/ GroupsSelectionModel* s );
-          void setMeshSelectionModel( QItemSelectionModel* s );
+          void setMeshSelectionModel( MeshSelectionModel* s );
 
           virtual bool editorEvent ( QEvent * event, 
                                      QAbstractItemModel * model, 
@@ -87,7 +87,7 @@ namespace HEXABLOCK
           PatternDataSelectionModel*    _patternDataSelectionModel;
           PatternBuilderSelectionModel* _patternBuilderSelectionModel;
           GroupsSelectionModel*         _groupsSelectionModel; 
-          QItemSelectionModel*          _meshSelectionModel;
+          MeshSelectionModel*           _meshSelectionModel;
 
       private slots:
           void commitEditor();

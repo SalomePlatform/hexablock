@@ -31,7 +31,7 @@
 // #include <SOCC_ViewWindow.h>
 // #include <OCCViewer_ViewWindow.h>
 
-#include <GEOMBase_Helper.h>
+#include "MyGEOMBase_Helper.hxx"
 
 #include "klinkitemselectionmodel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
@@ -55,7 +55,7 @@ namespace HEXABLOCK
     };
 
     class PatternDataSelectionModel : public QItemSelectionModel,
-                                      public GEOMBase_Helper
+                                      public MyGEOMBase_Helper
     {
       Q_OBJECT
 
@@ -136,6 +136,8 @@ namespace HEXABLOCK
       public:
         MeshSelectionModel( QAbstractItemModel * model );
         virtual ~MeshSelectionModel();
+
+        QModelIndex  indexBy( int role, const QVariant& var );
 
       protected slots:
 //         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
