@@ -2430,3 +2430,9 @@ void Document_impl::setLevel(::CORBA::Long debug)
 {
     _document_cpp->setLevel (debug);
 }
+// ================================================== clearAssociation
+void Document_impl::clearAssociation ()
+     throw (SALOME::SALOME_Exception)
+{
+    _document_cpp->clearAssociation ();
+}

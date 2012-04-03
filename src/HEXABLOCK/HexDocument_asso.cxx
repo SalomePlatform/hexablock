@@ -234,10 +234,7 @@ void Document::clearAssociation ()
        {
        for (EltBase* elt = doc_first_elt[nat]->next (); elt!=NULL;
                      elt = elt->next())
-           {
-           if (elt!=NULL && elt->isHere())
-              elt->clearAssociation ();
-           }
+           clear_association (elt);
        }
 }
 

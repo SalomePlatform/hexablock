@@ -575,6 +575,8 @@ module HEXABLOCK_ORB
     boolean removeElements( in Elements b )
         raises (SALOME::SALOME_Exception);
 
+    void clearAssociation ()
+      raises (SALOME::SALOME_Exception);
   };
 };
 

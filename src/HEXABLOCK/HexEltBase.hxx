@@ -147,5 +147,11 @@ inline bool EltBase::hasParents ()
 
    return false;
 }
+// ========================================================= clear_association
+inline void clear_association (EltBase* elt)
+{
+   if (elt != NULL && elt->isHere() && elt->isValid())
+       elt -> clearAssociation ();
+}
 END_NAMESPACE_HEXA
 #endif

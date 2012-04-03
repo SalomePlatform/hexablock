@@ -1924,10 +1924,12 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
    init_vec (tda, 20, 20, 20 );
    init_vec (tdl, 1 );
 
-   doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
+   Hex::Elements* grid=doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
 
    doc->saveVtk ("cylindricals.vtk");
    doc->dump();
+   grid->clearAssociation();
+   doc->clearAssociation();
    return HOK;
 }
 int test_quads (int nbargs, cpchar tabargs[]);
@@ -1937,6 +1939,6 @@ int test_replace (int nbargs, cpchar tabargs[]);
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_joint2 (nbargs, tabargs);
+   int ier = test_cylindricals (nbargs, tabargs);
    return ier;
 }

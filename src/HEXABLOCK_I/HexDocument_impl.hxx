@@ -269,11 +269,11 @@ public:
   ::CORBA::Boolean removeElements (Elements_ptr bloc) 
            throw (SALOME::SALOME_Exception);
 
-  void setLevel(::CORBA::Long level) throw (SALOME::SALOME_Exception);
+  void setLevel(::CORBA::Long level)       throw (SALOME::SALOME_Exception);
+  void clearAssociation ()                 throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Document *_document_cpp;
-
 };
-
+//--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 #endif

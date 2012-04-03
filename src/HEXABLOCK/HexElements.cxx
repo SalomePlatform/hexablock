@@ -986,32 +986,41 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
        }
    return HOK;
 }
+// ====================================================== clear_associations
+void clear_associations (std::vector<Quad*>& table)
+{
+   int nbelts = table.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       clear_association (table[nro]);
+}
+// ====================================================== clear_associations
+void clear_associations (std::vector<Edge*>& table)
+{
+   int nbelts = table.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       clear_association (table[nro]);
+}
+// ====================================================== clear_associations
+void clear_associations (std::vector<Vertex*>& table)
+{
+   int nbelts = table.size();
+   for (int nro=0 ; nro<nbelts ; nro++)
+       clear_association (table[nro]);
+}
 // ====================================================== clearAssociation
 void Elements::clearAssociation  ()
 {
-   int nbelts = tab_vertex.size();
-   for (int nro=0 ; nro<nbelts ; nro++)
-       {
-       Vertex* elt = tab_vertex[nro];
-       if (elt != NULL && elt->isValid())
-           elt->clearAssociation ();
-       }
+// clear_associations (tab_hexa);
+   clear_associations (tab_quad);
+   clear_associations (tab_edge);
+   clear_associations (tab_vertex);
 
-   nbelts = tab_edge.size();
-   for (int nro=0 ; nro<nbelts ; nro++)
-       {
-       Edge* elt = tab_edge[nro];
-       if (elt != NULL && elt->isValid())
-           elt->clearAssociation ();
-       }
+   //  clear_associations (tab_orig);
 
-   nbelts = tab_quad.size();
-   for (int nro=0 ; nro<nbelts ; nro++)
-       {
-       Quad* elt = tab_quad[nro];
-       if (elt != NULL && elt->isValid())
-           elt->clearAssociation ();
-       }
+   clear_associations (ker_hquad);
+   clear_associations (ker_vquad);
+   clear_associations (ker_hedge);
+   clear_associations (ker_vedge);
 
 /* ***********************************************
    nbelts = tab_hexa.size();

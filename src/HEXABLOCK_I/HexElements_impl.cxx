@@ -254,6 +254,12 @@ Hexa_ptr Elements_impl::getHexaIJK(::CORBA::Long x, ::CORBA::Long y, ::CORBA::Lo
   return result;
 }
 
+// ================================================== clearAssociation
+void Elements_impl::clearAssociation ()
+     throw (SALOME::SALOME_Exception)
+{
+    _elements_cpp->clearAssociation ();
+}
 
 // Quad_ptr Elements_impl::getQuad1(EnumCoord dirIn, ::CORBA::Long nx, ::CORBA::Long ny, ::CORBA::Long nz)
 //       throw (SALOME::SALOME_Exception)

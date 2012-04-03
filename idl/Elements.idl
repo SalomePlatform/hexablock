@@ -157,7 +157,11 @@ module HEXABLOCK_ORB
 // 
 //       Edge  getEdge1( in EnumCoord dir, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception); //CS_NOT_SPEC
 
-      long saveVtk( in string fname );//CS_NOT_SPEC
+      long saveVtk( in string fname )
+           raises (SALOME::SALOME_Exception);
+
+      void clearAssociation ()
+           raises (SALOME::SALOME_Exception);
 
   };
 

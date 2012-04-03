@@ -62,7 +62,6 @@ public:
 
     Hexa_ptr getHexaIJK(::CORBA::Long x, ::CORBA::Long y, ::CORBA::Long z) throw (SALOME::SALOME_Exception);
 
-
 //     Quad_ptr getQuad1(EnumCoord dir, ::CORBA::Long nx, ::CORBA::Long ny, ::CORBA::Long nz)
 //       throw (SALOME::SALOME_Exception);
 // 
@@ -70,10 +69,11 @@ public:
 //       throw (SALOME::SALOME_Exception);
 
     ::CORBA::Long saveVtk(const char* fname) throw (SALOME::SALOME_Exception);
-    void dump() throw (SALOME::SALOME_Exception);
-    void printName() throw (SALOME::SALOME_Exception);
-    char* getName() throw (SALOME::SALOME_Exception);
-    void  setName (const char* name) throw (SALOME::SALOME_Exception);
+    void  dump()                             throw (SALOME::SALOME_Exception);
+    void  printName()                        throw (SALOME::SALOME_Exception);
+    char* getName()                          throw (SALOME::SALOME_Exception);
+    void  setName (const char* name)         throw (SALOME::SALOME_Exception);
+    void  clearAssociation ()                throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Elements *_elements_cpp;

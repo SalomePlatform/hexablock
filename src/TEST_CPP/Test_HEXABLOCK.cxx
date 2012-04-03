@@ -29,7 +29,9 @@
 
 #define TestUnit(call) display(#call); ier=call(nbargs,tabargs); display(ier)
 
-static cpchar test_name = "Unknown";
+static int    total_errors = 0;
+static cpchar test_name    = "Unknown";
+
 static void display (cpchar name);
 static void display (int ier);
 
@@ -51,7 +53,7 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_string_xml );
    ///   TestUnit (test_relecture );
    TestUnit (test_spherical);
-   // TestUnit (test_grille_cyl );   TODO : Correction Abu (en cours)
+   TestUnit (test_grille_cyl );
    TestUnit (test_cylindrical );
    TestUnit (test_cylinder );
    TestUnit (test_xml_cylinder );
@@ -85,6 +87,13 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_replace );
    TestUnit (test_hemispheres );
    TestUnit (test_quads );
+
+   cout << "========================================= " 
+        << endl;
+   cout << "==== End of tests : Number of Errors = " << total_errors 
+        << endl;
+   cout << "========================================= " 
+        << endl;
 }
 // ============================================================== main-type
 int main_standard (int argc, char* argv[])
@@ -140,7 +149,10 @@ void display (int result)
    cout << ".........................................."
         << " End of " << test_name;
    if (result==0)
+      {
       cout << ", Successfull";
+      total_errors ++;
+      }
    else 
       cout << ", Code error = " << result;
    cout << endl;

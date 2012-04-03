@@ -210,12 +210,12 @@ int Elements::fillGrid ()
       case CYL_NOFILL  :
       default : ;
       }
-
    return HOK;
 }
 // ====================================================== fillCenter
 // === Remplissage radial
 #define IndElt(nc,nz)   (nbsecteurs*(nz) + nc)
+#define IndRedge(nc,nz) (nbrayons  *(nz) + nc)
 #define IndVquad(nc,nz) (nbrayons  *(nz-1) + nc)
 void Elements::fillCenter ()
 {
@@ -226,7 +226,7 @@ void Elements::fillCenter ()
    size_hplus  = nbsecteurs * size_hz;
    size_qhplus = nbsecteurs * size_vz;
    size_qvplus = nbrayons   * size_hz;
-   size_ehplus = nbsecteurs * size_vz;
+   size_ehplus = nbrayons   * size_vz;
    size_evplus = size_hz;
 
    ker_hexa .resize (size_hplus);
@@ -246,16 +246,16 @@ void Elements::fillCenter ()
            {
            Vertex* vv = getVertexIJK (nx0, 2*nc, nz);
            Edge*   edge = newEdge (center, vv);
-           ker_hedge [IndElt(nc,nz)] = edge;
+           ker_hedge [IndRedge(nc,nz)] = edge;
            }
                                  //   Quads horizontaux
        for (int nc=0; nc<nbsecteurs ; nc++)
            {
            int nc1  = (nc + 1) MODULO nbrayons;
-           Edge* e1 = ker_hedge [IndElt (nc, nz)];
+           Edge* e1 = ker_hedge [IndRedge (nc, nz)];
            Edge* e2 = getEdgeJ (nx0, 2*nc,  nz);
            Edge* e3 = getEdgeJ (nx0, 2*nc+1,nz);
-           Edge* e4 = ker_hedge [IndElt (nc1, nz)];
+           Edge* e4 = ker_hedge [IndRedge (nc1, nz)];
 
            ker_hquad [IndElt (nc,nz)] = newQuad (e1, e2, e3, e4);
            if (debug()) 
@@ -272,9 +272,9 @@ void Elements::fillCenter ()
 
           for (int nc=0 ; nc<nbrayons ; nc++)
               {
-              Edge* e1 = ker_hedge [IndElt (nc, nz)];
+              Edge* e1 = ker_hedge [IndRedge (nc, nz)];
               Edge* e2 = getEdgeK (nx0, 2*nc,  nz-1);
-              Edge* e3 = ker_hedge [IndElt (nc, nz-1)];
+              Edge* e3 = ker_hedge [IndRedge (nc, nz-1)];
               ker_vquad [IndVquad (nc,nz)] = newQuad (e1, e2, e3, pilier);
               if (debug()) 
                  {

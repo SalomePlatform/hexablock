@@ -387,8 +387,16 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
                     double pstart, double pend, bool closed, bool inv)
 {
    db = on_debug ();
-   if (db) cout << "____________________________________________"
-        << " associateShapes" << endl;
+   if (db) 
+      {
+      cout << "____________________________________________"
+           << " associateShapes" << endl;
+      PutData (gline.size());
+      PutData (pstart);
+      PutData (pend);
+      PutData (closed);
+      PutData (inv);
+      }
 
    int nbshapes = gline.size ();
    int nblines  = nbshapes + 1; 
