@@ -29,6 +29,7 @@
 
 #define TestUnit(call) display(#call); ier=call(nbargs,tabargs); display(ier)
 
+static int    total_tests  = 0;
 static int    total_errors = 0;
 static cpchar test_name    = "Unknown";
 
@@ -90,11 +91,14 @@ int main (int nbargs, cpchar tabargs [])
 
    cout << "========================================= " 
         << endl;
-   cout << "==== End of tests : Number of Errors = " << total_errors 
+   cout << "==== End of tests : Number of Errors = " << total_errors << " / " << total_tests
         << endl;
    cout << "========================================= " 
         << endl;
+
+   return total_errors==0 ? 0 : 1;
 }
+
 // ============================================================== main-type
 int main_standard (int argc, char* argv[])
 {
@@ -148,13 +152,15 @@ void display (int result)
 {
    cout << ".........................................."
         << " End of " << test_name;
+   total_tests++;
    if (result==0)
       {
       cout << ", Successfull";
-      total_errors ++;
       }
-   else 
+   else {
       cout << ", Code error = " << result;
+      total_errors++;
+   };
    cout << endl;
    
 }

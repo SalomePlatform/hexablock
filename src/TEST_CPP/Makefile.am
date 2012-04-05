@@ -86,6 +86,7 @@ Test_HEXABLOCK_LDADD    = \
 
 UNIT_TEST_PROG = ./Test_HEXABLOCK
 
+check : tests
 
 # bin_PROGRAMS = bielle 
 # 	test_hexa1 \
