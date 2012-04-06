@@ -92,6 +92,7 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
 
 //     QWidget* w = _dw->widget();
 //     if (w) w->close();
+    if ( !_dw->isVisible() ) _dw->setVisible(true);
     _dw->setWidget( editor );
     _dw->setWindowTitle( editor->windowTitle() );
 //         connect ( editor, SIGNAL( editingFinished() ), this, SLOT ( commitEditor() ) );

@@ -79,6 +79,8 @@
 
 #include <SALOME_LifeCycleCORBA.hxx>
 
+#include <LightApp_VTKSelector.h>
+
 #include <OCCViewer_ViewManager.h>
 
 
@@ -327,17 +329,22 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
   LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
   SUIT_ViewManager* vm;
-  ViewManagerList OCCViewManagers;
+  ViewManagerList OCCViewManagers, VTKViewManagers;
 
   application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
   QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
   while ( itOCC.hasNext() && (vm = itOCC.next()) )
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 
-//   //NPAL 19674
-//   SALOME_ListIO selected;
-//   sm->selectedObjects( selected );
-//   sm->clearSelected();
+  application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
+  QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
+  while ( itVTK.hasNext() && (vm = itVTK.next()) )
+    myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
+
+  //NPAL 19674
+  SALOME_ListIO selected;
+  sm->selectedObjects( selected );
+  sm->clearSelected();
 
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
@@ -345,6 +352,16 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
   while ( itOCCSel.hasNext() )
     if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
       sr->setEnabled(true);
+
+  // disable VTK selectors
+  getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+  QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+  while ( itVTKSel.hasNext() )
+    if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+      sr->setEnabled(true);
+
+  sm->setSelectedObjects( selected, true );   //NPAL 19674
+
 
   _hexaEngine->SetCurrentStudy(SALOMEDS::Study::_nil());
   if ( SalomeApp_Study* s = dynamic_cast<SalomeApp_Study*>( theStudy ))
@@ -357,6 +374,8 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 
   return bOk;
 }
+
+
 
 bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 {
@@ -388,6 +407,16 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 //     delete _patternBuilderSelectionModel;
 //     _patternBuilderSelectionModel = NULL;
 //   }
+
+  qDeleteAll(myOCCSelectors);
+  myOCCSelectors.clear();
+  getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
+
+  qDeleteAll(myVTKSelectors);
+  myVTKSelectors.clear();
+  getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
+
+
   return SalomeApp_Module::deactivateModule( theStudy );
 }
 
@@ -562,7 +591,26 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* )
   DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");
 }
 
+void HEXABLOCKGUI::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected  )
+{
+  QModelIndexList l = selected.indexes();
+  if ( l.count() == 0 ) return;
+  if ( !l[0].isValid() ) return;
 
+  QTreeView* theTree = NULL;
+  if ( sender() == _patternDataSelectionModel ){
+    theTree = _patternDataTreeView;
+  } else if ( sender() == _patternBuilderSelectionModel  ){
+    theTree = _patternBuilderTreeView;
+  } else if ( sender() == _groupsSelectionModel ){
+    theTree = _groupsTreeView;
+  } else if ( sender() == _meshSelectionModel ){
+    theTree = _meshTreeView;
+  }
+  if ( theTree ){
+    theTree->scrollTo ( l[0] );
+  }
+}
 
 // void HEXABLOCKGUI::onTryClose(bool &isClosed, QxScene_ViewWindow* window) //CS_TODO
 // {
@@ -700,6 +748,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
   //1) *********** user input panel ( contain user's edit dialog box )
   _dwInputPanel = new QDockWidget(aParent);
+//   _dwInputPanel->setWindowFlags(Qt::FramelessWindowHint);
+//   _dwInputPanel->setWindowFlags(Qt::WindowTitleHint);
   _dwInputPanel->setVisible(false);
   _dwInputPanel->setWindowTitle("Input Panel");
 //   _dwInputPanel->setMinimumHeight(DWINPUT_MINIMUM_HEIGHT);
@@ -737,20 +787,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   _dwPattern->setWidget(patternFrame);
   patternFrame->show();
   //_dwPattern->raise();
-
-//   //      Association
-//   _dwAssociation = new QDockWidget(aParent);
-// //   _dwAssociation->installEventFilter(this);
-//   _dwAssociation->setVisible(false);
-//   _dwAssociation->setWindowTitle("Association");
-//   _dwAssociation->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-//   _associationTreeView = new QTreeView(_dwAssociation);
-//   //   _associationTreeView->setMinimumHeight(DW_MINIMUM_WIDTH);
-//   _associationTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);//QAbstractItemView::SelectedClicked); 
-//   _associationTreeView->setItemDelegate(_treeViewDelegate);
-//   _dwAssociation->setWidget(_associationTreeView);
-//   _associationTreeView->show();
-//   //   _dwAssociation->raise();
 
   //      Groups
   _dwGroups = new QDockWidget(aParent);
@@ -1354,6 +1390,7 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     if ( _patternBuilderSelectionModel ) delete _patternBuilderSelectionModel;
     if ( _groupsSelectionModel )         delete _groupsSelectionModel;
     if ( _meshSelectionModel )           delete _meshSelectionModel;
+
     _patternDataSelectionModel    = new PatternDataSelectionModel( _patternDataModel );
     _patternBuilderSelectionModel = new PatternBuilderSelectionModel( _patternBuilderModel, _patternDataSelectionModel );
     _groupsSelectionModel         = new GroupsSelectionModel( _groupsModel );
@@ -1384,6 +1421,17 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
     _treeViewDelegate->setPatternBuilderSelectionModel( _patternBuilderSelectionModel );
     _treeViewDelegate->setGroupsSelectionModel( _groupsSelectionModel /*_groupsTreeView->selectionModel()*/ );
     _treeViewDelegate->setMeshSelectionModel( _meshSelectionModel/*_meshTreeView->selectionModel()*/ );
+
+
+    connect( _patternDataSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                                   this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+    connect( _patternBuilderSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                                      this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+    connect( _groupsSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                              this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+    connect( _meshSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
 
     currentVtkView = dynamic_cast<SVTK_ViewWindow*>( _currentGraphicView->get_SUIT_ViewWindow() );
   }
@@ -1816,6 +1864,17 @@ void HEXABLOCKGUI::newDocument()
   _treeViewDelegate->setGroupsSelectionModel( _groupsSelectionModel/*_groupsTreeView->selectionModel()*/ );
   _treeViewDelegate->setMeshSelectionModel( _meshSelectionModel/*_meshTreeView->selectionModel()*/ );
 
+
+  connect( _patternDataSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                                 this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+  connect( _patternBuilderSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                                    this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+  connect( _groupsSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+  connect( _meshSelectionModel, SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                          this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
+
   // salome view/object browser/model management
   _documentModels[ suitVW ] = _currentModel;
 
@@ -1915,18 +1974,22 @@ void HEXABLOCKGUI::saveDocument()
 
 void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 {
+  MESSAGE("HEXABLOCKGUI::_showDialogBox()");
   if (!diag) return;
+  MESSAGE("if (!diag) return;");
   if (!_dwInputPanel) return;
+  MESSAGE("if (!_dwInputPanel) return;");
 
   diag->setDocumentModel(_currentModel);
   diag->setPatternDataSelectionModel(_patternDataSelectionModel);
   diag->setPatternBuilderSelectionModel(_patternBuilderSelectionModel);
   diag->setGroupsSelectionModel(_groupsSelectionModel);
   diag->setMeshSelectionModel(_meshSelectionModel/*_meshTreeView->selectionModel()*/);
-//   diag->setFocus();
-//   diag->show();
+
   QWidget* w = _dwInputPanel->widget();
   if (w) w->hide();
+
+  if ( !_dwInputPanel->isVisible() ) _dwInputPanel->setVisible(true);
   _dwInputPanel->setWidget(diag);
   _dwInputPanel->setWindowTitle(diag->windowTitle());
   diag->show();

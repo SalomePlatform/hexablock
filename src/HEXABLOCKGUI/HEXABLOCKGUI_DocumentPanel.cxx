@@ -430,7 +430,8 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
     SUIT_MessageBox::information( 0,
       tr("HEXA_INFO"), 
-      tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
+//       tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
+      tr("%1:\n-Bad selection type : please select a %2").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
     return false;
   }
 
@@ -468,7 +469,9 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
       MESSAGE("*  bad selection : " << selType<< " is not  " << wType );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
-        tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
+//         tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
+        tr("%1:\n-Bad selection type : please select a %2").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+
       return false;
     } else { // add selection to listWidget if selection is OK
       item = new QListWidgetItem( isel.data().toString() );
@@ -647,6 +650,7 @@ void HexaBaseDialog::showEvent( QShowEvent * event )
   }
   if ( _mgr )
     connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(onCurrentSelectionChanged()) );
+
   if ( _vtkVm )
     connect( _vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
   if ( _occVm )
@@ -738,9 +742,9 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
   QModelIndex    index;
 
   QWidget* w = 0;
-  QLineEdit*   lineEdit   = 0;
-  QListWidget* listWidget = 0;
-  HexaBaseDialog* dialog  = 0;
+  QLineEdit*   lineEdit   = dynamic_cast<QLineEdit*>(obj);
+  QListWidget* listWidget = dynamic_cast<QListWidget*>(obj);
+  HexaBaseDialog* dialog  = dynamic_cast<HexaBaseDialog*>(obj);
 
   QItemSelectionModel *selector = 0;
 
@@ -765,67 +769,77 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
   selector = _getSelector( obj );
   if ( !selector ) return false;
 
-  //And if it contains an hexa element, select it in model/view
-  lineEdit = dynamic_cast<QLineEdit*>(obj);
-//   listWidget = dynamic_cast<QListWidget*>(obj); // not here : special treatment
-  dialog   = dynamic_cast<HexaBaseDialog*>(obj);
-
-  if ( lineEdit ){ //element can be from lineEdit
-    MESSAGE("*  on QLineEdit");
-    v = lineEdit->property("QModelIndex");
-    if ( !v.isValid() ) return QObject::eventFilter(obj, event);
-    index = v.value<QModelIndex>();
-    _selectionMutex = true;
-    MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
-    MESSAGE("*  with selector : " << selector);
-    MESSAGE( "*  _patternDataSelectionModel    : " << _patternDataSelectionModel );
-    MESSAGE( "*  _patternBuilderSelectionModel : " << _patternBuilderSelectionModel );
-    MESSAGE( "*  _groupsSelectionModel         : " << _groupsSelectionModel );
-    MESSAGE( "*  _meshSelectionModel           : " << _meshSelectionModel );
-    selector->select( index, QItemSelectionModel::Clear );
-    selector->select( index, QItemSelectionModel::Select );
-    _selectionMutex = false;
-  }
+  //If there is a current selection fill the widget with it
+  if ( selector->hasSelection() ){
+    QItemSelection currentSelection  = selector->selection();
+    foreach( const QModelIndex& i, currentSelection.indexes() ){
+      MESSAGE( "current element selected" << i.data().toString().toStdString() );
+      QString name = i.data().toString();
+      if ( lineEdit ){ //element can be from lineEdit
+        lineEdit->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(i) );
+        lineEdit->setText( name );
+      } else if ( listWidget ){
+        QListWidgetItem* item  = new QListWidgetItem( name );
+        item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(i) );
+        listWidget->addItem( item );
+      }
+    }
+  } else { //If the widget contains an hexa element, select it in model/view
+    if ( lineEdit ){ //element can be from lineEdit
+      MESSAGE("*  on QLineEdit");
+      v = lineEdit->property("QModelIndex");
+      if ( !v.isValid() ) return QObject::eventFilter(obj, event);
+      index = v.value<QModelIndex>();
+      _selectionMutex = true;
+      MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
+      MESSAGE("*  with selector : " << selector);
+      MESSAGE( "*  _patternDataSelectionModel    : " << _patternDataSelectionModel );
+      MESSAGE( "*  _patternBuilderSelectionModel : " << _patternBuilderSelectionModel );
+      MESSAGE( "*  _groupsSelectionModel         : " << _groupsSelectionModel );
+      MESSAGE( "*  _meshSelectionModel           : " << _meshSelectionModel );
+      selector->select( index, QItemSelectionModel::Clear );
+      selector->select( index, QItemSelectionModel::Select );
+      _selectionMutex = false;
+    }
+    
   
-
-  if ( dialog ){ //element can be from a dialog box
-    MESSAGE("*  on Dialog");
-    v = dialog->property("QModelIndex");
-    if ( !v.isValid() ) return QObject::eventFilter(obj, event);
-    index = v.value<QModelIndex>();
-    _selectionMutex = true;
-    MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
-    selector->select( index, QItemSelectionModel::Clear );
-    selector->select( index, QItemSelectionModel::Select );
-//QItemSelectionModel::SelectCurrent );
-
-
-    _selectionMutex = false;
+    if ( dialog ){ //element can be from a dialog box
+      MESSAGE("*  on Dialog");
+      v = dialog->property("QModelIndex");
+      if ( !v.isValid() ) return QObject::eventFilter(obj, event);
+      index = v.value<QModelIndex>();
+      _selectionMutex = true;
+      MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
+      selector->select( index, QItemSelectionModel::Clear );
+      selector->select( index, QItemSelectionModel::Select );
+  //QItemSelectionModel::SelectCurrent );
+      _selectionMutex = false;
+    }
+  
+  
+  //   if ( listWidget ){//element can be from listWidget
+  //     MESSAGE("*  on QListWidget");
+  //     QList<QListWidgetItem *> sel = listWidget->selectedItems();
+  // //     _allowSelection(); //CS_??
+  //     _selectionMutex = true;
+  //     _patternDataSelectionModel->clearSelection();
+  //     foreach ( QListWidgetItem *item, sel ){
+  //       index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
+  //       if ( index.isValid() ){
+  //         MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
+  //         _patternDataSelectionModel->select( index, QItemSelectionModel::Select );
+  //       }
+  //     }
+  //     _selectionMutex = false;
+  //   }
+  
+  //    if ( _editMode == INFO_MODE ){
+  //     _documentModel->allowEdition();
+  //   } else {
+  //   if ( _editMode != INFO_MODE ){
+  //     _documentModel->disallowEdition();
+  //   }
   }
-
-
-//   if ( listWidget ){//element can be from listWidget
-//     MESSAGE("*  on QListWidget");
-//     QList<QListWidgetItem *> sel = listWidget->selectedItems();
-// //     _allowSelection(); //CS_??
-//     _selectionMutex = true;
-//     _patternDataSelectionModel->clearSelection();
-//     foreach ( QListWidgetItem *item, sel ){
-//       index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
-//       if ( index.isValid() ){
-//         MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
-//         _patternDataSelectionModel->select( index, QItemSelectionModel::Select );
-//       }
-//     }
-//     _selectionMutex = false;
-//   }
-
-//    if ( _editMode == INFO_MODE ){
-//     _documentModel->allowEdition();
-//   } else {
-//   if ( _editMode != INFO_MODE ){
-//     _documentModel->disallowEdition();
-//   }
   MESSAGE("}");
   return false;
 //   return QObject::eventFilter(obj, event);
@@ -1414,7 +1428,8 @@ HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
   _initWidget(editmode);
   quads_rb->setFocusProxy( quads_lw );
   vertices_rb->setFocusProxy( vertices_lw );
-  quads_rb->click();
+//   quads_rb->click();
+//   quads_rb->setFocus();
 
   if  ( editmode == INFO_MODE ){
     setWindowTitle( tr("Hexahedron Information") );
@@ -1424,6 +1439,7 @@ HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 HexaDialog::~HexaDialog()
 {
 }
+
 
 void HexaDialog::_initInputWidget( Mode editmode )
 {
@@ -4375,6 +4391,7 @@ void GroupDialog::onKindChanged(int index)
   case HEXA_NS::VertexNode: eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(VERTEX_TREE)); MESSAGE("====>VERTEX_TREE"); break;
   default:Q_ASSERT( false );
   }
+  eltBase_lw->clear();
   eltBase_lw->setFocus();
 }
 

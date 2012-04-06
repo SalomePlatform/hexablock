@@ -113,6 +113,7 @@ class SalomeApp_Application;
 class SUIT_ViewWindow;
 class SVTK_ViewWindow;
 class OCCViewer_ViewWindow;
+class LightApp_VTKSelector;
 
 // // SALOME KERNEL includes
 // #include <SALOMEDS_Study.hxx>
@@ -197,6 +198,8 @@ protected slots:
   virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
 //   void onTryClose(bool &isClosed, QxScene_ViewWindow* window);
 
+  void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
 protected:
 //   virtual  CAM_DataModel* createDataModel();
   bool createSComponent();
@@ -279,6 +282,7 @@ private slots:
 private:
 
   QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
+  QList<LightApp_VTKSelector*> myVTKSelectors;
 
 
   QStringList getQuickDirList();
