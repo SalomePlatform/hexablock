@@ -79,7 +79,7 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     case PIPE_TREE :     editor = new PipeDialog(parent, HexaBaseDialog::INFO_MODE);       break;
   //   case ELEMENTS_TREE :  break;
   //   case CROSSELEMENTS_TREE : break;
-    case GROUP_TREE       : editor = new GroupDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
+    case GROUP_TREE       : editor = new GroupDialog(parent, HexaBaseDialog::INFO_MODE/*UPDATE_MODE*/); break;
     case LAW_TREE         : editor = new LawDialog(parent, HexaBaseDialog::UPDATE_MODE); break;
     case PROPAGATION_TREE : editor = new PropagationDialog(parent, HexaBaseDialog::INFO_MODE); break;
   }

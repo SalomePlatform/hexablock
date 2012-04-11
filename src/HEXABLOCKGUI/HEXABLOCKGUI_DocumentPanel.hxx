@@ -90,6 +90,7 @@
 
 Q_DECLARE_METATYPE(QModelIndex); 
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
+Q_DECLARE_METATYPE(GEOM::GeomObjPtr);
 
 // class MyBasicGUI_PointDlg;
 
@@ -118,7 +119,8 @@ namespace HEXABLOCK
           // listwidget
           enum {
             LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
-            LW_ASSOC_ROLE
+            LW_ASSOC_ROLE,
+            LW_GEOM_OBJ_ROLE
           }; 
 
           HexaBaseDialog( QWidget * parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = 0 );
@@ -789,8 +791,8 @@ namespace HEXABLOCK
 
       private:
         // Preview in GEOM
-        GEOM::GeomObjPtr    _firstLine;
-        GEOM::GeomObjPtr    _lastLine;
+//         GEOM::GeomObjPtr    _firstLine;
+//         GEOM::GeomObjPtr    _lastLine;
         GEOM::GeomObjPtr    _currentLine;
         double              _currentParameter;
         GEOM::GEOM_Gen_var  _geomEngine ;

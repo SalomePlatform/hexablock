@@ -421,6 +421,15 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 }
 
 
+bool HEXABLOCKGUI::renameAllowed( const QString& entry) const {
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
+  SalomeApp_DataObject* obj = appStudy ? dynamic_cast<SalomeApp_DataObject*>(appStudy->findObjectByEntry(entry)) : 0;
+  
+  return (app && appStudy && obj && !appStudy->isComponent(entry) && !obj->isReference());
+}
+
 
 bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
 {
@@ -2348,7 +2357,7 @@ void HEXABLOCKGUI::setPropagation()
       diag->setValue(p);
       diag->setFocus();
       _dwInputPanel->setWidget(diag);
-      _dwInputPanel->setWindowTitle( diag->windowTitle() );
+      _dwInputPanel->setWindowTitle( diag->windowTitle() + " : " + selected.data().toString() );
       return;
     }
   }

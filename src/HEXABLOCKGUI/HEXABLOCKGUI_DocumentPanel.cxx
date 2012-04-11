@@ -431,7 +431,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
     SUIT_MessageBox::information( 0,
       tr("HEXA_INFO"), 
 //       tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
-      tr("%1:\n-Bad selection type : please select a %2").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+      tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
     return false;
   }
 
@@ -470,7 +470,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
 //         tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
-        tr("%1:\n-Bad selection type : please select a %2").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+        tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
 
       return false;
     } else { // add selection to listWidget if selection is OK
@@ -572,7 +572,7 @@ void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
     selOk = _onSelectionChanged( sel, aListWidget );
   }
 
-  if ( !selOk && selector && aLineEdit && aListWidget ){ //CS_HERE
+  if ( !selOk && selector && ( aLineEdit || aListWidget ) ){
     selector->clearSelection();
   }
 
@@ -772,18 +772,27 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
   //If there is a current selection fill the widget with it
   if ( selector->hasSelection() ){
     QItemSelection currentSelection  = selector->selection();
-    foreach( const QModelIndex& i, currentSelection.indexes() ){
-      MESSAGE( "current element selected" << i.data().toString().toStdString() );
-      QString name = i.data().toString();
-      if ( lineEdit ){ //element can be from lineEdit
-        lineEdit->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(i) );
-        lineEdit->setText( name );
-      } else if ( listWidget ){
-        QListWidgetItem* item  = new QListWidgetItem( name );
-        item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(i) );
-        listWidget->addItem( item );
-      }
+    bool selOk = false;
+    if ( lineEdit ){ //element can be from lineEdit
+      selOk = _onSelectionChanged( currentSelection, lineEdit );
+    } else if ( listWidget ){
+      selOk = _onSelectionChanged( currentSelection, listWidget );
     }
+    if ( !selOk &&  ( lineEdit || listWidget ) ){
+      selector->clearSelection();
+    }
+//     foreach( const QModelIndex& i, currentSelection.indexes() ){
+//       MESSAGE( "current element selected" << i.data().toString().toStdString() );
+//       QString name = i.data().toString();
+//       if ( lineEdit ){ //element can be from lineEdit
+//         lineEdit->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(i) );
+//         lineEdit->setText( name );
+//       } else if ( listWidget ){
+//         QListWidgetItem* item  = new QListWidgetItem( name );
+//         item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(i) );
+//         listWidget->addItem( item );
+//       }
+//     }
   } else { //If the widget contains an hexa element, select it in model/view
     if ( lineEdit ){ //element can be from lineEdit
       MESSAGE("*  on QLineEdit");
@@ -3911,9 +3920,9 @@ HexaBaseDialog( parent, editmode, f )
   _initViewManager();
   setFocusProxy( edges_lw );
 
-  _firstLine.nullify();
-  _lastLine.nullify();
-  _currentLine.nullify();
+//   _firstLine.nullify();
+//   _lastLine.nullify();
+//   _currentLine.nullify();
   _currentParameter = 0.;
 
 }
@@ -4028,8 +4037,10 @@ bool EdgeAssocDialog::execute(ObjectList& objects)
 void EdgeAssocDialog::pstartChanged( double val )
 {
   MESSAGE("pstartChanged("<<val<<") { ");
-  if ( _firstLine->_is_nil() ) return;
-  _currentLine = _firstLine;
+  QListWidgetItem* lineItem = lines_lw->item( 0 );
+  if (!lineItem) return;
+//   MESSAGE("data : "<<lineItem->text().toStdString());
+  _currentLine = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
   _currentParameter = pstart_spb->value();
   displayPreview(true);
   MESSAGE("}pstartChanged()");
@@ -4039,8 +4050,11 @@ void EdgeAssocDialog::pstartChanged( double val )
 void EdgeAssocDialog::pendChanged( double val )
 {
   MESSAGE("pendChanged("<<val<<") { ");
-  if ( _lastLine->_is_nil() ) return;
-  _currentLine      = _lastLine;
+//   if ( _lastLine->_is_nil() ) return;
+  QListWidgetItem* lineItem = lines_lw->item( lines_lw->count()-1 );
+  if (!lineItem) return;
+//   MESSAGE("data : "<<lineItem->text().toStdString());
+  _currentLine      = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
   _currentParameter = pend_spb->value();
   displayPreview(true);
   MESSAGE("}pendChanged()");
@@ -4095,11 +4109,13 @@ void EdgeAssocDialog::onCurrentSelectionChanged()
 
     item  = new QListWidgetItem( aLine.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aLine) );
+    item->setData(  LW_GEOM_OBJ_ROLE, QVariant::fromValue<GEOM::GeomObjPtr>(aSelectedObject) );
     lines_lw->addItem(item);
 //     lines_lw->setCurrentRow( lines_lw->count() - 1 );
-    // preview
-    if ( _firstLine->_is_nil() ) _firstLine = aSelectedObject;
-    _lastLine = aSelectedObject;
+
+//     // preview
+//     if ( _firstLine->_is_nil() ) _firstLine = aSelectedObject;
+//     _lastLine = aSelectedObject;
   }
 }
 
@@ -4327,6 +4343,8 @@ _value(NULL)
     setWindowTitle( tr("Group Construction") );
   } else if ( editmode == UPDATE_MODE ){
     setWindowTitle( tr("Group Modification") );
+  } else if ( editmode == INFO_MODE ){
+    setWindowTitle( tr("Group Information") );
   }
 }
 
@@ -4703,6 +4721,7 @@ void PropagationDialog::setValue(HEXA_NS::Propagation* p)
   QModelIndex ip = _meshSelectionModel->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
   setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(ip) );
 
+
   // law on propagation
   if ( l != NULL ){
     law_le->setText( l->getName() );
@@ -4804,6 +4823,8 @@ HexaBaseDialog(parent, editmode, f)
 
     _dim->setRange(1, 3);
     _dim->setValue(3);
+
+    _initWidget(editmode);
 
 //     _initButtonBox( editmode );
 
