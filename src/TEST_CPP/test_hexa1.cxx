@@ -20,6 +20,8 @@
 //  See http://www.salome-platform.org/ 
 //  or email : webmaster.salome@opencascade.com
 
+#include "test_unit.hxx"
+
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
@@ -36,6 +38,7 @@
 #include "HexMatrix.hxx"
 #include "HexCramer.hxx"
 #include "HexGroup.hxx"
+
 
 #include <cstdlib>
 
@@ -1575,22 +1578,13 @@ int test_disconnect (int nbargs, cpchar tabargs[])
    vertex->setScalar (5);
 
    doc->saveVtk ("test_disco", nvtk);
-   Hex::Elements* dq = doc->disconnectQuad (hexa1, quad);
-   // doc->performTranslation (dq, ecart);
-   //      hexa1 ->transform (&matrice);
-   // contraction  (hexa1, dq) ;
+   doc->disconnectQuad (hexa1, quad);
    doc->saveVtk ("test_disco", nvtk);
 
-   Hex::Elements* de = doc->disconnectEdge (hexa2, edge);
-   // doc->performTranslation (de, ecart);
-   //      hexa2->transform (&matrice);
-   // contraction  (hexa2, de) ;
+   doc->disconnectEdge (hexa2, edge);
    doc->saveVtk ("test_disco", nvtk);
 
-   Hex::Elements* dv = doc->disconnectVertex (hexa3, vertex);
-   // doc->performTranslation (dv, ecart);
-   //      hexa3->transform (&matrice);
-   // contraction  (hexa3, dv) ;
+   doc->disconnectVertex (hexa3, vertex);
    doc->saveVtk ("test_disco", nvtk);
 
    // doc->dumpPropagation ();
@@ -1924,19 +1918,21 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
    init_vec (tda, 20, 20, 20 );
    init_vec (tdl, 1 );
 
-   doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
+   Hex::Elements* grid=doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
 
    doc->saveVtk ("cylindricals.vtk");
    doc->dump();
+   grid->clearAssociation();
+   doc->clearAssociation();
    return HOK;
 }
-int test_quads (int nbargs, cpchar tabargs[]);
-int test_hemispheres (int nbargs, cpchar tabargs[]);
-int test_replace (int nbargs, cpchar tabargs[]);
-
 // ======================================================== test_hexa
 int test_hexa (int nbargs, cpchar tabargs[])
 {
-   int ier = test_joint2 (nbargs, tabargs);
+   goto_workspace ();
+   int ier = test_cylindricals (nbargs, tabargs);
+   ier = test_transfo (nbargs, tabargs);
+   free_workspace ();
+
    return ier;
 }

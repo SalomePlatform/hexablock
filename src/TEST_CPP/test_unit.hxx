@@ -24,6 +24,9 @@
 
 #include "hexa_base.hxx"
 
+void goto_workspace ();
+void free_workspace ();
+
 int test_sphere (int nbargs, cpchar tabargs[]);
 int test_joint (int nbargs, cpchar tabargs[]);
 int test_prism (int nbargs, cpchar tabargs[]);

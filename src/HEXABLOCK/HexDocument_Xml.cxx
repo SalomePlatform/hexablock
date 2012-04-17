@@ -17,8 +17,9 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
+
 #include "HexDocument.hxx"
 #include <libgen.h>               // Pour basename
 #include <cstdlib>               // Pour atoi et atof
@@ -490,7 +491,7 @@ int Document::saveVtk (cpchar nomfic)
 
    int nbnodes = 0;
    int nbcells = 0;
-                                           // -- 2) Comptage
+
    for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
                  elt = elt->next())
        {
@@ -502,7 +503,15 @@ int Document::saveVtk (cpchar nomfic)
           }
        }
 
-   pfile    vtk = fopen (nomfic, "w");
+   pfile vtk = fopen (nomfic, "w");
+   if (vtk==NULL)
+      {
+      cout << " ****" << endl;
+      cout << " **** Document::saveVtk : " << endl;
+      cout << " **** Can't open file "     << endl;
+      cout << " ****" << endl;
+
+      }
    fprintf (vtk, "# vtk DataFile Version 3.1\n");
    fprintf (vtk, "%s \n", nomfic);
    fprintf (vtk, "ASCII\n");
