@@ -88,6 +88,9 @@ UNIT_TEST_PROG = ./Test_HEXABLOCK
 
 check : tests
 
+clean-local:
+        -rm -fr *.vtk *.xml *.brep
+
 # bin_PROGRAMS = bielle 
 # 	test_hexa1 \
 # 	test_cartesi1 \
@@ -200,6 +203,3 @@ check : tests
 # 	libHEXATest.la \
 # 	../HEXA/libHEXAimpl.la \
 # 	$(COMMON_LIBS)
-
-
-
