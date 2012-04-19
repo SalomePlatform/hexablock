@@ -424,6 +424,8 @@ int test_cramer (int nbargs, cpchar tabargs[])
 // ====================================================== test_hexa_quads_ac1
 int test_hexa_quads_ac1 (int nbargs, cpchar tabargs[])
 {
+   int nbtraces = 0;
+   cout << "test_hexa_quads_ac1, trace nro " << ++nbtraces <<endl;
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
@@ -465,8 +467,8 @@ int test_hexa_quads_ac1 (int nbargs, cpchar tabargs[])
 
    /* Hex::Hexa* hexa = */  doc->addHexa2Quads (qa, qc);
 
+   // doc->dump();
    doc->saveVtk ("hexa_quads.vtk");
-
    return HOK;
 }
 // ======================================================== test_part_rind

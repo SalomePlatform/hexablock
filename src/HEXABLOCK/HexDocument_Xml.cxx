@@ -490,7 +490,7 @@ int Document::saveVtk (cpchar nomfic)
 
    int nbnodes = 0;
    int nbcells = 0;
-                                           // -- 2) Comptage
+
    for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
                  elt = elt->next())
        {
@@ -502,7 +502,15 @@ int Document::saveVtk (cpchar nomfic)
           }
        }
 
-   pfile    vtk = fopen (nomfic, "w");
+   pfile vtk = fopen (nomfic, "w");
+   if (vtk==NULL)
+      {
+      cout << " ****" << endl;
+      cout << " **** Document::saveVtk : " << endl;
+      cout << " **** Can't open file "     << endl;
+      cout << " ****" << endl;
+
+      }
    fprintf (vtk, "# vtk DataFile Version 3.1\n");
    fprintf (vtk, "%s \n", nomfic);
    fprintf (vtk, "ASCII\n");

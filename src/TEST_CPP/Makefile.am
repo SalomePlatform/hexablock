@@ -65,6 +65,7 @@ lib_LTLIBRARIES = libHEXABLOCKTest.la
 libHEXABLOCKTest_la_SOURCES  = \
 	test_unit.hxx           \
 	test_hexa1.cxx              \
+	test_tools.cxx              \
 	test_quads.cxx              \
 	ModelTest.cxx ModelTest.hxx
 

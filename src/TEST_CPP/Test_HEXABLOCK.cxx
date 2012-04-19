@@ -40,7 +40,8 @@ static void display (int ier);
 int main (int nbargs, cpchar tabargs [])
 {
    int ier;
-   cpchar barre = "=====================================================";
+
+   goto_workspace ();
 
    TestUnit (test_sphere );
    TestUnit (test_joint );
@@ -72,7 +73,6 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_transfo );
    TestUnit (test_copy_document );
    TestUnit (test_cylindricals );
-   TestUnit (test_hexa );
                  // Dans test_quads
    TestUnit (test_hexa_quads_5 );
    TestUnit (test_hexa_quads_ab );
@@ -87,7 +87,8 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_piquage );
    TestUnit (test_replace );
    TestUnit (test_hemispheres );
-   TestUnit (test_quads );
+
+   free_workspace ();
 
    cout << "========================================= " 
         << endl;

@@ -461,20 +461,23 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
   //fill the listWidget
   QListWidgetItem* item = NULL;
   int selType;
-  int maxSize = 8;//CS_TODO
+  QString selName;
+//   int maxSize = 8;
   foreach( const QModelIndex& isel, l ){
-    if ( lw->count() == maxSize) break;
+//     if ( lw->count() == maxSize) break;
     selType = isel.data(HEXA_TREE_ROLE).toInt();
     if ( selType != wType ){ // check selection compatibility between selection and widget
       MESSAGE("*  bad selection : " << selType<< " is not  " << wType );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
-//         tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
         tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
-
       return false;
-    } else { // add selection to listWidget if selection is OK
-      item = new QListWidgetItem( isel.data().toString() );
+    }
+    // add selection to listWidget if selection is OK
+    selName = isel.data().toString();
+    QList<QListWidgetItem *> twice = lw->findItems( selName, Qt::MatchExactly);
+    if ( twice.count() == 0 ){
+      item = new QListWidgetItem( selName );
       item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
       lw->addItem(item);
       updateButtonBox();

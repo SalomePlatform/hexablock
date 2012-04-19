@@ -39,8 +39,8 @@ public:
     int    nbr_aretes;
     Quad*  tab_quads  [MaxQuads];
     int    inter_nbre [MaxQuads];
-    int    inter_edge [MaxQuads][MaxQuads];
-    int    inter_quad [MaxQuads][QUAD4];
+    int    inter_edge [MaxQuads][MaxQuads]; // L'arete commune des 2 quads
+    int    inter_quad [MaxQuads][QUAD4];    // Le quad touchant la ieme arete
 };
 // ----------------------------------------------- Inlining
 // ========================================================== Constructeur
@@ -54,9 +54,9 @@ inline AnaQuads::AnaQuads (Quad* q0, Quad* q1, Quad* q2, Quad* q3, Quad* q4)
        {
        tab_quads  [nquad] = NULL;
        inter_nbre [nquad] = 0;
-       for (int nro=0 ; nro < MaxQuads ; nro++)
-           inter_quad [nquad][nro] = NOTHING;
        for (int nro=0 ; nro < QUAD4 ; nro++)
+           inter_quad [nquad][nro] = NOTHING;
+       for (int nro=0 ; nro < MaxQuads ; nro++)
            inter_edge [nquad][nro] = NOTHING;
        }
 
