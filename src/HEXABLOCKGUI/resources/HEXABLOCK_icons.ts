@@ -158,6 +158,18 @@
             <source>ICON_COMPUTE_MESH</source>
             <translation>compute_mesh.png</translation>
         </message>
+        <message>
+            <source>ICON_QUAD_REVOLUTION</source>
+            <translation>quad_revolution.png</translation>
+        </message>
+        <message>
+            <source>ICON_REPLACE_HEXA</source>
+            <translation>replace_hexa.png</translation>
+        </message>
+        <message>
+            <source>ICON_MAKE_HEMISPHERE</source>
+            <translation>make_hemisphere.png</translation>
+        </message>
 
         <message>
             <source>ICON_DLG_POINT</source>

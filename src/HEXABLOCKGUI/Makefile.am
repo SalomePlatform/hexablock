@@ -189,7 +189,7 @@ ICONS =  \
 	resources/perform_transformation.png \
 	resources/perform_symmetry.png \
 	resources/assoc_vertex.png \
-        resources/assoc_edge.png \
+	resources/assoc_edge.png \
 	resources/assoc_quad.png \
 	resources/add_group.png \
 	resources/remove_group.png \
@@ -197,14 +197,17 @@ ICONS =  \
 	resources/remove_law.png \
 	resources/set_propagation.png \
 	resources/compute_mesh.png \
-        resources/point2.png \
+	resources/point2.png \
 	resources/pointonedge.png \
 	resources/select1.png \
 	resources/point3.png \
 	resources/point_line_intersection.png  \
-        resources/pointonface.png \
+	resources/pointonface.png \
 	resources/line.png \
-	resources/build_wire.png
+	resources/build_wire.png \
+	resources/quad_revolution.png \
+	resources/replace_hexa.png \
+	resources/make_hemisphere.png
 
 QMFILES = \
 	HEXABLOCK_msg_en.qm \
