@@ -17,7 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#define _DEVDEBUG_
+//#define _DEVDEBUG_
 
 // #include <Python.h>
 
@@ -874,190 +874,288 @@ void HEXABLOCKGUI::createAndFillDockWidget()
           SIGNAL(customContextMenuRequested(const QPoint &)),
           this,
           SLOT(treeContextMenu(const QPoint &)));
-
-
-
-
 }
-
-
-
 
 void HEXABLOCKGUI::createActions()
 {
   QMainWindow *aParent = application()->desktop();
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
-  // Document 
-  _newAct = createAction( _menuId++, tr("Create a new document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_NEW_DOCUMENT" ) ),
-                                     tr("New document"),  tr("Create a new document"),
-                                     0, aParent, false, this,  SLOT(newDocument()) );
+  // Document
+  _newAct = createAction(_menuId++,
+                         tr("Create a new document"),
+                         resMgr->loadPixmap("HEXABLOCK", tr("ICON_NEW_DOCUMENT")),
+                         tr("New Document"),
+                         tr("Create a new document"),
+                         0, aParent, false, this, SLOT(newDocument()));
   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
 
-  _importAct = createAction( _menuId++, tr("Load a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_LOAD_DOCUMENT" ) ),
-                                            tr("Load document"), tr("Load a document"),
-                                            0, aParent, false, this,  SLOT(loadDocument()) );
+  _importAct = createAction(_menuId++,
+                            tr("Load a document"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_LOAD_DOCUMENT")),
+                            tr("Load Document"),
+                            tr("Load a document"),
+                            0, aParent, false, this, SLOT(loadDocument()));
   _importAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_O); // --- QKeySequence::Open ambiguous in SALOME
 
+  _saveAct = createAction(_menuId++,
+                          tr("Save the document"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_SAVE_DOCUMENT")),
+                          tr("Save Document"),
+                          tr("Save the document"),
+                          0, aParent, false, this, SLOT(saveDocument()));
 
-  _saveAct = createAction( _menuId++, tr("Save a document"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SAVE_DOCUMENT" ) ), tr("Save document"), tr("Save a document"), 0, aParent, false, this,  SLOT(saveDocument()) );
-
-
-//   _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
-//                                      tr("Test"),  tr("New test"),
-//                                      0, aParent, false, this, SLOT(test_association()) );
-
-  _testAct = createAction( _menuId++, tr("Test"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_TEST" ) ),
-                                     tr("Test"),  tr("New test"),
-                                     0, aParent, false, this, SLOT(test()) );
+//  _testAct = createAction(_menuId++, tr("Test"), resMgr->loadPixmap("HEXABLOCK", tr("ICON_TEST")),
+//                          tr("Test"),  tr("New test"),
+//                          0, aParent, false, this, SLOT(test_association()));
 
   // Pattern Data creation
-  _addVertex = createAction( _menuId++, tr("Create a vertex"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_VERTEX" ) ),
-                                            tr("Add vertex"),  tr("Create a new vertex"),
-                                            0, aParent, false, this,  SLOT(addVertex()) );
+  _addVertex = createAction(_menuId++,
+                            tr("Create a vertex"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_VERTEX")),
+                            tr("Add Vertex"),
+                            tr("Create a new vertex"),
+                            0, aParent, false, this, SLOT(addVertex()));
 
-  _addEdge = createAction( _menuId++, tr("Create an edge"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_EDGE" ) ),
-                                            tr("Add edge"),  tr("Create a new edge"),
-                                            0, aParent, false, this,  SLOT(addEdge()) );
+  _addEdge = createAction(_menuId++,
+                          tr("Create an edge"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_EDGE")),
+                          tr("Add Edge"),
+                          tr("Create a new edge"),
+                          0, aParent, false, this, SLOT(addEdge()));
 
-  _addQuad = createAction( _menuId++, tr("Create a quad"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_QUAD" ) ),
-                                            tr("Add quad"),  tr("Create a new quad"),
-                                            0, aParent, false, this,  SLOT(addQuad()) );
+  _addQuad = createAction(_menuId++,
+                          tr("Create a quadrangle"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_QUAD")),
+                          tr("Add Quadrangle"),
+                          tr("Create a new quadrangle"),
+                          0, aParent, false, this, SLOT(addQuad()));
 
-  _addHexa = createAction( _menuId++, tr("Create an hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_HEXA" ) ),
-                                            tr("Add hexa"),  tr("Create a new hexa"),
-                                            0, aParent, false, this,  SLOT(addHexa()) );
-
-
-
+  _addHexa = createAction(_menuId++,
+                          tr("Create an hexahedron"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_HEXA")),
+                          tr("Add Hexahedron"),
+                          tr("Create a new hexahedron"),
+                          0, aParent, false, this, SLOT(addHexa()));
 
   // Builder Data creation
-  _addVector    = createAction( _menuId++, tr("Create a vector"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_VECTOR" ) ),
-                                            tr("Add vector"),  tr("Create a new vector"),
-                                            0, aParent, false, this,  SLOT(addVector()) );
+  _addVector = createAction(_menuId++,
+                            tr("Create a vector"),
+                            resMgr->loadPixmap( "HEXABLOCK", tr("ICON_ADD_VECTOR")),
+                            tr("Add Vector"),
+                            tr("Create a new vector"),
+                            0, aParent, false, this, SLOT(addVector()));
 
-  _addCylinder  = createAction( _menuId++, tr("Create a cylinder"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_CYLINDER" ) ),
-                                            tr("Add cylinder"),  tr("Create a new cylinder"),
-                                            0, aParent, false, this,  SLOT(addCylinder()) );
+  _addCylinder = createAction(_menuId++,
+                              tr("Create a cylinder"),
+                              resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_CYLINDER")),
+                              tr("Add Cylinder"),
+                              tr("Create a new cylinder"),
+                              0, aParent, false, this,  SLOT(addCylinder()));
 
-  _addPipe      = createAction( _menuId++, tr("Create a pipe"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_PIPE" ) ),
-                                            tr("Add pipe"),  tr("Create a new pipe"),
-                                            0, aParent, false, this,  SLOT(addPipe()) );
+  _addPipe = createAction(_menuId++,
+                          tr("Create a pipe"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_PIPE")),
+                          tr("Add Pipe"),
+                          tr("Create a new pipe"),
+                          0, aParent, false, this, SLOT(addPipe()));
 
-  _makeGrid     = createAction( _menuId++, tr("Make a grid"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_GRID" ) ),
-                                            tr("Make grid"),  tr("Make a grid"),
-                                            0, aParent, false, this,  SLOT(makeGrid()) );
+  _makeGrid = createAction(_menuId++,
+                           tr("Make a grid"),
+                           resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_GRID")),
+                           tr("Make Grid"),
+                           tr("Make a grid"),
+                           0, aParent, false, this,  SLOT(makeGrid()));
 
-  _makeCylinder     = createAction( _menuId++, tr("Make a cylinder"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_CYLINDER" ) ),
-                                            tr("Make cylinder"),  tr("Make a cylinder"),
-                                            0, aParent, false, this,  SLOT(makeCylinder()) );
+  _makeCylinder = createAction(_menuId++,
+                               tr("Make a cylinder"),
+                               resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_CYLINDER")),
+                               tr("Make Cylinder"),
+                               tr("Make a cylinder"),
+                               0, aParent, false, this, SLOT(makeCylinder()));
 
-  _makePipe     = createAction( _menuId++, tr("Make a pipe"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_PIPE" ) ),
-                                            tr("Make pipe"),  tr("Make a pipe"),
-                                            0, aParent, false, this,  SLOT(makePipe()) );
+  _makePipe = createAction(_menuId++,
+                           tr("Make a pipe"),
+                           resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_PIPE")),
+                           tr("Make Pipe"),
+                           tr("Make a pipe"),
+                           0, aParent, false, this, SLOT(makePipe()));
 
-  _makeCylinders     = createAction( _menuId++, tr("Make cylinders"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_CYLINDERS" ) ),
-                                            tr("Make cylinders"),  tr("Make cylinders"),
-                                            0, aParent, false, this,  SLOT(makeCylinders()) );
+  _makeCylinders = createAction(_menuId++,
+                                tr("Make cylinders"),
+                                resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_CYLINDERS")),
+                                tr("Make Cylinders"),
+                                tr("Make cylinders"),
+                                0, aParent, false, this, SLOT(makeCylinders()));
 
-  _makePipes     = createAction( _menuId++, tr("Make pipes"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_PIPES" ) ),
-                                            tr("Make pipes"),  tr("Make pipes"),
-                                            0, aParent, false, this,  SLOT(makePipes()) );
+  _makePipes = createAction(_menuId++,
+                            tr("Make pipes"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_PIPES")),
+                            tr("Make Pipes"),
+                            tr("Make pipes"),
+                            0, aParent, false, this, SLOT(makePipes()));
 
-
-// //   _makeRind     = createAction( _menuId++, tr("Make rind"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_RIND" ) ),
+// //   _makeRind     = createAction( _menuId++, tr("Make rind"), resMgr->loadPixmap( "HEXABLOCK", tr("ICON_MAKE_RIND")),
 // //                                             tr("Make rind"),  tr("Make rind"),
-// //                                             0, aParent, false, this,  SLOT(makeRind()) );
+// //                                             0, aParent, false, this, SLOT(makeRind()));
 
-  _makeHemiSphere   = createAction( _menuId++, tr("Make hemisphere"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_HEMISPHERE" ) ),
-                                            tr("Make hemisphere"),  tr("Make hemisphere"),
-                                            0, aParent, false, this,  SLOT(makeHemiSphere()) );
+  _makeHemiSphere = createAction(_menuId++,
+                                 tr("Make an hemisphere"),
+                                 resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_HEMISPHERE")),
+                                 tr("Make Hemisphere"),
+                                 tr("Make an hemisphere"),
+                                 0, aParent, false, this, SLOT(makeHemiSphere()));
 
   // Pattern Data edition
-  _removeHexa     = createAction( _menuId++, tr("Remove hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REMOVE_HEXA" ) ),
-                                            tr("Remove hexa"),  tr("Remove hexa"),
-                                            0, aParent, false, this,  SLOT(removeHexa()) );
+  _removeHexa = createAction(_menuId++,
+                             tr("Remove hexahedra"),
+                             resMgr->loadPixmap("HEXABLOCK", tr("ICON_REMOVE_HEXA")),
+                             tr("Remove Hexahedra"),
+                             tr("Remove hexahedra"),
+                             0, aParent, false, this, SLOT(removeHexa()));
 
-  _prismQuad     = createAction( _menuId++, tr("Prism quad"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_PRISM_QUAD" ) ),
-                                            tr("Prism quad"),  tr("Prism quad"),
-                                            0, aParent, false, this,  SLOT(prismQuad()) );
+  _prismQuad = createAction(_menuId++,
+                            tr("Prism quadrangles"),
+                            resMgr->loadPixmap( "HEXABLOCK", tr("ICON_PRISM_QUAD")),
+                            tr("Prism Quadrangles"),
+                            tr("Prism quadrangles"),
+                            0, aParent, false, this, SLOT(prismQuad()));
 
-  _joinQuad     = createAction( _menuId++, tr("join quad"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_JOIN_QUAD" ) ),
-                                            tr("join quad"),  tr("Join quad"),
-                                            0, aParent, false, this,  SLOT(joinQuad()) );
+  _joinQuad = createAction(_menuId++,
+                           tr("Join quadrangles"),
+                           resMgr->loadPixmap("HEXABLOCK", tr("ICON_JOIN_QUAD")),
+                           tr("Join Quadrangles"),
+                           tr("Join quadrangles with hexahedra"),
+                           0, aParent, false, this, SLOT(joinQuad()));
 
-  _merge     = createAction( _menuId++, tr("Merge"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MERGE" ) ),
-                                            tr("Merge"),  tr("Merge"),
-                                            0, aParent, false, this,  SLOT(merge()) );
+  _merge = createAction(_menuId++,
+                        tr("Merge"),
+                        resMgr->loadPixmap("HEXABLOCK", tr("ICON_MERGE")),
+                        tr("Merge"),
+                        tr("Merge"),
+                        0, aParent, false, this, SLOT(merge()));
 
-  _disconnect     = createAction( _menuId++, tr("Disconnect"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_DISCONNECT" ) ),
-                                            tr("Disconnect"),  tr("Disconnect"),
-                                            0, aParent, false, this,  SLOT(disconnectElts()) );
+  _disconnect = createAction(_menuId++,
+                             tr("Disconnect"),
+                             resMgr->loadPixmap("HEXABLOCK", tr("ICON_DISCONNECT")),
+                             tr("Disconnect"),
+                             tr("Disconnect edges, vertexes or quadrangles"),
+                             0, aParent, false, this, SLOT(disconnectElts()));
 
-  _cutEdge     = createAction( _menuId++, tr("Cut edge"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_CUT_EDGE" ) ),
-                                            tr("Cut edge"),  tr("Cut edge"),
-                                            0, aParent, false, this,  SLOT(cutEdge()) );
+  _cutEdge = createAction(_menuId++,
+                          tr("Cut edge"),
+                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_CUT_EDGE")),
+                          tr("Cut Edge"),
+                          tr("Cut edge"),
+                          0, aParent, false, this, SLOT(cutEdge()));
 
+  _makeTransformation = createAction(_menuId++,
+                                     tr("Make transformation"),
+                                     resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_TRANSFORMATION")),
+                                     tr("Make Transformation"),
+                                     tr("Make transformation"),
+                                     0, aParent, false, this, SLOT(makeTransformation()));
 
-  _makeTransformation     = createAction( _menuId++, tr("Make transformation"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_TRANSFORMATION" ) ),
-                                            tr("Make transformation"),  tr("Make transformation"),
-                                            0, aParent, false, this,  SLOT(makeTransformation()) );
+  _makeSymmetry = createAction(_menuId++,
+                               tr("Make symmetry"),
+                               resMgr->loadPixmap("HEXABLOCK", tr("ICON_MAKE_SYMMETRY")),
+                               tr("Make Symmetry"),
+                               tr("Make symmetry"),
+                               0, aParent, false, this, SLOT(makeSymmetry()));
 
-  _makeSymmetry     = createAction( _menuId++, tr("Make symmetry"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_MAKE_SYMMETRY" ) ),
-                                            tr("Make symmetry"),  tr("Make symmetry"),
-                                            0, aParent, false, this,  SLOT(makeSymmetry()) );
+  _performTransformation = createAction(_menuId++,
+                                        tr("Perform transformation"),
+                                        resMgr->loadPixmap("HEXABLOCK", tr("ICON_PERFORM_TRANSFORMATION")),
+                                        tr("Perform Transformation"),
+                                        tr("Perform transformation"),
+                                        0, aParent, false, this, SLOT(performTransformation()));
 
-  _performTransformation     = createAction( _menuId++, tr("Perform transformation"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_PERFORM_TRANSFORMATION" ) ), tr("Perform transformation"),  tr("Perform transformation"),
-                                            0, aParent, false, this,  SLOT(performTransformation()) );
+  _performSymmetry = createAction(_menuId++,
+                                  tr("Perform symmetry"),
+                                  resMgr->loadPixmap("HEXABLOCK", tr("ICON_PERFORM_SYMMETRY")),
+                                  tr("Perform Symmetry"),
+                                  tr("Perform symmetry"),
+                                  0, aParent, false, this, SLOT(performSymmetry()));
 
-  _performSymmetry     = createAction( _menuId++, tr("Perform Symmetry"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_PERFORM_SYMMETRY" ) ),
-                                            tr("Perform Symmetry"),  tr("Perform Symmetry"),
-                                            0, aParent, false, this,  SLOT(performSymmetry()) );
+  _replaceHexa = createAction(_menuId++,
+                              tr("Replace hexahedron"),
+                              resMgr->loadPixmap("HEXABLOCK", tr("ICON_REPLACE_HEXA")),
+                              tr("Replace Hexahedron"),
+                              tr("Replace hexahedron"),
+                              0, aParent, false, this, SLOT(replaceHexa()));
 
-  _replaceHexa    = createAction( _menuId++, tr("Replace Hexa"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REPLACE_HEXA" ) ),
-                                            tr("Replace Hexa"),  tr("Replace Hexa"),
-                                            0, aParent, false, this,  SLOT(replaceHexa()) );
+  _quadRevolution = createAction(_menuId++,
+                                 tr("Quad revolution"),
+                                 resMgr->loadPixmap("HEXABLOCK", tr("ICON_QUAD_REVOLUTION")),
+                                 tr("Quad Revolution"),
+                                 tr("Quad revolution"),
+                                 0, aParent, false, this, SLOT(quadRevolution()));
 
-  _quadRevolution = createAction( _menuId++, tr("Quad Revolution"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_QUAD_REVOLUTION" ) ),
-                                            tr("Quad Revolution"),  tr("Quad Revolution"),
-                                            0, aParent, false, this,  SLOT(quadRevolution()) );
+  // Association
+  _assocVertex = createAction(_menuId++,
+                              tr("Make vertex association"),
+                              resMgr->loadPixmap("HEXABLOCK", tr("ICON_VERTEX_ASSOCIATION")),
+                              tr("Make Vertex association"),
+                              tr("Make vertex association"),
+                              0, aParent, false, this, SLOT(assocVertex()));
 
+  _assocEdge = createAction(_menuId++,
+                            tr("Make edge association"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_EDGE_ASSOCIATION")),
+                            tr("Make Edge Association"),
+                            tr("Make edge association"),
+                            0, aParent, false, this, SLOT(assocEdge()));
 
+  _assocQuad = createAction(_menuId++,
+                            tr("Make quadrangle association"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_QUAD_ASSOCIATION")),
+                            tr("Make Quadrangle Association"),
+                            tr("Make quadrangle association"),
+                            0, aParent, false, this, SLOT(assocQuad()));
 
-  _assocVertex  =  createAction( _menuId++, tr("Make Vertex Association"), resMgr->loadPixmap( "HEXABLOCK", tr("ICON_VERTEX_ASSOCIATION") ), tr("Make Vertex association"),  tr("Make Vertex association"),
-                                            0, aParent, false, this,  SLOT(assocVertex()) );
+  // Group
+  _addGroup = createAction(_menuId++,
+                           tr("Add a group"),
+                           resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_GROUP")),
+                           tr("Add Group"),
+                           tr("Add a group"),
+                           0, aParent, false, this, SLOT(addGroup()));
 
-  _assocEdge = createAction( _menuId++, tr("Make Edge Association"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_EDGE_ASSOCIATION" ) ), tr("Make Edge Association"),  tr("Make Edge Association"),
-                                            0, aParent, false, this,  SLOT(assocEdge()) );
+  _removeGroup = createAction(_menuId++,
+                              tr("Remove a group"),
+                              resMgr->loadPixmap("HEXABLOCK", tr("ICON_REMOVE_GROUP")),
+                              tr("Remove Group"),
+                              tr("Remove a group"),
+                              0, aParent, false, this, SLOT(removeGroup()));
 
-  _assocQuad = createAction( _menuId++, tr("Make Quad Association"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_QUAD_ASSOCIATION" ) ), tr("Make Quad Association"),  tr("Make Quad Association"),
-                                            0, aParent, false, this,  SLOT(assocQuad()) );
+  // Mesh
+  _addLaw = createAction(_menuId++,
+                         tr("Add a law"),
+                         resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_LAW")),
+                         tr("Add Law"),
+                         tr("Add law"),
+                         0, aParent, false, this, SLOT(addLaw()));
 
+  _removeLaw = createAction(_menuId++,
+                            tr("Remove a law"),
+                            resMgr->loadPixmap("HEXABLOCK", tr("ICON_REMOVE_LAW")),
+                            tr("Remove Law"),
+                            tr("Remove a law"),
+                            0, aParent, false, this, SLOT(removeLaw()));
 
-  _addGroup     = createAction( _menuId++, tr("Add group"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_GROUP" ) ),
-                                            tr("Add group"),  tr("Add group"),
-                                            0, aParent, false, this,  SLOT(addGroup()) );
-  _removeGroup     = createAction( _menuId++, tr("Remove group"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REMOVE_GROUP" ) ),
-                                            tr("Remove group"),  tr("Remove group"),
-                                            0, aParent, false, this,  SLOT(removeGroup()) );
+  _setPropagation = createAction(_menuId++,
+                                 tr("Set propagation"),
+                                 resMgr->loadPixmap("HEXABLOCK", tr("ICON_SET_PROPAGATION")),
+                                 tr("Set Propagation"),
+                                 tr("Set propagation"),
+                                 0, aParent, false, this, SLOT(setPropagation()));
 
-  _addLaw     = createAction( _menuId++, tr("Add law"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_ADD_LAW" ) ),
-                                            tr("Add law"),  tr("Add law"),
-                                            0, aParent, false, this,  SLOT(addLaw()) );
-
-  _removeLaw     = createAction( _menuId++, tr("Remove law"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_REMOVE_LAW" ) ),
-                                            tr("Remove law"),  tr("Remove law"),
-                                            0, aParent, false, this,  SLOT(removeLaw()) );
-
-  _setPropagation = createAction( _menuId++, tr("Set Propagation"), resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_SET_PROPAGATION" ) ),tr("Set Propagation"),  tr("Set Propagation"),
-                                            0, aParent, false, this,  SLOT(setPropagation()) );
-
-  _computeMesh    = createAction( _menuId++,
-                                  tr("Compute mesh"),
-                                  resMgr->loadPixmap( "HEXABLOCK", tr( "ICON_COMPUTE_MESH" ) ),
-                                  tr("Compute mesh"),
-                                  tr("Compute mesh"),
-                                  0, aParent, false, this,  SLOT(computeMesh()) );
+  _computeMesh = createAction(_menuId++,
+                              tr("Compute mesh"),
+                              resMgr->loadPixmap("HEXABLOCK", tr("ICON_COMPUTE_MESH")),
+                              tr("Compute Mesh"),
+                              tr("Compute mesh"),
+                              0, aParent, false, this, SLOT(computeMesh()));
 
 
   //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
@@ -1077,9 +1175,9 @@ void HEXABLOCKGUI::createActions()
 void HEXABLOCKGUI::createMenus()
 {
   int aMenuId;
-  aMenuId = createMenu( "File", -1, -1 );
+  aMenuId = createMenu( tr("MEN_FILE"), -1, -1 );
   createMenu( separator(), aMenuId, -1, 10 );
-  aMenuId = createMenu( "HEXABLOCK" , aMenuId, -1, 10 );
+  aMenuId = createMenu( tr("HEXABLOCK"), aMenuId, -1, 10 );
   createMenu( _newAct, aMenuId );
   createMenu( _importAct, aMenuId );
   createMenu( _saveAct, aMenuId );
@@ -1126,14 +1224,11 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _replaceHexa,    aMenuId );
   createMenu( _quadRevolution, aMenuId );
 
-
-
-// // Association
+  // Association
   aMenuId = createMenu( tr("Association"), -1, -1, 30 );
   createMenu( _assocVertex, aMenuId );
   createMenu( _assocEdge,   aMenuId );
   createMenu( _assocQuad,   aMenuId );
-
 
   // Group
   aMenuId = createMenu( tr("Groups"), -1, -1, 30 );
@@ -1146,13 +1241,12 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _removeLaw, aMenuId );
   createMenu( _setPropagation, aMenuId );
   createMenu( _computeMesh, aMenuId );
-
 }
 
 
 void HEXABLOCKGUI::createTools()
 {
-  int aToolId = createTool ( tr( "HEXABLOCK Toolbar" ) );
+  int aToolId = createTool ( tr( "HexaBlock Toolbar" ) );
 
   createTool( _newAct, aToolId );
   createTool( _importAct, aToolId );
@@ -1573,10 +1667,10 @@ QModelIndex orig6 = _currentModel->addVertex( 10, 20, 0);
 QModelIndex vz = _currentModel->addVector(0, 0, 1);
 QModelIndex vx = _currentModel->addVector(1, 0, 0);
 
-int dr = 1;
-int dl = 1;
-int nr = 2;
-int nl = 3;
+//int dr = 1;
+//int dl = 1;
+//int nr = 2;
+//int nl = 3;
 
 // QModelIndex c1 = _currentModel->makeCylindrical(orig1, vx, vz, dr, 360, dl, nr, 4, nl, true);
 // QModelIndex c2 = _currentModel->makeCylindrical(orig2, vx, vz, dr, 360, dl, nr, 8, nl, true);
@@ -1933,7 +2027,7 @@ void HEXABLOCKGUI::loadDocument( const QString &inFile )
   QString selectedFile;
 
   if ( inFile.isNull() ){
-    QFileDialog dialog( aParent, "Choose a filename to load" ,
+    QFileDialog dialog( aParent, tr("Open HexaBlock Document") ,
                         QString::null, tr( "XML-Files (*.xml);;All Files (*)" ) );
     dialog.setHistory( getQuickDirList() );
     if (dialog.exec()){
@@ -1950,9 +2044,8 @@ void HEXABLOCKGUI::loadDocument( const QString &inFile )
     _currentModel->load(selectedFile);
     renameObject( _currentModel->documentEntry(), _currentModel->getName() );
   }
-
-
 }
+
 void HEXABLOCKGUI::saveDocument()
 {
   QMainWindow *aParent = application()->desktop();
@@ -1961,7 +2054,7 @@ void HEXABLOCKGUI::saveDocument()
     anInitialPath = QDir::currentPath();
 //   QString aMeshName = anIO->getName();
 
-  QString aDocName = "zedocument";
+  QString aDocName = "document";
   QStringList filter;
   filter.append( QObject::tr( "XML_FILES_FILTER" ) + " (*.xml)" );
   filter.append( QObject::tr( "ALL_FILES_FILTER" ) + " (*)" );
@@ -1969,7 +2062,7 @@ void HEXABLOCKGUI::saveDocument()
   aFilename = SUIT_FileDlg::getFileName( aParent,
                                          aFilename,
                                          filter,
-                                         tr( "HEXABLOCK_SAVE_XML" ),
+                                         tr( "Save HexaBlock Document" ),
                                          false );
   std::cout<<"HEXABLOCKGUI::saveDocument()"<<std::endl;
   if ( !aFilename.isEmpty() ) {
@@ -1978,8 +2071,6 @@ void HEXABLOCKGUI::saveDocument()
   }
   //CS_TODO save doc
 }
-
-
 
 void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 {
