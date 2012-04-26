@@ -20,7 +20,7 @@
 #include "MyGEOMBase_Skeleton.hxx"
 #include "GEOMBase.h"
 
-#include <DlgRef.hxx>
+#include "MyDlgRef.hxx"
 #include <GeometryGUI.h>
 
 #include <SalomeApp_Application.h>
@@ -56,7 +56,7 @@ MyGEOMBase_Skeleton::MyGEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* 
   setModal( modal );
   MESSAGE("MyGEOMBase_Skeleton::MyGEOMBase_Skeleton()");
 
-  myMainFrame = new DlgRef_Skeleton( this );
+  myMainFrame = new MyDlgRef_Skeleton( this );
   QVBoxLayout* topLayout = new QVBoxLayout( this );
   topLayout->setMargin( 0 ); topLayout->setSpacing( 0 );
   topLayout->addWidget( myMainFrame );
@@ -366,7 +366,7 @@ void MyGEOMBase_Skeleton::setHelpFileName( const QString& theName )
   myHelpFileName = theName;
 }
 
-DlgRef_Skeleton* MyGEOMBase_Skeleton::mainFrame()
+MyDlgRef_Skeleton* MyGEOMBase_Skeleton::mainFrame()
 {
   return myMainFrame;
 }

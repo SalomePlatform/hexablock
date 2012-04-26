@@ -18,7 +18,7 @@
 //
 
 
-#include "DlgRef.hxx"
+#include "MyDlgRef.hxx"
 
 //////////////////////////////////////////
 // DlgRef_1List1Spin1Btn
@@ -800,13 +800,13 @@ DlgRef_6Sel::~DlgRef_6Sel()
 // DlgRef_Skeleton
 //////////////////////////////////////////
 
-DlgRef_Skeleton::DlgRef_Skeleton( QWidget* parent, Qt::WindowFlags f )
+MyDlgRef_Skeleton::MyDlgRef_Skeleton( QWidget* parent, Qt::WindowFlags f )
 : QWidget( parent, f )
 {
   setupUi( this );
 }
 
-DlgRef_Skeleton::~DlgRef_Skeleton()
+MyDlgRef_Skeleton::~MyDlgRef_Skeleton()
 {
 }
 

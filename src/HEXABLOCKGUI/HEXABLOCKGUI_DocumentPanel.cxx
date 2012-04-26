@@ -1440,7 +1440,7 @@ HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
   _initWidget(editmode);
   quads_rb->setFocusProxy( quads_lw );
   vertices_rb->setFocusProxy( vertices_lw );
-//   quads_rb->click();
+  quads_rb->click();
 //   quads_rb->setFocus();
 
   if  ( editmode == INFO_MODE ){
