@@ -20,7 +20,7 @@
 # GEOM DLGREF : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
-# Package : DlgRef
+# Package : MyDlgRef
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -29,11 +29,11 @@ lib_LTLIBRARIES = libMyDlgRef.la
 
 # Sources files
 dist_libMyDlgRef_la_SOURCES = 	\
-	DlgRef.hxx		\
-	DlgRef.cxx
+	MyDlgRef.hxx		\
+	MyDlgRef.cxx
 
 MOC_FILES =			\
-	DlgRef_moc.cxx
+	MyDlgRef_moc.cxx
 
 UIC_FILES =					\
 	ui_DlgRef_1List1Spin1Btn_QTD.h		\

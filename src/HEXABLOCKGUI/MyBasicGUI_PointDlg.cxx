@@ -27,7 +27,7 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <DlgRef.hxx>
+#include "MyDlgRef.hxx"
 
 #include <GEOMImpl_Types.hxx>
 

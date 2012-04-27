@@ -131,11 +131,12 @@ libHEXABLOCK_la_CXXFLAGS = \
 	-I$(srcdir)/../HEXABLOCK \
 	-I$(srcdir)/../HEXABLOCK_I \
 	-I$(top_builddir) \
-	-I$(srcdir)/../HEXABLOCKGUI/MyDlgRef \
-	-I$(top_builddir)/src/HEXABLOCKGUI/MyDlgRef \
 	-I../../idl \
 	$(qt4_cppflags) \
-	$(qsci4_cppflags)
+	$(qsci4_cppflags) \
+	-I$(srcdir)/../HEXABLOCKGUI/MyDlgRef \
+	-I$(top_builddir)/src/HEXABLOCKGUI/MyDlgRef
+
 
 
 libHEXABLOCK_la_LDFLAGS  = \

@@ -27,7 +27,7 @@
 
 class SalomeApp_DoubleSpinBox;
 class GeometryGUI;
-class DlgRef_Skeleton;
+class MyDlgRef_Skeleton;
 class QSpinBox;
 class QDoubleSpinBox;
 class QLineEdit;
@@ -83,7 +83,7 @@ protected:
     
     void                setHelpFileName( const QString& );
 
-    DlgRef_Skeleton*    mainFrame();
+    MyDlgRef_Skeleton*    mainFrame();
     QWidget*            centralWidget();
     QPushButton*        buttonCancel() const;
     QPushButton*        buttonOk() const;
@@ -96,7 +96,7 @@ protected:
     QString             myHelpFileName;        //!< Associated HTML help file name
     
     QButtonGroup*       myRBGroup;             //!< radio button group
-    DlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
+    MyDlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
 
 protected slots:
     virtual void        ClickOnCancel();

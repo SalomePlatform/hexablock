@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DlgRef_Skeleton_QTD</class>
- <widget class="QWidget" name="DlgRef_Skeleton_QTD">
+ <class>MyDlgRef_Skeleton_QTD</class>
+ <widget class="QWidget" name="MyDlgRef_Skeleton_QTD">
   <property name="geometry">
    <rect>
     <x>0</x>
