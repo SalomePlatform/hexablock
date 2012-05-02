@@ -16,7 +16,7 @@
     </message>
     <message>
         <source>CANNOT CUT EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot cut edge</translation>
     </message>
 </context>
 <context>
@@ -31,7 +31,7 @@
     </message>
     <message>
         <source>CANNOT ADD CYLINDER</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot add cylinder</translation>
     </message>
 </context>
 <context>
@@ -42,7 +42,7 @@
     </message>
     <message>
         <source>CANNOT DISCONNECT</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot disconnect</translation>
     </message>
 </context>
 <context>
@@ -53,7 +53,7 @@
     </message>
     <message>
         <source>CANNOT MAKE EDGE ASSOCIATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make edge association</translation>
     </message>
 </context>
 <context>
@@ -68,7 +68,7 @@
     </message>
     <message>
         <source>CANNOT BUILD EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot build edge</translation>
     </message>
 </context>
 <context>
@@ -91,58 +91,58 @@
     </message>
     <message>
         <source>CANNOT ADD GROUP</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot add group</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCK::GUI::HexaBaseDialog</name>
     <message>
         <source>VERTEX</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertex</translation>
     </message>
     <message>
         <source>EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Edge</translation>
     </message>
     <message>
         <source>QUAD</source>
-        <translation type="unfinished"></translation>
+        <translation>quadrangle</translation>
     </message>
     <message>
         <source>HEXA</source>
-        <translation type="unfinished"></translation>
+        <translation>Hexahedron</translation>
     </message>
     <message>
         <source>VECTOR</source>
-        <translation type="unfinished"></translation>
+        <translation>Vector</translation>
     </message>
     <message>
         <source>CYLINDER</source>
-        <translation type="unfinished"></translation>
+        <translation>Cylinder</translation>
     </message>
     <message>
         <source>PIPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Pipe</translation>
     </message>
     <message>
         <source>ELEMENTS</source>
-        <translation type="unfinished"></translation>
+        <translation>Elements</translation>
     </message>
     <message>
         <source>CROSSELEMENTS</source>
-        <translation type="unfinished"></translation>
+        <translation>Cross Elements</translation>
     </message>
     <message>
         <source>GROUP</source>
-        <translation type="unfinished"></translation>
+        <translation>Group</translation>
     </message>
     <message>
         <source>LAW</source>
-        <translation type="unfinished"></translation>
+        <translation>Law</translation>
     </message>
     <message>
         <source>PROPAGATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Propagation</translation>
     </message>
     <message>
         <source>Close</source>
@@ -162,11 +162,11 @@
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
+        <translation>HexaBlock</translation>
     </message>
     <message>
-        <source>%1:
--Bad selection type ( please select a %2 )</source>
+        <source>%1: Bad type selected
+Please select a %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -182,7 +182,7 @@
     </message>
     <message>
         <source>CANNOT BUILD HEXA</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot build hexahedra</translation>
     </message>
 </context>
 <context>
@@ -193,7 +193,7 @@
     </message>
     <message>
         <source>CANNOT JOIN QUAD(S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot join quadrangle(s)</translation>
     </message>
 </context>
 <context>
@@ -212,7 +212,7 @@
     </message>
     <message>
         <source>CANNOT ADD LAW</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot add law</translation>
     </message>
 </context>
 <context>
@@ -223,7 +223,7 @@
     </message>
     <message>
         <source>CANNOT MAKE CYLINDER</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make cylinder</translation>
     </message>
 </context>
 <context>
@@ -234,7 +234,7 @@
     </message>
     <message>
         <source>CANNOT MAKE CYLINDERS</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make cylinders</translation>
     </message>
 </context>
 <context>
@@ -245,7 +245,7 @@
     </message>
     <message>
         <source>CANNOT MAKE GRID</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make grid</translation>
     </message>
 </context>
 <context>
@@ -256,7 +256,7 @@
     </message>
     <message>
         <source>CANNOT MAKE RIND</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make rind</translation>
     </message>
 </context>
 <context>
@@ -267,7 +267,7 @@
     </message>
     <message>
         <source>CANNOT MAKE PIPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make pipe</translation>
     </message>
 </context>
 <context>
@@ -278,7 +278,7 @@
     </message>
     <message>
         <source>CANNOT MAKE PIPES</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make pipes</translation>
     </message>
 </context>
 <context>
@@ -289,7 +289,7 @@
     </message>
     <message>
         <source>CANNOT MAKE TRANSFORMATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make symmetry</translation>
     </message>
 </context>
 <context>
@@ -300,7 +300,7 @@
     </message>
     <message>
         <source>CANNOT MAKE TRANSFORMATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make transformation</translation>
     </message>
 </context>
 <context>
@@ -311,7 +311,7 @@
     </message>
     <message>
         <source>CANNOT MERGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot merge</translation>
     </message>
 </context>
 <context>
@@ -466,18 +466,18 @@
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bad selection type : please select a %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HexaBlock</translation>
     </message>
     <message>
         <source>ERR_ERROR</source>
-        <translation type="unfinished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <source>CANNOT MAKE VERTEX ASSOCIATION</source>
+        <translation>Cannot make vertex association</translation>
+    </message>
+    <message>
+        <source>Bad selection type: please select a %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -489,7 +489,7 @@
     </message>
     <message>
         <source>CANNOT PERFORM SYMMETRY</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot perform symmetry</translation>
     </message>
 </context>
 <context>
@@ -500,7 +500,7 @@
     </message>
     <message>
         <source>CANNOT PERFORM TRANSFORMATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot perform transformation</translation>
     </message>
 </context>
 <context>
@@ -515,7 +515,7 @@
     </message>
     <message>
         <source>CANNOT ADD PIPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot add pipe</translation>
     </message>
 </context>
 <context>
@@ -526,7 +526,7 @@
     </message>
     <message>
         <source>CANNOT PRISM QUAD(S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot prism quadrangle(s)</translation>
     </message>
 </context>
 <context>
@@ -549,14 +549,14 @@
     </message>
     <message>
         <source>CANNOT SET PROPAGATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot set propagation</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCK::GUI::QuadDialog</name>
     <message>
         <source>Quad Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrangle information</translation>
     </message>
     <message>
         <source>ERR_ERROR</source>
@@ -564,7 +564,7 @@
     </message>
     <message>
         <source>CANNOT BUILD QUAD</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot build quadrangle</translation>
     </message>
 </context>
 <context>
@@ -575,7 +575,7 @@
     </message>
     <message>
         <source>CANNOT MAKE QUAD REVOLUTION</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot make revolution</translation>
     </message>
 </context>
 <context>
@@ -586,7 +586,7 @@
     </message>
     <message>
         <source>CANNOT REMOVE HEXA</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot remove hexahedra</translation>
     </message>
 </context>
 <context>
@@ -597,7 +597,7 @@
     </message>
     <message>
         <source>CANNOT REPLACE HEXA</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot replace hexahedra</translation>
     </message>
 </context>
 <context>
@@ -612,7 +612,7 @@
     </message>
     <message>
         <source>CANNOT BUILD VECTOR</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot build vector</translation>
     </message>
 </context>
 <context>
@@ -631,15 +631,11 @@
     </message>
     <message>
         <source>VERTEX UPDATE/CONSTRUCTION</source>
-        <translation type="unfinished"></translation>
+        <translation>Vertext Update/Construction</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCKGUI</name>
-    <message>
-        <source>BUT_OK</source>
-        <translation type="obsolete">OK</translation>
-    </message>
     <message>
         <source>ERR_ERROR</source>
         <translation>Error</translation>
@@ -1166,35 +1162,35 @@
     </message>
     <message>
         <source>CANNOT REMOVE %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot remove %1</translation>
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
+        <translation>HexaBlock</translation>
     </message>
     <message>
         <source>GROUP REMOVED</source>
-        <translation type="unfinished"></translation>
+        <translation>Group removed</translation>
     </message>
     <message>
         <source>CANNOT REMOVE GROUP</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot remove group</translation>
     </message>
     <message>
         <source>LAW REMOVED</source>
-        <translation type="unfinished"></translation>
+        <translation>Law removed</translation>
     </message>
     <message>
         <source>CANNOT REMOVE LAW</source>
-        <translation type="unfinished"></translation>
+        <translation>Cannot remove law</translation>
     </message>
     <message>
         <source>PLEASE SELECT A PROPAGATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Please select a propagation</translation>
     </message>
     <message>
         <source>ASSOCIATION CLEARED</source>
-        <translation type="unfinished"></translation>
+        <translation>association cleared</translation>
     </message>
 </context>
 <context>
@@ -1261,118 +1257,6 @@
     <message>
         <source>BUT_OK</source>
         <translation>OK</translation>
-    </message>
-    <message>
-        <source>PREF_TAB_GENERAL</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_COMPONENT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Link colors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_GENERAL</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stream link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stream link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Control link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Control link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Emphasis link color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>link pen darkness</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_TAB_NODE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_SCENE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>High pen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>High brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_BLOC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_NODE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_HEADER</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_CONTROL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_PORT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_DRAG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On dragging</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_TAB_STATE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_EDIT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_RUN</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>WRN_STUDY_LOCKED</source>

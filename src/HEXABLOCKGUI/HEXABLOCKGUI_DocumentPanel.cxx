@@ -430,8 +430,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
     SUIT_MessageBox::information( 0,
       tr("HEXA_INFO"), 
-//       tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
-      tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+      tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
     return false;
   }
 
@@ -470,7 +469,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
       MESSAGE("*  bad selection : " << selType<< " is not  " << wType );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
-        tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+        tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
       return false;
     }
     // add selection to listWidget if selection is OK

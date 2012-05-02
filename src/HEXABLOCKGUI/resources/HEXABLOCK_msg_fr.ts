@@ -16,7 +16,7 @@
     </message>
     <message>
         <source>CANNOT CUT EDGE</source>
-        <translation>Impossible de copuer l&apos;arête</translation>
+        <translation>Impossible de couper l&apos;arête</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>HEXA</source>
-        <translation>Hexèdre</translation>
+        <translation>Hexaèdre</translation>
     </message>
     <message>
         <source>VECTOR</source>
@@ -162,19 +162,20 @@
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
+        <translation>HexaBlock</translation>
     </message>
     <message>
-        <source>%1:
--Bad selection type ( please select a %2 )</source>
-        <translation type="unfinished"></translation>
+        <source>%1: Bad type selected
+Please select a %2.</source>
+        <translation>%1 : mauvais type sélectionné
+Choisisser un(e) %2.</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCK::GUI::HexaDialog</name>
     <message>
         <source>Hexahedron Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Information sur l&apos;hexaèdre</translation>
     </message>
     <message>
         <source>ERR_ERROR</source>
@@ -311,42 +312,42 @@
     </message>
     <message>
         <source>CANNOT MERGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de fusionner</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCK::GUI::MyBasicGUI_PointDlg</name>
     <message>
         <source>ICON_DLG_POINT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICON_DLG_POINT_EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICON_SELECT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICON_DLG_POINT_REF</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICON_DLG_POINT_LINES</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICON_DLG_POINT_FACE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICO_LINE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>ICO_WIRE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Vertex Association</source>
@@ -354,43 +355,43 @@
     </message>
     <message>
         <source>GEOM_POINTS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GEOM_PARAM_VALUE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GEOM_LENGTH_VALUE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GEOM_COORD_VALUE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GEOM_COORDINATES</source>
-        <translation type="unfinished"></translation>
+        <translation>coordonnées</translation>
     </message>
     <message>
         <source>GEOM_X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>GEOM_Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>GEOM_Z</source>
-        <translation type="unfinished"></translation>
+        <translation>Z</translation>
     </message>
     <message>
         <source>GEOM_POINT_ON_EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GEOM_EDGE</source>
-        <translation type="unfinished"></translation>
+        <translation>Arête</translation>
     </message>
     <message>
         <source>GEOM_START_POINT</source>
@@ -406,7 +407,7 @@
     </message>
     <message>
         <source>GEOM_FACE</source>
-        <translation type="unfinished"></translation>
+        <translation>Face</translation>
     </message>
     <message>
         <source>GEOM_UPARAMETER</source>
@@ -426,15 +427,15 @@
     </message>
     <message>
         <source>GEOM_DX</source>
-        <translation type="unfinished"></translation>
+        <translation>Dx</translation>
     </message>
     <message>
         <source>GEOM_DY</source>
-        <translation type="unfinished"></translation>
+        <translation>Dy</translation>
     </message>
     <message>
         <source>GEOM_DZ</source>
-        <translation type="unfinished"></translation>
+        <translation>Dz</translation>
     </message>
     <message>
         <source>GEOM_LINE_INTERSECTION</source>
@@ -454,7 +455,7 @@
     </message>
     <message>
         <source>GEOM_VERTEX</source>
-        <translation type="unfinished"></translation>
+        <translation>Sommet</translation>
     </message>
     <message>
         <source>GEOM_COMPOUND</source>
@@ -466,11 +467,7 @@
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bad selection type : please select a %1</source>
-        <translation type="unfinished"></translation>
+        <translation>HexaBlock</translation>
     </message>
     <message>
         <source>ERR_ERROR</source>
@@ -479,6 +476,10 @@
     <message>
         <source>CANNOT MAKE VERTEX ASSOCIATION</source>
         <translation>Impossible d&apos;associer les sommets</translation>
+    </message>
+    <message>
+        <source>Bad selection type: please select a %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -526,7 +527,7 @@
     </message>
     <message>
         <source>CANNOT PRISM QUAD(S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;extruder le(s) quadrangle(s)</translation>
     </message>
 </context>
 <context>
@@ -575,7 +576,7 @@
     </message>
     <message>
         <source>CANNOT MAKE QUAD REVOLUTION</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;effectuer la révolution</translation>
     </message>
 </context>
 <context>
@@ -631,7 +632,7 @@
     </message>
     <message>
         <source>VERTEX UPDATE/CONSTRUCTION</source>
-        <translation type="unfinished"></translation>
+        <translation>Création/Mise à jour d&apos;un sommet</translation>
     </message>
 </context>
 <context>
@@ -642,7 +643,7 @@
     </message>
     <message>
         <source>New Document</source>
-        <translation>Nouveau document</translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <source>Load a document</source>
@@ -650,7 +651,7 @@
     </message>
     <message>
         <source>Load Document</source>
-        <translation>Ouvrir ...</translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <source>Save the document</source>
@@ -702,7 +703,7 @@
     </message>
     <message>
         <source>Add Hexahedron</source>
-        <translation>Ajouter hexahèdre</translation>
+        <translation>Ajouter hexaèdre</translation>
     </message>
     <message>
         <source>Create a new hexahedron</source>
@@ -802,11 +803,11 @@
     </message>
     <message>
         <source>Prism quadrangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Extruder des quadrangles</translation>
     </message>
     <message>
         <source>Prism Quadrangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Extruder quadrangles</translation>
     </message>
     <message>
         <source>Join quadrangles</source>
@@ -818,19 +819,19 @@
     </message>
     <message>
         <source>Join quadrangles with hexahedra</source>
-        <translation>Joindre des quandrangles par des hexaèdres</translation>
+        <translation>Joindre des quadrangles par des hexaèdres</translation>
     </message>
     <message>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionner</translation>
     </message>
     <message>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecter</translation>
     </message>
     <message>
         <source>Disconnect edges, vertexes or quadrangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Déconnecter des arêtes, des sommets ou des quadrangles</translation>
     </message>
     <message>
         <source>Cut edge</source>
@@ -846,7 +847,7 @@
     </message>
     <message>
         <source>Make Transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un élément par transformation</translation>
     </message>
     <message>
         <source>Make symmetry</source>
@@ -854,39 +855,39 @@
     </message>
     <message>
         <source>Make Symmetry</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un élément par symétrie</translation>
     </message>
     <message>
         <source>Perform transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformer un élément</translation>
     </message>
     <message>
         <source>Perform Transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformer élément</translation>
     </message>
     <message>
         <source>Perform symmetry</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer une symétrie à un élément</translation>
     </message>
     <message>
         <source>Perform Symmetry</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer symétrie</translation>
     </message>
     <message>
         <source>Replace hexahedron</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer un hexaèdre</translation>
     </message>
     <message>
         <source>Replace Hexahedron</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer hexaèdre</translation>
     </message>
     <message>
         <source>Quad revolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Révolution</translation>
     </message>
     <message>
         <source>Quad Revolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Révolution</translation>
     </message>
     <message>
         <source>Make vertex association</source>
@@ -958,11 +959,11 @@
     </message>
     <message>
         <source>Compute mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculer</translation>
     </message>
     <message>
         <source>Compute Mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Calculer</translation>
     </message>
     <message>
         <source>HEXABLOCK</source>
@@ -1001,47 +1002,195 @@
         <translation>Fichiers XML (*.xml);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <source>save HexaBlock Document</source>
-        <translation type="obsolete">Enregistrer le document HexaBlock</translation>
-    </message>
-    <message>
         <source>ERR_ERROR</source>
         <translation>Erreur</translation>
     </message>
     <message>
         <source>CANNOT REMOVE %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de supprimer %1</translation>
     </message>
     <message>
         <source>HEXA_INFO</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>GROUP REMOVED</source>
-        <translation type="unfinished"></translation>
+        <translation>Groupe supprimé</translation>
     </message>
     <message>
         <source>CANNOT REMOVE GROUP</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de supprimer le groupe</translation>
     </message>
     <message>
         <source>LAW REMOVED</source>
-        <translation type="unfinished"></translation>
+        <translation>Loi supprimée</translation>
     </message>
     <message>
         <source>CANNOT REMOVE LAW</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de supprimer la loi</translation>
     </message>
     <message>
         <source>PLEASE SELECT A PROPAGATION</source>
-        <translation type="unfinished"></translation>
+        <translation>Veuillez choisir une propagation</translation>
     </message>
     <message>
         <source>ASSOCIATION CLEARED</source>
-        <translation type="unfinished"></translation>
+        <translation>Association supprimée</translation>
     </message>
     <message>
         <source>Save HexaBlock Document</source>
+        <translation>Enregistrer le document HexaBlock</translation>
+    </message>
+    <message>
+        <source>ICON_NEW_DOCUMENT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_LOAD_DOCUMENT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_SAVE_DOCUMENT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_VERTEX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_EDGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_QUAD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_HEXA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_VECTOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_CYLINDER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_PIPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_GRID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_CYLINDER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_PIPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_CYLINDERS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_PIPES</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_HEMISPHERE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_REMOVE_HEXA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_PRISM_QUAD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_JOIN_QUAD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MERGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_DISCONNECT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_CUT_EDGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_TRANSFORMATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_MAKE_SYMMETRY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_PERFORM_TRANSFORMATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_PERFORM_SYMMETRY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_REPLACE_HEXA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_QUAD_REVOLUTION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_VERTEX_ASSOCIATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_EDGE_ASSOCIATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_QUAD_ASSOCIATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_GROUP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_REMOVE_GROUP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_ADD_LAW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_REMOVE_LAW</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_SET_PROPAGATION</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ICON_COMPUTE_MESH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MEN_FILE</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1109,114 +1258,6 @@
     <message>
         <source>BUT_OK</source>
         <translation>OK</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_COMPONENT</source>
-        <translation>Composant</translation>
-    </message>
-    <message>
-        <source>Link colors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_GENERAL</source>
-        <translation>Général</translation>
-    </message>
-    <message>
-        <source>Link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stream link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stream link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Control link draw color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Control link select color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Emphasis link color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>link pen darkness</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_TAB_NODE</source>
-        <translation>Noeuds</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_SCENE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pen</source>
-        <translation>Stylo</translation>
-    </message>
-    <message>
-        <source>Brush</source>
-        <translation>Pinceau</translation>
-    </message>
-    <message>
-        <source>High pen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>High brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_BLOC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_NODE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_HEADER</source>
-        <translation>Entête</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_CONTROL</source>
-        <translation>Port de Contrôle</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_PORT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_DRAG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On dragging</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_TAB_STATE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_EDIT</source>
-        <translation>Édition</translation>
-    </message>
-    <message>
-        <source>PREF_GROUP_RUN</source>
-        <translation>Exécution</translation>
     </message>
     <message>
         <source>WRN_STUDY_LOCKED</source>

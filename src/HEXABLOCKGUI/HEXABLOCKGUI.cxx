@@ -1255,11 +1255,6 @@ void HEXABLOCKGUI::createTools()
   createTool( separator(), aToolId );
 
   // Pattern Data
-  createTool( _assocVertex, aToolId );
-  createTool( _assocEdge, aToolId );
-  createTool( _assocQuad, aToolId );
-  createTool( separator(), aToolId );
-
   createTool( _addVertex, aToolId );
   createTool( _addEdge, aToolId );
   createTool( _addQuad, aToolId );
@@ -1296,9 +1291,9 @@ void HEXABLOCKGUI::createTools()
   createTool( separator(), aToolId );
 
   // Association
-//   createTool( _assocVertex, aToolId );
-//   createTool( _assocEdge, aToolId );
-//   createTool( _assocQuad, aToolId );
+  createTool( _assocVertex, aToolId );
+  createTool( _assocEdge, aToolId );
+  createTool( _assocQuad, aToolId );
   createTool( separator(), aToolId );
 
   // Group

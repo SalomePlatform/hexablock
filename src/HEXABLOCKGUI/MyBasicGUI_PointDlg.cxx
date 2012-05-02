@@ -1157,7 +1157,7 @@ void MyBasicGUI_PointDlg::_initViewManager()
 //     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
 //     SUIT_MessageBox::information( 0,
 //       tr("HEXA_INFO"), 
-//       tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
+//       tr("Bad selection type: please select a %1").arg( _strHexaWidgetType[wType]) );
 //     return false;
 //   }
 // 
@@ -1205,7 +1205,7 @@ void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const Q
       MESSAGE("*  bad selection : " << selType << " is not  " << HEXABLOCK::GUI::VERTEX_TREE );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
-        tr("Bad selection type : please select a %1").arg( "VERTEX" ) );
+        tr("Bad selection type: please select a %1").arg( "VERTEX" ) );
     }
   }
   MESSAGE("}");
