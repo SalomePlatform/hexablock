@@ -1133,7 +1133,7 @@ void HEXABLOCKGUI::createActions()
                          tr("Add a law"),
                          resMgr->loadPixmap("HEXABLOCK", tr("ICON_ADD_LAW")),
                          tr("Add Law"),
-                         tr("Add law"),
+                         tr("Add a law"),
                          0, aParent, false, this, SLOT(addLaw()));
 
   _removeLaw = createAction(_menuId++,
@@ -1995,12 +1995,11 @@ void HEXABLOCKGUI::newDocument()
 
 }
 
-
 void HEXABLOCKGUI::slot_modelChanged(const QModelIndex &topLeft, const QModelIndex  &bottomRight)
 {
-  std::cout << "HHHHHHHHHHHHHHHHHH  Model changed." << std::endl;
-  std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
-  std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
+  //std::cout << "HHHHHHHHHHHHHHHHHH  Model changed." << std::endl;
+  //std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged topLeft -> " << topLeft.data().toString().toStdString()<<std::endl;
+  //std::cout << "HHHHHHHHHHHHHHHHHH  slot_modelChanged bottomRight ->" << bottomRight.data().toString().toStdString()<<std::endl;
 
   _patternDataTreeView->openPersistentEditor( topLeft );
  
@@ -2012,8 +2011,6 @@ void HEXABLOCKGUI::slot_modelChanged(const QModelIndex &topLeft, const QModelInd
 //     std::cout << "ind" << ind.data() << std::endl;
 //     }
 }
-
-
 
 void HEXABLOCKGUI::loadDocument( const QString &inFile )
 {
@@ -2059,9 +2056,9 @@ void HEXABLOCKGUI::saveDocument()
                                          filter,
                                          tr( "Save HexaBlock Document" ),
                                          false );
-  std::cout<<"HEXABLOCKGUI::saveDocument()"<<std::endl;
+  //std::cout<<"HEXABLOCKGUI::saveDocument()"<<std::endl;
   if ( !aFilename.isEmpty() ) {
-    std::cout<<"!aFilename.isEmpty()"<<std::endl;
+    //std::cout<<"!aFilename.isEmpty()"<<std::endl;
     _currentModel->save( aFilename );
   }
   //CS_TODO save doc

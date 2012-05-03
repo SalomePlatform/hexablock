@@ -46,7 +46,7 @@ KLinkItemSelectionModel::~KLinkItemSelectionModel()
 
 void KLinkItemSelectionModel::select(const QModelIndex &index, QItemSelectionModel::SelectionFlags command)
 {
-    std::cout<<"KLinkItemSelectionModel::select(const QModelIndex &index"<<std::endl;
+    //std::cout<<"KLinkItemSelectionModel::select(const QModelIndex &index"<<std::endl;
     Q_D(KLinkItemSelectionModel);
     // When an item is removed, the current index is set to the top index in the model.
     // That causes a selectionChanged signal with a selection which we do not want.

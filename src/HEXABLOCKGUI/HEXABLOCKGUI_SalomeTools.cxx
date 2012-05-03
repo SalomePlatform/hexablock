@@ -97,17 +97,17 @@ _PTR(Study) GetActiveStudyDocument()
 
 CORBA::Object_var corbaObj( _PTR(SObject) theSO )
 {
-  std::cout<< "corbaObj( _PTR(SObject) theSO )" << std::endl;
+  //std::cout<< "corbaObj( _PTR(SObject) theSO )" << std::endl;
   CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
   if ( theSO ) {
-    std::cout<< "theSO" << std::endl;
+    //std::cout<< "theSO" << std::endl;
     std::string aValue = theSO->GetIOR();
-    std::cout<< "aValue" << std::endl;
+    //std::cout<< "aValue" << std::endl;
     if (strcmp(aValue.c_str(), "") != 0) {
       CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
-      std::cout<< "anORB" << anORB << std::endl;
+      //std::cout<< "anORB" << anORB << std::endl;
       aCorbaObj = anORB->string_to_object(aValue.c_str());
-      std::cout<< "aCorbaObj" << aCorbaObj << std::endl;
+      //std::cout<< "aCorbaObj" << aCorbaObj << std::endl;
 //         anDoc = Document::_narrow(aCorbaObj);
     }
   }
@@ -283,7 +283,7 @@ int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,
     for( ; anIter != anIdContainer.end(); anIter++)
       theName += QString(" %1").arg(*anIter);
 
-    std::cout << "GetNameOfSelectedElements name =>" << theName.toStdString() << std::endl;
+    //std::cout << "GetNameOfSelectedElements name =>" << theName.toStdString() << std::endl;
     return aMapIndex.Extent();
 }
 
@@ -328,7 +328,7 @@ MyGEOM_Displayer::~MyGEOM_Displayer()
 
 SALOME_Prs* MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
 {
-  std::cout << "MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )" << std::endl;
+  //std::cout << "MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )" << std::endl;
   if ( theObj->_is_nil() )
     return 0;
 
@@ -358,18 +358,9 @@ SALOME_Prs* MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
   return aPrs;
 }
 
-
-
-
-
-
 } //namespace GUI{
 
 }//namespace HEXABLOCK{
-
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 
