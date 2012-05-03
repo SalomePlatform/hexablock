@@ -46,6 +46,57 @@
     </message>
 </context>
 <context>
+    <name>HEXABLOCK::GUI::DocumentModel</name>
+    <message>
+        <source>TREE_ITEM_VERTEX</source>
+        <translation>Vertexes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_EDGE</source>
+        <translation>Edges</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_QUAD</source>
+        <translation>Quadrangles</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_HEXA</source>
+        <translation>Hexahedra</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_VECTOR</source>
+        <translation>Vectors</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_CYLINDER</source>
+        <translation>Cylinders</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_PIPE</source>
+        <translation>Pipes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_ELEMENT</source>
+        <translation>Elements</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_CROSSELEMENT</source>
+        <translation>Cross Elements</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_GROUP</source>
+        <translation>Groups</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_LAW</source>
+        <translation>Laws</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_PROPAGATION</source>
+        <translation>Porpagations</translation>
+    </message>
+</context>
+<context>
     <name>HEXABLOCK::GUI::EdgeAssocDialog</name>
     <message>
         <source>ERR_ERROR</source>
@@ -1074,10 +1125,6 @@ Please select a %2.</source>
     </message>
     <message>
         <source>Add Law</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add law</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

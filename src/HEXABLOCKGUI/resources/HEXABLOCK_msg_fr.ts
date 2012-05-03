@@ -46,6 +46,57 @@
     </message>
 </context>
 <context>
+    <name>HEXABLOCK::GUI::DocumentModel</name>
+    <message>
+        <source>TREE_ITEM_VERTEX</source>
+        <translation>Vecteurs</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_EDGE</source>
+        <translation>Arêtes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_QUAD</source>
+        <translation>Quadrangles</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_HEXA</source>
+        <translation>Hexaèdres</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_VECTOR</source>
+        <translation>Vecteurs</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_CYLINDER</source>
+        <translation>Cylindres</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_PIPE</source>
+        <translation>tuyaux</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_ELEMENT</source>
+        <translation>Elements</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_CROSSELEMENT</source>
+        <translation>Eléments de croix</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_GROUP</source>
+        <translation>Groupes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_LAW</source>
+        <translation>Lois</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_PROPAGATION</source>
+        <translation>Porpagations</translation>
+    </message>
+</context>
+<context>
     <name>HEXABLOCK::GUI::EdgeAssocDialog</name>
     <message>
         <source>ERR_ERROR</source>
@@ -130,7 +181,7 @@
     </message>
     <message>
         <source>CROSSELEMENTS</source>
-        <translation type="unfinished"></translation>
+        <translation>Elements de croix</translation>
     </message>
     <message>
         <source>GROUP</source>
@@ -835,11 +886,11 @@ Choisisser un(e) %2.</translation>
     </message>
     <message>
         <source>Cut edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Couper les arêtes</translation>
     </message>
     <message>
         <source>Cut Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Couper arêtes</translation>
     </message>
     <message>
         <source>Make transformation</source>
@@ -938,10 +989,6 @@ Choisisser un(e) %2.</translation>
         <translation>Ajouter loi</translation>
     </message>
     <message>
-        <source>Add law</source>
-        <translation>Ajouter loi</translation>
-    </message>
-    <message>
         <source>Remove a law</source>
         <translation>Supprimer une loi</translation>
     </message>
@@ -951,11 +998,11 @@ Choisisser un(e) %2.</translation>
     </message>
     <message>
         <source>Set propagation</source>
-        <translation type="unfinished"></translation>
+        <translation>Propager une loi de discrétisation</translation>
     </message>
     <message>
         <source>Set Propagation</source>
-        <translation type="unfinished"></translation>
+        <translation>Propager loi</translation>
     </message>
     <message>
         <source>Compute mesh</source>
