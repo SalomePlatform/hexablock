@@ -110,6 +110,7 @@ void HEXABLOCKGUI_Resource::setValue( const QString& name, const QString val ) {
 
 void HEXABLOCKGUI_Resource::createPreferences(HEXABLOCKGUI* swm)
 {
+/*
   DEBTRACE("createPreferences");
   // --- General tab ---
   int genTab = swm->addPreference( QObject::tr( "PREF_TAB_GENERAL" ) );
@@ -239,6 +240,7 @@ void HEXABLOCKGUI_Resource::createPreferences(HEXABLOCKGUI* swm)
   swm->addPreference( QObject::tr( _FAILED            ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _FAILED            );
   swm->addPreference( QObject::tr( _ERROR             ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _ERROR             );
   swm->addPreference( QObject::tr( _DEFAULT           ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _DEFAULT           );
+*/
 }
 
 void HEXABLOCKGUI_Resource::preferencesChanged()
