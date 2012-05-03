@@ -14,7 +14,7 @@ To save a document in the **Main Menu** select **Document -> Save document**.
 
 A document contains all informations to generate a hexahedral mesh:
 
-- the model of bocks,
+- the model of blocks,
 - all associations,
 - all groups,
 - all laws set on propagations.
