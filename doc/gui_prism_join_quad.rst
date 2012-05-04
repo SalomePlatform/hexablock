@@ -13,12 +13,11 @@ Prism and join quadrangles
 Prism Quadrangles
 =================
 
-To prism from quadrangles in the **Main Menu** select **Model -> Prism
-quad**.
+To prism from quadrangles in the **Main Menu** select **Model -> Prism Quadrangles**.
 
-From a list of quadrangles, a set of hexaedra is created.
+From a list of quadrangles, a set of hexahedra is created.
 
-**Arguments:** list of quadrangles + 1 vector (direction) + number of layers
+**Arguments:** list of quadrangles, a vector (direction) and the number of layers.
 
 The dialogue box to prism from quadrangles is:
 
@@ -46,7 +45,7 @@ Example:
 Join Quadrangles
 ================
 
-To join quadrangles in the **Main Menu** select **Model -> Join quad**
+To join quadrangles in the **Main Menu** select **Model -> Join Quadrangles**.
 
 .. image:: _static/gui_join_quads.png
    :align: center
@@ -55,20 +54,20 @@ To join quadrangles in the **Main Menu** select **Model -> Join quad**
    Join Quadrangles Dialog Box
 
 
-The following data are required :
+The following data are required:
 
 - From
-        - QA : the set of quads to be joined and from which hexahedrons will be created ( select quads  )
-	- QA_1 : a vertex belonging to the set of quads ( select a vertex )
-	- QA_2 : a vertex belonging to the set of quads ( select a vertex )
+    - Quadrangles: the set of quadrangles to be joined and from which hexahedra will be created.
+    - Point a: a vertex belonging to the set of quadrangles.
+    - Point b: a vertex belonging to the set of quadrangles.
 
 - To
-        - QB : a quad from the set of targeted quads ( select a quad )
-	- QB_1 : the target vertex of QA_1. belongs to QB ( select a vertex )
-	- QB_2 : the target vertex of QA_2. belongs to QB ( select a vertex )
+    - Quadrangle: a quadrangle from the set of targeted quadrangles.
+    - Point a: the target vertex (in the target quadrangle) for *From.Point a*.
+    - Point b: the target vertex (in the target quadrangle) for *From.Point b*.
 
 - Grid
-        - size : number of layers of hexahedrons issued from the operation
+    - size: number of layers of hexahedra issued from the operation.
 
 
 TUI command: :ref:`tuiprismjoinquad`

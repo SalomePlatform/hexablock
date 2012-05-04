@@ -10,65 +10,63 @@ To merge elements in the **Main Menu** select **Model -> Merge**.
 
 .. _guimergequads:
 
-Merge 2 quadrangles
-===================
+Merge two quadrangles
+=====================
 
 **Arguments:**
 
-- 2 quadrangles (q1 and q2)
-- 4 vertices (v1, v2, v3, v4)
+- 2 quadrangles (q1 and q2),
+- 4 vertices (v1, v2, v3, v4).
 
-v1 : vertex of the quadrangle q1 to merge with the vertex v2 of the
-quadrangle q2.
-v3 : vertex of the quadrangle q1 to merge with the vertex v4 of the
-quadrangle q2.
+v1: vertex of the quadrangle *q1* to merge with the vertex *v2* of the quadrangle *q2*.
+v3: vertex of the quadrangle *q1* to merge with the vertex *v4* of the quadrangle *q2*.
 
 
-The dialogue box to merge 2 quadrangles is:
+The dialogue box to merge two quadrangles is:
 
 
 .. image:: _static/gui_merge_quads.png
    :align: center
 
 .. centered::
-   Merge 2 Quadrangles
+   Merge two Quadrangles
 
 .. _guimergeedges:
 
-Merge 2 edges
-=============
+Merge two edges
+===============
 
 **Arguments:**
 
-- 2 edges (e1 and e2)
-- 2 vertices (v1 and v2)
+- 2 edges (e1 and e2),
+- 2 vertices (v1 and v2).
 
-v1 : vertex of the edge e1 to merge with the vertex v2 of the edge e2
+v1: vertex of the edge *e1* to merge with the vertex *v2* of the edge *e2*.
 
-The dialogue box to merge 2 edges is:
+The dialogue box to merge two edges is:
 
 .. image:: _static/gui_merge_edges.png
    :align: center
 
 .. centered::
-   Merge 2 Edges
+   Merge two Edges
 
 .. _guimergevertices:
 
-Merge 2 vertices
-================
+Merge two vertices
+==================
 
-**Arguments:** 2 vertices (v1 and v2)
+**Arguments:** 2 vertices (v1 and v2).
 
 
-The dialogue box to merge 2 vertices is:
+The dialogue box to merge two vertices is:
 
 
 .. image:: _static/gui_merge_vertices.png
    :align: center
 
 .. centered::
-   Merge 2 Vertices
+   Merge two Vertices
 
 
 TUI command: :ref:`tuimergeelements`

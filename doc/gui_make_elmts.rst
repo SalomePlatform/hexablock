@@ -16,8 +16,8 @@ Make elements by translation
 
 **Arguments:**
 
-- elements to translate
-- vector 
+- elements to translate,
+- vector.
 
 
 The dialogue box to make elements by translation is:
@@ -52,9 +52,9 @@ Make elements by scaling
 
 **Arguments:**
 
-- elements
-- vertex
-- k growing factor
+- elements,
+- vertex,
+- k growing factor.
 
 The dialogue box to make elements by scaling is:
 
@@ -80,10 +80,10 @@ Make elements by rotation
 
 **Arguments:**
 
-- elements
-- vector direction
-- vertex 
-- angle
+- elements,
+- vector direction,
+- vertex,
+- angle.
 
 
 The dialogue box to make elements by rotation is:

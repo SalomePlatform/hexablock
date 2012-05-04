@@ -9,7 +9,7 @@ The CAD
 
 
 The geometry to mesh is defined by a set of independant shapes, these
-shapes are external referencies to the GEOM module of SALOME. The
+shapes are external references to the GEOM module of SALOME. The
 shapes of this set can be faces and/or solids. In Hexablock module you
 can:
 

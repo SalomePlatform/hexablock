@@ -7,19 +7,18 @@
 Component
 =========
 
-To activate hexablock component, in the corresponding area of the
-screen:
+To activate HexaBlock component, in the corresponding area of the screen:
 
 .. image:: _static/component2.png
    :align: center
 
-Select the hexablock component in the list:
+Select the HexaBlock component in the list:
 
 .. image:: _static/component1.png
    :align: center
 
 .. centered::
-   Activate Hexablock Component (first method)
+   Activate HexaBlock Component (first method)
 
 Or click on the corresponding icon:
 
@@ -27,7 +26,7 @@ Or click on the corresponding icon:
    :align: center
 
 .. centered::
-   Activate Hexablock Component (second method)
+   Activate HexaBlock Component (second method)
 
 The result of this action is:
 
@@ -35,6 +34,6 @@ The result of this action is:
    :align: center
 
 .. centered::
-   Result of the Activation of Hexablock Component
+   Result of the Activation of HexaBlock Component
 
 TUI command: :ref:`tuicomponent`

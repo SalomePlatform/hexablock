@@ -3,15 +3,15 @@
 
 .. _tuiremove:
 
-===============
-Remove hexaedra
-===============
+================
+Remove hexahedra
+================
 
-Remove one hexaedra of the model of blocks::
+Remove one hexahedra of the model of blocks::
 
 	 doc.removeHexa(hexa)
 
-Remove all hexaedra connected of the model of blocks::
+Remove all hexahedra connected of the model of blocks::
 
 	 doc.removeConnectedHexa(hexa)
 

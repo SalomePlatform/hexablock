@@ -15,8 +15,8 @@ Disconnect a quadrangle
 
 **Arguments:**
 
-- q : quadrangle to disconnect
-- from hexa : hexaedron from which disconnect the quadrangle
+- q: the quadrangle to disconnect.
+- from hexa: the hexahedron to disconnect the quadrangle from.
 
 The dialogue box to disconnect a quadrangle is:
 
@@ -43,8 +43,8 @@ Disconnect an edge
 
 **Arguments:**
 
-- e : edge to disconnect
-- from hexa : hexaedron from which disconnect the edge
+- e: the edge to disconnect.
+- from hexa: the hexahedron to disconnect the edge from.
 
 
 The dialogue box to disconnect an edge is:
@@ -63,8 +63,8 @@ Disconnect a vertex
 
 **Arguments:**
 
-- v : vertex to disconnect
-- from hexa : hexaedron from which disconnect the vertex
+- v: the vertex to disconnect.
+- from hexa: the hexahedron to disconnect the vertex from.
 
 
 The dialogue box to disconnect a vertex is:

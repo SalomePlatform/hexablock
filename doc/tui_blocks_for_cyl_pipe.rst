@@ -24,7 +24,7 @@ na: number of angular section.
 
 nl: number of blocks along the axis of the cylinder.
 
-The result is an array of hexahedral ranked first by following the
+The result is an array of hexahedra ranked first by following the
 radial direction and the angular direction, then according to the
 layers in the cylinder axis.
 
@@ -110,8 +110,8 @@ Make blocks for pipes
 
 	 elts = doc.makePipes(p1, p2)
 
-The result is an array of hexahedral where we first find hexahedral of
-the first pipe and the second pipe. Each pipe range hexaedra following
+The result is an array of hexahedra where we first find hexahedra of
+the first pipe and the second pipe. Each pipe range hexahedra following
 first radial layers and angular layers, and finally the axial layers.
 
 

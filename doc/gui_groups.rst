@@ -13,7 +13,7 @@ Add group
 
 A group is characterized by:
 
-- its name
+- its name,
 - its type:
       - HexaCell (default)
       - EdgeCell
@@ -22,10 +22,9 @@ A group is characterized by:
       - QuadNode
       - EdgeNode
       - VertexNode
-- its elements
+- its elements.
 
-To define groups on the model in the **Main Menu** select **Groups ->
-Add group**.
+To define groups on the model in the **Main Menu** select **Groups -> Add Group**.
 
 .. image:: _static/gui_add_group.png
    :align: center
@@ -36,10 +35,9 @@ Add group**.
 Remove group
 ============
 
-To remove group of the model in the **Main Menu** select **Groups ->
-Remove group**.
+To remove a group from the model in the **Main Menu** select **Groups -> Remove Group**.
 
-*todo copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
+*TODO copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
 
 .. image:: _static/gui_remove_group.png
    :align: center

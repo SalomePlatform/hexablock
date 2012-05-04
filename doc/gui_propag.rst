@@ -6,10 +6,9 @@
 Discretize on the propagation edges
 ===================================
 
-To define a propagation in the **Main Menu** select **Mesh ->
-Set Propagation**.
+To define a propagation in the **Main Menu** select **Mesh -> Set Propagation**.
 
-**Arguments:** law + direction
+**Arguments:** a law and a direction.
 
 The dialogue box for creating a propagation is:
 

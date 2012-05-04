@@ -8,8 +8,7 @@ Generate the mesh
 =================
 
 
-To generate the mesh in the **Main Menu** select **Mesh ->
-compute Mesh**.
+To generate the mesh in the **Main Menu** select **Mesh -> Compute Mesh**.
 
 **Arguments:**
 

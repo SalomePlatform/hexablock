@@ -6,15 +6,17 @@
 Vector
 ======
 
-To create a **Vector** in the **Main Menu** select **Model -> Add vector** 
+To create a **Vector** in the **Main Menu** select **Model -> Add vector**.
 
-There are 2 algorithms to create a **Vector**.
+There are two methods to create a **Vector**.
 
-Firstly you can define a **Vector** through **dx**, **dy** and **dz**.
+Create with dx, dy, dz
+======================
+The **Vector** can be defined by **dx**, **dy** and **dz**.
 
 **Arguments:** 3 reals.
 
-The dialogue box for the creation of a vector is:
+The dialogue box to create a vector with dx, dy, dz is:
 
 .. image:: _static/gui_vector1.png
    :align: center
@@ -22,11 +24,13 @@ The dialogue box for the creation of a vector is:
 .. centered::
    Add Vector
 
-Secondly you can define a **Vector** through **Point1** and **Point2**.
+Create with two vertices
+========================
+The **Vector** can also be defined by two vertices **Point1** and **Point2**.
 
 **Arguments:** 2 vertices.
 
-The dialogue box for the creation of a vector from 2 vertices is:
+The dialogue box to create a vector from two vertices is:
 
 .. image:: _static/gui_vector2.png
    :align: center

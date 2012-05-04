@@ -7,8 +7,7 @@
 Modify elements by symmetry
 ===========================
 
-To modify elements by symmetry elements in the **Main Menu** select
-**Model -> Perform symmetry**.
+To modify elements by symmetry elements in the **Main Menu** select **Model -> Perform Symmetry**.
 
 .. _guimodifypoint:
 
@@ -17,8 +16,8 @@ Modify elements by point symmetry
 
 **Arguments:**
 
-- elements
-- vertex
+- elements,
+- vertex.
 
 The dialogue box to modify elements by point symmetry is:
 
@@ -35,9 +34,9 @@ Modify elements by line symmetry
 
 **Arguments:**
 
-- elements
-- vertex
-- vector
+- elements,
+- vertex,
+- vector.
 
 The dialogue box to modify elements by line symmetry is:
 
@@ -54,9 +53,9 @@ Modify elements by plan symmetry
 
 **Arguments:**
 
-- elements
-- vertex
-- vector
+- elements,
+- vertex,
+- vector.
 
 The dialogue box to modify elements by plan symmetry is:
 

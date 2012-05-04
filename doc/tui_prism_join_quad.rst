@@ -22,7 +22,7 @@ Prism from a quadrangle or quadrangles
 
 	elts = doc.prismQuads([ q1, q2, q3 ], vec, nb)
 
-From a list of quadrangles, a set of hexaedra is created. Given the
+From a list of quadrangles, a set of hexahedra is created. Given the
 arbitrary nature of the start list, we can not provide additional
 information on the order of the intermediate elements (vertices,
 edges, quads) that contains the container-like Elements.

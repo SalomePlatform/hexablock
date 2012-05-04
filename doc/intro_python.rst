@@ -380,11 +380,11 @@ Mesh generation
 
 ::
 
- print  " --- MAILLAGE HEXAHEDRIQUE --- "
+ print  " --- HEXAHEDRICAL MESH --- "
  mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
 
- print "Nombre d hexaedres:", mesh_hexas.NbHexas()
- print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
- print "Nombre de segments:", mesh_hexas.NbEdges()
- print "Nombre de noeuds:", mesh_hexas.NbNodes()
+ print "Number of hexahedra:", mesh_hexas.NbHexas()
+ print "Number of quadrangles:", mesh_hexas.NbQuadrangles()
+ print "Number of segments:", mesh_hexas.NbEdges()
+ print "Number of nodes:", mesh_hexas.NbNodes()
 
