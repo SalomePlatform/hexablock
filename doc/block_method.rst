@@ -17,8 +17,8 @@ cutting is complete, the mesh is easy to obtain.
 
 The method by blocks consists in:
 
-- finding a coumpound of blocks,
-- this coumpound of blocks has to be equivalent to the initial geometry to mesh.
+- finding a compound of blocks,
+- this compound of blocks has to be equivalent to the initial geometry to mesh.
 
 
 A block is a volume defined by:
@@ -58,7 +58,7 @@ two following methods:
         - disconnect two vertices
         - create hexahedra between two existing quadrangles
 
-2. Construct hexahedras via predifined models:
+2. Construct hexahedra via predefined models:
     - cylinder
     - pipe
     - two intersected cylinders

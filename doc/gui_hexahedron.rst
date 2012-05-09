@@ -12,7 +12,7 @@ There are two methods to create an **Hexahedron**.
 
 Create from quadrangles
 =======================
-The **Hexahedron** can be defined its faces (quadranles).
+The **Hexahedron** can be defined its faces (quadrangles).
 
 **Arguments:** Select from 2 to 6 quadrangles.
 

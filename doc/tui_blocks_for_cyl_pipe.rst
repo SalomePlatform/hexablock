@@ -12,7 +12,7 @@ Make blocks for a cylinder
 
 ::
 
-	 elts = doc.makeCylinder(cyl, vb, nr, na, nl)
+    elts = doc.makeCylinder(cyl, vb, nr, na, nl)
 
 cyl: cylinder
 
@@ -61,7 +61,7 @@ Make blocks for cylinders
 
 ::
 
-	 elts = doc.makeCylinders(cyl1, cyl2)
+     elts = doc.makeCylinders(cyl1, cyl2)
 
 The result is an array of hexahedral.
 
@@ -71,7 +71,7 @@ Make blocks for a pipe
 
 ::
 
-	 elts = doc.makePipe(pi, vb, nr, na, nl)
+    elts = doc.makePipe(pi, vb, nr, na, nl)
 
 The result is an array of hexahedral arranged in layers following the
 first radial and angular layers, and finally the axial layers.
@@ -108,7 +108,7 @@ Make blocks for pipes
 
 ::
 
-	 elts = doc.makePipes(p1, p2)
+    elts = doc.makePipes(p1, p2)
 
 The result is an array of hexahedra where we first find hexahedra of
 the first pipe and the second pipe. Each pipe range hexahedra following

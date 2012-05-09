@@ -7,8 +7,8 @@ Introduction to HEXABLOCK
 #########################
 
 .. Within the SALOME framework, a CAD module (GEOM) and a meshing
-   module (SMESH) are developped. This tools enable the construction
-   of hexaedrical meshes by means of a CAD cutting in blocks (the
+   module (SMESH) are developed. This tools enable the construction
+   of hexahedrical meshes by means of a CAD cutting in blocks (the
    method of blocks) topologically equivalent to hexahedra. Once this
    cutting performed, the mesh construction is easy, but the method of
    blocks can be touchy if the piece to mesh is complex.
@@ -16,7 +16,7 @@ Introduction to HEXABLOCK
 Goals
 =====
 
-The Hexablock module is designed to helpe users to build hexahedrical meshes
+The HexaBlock module is designed to help users to build hexahedrical meshes
 via the method by blocks. The two fundamental choices are:
 
 - To execute the method by blocks where the user has to determine the needed blocks.
@@ -26,9 +26,9 @@ via the method by blocks. The two fundamental choices are:
 Solution
 ========
 
-Finding a coumpound of blocks is in charge of users.
+Finding a compound of blocks is in charge of users.
  
-Hexablock enables to define a mesh with hexahedra in five stages:
+HexaBlock enables to define a mesh with hexahedra in five stages:
 
 - Load and create a geometry without constraint.
 - Search a compound of blocks (mental working).

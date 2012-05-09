@@ -3,10 +3,10 @@
 .. _python:
 
 ###############################################
-Using Hexablock with the Python interface (TUI)
+Using HexaBlock with the Python interface (TUI)
 ###############################################
 
-By the links below you can find sample scripts for all operations provided by Hexablock module
+By the links below you can find sample scripts for all operations provided by HexaBlock module
 
 .. toctree::
    :maxdepth: 2

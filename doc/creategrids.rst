@@ -75,7 +75,7 @@ The following data are required:
     - fill: choose this option to fill the central part of the hexhahedra.
 
 
-Elements size of the grid can be irregular (differents sizes). Select the adequat radio button:
+Elements size of the grid can be irregular (differents sizes). Select the adequate radio button:
 
 .. image:: _static/gui_make_cyl_grid_irregular.png
    :align: center

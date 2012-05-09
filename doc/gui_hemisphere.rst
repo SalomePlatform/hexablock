@@ -19,12 +19,12 @@ To create an **HemiSpherical Grid** in the **Main Menu** select **Model -> Make 
 The following data are required:
 
 - Result Name
-    - name: name of the grid created (**optionnal**).
+    - name: name of the grid created (**optional**).
 
 - Sphere
     - center: center coordinates of the sphere (select a vertex).
     - external radius: radius size of the sphere.
-    - internal radius: fill this field to create rind (**optionnal**).
+    - internal radius: fill this field to create rind (**optional**).
 
 - Hole
     - axis(z): axes of the hole (select a vector).
@@ -38,7 +38,7 @@ The following data are required:
 
 - Radial section
     - start   : a vector defining the start of the radial section (select a vector).
-    - angle   : fill this field to customize the section (value in degree, **optionnal**).
+    - angle   : fill this field to customize the section (value in degree, **optional**).
 
 - Grid
     - radius: number of hexahedra from the center of the sphere.
@@ -74,7 +74,7 @@ TUI command: :ref:`tuihemisphericalgrid`
 
 Partial HemiSpherical Grid
 ==========================
-To create a partial hemispherical grid: On *Radial section* check the *partial* checkbox and fill in the *angle* parameter.
+To create a partial hemispherical grid: On *Radial section* check the *partial* check box and fill in the *angle* parameter.
 
 .. image:: _static/gui_parthemispherical.png
    :align: center
@@ -99,7 +99,7 @@ TUI command: :ref:`tuiparthemisphericalgrid`
 
 Rind Grid
 ==========
-To create a rind grid: On *Sphere* check the *rind* checkbox and fill in the *internal radius* parameter.
+To create a rind grid: On *Sphere* check the *rind* check box and fill in the *internal radius* parameter.
 
 .. image:: _static/gui_rind.png
    :align: center
@@ -126,7 +126,7 @@ TUI command: :ref:`tuirindgrid`
 Partial Rind Grid
 =================
 To create a partial rind grid: in addition to the *internal radius* parameter 
-(see :ref:`guirindgrid`), on *Radial section* check the *partial* checkbox and fill
+(see :ref:`guirindgrid`), on *Radial section* check the *partial* check box and fill
 in the *angle* parameter.
 
 .. image:: _static/gui_partrind.png

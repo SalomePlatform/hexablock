@@ -19,7 +19,7 @@ To add a spherical grid, the following data are required:
 
 Make a spherical grid::
 
-	 elts = doc.makeSpherical(pt, dv, n, k)
+    elts = doc.makeSpherical(pt, dv, n, k)
 
 The result is an array of hexahedra starting with the central and
 other hexahedral are arranged layer by layer from the center. Each

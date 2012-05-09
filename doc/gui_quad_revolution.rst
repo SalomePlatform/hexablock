@@ -20,7 +20,7 @@ To make a **Quad revolution** in the **Main Menu** select **Model -> Quad Revolu
 The following data are required:
 
 - Result Name
-    - name: name of the elements created (**optionnal**).
+    - name: name of the elements created (**optional**).
 
 - Arguments
     - Quads: a set of quadrangles from which hexahedrons will be created (select quads).

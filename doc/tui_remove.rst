@@ -9,11 +9,11 @@ Remove hexahedra
 
 Remove one hexahedra of the model of blocks::
 
-	 doc.removeHexa(hexa)
+    doc.removeHexa(hexa)
 
 Remove all hexahedra connected of the model of blocks::
 
-	 doc.removeConnectedHexa(hexa)
+    doc.removeConnectedHexa(hexa)
 
 
 .. image:: _static/remove3.PNG

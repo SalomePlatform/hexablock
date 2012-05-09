@@ -8,14 +8,14 @@ Disconnect elements
 
 Disconnect a quadrangle::
 
- 	elts = doc.disconnectQuad(hexa, qua)
+    elts = doc.disconnectQuad(hexa, qua)
 
 Disconnect an edge::
 
-	 elts = doc.disconnectEdge(hexa, edg)
+    elts = doc.disconnectEdge(hexa, edg)
  
 Disconnect a vertex::
 
- 	elts = doc.disconnectVertex(hexa, ver)
+    elts = doc.disconnectVertex(hexa, ver)
 
 GUI command: :ref:`guidisconnectelements`

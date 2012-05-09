@@ -8,10 +8,7 @@ Cut hexahedra
 =============
 
 This method allows to cut in two (or more) a series of hexahedra
-using a series of edges propagation. This method is very useful to
-connect two connexe components of hexahedra: it enables to cut a base
-and to make possible the use of a "merge" to accomplish this
-connexion.
+using a series of edges propagation.
 
 To cut an hexahedra in the **Main Menu** select **Model -> Cut Hexahedra**.
 

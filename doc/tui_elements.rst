@@ -9,24 +9,24 @@ Elements
 
 Add an empty set of elements::
 
-	 elts = doc.addElements()
+    elts = doc.addElements()
 
 Add an element in a set of elements::
 
-	 elts.addElement(element)
+    elts.addElement(element)
 
 Remove an element in a set of elements::
 
-	 elts.removeElement(element)
+    elts.removeElement(element)
 
 Remove all elements in a set of elements::
 
-	 elts.clearElement()
+    elts.clearElement()
 
 Access to the elements of the document::
-	
-	 nel = doc.countElements()
-	 elts = doc.getElements(index)
+    
+    nel = doc.countElements()
+    elts = doc.getElements(index)
 
 GUI command: :ref:`guielements`
 
