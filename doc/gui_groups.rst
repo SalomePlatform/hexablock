@@ -37,7 +37,6 @@ Remove group
 
 To remove a group from the model in the **Main Menu** select **Groups -> Remove Group**.
 
-*TODO copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
 
 .. image:: _static/gui_remove_group.png
    :align: center

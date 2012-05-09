@@ -6,7 +6,6 @@
 Example generated from Hexablock
 #################################
 
-*todo a revoir*
 
 .. image:: _static/bride.PNG
    :align: center

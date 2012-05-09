@@ -38,8 +38,6 @@ Remove law
 To remove a discretization law in the **Main Menu** select **Mesh -> Remove Law**.
 
 
-*TODO copie d'ecran : plantage de Salome a l'ouverture de la fenetre*
-
 .. image:: _static/gui_remove_law.png
    :align: center
 

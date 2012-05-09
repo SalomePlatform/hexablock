@@ -12,8 +12,6 @@ To define a propagation in the **Main Menu** select **Mesh -> Set Propagation**.
 
 The dialogue box for creating a propagation is:
 
-*todo a revoir : copie d'ecran propagation : comment fait-on ??*
-
 .. image:: _static/gui_propagation.png
    :align: center
 

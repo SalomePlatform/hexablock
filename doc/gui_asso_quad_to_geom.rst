@@ -30,8 +30,6 @@ Associate to a vertex of the geometry
 To associate a vertex of the model of blocks to a vertex of the geometry in
 the **Main Menu** select **Model -> Make Vertex association**
 
-*todo : plantage salome a l'ouverture de la fenetre de dialogue!!*
-
 **Arguments:**
 
 - vertex of the model of blocks,
