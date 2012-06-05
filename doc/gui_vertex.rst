@@ -6,11 +6,11 @@
 Vertex
 ========
 
-To create a **Vertex** in the **Main Menu** select **Model -> Add vertex** 
+To create a **Vertex** in the **Main Menu** select **Model -> Add vertex**.
 
 The vertex is defined by settings its x, y and z **Coordinates**.
 
-**Arguments:** x, y and z coordinates of the vertex
+**Arguments:** x, y and z coordinates of the vertex.
 
 The dialogue box for the creation of a vertex is:
 

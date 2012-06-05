@@ -1,32 +1,21 @@
-#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+# Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-# UIC_FILES =       \
-#   ui_FormComponent.h 
-# BUILT_SOURCES =       \
-#   $(UIC_FILES)
-# 
-# EXTRA_DIST =        \
-#   FormComponent.ui  \
-#   FormContainer.ui  \
-# salomeresdir = $(prefix)/share/salome/resources/@MODULE_NAME@
-# include $(top_srcdir)/adm/unix/make_begin.am
 
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
@@ -201,7 +190,7 @@ ICONS =  \
 	resources/perform_transformation.png \
 	resources/perform_symmetry.png \
 	resources/assoc_vertex.png \
-        resources/assoc_edge.png \
+	resources/assoc_edge.png \
 	resources/assoc_quad.png \
 	resources/add_group.png \
 	resources/remove_group.png \
@@ -209,14 +198,17 @@ ICONS =  \
 	resources/remove_law.png \
 	resources/set_propagation.png \
 	resources/compute_mesh.png \
-        resources/point2.png \
+	resources/point2.png \
 	resources/pointonedge.png \
 	resources/select1.png \
 	resources/point3.png \
 	resources/point_line_intersection.png  \
-        resources/pointonface.png \
+	resources/pointonface.png \
 	resources/line.png \
-	resources/build_wire.png
+	resources/build_wire.png \
+	resources/quad_revolution.png \
+	resources/replace_hexa.png \
+	resources/make_hemisphere.png
 
 QMFILES = \
 	HEXABLOCK_msg_en.qm \

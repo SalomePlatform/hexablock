@@ -1,6 +1,6 @@
 <!DOCTYPE TS>
 <!--
-  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+  Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,6 +157,18 @@
         <message>
             <source>ICON_COMPUTE_MESH</source>
             <translation>compute_mesh.png</translation>
+        </message>
+        <message>
+            <source>ICON_QUAD_REVOLUTION</source>
+            <translation>quad_revolution.png</translation>
+        </message>
+        <message>
+            <source>ICON_REPLACE_HEXA</source>
+            <translation>replace_hexa.png</translation>
+        </message>
+        <message>
+            <source>ICON_MAKE_HEMISPHERE</source>
+            <translation>make_hemisphere.png</translation>
         </message>
 
         <message>

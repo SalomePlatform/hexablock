@@ -7,10 +7,9 @@
 Pipe
 ====
 
-To create a **Pipe** in the **Main Menu** select **Model -> Add pipe** 
+To create a **Pipe** in the **Main Menu** select **Model -> Add Pipe**.
 
-**Arguments:** 1 vertex (base) + 1 vector (direction) + internal radius + external
-               radius + height (h)
+**Arguments:** a vertex (base), a vector (direction), internal and external radius, and a height (h).
 
 The dialogue box for the creation of a pipe is:
 

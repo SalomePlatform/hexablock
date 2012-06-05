@@ -1,20 +1,20 @@
-//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 //#define _DEVDEBUG_
@@ -294,7 +294,7 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
   aCellTypesArray->Delete();
   aConnectivity->Delete();
   anIdList->Delete();
-  std::cout << "theGrid->GetNumberOfCells()" << theGrid->GetNumberOfCells() << std::endl;
+  //std::cout << "theGrid->GetNumberOfCells()" << theGrid->GetNumberOfCells() << std::endl;
 
   return theGrid;
 }
@@ -339,10 +339,10 @@ void DocumentGraphicView::update()
     theVTKViewWindow->RemoveActor( _documentActor );
     _documentActor->Delete();
 //     delete _documentActor;
-    std::cout << "* remove previous actor" << std::endl;
+    //std::cout << "* remove previous actor" << std::endl;
   }
 
-  std::cout << "* create new actor" << std::endl;
+  //std::cout << "* create new actor" << std::endl;
   _documentActor = new Document_Actor( theDocumentImpl, theDocumentEntry );
   // display HEXABLOCK document model
   theVTKViewWindow->AddActor( _documentActor );
@@ -524,21 +524,10 @@ void DocumentGraphicView::updateGeometries ()
   MESSAGE("}");
 }
 
-
 SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 {
   return _suitView;
 }
-
-
-
-
-
-
-
-
-
-
 
 // bool DocumentGraphicView::canBeDisplayed( const QString& entry, const QString& viewer_type ) const //CS_TODO
 // {
@@ -551,9 +540,6 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 //   std::cout << "canBeDisplayed => "<< result << std::endl;
 //   return result; // entry of an atom for sure
 // }
-
-
-
 
 // SALOME_Prs* HEXABLOCKGUI_Displayer::buildPresentation( const QString& entry, SALOME_View* theViewFrame)
 // {
@@ -599,8 +585,6 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 //     return prs;
 // }
 
-
-
 // SALOME_Prs* SMESHGUI_Displayer::buildPresentation( const QString& entry, SALOME_View* theViewFrame )
 // {
 //   SALOME_Prs* prs = 0;
@@ -631,10 +615,6 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 //   return prs;
 // }
 
-
-
-
-
 // 
 // void DocumentGraphicView::RemoveActor(SUIT_ViewWindow *theWnd, SALOME_Actor* theActor)
 // {
@@ -663,16 +643,6 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 //         std::cout << "RemoveActor() : 4" << std::endl;        
 //     }
 // }
-
-
-
-
-
-
-
-
-
-
 
 // bool DocumentGraphicView::eventFilter(QObject *obj, QEvent *event)
 // {

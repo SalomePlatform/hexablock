@@ -16,12 +16,12 @@ Example: Python script for a connecting rod
 
 Steps
 =====
-	- :ref:`modelcreation`
-	- :ref:`recover`
-	- :ref:`assoc`
-	- :ref:`groupdef`
-	- :ref:`lawdisc`
-	- :ref:`meshgener`
+    - :ref:`modelcreation`
+    - :ref:`recover`
+    - :ref:`assoc`
+    - :ref:`groupdef`
+    - :ref:`lawdisc`
+    - :ref:`meshgener`
 
 .. _modelcreation:
 
@@ -145,7 +145,7 @@ Recovering edges and faces before the association
                           "edge_arr_pte_g_b": 7, "edge_arr_pte_g_h": 8,
                           "edge_arr_pte_d_b": 9, "edge_arr_pte_d_h": 10,
                           "edge_arr_grd_g_b": 19, "edge_arr_grd_g_h": 20,
-                          "edge_arr_grd_d_b": 21, "edge_arr_grd_d_h": 22,              
+                          "edge_arr_grd_d_b": 21, "edge_arr_grd_d_h": 22,
                           "edge_trou_grd_b": 25, "edge_trou_grd_h": 26,
                           "edge_ray_grd_b": 27, "edge_ray_grd_h": 28,
                           "edge_long_g_b": 13, "edge_long_g_h": 14,
@@ -380,11 +380,11 @@ Mesh generation
 
 ::
 
- print  " --- MAILLAGE HEXAHEDRIQUE --- "
+ print  " --- HEXAHEDRICAL MESH --- "
  mesh_hexas = hexablock.mesh("Bielle:hexas", doc)
 
- print "Nombre d hexaedres:", mesh_hexas.NbHexas()
- print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
- print "Nombre de segments:", mesh_hexas.NbEdges()
- print "Nombre de noeuds:", mesh_hexas.NbNodes()
+ print "Number of hexahedra:", mesh_hexas.NbHexas()
+ print "Number of quadrangles:", mesh_hexas.NbQuadrangles()
+ print "Number of segments:", mesh_hexas.NbEdges()
+ print "Number of nodes:", mesh_hexas.NbNodes()
 

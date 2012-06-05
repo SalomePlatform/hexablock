@@ -8,8 +8,8 @@ Merge elements
 
 
 Merge 2 quadrangles::
- 	
-	l = doc.mergeQuads(qa, qb, va1, vb1, va2, vb2)
+
+    l = doc.mergeQuads(qa, qb, va1, vb1, va2, vb2)
  
 where:
 
@@ -25,7 +25,7 @@ va1, vb1, va2, vb2 can be set to `None` if the quadrangles are contiguous.
 
 Merge 2 edges::
 
-	 l = doc.mergeEdges(e1, e2, v1, v2)
+    l = doc.mergeEdges(e1, e2, v1, v2)
 
 where:
 
@@ -35,7 +35,7 @@ where:
 
 Merge 2 vertices::
 
-	 l = doc.mergeVertices(v1, v2)
+    l = doc.mergeVertices(v1, v2)
 
 where v1 and v2 are vertices.
 

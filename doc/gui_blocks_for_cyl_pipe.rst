@@ -12,19 +12,15 @@ Make blocks for a cylinder and a pipe
 Make Cylinder
 =============
 
-To make a **Cylinder** in the **Main Menu** select **Model -> Make cylinder**.
+To make a **Cylinder** in the **Main Menu** select **Model -> Make Cylinder**.
 
 To make a cylinder, the following data are required:
 
-- Cylinder: cylinder
-
-- Vector: vector on the base of the cylinder to start hexahedra.
-
-- nr: number of blocks on radial.
-
-- na: number of angular section.
-
-- nl: number of blocks along the axis of the cylinder.
+- Cylinder: a cylinder.
+- Vector: a vector on the base of the cylinder to start hexahedra.
+- nr: the number of blocks on radial.
+- na: the number of angular section.
+- nl: the number of blocks along the axis of the cylinder.
 
 The dialogue box to make a cylinder is:
 
@@ -51,11 +47,11 @@ The result of this action is:
 Make Cylinders
 ==============
 
-To make **two cylinders in T** in the **Main Menu** select **Model -> Make cylinders** 
+To make **two cylinders in T shape** in the **Main Menu** select **Model -> Make Cylinders** 
 
 You can make **Cylinders** through **Cylinder1** and **Cylinder2**.
 
-**Arguments:** 2 cylinders
+**Arguments:** 2 cylinders.
 
 The dialogue box to make cylinders is:
 
@@ -72,19 +68,15 @@ The result is an array of hexahedral.
 Make Pipe
 =========
 
-To make a **Pipe** in the **Main Menu** select **Model -> Make pipe** 
+To make a **Pipe** in the **Main Menu** select **Model -> Make Pipe**.
 
 To make a pipe, the following data are required:
 
-- Pipe: pipe
-
-- Vector: vector on the base of the pipe to start hexahedra.
-
-- nr: number of blocks on radial.
-
-- na: number of angular section.
-
-- nl: number of blocks along the axis of the pipe.
+- Pipe: a pipe.
+- Vector: a vector on the base of the pipe to start hexahedra.
+- nr: the number of blocks on radial.
+- na: the number of angular section.
+- nl: the number of blocks along the axis of the pipe.
 
 The dialogue box to make a pipe is:
 
@@ -111,11 +103,11 @@ The result of this action is:
 Make Pipes
 ==========
 
-To make **two intersect pipes** in the **Main Menu** select **Model -> Make pipes** 
+To make **two intersect pipes** in the **Main Menu** select **Model -> Make Pipes**.
 
 You can make **Pipes** through **Pipe1** and **Pipe2**.
 
-**Arguments:** 2 pipes
+**Arguments:** 2 pipes.
 
 The dialogue box to make pipes is:
 
@@ -125,8 +117,8 @@ The dialogue box to make pipes is:
 .. centered::
    Make Pipes
 
-The result is an array of hexahedral where we first find hexahedral of
-the first pipe and the second pipe. Each pipe range hexaedra following
+The result is an array of hexahedra where we first find hexahedra of
+the first pipe and the second pipe. Each pipe range hexahedra following
 first radial layers and angular layers, and finally the axial layers.
 
 TUI command: :ref:`tuiblockscylinderpipe`

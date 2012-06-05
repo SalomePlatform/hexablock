@@ -1,20 +1,20 @@
-#  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+# Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
 # This Makefile is responsible of generating the client and server
@@ -40,6 +40,8 @@ BASEIDL_FILES = \
 	Group.idl\
 	Document.idl\
 	HEXABLOCK_Gen.idl
+
+BASEIDL_FILES_PY=$(BASEIDL_FILES:%.idl=%_idl.py)
 
 # This variable defines the files to be installed
 dist_salomeidl_DATA = $(BASEIDL_FILES)
@@ -160,9 +162,15 @@ install-exec-local: $(BASEIDL_FILES:%=$(top_srcdir)/idl/%)
 	  $(OMNIORB_IDL) $(IDLPYFLAGS) -C$(DESTDIR)$(salomepythondir) $$file ; \
 	done
 
-# uninstall-local removes too much, but it works in distcheck
+# we want to remove only staff generated for IDL files and nothing more
 uninstall-local:
-	rm -rf $(DESTDIR)$(salomepythondir)/*
+	@for modulen in HEXABLOCK_ORB ; do \
+	  test -d $(DESTDIR)$(salomepythondir)/$${modulen} && echo "Removing $(DESTDIR)$(salomepythondir)/$${modulen}" && rm -rf $(DESTDIR)$(salomepythondir)/$${modulen} ; \
+	  test -d $(DESTDIR)$(salomepythondir)/$${modulen}__POA && echo "Removing $(DESTDIR)$(salomepythondir)/$${modulen}__POA" && rm -rf $(DESTDIR)$(salomepythondir)/$${modulen}__POA ; \
+	done ; \
+	for filen in $(BASEIDL_FILES_PY) ; do \
+	  echo "Removing $(DESTDIR)$(salomepythondir)/$${filen}" && rm -f $(DESTDIR)$(salomepythondir)/$${filen}* ; \
+	done
 
 mostlyclean-local:
 	-rm -f *.hh *.cc .depidl

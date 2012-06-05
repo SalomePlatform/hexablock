@@ -1,20 +1,20 @@
-//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 //CS_TODO: relever les fonctions qui nécessitent updateData().
@@ -31,9 +31,7 @@
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_Trace.hxx"
 
-
 #include "HexVertex.hxx"
-
 #include "HexShape.hxx"
 
 //#define _DEVDEBUG_
@@ -41,11 +39,6 @@
 
 using namespace std;
 using namespace HEXABLOCK::GUI;
-
-
-
-
-
 
 /*****************************************************************
                       DocumentModel
@@ -58,21 +51,21 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
   _entry( entryIn ),
 //   _hexaDocument(  new HEXA_NS::Document("/tmp/doc.hex") ), //CS_TODO
 
-  _vertexDirItem( new QStandardItem("Vertex") ),
-  _edgeDirItem(   new QStandardItem("Edge") ),
-  _quadDirItem(   new QStandardItem("Quad") ),
-  _hexaDirItem(   new QStandardItem("Hexa") ),
+  _vertexDirItem( new QStandardItem(tr("TREE_ITEM_VERTEX")) ),
+  _edgeDirItem(   new QStandardItem(tr("TREE_ITEM_EDGE")) ),
+  _quadDirItem(   new QStandardItem(tr("TREE_ITEM_QUAD")) ),
+  _hexaDirItem(   new QStandardItem(tr("TREE_ITEM_HEXA")) ),
 
-  _vectorDirItem(        new QStandardItem("Vector") ),
-  _cylinderDirItem(      new QStandardItem("Cylinder") ),
-  _pipeDirItem(          new QStandardItem("Pipe") ),
-  _elementsDirItem(      new QStandardItem("Elements") ),
-  _crossElementsDirItem( new QStandardItem("CrossElements") ),
+  _vectorDirItem(        new QStandardItem(tr("TREE_ITEM_VECTOR")) ),
+  _cylinderDirItem(      new QStandardItem(tr("TREE_ITEM_CYLINDER")) ),
+  _pipeDirItem(          new QStandardItem(tr("TREE_ITEM_PIPE")) ),
+  _elementsDirItem(      new QStandardItem(tr("TREE_ITEM_ELEMENT")) ),
+  _crossElementsDirItem( new QStandardItem(tr("TREE_ITEM_CROSSELEMENT")) ),
 
-  _groupDirItem( new QStandardItem("Group") ),
+  _groupDirItem( new QStandardItem(tr("TREE_ITEM_GROUP")) ),
 
-  _lawDirItem( new QStandardItem("Law") ),
-  _propagationDirItem( new QStandardItem("Propagation") ),
+  _lawDirItem( new QStandardItem(tr("TREE_ITEM_LAW")) ),
+  _propagationDirItem( new QStandardItem(tr("TREE_ITEM_PROPAGATION")) ),
 
   _vertexItemFlags( Qt::NoItemFlags ),
   _edgeItemFlags( Qt::NoItemFlags ),
@@ -126,7 +119,6 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
   parentItem->appendRow(_groupDirItem);
   parentItem->appendRow(_lawDirItem);
   parentItem->appendRow(_propagationDirItem);
-
 }
 
 DocumentModel::~DocumentModel()
@@ -150,10 +142,10 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
   // _hexaDocument->setFile( tmp.toLocal8Bit().constData() );
   // _hexaDocument->loadXml();
-  std::cout << "AAAAAAAAAA name ->" << _hexaDocument->getName() << std::endl;
+  //std::cout << "AAAAAAAAAA name ->" << _hexaDocument->getName() << std::endl;
   _hexaDocument->loadXml(tmp.toLocal8Bit().constData() );
-  std::cout << "BBBBBBBBB  name ->" << _hexaDocument->getName() << std::endl;
-  std::cout << "DocumentModel::load ->" << tmp.toStdString() << std::endl;
+  //std::cout << "BBBBBBBBB  name ->" << _hexaDocument->getName() << std::endl;
+  //std::cout << "DocumentModel::load ->" << tmp.toStdString() << std::endl;
   clearAll();
 
   fillData();
@@ -170,21 +162,20 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
   // BUILDER, ASSOCIATION, GROUPS, ... CS_TODO _fillBuilderFrom( _hexaDocument );
 }
 
-
 void DocumentModel::save( const QString& xmlFileName )
 {
-//   std::cout << "DocumentModel::save ->" << xmlFileName.toStdString() << std::endl;
-  std::cout << "DocumentModel::save _hexaDocument->" << _hexaDocument << std::endl;
+  //std::cout << "DocumentModel::save ->" << xmlFileName.toStdString() << std::endl;
+  //std::cout << "DocumentModel::save _hexaDocument->" << _hexaDocument << std::endl;
   QString noSuffix = xmlFileName.section('.', 0, 0);
-  std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
-  // _hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );   // Abu
-  // _hexaDocument->saveFile();   // Abu
+  //std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
+  //_hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );   // Abu
+  //_hexaDocument->saveFile();   // Abu
   _hexaDocument->save( noSuffix.toLocal8Bit().constData() );
 }
 
 void DocumentModel::updateData()
 {
-  std::cout<<"DocumentModel::updateData()  begin"<<std::endl;
+  //std::cout<<"DocumentModel::updateData()  begin"<<std::endl;
   clearData();
   fillData();
   clearMesh();
@@ -192,7 +183,7 @@ void DocumentModel::updateData()
   QString tmp = "/tmp/load.vtk";
   ////_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   emit patternDataChanged();
-  std::cout<<"DocumentModel::updateData()  end"<<std::endl;
+  //std::cout<<"DocumentModel::updateData()  end"<<std::endl;
 }
 
 void DocumentModel::clearAll() 
@@ -243,9 +234,9 @@ void DocumentModel::clearMesh()
 
 void DocumentModel::fillData()
 {
-  std::cout<<"DocumentModel::fillData()  begin"<<std::endl;
+  //std::cout<<"DocumentModel::fillData()  begin"<<std::endl;
 
-  std::cout << "DocumentModel::fillData() _hexaDocument->" << _hexaDocument << std::endl;
+  //std::cout << "DocumentModel::fillData() _hexaDocument->" << _hexaDocument << std::endl;
 
   // DATA
   HEXA_NS::Vertex *v     = NULL;
@@ -347,13 +338,13 @@ void DocumentModel::fillData()
     _hexaDirItem->appendRow(hItem);
   }
 
-  std::cout<<"DocumentModel::fillData()  end"<<std::endl;
+  //std::cout<<"DocumentModel::fillData()  end"<<std::endl;
 }
 
 
 void DocumentModel::fillBuilder() 
 {
-  std::cout<<"DocumentModel::fillBuilder()  begin"<<std::endl;
+  //std::cout<<"DocumentModel::fillBuilder()  begin"<<std::endl;
 
   HEXA_NS::Vector *v     = NULL;
   VectorItem      *vItem = NULL;
@@ -408,19 +399,19 @@ void DocumentModel::fillAssociation()
 
 void DocumentModel::fillGroups()
 {
-  std::cout<<"DocumentModel::fillGroups()  begin"<<std::endl;
+  //std::cout<<"DocumentModel::fillGroups()  begin"<<std::endl;
 //   _groupDirItem
   HEXA_NS::Group *g     = NULL;
   GroupItem      *gItem = NULL;
-  std::cout<<"countGroup => "<< _hexaDocument->countGroup() << std::endl;
+  //std::cout<<"countGroup => "<< _hexaDocument->countGroup() << std::endl;
   for ( int i=0; i<_hexaDocument->countGroup(); ++i ){
     g = _hexaDocument->getGroup(i);
-    std::cout<<"getGroup => "<< i << std::endl;
+    //std::cout<<"getGroup => "<< i << std::endl;
     gItem = new GroupItem(g);
     gItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _groupDirItem->appendRow(gItem);
   } 
-  std::cout<<"DocumentModel::fillGroups()  end"<<std::endl;
+  //std::cout<<"DocumentModel::fillGroups()  end"<<std::endl;
 }
 
 void DocumentModel::fillMesh()
@@ -428,10 +419,10 @@ void DocumentModel::fillMesh()
   //   _lawDirItem
   HEXA_NS::Law *l     = NULL;
   LawItem      *lItem = NULL;
-  std::cout<<"countLaw => "<< _hexaDocument->countLaw() << std::endl;
+  //std::cout<<"countLaw => "<< _hexaDocument->countLaw() << std::endl;
   for ( int i=0; i<_hexaDocument->countLaw(); ++i ){
     l = _hexaDocument->getLaw(i);
-    std::cout<<"getLaw => "<< i << std::endl;
+    //std::cout<<"getLaw => "<< i << std::endl;
     lItem = new LawItem(l);
     _lawDirItem->appendRow(lItem);
   }
@@ -439,7 +430,7 @@ void DocumentModel::fillMesh()
   //   _propagationDirItem
   HEXA_NS::Propagation *p     = NULL;
   PropagationItem      *pItem = NULL;
-  std::cout<<"countPropagation => "<< _hexaDocument->countPropagation() << std::endl;
+  //std::cout<<"countPropagation => "<< _hexaDocument->countPropagation() << std::endl;
   for ( int i=0; i<_hexaDocument->countPropagation(); ++i ){
     p = _hexaDocument->getPropagation(i);
 //     std::cout<<"getPropagation => "<< i << std::endl;
@@ -448,10 +439,7 @@ void DocumentModel::fillMesh()
     pItem->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _propagationDirItem->appendRow(pItem);
   }
-
-
 }
-
 
 // Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 // {
@@ -495,8 +483,6 @@ void DocumentModel::fillMesh()
 //   return flags;
 // }
 
-
-
 // Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 // {
 //   Qt::ItemFlags flags;
@@ -512,7 +498,6 @@ void DocumentModel::fillMesh()
 //   return flags;
 // }
 
-
 Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags flags;
@@ -524,19 +509,7 @@ Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
   } else {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
   }
-
 }
-
-
-
- 
-
-     
-
-
-
-
-
 
 void DocumentModel::allowEdition()
 {
@@ -551,7 +524,6 @@ void DocumentModel::disallowEdition()
   _disallowEdition = true;
   MESSAGE("}");
 }
-
 
 // disallowEdition
 // void DocumentModel::allowAllSelection()
@@ -572,8 +544,6 @@ void DocumentModel::disallowEdition()
 //   _propagationItemFlags = Qt::NoItemFlags;
 // }
 
-
-
 void DocumentModel::allowDataSelectionOnly()
 {
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
@@ -591,10 +561,6 @@ void DocumentModel::allowDataSelectionOnly()
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
-
-
-
-
 
 // void DocumentModel::allowVertexSelectionOnly()
 // {
@@ -619,7 +585,7 @@ void DocumentModel::allowDataSelectionOnly()
 
 void DocumentModel::allowVertexSelectionOnly()
 {
-    std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
+    //std::cout << "allowVertexSelectionOnly() allowVertexSelectionOnly() allowVertexSelectionOnly() "<< std::endl;
     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable);
     _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
     _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
@@ -638,14 +604,9 @@ void DocumentModel::allowVertexSelectionOnly()
 //     emit layoutChanged();
 }
 
-
-
-
-
-
 void DocumentModel::allowEdgeSelectionOnly()
 {
-  std::cout << "allowEdgeSelectionOnly() allowEdgeSelectionOnly() allowEdgeSelectionOnly() "<< std::endl;
+  //std::cout << "allowEdgeSelectionOnly() allowEdgeSelectionOnly() allowEdgeSelectionOnly() "<< std::endl;
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
   _quadItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -664,7 +625,7 @@ void DocumentModel::allowEdgeSelectionOnly()
 
 void DocumentModel::allowQuadSelectionOnly()
 {
-  std::cout << "allowQuadSelectionOnly() allowQuadSelectionOnly() allowQuadSelectionOnly() "<< std::endl;
+  //std::cout << "allowQuadSelectionOnly() allowQuadSelectionOnly() allowQuadSelectionOnly() "<< std::endl;
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _quadItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
@@ -680,7 +641,6 @@ void DocumentModel::allowQuadSelectionOnly()
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
-
 
 void DocumentModel::allowHexaSelectionOnly()
 {
@@ -700,10 +660,9 @@ void DocumentModel::allowHexaSelectionOnly()
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
-
 void DocumentModel::allowVectorSelectionOnly()
 {
-  std::cout << "allowVectorSelectionOnly() allowVectorSelectionOnly() allowVectorSelectionOnly() "<< std::endl;
+  //std::cout << "allowVectorSelectionOnly() allowVectorSelectionOnly() allowVectorSelectionOnly() "<< std::endl;
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _quadItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -719,7 +678,6 @@ void DocumentModel::allowVectorSelectionOnly()
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
-
 
 void DocumentModel::allowCylinderSelectionOnly()
 {
@@ -757,9 +715,6 @@ void DocumentModel::allowPipeSelectionOnly()
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
-
-
-
 /*
 void DocumentModel::allowPipeItemFlags()
 {
@@ -781,7 +736,7 @@ void DocumentModel::allowPipeItemFlags()
 
 void DocumentModel::allowElementsSelectionOnly()
 {
-  std::cout << "allowElementsSelectionOnly() allowElementsSelectionOnly() allowElementsSelectionOnly() "<< std::endl;
+  //std::cout << "allowElementsSelectionOnly() allowElementsSelectionOnly() allowElementsSelectionOnly() "<< std::endl;
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _edgeItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
   _quadItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -816,9 +771,6 @@ void DocumentModel::allowCrossElementsSelectionOnly()
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
-
-
-
 void DocumentModel::allowLawSelectionOnly()
 {
   _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -836,8 +788,6 @@ void DocumentModel::allowLawSelectionOnly()
   _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
   _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
-
-
 
 void DocumentModel::setName( const QModelIndex& iElt, const QString& name )
 {
@@ -873,7 +823,6 @@ void DocumentModel::setName( const QModelIndex& iElt, const QString& name )
   setData( iElt, name );
 }
 
-
 bool DocumentModel::clearEltAssociations( const QModelIndex& iElt )
 {
   bool isOk = false;
@@ -883,19 +832,19 @@ bool DocumentModel::clearEltAssociations( const QModelIndex& iElt )
   case VERTEX_TREE :
     { 
       elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >(); 
-      std::cout<<"VERTEX_TREE:"<<std::endl;
+      //std::cout<<"VERTEX_TREE:"<<std::endl;
       break;
     }
   case EDGE_TREE :
     {
       elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Edge* >();
-      std::cout<<"EDGE_TREE :"<<std::endl;
+      //std::cout<<"EDGE_TREE :"<<std::endl;
       break;
     }
   case QUAD_TREE :
     {
       elt = iElt.data( HEXA_DATA_ROLE ).value< HEXA_NS::Quad* >();
-      std::cout<<"QUAD_TREE :"<<std::endl;
+      //std::cout<<"QUAD_TREE :"<<std::endl;
       break;
     }
   }
@@ -907,14 +856,11 @@ bool DocumentModel::clearEltAssociations( const QModelIndex& iElt )
   }
 
   return isOk;
-
 }
-
-
 
 QModelIndex DocumentModel::addVertex( double x, double y, double z )
 {
-  std::cout << "DocumentModel::addVertex() _hexaDocument->" << _hexaDocument << std::endl;
+  //std::cout << "DocumentModel::addVertex() _hexaDocument->" << _hexaDocument << std::endl;
   QModelIndex vertexIndex;
 
   HEXA_NS::Vertex* hv = _hexaDocument->addVertex(x, y, z);
@@ -934,7 +880,6 @@ QModelIndex DocumentModel::addVertex( double x, double y, double z )
 
   return vertexIndex;
 }
-
 
 QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QModelIndex &i_v1 )
 {
@@ -1018,8 +963,6 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
   return quadIndex;
 }
 
-
-
 QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelIndex &e1,
                                          const QModelIndex &e2, const QModelIndex &e3 )
 { //CS_TODO
@@ -1046,8 +989,6 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
   }
   return quadIndex;
 }
-
-
 
 QModelIndex DocumentModel::addHexaVertices( 
             const QModelIndex &iv0, const QModelIndex &iv1,
@@ -1084,9 +1025,8 @@ QModelIndex DocumentModel::addHexaVertices(
   return iHexa;
 }
 
-
-
-QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelIndex &i_q1, const QModelIndex &i_q2,const QModelIndex &i_q3, const QModelIndex &i_q4, const QModelIndex &i_q5 )
+QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelIndex &i_q1,
+    const QModelIndex &i_q2,const QModelIndex &i_q3, const QModelIndex &i_q4, const QModelIndex &i_q5 )
 { //CS_TODO : gestion erreur
   QModelIndex hexaIndex;
 
@@ -1102,7 +1042,6 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
   HEXA_NS::Quad* hq3 = data(i_q3, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
   HEXA_NS::Quad* hq4 = data(i_q4, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
   HEXA_NS::Quad* hq5 = data(i_q5, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
-
 
   HEXA_NS::Hexa* hh = _hexaDocument->addHexa( hq0, hq1, hq2, hq3, hq4, hq5 );
 
@@ -1120,8 +1059,6 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
 
   return hexaIndex;
 }
-
-
 
 QModelIndex DocumentModel::addHexaQuads( const QModelIndexList &iquads)
 { 
@@ -1164,20 +1101,17 @@ QModelIndex DocumentModel::addHexaQuads( const QModelIndexList &iquads)
   return hexaIndex;
 }
 
-
-
-
 // Vector addVector( in double dx, in double dy, in double dz )
 //         raises (SALOME::SALOME_Exception);
 QModelIndex DocumentModel::addVector( double dx, double dy, double dz )
 {
-  std::cout << "DocumentModel::addVector" << std::endl;
+  //std::cout << "DocumentModel::addVector" << std::endl;
   QModelIndex vectorIndex;
 
   HEXA_NS::Vector* hv = _hexaDocument->addVector(dx, dy, dz);
 
   if ( hv->isValid() ){
-    std::cout << "hv->isValid()" << std::endl;
+    //std::cout << "hv->isValid()" << std::endl;
     VectorItem* v = new VectorItem(hv);
     _vectorDirItem->appendRow(v);
     vectorIndex = v->index();
@@ -1190,13 +1124,12 @@ QModelIndex DocumentModel::addVector( double dx, double dy, double dz )
     //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 
   } else {
-    std::cout << "delete hv" << std::endl;
+    //std::cout << "delete hv" << std::endl;
     delete hv;
   }
 
   return vectorIndex;
 }
-
 
 QModelIndex DocumentModel::addVectorVertices( const QModelIndex &iv0, const QModelIndex &iv1 )
 {
@@ -1220,7 +1153,6 @@ QModelIndex DocumentModel::addVectorVertices( const QModelIndex &iv0, const QMod
   return iVec;
 }
 
-
 QModelIndex DocumentModel::addCylinder( const QModelIndex &iv, const QModelIndex &ivec, double r,  double h )
 {
   QModelIndex iCyl;
@@ -1242,9 +1174,6 @@ QModelIndex DocumentModel::addCylinder( const QModelIndex &iv, const QModelIndex
 
   return iCyl;
 }
-
-
-
 
 QModelIndex DocumentModel::addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h )
 {
@@ -1268,35 +1197,29 @@ QModelIndex DocumentModel::addPipe( const QModelIndex &iv, const QModelIndex &iv
   return iPipe;
 }
 
-
-
-
-
 QModelIndex DocumentModel::makeCartesian( const QModelIndex& i_pt,
       const QModelIndex& i_vec_x, const QModelIndex& i_vec_y, const QModelIndex& i_vec_z,
       long nx, long ny, long nz)
 {
   QModelIndex eltsIndex;
-  std::cout<<"makeCartesian begin"<<std::endl; 
+  //std::cout<<"makeCartesian begin"<<std::endl; 
 
   HEXA_NS::Vertex* hpt    = data(i_pt,    HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
   HEXA_NS::Vector* hvec_x = data(i_vec_x, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
   HEXA_NS::Vector* hvec_y = data(i_vec_y, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
   HEXA_NS::Vector* hvec_z = data(i_vec_z, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
 
-
-  std::cout<<"hpt "<<hpt<<std::endl; 
-  std::cout<<"hvec_x "<<hvec_x<<std::endl; 
-  std::cout<<"hvec_y "<<hvec_y<<std::endl; 
-  std::cout<<"hvec_z "<<hvec_z<<std::endl; 
-  
+  //std::cout<<"hpt "<<hpt<<std::endl; 
+  //std::cout<<"hvec_x "<<hvec_x<<std::endl; 
+  //std::cout<<"hvec_y "<<hvec_y<<std::endl; 
+  //std::cout<<"hvec_z "<<hvec_z<<std::endl; 
 
   HEXA_NS::Elements* new_helts = _hexaDocument->makeCartesian( hpt,
                                                                hvec_x, hvec_y, hvec_z,
                                                                nx, ny, nz );
 
   if ( new_helts->isValid() ){
-    std::cout<<"makeCartesian OK!!!"<<std::endl; 
+    //std::cout<<"makeCartesian OK!!!"<<std::endl; 
     updateData(); //CS_TODO more or less?
     ElementsItem* eltsItem = new ElementsItem(new_helts);
     _elementsDirItem->appendRow(eltsItem);
@@ -1304,15 +1227,12 @@ QModelIndex DocumentModel::makeCartesian( const QModelIndex& i_pt,
     QString tmp = "/tmp/makeCartesian1.vtk";
     //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   } else {
-    std::cout<<"makeCartesian KO!!!"<<std::endl; 
+    //std::cout<<"makeCartesian KO!!!"<<std::endl; 
     delete new_helts;
   }
 
   return eltsIndex;
 }
-
-
-
 
 QModelIndex DocumentModel::makeCartesian( const QModelIndex& ivex,
                                           const QModelIndex& ivec,
@@ -1339,9 +1259,6 @@ QModelIndex DocumentModel::makeCartesian( const QModelIndex& ivex,
 
   return iElts;
 }
-
-
-
 
 // Elements makeCylindrical( in Vertex pt,
 //           in Vector vex, in Vector vez,
@@ -1377,8 +1294,6 @@ QModelIndex DocumentModel::makeCylindrical( const QModelIndex& i_pt,
 
   return eltsIndex;
 }
-
-
 
 QModelIndex DocumentModel::makeCylindricals( 
     const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& iheight,
@@ -1418,8 +1333,6 @@ QModelIndex DocumentModel::makeCylindricals(
   return eltsIndex;
 }
 
-
-
 QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelIndex& ivec, int nb, double k)
 {
   QModelIndex iElts;
@@ -1443,7 +1356,6 @@ QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelInd
   return iElts;
 }
 
-
 QModelIndex DocumentModel::makeSpherical( const QModelIndex& icenter, double radius, int nb, double k )
 {
   QModelIndex iElts;
@@ -1465,9 +1377,6 @@ QModelIndex DocumentModel::makeSpherical( const QModelIndex& icenter, double rad
 
   return iElts;
 }
-
-
-
 
 QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIndex& ivec,
                                          int nr, int na, int nl )
@@ -1492,8 +1401,6 @@ QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIn
   return iElts;
 }
 
-
-
 QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex& ivecx, 
                                      int nr, int na, int nl )
 { 
@@ -1517,9 +1424,6 @@ QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex
 
   return iElts;
 }
-
-
-
 
 QModelIndex DocumentModel::makeCylinders(const QModelIndex& icyl1, const QModelIndex& icyl2)
 { //CS_TODO
@@ -1608,8 +1512,6 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
   return iCrossElts;
 }
 
-
-
 QModelIndex DocumentModel::makeRind( const QModelIndex& icenter, 
                     const QModelIndex& ivecx, const QModelIndex& ivecz,
                     double  radext, double radint, double radhole,
@@ -1672,7 +1574,6 @@ QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter,
   return iElts;
 }
 
-
 QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter, 
                     const QModelIndex& ivecx, const QModelIndex& ivecz,
                     double radius, double radhole,
@@ -1704,7 +1605,6 @@ QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter,
   return iElts;
 }
 
-
 QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter, 
                     const QModelIndex& ivecx, const QModelIndex& ivecz,
                     double  radius, double radhole,
@@ -1735,13 +1635,6 @@ QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter,
 
   return iElts;
 }
-
-
-
-
-
-
-
 
 // ************  EDIT HEXABLOCK MODEL ************
 
@@ -1788,8 +1681,6 @@ bool DocumentModel::removeHexa( const QModelIndex& ihexa )
   return ret;
 }
 
-
-
 bool DocumentModel::removeConnectedHexa( const QModelIndex& ihexa )
 {
   bool ret = false;
@@ -1809,7 +1700,6 @@ bool DocumentModel::removeConnectedHexa( const QModelIndex& ihexa )
   return ret;
 }
 
- 
 QModelIndex DocumentModel::prismQuad( const QModelIndex& iquad, const QModelIndex& ivec, int nb)
 { 
   QModelIndex iElts;
@@ -1832,7 +1722,6 @@ QModelIndex DocumentModel::prismQuad( const QModelIndex& iquad, const QModelInde
 
   return iElts;
 }
-
 
 QModelIndex DocumentModel::prismQuads( const QModelIndexList& iquads, const QModelIndex& ivec, int nb)
 {
@@ -1859,7 +1748,6 @@ QModelIndex DocumentModel::prismQuads( const QModelIndexList& iquads, const QMod
   }
   return iElts;
 }
-
 
 //
 QModelIndex DocumentModel::joinQuad(
@@ -1894,7 +1782,6 @@ QModelIndex DocumentModel::joinQuad(
 
   return iElts;
 }
-
 
 QModelIndex DocumentModel::joinQuads( 
       const QModelIndexList& iquadsstart, const QModelIndex& iquaddest,
@@ -1937,10 +1824,6 @@ QModelIndex DocumentModel::joinQuads(
   return iElts;
 }
 
-
-
-
-
 bool DocumentModel::mergeVertices( const QModelIndex &iv0, const QModelIndex &iv1 ) //CS_TODO : impact sur le model?
 {
   bool ret = false;
@@ -1951,18 +1834,17 @@ bool DocumentModel::mergeVertices( const QModelIndex &iv0, const QModelIndex &iv
   int r = _hexaDocument->mergeVertices( hv0, hv1 );
   if ( r == HOK ){
     updateData(); //CS_TODO more or less?
-    std::cout << "DocumentModel:: mergeVertices => OK " << std::endl;
+    //std::cout << "DocumentModel:: mergeVertices => OK " << std::endl;
     QString tmp = "/tmp/mergeVertices.vtk";
     //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
     ret = true;
   } else if ( r == HERR ){
-    std::cout << "DocumentModel:: mergeVertices => KO " << std::endl;
+    //std::cout << "DocumentModel:: mergeVertices => KO " << std::endl;
     ret = false;
   }
 
   return ret;
 }
-
 
 bool DocumentModel::mergeEdges( const QModelIndex &ie0, const QModelIndex &ie1,
                                 const QModelIndex &iv0, const QModelIndex &iv1 )
@@ -1987,7 +1869,6 @@ bool DocumentModel::mergeEdges( const QModelIndex &ie0, const QModelIndex &ie1,
   }
 
   return ret;
-
 }
 
 bool DocumentModel::mergeQuads( const QModelIndex& iquad0, const QModelIndex& iquad1,
@@ -2017,8 +1898,6 @@ bool DocumentModel::mergeQuads( const QModelIndex& iquad0, const QModelIndex& iq
   return ret;
 }
 
-
-
 //
 QModelIndex DocumentModel::disconnectVertex( const QModelIndex& ihexa, const QModelIndex& ivertex )
 {
@@ -2042,8 +1921,6 @@ QModelIndex DocumentModel::disconnectVertex( const QModelIndex& ihexa, const QMo
 
   return iElts;
 }
-
-
 
 QModelIndex DocumentModel::disconnectEdge( const QModelIndex& ihexa, const QModelIndex& iedge )
 {
@@ -2404,9 +2281,6 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
   return ret;
 }
 
-
-
-
 QModelIndex DocumentModel::revolutionQuads( const QModelIndexList& istartquads,
                                             const QModelIndex& icenter, 
                                             const QModelIndex& ivecaxis, 
@@ -2438,7 +2312,6 @@ QModelIndex DocumentModel::revolutionQuads( const QModelIndexList& istartquads,
   return ielts;
 }
 
-
 QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
                              const QModelIndex& ip1, const QModelIndex& ic1,
                              const QModelIndex& ip2, const QModelIndex& ic2,
@@ -2452,7 +2325,6 @@ QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
   HEXA_NS::Vertex* hc2 = data(ic2, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
   HEXA_NS::Vertex* hp3 = data(ip3, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
   HEXA_NS::Vertex* hc3 = data(ic3, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
-
 
   HEXA_NS::Quads   hquads;
   HEXA_NS::Quad*   hquad = NULL;
@@ -2476,7 +2348,6 @@ QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
 
   return ielts;
 }
-
 
 // ************  ADD ASSOCIATION ************
 //
@@ -2509,7 +2380,7 @@ void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel
     newAssoc = assocIn.entry + "," + assocIn.subid + ";";
   }
 
-  std::cout << "addAssociation() newAssoc =>"  << newAssoc.toStdString()  << std::endl;
+  //std::cout << "addAssociation() newAssoc =>"  << newAssoc.toStdString()  << std::endl;
   setData( iElt, QVariant::fromValue(newAssoc), HEXA_ASSOC_ENTRY_ROLE );
 
   // tree view : 
@@ -2541,7 +2412,7 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
   QList<DocumentModel::GeomObj> res;
   DocumentModel::GeomObj        assoc;
 
-//   std::cout << "getAssociations() start"  << std::endl;
+  //std::cout << "getAssociations() start"  << std::endl;
   if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
     MESSAGE("*  of a Vertex");
     HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
@@ -2626,7 +2497,6 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
   MESSAGE("}" );
   return res;
 }
-
 
 //         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
 //                              double pstart, Shapes& gline, double pend);
@@ -2763,18 +2633,14 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
                                                 gstart, pstart, false, gline );
     if ( r == HOK ){
         updateData();
-        std::cout << "DocumentModel:: associateClosedLine => OK " << std::endl;
+        //std::cout << "DocumentModel:: associateClosedLine => OK " << std::endl;
         ret = true;
     } else if ( r == HERR ){
-        std::cout << "DocumentModel:: associateClosedLine => ERR " << std::endl;
+        //std::cout << "DocumentModel:: associateClosedLine => ERR " << std::endl;
         ret = false;
     }
     return ret;
 }
-
-
-
-
 
 // ************  GROUPS  ************
 //
@@ -2794,7 +2660,6 @@ QModelIndex DocumentModel::addGroup( const QString& name, Group kind )
   return iGroup;
 }
 
-
 //
 bool DocumentModel::removeGroup( const QModelIndex& igrp )
 {
@@ -2813,7 +2678,6 @@ bool DocumentModel::removeGroup( const QModelIndex& igrp )
   }
 }
 
-
 QModelIndexList DocumentModel::getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const
 {
   QModelIndexList iElements;
@@ -2825,7 +2689,8 @@ QModelIndexList DocumentModel::getGroupElements( const QModelIndex& iGroup, Docu
   QVariant q;
   HEXA_NS::EltBase* eltBase = NULL;
   for ( int nr = 0; nr < g->countElement(); ++nr ){
-    eltBase = g->getElement( nr ); std::cout<< "eltBase"<< eltBase << std::endl;
+    eltBase = g->getElement( nr );
+    //std::cout<< "eltBase"<< eltBase << std::endl;
     kind = g->getKind();
     switch ( kind ){
       case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: q = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
@@ -2844,9 +2709,6 @@ QModelIndexList DocumentModel::getGroupElements( const QModelIndex& iGroup, Docu
   return iElements;
 }
 
-
-
-
 // 7.4 Boite: éditer un groupe
 void DocumentModel::setGroupName( const QModelIndex& igrp, const QString& name )
 {
@@ -2857,11 +2719,9 @@ void DocumentModel::setGroupName( const QModelIndex& igrp, const QString& name )
     setData(igrp, QVariant::fromValue( name ) );
   }
 
-
   QString tmp = "/tmp/setGroupName.vtk";
   //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
-
 
 bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex& ielt )
 { //CS_TODO : check input? add child?
@@ -2877,8 +2737,8 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
   case HEXA_NS::VertexNode: hElt = data(ielt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>(); break;
   }
 
-  std::cout << "hGroup" << hGroup << std::endl;
-  std::cout << "hElt"   << hElt   << std::endl;
+  //std::cout << "hGroup" << hGroup << std::endl;
+  //std::cout << "hElt"   << hElt   << std::endl;
 
   int res = HERR;   
   if ( hGroup and hElt )
@@ -2892,7 +2752,6 @@ bool DocumentModel::addGroupElement( const QModelIndex& igrp, const QModelIndex&
   return addOk;
 }
 
-
 bool DocumentModel::removeGroupElement( const QModelIndex& igrp, int nro )
 { //CS_TODO : remove child?
   HEXA_NS::Group* hGroup = data(igrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
@@ -2903,7 +2762,6 @@ bool DocumentModel::removeGroupElement( const QModelIndex& igrp, int nro )
   QString tmp = "/tmp/removeGroupElement.vtk";
   //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
 }
-
 
 bool DocumentModel::clearGroupElement( const QModelIndex& igrp )
 {
@@ -2934,9 +2792,6 @@ QModelIndex DocumentModel::addLaw( const QString& name, int nbnodes )
   return iLaw;
 }
 
-
-
-
 bool DocumentModel::setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, KindLaw type )
 {
   bool ret = false;
@@ -2955,7 +2810,6 @@ bool DocumentModel::setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, 
   //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
   return ret;
 }
-
 
 // 
 bool  DocumentModel::removeLaw( const QModelIndex& ilaw )
@@ -2976,7 +2830,6 @@ bool  DocumentModel::removeLaw( const QModelIndex& ilaw )
   return ret;
 }
 
-
 bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QModelIndex& iLaw, bool way )
 {
   bool ret = false;
@@ -2995,7 +2848,6 @@ bool DocumentModel::setPropagation( const QModelIndex& iPropagation, const QMode
   }
   return ret;
 }
-
 
 QModelIndexList DocumentModel::getPropagation( const QModelIndex& iPropagation ) const
 {
@@ -3021,12 +2873,10 @@ QModelIndexList DocumentModel::getPropagation( const QModelIndex& iPropagation )
   return iEdges;
 }
 
-
 HEXA_NS::Document* DocumentModel::documentImpl()
 {
   return _hexaDocument;
 }
-
 
 QString DocumentModel::documentEntry()
 {
@@ -3050,12 +2900,6 @@ QString DocumentModel::documentEntry()
 // 8.3 Boite: éditer une loi  CS_TODO
 // (idem création)
 
-
-
-
-
-
-
 /*****************************************************************
                       PatternDataModel
 *****************************************************************/
@@ -3064,18 +2908,16 @@ PatternDataModel::PatternDataModel( QObject * parent ) :
   QSortFilterProxyModel( parent )
 {
   QString dataRegExp = QString("(%1|%2|%3|%4|%5|%6|%7|%8)").
-  arg(VERTEX_TREE).arg(EDGE_TREE).arg(QUAD_TREE).arg(HEXA_TREE).                     arg(VERTEX_DIR_TREE).arg(EDGE_DIR_TREE).arg(QUAD_DIR_TREE).arg(HEXA_DIR_TREE);
+        arg(VERTEX_TREE).arg(EDGE_TREE).arg(QUAD_TREE).arg(HEXA_TREE).
+        arg(VERTEX_DIR_TREE).arg(EDGE_DIR_TREE).arg(QUAD_DIR_TREE).arg(HEXA_DIR_TREE);
 
-  
   setFilterRole(HEXA_TREE_ROLE);
   setFilterRegExp ( QRegExp(dataRegExp) );
 }
 
-
 PatternDataModel::~PatternDataModel()
 {
 }
-
 
 HEXA_NS::Document* PatternDataModel::documentImpl()
 {
@@ -3233,23 +3075,21 @@ QStandardItem* PatternDataModel::itemFromIndex ( const QModelIndex & index ) con
   return item;
 }
 
-
 PatternBuilderModel::PatternBuilderModel( QObject * parent ) :
   QSortFilterProxyModel( parent )
 {
   QString builderRegExp =QString("(%1|%2|%3|%4|%5|%6|%7|%8|%9|%10)").
-    arg(VECTOR_TREE).arg(CYLINDER_TREE).arg(PIPE_TREE).arg(ELEMENTS_TREE).arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(CYLINDER_DIR_TREE).arg(PIPE_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
+    arg(VECTOR_TREE).arg(CYLINDER_TREE).arg(PIPE_TREE).arg(ELEMENTS_TREE).
+    arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(CYLINDER_DIR_TREE).
+    arg(PIPE_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
 
   setFilterRole( HEXA_TREE_ROLE );
   setFilterRegExp ( QRegExp(builderRegExp ) ); 
 }
 
-
 PatternBuilderModel::~PatternBuilderModel() 
 {
 }
-
-
 
 Qt::ItemFlags PatternBuilderModel::flags(const QModelIndex &index) const
 {
@@ -3263,7 +3103,6 @@ Qt::ItemFlags PatternBuilderModel::flags(const QModelIndex &index) const
   return flags;
 }
 
-
 QVariant PatternBuilderModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
   if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
@@ -3272,7 +3111,6 @@ QVariant PatternBuilderModel::headerData ( int section, Qt::Orientation orientat
       return QSortFilterProxyModel::headerData ( section, orientation, role );
   }
 }
-
 
 QStandardItem* PatternBuilderModel::itemFromIndex ( const QModelIndex & index ) const
 {
@@ -3283,8 +3121,6 @@ QStandardItem* PatternBuilderModel::itemFromIndex ( const QModelIndex & index ) 
   }
   return item;
 }
-
-
 
 // QModelIndex PatternBuilderModel::addVector( double dx, double dy, double dz )
 // {
@@ -3320,10 +3156,6 @@ QStandardItem* PatternBuilderModel::itemFromIndex ( const QModelIndex & index ) 
 //   return elementsIndex;
 // }
 
-
-
-
-
 AssociationsModel::AssociationsModel( QObject * parent ) :
   QSortFilterProxyModel( parent )
 {
@@ -3333,12 +3165,9 @@ AssociationsModel::AssociationsModel( QObject * parent ) :
   setFilterRegExp ( QRegExp(assocRegExp) ); 
 }
 
-
 AssociationsModel::~AssociationsModel() 
 {
 }
-
-
 
 Qt::ItemFlags AssociationsModel::flags(const QModelIndex &index) const
 {
@@ -3352,7 +3181,6 @@ Qt::ItemFlags AssociationsModel::flags(const QModelIndex &index) const
   return flags;
 }
 
-
 QVariant AssociationsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
   if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
@@ -3361,7 +3189,6 @@ QVariant AssociationsModel::headerData ( int section, Qt::Orientation orientatio
       return QSortFilterProxyModel::headerData ( section, orientation, role );
   }
 }
-
 
 QStandardItem* AssociationsModel::itemFromIndex ( const QModelIndex & index ) const
 {
@@ -3373,14 +3200,6 @@ QStandardItem* AssociationsModel::itemFromIndex ( const QModelIndex & index ) co
   return item;
 }
 
-
-
-
-
-
-
-
-
 GroupsModel::GroupsModel( QObject * parent ) :
   QSortFilterProxyModel( parent )
 {
@@ -3390,13 +3209,9 @@ GroupsModel::GroupsModel( QObject * parent ) :
   setFilterRegExp ( QRegExp(groupsRegExp ) ); 
 }
 
-
-
 GroupsModel::~GroupsModel() 
 {
 }
-
-
 
 Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 {
@@ -3419,8 +3234,6 @@ Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
   return flags;
 }
 
-
-
 QVariant GroupsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
   if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
@@ -3429,7 +3242,6 @@ QVariant GroupsModel::headerData ( int section, Qt::Orientation orientation, int
       return QSortFilterProxyModel::headerData ( section, orientation, role );
   }
 }
-
 
 QStandardItem* GroupsModel::itemFromIndex ( const QModelIndex & index ) const
 {
@@ -3441,7 +3253,6 @@ QStandardItem* GroupsModel::itemFromIndex ( const QModelIndex & index ) const
   return item;
 }
 
-
 QModelIndexList GroupsModel::getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const
 {
   QModelIndexList elements;
@@ -3452,7 +3263,6 @@ QModelIndexList GroupsModel::getGroupElements( const QModelIndex& iGroup, Docume
   return elements;
 }
 
-
 MeshModel::MeshModel( QObject * parent ) :
   QSortFilterProxyModel( parent )
 {
@@ -3462,15 +3272,9 @@ MeshModel::MeshModel( QObject * parent ) :
   setFilterRegExp ( QRegExp(meshRegExp) );
 }
 
-
-
-
 MeshModel::~MeshModel() 
 {
 }
-
-
-
 
 Qt::ItemFlags MeshModel::flags(const QModelIndex &index) const
 {
@@ -3493,7 +3297,6 @@ Qt::ItemFlags MeshModel::flags(const QModelIndex &index) const
   return flags;
 }
 
-
 QVariant MeshModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
   if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
@@ -3502,7 +3305,6 @@ QVariant MeshModel::headerData ( int section, Qt::Orientation orientation, int r
       return QSortFilterProxyModel::headerData ( section, orientation, role );
   }
 }
-
 
 QStandardItem* MeshModel::itemFromIndex ( const QModelIndex & index ) const
 {

@@ -10,33 +10,33 @@ Three kinds of group of meshing elements:
 
 - group of hexahedra:
 
- 	HexaBlocks.HexaCell 
+    HexaBlocks.HexaCell 
 
 - group of quadrangles:
 
-	HexaBlocks.QuadCell
+    HexaBlocks.QuadCell
 
 - group of edges: 
 
- 	HexaBlocks.EdgeCell 
+    HexaBlocks.EdgeCell 
 
 Four kinds of group of nodes:
 
 - group of nodes in hexahedra:
 
- 	HexaBlocks.HexaNode
+    HexaBlocks.HexaNode
 
 - group of nodes in quadrangles:
 
- 	HexaBlocks.QuadNode
+    HexaBlocks.QuadNode
 
 - group of nodes in edges:
 
- 	HexaBlocks.EdgeNode
+    HexaBlocks.EdgeNode
 
 - group of nodes on vertices:
 
- 	HexaBlocks.VertexNode
+    HexaBlocks.VertexNode
 
 
 
@@ -52,53 +52,53 @@ Add a new group in the document::
 
 Remove a group from the document::
 
- 	doc.removeGroup(grp)
+    doc.removeGroup(grp)
 
 Get the number of groups of the document::
 
- 	ng = doc.countGroup()
+    ng = doc.countGroup()
 
 Get a group of the document::
 
- 	grp = doc.getGroup(index)
+    grp = doc.getGroup(index)
 
 
 Find a group by his name in the document::
 
- 	g = doc.findGroup(name)
+    g = doc.findGroup(name)
 
 Get the name of a group::
 
- 	name = grp.getName()
+    name = grp.getName()
 
 Set the name of a group::
 
- 	grp.setName(name)
+    grp.setName(name)
 
 Get the kind of group among the 7 possibilities::
 
- 	kind = grp.getKind()
+    kind = grp.getKind()
 
 
 Add an element in a group::
 
-	grp.addElement(element)
+    grp.addElement(element)
 
 Get the number of elements of a group::
 
-	 nb = grp.countElement()
+    nb = grp.countElement()
 
 Get an element of a group::
 
-	el = grp.getElement(index)
+    el = grp.getElement(index)
 
 Remove an element of a group::
 
- 	grp.removeElement(index)
+    grp.removeElement(index)
 
 Clear all elements of a group::
 
- 	grp.clearElement()
+    grp.clearElement()
 
 
 GUI command: :ref:`guigroups`

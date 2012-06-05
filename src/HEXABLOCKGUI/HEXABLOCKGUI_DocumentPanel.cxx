@@ -1,20 +1,20 @@
-//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include <OCCViewer_ViewWindow.h>
@@ -430,8 +430,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
     SUIT_MessageBox::information( 0,
       tr("HEXA_INFO"), 
-//       tr("Bad selection type : please select a %1").arg( _strHexaWidgetType[wType]) );
-      tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+      tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
     return false;
   }
 
@@ -470,7 +469,7 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
       MESSAGE("*  bad selection : " << selType<< " is not  " << wType );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"), 
-        tr("%1:\n-Bad selection type ( please select a %2 )").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+        tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
       return false;
     }
     // add selection to listWidget if selection is OK
@@ -1488,7 +1487,6 @@ void HexaDialog::_initInputWidget( Mode editmode )
   connect( vertices_lw, SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()) );
 }
 
-
 void HexaDialog::clear()
 {
   name_le->clear();
@@ -1496,14 +1494,12 @@ void HexaDialog::clear()
   vertices_lw->clear();
 }
 
-
-
 void HexaDialog::updateButtonBox()
 {
-  std::cout << "updateButtonBox row=> " /*<< i */<< std::endl;
+  //std::cout << "updateButtonBox row=> " /*<< i */<< std::endl;
   if ( quads_rb->isChecked() ){  // build from quads count() must be between [2,6]
     int nbQuads = quads_lw->count();
-    std::cout << "nbQuads => " <<  nbQuads << std::endl;
+    //std::cout << "nbQuads => " <<  nbQuads << std::endl;
     if ( nbQuads >= 2 && nbQuads <= 6 ){
       _applyCloseButton->setEnabled(true);
       _applyButton->setEnabled(true);
@@ -1517,7 +1513,7 @@ void HexaDialog::updateButtonBox()
     }
   } else if ( vertices_rb->isChecked() ){ // build from vertices count() must be equals to 8
     int nbVertices = vertices_lw->count();
-    std::cout << "nbVertices => " <<  nbVertices << std::endl;
+    //std::cout << "nbVertices => " <<  nbVertices << std::endl;
     if ( nbVertices == 8 ){
       _applyCloseButton->setEnabled(true);
       _applyButton->setEnabled(true);
@@ -1532,8 +1528,6 @@ void HexaDialog::updateButtonBox()
   }
 }
 
-
-
 void HexaDialog::deleteQuadItem()
 {
   delete quads_lw->currentItem();
@@ -1545,8 +1539,6 @@ void HexaDialog::deleteVertexItem()
   delete vertices_lw->currentItem();
   updateButtonBox();
 }
-
-
 
 void HexaDialog::_setValueQuads( HEXA_NS::Hexa* h )
 {
@@ -1564,8 +1556,6 @@ void HexaDialog::_setValueQuads( HEXA_NS::Hexa* h )
   }
 }
 
-
-
 void HexaDialog::_setValueVertices( HEXA_NS::Hexa* h )
 {
   QListWidgetItem *vItem = NULL;
@@ -1582,8 +1572,6 @@ void HexaDialog::_setValueVertices( HEXA_NS::Hexa* h )
   }
 }
 
-
-
 void HexaDialog::setValue(HEXA_NS::Hexa* h)
 {
   // 0) name
@@ -1598,12 +1586,10 @@ void HexaDialog::setValue(HEXA_NS::Hexa* h)
   _value = h;
 }
 
-
 HEXA_NS::Hexa* HexaDialog::getValue()
 {
   return _value;
 }
-
 
 bool HexaDialog::apply(QModelIndex& result)
 {
@@ -1660,16 +1646,6 @@ bool HexaDialog::apply(QModelIndex& result)
   return true;
 }
 
-
-
-
-
-
-
-
-
-
-
 // ------------------------- VECTOR ----------------------------------
 VectorDialog::VectorDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
   HexaBaseDialog(parent, editmode, f),
@@ -1693,7 +1669,6 @@ VectorDialog::VectorDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 VectorDialog::~VectorDialog()
 {
 }
-
 
 void VectorDialog::_initInputWidget( Mode editmode )
 {
@@ -1733,7 +1708,6 @@ void VectorDialog::clear()
   v1_le_rb1->clear();
 }
 
-
 void VectorDialog::setValue(HEXA_NS::Vector* v)
 {
   name_le->setText( v->getName() );
@@ -1752,9 +1726,6 @@ HEXA_NS::Vector* VectorDialog::getValue()
 {
   return _value;
 }
-
-
-
 
 bool VectorDialog::apply(QModelIndex& result)
 {
@@ -2243,7 +2214,7 @@ void MakeGridDialog::addRadiusItem()
 
 void MakeGridDialog::delRadiusItem()
 {
-//   std::cout << "delRadiusItem()" << std::endl;
+  //std::cout << "delRadiusItem()" << std::endl;
   delete radius_lw->currentItem();
   updateButtonBox();
 }
@@ -2267,7 +2238,7 @@ void MakeGridDialog::addAngleItem()
 
 void MakeGridDialog::delAngleItem()
 {
-  std::cout << "delAngleItem()" << std::endl;
+  //std::cout << "delAngleItem()" << std::endl;
   delete angle_lw->currentItem();
   updateButtonBox();
 }
@@ -2291,7 +2262,7 @@ void MakeGridDialog::addHeightItem()
 
 void MakeGridDialog::delHeightItem()
 {
-  std::cout << "delHeightItem()" << std::endl;
+  //std::cout << "delHeightItem()" << std::endl;
   delete height_lw->currentItem();
   updateButtonBox();
 }
@@ -2354,7 +2325,7 @@ bool MakeGridDialog::apply(QModelIndex& result)
 
         for ( int r = 0; r < radius_lw->count(); ++r){
           item = radius_lw->item(r);
-//           std::cout << "radius : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+          //std::cout << "radius : " << item->data(Qt::EditRole).toDouble()<< std::endl;
           radius << item->data(Qt::EditRole).toDouble();
         }
 
@@ -4104,10 +4075,10 @@ void EdgeAssocDialog::onCurrentSelectionChanged()
     aLine.brep  = brep;
     aLine.start = 0.;
     aLine.end   = 1.;
-    std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
-    std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
-    std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
-    std::cout << "aLine.brep"  << aLine.brep.toStdString() << std::endl;
+    //std::cout << "aLine.name"  << aLine.name.toStdString()  << std::endl;
+    //std::cout << "aLine.entry" << aLine.entry.toStdString() << std::endl;
+    //std::cout << "aLine.subid" << aLine.subid.toStdString() << std::endl;
+    //std::cout << "aLine.brep"  << aLine.brep.toStdString() << std::endl;
 
 
     item  = new QListWidgetItem( aLine.name );
@@ -4151,7 +4122,7 @@ bool EdgeAssocDialog::apply(QModelIndex& result)
   for ( int r = 0; r < lines_lw->count(); ++r){
     item = lines_lw->item(r);
     aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-//     std::cout << " line added : " << aLine.name.toStdString() << std::endl;
+    //std::cout << " line added : " << aLine.name.toStdString() << std::endl;
     MESSAGE(" assocs => " << aLine.name.toStdString() );
     MESSAGE(" assocs => " << aLine.brep.toStdString() );
     assocs << aLine;
@@ -4174,11 +4145,6 @@ bool EdgeAssocDialog::apply(QModelIndex& result)
   return true;
 }
 
-
-
-
-
-
 // // ------------------------- QuadAssocDialog ----------------------------------
 QuadAssocDialog::QuadAssocDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ): 
 HexaBaseDialog(parent, editmode, f)
@@ -4189,7 +4155,6 @@ HexaBaseDialog(parent, editmode, f)
   _initViewManager();
   setFocusProxy( quad_le );
 }
-
 
 QuadAssocDialog::~QuadAssocDialog()
 {
@@ -4214,7 +4179,6 @@ void QuadAssocDialog::_initInputWidget( Mode editmode )
   _delFaceShortcut->setContext( Qt::WidgetShortcut );
 
   connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
-
 }
 
 void QuadAssocDialog::clear()
@@ -4244,9 +4208,9 @@ void QuadAssocDialog::onCurrentSelectionChanged()
     QString mainShapeEntry;
     int     subId = -1;
     QString brep;
-//     std::cout << "aSelectedObject->GetStudyEntry() =>" << aSelectedObject->GetStudyEntry()<< std::endl;
-//     std::cout << "aSelectedObject->GetEntry =>" << aSelectedObject->GetEntry() << std::endl;
-//     std::cout << "aSelectedObject->IsMainShape()=>" << aSelectedObject->IsMainShape() << std::endl;
+    //std::cout << "aSelectedObject->GetStudyEntry() =>" << aSelectedObject->GetStudyEntry()<< std::endl;
+    //std::cout << "aSelectedObject->GetEntry =>" << aSelectedObject->GetEntry() << std::endl;
+    //std::cout << "aSelectedObject->IsMainShape()=>" << aSelectedObject->IsMainShape() << std::endl;
 
     if ( aSelectedObject->IsMainShape() ){
       mainShapeEntry = aSelectedObject->GetStudyEntry();
@@ -4270,10 +4234,10 @@ void QuadAssocDialog::onCurrentSelectionChanged()
     aFace.brep  = brep;
     aFace.start = 0.;
     aFace.end   = 1.;
-    std::cout << "aFace.name"  << aFace.name.toStdString()  << std::endl;
-    std::cout << "aFace.entry" << aFace.entry.toStdString() << std::endl;
-    std::cout << "aFace.subid" << aFace.subid.toStdString() << std::endl;
-    std::cout << "aFace.brep"  << aFace.brep.toStdString() << std::endl;
+    //std::cout << "aFace.name"  << aFace.name.toStdString()  << std::endl;
+    //std::cout << "aFace.entry" << aFace.entry.toStdString() << std::endl;
+    //std::cout << "aFace.subid" << aFace.subid.toStdString() << std::endl;
+    //std::cout << "aFace.brep"  << aFace.brep.toStdString() << std::endl;
 
     item  = new QListWidgetItem( aFace.name );
     item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(aFace) );
@@ -4319,9 +4283,9 @@ bool QuadAssocDialog::apply(QModelIndex& result)
   for ( int r = 0; r < faces_lw->count(); ++r ){
     item = faces_lw->item(r);
     aFace = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-    std::cout << " face association : " << aFace.name.toStdString() << std::endl;
-    std::cout << " entry : " << aFace.entry.toStdString() << std::endl;
-    std::cout << " subid : " << aFace.subid.toStdString() << std::endl;
+    //std::cout << " face association : " << aFace.name.toStdString() << std::endl;
+    //std::cout << " entry : " << aFace.entry.toStdString() << std::endl;
+    //std::cout << " subid : " << aFace.subid.toStdString() << std::endl;
     _documentModel->addAssociation( iQuad, aFace );
   }
 
@@ -4522,7 +4486,7 @@ bool GroupDialog::apply(QModelIndex& result)
   _documentModel->clearGroupElement(iGrp);
   for ( int r = 0; r < eltBase_lw->count(); ++r){
     item     = eltBase_lw->item(r);
-    std::cout << " item " << item->text().toStdString() << std::endl;
+    //std::cout << " item " << item->text().toStdString() << std::endl;
     iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
     if ( iEltBase.isValid() )
       eltAdded = _documentModel->addGroupElement( iGrp, iEltBase );
@@ -4869,7 +4833,7 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
       .arg( _documentModel->documentEntry() )
       .arg( _dim->value() )
       .arg( _fact->text() );
-  std::cout << "command: " << command.toStdString() << std::endl;
+  //std::cout << "command: " << command.toStdString() << std::endl;
 
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   PyConsole_Console* pyConsole = app->pythonConsole();
@@ -4965,30 +4929,27 @@ void ReplaceHexaDialog::clear()
 {
 }
 
-
 void ReplaceHexaDialog::updateButtonBox()
 {
   int nbQuad = quads_lw->count();
-  std::cout << "K" << std::endl;
-//   std::cout << "nbHexa => " << nbHexa << std::endl;
+  //std::cout << "K" << std::endl;
+  //std::cout << "nbHexa => " << nbHexa << std::endl;
   if ( nbQuad > 0 ){
-    std::cout << "L" << std::endl;
+    //std::cout << "L" << std::endl;
     _applyCloseButton->setEnabled(true);
     _applyButton->setEnabled(true);
   } else {
-    std::cout << "M" << std::endl;
+    //std::cout << "M" << std::endl;
     _applyCloseButton->setEnabled(false);
     _applyButton->setEnabled(false);
   }
 }
-
 
 void ReplaceHexaDialog::deleteQuadItem()
 {
   delete quads_lw->currentItem();
   updateButtonBox();
 }
-
 
 bool ReplaceHexaDialog::apply(QModelIndex& result)
 {
@@ -5010,7 +4971,7 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
   for ( int r = 0; r < quads_lw->count(); ++r){
     item = quads_lw->item(r);
     iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-//     std::cout << "iquad => " << iquad.data().toString().toStdString() << std::endl;
+    //std::cout << "iquad => " << iquad.data().toString().toStdString() << std::endl;
     if ( iquad.isValid() )
       iquads << iquad;
   }
@@ -5027,12 +4988,12 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
 
   if ( ic1.isValid() && ic2.isValid() && ic3.isValid()
        && ip1.isValid() && ip2.isValid() && ip3.isValid() ){
-    std::cout << "ip1 => " << ip1.data().toString().toStdString() << std::endl;
-    std::cout << "ic1 => " << ic1.data().toString().toStdString() << std::endl;
-    std::cout << "ip2 => " << ip2.data().toString().toStdString() << std::endl;
-    std::cout << "ic2 => " << ic2.data().toString().toStdString() << std::endl;
-    std::cout << "ip3 => " << ip3.data().toString().toStdString() << std::endl;
-    std::cout << "ic3 => " << ic3.data().toString().toStdString() << std::endl;
+    //std::cout << "ip1 => " << ip1.data().toString().toStdString() << std::endl;
+    //std::cout << "ic1 => " << ic1.data().toString().toStdString() << std::endl;
+    //std::cout << "ip2 => " << ip2.data().toString().toStdString() << std::endl;
+    //std::cout << "ic2 => " << ic2.data().toString().toStdString() << std::endl;
+    //std::cout << "ip3 => " << ip3.data().toString().toStdString() << std::endl;
+    //std::cout << "ic3 => " << ic3.data().toString().toStdString() << std::endl;
 
     ielts = _documentModel->replace( iquads,
                                      ip1, ic1,
@@ -5193,7 +5154,7 @@ bool QuadRevolutionDialog::apply(QModelIndex& result)
   QList<double> angles;
   for ( int r = 0; r < angles_lw->count(); ++r){
     item = angles_lw->item(r);
-    std::cout << "angle : " << item->data(Qt::EditRole).toDouble()<< std::endl;
+    //std::cout << "angle : " << item->data(Qt::EditRole).toDouble()<< std::endl;
     angles << item->data(Qt::EditRole).toDouble();
   }
 

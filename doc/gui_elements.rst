@@ -7,6 +7,4 @@
 Elements
 ========
 
-**todo necessaire ? quelle est la GUI correspondante ?**
-
 TUI command: :ref:`tuielements`

@@ -7,7 +7,7 @@
 Modify elements by transforming elements
 ========================================
 
-To modify elements by transforming elements in the **Main Menu** select
+To modify elements by transforming elements in the **Main Menu** select 
 **Model -> Perform transformation**.
 
 .. _guimodifytranslation:
@@ -17,8 +17,8 @@ Modify elements by translation
 
 **Arguments:**
 
-- elements to translate
-- vector
+- elements to translate,
+- vector.
 
 The dialogue box to modify elements by translation is:
 
@@ -35,9 +35,9 @@ Modify elements by scaling
 
 **Arguments:**
 
-- elements
-- vertex
-- k growing factor
+- elements,
+- vertex,
+- k growing factor.
 
 
 The dialogue box to modify elements by scaling is:
@@ -55,10 +55,10 @@ Modify elements by rotation
 
 **Arguments:**
 
-- elements
-- vector direction
-- vertex 
-- angle
+- elements,
+- vector direction,
+- vertex,
+- angle.
 
 
 

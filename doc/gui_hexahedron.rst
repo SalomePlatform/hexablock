@@ -6,29 +6,32 @@
 Hexahedron
 ==========
 
-To create an **Hexaedron** in the **Main Menu** select **Model -> Add hexa** 
+To create an **Hexahedron** in the **Main Menu** select **Model -> Add Hexahedron**.
 
-There are 2 ways to create an **Hexaedron** :
+There are two methods to create an **Hexahedron**.
 
-Firstly you can define an **Hexaedron** by 2,3,4,5 or 6 Quads 
+Create from quadrangles
+=======================
+The **Hexahedron** can be defined its faces (quadrangles).
 
-**Arguments:**  Select from 2 to 6 quadrangles
+**Arguments:** Select from 2 to 6 quadrangles.
 
-The dialogue box for the creation of an hexahedron from quads is:
+The dialogue box to create an hexahedron from quadrangles is:
 
 .. image:: _static/gui_hexa_quads.png
    :align: center
 
 .. centered::
-   Create an Hexahedron from quads
+   Create an Hexahedron from quadrangles
 
-Secondly you can define an **Hexaedron** through **Vertex 1**, **Vertex
-2**, **Vertex 3**, **Vertex 4**, **Vertex 5**, **Vertex 6**, **Vertex
-7**, and **Vertex 8**, which ares the points through wich the **Hexaedron** passes.
+Create from vertices
+====================
+The **Hexahedron** can also be defined by its vertices **Vertex 1**,
+**Vertex 2**, ..., **Vertex 8**.
 
-**Arguments:** Select 8 vertices
+**Arguments:** Select 8 vertices.
 
-The dialogue box for the creation of an hexahedron from vertices is:
+The dialogue box to create an hexahedron from vertices is:
 
 .. image:: _static/gui_hexa_vertices.png
    :align: center

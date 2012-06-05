@@ -13,27 +13,27 @@ Elements association
 
 Associate to a vertex of the geometry::
 
- 	vx.setAssociation(geom_object_vertex)
+    vx.setAssociation(geom_object_vertex)
 
 Get the association::
 
- 	gov = vx.getAssociation()
+    gov = vx.getAssociation()
 
 Associate to an edge or a wire of the geometry::
 
-	 l = edg.addAssociation(geom_object_1D, debut, val)
+    l = edg.addAssociation(geom_object_1D, debut, val)
 
 Get the associations::
 
-	 edge_associations = edg.getAssociations()
+    edge_associations = edg.getAssociations()
 
 Associate to a face or a shell of the geometry::
 
- 	l = quad.addAssociation(geom_object_2D)
+    l = quad.addAssociation(geom_object_2D)
 
 Give the association::
 
- 	go2d = quad.getAssociations()
+    go2d = quad.getAssociations()
 
 .. _tuiassolines:
 
@@ -41,7 +41,7 @@ Associate by lines
 ==================
 
 To associate an opened line to the geometry, the following data have
-to be mentionned:
+to be mentioned:
 
 - the starting edge of the model of blocks: *mstart*
 - the list of edges of the model of blocks: *mline*
@@ -58,7 +58,7 @@ Associate an opened line::
         l = doc.associateOpenedLine(mstart, mline, gstart, pstart, gline, pend) 
 
 To associate a closed line to the geometry, the following data have
-to be mentionned:
+to be mentioned:
 
 - the starting vertex of the model of blocks: *mfirst*
 - the starting edge of the model of blocks: *mstart*
@@ -72,6 +72,6 @@ different from the number of edges of the geometry.
 
 Associate a closed line::
 
-        l = doc.associateClosedLine(mfirst, mstart, mline, gstart, pstart, gline) 
+    l = doc.associateClosedLine(mfirst, mstart, mline, gstart, pstart, gline)
 
 GUI command: :ref:`guiassoquadtogeom`

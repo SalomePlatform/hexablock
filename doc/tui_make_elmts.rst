@@ -8,10 +8,10 @@ Make elements by transforming elements
 
 Rotate and translate for any kind of elements::
 
- 	elts = doc.makeTranslation(element, vec)
-	elts = doc.makeRotation(element, ver, vec, angle)
+    elts = doc.makeTranslation(element, vec)
+    elts = doc.makeRotation(element, ver, vec, angle)
 
-and "element" could be Vertex, Edge, Quad, Hexa, Vector, Cylinder,
+and "element" could be Vertex, Edge, Quadrangle, Hexahedeon, Vector, Cylinder,
 Pipe and Elements and the result "elts" is always an object of type
 "Elements".
 

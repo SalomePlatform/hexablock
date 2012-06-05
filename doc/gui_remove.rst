@@ -7,9 +7,9 @@ Remove hexahedra
 ================
 
 
-To remove an **Hexaedron** in the **Main Menu** select **Model -> Remove hexa** 
+To remove an **Hexahedron** in the **Main Menu** select **Model -> Remove hexahedra**.
 
-**Arguments:** 1 hexaedra + select if including connected hexa or not
+**Arguments:** 1 hexahedron and a flag to indicate if connected hexahedra should be removed or not.
 
 
 The dialogue box for removing hexahedra:

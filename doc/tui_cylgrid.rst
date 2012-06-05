@@ -10,14 +10,14 @@ Make cylindrical grids
 To add a cylindrical grid, the following data are required:
 
 - the coordinates (vertex) of the cylinder base center: *pt*
-- the vectors defining the axe and the direction of the cylinder: *vex, vez*
+- the vectors defining the axis and the direction of the cylinder: *vex, vez*
 - the radial, angular and axial sizes: *dr, da, dl*
 - the radial, angular and axial elements number: *nr, na, nl*
 - to fill or not the central part of hexahedra: *fill*
 
 Make a cylindrical grid::
 
- 	elts = doc.makeCylindrical(pt, vex, vez, dr, da, dl, nr, na, nl, fill)
+    elts = doc.makeCylindrical(pt, vex, vez, dr, da, dl, nr, na, nl, fill)
 
 
 The result is an array of hexahedra which are arranged along the
@@ -25,7 +25,7 @@ radial axis first, then the angular axis, then according to the layers
 and then possibly hexahedra filling the central part.
 
 
-The filling the central part of the cylinder is made​according to the two following cases:
+The filling the central part of the cylinder is made ​accordingly to the two following cases:
 
 .. image:: _static/cyl_grid2.PNG
    :align: center
@@ -42,7 +42,7 @@ The filling the central part of the cylinder is made​according to the two foll
 Example
 -------
 
-Filling rule is illustrated by differents case-tests::
+Filling rule is illustrated by different case-tests::
 
         import hexablock
         doc = hexablock.addDocument()

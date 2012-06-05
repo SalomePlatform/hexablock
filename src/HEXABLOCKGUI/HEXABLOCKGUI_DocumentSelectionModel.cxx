@@ -1,20 +1,20 @@
-//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include <set>
@@ -63,16 +63,8 @@
 
 #include <QMultiMap>
 
-
-
 #include "GEOMBase.h"
 #include "MyGEOMBase_Helper.hxx"
-
-
-
-
-
-
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
@@ -483,11 +475,11 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
   QVariant docEntryVariant = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
 
   if ( !entryVariant.isValid() ){
-    INFOS("entryVariant not valid");
+    //INFOS("entryVariant not valid");
     return;
   }
   if ( !docEntryVariant.isValid() ){
-    INFOS("docEntryVariant not valid");
+    //INFOS("docEntryVariant not valid");
     return;
   }
 
@@ -518,11 +510,8 @@ void PatternDataSelectionModel::_selectVTK( const QModelIndex& eltIndex )
   selector->AddOrRemoveIndex( docIO, aMap, false );
   currentVTKViewWindow->highlight( docIO, true, true );
 
-
   MESSAGE("}");
 }
-
-
 
 QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
@@ -562,8 +551,6 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
   MESSAGE("}");
   return eltIndex;
 }
-
-
 
 QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
@@ -686,7 +673,7 @@ void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
   QVariant docEntryVariant    = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
 
   if ( !treeVariant.isValid() || !docEntryVariant.isValid() ){ 
-    INFOS("data from model not valid");
+    //INFOS("data from model not valid");
     return;
   }
 
@@ -694,7 +681,7 @@ void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
   docEntry = docEntryVariant.toString();
 
   if ( eltType != GROUP_TREE ){
-    INFOS("bad element type : not a group item" << eltType );
+    //INFOS("bad element type : not a group item" << eltType );
     return;
   }
 
@@ -828,7 +815,7 @@ void MeshSelectionModel::_highlightPropagation( const QModelIndex& eltIndex )
   QVariant docEntryVariant    = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
 
   if ( !treeVariant.isValid() || !docEntryVariant.isValid() ){ 
-    INFOS("data from model not valid");
+    //INFOS("data from model not valid");
     return;
   }
 
@@ -836,7 +823,7 @@ void MeshSelectionModel::_highlightPropagation( const QModelIndex& eltIndex )
   docEntry = docEntryVariant.toString();
 
   if ( eltType != PROPAGATION_TREE ){
-    INFOS("bad element type : not a propagation item" << eltType );
+    //INFOS("bad element type : not a propagation item" << eltType );
     return;
   }
 

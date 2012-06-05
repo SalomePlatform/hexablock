@@ -16,9 +16,8 @@ Make elements by point symmetry
 
 **Arguments:**
 
-- elements
-- vertex
-
+- elements,
+- vertex.
 
 
 The dialogue box to make elements by point symmetry is:
@@ -37,9 +36,9 @@ Make elements by line symmetry
 
 **Arguments:**
 
-- elements
-- vertex
-- vector
+- elements,
+- vertex,
+- vector.
 
 The dialogue box to make elements by line symmetry is:
 
@@ -56,9 +55,9 @@ Make elements by plan symmetry
 
 **Arguments:**
 
-- elements
-- vertex
-- vector
+- elements,
+- vertex,
+- vector.
 
 The dialogue box to make elements by plan symmetry is:
 

@@ -3,11 +3,11 @@
 .. _interactive:
 
 #######################################################
-Using Hexablock with the Graphical User Interface (GUI)
+Using HexaBlock with the Graphical User Interface (GUI)
 #######################################################
 
 
-HEXABLOCK is a component of SALOME with an interactive part and has:
+HexaBlock is a component of SALOME with an interactive part and has:
 
 - its own menus and toolboxes,
 - its document zone to represent all kind of objects (vertices, hexahedral, etc.),
@@ -19,25 +19,25 @@ HEXABLOCK is a component of SALOME with an interactive part and has:
 
 It provides the toolset allowing to:
 
-- build a model of block:
-   - create basic geometrical objects: point, edge, quadrangle, hexahedra
-   - create grid: cartesian, cylindrical, spherical
-   - create  a cylinder, a pipe, two intersected cylinders, two intersected pipes, an hemisphere, a rind
-   - remove an hexahedron
-   - replace hexahedrons
-   - disconnect by a point, an edge, a quadrangle
-   - join quadrangles by hexahedra, merge quadrangles
-   - transform or modify by translation, rotation and other symetries
-   - make quad revolution
-- associate a model of block to a geometry:
-   - associate vertices of the model of blocks to vertices of a geometry
-   - associate edges of the model of blocks to edges of a geometry
-   - associate quadrangles of the model of blocks to faces of a geometry
-   - associate lines
-- generate a mesh:
-   - define groups
-   - define laws on propagations
-   - generate an hexahedral mesh
+- Build a model of block:
+   - create basic geometrical objects: point, edge, quadrangle, hexahedra,
+   - create grid: cartesian, cylindrical, spherical,
+   - create  a cylinder, a pipe, two intersected cylinders, two intersected pipes, an hemisphere, a rind,
+   - remove an hexahedron,
+   - replace hexahedrons,
+   - disconnect by a point, an edge, a quadrangle,
+   - join quadrangles by hexahedra, merge quadrangles,
+   - transform or modify by translation, rotation and other symmetries,
+   - make quad revolution.
+- Associate a model of block to a geometry:
+   - associate vertices of the model of blocks to vertices of a geometry,
+   - associate edges of the model of blocks to edges of a geometry,
+   - associate quadrangles of the model of blocks to faces of a geometry,
+   - associate lines.
+- Generate a mesh:
+   - define groups,
+   - define laws on propagations,
+   - generate an hexahedral mesh.
 
 
 .. toctree::

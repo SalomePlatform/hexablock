@@ -1,20 +1,20 @@
-//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 
@@ -110,6 +110,7 @@ void HEXABLOCKGUI_Resource::setValue( const QString& name, const QString val ) {
 
 void HEXABLOCKGUI_Resource::createPreferences(HEXABLOCKGUI* swm)
 {
+/*
   DEBTRACE("createPreferences");
   // --- General tab ---
   int genTab = swm->addPreference( QObject::tr( "PREF_TAB_GENERAL" ) );
@@ -239,6 +240,7 @@ void HEXABLOCKGUI_Resource::createPreferences(HEXABLOCKGUI* swm)
   swm->addPreference( QObject::tr( _FAILED            ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _FAILED            );
   swm->addPreference( QObject::tr( _ERROR             ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _ERROR             );
   swm->addPreference( QObject::tr( _DEFAULT           ), runGroup, LightApp_Preferences::Color, RESOURCE_HEXABLOCK, _DEFAULT           );
+*/
 }
 
 void HEXABLOCKGUI_Resource::preferencesChanged()

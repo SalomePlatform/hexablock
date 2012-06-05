@@ -6,20 +6,20 @@
 Create grids
 ============
 
-To create a **Grid** in the **Main Menu** select **Model -> Make grid** 
+To create a **Grid** in the **Main Menu** select **Model -> Make Grid**.
 
 Three kinds of grid can be created:
 
-- cartesian grid (see :ref:`guicartgrid`)
-- cylindrical grid (see :ref:`guicylgrid`)
-- spherical grid (see :ref:`guisphergrid`)
+- cartesian grid (see :ref:`guicartgrid`),
+- cylindrical grid (see :ref:`guicylgrid`),
+- spherical grid (see :ref:`guisphergrid`).
 
 .. _guicartgrid:
 
 Cartesian grid
 ==============
 
-To create a cartesian grid, select radio button **Cartesian** :
+To create a cartesian grid, select radio button **Cartesian**:
 
 .. image:: _static/gui_make_cart_grid.png
    :align: center
@@ -30,10 +30,10 @@ To create a cartesian grid, select radio button **Cartesian** :
 
 The following data are required:
 
-- the vertex of the initial hexahedron
-- the vector corresponding to the diametrically opposite vertex to the initial vertex
+- the vertex of the initial hexahedron,
+- the vector corresponding to the diametrically opposite vertex to the initial vertex,
 - the number of repetition of this hexahedra along the three axes
-  (n(x), n(y) and n(z))
+  (n(x), n(y) and n(z)).
 
 
 The result of this action is:
@@ -52,7 +52,7 @@ TUI command: :ref:`tuicartgrid`
 Cylindrical grid
 ================
 
-To create a cylindrical grid, select radio button **Cylindrical** :
+To create a cylindrical grid, select radio button **Cylindrical**:
 
 .. image:: _static/gui_make_cyl_grid.png
    :align: center
@@ -61,21 +61,21 @@ To create a cylindrical grid, select radio button **Cylindrical** :
    Dialogue Box for a Cylindrical grid (regular size)
 
 
-The following data are required :
+The following data are required:
 
 - Cylinder
-	- center : coordinates of the cylinder base center ( select a vertex )
-        - base   : base vector of the cylinder ( select a vector )
-        - height : vertical vector of the cylinder ( select a vector )
+    - center: coordinates of the cylinder base center (select a vertex).
+    - base: base vector of the cylinder (select a vector).
+    - height: vertical vector of the cylinder (select a vector).
 
 - Grid
-        - radius : size and number of elements from the center
-	- angle  : size and number of elements around the center
-        - height : size and number of elements on height
-        - fill   : choose this option to fill the central part of the hexahedra
+    - radius: size and number of elements from the center.
+    - angle: size and number of elements around the center.
+    - height: size and number of elements on height.
+    - fill: choose this option to fill the central part of the hexhahedra.
 
 
-Elements size of the grid can be irregular ( differents sizes ). Select the adequat radio button:
+Elements size of the grid can be irregular (differents sizes). Select the adequate radio button:
 
 .. image:: _static/gui_make_cyl_grid_irregular.png
    :align: center
@@ -88,7 +88,7 @@ The result is an array of hexahedra which are arranged along the
 radial axis first, then the angular axis, then according to the layers
 and then possibly hexahedra filling the central part.
 
-The filling the central part of the cylinder is made​ according to the two following cases:
+The filling of the central part of the cylinder is made​ according to the two following cases:
 
 .. image:: _static/cyl_grid2.PNG
    :align: center
@@ -134,7 +134,7 @@ TUI command: :ref:`tuicylgrid`
 Spherical grid
 ===============
 
-To create a spherical grid, select radio button **Spherical** :
+To create a spherical grid, select radio button **Spherical**:
 
 .. image:: _static/gui_make_spher_grid.png
    :align: center
@@ -145,17 +145,16 @@ To create a spherical grid, select radio button **Spherical** :
 
 The following data are required:
 
-- the center (vertex) of the central hexahedron
-- the vector corresponding to the diametrically opposite vertex to the
-  initial vertex
-- the number of embedded hexahedra (nb)
-- the coefficient of growth (k)
+- the center (vertex) of the central hexahedron,
+- the vector corresponding to the diametrically opposite vertex to the initial vertex,
+- the number of embedded hexahedra (nb),
+- the coefficient of growth (k).
 
 
 The result is an array of hexahedra starting with the central and
 other hexahedral are arranged layer by layer from the center. Each
 layer contains six hexahedral always in the following order: two along
-the X axis, then 2 for the Y axis and 2 for the Z axis.
+the X axis, then two for the Y axis and two for the Z axis.
 
 The result of this action is:
 

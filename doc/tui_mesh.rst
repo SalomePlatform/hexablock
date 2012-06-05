@@ -9,18 +9,18 @@ Generate the mesh
 
 Use the SMESH component of SALOME::
 
- 	import smesh
-	m = hexablock.mesh(name, doc)
+    import smesh
+    m = hexablock.mesh(name, doc)
 
 Export to a MED file::
 
- 	m.ExportMED("/tmp/mesh.med")
+    m.ExportMED("/tmp/mesh.med")
 
-Get some informations about the mesh::
+Get some information about the mesh::
 
- 	print "Number of hexahedra: ", m.NbHexas()
- 	print "Number of quadrangles: ", m.NbQuadrangles()
- 	print "Number of segments: ", m.NbEdges()
- 	print "Number of nodes: ", m.NbNodes()
+    print "Number of hexahedra: ", m.NbHexas()
+    print "Number of quadrangles: ", m.NbQuadrangles()
+    print "Number of segments: ", m.NbEdges()
+    print "Number of nodes: ", m.NbNodes()
 
 GUI command: :ref:`guimesh`
