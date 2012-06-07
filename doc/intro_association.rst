@@ -68,6 +68,7 @@ For each vertex, the association is made in three steps:
 - Choose the way of associating among the 4 possibilities described above.
 - Specify the point on the geometry, the process depends on the
   previous choice:
+
     - case of an existing vertex: selection and highlight on the
       vertices of the geometry solely
     - case of a point taken on an edge of the geometry: selection
@@ -92,12 +93,14 @@ applies four different algorithms in the following order:
   taking the shortest way.
 - if that wire does not exist, then another wire is build in the
   following manner:
+
     - compute the normals to the two vertices,
     - compute the mean normal of the two previous normals,
     - build the plan passing through the two vertices and this
       mean normal,
     - the sought-after wire is the intersection of the geometry
       with the plan,
+
 - if the intersection with this plan fails, then another wire
   "iso-type" is determined between the two vertices and going along
   the faces of the geometry linking these two vertices,
@@ -119,9 +122,12 @@ automatic. The three cases are processed:
   faces,
 - the faces do exist but some pieces are missing because of the new
   edges or vertices, in that case two strategies are deployed:
+
     - automatic construction of the missing faces from the contour lines,
     - or association of new faces build in the geometry,
+
 - there are no associated faces to the quadrangle of the model:
+
     - only the automatic mesh is used,
     - if this automatic mesh does not work, then it is possible to
       associate to the model quadrangle a geometric face build in
