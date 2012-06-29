@@ -130,6 +130,7 @@ DocumentModel::~DocumentModel()
 void DocumentModel::setName(const QString& name)
 {
   _hexaDocument->setName( name.toLocal8Bit().constData() );
+  emit nameChanged(name);
 }
 
 QString DocumentModel::getName()
@@ -139,11 +140,13 @@ QString DocumentModel::getName()
 
 void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 {
-  QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
+  MESSAGE("HEXABLOCKGUI::load()  => "<<xmlFileName.toStdString());
+  //   QString tmp = xmlFileName.section('.', 0, 0); //CS_BP bof
   // _hexaDocument->setFile( tmp.toLocal8Bit().constData() );
   // _hexaDocument->loadXml();
   //std::cout << "AAAAAAAAAA name ->" << _hexaDocument->getName() << std::endl;
-  _hexaDocument->loadXml(tmp.toLocal8Bit().constData() );
+  //   _hexaDocument->loadXml(tmp.toLocal8Bit().constData() );
+  _hexaDocument->loadXml(xmlFileName.toLocal8Bit().constData() );
   //std::cout << "BBBBBBBBB  name ->" << _hexaDocument->getName() << std::endl;
   //std::cout << "DocumentModel::load ->" << tmp.toStdString() << std::endl;
   clearAll();
@@ -164,13 +167,15 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 
 void DocumentModel::save( const QString& xmlFileName )
 {
+  MESSAGE("HEXABLOCKGUI::save()  => "<<xmlFileName.toStdString());
   //std::cout << "DocumentModel::save ->" << xmlFileName.toStdString() << std::endl;
   //std::cout << "DocumentModel::save _hexaDocument->" << _hexaDocument << std::endl;
-  QString noSuffix = xmlFileName.section('.', 0, 0);
+//   QString noSuffix = xmlFileName.section('.', 0, 0);
   //std::cout << "DocumentModel::save ->" << noSuffix.toStdString() << std::endl;
   //_hexaDocument->setFile( noSuffix.toLocal8Bit().constData() );   // Abu
   //_hexaDocument->saveFile();   // Abu
-  _hexaDocument->save( noSuffix.toLocal8Bit().constData() );
+//   _hexaDocument->save( noSuffix.toLocal8Bit().constData() );
+  _hexaDocument->save( xmlFileName.toLocal8Bit().constData() );
 }
 
 void DocumentModel::updateData()
@@ -1944,6 +1949,46 @@ QModelIndex DocumentModel::disconnectEdge( const QModelIndex& ihexa, const QMode
 
   return iElts;
 }
+
+
+QModelIndex DocumentModel::disconnectEdges( const QModelIndexList& ihexas, const QModelIndexList& iedges )
+{
+  QModelIndex iElts;
+
+  HEXA_NS::Hexas hHexas;
+  HEXA_NS::Edges hEdges;
+
+  //Construction de la liste des edges
+  HEXA_NS::Edge* hedge = NULL;
+  foreach( const QModelIndex& iedge, iedges ){
+    hedge = data( iedge, HEXA_DATA_ROLE ).value<HEXA_NS::Edge *>();
+    hEdges.push_back( hedge );
+  }
+
+  //Construction de la liste des hexas
+  HEXA_NS::Hexa* hhexa = NULL;
+  foreach( const QModelIndex& ihexa, ihexas ){
+    hhexa = data( ihexa, HEXA_DATA_ROLE ).value<HEXA_NS::Hexa *>();
+    hHexas.push_back( hhexa );
+  }
+
+
+  HEXA_NS::Elements* hElts = _hexaDocument->disconnectEdges( hHexas, hEdges );
+
+  if ( hElts->isValid() ){
+    updateData(); //CS_TO_CHECK
+    ElementsItem* elts = new ElementsItem(hElts);
+    _elementsDirItem->appendRow(elts);
+    iElts = elts->index();
+    QString tmp = "/tmp/disconnectEdges.vtk";
+    //_hexaDocument->saveVtk( tmp.toLocal8Bit().constData() );
+  } else {
+    delete hElts;
+  }
+
+  return iElts;
+}
+
 
 QModelIndex DocumentModel::disconnectQuad( const QModelIndex& ihexa, const QModelIndex& iquad )
 {

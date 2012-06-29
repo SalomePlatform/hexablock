@@ -42,14 +42,14 @@
     </message>
     <message>
         <source>CANNOT DISCONNECT</source>
-        <translation>Cannot disconnect</translation>
+        <translation>Impossible de déconnecter</translation>
     </message>
 </context>
 <context>
     <name>HEXABLOCK::GUI::DocumentModel</name>
     <message>
         <source>TREE_ITEM_VERTEX</source>
-        <translation>Vecteurs</translation>
+        <translation>Sommets</translation>
     </message>
     <message>
         <source>TREE_ITEM_EDGE</source>
@@ -73,11 +73,11 @@
     </message>
     <message>
         <source>TREE_ITEM_PIPE</source>
-        <translation>tuyaux</translation>
+        <translation>Tuyaux</translation>
     </message>
     <message>
         <source>TREE_ITEM_ELEMENT</source>
-        <translation>Elements</translation>
+        <translation>Eléments</translation>
     </message>
     <message>
         <source>TREE_ITEM_CROSSELEMENT</source>
@@ -93,7 +93,7 @@
     </message>
     <message>
         <source>TREE_ITEM_PROPAGATION</source>
-        <translation>Porpagations</translation>
+        <translation>Propagations</translation>
     </message>
 </context>
 <context>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <source>CROSSELEMENTS</source>
-        <translation>Elements de croix</translation>
+        <translation>Eléments de croix</translation>
     </message>
     <message>
         <source>GROUP</source>
@@ -218,8 +218,8 @@
     <message>
         <source>%1: Bad type selected
 Please select a %2.</source>
-        <translation>%1 : mauvais type sélectionné
-Choisisser un(e) %2.</translation>
+        <translation>%1 : Mauvais type sélectionné
+Choisissez un(e) %2.</translation>
     </message>
 </context>
 <context>
@@ -726,7 +726,7 @@ Choisisser un(e) %2.</translation>
     </message>
     <message>
         <source>Create an edge</source>
-        <translation>Créer une arrête</translation>
+        <translation>Créer une arête</translation>
     </message>
     <message>
         <source>Add Edge</source>
@@ -798,7 +798,7 @@ Choisisser un(e) %2.</translation>
     </message>
     <message>
         <source>Make a grid</source>
-        <translation>Créer un grille</translation>
+        <translation>Créer une grille</translation>
     </message>
     <message>
         <source>Make Grid</source>
@@ -1269,19 +1269,19 @@ Choisisser un(e) %2.</translation>
     </message>
     <message>
         <source>GEOM_BUT_CLOSE</source>
-        <translation>&amp;amp;Fermer</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <source>GEOM_BUT_APPLY_AND_CLOSE</source>
-        <translation>A&amp;amp;ppliquer et fermer</translation>
+        <translation>Appliquer et fermer</translation>
     </message>
     <message>
         <source>GEOM_BUT_APPLY</source>
-        <translation>&amp;amp;Appliquer</translation>
+        <translation>Appliquer</translation>
     </message>
     <message>
         <source>GEOM_BUT_HELP</source>
-        <translation>&amp;amp;Aide</translation>
+        <translation>Aide</translation>
     </message>
 </context>
 <context>

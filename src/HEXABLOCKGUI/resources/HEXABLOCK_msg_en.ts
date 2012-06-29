@@ -49,7 +49,7 @@
     <name>HEXABLOCK::GUI::DocumentModel</name>
     <message>
         <source>TREE_ITEM_VERTEX</source>
-        <translation>Vertexes</translation>
+        <translation>Vertices</translation>
     </message>
     <message>
         <source>TREE_ITEM_EDGE</source>
@@ -93,7 +93,7 @@
     </message>
     <message>
         <source>TREE_ITEM_PROPAGATION</source>
-        <translation>Porpagations</translation>
+        <translation>Propagations</translation>
     </message>
 </context>
 <context>
@@ -157,7 +157,7 @@
     </message>
     <message>
         <source>QUAD</source>
-        <translation>quadrangle</translation>
+        <translation>Quadrangle</translation>
     </message>
     <message>
         <source>HEXA</source>
@@ -307,7 +307,7 @@ Please select a %2.</source>
     </message>
     <message>
         <source>CANNOT MAKE RIND</source>
-        <translation>Cannot make rind</translation>
+        <translation>Cannot make hemisphere</translation>
     </message>
 </context>
 <context>
@@ -1268,19 +1268,19 @@ Please select a %2.</source>
     </message>
     <message>
         <source>GEOM_BUT_CLOSE</source>
-        <translation>&amp;amp;Close</translation>
+        <translation>Close</translation>
     </message>
     <message>
         <source>GEOM_BUT_APPLY_AND_CLOSE</source>
-        <translation>A&amp;amp;pply and Close</translation>
+        <translation>Apply and Close</translation>
     </message>
     <message>
         <source>GEOM_BUT_APPLY</source>
-        <translation>&amp;amp;Apply</translation>
+        <translation>Apply</translation>
     </message>
     <message>
         <source>GEOM_BUT_HELP</source>
-        <translation>&amp;amp;Help</translation>
+        <translation>Help</translation>
     </message>
 </context>
 <context>
@@ -1299,7 +1299,7 @@ Please select a %2.</source>
     </message>
     <message>
         <source>EXTERNAL_BROWSER_CANNOT_SHOW_PAGE</source>
-        <translation>External browser &apos;%1&apos; can not show help page &apos;%2&apos;. Do you want to change it in preferences?</translation>
+        <translation>External browser &apos;%1&apos; cannot show help page &apos;%2&apos;. Do you want to change it in preferences?</translation>
     </message>
     <message>
         <source>BUT_OK</source>

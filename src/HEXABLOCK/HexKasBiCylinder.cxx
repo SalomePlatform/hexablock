@@ -245,7 +245,13 @@ int KasBiCylinder::associate (Edge* edge)
            {
            if (tline2[ns2] == nlig)
               {
-              inter_line[nlig]->assoEdge (edge, tparam1[ns1], tparam2[ns2], 2);
+              double param1 = tparam1[ns2];
+              double param2 = tparam2[ns2];
+              if (param1 >= 1.0-Epsil && param1 <= 1.0+Epsil)
+                  param1  = 0.0;
+              if (param2 >= -Epsil && param2 <= Epsil)
+                  param2  = 1.0;
+              inter_line[nlig]->assoEdge (edge, param1, param2, 2);
               return HOK;
               }  
            }

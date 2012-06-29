@@ -47,6 +47,9 @@ public:
    int findEdge   (Edge*   elt);
    int findVertex (Vertex* elt);
 
+   int findVertex (double vx, double vy, double vz);
+
+
 public:
    Elements (Document* doc);
    Elements (Document* doc, int nx, int ny, int nz);

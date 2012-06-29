@@ -1032,4 +1032,26 @@ void Elements::clearAssociation  ()
        }
    *********************************************** */
 }
+// ============================================================ findVertex
+int Elements::findVertex (double vx, double vy, double vz)
+{
+   double tol = el_root->getTolerance ();
+   double xmin = vx - tol;
+   double xmax = vx + tol;
+   double ymin = vy - tol;
+   double ymax = vy + tol;
+   double zmin = vz - tol;
+   double zmax = vz + tol;
+
+   int nbre = tab_vertex.size();
+   for (int nro=0 ; nro<nbre ; nro++)
+       {
+       Vertex* node = tab_vertex [nro];
+       if (node != NULL && node->isHere ()
+                        && node->isin   (xmin, xmax, ymin, ymax, zmin, zmax))
+              return nro;
+       }
+   return NOTHING;
+}
+
 END_NAMESPACE_HEXA

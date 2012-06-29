@@ -32,6 +32,8 @@
 #include "HexCylinder.hxx"
 #include "HexShape.hxx"
 
+#include <stdlib.h>
+
 static bool   db  = false;
 
 static const double UnSur2pi = DEMI/M_PI;
@@ -260,12 +262,47 @@ void CrossElements::setVertex (Vertex* elt, int cyl, int nx, int ny, int nz)
    tab_vertex [nro] = elt;
 }
 // ====================================================== setVertex (2)
+inline bool isequals (double v1, double v2)
+{
+   const double eps    = 0.01;
+   bool         equals = v1 <= v2 + eps && v1 >= v2 - eps; 
+   return equals;
+}
+// ====================================================== setVertex (2)
 void CrossElements::setVertex (int cyl, int nx, int ny, int nz, double px, 
                                                      double py, double pz)
 {
+   if (isequals (px, 0) && isequals (py, -1.5)  && isequals (pz, 5))
+      printf (" Vertex trouve : Cyl%d [%d,%d,%d] = (%g,%g,%g)\n",
+                                          cyl, nx,ny,nz, px,py,pz);
+
    int nro = indVertex (cyl, nx, ny, nz);
    if (nro<0) 
       return;
+   else if (tab_vertex[nro] != NULL)
+      {
+      Vertex* node = tab_vertex[nro];
+      if (node->definedBy (px, py, pz))
+         return;
+
+      printf (" ************ ATTENTION ****************\n");
+      printf (" Creation d'un vertex : Cyl%d [%d,%d,%d] = (%g,%g,%g)\n",
+                                          cyl, nx,ny,nz, px,py,pz);
+      printf (" Indice %d deja occupe par le vertex (%g,%g,%g)\n", nro, 
+              node->getX(), node->getY(), node->getZ());
+
+      return;
+      }
+   
+   int trouve = findVertex (px, py, pz);
+   if (trouve>=0)
+      {
+      printf (" Creation d'un vertex : Cyl%d [%d,%d,%d] = (%g,%g,%g)\n",
+                                          cyl, nx,ny,nz, px,py,pz);
+      printf (" Vertex %d present a l'indice %d\n", nro, trouve);
+      tab_vertex [nro] = tab_vertex [trouve];
+      return;
+      }
    Vertex*    node = el_root->addVertex (px, py, pz);
    setVertex (node, cyl, nx, ny, nz);
 }

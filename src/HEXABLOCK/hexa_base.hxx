@@ -214,6 +214,8 @@ bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
 bool   on_debug();
 int    niv_debug();
 
+void   set_minus (string& chaine);
+
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;
 const double Epsil2  = 1e-12;

@@ -43,6 +43,13 @@ bool on_debug ()
    return debug_level > 0;
     
 }
+// ======================================================== set_minus
+void set_minus (string& chaine)
+{
+   int lg = chaine.size();
+   for (int nc=0 ; nc<lg ; nc++)
+       chaine [lg] = tolower (chaine[lg]);
+}
 // ======================================================== get_temp_name
 pchar get_temp_name (cpchar format, pchar nomfic)
 {

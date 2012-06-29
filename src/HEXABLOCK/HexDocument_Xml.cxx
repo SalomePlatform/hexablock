@@ -241,7 +241,7 @@ int Document::parseXml (XmlTree& xml)
        else if (type=="Shape" && quad!=NULL)
           {
           Shape* shape = parseShape (node);
-          edge->addAssociation (shape);
+          quad->addAssociation (shape);
           }
        }
 

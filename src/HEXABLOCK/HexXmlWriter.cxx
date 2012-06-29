@@ -45,9 +45,18 @@ int XmlWriter::openXml (cpchar nomfic)
 
    if (nomfic != NULL)
       {
-      on_file  = true;
+      on_file   = true;
+      bool suff = true;
+      int  pext = strlen (nomfic) - 4;
+      if (pext > 0)
+         {
+         string sext = &nomfic[pext];
+         set_minus (sext);
+         suff = sext != ".xml";
+         }
       string fname = nomfic;
-      fname   += ".xml";
+      if (suff) 
+         fname   += ".xml";
       xml_file = fopen (fname.c_str(), "w");
       if (xml_file==NULL)
          {

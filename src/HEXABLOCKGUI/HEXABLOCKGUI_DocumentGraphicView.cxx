@@ -309,13 +309,21 @@ DocumentGraphicView::DocumentGraphicView( LightApp_Application* app, SUIT_ViewWi
       _documentActor( 0 ),
       _currentChanged( false )
 {
+//   MESSAGE("DocumentGraphicView::DocumentGraphicView() app"<<app);
+//   MESSAGE("DocumentGraphicView::DocumentGraphicView() suitView"<<suitView);
+//   MESSAGE("DocumentGraphicView::DocumentGraphicView() parent"<<parent);
 // _suitView->getViewPort();
 // _suitView->viewport();
 // _suitView->installEventFilter(this);
 }
 
 DocumentGraphicView::~DocumentGraphicView()
+{  
+}
+
+void DocumentGraphicView::setWindowTitle(const QString& title)
 {
+  _suitView->setWindowTitle( QString("hexablock : ") + title );
 }
 
 void DocumentGraphicView::onPatternDatachanged()
@@ -331,7 +339,12 @@ void DocumentGraphicView::update()
   MESSAGE("DocumentGraphicView::update(){");
 
   SVTK_ViewWindow*    theVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
-  PatternDataModel*   theModel         = dynamic_cast<PatternDataModel *>( model() );
+//   PatternDataModel*   theModel         = dynamic_cast<PatternDataModel *>( model() );
+  DocumentModel*   theModel = dynamic_cast<DocumentModel*>( model() );
+  MESSAGE("model()"<<model());
+  MESSAGE("theModel"<<theModel);
+  if (!theModel) return;
+    
   HEXA_NS::Document*  theDocumentImpl  = theModel->documentImpl();
   QString             theDocumentEntry = theModel->documentEntry();
 
@@ -662,11 +675,28 @@ SUIT_ViewWindow* DocumentGraphicView::get_SUIT_ViewWindow()
 // }
 // 
 // 
-// // void DocumentGraphicView::setModel ( QAbstractItemModel * model )
-// // {
-// //   QAbstractItemView::setModel( model );
-// //   connect( model, SIGNAL(patternDataChanged() ), this,  SLOT ( slotTEST() ) );
-// // }
+void DocumentGraphicView::setModel ( QAbstractItemModel * model )
+{
+  MESSAGE("DocumentGraphicView::setModel (){");
+  QAbstractItemView::setModel( model );
+  
+//   PatternDataModel* pdm = dynamic_cast<PatternDataModel*>(model);
+//   MESSAGE("pdm"<<pdm);
+//   if (pdm){    
+//     connect( pdm, SIGNAL(patternDataChanged() ), this,  SLOT ( onPatternDatachanged() ) );
+//   }
+    
+  DocumentModel* dm = dynamic_cast<DocumentModel*>(model);
+  MESSAGE("dm"<<dm);
+  if (dm){
+    setWindowTitle( dm->getName() );
+    connect( dm, SIGNAL(patternDataChanged() ), this,  SLOT ( onPatternDatachanged() ) );
+    connect( dm, SIGNAL( nameChanged(const QString&) ), this,  SLOT ( setWindowTitle(const QString&) ) );    
+    
+  }
+  
+  
+}
 
 // void DocumentGraphicView::loadVTK( const QString&  path ) //CS_TEST
 // {

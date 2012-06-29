@@ -240,6 +240,7 @@ namespace HEXABLOCK
         QModelIndex disconnectVertex( const QModelIndex& h, const QModelIndex& v );
         QModelIndex disconnectEdge( const QModelIndex& h, const QModelIndex& e );
         QModelIndex disconnectQuad( const QModelIndex& h, const QModelIndex& q );
+	QModelIndex disconnectEdges( const QModelIndexList& h, const QModelIndexList& e );
 
         //
         QModelIndex cutEdge( const QModelIndex &e, int nbcuts );
@@ -358,6 +359,7 @@ namespace HEXABLOCK
 
       signals:
         void patternDataChanged();
+	void nameChanged(const QString& name);
         
       private:
         QTemporaryFile    *_hexaFile;

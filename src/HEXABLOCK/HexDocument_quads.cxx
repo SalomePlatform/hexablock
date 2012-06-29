@@ -42,7 +42,7 @@ BEGIN_NAMESPACE_HEXA
 void    permuter_edges  (Edge* &e1, Edge* &e2, cpchar n1=NULL, cpchar n2=NULL);
 double* prod_vectoriel (Edge* e1, Edge* e2, double result[]);
 
-static bool db = false;
+static bool db = true;
 
 // ======================================================== copyDocument
 Document* Document::copyDocument ()
@@ -762,16 +762,58 @@ Elements* Document::replace (Quads& pattern, Vertex* p1, Vertex* c1,
 void print_replace (Edge* zig, Edge*  zag)
 {
    cout << zig->getName() << " = (" << zig->getVertex(0)->getName() 
-        << ", " << zig->getVertex(1)->getName() << ") est remplace par ";
+        << ", " << zig->getVertex(1)->getName() << ") est clone en ";
 
    cout << zag->getName() << " = (" << zag->getVertex(0)->getName() 
         << ", " << zag->getVertex(1)->getName() << ")" << endl;
+}
+// ========================================================= only_in_hexas
+bool only_in_hexas (Hexas& thexas, Quad* quad)
+{
+   int nbhexas = thexas.size();
+   int nbp     = quad->getNbrParents();
+   for (int nh=0 ; nh <nbp ; nh++)
+       {
+       bool pasla = true;
+       Hexa* hexa = quad->getParent (nh); 
+       for (int nc=0 ; pasla && nc < nbhexas ; nc++)
+           pasla = hexa != thexas [nc];
+       if (pasla) 
+           return false;
+       }
+   return true;
+}
+// ========================================================= only_in_hexas
+bool only_in_hexas (Hexas& thexas, Edge*  edge)
+{
+   int nbp = edge->getNbrParents();
+   for (int nq=0 ; nq <nbp ; nq++)
+       {
+       Quad* quad = edge->getParent   (nq); 
+       if (NOT only_in_hexas (thexas, quad))
+          {
+          cout << " ... inMoreHexas " << edge->getName() << endl; 
+          return false;
+          }
+       }
+   cout << " ... only_in_hexas " << edge->getName() << endl; 
+   return true;
+}
+// ========================================================= only_in_hexas
+void replace_vertex (Hexas& thexas, Vertex* node,  Vertex* par)
+{
+   int nbh = thexas.size();
+   for (int nh=0 ; nh <nbh ; nh++)
+       thexas[nh]->replaceVertex (node, par);
 }
 // ========================================================= disconnectEdges
 Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
 {
    int nbedges = tedges.size();
    int nbhexas = thexas.size();
+
+   if (db)
+      cout << " +++ Disconnect Edges" << endl;
 
    if (nbhexas != nbedges) 
       {
@@ -788,18 +830,24 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
 
    for (int nro=0 ; nro<nbedges ; nro++)
        {
-       if (BadElement (tedges[0]))
+       if (BadElement (tedges[nro]))
           {
           cout << " **** Eddge number " << nro+1 << " is incorrect"
                << endl;
           return NULL;
           }
-       if (BadElement (thexas[0]))
+       if (BadElement (thexas[nro]))
           {
           cout << " **** Hexa number " << nro+1 << " is incorrect"
                << endl;
           return NULL;
           }
+       if (db)
+          cout << nro+1 << " hexa = " << thexas[nro]->getName () 
+                        << ", edge = " << tedges[nro]->getName () 
+                        << " = (" << tedges[nro]->getVertex(0)->getName () 
+                        << ", "   << tedges[nro]->getVertex(1)->getName () 
+                        << ")" << endl;
        }
 
    for (int nro=0 ; nro<nbhexas ; nro++)
@@ -869,7 +917,7 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
        if (db)
           {
           cout << nro << " : "         << tvertex[nro]->getName() 
-               << " est remplace par " << node1->getName() << endl;
+               << " est clone en " << node1->getName() << endl;
           }
 
        if (nro>0)
@@ -880,7 +928,6 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
           state_edge [tedges[nro-1]] = REPLACED;
           if (db)
              print_replace (tedges[nro-1], edge);
-
           }
        }
 
@@ -903,10 +950,26 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
               Vertex* v2 = edge->getVertex (V_AVAL);
               int etat = REPLACED;
               if (VertexIsNew (v1))
-                 v1 = new_vertex [v1];
+                 {
+                 if (only_in_hexas (thexas, edge))
+                    {
+                    replace_vertex (thexas, v1, new_vertex[v1]);
+                    etat = AS_IS;
+                    }
+                 else
+                    v1 = new_vertex [v1];
+                 }
               else if (VertexIsNew (v2))
-                 v2 = new_vertex [v2];
-              else
+                 {
+                 if (only_in_hexas (thexas, edge))
+                    {
+                    replace_vertex (thexas, v2, new_vertex[v2]);
+                    etat = AS_IS;
+                    }
+                 else
+                    v2 = new_vertex [v2];
+                 }
+              else 
                  etat = AS_IS;
 
               if (etat==REPLACED)

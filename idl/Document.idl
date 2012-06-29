@@ -79,6 +79,9 @@ module HEXABLOCK_ORB
     void setLevel (in long debug_level )
       raises (SALOME::SALOME_Exception);
 
+    long loadXml( in string fname )
+      raises (SALOME::SALOME_Exception);
+
 
     /*!
     */

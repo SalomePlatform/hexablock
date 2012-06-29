@@ -245,7 +245,7 @@ GEOM::GEOM_Gen_ptr HEXABLOCKGUI::InitGEOMGen( SalomeApp_Application* app,
 
 void HEXABLOCKGUI::initialize( CAM_Application* app )
 {
-  DEBTRACE("HEXABLOCKGUI::initialize");
+  DEBTRACE("HEXABLOCKGUI::initialize");  
   SalomeApp_Module::initialize( app );
 
   _hexaEngine = InitHEXABLOCKGen( dynamic_cast<SalomeApp_Application*>( app ) );
@@ -286,20 +286,27 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
 void HEXABLOCKGUI::viewManagers( QStringList& list ) const
 {
   DEBTRACE("HEXABLOCKGUI::viewManagers");
+  MESSAGE("HEXABLOCKGUI::viewManagers");
+//   foreach (const QString &str, list)
+//     MESSAGE("HEXABLOCKGUI::viewManagers"<<str.toStdString() );
 //   list.append( QxScene_Viewer::Type() );
-  list.append( SVTK_Viewer::Type() );
-  list.append( OCCViewer_Viewer::Type() );
+//   list.append( OCCViewer_Viewer::Type() );
+//   list.append( SVTK_Viewer::Type() );  
 }
-
 
 bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 {
-  DEBTRACE("HEXABLOCKGUI::activateModule");
+  DEBTRACE("HEXABLOCKGUI::activateModule");  
   bool bOk = SalomeApp_Module::activateModule( theStudy );
   if ( !bOk ) return false;
 
-  setMenuShown( true );
-  setToolShown( true );
+//   setMenuShown( true );
+//   setToolShown( true );    
+  if ( _currentModel == 0 )
+    initialMenus();
+  else
+    showAllMenus();
+  
 
 //   showDockWidgets(false);
   showDockWidgets(true);
@@ -379,7 +386,7 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 
 bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 {
-  DEBTRACE("HEXABLOCKGUI::deactivateModule");
+  DEBTRACE("HEXABLOCKGUI::deactivateModule");  
 
   setMenuShown( false );
   setToolShown( false );
@@ -416,28 +423,30 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
   myVTKSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
 
-
+  
   return SalomeApp_Module::deactivateModule( theStudy );
 }
 
 
-bool HEXABLOCKGUI::renameAllowed( const QString& entry) const {
-
+bool HEXABLOCKGUI::renameAllowed( const QString& entry) const 
+{
+//   MESSAGE("HEXABLOCKGUI::renameAllowed");
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
   SalomeApp_DataObject* obj = appStudy ? dynamic_cast<SalomeApp_DataObject*>(appStudy->findObjectByEntry(entry)) : 0;
   
+  bool res = app && appStudy && obj && !appStudy->isComponent(entry) && !obj->isReference();  
   return (app && appStudy && obj && !appStudy->isComponent(entry) && !obj->isReference());
 }
 
 
 bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
 {
-  DEBTRACE("HEXABLOCKGUI::renameObject");
-  bool appRes = SalomeApp_Module::renameObject(entry,name);
-  if( !appRes )
-    return false;
-
+  MESSAGE("HEXABLOCKGUI::renameObject");
+//   bool appRes = SalomeApp_Module::renameObject(entry,name);
+//   MESSAGE("appRes"<<appRes);
+//   if( !appRes )
+//     return false;
   bool result = false;
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
@@ -463,6 +472,7 @@ bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
         aName->SetValue( name.toLatin1().data() ); // rename the SObject
 //         aDoc->setName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
         _currentModel->setName( name/*.toLatin1().data()*/ );
+// 	_currentGraphicView->setWindowTitle( _currentModel->getName() );
         result = true;
     }
   }
@@ -595,9 +605,9 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
   DEBTRACE("HEXABLOCKGUI::onViewManagerAdded");
 }
 
-void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* )
+void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
 {
-  DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");
+  DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");  
 }
 
 void HEXABLOCKGUI::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected  )
@@ -780,10 +790,12 @@ void HEXABLOCKGUI::createAndFillDockWidget()
   
   QFrame*      patternFrame  = new QFrame(_dwPattern);
   QVBoxLayout* patternLayout = new QVBoxLayout(patternFrame);
+  QSplitter *splitter = new QSplitter(Qt::Vertical,0);
   _patternDataTreeView    = new QTreeView(patternFrame);//_dwPattern);
   _patternBuilderTreeView = new QTreeView(patternFrame);
-  patternLayout->addWidget(_patternDataTreeView );
-  patternLayout->addWidget(_patternBuilderTreeView );
+  splitter->addWidget(_patternDataTreeView);
+  splitter->addWidget(_patternBuilderTreeView);
+  patternLayout->addWidget(splitter);
 //   _patternDataTreeView->setMinimumHeight(DW_MINIMUM_WIDTH); 
 
   _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers/*QAbstractItemView::DoubleClicked*/);
@@ -1236,7 +1248,7 @@ void HEXABLOCKGUI::createMenus()
   createMenu( _removeGroup, aMenuId ); //CS_TODO
 
   // Law
-  aMenuId = createMenu( tr("Mesh"), -1, -1, 30 );
+  aMenuId = createMenu( tr("Mesh "), -1, -1, 30 );
   createMenu( _addLaw,    aMenuId );
   createMenu( _removeLaw, aMenuId );
   createMenu( _setPropagation, aMenuId );
@@ -1475,8 +1487,10 @@ void HEXABLOCKGUI::switchModel(SUIT_ViewWindow *view)
 
     // associate models and views
     _currentGraphicView = _documentView[view];
-    _currentGraphicView->setModel(_patternDataModel);
+//     _currentGraphicView->setModel(_patternDataModel);
 //     connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
+    _currentGraphicView->setModel(_currentModel);
+
     _patternDataTreeView->setModel(_patternDataModel); //_currentModel
     _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel
 //     _associationTreeView->setModel(_associationsModel);;
@@ -1574,24 +1588,33 @@ void HEXABLOCKGUI::showDockWidgets(bool isVisible)
 // }
 
 
+
+
 DocumentGraphicView* HEXABLOCKGUI::newGraphicView()
 {
+  MESSAGE("HEXABLOCKGUI::newGraphicView");
   DocumentGraphicView *newGView = 0;
-
-  SUIT_ViewWindow *suitVW = NULL;
-  if ( !_suitVM ){
-    _suitVM = getApp()->getViewManager(SVTK_Viewer::Type(), true);
-    suitVW = _suitVM->getActiveView();
-  } else {
-    suitVW = _suitVM->createViewWindow();
-  }
-  if ( suitVW )
+  SUIT_ViewWindow *suitVW = NULL;    
+  
+  SUIT_ViewManager *suitVM = getApp()->getViewManager(SVTK_Viewer::Type(), true);
+  MESSAGE("suitVM->getViewsCount() => " << suitVM->getViewsCount() );
+  suitVW = suitVM->getActiveView();
+  if ( _documentView.count(suitVW) > 0)
+    suitVW = suitVM->createViewWindow();
+  
+  if ( suitVW ){
     newGView = new DocumentGraphicView(getApp(), suitVW, application()->desktop());
-
-  _documentView[suitVW] = newGView;
+    _documentView[suitVW] = newGView;
+  }
 
   return newGView;
 }
+
+
+
+
+
+
 
 
 void HEXABLOCKGUI::testDocument()
@@ -1924,8 +1947,9 @@ void HEXABLOCKGUI::newDocument()
   suitVW = _currentGraphicView->get_SUIT_ViewWindow();
 
   // --- setting model
-  _currentGraphicView->setModel(_patternDataModel);
-  connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
+  _currentGraphicView->setModel(_currentModel);
+//   _currentGraphicView->setModel(_patternDataModel);
+//   connect( _currentModel, SIGNAL(patternDataChanged() ), _currentGraphicView,  SLOT ( onPatternDatachanged() ) );
   _patternDataTreeView->setModel(_patternDataModel);//_currentModel;
 //   _patternDataTreeView->setModel(_currentModel);//;
   _patternBuilderTreeView->setModel(_patternBuilderModel);//_currentModel;
@@ -1982,6 +2006,9 @@ void HEXABLOCKGUI::newDocument()
   _salomeViewWindows[docEntry] = suitVW;
   currentVtkView = dynamic_cast<SVTK_ViewWindow*>( _currentGraphicView->get_SUIT_ViewWindow() );
   currentVtkView->raise();
+  
+//   _currentGraphicView->setWindowTitle( _currentModel->getName() );
+//   currentVtkView->setWindowTitle( _currentModel->getName() );
 //   showDockWidgets(true);
 //   showPatternMenus
 //   _dwPattern->setVisible(true);
@@ -2324,6 +2351,7 @@ void HEXABLOCKGUI::assocVertex()
   _vertexAssocDiag->setPatternDataSelectionModel(_patternDataSelectionModel);
   _dwInputPanel->setWidget(_vertexAssocDiag);
   _dwInputPanel->setWindowTitle(_vertexAssocDiag->windowTitle());
+  //_vertexAssocDiag->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _vertexAssocDiag->show();
 }
  
@@ -2362,11 +2390,11 @@ void HEXABLOCKGUI::removeGroup()
   QItemSelectionModel *groupsSelectionModel = _groupsTreeView->selectionModel();
 
   QModelIndexList l = groupsSelectionModel->selectedIndexes();
-  foreach( const QModelIndex& selected, l ){
+  foreach( QModelIndex selected, l ){
     if ( selected.data(HEXA_TREE_ROLE) == GROUP_TREE ){
-      QModelIndex selected = _groupsModel->mapToSource( selected );
+      selected = _groupsModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
-      bool removed = _currentModel->removeGroup(selected);
+      bool removed = _currentModel->removeGroup( selected );
       if ( removed == true )
         removeGroupOK = true;
       else
@@ -2399,9 +2427,9 @@ void HEXABLOCKGUI::removeLaw()
 
   QModelIndexList l = _meshSelectionModel->selectedIndexes();
 
-  foreach( const QModelIndex& selected, l ){
+  foreach( QModelIndex selected, l ){
     if ( selected.data(HEXA_TREE_ROLE) == LAW_TREE ){
-      QModelIndex selected = _meshModel->mapToSource( selected );
+      selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
       bool removed = _currentModel->removeLaw(selected);
       if ( removed == true )
@@ -2457,6 +2485,7 @@ void HEXABLOCKGUI::computeMesh()
   if ( !_computeMeshDiag ){
     _computeMeshDiag = new ComputeMeshDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
   }
+  _computeMeshDiag->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _showDialogBox( _computeMeshDiag );
 }
 

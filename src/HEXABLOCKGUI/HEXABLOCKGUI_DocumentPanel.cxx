@@ -3153,6 +3153,7 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, Mode editmode, Qt::WindowFl
   rb0->setFocusProxy( v_le_rb0 );
   rb1->setFocusProxy( e_le_rb1 );
   rb2->setFocusProxy( q_le_rb2 );
+  rb3->setFocusProxy( d_edges_lw);
   rb0->click();
 //   setFocusProxy( rb0 );
 
@@ -3161,6 +3162,7 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, Mode editmode, Qt::WindowFl
   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( rb3, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 
@@ -3199,6 +3201,23 @@ void DisconnectDialog::_initInputWidget( Mode editmode )
   h_le_rb2->setValidator( validator );
   q_le_rb2->installEventFilter(this);
   h_le_rb2->installEventFilter(this);
+
+  //edges
+  d_edges_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+  hexas_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+  d_edges_lw->installEventFilter(this);
+  hexas_lw->installEventFilter(this);
+  
+  QShortcut* delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), d_edges_lw);
+  QShortcut* delHexaShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), hexas_lw);
+  delEdgeShortcut->setContext( Qt::WidgetShortcut );
+  delHexaShortcut->setContext( Qt::WidgetShortcut );
+  
+  connect( d_edges_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()) );
+  connect( hexas_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()) );
+  connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
+  connect( delHexaShortcut, SIGNAL(activated()), this, SLOT(deleteHexaItem()) );
+
 }
 
 
@@ -3210,6 +3229,18 @@ void DisconnectDialog::clear()
   h_le_rb0->clear();
   h_le_rb1->clear();
   h_le_rb2->clear();
+  d_edges_lw->clear();
+  hexas_lw->clear();
+}
+
+void DisconnectDialog::deleteEdgeItem()
+{
+  delete d_edges_lw->currentItem();
+}
+
+void DisconnectDialog::deleteHexaItem()
+{
+  delete hexas_lw->currentItem();
 }
 
 
@@ -3221,6 +3252,8 @@ void DisconnectDialog::updateHelpFileName()
     _helpFileName = "gui_disc_elmts.html#disconnect-an-edge";
   } else if ( sender() == rb2 ){
     _helpFileName = "gui_disc_elmts.html#disconnect-a-quadrangle";
+  } else if (sender() == rb3 ){
+    _helpFileName = "gui_disc_elmts.html#disconnect-edges";
   }
 }
 
@@ -3264,6 +3297,29 @@ bool DisconnectDialog::apply(QModelIndex& result)
       && iquad.isValid() ){
       iElts = _documentModel->disconnectQuad( ihexa, iquad );
     }
+  } else if ( rb3->isChecked() ){ //
+        
+        QModelIndex iedge, ihexa;
+	QModelIndexList iedges, ihexas;
+	QListWidgetItem* item = NULL;
+
+	//Liste des edges
+	for (int r = 0; r < d_edges_lw->count(); ++r){
+	   item = d_edges_lw->item(r);
+ 	   iedge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+       	   if ( iedge.isValid() )
+		iedges << iedge;
+	}
+	
+	//Liste des hexas
+	for (int r = 0; r < hexas_lw->count(); ++r){
+	   item = hexas_lw->item(r);
+	   ihexa = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+   	   if ( ihexa.isValid() )
+		ihexas << ihexa;
+	}
+
+      	iElts = _documentModel->disconnectEdges( ihexas, iedges );
   }
 
   if ( !iElts.isValid() ){

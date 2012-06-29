@@ -94,9 +94,9 @@ namespace HEXABLOCK
             public:
             DocumentGraphicView( LightApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent = 0 );
             virtual ~DocumentGraphicView();
-
-
-
+	    
+	    
+	    void setModel ( QAbstractItemModel * model );
 
 
             SUIT_ViewWindow* get_SUIT_ViewWindow();
@@ -116,6 +116,7 @@ namespace HEXABLOCK
 //         virtual bool canBeDisplayed( const QString& /*entry*/, const QString& /*viewer_type*/ ) const;
 
         public slots:
+	  void setWindowTitle(const QString& title);
           void onPatternDatachanged();
 
         protected slots:

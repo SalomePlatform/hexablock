@@ -638,6 +638,8 @@ namespace HEXABLOCK
 
       protected slots:
         void updateHelpFileName();
+	void deleteEdgeItem();
+	void deleteHexaItem();
    };
 
 

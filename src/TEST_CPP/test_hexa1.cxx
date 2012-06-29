@@ -24,8 +24,6 @@
 
 #include "test_unit.hxx"
 
-#include "test_unit.hxx"
-
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
