@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>362</width>
-    <height>711</height>
+    <width>282</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,7 @@
   <property name="windowTitle">
    <string>Disconnect Operation</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
-   <property name="spacing">
-    <number>-1</number>
-   </property>
-   <property name="sizeConstraint">
-    <enum>QLayout::SetDefaultConstraint</enum>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="enabled">
@@ -120,12 +114,6 @@
       <string>Arguments</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>-1</number>
-      </property>
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
       <item>
        <widget class="QWidget" name="widget" native="true">
         <property name="sizePolicy">
@@ -150,7 +138,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>v</string>
+            <string>vertex</string>
            </property>
           </widget>
          </item>
@@ -226,7 +214,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>e</string>
+            <string>edge</string>
            </property>
           </widget>
          </item>
@@ -302,7 +290,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_7">
            <property name="text">
-            <string>q</string>
+            <string>quad</string>
            </property>
           </widget>
          </item>
@@ -368,10 +356,7 @@
           <height>344</height>
          </size>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <widget class="QGroupBox" name="groupBox_3">
            <property name="sizePolicy">
@@ -383,7 +368,13 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>160</height>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>131</height>
             </size>
            </property>
            <property name="title">
@@ -397,6 +388,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -414,13 +411,19 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>160</height>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>131</height>
             </size>
            </property>
            <property name="title">
             <string>From Hexa(s)</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
              <widget class="QListWidget" name="hexas_lw">
               <property name="sizePolicy">
@@ -428,6 +431,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
               </property>
              </widget>
             </item>

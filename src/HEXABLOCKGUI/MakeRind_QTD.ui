@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>263</width>
+    <width>324</width>
     <height>423</height>
    </rect>
   </property>
@@ -93,7 +93,14 @@
        </widget>
       </item>
       <item row="4" column="2">
-       <widget class="QDoubleSpinBox" name="radext_spb"/>
+       <widget class="QDoubleSpinBox" name="radext_spb">
+        <property name="decimals">
+         <number>6</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000.000000000000000</double>
+        </property>
+       </widget>
       </item>
       <item row="5" column="0" colspan="2">
        <widget class="QLabel" name="label_5">
@@ -103,7 +110,14 @@
        </widget>
       </item>
       <item row="5" column="2">
-       <widget class="QDoubleSpinBox" name="radint_spb"/>
+       <widget class="QDoubleSpinBox" name="radint_spb">
+        <property name="decimals">
+         <number>6</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000.000000000000000</double>
+        </property>
+       </widget>
       </item>
       <item row="6" column="0" colspan="2">
        <widget class="QLabel" name="label_6">
@@ -113,7 +127,14 @@
        </widget>
       </item>
       <item row="6" column="2">
-       <widget class="QDoubleSpinBox" name="radhole_spb"/>
+       <widget class="QDoubleSpinBox" name="radhole_spb">
+        <property name="decimals">
+         <number>6</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000.000000000000000</double>
+        </property>
+       </widget>
       </item>
       <item row="7" column="0" colspan="2">
        <widget class="QLabel" name="label_7">
@@ -143,7 +164,11 @@
        </widget>
       </item>
       <item row="8" column="2">
-       <widget class="QSpinBox" name="nrad_spb"/>
+       <widget class="QSpinBox" name="nrad_spb">
+        <property name="maximum">
+         <number>1000000</number>
+        </property>
+       </widget>
       </item>
       <item row="9" column="0" colspan="2">
        <widget class="QLabel" name="label_9">
@@ -153,7 +178,11 @@
        </widget>
       </item>
       <item row="9" column="2">
-       <widget class="QSpinBox" name="nang_spb"/>
+       <widget class="QSpinBox" name="nang_spb">
+        <property name="maximum">
+         <number>1000000</number>
+        </property>
+       </widget>
       </item>
       <item row="10" column="0" colspan="2">
        <widget class="QLabel" name="label_10">
@@ -163,7 +192,11 @@
        </widget>
       </item>
       <item row="10" column="2">
-       <widget class="QSpinBox" name="nhaut_spb"/>
+       <widget class="QSpinBox" name="nhaut_spb">
+        <property name="maximum">
+         <number>1000000</number>
+        </property>
+       </widget>
       </item>
       <item row="11" column="0">
        <widget class="QLabel" name="angle_label">
@@ -179,6 +212,12 @@
        <widget class="QDoubleSpinBox" name="angle_spb">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="decimals">
+         <number>6</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000.000000000000000</double>
         </property>
        </widget>
       </item>

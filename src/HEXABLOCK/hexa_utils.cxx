@@ -161,4 +161,22 @@ void fatal_error (cpchar format, cpchar info1, cpchar info2)
 #endif
    printf ("\n");
 }
+static int current_option = NOTHING;
+// ====================================================== special_option
+bool special_option ()
+{
+   if (current_option == NOTHING)
+      {
+      cpchar rep = getenv ("HEXA_OPTION");
+      if (rep!=NULL)
+          current_option = atoi (rep);
+      current_option = std::max (current_option, 0); 
+      }
+   return current_option > 0;
+}
+// ====================================================== set_special_option
+void set_special_option (bool opt)
+{
+   current_option = opt ? 1 : 0;
+}
 END_NAMESPACE_HEXA

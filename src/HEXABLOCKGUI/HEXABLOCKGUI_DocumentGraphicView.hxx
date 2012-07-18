@@ -83,6 +83,21 @@ namespace HEXABLOCK
             HEXA_NS::Document* _doc;
         };
 
+                                                     // Abu
+        class Associate_Actor : public SALOME_Actor
+        {
+          public:
+            Associate_Actor(HEXA_NS::Document* doc, const QString& entry);
+            virtual ~Associate_Actor() {}
+
+            std::map<int,vtkIdType>   vtkElemsId;
+            std::map<vtkIdType, int>  hexaElemsId;
+
+            vtkUnstructuredGrid* getUnstructuredGrid();
+          private:
+            HEXA_NS::Document* _doc;
+        };
+
 
         /********************************************************************************
          *                          DocumentGraphicView
@@ -145,6 +160,7 @@ namespace HEXABLOCK
         private:
             SUIT_ViewWindow *_suitView;
             Document_Actor  *_documentActor;
+            Associate_Actor *_associateActor;
             bool _currentChanged;
         };
     }

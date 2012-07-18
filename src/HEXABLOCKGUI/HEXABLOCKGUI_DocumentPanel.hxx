@@ -88,7 +88,7 @@
 
 
 
-Q_DECLARE_METATYPE(QModelIndex); 
+Q_DECLARE_METATYPE(QModelIndex);
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
 Q_DECLARE_METATYPE(GEOM::GeomObjPtr);
 
@@ -98,7 +98,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog, 
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog,
                                                              public MyGEOMBase_Helper
     {
         Q_OBJECT
@@ -121,7 +121,7 @@ namespace HEXABLOCK
             LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
             LW_ASSOC_ROLE,
             LW_GEOM_OBJ_ROLE
-          }; 
+          };
 
           HexaBaseDialog( QWidget * parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = 0 );
           virtual ~HexaBaseDialog();
@@ -284,7 +284,7 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply(QModelIndex& result);
-        void updateName();
+//         void updateName();
 
       protected:
         void _initInputWidget( Mode editmode );
@@ -346,7 +346,7 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply(QModelIndex& result);
-        void updateName();
+//         void updateName();
 
       protected:
         void _initInputWidget( Mode editmode );
@@ -374,7 +374,7 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply(QModelIndex& result);
-        void updateName();
+//         void updateName();
 
       protected:
         void _initInputWidget( Mode editmode );
@@ -402,7 +402,7 @@ namespace HEXABLOCK
 
       public slots:
         virtual bool apply(QModelIndex& result);
-        void updateName();
+//         void updateName();
 
       protected:
         void _initInputWidget( Mode editmode );
@@ -488,7 +488,7 @@ namespace HEXABLOCK
 
 
   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindersDialog : public HexaBaseDialog,
-                                                                public Ui::MakeCylindersDialog 
+                                                                public Ui::MakeCylindersDialog
   {
       Q_OBJECT
 
@@ -790,12 +790,14 @@ namespace HEXABLOCK
         void addLine();
         void pstartChanged( double val );
         void pendChanged( double val );
+	void SetEditCurrentArgument();
 
       private:
         // Preview in GEOM
 //         GEOM::GeomObjPtr    _firstLine;
 //         GEOM::GeomObjPtr    _lastLine;
         GEOM::GeomObjPtr    _currentLine;
+	GEOM::GeomObjPtr    myLine;
         double              _currentParameter;
         GEOM::GEOM_Gen_var  _geomEngine ;
 
@@ -914,6 +916,7 @@ namespace HEXABLOCK
 
       protected slots:
         void updateHelpFileName();
+        void deletePropagationItem();
 
       private:
         HEXA_NS::Propagation *_value;
@@ -1034,17 +1037,17 @@ namespace HEXABLOCK
 //                                                     public Ui::MakeRindDialog
 //   {
 //       Q_OBJECT
-// 
+//
 //       public:
 //         MakeRindDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
 //         virtual ~MakeRindDialog();
-// 
+//
 //       public slots:
 //         virtual bool apply(QModelIndex& result);
-//   
+//
 //       private:
 // //         HEXA_NS::Propagation *_value;:q
-// 
+//
 //   };
 
 

@@ -19,7 +19,7 @@
 using namespace std;
 
 
-
+static bool db = false;
 
 
 
@@ -74,6 +74,9 @@ using namespace std;
 
 #include "HexDocument_impl.hxx"
 #include <string>
+
+// #include "SALOMEDS_Tool.hxx"
+// #include "SALOMEDSImpl_TMPFile.hxx"
 
 using namespace HEXABLOCK_ORB;
 
@@ -434,17 +437,21 @@ GEOM::GEOM_Object_ptr HEXABLOCK_Gen_i::brepToGeomObject(const std::string& theBr
   }
   GEOM::GEOM_IInsertOperations_var aInsOp = _geomGen->GetIInsertOperations(theStudyID);
 
-  char *tmpname = strdup("HexaAssocXXXXXX");
-  int fd = mkstemp( tmpname );
+  // char *tmpname = strdup("HexaAssocXXXXXX");   // killed by Abu 
+  char tmpname [32];                              // Abu 11/07
+  sprintf (tmpname, "/tmp/tmpHexaAsso%dXXXXXX", getpid()); // Abu 11/07
+  // strcpy (tmpname, "HexaAssocXXXXXX");   // killed by Abu 
 
-  if ( fd != -1 ){
-    ofstream tmpfile( tmpname );
-    tmpfile << theBrep;
-    tmpfile.close();
-    aShapeObj = aInsOp->ImportFile( tmpname, "BREP" );
-    close(fd);
-    unlink(tmpname);
-  }
+  int fd = mkstemp( tmpname );
+  if ( fd != -1 )
+     {
+     ofstream tmpfile( tmpname );
+     tmpfile << theBrep;
+     tmpfile.close();
+     aShapeObj = aInsOp->ImportFile( tmpname, "BREP" );
+     close(fd);
+     unlink(tmpname);
+     }
 
   return aShapeObj._retn();
 }
@@ -541,7 +548,7 @@ Document_ptr HEXABLOCK_Gen_i::createDoc (const char* name)
 
     // activate the CORBA servant of Mesh
     Document_var docServant = Document::_narrow( docImpl->_this() );
-    int nextId = RegisterObject( docServant );
+    /* int nextId = */    RegisterObject( docServant );
 //     if(MYDEBUG) MESSAGE( "Add mesh to map with id = "<< nextId);
     return docServant._retn();
   }
@@ -604,7 +611,7 @@ int HEXABLOCK_Gen_i::GetCurrentStudyID()
 
 void HEXABLOCK_Gen_i::SetCurrentStudy( SALOMEDS::Study_ptr theStudy )
 {
-  int curStudyId = GetCurrentStudyID();
+  /*int curStudyId = */     GetCurrentStudyID();
   myCurrentStudy = SALOMEDS::Study::_duplicate( theStudy );
   // create study context, if it doesn't exist and set current study
   int studyId = GetCurrentStudyID();
@@ -668,9 +675,7 @@ TopoDS_Shape string2shape( const string& brep )
 //   return(shape);
 // }
 
-
-
-
+// ===================================================== shape2string
 string shape2string( const TopoDS_Shape& aShape )
 {
   ostringstream streamShape;
@@ -680,8 +685,7 @@ string shape2string( const TopoDS_Shape& aShape )
 
   return streamShape.str();
 }
-
-
+// ===================================================== HEXABLOCKEngine_factory
 extern "C"
 {
   PortableServer::ObjectId * HEXABLOCKEngine_factory(
@@ -697,45 +701,133 @@ extern "C"
       = new HEXABLOCK_Gen_i(orb, poa, contId, instanceName, interfaceName);
     return myHEXABLOCK->getId() ;
   }
-
 }
+// ------------------------------------------------------------------------
+// 
+//                 Heritage de  SALOMEDSImpl_Driver
+//
+// ------------------------------------------------------------------------
+//
+/* ***********************************************************************
+// ========================================================= GetIOR
+std::string HEXABLOCK_Gen_i::GetIOR()
+{
+   return "";
+}
+   *********************************************************************** */
+// =========================================================== SaveASCII
+SALOMEDS::TMPFile* HEXABLOCK_Gen_i::SaveASCII (
+                                          const SALOMEDS::SComponent_ptr compo,
+                                          const char* theURL,
+                                          bool isMultiFile)
+{
+   SALOMEDS::TMPFile* fic =  Save (compo, theURL, isMultiFile);
+   return fic;
+}
+// =========================================================== LoadASCII
+CORBA::Boolean HEXABLOCK_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr compo,
+                           const SALOMEDS::TMPFile& theStream,
+                           const char* theURL,
+                           bool isMultiFile)
+{
+   bool rep = Load (compo, theStream, theURL, isMultiFile);
+   return rep;
+}
+// =========================================================== Close
+void HEXABLOCK_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "Close" << endl;
+}
+// =================================================== IORToLocalPersistentID
+char* HEXABLOCK_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
+                               const char* IORString,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "IORToLocalPersistentID" << endl;
+   static char empty [8] = "";
+   return empty;
+}
+// =================================================== LocalPersistentIDToIOR
+char* HEXABLOCK_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
+                               const char* aLocalPersistentID,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "LocalPersistentIDToIOR" << endl;
+   static char empty [8] = "";
+   return empty;
+}
+//   
+// =========================================================== CanCopy
+CORBA::Boolean HEXABLOCK_Gen_i::CanCopy (SALOMEDS::SObject_ptr theObject)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "CanCopy" << endl;
+   return false;
+}
+// =========================================================== CopyFrom
+SALOMEDS::TMPFile* HEXABLOCK_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, 
+                                             CORBA::Long& theObjectID)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "CopyFrom" << endl;
+   return NULL;
+}
+// =========================================================== CanPaste
+CORBA::Boolean HEXABLOCK_Gen_i:: CanPaste (const char* theComponentName, 
+                                           CORBA::Long theObjectID)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "CanPaste" << endl;
+   return false;
+}
+// =========================================================== PasteInto
+SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PasteInto(const SALOMEDS::TMPFile& fic,
+                                  CORBA::Long theObjectID,
+                                  SALOMEDS::SObject_ptr theObject)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "PasteInto" << endl;
+   return NULL;
+}
+// ======================================================== CanPublishInStudy
+// bool HEXABLOCK_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
+// {
+   // return NULL;
+// }
+// =========================================================== CanPaste
+SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PublishInStudy (SALOMEDS::Study_ptr stud,
+                                       SALOMEDS::SObject_ptr theSObject,
+                                       CORBA::Object_ptr theObject,
+                                       const char* theName) 
+        throw (SALOME::SALOME_Exception) 
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "PublishInStudy" << endl;
+   return NULL;
+}
+// =========================================================== Save
+SALOMEDS::TMPFile* HEXABLOCK_Gen_i::Save( 
+                                     const SALOMEDS::SComponent_ptr compo,
+                                     const char* theURL,
+                                     bool isMultiFile)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "Save" << endl;
+   return NULL;
+}
+// =========================================================== Load
+CORBA::Boolean HEXABLOCK_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
+                      const SALOMEDS::TMPFile& theStream,
+                      const char* theURL,
+                      bool isMultiFile)
+{
+   if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
+        << "Load" << endl;
 
-// //================= Primitives Construction : BasicOperations =================
-// //=============================================================================
-// //  makeBanner: renvoie un message
-// //=============================================================================
-// 
-// 
-// #include "Vertex_impl.hxx"
-// #include "Edge_impl.hh"
-// char* HEXABLOCK_Gen_i::makeBanner(const char* name)
-// {
-//     string banner="Pourquoi?, ";
-//     banner+=name;
-//     return CORBA::string_dup(banner.c_str());
-// }
-// 
-// //=============================================================================
-// //  makeVertex: construit un sommet
-// //=============================================================================
-// 
-// HEXABLOCK_ORB::Vertex_ptr HEXABLOCK_Gen_i::makeVertex(CORBA::Double x, CORBA::Double y, CORBA::Double z)
-// {
-//   Vertex *vert=_engine_cpp->makeVertex(x,y,z);
-//   Vertex_impl *servantCorba=new Vertex_impl(vert);
-//   return servantCorba->_this();
-// }
-// 
-// //=============================================================================
-// //  makeEdge: construit une arrête
-// //=============================================================================
-// 
-// HEXABLOCK_ORB::Edge_ptr HEXABLOCK_Gen_i::makeEdge(HEXABLOCK_ORB::Vertex_ptr va, HEXABLOCK_ORB::Vertex_ptr vb)
-// {
-//   Edge *edg=_engine_cpp->makeEdge(va,vb);
-//   Edge_impl *servantCorba=new Edge_impl(edg);
-//   return servantCorba->_this();
-// }
-// //=============================================================================
-// // 
-// //=============================================================================
+   return false;
+}

@@ -34,6 +34,7 @@
 #include "HexVertex.hxx"
 #include "HexShape.hxx"
 
+#include <qglobal.h>
 //#define _DEVDEBUG_
 
 
@@ -1091,7 +1092,7 @@ QModelIndex DocumentModel::addHexaQuads( const QModelIndexList &iquads)
       hh = _hexaDocument->addHexa( hq0, hq1, hq2, hq3, hq4, hq5 );
   }
 
-  if ( hh->isValid() ){
+  if ( hh && hh->isValid() ){
     HexaItem* h = new HexaItem(hh);
     h->setData( _entry, HEXA_DOC_ENTRY_ROLE );
     _hexaDirItem->appendRow(h);
@@ -2626,7 +2627,8 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
 bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
                                          const  QModelIndexList& iedges,
                                          const  GeomObjList&     assocs,
-                                         double pstart )
+                                         double pstart,
+					 bool   inv )
 {
     MESSAGE("DocumentModel::associateClosedLine() ");
     bool ret = false;
@@ -2675,7 +2677,7 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
     MESSAGE("*    pstart" << pstart );
 
     int r = _hexaDocument->associateClosedLine( mfirst, mstart, mline,
-                                                gstart, pstart, false, gline );
+                                                gstart, pstart, inv, gline );
     if ( r == HOK ){
         updateData();
         //std::cout << "DocumentModel:: associateClosedLine => OK " << std::endl;
@@ -2721,6 +2723,7 @@ bool DocumentModel::removeGroup( const QModelIndex& igrp )
   } else if ( r == HERR ){
     ret = false;
   }
+  return ret;
 }
 
 QModelIndexList DocumentModel::getGroupElements( const QModelIndex& iGroup, DocumentModel::Group& kind ) const

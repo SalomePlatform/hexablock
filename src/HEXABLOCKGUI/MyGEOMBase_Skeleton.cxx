@@ -39,14 +39,14 @@
 
 //=================================================================================
 // class    : MyGEOMBase_Skeleton()
-// purpose  : Constructs a MyGEOMBase_Skeleton which is a child of 'parent', with the 
+// purpose  : Constructs a MyGEOMBase_Skeleton which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            true to construct a modal dialog.
 //=================================================================================
 MyGEOMBase_Skeleton::MyGEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
                                       bool modal, Qt::WindowFlags fl )
-  : QDialog( parent, fl ), 
+  : QDialog( parent, fl ),
     MyGEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
     myRBGroup( 0 )
@@ -70,7 +70,7 @@ MyGEOMBase_Skeleton::MyGEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* 
   myMainFrame->CheckBoxPreview->setText( tr("GEOM_PREVIEW") );
 
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
-  buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
+  //buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
   buttonApply()->setText( tr( "GEOM_BUT_APPLY" ) );
   buttonHelp()->setText( tr( "GEOM_BUT_HELP" ) );
 
@@ -132,16 +132,16 @@ void MyGEOMBase_Skeleton::Init()
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   bool aPrv = (resMgr == 0) ? false : resMgr->booleanValue( "Geometry", "geom_preview", false );
-  
+
   myMainFrame->CheckBoxPreview->setChecked( aPrv );
   myMainFrame->GroupBoxPublish->hide();
 }
 
 //=================================================================================
 // function : initSpinBox()
-// purpose  : 
+// purpose  :
 //=================================================================================
-void MyGEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
+void MyGEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
                                      int min,  int max, int step )
 {
   spinBox->setRange( min, max );
@@ -150,25 +150,25 @@ void MyGEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 
 //=================================================================================
 // function : initSpinBox()
-// purpose  : 
+// purpose  :
 //=================================================================================
-void MyGEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
-                                     double min,  double max, 
+void MyGEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
+                                     double min,  double max,
                                      double step, const char* quantity )
 {
   // Obtain precision from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
-  
+
   spinBox->setPrecision( aPrecision );
   spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
-  
+
   // Add a hint for the user saying how to tune precision
   QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
-  spinBox->setProperty( "validity_tune_hint", 
+  spinBox->setProperty( "validity_tune_hint",
                         QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
@@ -341,7 +341,7 @@ void MyGEOMBase_Skeleton::unsetConstructorId()
 void MyGEOMBase_Skeleton::ClickOnHelp()
 {
   LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
-  if ( app ) 
+  if ( app )
     app->onHelpContextModule( myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString(""), myHelpFileName );
   else {
     QString platform;
@@ -381,10 +381,10 @@ QPushButton* MyGEOMBase_Skeleton::buttonCancel() const
   return myMainFrame->buttonCancel;
 }
 
-QPushButton* MyGEOMBase_Skeleton::buttonOk() const
+/*QPushButton* MyGEOMBase_Skeleton::buttonOk() const
 {
   return myMainFrame->buttonOk;
-}
+}*/
 
 QPushButton* MyGEOMBase_Skeleton::buttonApply() const
 {
@@ -412,10 +412,11 @@ void MyGEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
   }
 }
 
+
 //=================================================================================
 // function : showOnlyPreviewControl()
 // purpose  : display only CheckBoxPreview check box,
-//            hide CheckBoxRestoreSS and CheckBoxAddPrefix 
+//            hide CheckBoxRestoreSS and CheckBoxAddPrefix
 //=================================================================================
 void MyGEOMBase_Skeleton::showOnlyPreviewControl(){
   mainFrame()->GroupBoxPublish->show();

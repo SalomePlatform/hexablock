@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>437</height>
+    <width>309</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,12 +16,30 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>260</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Edge(s) Association</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>5</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -30,13 +48,60 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>300</width>
-        <height>520</height>
+        <width>287</width>
+        <height>767</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>52</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>52</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Mode</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="single_rb">
+            <property name="text">
+             <string>Single</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="multiple_rb">
+            <property name="text">
+             <string>Multiple</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_2">
+         <property name="minimumSize">
+          <size>
+           <width>5</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="title">
           <string>Arguments</string>
          </property>
@@ -45,6 +110,12 @@
            <widget class="QGroupBox" name="vertex_gb">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="title">
              <string>Vertex</string>
@@ -81,7 +152,37 @@
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="single_edge_gb">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>58</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>58</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Edge of model</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLineEdit" name="single_edge_le"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QGroupBox" name="edge_gb">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="title">
              <string>Edges of model</string>
             </property>
@@ -94,22 +195,87 @@
           </item>
           <item>
            <widget class="QGroupBox" name="line_gb">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="title">
              <string>Line of the geometry</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="0" rowspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="pb_line_select">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>21</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="autoDefault">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="single_line_le">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <widget class="QListWidget" name="lines_lw"/>
              </item>
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="close_cb">
-               <property name="text">
-                <string>Closed line</string>
-               </property>
-              </widget>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QCheckBox" name="close_cb">
+                 <property name="text">
+                  <string>Closed line</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="inverse_cb">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Inversion</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
-             <item row="3" column="0">
+             <item>
               <widget class="QGroupBox" name="groupBox">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>86</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="title">
                 <string>Parameters</string>
                </property>
@@ -123,6 +289,9 @@
                 </item>
                 <item row="0" column="1">
                  <widget class="QDoubleSpinBox" name="pstart_spb">
+                  <property name="decimals">
+                   <number>6</number>
+                  </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
                   </property>
@@ -140,11 +309,17 @@
                 </item>
                 <item row="1" column="1">
                  <widget class="QDoubleSpinBox" name="pend_spb">
+                  <property name="decimals">
+                   <number>6</number>
+                  </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
                   </property>
                   <property name="singleStep">
                    <double>0.010000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -156,6 +331,19 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>5</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -210,6 +398,278 @@
     <hint type="destinationlabel">
      <x>67</x>
      <y>581</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>close_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>inverse_cb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>393</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>393</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>vertex_gb</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>single_edge_gb</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>edge_gb</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>lines_lw</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>vertex_gb</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>single_edge_gb</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>edge_gb</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>single_line_le</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>425</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>lines_lw</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>single_line_le</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>425</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>pb_line_select</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>462</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>pb_line_select</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>61</x>
+     <y>462</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>close_cb</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>627</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>close_cb</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>627</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>inverse_cb</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>212</x>
+     <y>627</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>inverse_cb</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>218</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>212</x>
+     <y>627</y>
     </hint>
    </hints>
   </connection>

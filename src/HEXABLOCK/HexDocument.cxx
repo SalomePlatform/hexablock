@@ -305,6 +305,25 @@ Hexa* Document::findHexa (Vertex* v1, Vertex* v2)
        }
    return NULL;
 }
+
+// ======================================================== findElement
+EltBase* Document::findElement (EnumElt type, int ident)
+{
+   for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       if (elt->isHere() && elt->getId()==ident)
+          return elt;
+       }
+   return NULL;
+}
+// ======================================================== findVertex
+Vertex* Document::findVertex (int ident)
+{
+   Vertex* node = static_cast <Vertex*> (findElement (EL_VERTEX, ident)); 
+   return  node;
+
+}
 // ======================================================== index_tv
 int index_tv (Vertex* table[], Vertex* elt)
 {
@@ -994,8 +1013,12 @@ void Document::setLevel (int niv)
 {
    if (niv == 747)
       clearAssociation ();
+   else if (niv == 777)
+      set_special_option (true);
+   else if (niv == 778)
+      set_special_option (false);
 #ifdef _TEST_BICYL
-   if (niv >=90 && niv <=99)
+   else if (niv >=90 && niv <=99)
       test_bicylinder (this, niv-90);
 #endif
    else
@@ -1003,5 +1026,23 @@ void Document::setLevel (int niv)
       doc_db = niv;
       set_debug_asso (niv>0);
       }
+}
+// ======================================================== getAssoVertices
+void Document::getAssoVertices (Vertices& tabelt)
+{
+   tabelt.clear ();
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+                 elt = elt->next())
+       if (elt->isHere())
+          tabelt.push_back (static_cast <Vertex*> (elt)); 
+}
+// ======================================================== getAssoEdges
+void Document::getAssoEdges (Edges& tabelt)
+{
+   tabelt.clear ();
+   for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
+                 elt = elt->next())
+       if (elt->isHere())
+          tabelt.push_back (static_cast <Edge*> (elt)); 
 }
 END_NAMESPACE_HEXA

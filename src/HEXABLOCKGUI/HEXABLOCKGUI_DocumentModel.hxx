@@ -297,7 +297,8 @@ namespace HEXABLOCK
         bool associateClosedLine( const QModelIndex& vertex, 
                                   const QModelIndexList& edges,
                                   const GeomObjList&     assocs,
-                                  double pstart );
+                                  double pstart, 
+				  bool   inv = false );
 
 
         // ************  GROUPS  ************

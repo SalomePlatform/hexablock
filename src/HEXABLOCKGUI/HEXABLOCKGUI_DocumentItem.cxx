@@ -67,7 +67,7 @@ QVariant VertexItem::data( int role ) const
     } else if (role == Qt::ForegroundRole ) {
       HEXA_NS::Shape* assoc = _hexaVertex->getAssociation();
       if ( assoc )
-	return QColor(Qt::red);
+	return QColor(Qt::darkGreen);
     } else {
       return QStandardItem::data( role );
     }
@@ -123,7 +123,7 @@ QVariant EdgeItem::data( int role ) const
     } else if (role == Qt::ForegroundRole ) {
       const HEXA_NS::Shapes& assocs = _hexaEdge->getAssociations();
       if ( assocs.size()>0 )
-	return QColor(Qt::red);
+	return QColor(Qt::darkGreen);
     } else {
       return QStandardItem::data( role );
     }
@@ -176,7 +176,7 @@ QVariant QuadItem::data( int role ) const
     } else if ( role == Qt::ForegroundRole ) {
       const HEXA_NS::Shapes& assocs = _hexaQuad->getAssociations();
       if ( assocs.size()>0 )
-	return QColor(Qt::red);
+	return QColor(Qt::darkGreen);
     } else {
       return QStandardItem::data( role );
     }

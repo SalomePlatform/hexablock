@@ -160,6 +160,7 @@ BUILT_SOURCES = $(UIC_FILES)
 
 # resources files
 ICONS =  \
+	resources/LightApp.xml \
 	resources/SalomeApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \

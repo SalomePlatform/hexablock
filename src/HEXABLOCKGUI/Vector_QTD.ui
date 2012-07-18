@@ -120,8 +120,14 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
            <property name="minimum">
-            <double>-99.000000000000000</double>
+            <double>-1000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
             <double>0.000000000000000</double>
@@ -149,8 +155,14 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
            <property name="minimum">
-            <double>-99.000000000000000</double>
+            <double>-1000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -175,8 +187,14 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
            <property name="minimum">
-            <double>-99.000000000000000</double>
+            <double>-1000000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000000.000000000000000</double>
            </property>
           </widget>
          </item>

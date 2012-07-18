@@ -119,8 +119,9 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* p
 
 //   setWindowTitle(tr("GEOM_POINT_TITLE"));
   setWindowTitle( tr("Vertex Association") );
+  setMinimumWidth(260);
 
-  
+
 
 
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_POINTS"));
@@ -315,7 +316,7 @@ void MyBasicGUI_PointDlg::Init()
     connect(myGeomGUI,      SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
     connect(myGeomGUI,      SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
   }
-  connect(buttonOk(),     SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  //connect(buttonOk(),     SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),  SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(this,           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
@@ -342,7 +343,7 @@ void MyBasicGUI_PointDlg::Init()
 
   if ( myGeomGUI ){
     connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this,  SLOT(SetDoubleSpinBoxStep(double)));
-  
+
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
             this,  SLOT(SelectionIntoArgument()));
   }
@@ -678,7 +679,7 @@ void MyBasicGUI_PointDlg::SetEditCurrentArgument()
 // purpose  : to reactivate this dialog box when mouse enter onto the window
 //=================================================================================
 void MyBasicGUI_PointDlg::enterEvent(QEvent*)
-{ 
+{
   MESSAGE( "MyBasicGUI_PointDlg::enterEvent() ");
   if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
@@ -1109,7 +1110,7 @@ void MyBasicGUI_PointDlg::_initInputWidget()
 //   mainFrame()->_vertex_le = new QLineEdit( GroupBoxName );
 //   mainFrame()->_vertex_le->setObjectName(QString::fromUtf8("mainFrame()->_vertex_le"));
 //   hboxLayout1->addWidget(mainFrame()->_vertex_le);
-// 
+//
 //   layout()->addWidget( GroupBoxName );
 
 
@@ -1142,25 +1143,25 @@ void MyBasicGUI_PointDlg::_initViewManager()
 //   MESSAGE("*  le is "<< le->objectName().toStdString() );
 //   QModelIndexList l = sel.indexes();
 //   if ( l.count() == 0 ) return false;
-// 
+//
 //   //type from selection (first)
 //   QModelIndex selected = l[0];
 //   int selType = selected.data(HEXABLOCK::GUI::HEXA_TREE_ROLE).toInt();
-// 
+//
 //   //type of widget
 //   QVariant v = le->property("HexaWidgetType");
 //   if ( !v.isValid() ) return false;
 //   HexaWidgetType wType = v.value<HexaWidgetType>();
-// 
+//
 //   // check selection compatibility between selection and widget
 //   if ( selType != wType ){
 //     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
 //     SUIT_MessageBox::information( 0,
-//       tr("HEXA_INFO"), 
+//       tr("HEXA_INFO"),
 //       tr("Bad selection type: please select a %1").arg( _strHexaWidgetType[wType]) );
 //     return false;
 //   }
-// 
+//
 //   //fill the lineEdit if selection is OK
 //   le->setText( selected.data().toString() );// name
 //   le->setProperty("QModelIndex",  QVariant::fromValue(selected) );
@@ -1204,7 +1205,7 @@ void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const Q
       _patternDataSelectionModel->clearSelection();
       MESSAGE("*  bad selection : " << selType << " is not  " << HEXABLOCK::GUI::VERTEX_TREE );
       SUIT_MessageBox::information( 0,
-        tr("HEXA_INFO"), 
+        tr("HEXA_INFO"),
         tr("Bad selection type: please select a %1").arg( "VERTEX" ) );
     }
   }
@@ -1214,15 +1215,15 @@ void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const Q
 
 void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
 {
-  MESSAGE( "getConstructorId()"<< getConstructorId() ); 
+  MESSAGE( "getConstructorId()"<< getConstructorId() );
   SUIT_ViewWindow* v = vm->getActiveView();
   QString vmType = vm->getType();
   if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
-    mainFrame()->_vertex_le->setFocus(); 
+    mainFrame()->_vertex_le->setFocus();
   } else if ( vmType == OCCViewer_Viewer::Type() ){
 //     lines_lw->setFocus();
 //     ConstructorsClicked(0);
-    MESSAGE( "getConstructorId()"<< getConstructorId() ); 
+    MESSAGE( "getConstructorId()"<< getConstructorId() );
     ConstructorsClicked( getConstructorId() );
   }
 }
@@ -1232,7 +1233,7 @@ void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
 bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
 {
   if ( (event->type() != QEvent::FocusIn)
-    or (obj != mainFrame()->_vertex_le) ){ 
+    or (obj != mainFrame()->_vertex_le) ){
     return MyGEOMBase_Skeleton::eventFilter(obj, event);
   }
   MESSAGE("MyBasicGUI_PointDlg::eventFilter{");
@@ -1430,11 +1431,11 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
     const HEXABLOCK::GUI::PatternDataModel* patternDataModel = dynamic_cast<const HEXABLOCK::GUI::PatternDataModel*>( _patternDataSelectionModel->model() );
     if ( !patternDataModel ) return false;
     _currentObj = NULL;
-  
+
     QVariant v = mainFrame()->_vertex_le->property("QModelIndex");
     if ( !v.isValid() ) return false;
     QModelIndex iVertex = patternDataModel->mapToSource( v.value<QModelIndex>() );
-  
+
     if ( iVertex.isValid() ){
       HEXABLOCK::GUI::DocumentModel::GeomObj aPoint;
       aPoint.name  = newVertexName;
@@ -1444,7 +1445,7 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
       MESSAGE(" aPoint.entry" <<  aPoint.entry.toStdString() );
       MESSAGE(" aPoint.brep"  <<  aPoint.brep.toStdString() );
       _documentModel->addAssociation( iVertex, aPoint );
-      // to select/highlight result 
+      // to select/highlight result
 //       _patternDataSelectionModel->clearSelection();
 //       mainFrame()->_vertex_le->setFocus();
 

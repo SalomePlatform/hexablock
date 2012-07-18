@@ -42,7 +42,7 @@ BEGIN_NAMESPACE_HEXA
 void    permuter_edges  (Edge* &e1, Edge* &e2, cpchar n1=NULL, cpchar n2=NULL);
 double* prod_vectoriel (Edge* e1, Edge* e2, double result[]);
 
-static bool db = true;
+static bool db = false;
 
 // ======================================================== copyDocument
 Document* Document::copyDocument ()

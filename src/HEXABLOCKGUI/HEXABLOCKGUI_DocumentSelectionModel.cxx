@@ -649,12 +649,15 @@ SVTK_ViewWindow* GroupsSelectionModel::_getVTKViewWindow()
 void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
 {
   const GroupsModel* m = dynamic_cast<const GroupsModel *>( model() );
+  
+// ---- VTK ----
   if ( m == NULL ) return;
   SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
   if ( currentVTKViewWindow == NULL ) return;
   SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
   if ( selector == NULL ) return;
 
+// ----  vtkActor
   // document selection
   Document_Actor* docActor = NULL;
   Handle(SALOME_InteractiveObject) docIO;
@@ -665,7 +668,9 @@ void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
   QList<int>::const_iterator anIter;
   int vtkElemsId;
 
-  // data from model
+
+  
+  // debut ** data from model
   int     eltType;
   QString docEntry;
 
@@ -684,6 +689,7 @@ void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
     //INFOS("bad element type : not a group item" << eltType );
     return;
   }
+  // fin ** data from model
 
   // Select the document in Salome
   docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
@@ -713,6 +719,84 @@ void GroupsSelectionModel::_highlightGroups( const QModelIndex& eltIndex )
   currentVTKViewWindow->highlight( docIO, true, true );
 
 }
+
+/*
+void GroupsSelectionModel::_highlightAssoc( const QModelIndex& eltIndex )
+{
+  const GroupsModel* m = dynamic_cast<const GroupsModel *>( model() );
+  
+// ---- VTK ----
+  if ( m == NULL ) return;
+  SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+  if ( currentVTKViewWindow == NULL ) return;
+  SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
+  if ( selector == NULL ) return;
+
+// ----  vtkActor
+  // document selection
+  Document_Actor* docActor = NULL;
+  Handle(SALOME_InteractiveObject) docIO;
+  SALOME_ListIO aList;
+
+  // element highlight
+  TColStd_MapOfInteger aMap;
+  QList<int>::const_iterator anIter;
+  int vtkElemsId;
+
+
+  
+  // debut ** data from model
+  int     eltType;
+  QString docEntry;
+
+  QVariant treeVariant        = eltIndex.data( HEXA_TREE_ROLE );
+  QVariant docEntryVariant    = eltIndex.data( HEXA_DOC_ENTRY_ROLE );
+
+  if ( !treeVariant.isValid() || !docEntryVariant.isValid() ){ 
+    //INFOS("data from model not valid");
+    return;
+  }
+
+  eltType  = treeVariant.toInt();
+  docEntry = docEntryVariant.toString();
+ ){
+    //INFOS("bad element typ
+  if ( eltType != GROUP_TREE ){
+    //INFOS("bad element type : not a group item" << eltType );
+    return;
+  }
+  // fin ** data from model
+
+  // Select the document in Salome
+  docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
+  if ( docActor == NULL) return;
+  docIO = docActor->getIO();
+
+  // Highlight in vtk view the element from document
+  DocumentModel::Group kind;
+  QModelIndexList iElements = m->getGroupElements( eltIndex, kind );
+
+  // Set selection mode in VTK view
+/*
+  switch (kind){
+  case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: currentVTKViewWindow->SetSelectionMode(VolumeSelection); break;
+  case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: currentVTKViewWindow->SetSelectionMode(FaceSelection);   break;
+  case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: currentVTKViewWindow->SetSelectionMode(EdgeSelection);   break;
+  case HEXA_NS::VertexNode: currentVTKViewWindow->SetSelectionMode(NodeSelection); break;
+  }---/
+
+  QString eltEntry;
+  foreach( const QModelIndex& iElt, iElements ){
+    eltEntry = iElt.data( HEXA_ENTRY_ROLE ).toString();
+    vtkElemsId = docActor->vtkElemsId[ eltEntry.toInt() ];
+    if() 
+      if ( vtkElemsId > 0 ) aMap.Add( vtkElemsId );
+  }
+
+  selector->AddOrRemoveIndex( docIO, aMap, false );
+  currentVTKViewWindow->highlight( docIO, true, true );
+
+}*/
 
 
 

@@ -35,8 +35,9 @@ for  %HEXABLOCK component as an example in %SALOME application.
 module HEXABLOCK_ORB
 {
   /*! \brief Interface of the %HEXABLOCK component
+                                            03/07/2012 : ajout de SALOMEDS::Driver (Abu)
    */
-  interface HEXABLOCK_Gen : Engines::EngineComponent
+  interface HEXABLOCK_Gen : Engines::EngineComponent, SALOMEDS::Driver
   {
      /*!
          Donne le nombre de documents ouverts en session.

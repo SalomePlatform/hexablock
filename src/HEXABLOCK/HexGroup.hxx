@@ -51,10 +51,13 @@ public :
    static EnumGroup getKind (const string& k) { return getKind (k.c_str());}
 
 private :
+   int grp_id;
+   static int last_grp_id;
    EnumGroup   grp_kind;
    EnumElt     grp_typelt;
    std::string grp_name;
    std::vector <EltBase*> grp_table;
 };
+
 END_NAMESPACE_HEXA
 #endif

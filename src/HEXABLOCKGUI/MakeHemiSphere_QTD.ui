@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
+    <width>367</width>
     <height>440</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
+      <enum>Qt::ScrollBarAsNeeded</enum>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -32,8 +32,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>302</width>
+        <y>-261</y>
+        <width>329</width>
         <height>679</height>
        </rect>
       </property>
@@ -132,6 +132,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="decimals">
+                <number>6</number>
+               </property>
+               <property name="maximum">
+                <double>1000000000.000000000000000</double>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -154,6 +160,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="decimals">
+                <number>6</number>
+               </property>
+               <property name="maximum">
+                <double>1000000000.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -219,6 +231,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="decimals">
+                <number>6</number>
+               </property>
+               <property name="maximum">
+                <double>1000000000.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -313,7 +331,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>start</string>
+                <string>start vector</string>
                </property>
               </widget>
              </item>
@@ -357,6 +375,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="decimals">
+                <number>6</number>
+               </property>
+               <property name="maximum">
+                <double>360.000000000000000</double>
+               </property>
               </widget>
              </item>
              <item row="2" column="0" colspan="2">
@@ -387,7 +411,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>radius</string>
+                <string>n (radial)</string>
                </property>
               </widget>
              </item>
@@ -399,12 +423,15 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="maximum">
+                <number>1000000</number>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>angle</string>
+                <string>n (angular)</string>
                </property>
               </widget>
              </item>
@@ -416,12 +443,15 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="maximum">
+                <number>1000000</number>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
-                <string>height</string>
+                <string>n (height)</string>
                </property>
               </widget>
              </item>
@@ -432,6 +462,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="maximum">
+                <number>1000000</number>
                </property>
               </widget>
              </item>

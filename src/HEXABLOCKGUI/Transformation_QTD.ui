@@ -191,7 +191,14 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="k_spb"/>
+          <widget class="QDoubleSpinBox" name="k_spb">
+           <property name="decimals">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <double>1000000000.000000000000000</double>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_8">
@@ -267,7 +274,23 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QDoubleSpinBox" name="angle_spb"/>
+          <widget class="QDoubleSpinBox" name="angle_spb">
+           <property name="wrapping">
+            <bool>false</bool>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="suffix">
+            <string/>
+           </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <double>360.000000000000000</double>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_9">
@@ -288,7 +311,7 @@
  <connections>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>show()</slot>
    <hints>
@@ -304,7 +327,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -320,7 +343,7 @@
   </connection>
   <connection>
    <sender>rb0</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -336,7 +359,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -352,7 +375,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>show()</slot>
    <hints>
@@ -368,7 +391,7 @@
   </connection>
   <connection>
    <sender>rb1</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
@@ -384,7 +407,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>show()</slot>
    <hints>
@@ -400,7 +423,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget_2</receiver>
    <slot>hide()</slot>
    <hints>
@@ -416,7 +439,7 @@
   </connection>
   <connection>
    <sender>rb2</sender>
-   <signal>pressed()</signal>
+   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>

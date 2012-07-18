@@ -26,10 +26,10 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Edge : public EltBase 
+class Edge : public EltBase
 {
 public:
-    virtual int     countVertex () { return V_TWO; } 
+    virtual int     countVertex () { return V_TWO; }
     virtual Vertex* getVertex (int  nro);
     bool    getWay ()              { return e_way ; }
 
@@ -37,8 +37,8 @@ public:
     virtual void saveXml (XmlWriter* xml);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
     virtual void clearAssociation  ()      { tab_assoc.clear() ; }
-    virtual void setAssociation (Shape* forme); 
-    int    addAssociation (Shape* forme); 
+    virtual void setAssociation (Shape* forme);
+    int    addAssociation (Shape* forme);
 
     Edge (Vertex* va, Vertex* vb);
     Edge (Edge* other);
@@ -50,7 +50,7 @@ public:
     void  setPropag (int nro, bool sens) { e_propag = nro; e_way=sens; }
     int   getPropag ()                   { return e_propag ; }
 
-    Quad* getParent (int nro); 
+    Quad* getParent (int nro);
     virtual void dump ();
     void         dumpPlus ();
     void         dumpAsso ();
@@ -64,11 +64,11 @@ public:
     Vertex* opposedVertex (Vertex* sommet);
     double* commonPoint   (Edge* other, double point[]);
 
-    Vertex* getAmont ()       { return e_vertex [NOT e_way] ; } 
-    Vertex* getAval  ()       { return e_vertex [e_way] ; } 
+    Vertex* getAmont ()       { return e_vertex [NOT e_way] ; }
+    Vertex* getAval  ()       { return e_vertex [e_way] ; }
 
-    Law* getLaw ()            { return e_law ; } 
-    void setLaw (Law* law)    { e_law =  law ; } 
+    Law* getLaw ()            { return e_law ; }
+    void setLaw (Law* law)    { e_law =  law ; }
 
     void setScalar (double valeur);
     void setColor  (double valeur)          { setScalar (valeur) ; }
@@ -92,21 +92,21 @@ private:
 
 // ----------------------------------------------- Inlining
 // =============================================================== getVertex
-inline Vertex* Edge::getVertex(int nro) 
+inline Vertex* Edge::getVertex(int nro)
 {
    Vertex* elt = NULL;
    if (nro >=0 && nro < V_TWO  && el_status == HOK
                && e_vertex [nro]->isValid())
-      elt = e_vertex [nro]; 
+      elt = e_vertex [nro];
 
    return elt;
 }
 // =============================================================== index
 inline int Edge::index (Vertex* node)
 {
-   return  node == NULL ? NOTHING 
+   return  node == NULL ? NOTHING
          : node == e_vertex[V_AMONT] ? V_AMONT
-         : node == e_vertex[V_AVAL ] ? V_AVAL : NOTHING; 
+         : node == e_vertex[V_AVAL ] ? V_AVAL : NOTHING;
 }
 // ============================================================= opposedVertex
 inline Vertex* Edge::opposedVertex (Vertex* sommet)
@@ -142,14 +142,14 @@ inline int Edge::inter (Edge* other)
 // =============================================================== inter
 inline int Edge::inter (Edge* other, int& nother)
 {
-   for (int ni=0 ; ni<V_TWO ; ni++) 
-        for (int nj=0 ; nj<V_TWO ; nj++) 
+   for (int ni=0 ; ni<V_TWO ; ni++)
+        for (int nj=0 ; nj<V_TWO ; nj++)
             if (e_vertex[ni] == other->e_vertex[nj])
                {
                nother =  nj;
                return ni;
                }
- 
+
    nother = NOTHING;
    return   NOTHING;
 }
@@ -169,7 +169,7 @@ inline void Edge::setScalar  (double val)
 // =============================================================== duplicate
 inline void Edge::duplicate  ()
 {
-   e_clone = new Edge (GetClone (e_vertex [V_AMONT]), 
+   e_clone = new Edge (GetClone (e_vertex [V_AMONT]),
                        GetClone (e_vertex [V_AVAL ]));
 
    e_clone->tab_assoc = tab_assoc;

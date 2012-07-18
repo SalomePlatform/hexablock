@@ -26,13 +26,27 @@
 
 BEGIN_NAMESPACE_HEXA
 
+int Group::last_grp_id = 0;
 static const cpchar kind_name[] = { "HexaCell", "QuadCell", "EdgeCell", 
                   "HexaNode", "QuadNode", "EdgeNode", "VertexNode" };
 
 // ======================================================== Constructeur
 Group::Group (cpchar nom, EnumGroup grp)  
 {
-   grp_name = nom ; 
+   grp_id = last_grp_id++;
+
+   //Initialisation du nom du groupe: un nom par défaut est donné s'il n'est pas fourni
+   std::string _nom = std::string(nom);
+   _nom.erase (_nom.find_last_not_of (" \n\r\t" ) + 1);
+   _nom.erase (0, _nom.find_first_not_of (" \n\r\t" ));
+   if (!_nom.empty())
+	grp_name = _nom;
+   else {
+   	char buffer [16];
+   	sprintf (buffer, "g%04d", grp_id);
+        grp_name = std::string(buffer);
+   }
+   
    grp_kind = grp;
 
    switch (grp_kind)

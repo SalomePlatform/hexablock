@@ -83,6 +83,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexCylinder.cxx \
 	HexGroup.cxx \
 	HexPipe.cxx \
+	HexLaw.cxx \
 	HexShape.cxx \
 	HexDocument_trans.cxx \
 	HexDocument_Xml.cxx \

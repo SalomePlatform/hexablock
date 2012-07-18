@@ -163,12 +163,12 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
       }
 }
 // ========================================================= assoPoint
-void KasLine::assoPoint (double alpha, Vertex* node)
+void KasLine::assoPoint (double abscis, Vertex* node)
 {
-   GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+   GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
                              geom_curve->FirstParameter());
-   double u1       = s1.Parameter ();
-   gp_Pnt pnt_asso = geom_curve->Value (u1);
+   double gparam       = s1.Parameter ();
+   gp_Pnt pnt_asso = geom_curve->Value (gparam);
 
    KasPoint gpoint;
    gpoint.definePoint (pnt_asso);
@@ -177,11 +177,13 @@ void KasLine::assoPoint (double alpha, Vertex* node)
    if (db)
       {
       double* coord = gpoint.getCoord();
-      printf (" ... assoPoint : v=%s (%g,%g,%g), param=%g\n", 
-           node->getName(), node->getX(), node->getY(), node->getZ(), alpha);
+      char    car   = '%';
+      if (node->definedBy (coord[dir_x], coord[dir_y], coord[dir_z]))
+         car= ' ';
+      printf (" ... assoPoint%c: v=%s (%g,%g,%g), p=%g", car,
+           node->getName(), node->getX(), node->getY(), node->getZ(), abscis);
  
-      printf ("                   ----> (%g,%g,%g)\n", coord[dir_x], 
-                                         coord[dir_y], coord[dir_z]);
+      printf (" -> (%g,%g,%g)\n", coord[dir_x], coord[dir_y], coord[dir_z]);
       }
 }
 // ========================================================= associate
@@ -233,7 +235,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
       }
 
                                // ---------------Association du vertex 
-   double param = geom_inverse ? vpara2 : vpara1;
+   double hparam = geom_inverse ? vpara2 : vpara1;
    double smx   = sm1;
    double absc1 = start_absc - TolAsso*geom_total_length;
    double absc2 = end_absc   + TolAsso*geom_total_length;
@@ -247,11 +249,11 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              {
                                           // .....  Coordonnees du point
 
-             double alpha = geom_total_length*param;
-             GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+             double abscis = geom_total_length*hparam;
+             GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
                                        geom_curve->FirstParameter());
-             double u1       = s1.Parameter ();
-             gp_Pnt pnt_asso = geom_curve->Value (u1);
+             double gparam       = s1.Parameter ();
+             gp_Pnt pnt_asso = geom_curve->Value (gparam);
 
                                           // .....  Creation d'un vertex Geom
              KasPoint gpoint;
@@ -262,16 +264,16 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
                 double* ass = gpoint.getCoord();
                 printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
                     node->getName(), node->getX(), node->getY(), node->getZ(),
-                    ass[dir_x], ass[dir_y], ass[dir_z], param, smx);
+                    ass[dir_x], ass[dir_y], ass[dir_z], hparam, smx);
                 }
              }
          else if (db)
              {
-             double alpha = geom_total_length*param;
-             GCPnts_AbscissaPoint s1 (*geom_curve, alpha, 
+             double abscis = geom_total_length*hparam;
+             GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
                                     geom_curve->FirstParameter());
-             double u1       = s1.Parameter ();
-             gp_Pnt pnt_asso = geom_curve->Value (u1);
+             double gparam   = s1.Parameter ();
+             gp_Pnt pnt_asso = geom_curve->Value (gparam);
 
                                           // .....  Creation d'un vertex Geom
              KasPoint gpoint;
@@ -281,7 +283,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
                      node->getName(),
                      node->getX(), node->getY(), node->getZ(),
-                     ass[dir_x], ass[dir_y], ass[dir_z], param, smx);
+                     ass[dir_x], ass[dir_y], ass[dir_z], hparam, smx);
 
              gpoint.definePoint (node);
              ass = gpoint.getCoord();
@@ -289,7 +291,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
                      ass[dir_x], ass[dir_y], ass[dir_z]);
              }
           }
-      param = geom_inverse ? vpara1 : vpara2;
+      hparam = geom_inverse ? vpara1 : vpara2;
       smx   = sm2;
       }
 }
@@ -395,29 +397,34 @@ double KasLine::findParam (double* coord)
 {
    double umin = 0, umax = 0;
    gp_Pnt gpoint (coord[dir_x], coord[dir_y], coord[dir_z]);
-   Handle(Geom_Curve) curve = BRep_Tool::Curve (geom_line, umin, umax);
+   Handle(Geom_Curve) handle = BRep_Tool::Curve (geom_line, umin, umax);
 
-   GeomAPI_ProjectPointOnCurve projector (gpoint, curve);
+   GeomAPI_ProjectPointOnCurve projector (gpoint, handle);
    if ( projector.NbPoints() == 0 )
       return -1.0;
 
-   double param = projector.LowerDistanceParameter();
-   if (param <par_mini || param>par_maxi)
+   double gparam = projector.LowerDistanceParameter();
+   if (gparam <par_mini || gparam>par_maxi)
       {
-      // cout << " Rejet : " << param << " not in (" << par_mini 
+      // cout << " Rejet : " << gparam << " not in (" << par_mini 
       //                              << ", " << par_maxi << ")" << endl;
       return -1.0;
       }
  
-   gp_Pnt rpoint = geom_curve->Value (param);
+   gp_Pnt rpoint = geom_curve->Value (gparam);
    if (NOT same_coords (gpoint, rpoint))
       {
       //  cout << " Rejet : points differents " << endl;
       return -1.0;
       }
 
-   param = (param-par_mini) / (par_maxi-par_mini); 
-   return param;
+
+   GeomAdaptor_Curve  adapt_curve (handle);
+   double abscis = GCPnts_AbscissaPoint::Length (adapt_curve, umin, gparam);
+   double hparam = abscis/geom_total_length;
+  
+   // gparam = (gparam-par_mini) / (par_maxi-par_mini); 
+   return hparam;
 }
 // ========================================================= arrondir
 void arrondir (double &val)

@@ -55,7 +55,7 @@ private:
 protected:
     void                initSpinBox( QSpinBox*, int, int, int = 1 );
     void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, const char* = "length_precision" );
-    
+
     void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
 
     void                closeEvent( QCloseEvent* );
@@ -80,13 +80,13 @@ protected:
     void                unsetConstructorId();
 
     void                showOnlyPreviewControl();
-    
+
     void                setHelpFileName( const QString& );
 
     MyDlgRef_Skeleton*    mainFrame();
     QWidget*            centralWidget();
     QPushButton*        buttonCancel() const;
-    QPushButton*        buttonOk() const;
+    //QPushButton*        buttonOk() const;
     QPushButton*        buttonApply() const;
     QPushButton*        buttonHelp() const;
 
@@ -94,7 +94,7 @@ protected:
     QLineEdit*          myEditCurrentArgument; //!< Current LineEdit
     GeometryGUI*        myGeomGUI;             //!< reference GEOM GUI
     QString             myHelpFileName;        //!< Associated HTML help file name
-    
+
     QButtonGroup*       myRBGroup;             //!< radio button group
     MyDlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
 

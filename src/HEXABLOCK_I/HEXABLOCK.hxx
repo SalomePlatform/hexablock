@@ -22,6 +22,9 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(HEXABLOCK_Gen)
 #include "SALOME_Component_i.hxx"
+//  #include "SALOMEDSImpl_TMPFile.hxx"
+//  #include "SALOMEDSImpl_SComponent.hxx"
+
 
 
 #include <sstream>
@@ -117,22 +120,15 @@ private:
 
 
 
-
-
-
-
-
-class HEXABLOCK_Gen_i:
-  public POA_HEXABLOCK_ORB::HEXABLOCK_Gen,
-  public Engines_Component_i 
+class HEXABLOCK_Gen_i: public POA_HEXABLOCK_ORB::HEXABLOCK_Gen,
+                       public Engines_Component_i 
 {
-
 public:
     HEXABLOCK_Gen_i( CORBA::ORB_ptr orb,
-	    PortableServer::POA_ptr poa,
-	    PortableServer::ObjectId * contId, 
-	    const char *instanceName, 
-	    const char *interfaceName);
+            PortableServer::POA_ptr poa,
+            PortableServer::ObjectId * contId, 
+            const char *instanceName, 
+            const char *interfaceName);
   // Get object of the CORBA reference
     static CORBA::ORB_var GetORB() { return _orb;}
     static PortableServer::POA_var GetPOA() { return _poa;}
@@ -157,9 +153,9 @@ public:
 
 
     virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
-					 CORBA::Boolean isPublished,
-					 CORBA::Boolean isMultiFile,
-					 CORBA::Boolean& isValidScript);
+                                         CORBA::Boolean isPublished,
+                                         CORBA::Boolean isMultiFile,
+                                         CORBA::Boolean& isValidScript);
 
   void SetCurrentStudy( SALOMEDS::Study_ptr theStudy );
   int GetCurrentStudyID();
@@ -187,8 +183,130 @@ public:
   Document_ptr createDocInStudy(const char* name)
                throw ( SALOME::SALOME_Exception );
 
+  //-----------------------------------------------------------------------//
+  // Inherited methods from SALOMEDS::Driver                               //
+  //-----------------------------------------------------------------------//
 
-private:
+public :
+  SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
+                          const char* theURL,
+                          bool isMultiFile);
+
+  SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
+                               const char* theURL,
+                               bool isMultiFile);
+
+  CORBA::Boolean Load(SALOMEDS::SComponent_ptr theComponent,
+                      const SALOMEDS::TMPFile& theStream,
+                      const char* theURL,
+                      bool isMultiFile);
+
+  CORBA::Boolean LoadASCII(SALOMEDS::SComponent_ptr theComponent,
+                           const SALOMEDS::TMPFile& theStream,
+                           const char* theURL,
+                           bool isMultiFile);
+
+  void Close(SALOMEDS::SComponent_ptr theComponent);
+  // char* ComponentDataType();  Deja la 
+
+  CORBA::Boolean CanCopy  (SALOMEDS::SObject_ptr theObject);
+  CORBA::Boolean CanPaste (const char* theComponentName, 
+                           CORBA::Long theObjectID);
+
+  SALOMEDS::TMPFile* CopyFrom(SALOMEDS::SObject_ptr theObject, 
+                              CORBA::Long& theObjectID);
+
+  SALOMEDS::SObject_ptr PasteInto(const SALOMEDS::TMPFile& theStream,
+                                  CORBA::Long theObjectID,
+                                  SALOMEDS::SObject_ptr theObject);
+  SALOMEDS::SObject_ptr PublishInStudy(SALOMEDS::Study_ptr theStudy,
+                                       SALOMEDS::SObject_ptr theSObject,
+                                       CORBA::Object_ptr theObject,
+                                       const char* theName) throw (SALOME::SALOME_Exception) ;
+
+
+  char* IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
+                               const char* IORString,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII);
+  char* LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
+                               const char* aLocalPersistentID,
+                               CORBA::Boolean isMultiFile,
+                               CORBA::Boolean isASCII);
+
+
+#if 0
+  virtual std::string GetIOR();
+
+  /*******************
+  virtual SALOMEDSImpl_TMPFile* Save(const SALOMEDSImpl_SComponent& compo,
+                                     const std::string& theURL,
+                                     long& theStreamLength,
+                                     bool isMultiFile);
+
+  virtual SALOMEDSImpl_TMPFile* SaveASCII(const SALOMEDSImpl_SComponent& compo,
+                                          const std::string& theURL,
+                                          long& theStreamLength,
+                                          bool isMultiFile);
+  *********************/
+  
+  virtual SALOMEDS::TMPFile* Save(SALOMEDS::SComponent_ptr theComponent,
+                                  const char* theURL,
+                                  bool isMultiFile);
+
+
+  virtual SALOMEDS::TMPFile* SaveASCII(SALOMEDS::SComponent_ptr theComponent,
+                               const char* theURL,
+                               bool isMultiFile);
+
+
+  
+  virtual bool Load(const SALOMEDSImpl_SComponent& compo,
+                    const unsigned char* theStream,
+                    const long theStreamLength,
+                    const std::string& theURL,
+                    bool isMultiFile);
+
+  virtual bool LoadASCII(const SALOMEDSImpl_SComponent& theComponent,
+                         const unsigned char* theStream,
+                         const long theStreamLength,
+                         const std::string& theURL,
+                         bool isMultiFile);
+
+  virtual void Close(const SALOMEDSImpl_SComponent& theComponent);
+ 
+  // virtual std::string ComponentDataType();
+
+  virtual std::string IORToLocalPersistentID(const SALOMEDSImpl_SObject& theSObject,
+                                             const std::string& IORString,
+                                             bool isMultiFile,
+                                             bool isASCII);
+
+  virtual std::string LocalPersistentIDToIOR(const SALOMEDSImpl_SObject& theSObject,
+                                             const std::string& aLocalPersistentID,
+                                             bool isMultiFile,
+                                             bool isASCII);
+
+  virtual bool CanCopy(const SALOMEDSImpl_SObject& theObject);
+
+  virtual SALOMEDSImpl_TMPFile* CopyFrom(const SALOMEDSImpl_SObject& theObject, 
+                                         int& theObjectID,
+                                         long& theStreamLength);
+  
+  virtual bool CanPaste(const std::string& theComponentName, int theObjectID);
+
+  virtual std::string PasteInto(const unsigned char* theStream,
+                                const long theStreamLength,
+                                int theObjectID,
+                                const SALOMEDSImpl_SObject& theObject);
+
+  virtual SALOMEDSImpl_TMPFile* DumpPython(SALOMEDSImpl_Study* theStudy, 
+                                           bool isPublished, 
+                                           bool isMultiFile,
+                                           bool& isValidScript,
+                                           long& theStreamLength);
+#endif
+private :
    HEXA_NS::Hex* _engine_cpp;
    GEOM_Client*  _geomClient;
 

@@ -216,6 +216,9 @@ int    niv_debug();
 
 void   set_minus (string& chaine);
 
+bool   special_option ();
+void   set_special_option (bool opt);
+
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;
 const double Epsil2  = 1e-12;

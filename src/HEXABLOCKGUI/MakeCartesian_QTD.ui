@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>425</height>
+    <width>232</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,6 +76,9 @@
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QFormLayout" name="formLayout">
+         <property name="labelAlignment">
+          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
@@ -87,7 +90,7 @@
           <widget class="QLineEdit" name="vex_le_rb0">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -107,7 +110,7 @@
           <widget class="QLineEdit" name="vec_le_rb0">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -117,46 +120,85 @@
           </widget>
          </item>
          <item row="2" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
+          <layout class="QFormLayout" name="formLayout_3">
+           <property name="labelAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="formAlignment">
+            <set>Qt::AlignJustify|Qt::AlignTop</set>
+           </property>
+           <property name="topMargin">
+            <number>8</number>
+           </property>
+           <item row="0" column="0">
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>n(x):</string>
+              <string>n (x)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="1">
             <widget class="QSpinBox" name="nx_spb_rb0">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
              <property name="value">
-              <number>15</number>
+              <number>1</number>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="ny_spb_rb0">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QSpinBox" name="nz_spb_rb0">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>n(y):</string>
+              <string>n (y)</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QSpinBox" name="ny_spb_rb0">
-             <property name="value">
-              <number>12</number>
-             </property>
-            </widget>
-           </item>
-           <item>
+           <item row="4" column="0">
             <widget class="QLabel" name="label_14">
              <property name="text">
-              <string>n(z):</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="nz_spb_rb0">
-             <property name="value">
-              <number>8</number>
+              <string>n (z)</string>
              </property>
             </widget>
            </item>
@@ -168,6 +210,9 @@
       <item>
        <widget class="QWidget" name="widget_2" native="true">
         <layout class="QFormLayout" name="formLayout_2">
+         <property name="labelAlignment">
+          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -179,7 +224,7 @@
           <widget class="QLineEdit" name="vex_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -199,7 +244,7 @@
           <widget class="QLineEdit" name="vec_x_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -219,7 +264,7 @@
           <widget class="QLineEdit" name="vec_y_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -239,7 +284,7 @@
           <widget class="QLineEdit" name="vec_z_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -249,46 +294,79 @@
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
+          <layout class="QFormLayout" name="formLayout_4">
+           <property name="labelAlignment">
+            <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+           </property>
+           <property name="topMargin">
+            <number>8</number>
+           </property>
+           <item row="0" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>n(x):</string>
+              <string>n (x)</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="1">
             <widget class="QSpinBox" name="nx_spb_rb1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
              <property name="value">
-              <number>15</number>
+              <number>1</number>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="ny_spb_rb1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QSpinBox" name="nz_spb_rb1">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>n(y):</string>
+              <string>n (y)</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QSpinBox" name="ny_spb_rb1">
-             <property name="value">
-              <number>12</number>
-             </property>
-            </widget>
-           </item>
-           <item>
+           <item row="4" column="0">
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>n(z):</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="nz_spb_rb1">
-             <property name="value">
-              <number>8</number>
+              <string>n (z)</string>
              </property>
             </widget>
            </item>

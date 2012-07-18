@@ -104,6 +104,8 @@ public :
    Quad*   findQuad   (Vertex* va, Vertex* vb);
    Hexa*   findHexa   (Vertex* va, Vertex* vb);
 
+   Vertex* findVertex (int id);
+
    int     mergeVertices (Vertex* v1, Vertex* v2);
    int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
    int     mergeQuads    (Quad* q1, Quad* q2, Vertex* v1, Vertex* v2, 
@@ -223,7 +225,14 @@ public :
              RealVector& tdr, RealVector& tda, RealVector& tdh, 
              bool fill=false);
 
+   // --------------------------------------------------- Evols Hexa4'
+
    void clearAssociation ();
+
+   typedef std::vector <Vertex*> Vertices;
+   void getAssoEdges    (Edges&    tabelt);
+   void getAssoVertices (Vertices& tabelt);
+
 public:
     Document (cpchar name);
    ~Document ();
@@ -285,7 +294,9 @@ private :
    Hexa* addHexaQuadsABCD (AnaQuads& strquads);
    Hexa* addHexaQuadsACDE (AnaQuads& strquads);
 
-   Shape* parseShape (XmlTree* node);
+   Shape*   parseShape  (XmlTree* node);
+
+   EltBase* findElement (EnumElt type, int ident);
 
 private :
    friend class EltBase;

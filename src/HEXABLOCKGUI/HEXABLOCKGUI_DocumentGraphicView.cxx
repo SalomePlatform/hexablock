@@ -99,11 +99,6 @@ using namespace std;
 using namespace HEXABLOCK::GUI;
 
 
-
-
-
-
-
 Document_Actor::Document_Actor( HEXA_NS::Document* doc, const QString& entry ):
   SALOME_Actor(),
   _doc( doc )
@@ -123,6 +118,7 @@ Document_Actor::Document_Actor( HEXA_NS::Document* doc, const QString& entry ):
   aMapper->Delete();
 
   vtkProperty* aProp = vtkProperty::New();
+
 //   aProp->SetRepresentationToSurface();
   aProp->SetRepresentationToWireframe();
 //   aProp->SetRepresentationToPoints();
@@ -299,7 +295,157 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
   return theGrid;
 }
 
+// =============================================================== Abu : debut
+// ===================================================== Constructeur
+Associate_Actor::Associate_Actor( HEXA_NS::Document* doc, const QString& entry)
+               : SALOME_Actor(), _doc( doc )
+{
+  DEBTRACE("Associate_Actor::Associate_Actor " << entry.toLatin1() );
+  Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject( entry.toLatin1(), "HEXABLOCK" );//,theName); CS_TODO
+  setIO(anIO);
+  vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
 
+  vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
+  aMapper->SetInput(aGrid);
+  aGrid->Delete();
+
+  SetVisibility( true );//VisibilityOff();
+  SetPickable( true ); //PickableOff();//
+  SetMapper( aMapper );
+  aMapper->Delete();
+
+  vtkProperty* aProp = vtkProperty::New();
+  aProp->SetColor(0,255,0);
+//   aProp->SetRepresentationToSurface();
+  aProp->SetRepresentationToWireframe();
+//   aProp->SetRepresentationToPoints();
+  aProp->EdgeVisibilityOn ();
+  aProp->SetPointSize(5);
+  SetProperty( aProp );
+  aProp->Delete();
+//   SetPointRepresentation(true);
+}
+// ===================================================== getUnstructuredGrid
+vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
+{
+  vtkUnstructuredGrid* theGrid = vtkUnstructuredGrid::New();
+
+  _doc->reorderFaces(); //CS_TEST
+
+  std::map<int,vtkIdType>   vtkNodeId;
+  std::map<vtkIdType, int>  hexaNodeId;
+ 
+  std::vector <HEXA_NS::Vertex*>  tab_vertex;
+  HEXA_NS::Edges    tab_edge; 
+
+  _doc->getAssoVertices (tab_vertex);
+  _doc->getAssoEdges    (tab_edge);
+
+  int nb0DElement = tab_vertex.size();
+  int nbEdge      = tab_edge.size();
+  int nbFace      = 0;
+  int nbVolume    = 0;
+
+  // Create points
+  vtkPoints* aPoints = vtkPoints::New();
+  int nbVertex = nb0DElement;
+  aPoints->SetNumberOfPoints( nbVertex );
+
+  HEXA_NS::Vertex* v = NULL;
+  int vertexId;
+  for ( int i=0; i <nbVertex; ++i ){
+    v = _doc->getVertex(i);
+    aPoints->SetPoint( i, v->getX(), v->getY(), v->getZ() );
+    vertexId = reinterpret_cast<intptr_t>(v); //v->getId();
+    vtkNodeId [ vertexId ] = i;
+    hexaNodeId[ i ] = vertexId ;
+//     vtkNodeId [ vertexId ] = i+1;
+//     hexaNodeId[ i+1 ] = vertexId ;
+  }
+
+  theGrid->SetPoints( aPoints );
+  aPoints->Delete();
+//   theGrid->SetCells( 0, 0, 0, 0, 0 );
+
+  // Calculate cells size
+
+  vtkIdType aCellsSize =  2*nb0DElement + 3*nbEdge + ( 4 + 1 )*nbFace + ( 8 + 1 )*nbVolume;
+  vtkIdType aNbCells   =  nb0DElement + nbEdge + nbFace + nbVolume;
+
+  // Create cells
+  vtkCellArray* aConnectivity = vtkCellArray::New();
+  aConnectivity->Allocate( aCellsSize, 0 );
+
+  vtkUnsignedCharArray* aCellTypesArray = vtkUnsignedCharArray::New();
+  aCellTypesArray->SetNumberOfComponents( 1 );
+  aCellTypesArray->Allocate( aNbCells * aCellTypesArray->GetNumberOfComponents() );
+
+  vtkIdList *anIdList = vtkIdList::New();
+  vtkIdType iVtkElem = 0;
+//   vtkIdType iVtkElem = 1; //CS_TEST
+  int       iHexaElem;
+
+  // VERTEX
+  for ( int i=0; i<nb0DElement; ++i ){
+    anIdList->SetNumberOfIds( 1 );
+ // v = _doc->getVertex(i);        // Abu 
+    v = tab_vertex [i];
+    iHexaElem = reinterpret_cast<intptr_t>(v);//v->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+    anIdList->SetId(0, vtkNodeId[iHexaElem]);
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_VERTEX );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // EDGE
+  HEXA_NS::Edge* e = NULL;
+  HEXA_NS::Vertex* vertexElem = NULL;
+  for ( int i=0; i<nbEdge; ++i ){
+    anIdList->SetNumberOfIds( 2 );
+ // e = _doc->getEdge(i);        // Abu 
+    e = tab_edge [i];
+    iHexaElem = reinterpret_cast<intptr_t>(e); //e->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 2; ++j ){ //j< e->countVertex(); ++j ){
+      vertexElem = e->getVertex( j );
+      anIdList->SetId( j, vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ] );//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_LINE );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+
+// 0        1      2     3        4     5      6      7
+// V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
+// 
+// 0        1     3      2        4    5      7      6
+
+  // Insert cells in grid
+  VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
+  aCellLocationsArray->SetNumberOfComponents( 1 );
+  aCellLocationsArray->SetNumberOfTuples( aNbCells );
+//   std::cout << "aNbCells =>" << aNbCells << std::endl;
+
+  aConnectivity->InitTraversal();
+  for( vtkIdType idType = 0, *pts, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
+    aCellLocationsArray->SetValue( idType, aConnectivity->GetTraversalLocation( npts ) );
+  }
+  theGrid->SetCells( aCellTypesArray, aCellLocationsArray,aConnectivity );
+
+  aCellLocationsArray->Delete();
+  aCellTypesArray->Delete();
+  aConnectivity->Delete();
+  anIdList->Delete();
+  //std::cout << "theGrid->GetNumberOfCells()" << theGrid->GetNumberOfCells() << std::endl;
+
+  return theGrid;
+}
+// =============================================================== Abu : Fin
 
 
 // DocumentGraphicView::DocumentGraphicView(SalomeApp_Application* app, SUIT_ViewWindow *suitView, QWidget *parent)
@@ -307,6 +453,7 @@ DocumentGraphicView::DocumentGraphicView( LightApp_Application* app, SUIT_ViewWi
     : QAbstractItemView(parent),
       _suitView( suitView ),
       _documentActor( 0 ),
+      _associateActor (NULL), // Abu
       _currentChanged( false )
 {
 //   MESSAGE("DocumentGraphicView::DocumentGraphicView() app"<<app);
@@ -351,14 +498,24 @@ void DocumentGraphicView::update()
   if ( _documentActor ){
     theVTKViewWindow->RemoveActor( _documentActor );
     _documentActor->Delete();
-//     delete _documentActor;
-    //std::cout << "* remove previous actor" << std::endl;
   }
-
-  //std::cout << "* create new actor" << std::endl;
-  _documentActor = new Document_Actor( theDocumentImpl, theDocumentEntry );
-  // display HEXABLOCK document model
+  _documentActor  = new Document_Actor( theDocumentImpl, theDocumentEntry );
   theVTKViewWindow->AddActor( _documentActor );
+ 
+                                 // -------------------- Abu debut 
+  if (HEXA_NS::special_option())
+     {
+     if (_associateActor != NULL)
+        {
+        theVTKViewWindow->RemoveActor( _associateActor );
+        _associateActor->Delete();
+        }
+     _associateActor = new Associate_Actor( theDocumentImpl, theDocumentEntry );
+     theVTKViewWindow->AddActor( _associateActor );
+     }
+                                 // -------------------- Abu fin
+
+  // display HEXABLOCK document model
   theVTKViewWindow->getRenderer()->Render();
   theVTKViewWindow->Repaint();
   theVTKViewWindow->onFitAll();

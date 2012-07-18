@@ -40,33 +40,19 @@ public:
    void    setKind (cpchar  type);
    int     setName (cpchar  nom);
 
-public:
     Law (cpchar name, int nbnodes);
     Law (Law* other);
     void saveXml (XmlWriter* xml);
 
 private:
+    int law_id;
+    static int last_law_id;
     std::string law_name;
     int         nbr_nodes;
     KindLaw     law_type;
     double      law_coefficient;
 };
-// ================================================== Constructeur
-inline Law::Law (cpchar name, int nbnodes)
-{
-   nbr_nodes = nbnodes;
-   law_name  = name;
-   law_type  = Uniform;
-   law_coefficient = 0.0;
-}
-// ================================================== Constructeur 2
-inline Law::Law (Law* other)
-{
-   nbr_nodes       = other->nbr_nodes;
-   law_name        = other->law_name ;
-   law_type        = other->law_type ;
-   law_coefficient = other->law_coefficient;
-}
+
 // ================================================== setNodes
 inline int Law::setNodes (int  nbre)
 {
@@ -105,5 +91,6 @@ inline void Law::setKind (cpchar type)
    VerifKind (type, Arithmetic);
    VerifKind (type, Geometric);
 }
+
 END_NAMESPACE_HEXA
 #endif

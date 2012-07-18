@@ -74,7 +74,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = true;
+static bool db = false;
 
 static KasBiCylinder current_bicyl;
 
@@ -90,6 +90,7 @@ int KasBiCylinder::defineCyls (double* borig,  double* bnorm, double* bbase,
                               double* sorig,  double* snorm, double* sbase,
                               double  srayon, double  shaut)
 {
+   db = on_debug ();
    purge ();
    if (db)
       {
@@ -167,7 +168,10 @@ int KasBiCylinder::defineCyls (double* borig,  double* bnorm, double* bbase,
          cout << "____________________________________ Ligne suivante" << endl;
          geom_make_brep (ligne, crep);
          if (db) 
+            {
+            cout << "----  save_brep inter" << nbrep+1 << ".brep" << endl;
             save_brep ("inter", crep, nbrep);
+            }
          shape.setBrep (crep);
 
          KasLine* geom_line = new KasLine (&shape);
@@ -245,7 +249,7 @@ int KasBiCylinder::associate (Edge* edge)
            {
            if (tline2[ns2] == nlig)
               {
-              double param1 = tparam1[ns2];
+              double param1 = tparam1[ns1];
               double param2 = tparam2[ns2];
               if (param1 >= 1.0-Epsil && param1 <= 1.0+Epsil)
                   param1  = 0.0;
