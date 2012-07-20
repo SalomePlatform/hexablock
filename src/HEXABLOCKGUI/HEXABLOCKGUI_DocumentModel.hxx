@@ -387,6 +387,7 @@ namespace HEXABLOCK
         //association
         // CS_TODO
 
+
         // groups
         QStandardItem     *_groupDirItem;
 

@@ -119,7 +119,8 @@ class HexaPositiveDoubleSpinBoxDelegate : public QStyledItemDelegate  {
                           const QModelIndex &index) const{
         QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
         sb->setMinimum(0);
-        sb->setMaximum(1000000000); //10e15 -> 10e9 (machine 32 bits)
+/////// sb->setMaximum(1000000000000000); //10e15   Abu : Pb en 32 bits
+        sb->setMaximum(1000000000);       //10e9 
         return sb;
     }
 };
@@ -4281,12 +4282,10 @@ bool EdgeAssocDialog::apply(QModelIndex& result)
       QString mainShapeEntry;
       int     subId = -1;
       QString brep;
-	//std::cout << "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk OUT" << GEOMBase::GetName(myLine.get()).toStdString() << std::endl;
       GEOM::GeomObjPtr aSelectedObject = myLine;
       TopoDS_Shape aShape;
 
       if ( aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull() ){
-		//std::cout << "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk IN" << GEOMBase::GetName(aSelectedObject.get()).toStdString() << std::endl;
 	      if ( aSelectedObject->IsMainShape() ){
 		      mainShapeEntry = aSelectedObject->GetStudyEntry();
 		      brep =  shape2string( aShape ).c_str();

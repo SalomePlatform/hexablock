@@ -48,8 +48,6 @@ public:
   ::CORBA::Long save (const char* fileName)    throw (SALOME::SALOME_Exception);
   ::CORBA::Long setName (const char* fileName) throw (SALOME::SALOME_Exception);
    char* getName ()                      throw (SALOME::SALOME_Exception);
-   
-   ::CORBA::Long loadXml(const char* fname) throw (SALOME::SALOME_Exception);
 
 
   void setTolerance(::CORBA::Double tol) throw (SALOME::SALOME_Exception);

@@ -63,7 +63,7 @@ Document::Document (cpchar name)
    doc_xml          = NULL;
    doc_shape        = NULL;
 
-   addLaw ("DefaultLaw", 0);
+   defaultLaw = addLaw ("DefaultLaw", 0);
    
    nbr_used_hexas = nbr_used_quads = nbr_used_edges = nbr_used_vertex = 0;
 
@@ -784,12 +784,19 @@ int Document::removeLaw (Law* loi)
 { 
    for (int nro=1 ; nro<nbr_laws; nro++)
        if (doc_laws [nro] == loi)
-          {
-          delete doc_laws [nro];
-          doc_laws.erase (doc_laws.begin()+nro);
-          nbr_laws= doc_laws.size();
-          return HOK;
-	  }
+       {
+          //All propagations having this law should now have the default law.
+		  for (int nro=0 ; nro<nbr_propagations ; nro++)
+		  {
+		  	if ( doc_propagation [nro]->getLaw() == loi )
+				doc_propagation [nro]->setLaw(defaultLaw);
+		  }
+
+		  delete doc_laws [nro];
+		  doc_laws.erase (doc_laws.begin()+nro);
+		  nbr_laws= doc_laws.size();
+		  return HOK;
+	    }
 
    return HERR;
 }
@@ -1033,7 +1040,7 @@ void Document::getAssoVertices (Vertices& tabelt)
    tabelt.clear ();
    for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
                  elt = elt->next())
-       if (elt->isHere())
+       if (elt->isHere() && elt->getAssociation()!=NULL)
           tabelt.push_back (static_cast <Vertex*> (elt)); 
 }
 // ======================================================== getAssoEdges
@@ -1043,6 +1050,11 @@ void Document::getAssoEdges (Edges& tabelt)
    for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
                  elt = elt->next())
        if (elt->isHere())
-          tabelt.push_back (static_cast <Edge*> (elt)); 
+          { 
+          Edge* edge = static_cast <Edge*> (elt); 
+          int nbass  = edge->getAssociations().size();
+          if (nbass>0)
+              tabelt.push_back (edge);
+          }
 }
 END_NAMESPACE_HEXA

@@ -2437,9 +2437,11 @@ void HEXABLOCKGUI::removeGroup()
 {
   QItemSelectionModel *groupsSelectionModel = _groupsTreeView->selectionModel();
   QModelIndexList l = groupsSelectionModel->selectedIndexes();
+  int nbGroupsRemoved = 0;
 
   if ( l.isEmpty() ){
-    SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE GROUP" ), tr( "No group selected!" ) );
+    SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE GROUP" ), 
+									tr( "No group selected!" ) );
     return;
   }
 
@@ -2448,7 +2450,7 @@ void HEXABLOCKGUI::removeGroup()
       selected = _groupsModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
 
-      //Demande de confirmation de la suppression des groupes
+      //Demande de confirmation de la suppression des groupes (Group)
       if (SUIT_MessageBox::question(
             0,
             tr("Remove Group"),
@@ -2459,11 +2461,16 @@ void HEXABLOCKGUI::removeGroup()
 
       bool removed = _currentModel->removeGroup( selected );
       if ( !removed ) {
-        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
+        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), 
+					tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
         return;
       }
+	  nbGroupsRemoved++;
     }
   }
+  if (!nbGroupsRemoved)
+	SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE GROUP" ), 
+									tr( "No group selected!" ) );
 }
 
 
@@ -2478,13 +2485,12 @@ void HEXABLOCKGUI::addLaw()
 void HEXABLOCKGUI::removeLaw()
 {
 
-//   QItemSelectionModel *meshSelectionModel = _meshTreeView->selectionModel();
-//   QModelIndexList l = meshSelectionModel->selectedIndexes();
-
   QModelIndexList l = _meshSelectionModel->selectedIndexes();
+  int nbLawsRemoved = 0;
 
   if ( l.isEmpty() ){
-    SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE LAW" ), tr( "No law selected!" ) );
+    SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE LAW" ), 
+									tr( "No law selected!" ) );
     return;
   }
 
@@ -2493,22 +2499,28 @@ void HEXABLOCKGUI::removeLaw()
       selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
 
-      //Demande de confirmation de la suppression des règles (Law)
+      //Demande de confirmation de la suppression des lois (Law)
       if (SUIT_MessageBox::question(
             0,
             tr("Remove Law"),
-            tr("Remove law : %1 ?").arg(selected.data().toString()),
+            tr("Remove law : %1 ?\nAll propagations having this law will \
+have the default law.").arg(selected.data().toString()),
             SUIT_MessageBox::Ok | SUIT_MessageBox::Cancel,
             SUIT_MessageBox::Cancel
         ) == SUIT_MessageBox::Cancel) return;
 
       bool removed = _currentModel->removeLaw(selected);
       if ( !removed ) {
-        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
+        SUIT_MessageBox::critical( 0, tr( "ERR_ERROR" ), 
+					tr( "CANNOT REMOVE %1" ).arg(selected.data().toString()) );
         return;
       }
+	  nbLawsRemoved++;
     }
   }
+  if (!nbLawsRemoved)
+	SUIT_MessageBox::information( 0, tr( "CANNOT REMOVE LAW" ), 
+									tr( "No law selected!" ) );
 
 }
 

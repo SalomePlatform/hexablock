@@ -255,7 +255,14 @@ int KasBiCylinder::associate (Edge* edge)
                   param1  = 0.0;
               if (param2 >= -Epsil && param2 <= Epsil)
                   param2  = 1.0;
-              inter_line[nlig]->assoEdge (edge, param1, param2, 2);
+              if (param1 < param2)
+                  inter_line[nlig]->assoEdge (edge, param1, param2, 2);
+              else
+                     // Le debut de la ligne (fermee) est entre les 2 vertex)
+                  {
+                  inter_line[nlig]->assoEdge (edge, param1, 1.0, V_AMONT);
+                  inter_line[nlig]->assoEdge (edge, 0.0, param2, V_AVAL);
+                  }
               return HOK;
               }  
            }

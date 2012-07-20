@@ -317,6 +317,7 @@ private :
 
    std::vector <Law*> doc_laws;
    int                nbr_laws;
+   Law* defaultLaw;
 
    int  nbr_propagations;
    bool maj_propagation;

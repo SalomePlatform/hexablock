@@ -90,14 +90,6 @@ HEXA_NS::Document* Document_impl::GetImpl() throw (SALOME::SALOME_Exception)
   return ret;
 }
 
-
-::CORBA::Long Document_impl::loadXml(const char* fname) throw (SALOME::SALOME_Exception)
-{
-  ::CORBA::Long ret = _document_cpp->loadXml(fname);
-  return ret;
-}
-
-
 void Document_impl::setTolerance(::CORBA::Double tol)
                     throw (SALOME::SALOME_Exception)
 {
