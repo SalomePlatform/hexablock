@@ -202,6 +202,6 @@ for i in xrange(2):
 
 hexablock.addLaws(doc, 10, True)
 
-blocs = hexablock.mesh(doc, dim=2)
+blocs = hexablock.mesh(doc)
 
 muv, mue, muq, muh = hexablock.dump(doc, blocs)
