@@ -752,8 +752,10 @@ void CrossElements::assoArc (int cyl, int nx, int ny, int nz, string& brep,
     double angle1 = getAngle (cyl, ny);
     double angle2 = getAngle (cyl, ny+1);
     Edge*   edge  = getEdgeJ     (cyl, nx, ny, nz);
-    Shape*  shape = new Shape (brep);
+    if (edge==NULL)
+       return;
 
+    Shape* shape = new Shape (brep);
     shape->setBounds (angle1*UnSur2pi, angle2*UnSur2pi);
     edge ->addAssociation (shape);
 

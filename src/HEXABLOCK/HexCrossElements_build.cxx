@@ -57,9 +57,11 @@ int  geom_asso_cylcyl   (Edge* edge);
 void CrossElements::createBigCyl ()
 {
    const int iv0   = 0;
-   const int kv_mil = at_left ? 2 : 4 ;
+   const int kv_mil = cyl_left != NO_PIPE ? 2 : 3 ;
 
+   enum { k0, k1, k2, k3, k4 };
    double z0, z1, z2, z3, z4;
+
    z0 = big_hauteur[0] = - calcul_centre (cross_cyl2->getBase(), cross_center);
    z4 = big_hauteur[4] = z0 + cross_cyl2->getHeight ();
 
@@ -67,7 +69,6 @@ void CrossElements::createBigCyl ()
    z2 = big_hauteur[2] = getVertexIJK (CylSmall, NxExt, S_E,  kv_mil)->getZ();
    z3 = big_hauteur[3] = getVertexIJK (CylSmall, NxExt, S_NE, kv_mil)->getZ();
 
-   enum { k0, k1, k2, k3, k4 };
 
    setVertex (CylBig, iv0, 0, k0,    0, 0, z0);
    addSlice  (CylBig, NxInt, k0, z0);
@@ -149,13 +150,13 @@ void CrossElements::createBigCyl ()
    copyVertex (NxExt, S_E,  4,   NxInt, S_NE, k2);
    copyVertex (NxExt, S_W,  4,   NxInt, S_SE, k2);
 
-   if (NOT at_left)
+   if (cyl_left == NO_PIPE)
       {
       addVertex (CylBig, NxExt, S_W, k2, z2, cross_rayon [CylBig][NxExt]);
       addVertex (CylBig, NxInt, S_W, k2, z2, cross_rayon [CylBig][NxInt]);
       }
 
-   if (NOT at_right)
+   if (cyl_right == NO_PIPE)
       {
       addVertex (CylBig, NxExt, S_E, k2, z2, cross_rayon [CylBig][NxExt]);
       addVertex (CylBig, NxInt, S_E, k2, z2, cross_rayon [CylBig][NxInt]);
@@ -215,9 +216,9 @@ void CrossElements::createBigCyl ()
 void CrossElements::createLittleCyl ()
 {
    double c1 = calcul_centre (cross_cyl1->getBase(), cross_center);
-   double cosalpha = cos (angle_inter[CylBig]);
-   double prayext  = cross_rayon [CylBig][NxExt] * cosalpha;
-   double prayint  = cross_rayon [CylBig][NxInt] * cosalpha;
+   // double cosalpha = cos (angle_inter[CylBig]);
+   double prayext  = cross_rayon [CylBig][NxExt]; // * cosalpha;
+   double prayint  = cross_rayon [CylBig][NxInt]; // * cosalpha;
 
    double t_haut [MaxLevel] = { -c1,  -prayext,  -prayint,  
                                  0,    prayint,  prayext, 
@@ -229,8 +230,31 @@ void CrossElements::createLittleCyl ()
 
    double t_rayext [MaxLevel] = { -1,  -1, rm, rc, rm, -1, -1 }; 
 
+/* *******************************************************************
    int nkdeb = at_left  ? 0        : size_v1z/2;
    int nkfin = at_right ? size_v1z : size_v1z/2;
+   ******************************************************************* */
+
+   int nkdeb, nkfin;
+   switch (cyl_left)
+          {
+          case IS_HERE : nkdeb = 0;
+               break;
+          case NO_PIPE : nkdeb = size_v1z/2;
+               break;
+          case NO_CYL  : nkdeb = 1;
+               break;
+          }
+   switch (cyl_right)
+          {
+          case IS_HERE : nkfin = size_v1z;
+               break;
+          case NO_PIPE : nkfin = size_v1z/2;
+               break;
+          case NO_CYL  : nkfin = size_v1z-1;
+               break;
+          }
+
    for (int nk = nkdeb ; nk<nkfin ; nk++)
        {
        double px = t_haut [nk]; 
@@ -265,6 +289,14 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    if (cross_center==NULL)
       return HERR;
 
+   if (at_left)                     cyl_left = IS_HERE;
+   else if (grid_type == GR_BIPIPE) cyl_left = NO_PIPE;
+   else                             cyl_left = NO_CYL;
+
+   if (at_right)                    cyl_right = IS_HERE;
+   else if (grid_type == GR_BIPIPE) cyl_right = NO_PIPE;
+   else                             cyl_right = NO_CYL;
+
    double cross_gray1  = cross_cyl1->getRadius ();
    double cross_gray2  = cross_cyl2->getRadius ();
    double cross_igray1 = cross_gray1 * epaiss2;
@@ -291,16 +323,18 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    createLittleCyl ();
    createBigCyl    ();
 
-   if (at_left)
+   if (cyl_left!=NO_PIPE)
       {
       adjustLittleSlice (NxExt, 1, NxExt);
+      adjustLittleSlice (NxInt, 1, NxExt);
       if (grid_type == GR_BIPIPE) 
          adjustLittleSlice (NxInt, 2, NxInt);
       }
 
-   if (at_right)
+   if (cyl_right!=NO_PIPE)
       {
       adjustLittleSlice (NxExt, 5, NxExt);
+      adjustLittleSlice (NxInt, 5, NxExt);
       if (grid_type == GR_BIPIPE) 
          adjustLittleSlice (NxInt, 4, NxInt);
       }
@@ -321,7 +355,7 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    assoCylinder (CylSmall, snorm);
    assoCylinder (CylBig,   bnorm);
 
-   if (at_left)
+   if (cyl_left == IS_HERE)
       { 
       assoIntersection (NxExt, 1, snorm, bnorm);
       if (grid_type == GR_BIPIPE) 
@@ -330,7 +364,7 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
          }
       }
 
-   if (at_right)
+   if (cyl_right == IS_HERE)
       { 
       assoIntersection (NxExt, NbrSlices1-1, snorm, bnorm);
       if (grid_type == GR_BIPIPE) 
@@ -362,7 +396,7 @@ void CrossElements::assoCylinder (int cyl, double* normal)
 {
    Real3   base, vec1, center, east, west, nordest;
    int nk = 0;
-   if (cyl==CylSmall && NOT at_left) 
+   if (cyl==CylSmall && cyl_left == NO_PIPE) 
       nk  = size_hz[cyl];
 
    Vertex* v_e  = getVertexIJK (cyl, NxExt, S_E , nk);
@@ -394,7 +428,7 @@ void CrossElements::assoCylinder (int cyl, double* normal)
          }
       }
 
-   if (cyl==CylBig || at_right)
+   if (cyl==CylBig || cyl_right == IS_HERE)
       {
       assoSlice (cyl, base, normal, NxExt, size_hz[cyl]);
       if (grid_type == GR_BIPIPE) 
@@ -435,7 +469,7 @@ void CrossElements::assoBigMiddle (double* base, double* normal, int nzs)
    geom_create_circle (center, rayon, normal, base, brep);
    geom_define_line   (brep);   // pour geom_asso_point
 
-   if (NOT at_right)
+   if (cyl_right == NO_PIPE)
       {
       assoArc (CylBig, NxExt, S_SE, nzs, brep, rayon);
       assoArc (CylBig, NxExt, S_E,  nzs, brep, rayon);
@@ -444,7 +478,7 @@ void CrossElements::assoBigMiddle (double* base, double* normal, int nzs)
    assoArc (CylBig, NxExt, S_NE, nzs, brep, rayon);
    assoArc (CylBig, NxExt, S_N , nzs, brep, rayon);
 
-   if (NOT at_left)
+   if (cyl_left == NO_PIPE)
       {
       assoArc (CylBig, NxExt, S_NW, nzs, brep, rayon);
       assoArc (CylBig, NxExt, S_W , nzs, brep, rayon);

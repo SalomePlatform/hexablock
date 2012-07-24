@@ -31,6 +31,7 @@ enum { SizeRay=3, BiCyl=2};
 enum { NbrVSlices1=NbrSlices1+1, NbrVSlices2=NbrSlices2+1};
 enum { MiddleSlice1=NbrSlices1/2};
 enum { Cyl1=CylSmall, Cyl2=CylBig };
+enum { NO_CYL=-1, NO_PIPE=0, IS_HERE=1 };
 
 class CrossElements : public Elements 
 {
@@ -126,7 +127,8 @@ private :
     double cross_rayon [BiCyl][SizeRay];
     double big_hauteur [size_v2z];
 
-    bool      at_right, at_left;
+    bool  at_right,  at_left;
+    int   cyl_right, cyl_left;
 };
 END_NAMESPACE_HEXA
 #endif
