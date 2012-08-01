@@ -35,6 +35,9 @@ public :
    double getZ()   { return v_z; }
    double getCoord (int dir);
 
+   virtual int     countVertex ()       { return 1; }
+   virtual Vertex* getVertex (int nro)  { return this; }
+
 
    void setX (double v)   { v_x = v ; }
    void setY (double v)   { v_y = v ; }

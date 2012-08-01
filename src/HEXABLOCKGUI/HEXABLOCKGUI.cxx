@@ -403,8 +403,14 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 
 
   if ( HEXABLOCKGUI::currentVtkView ){
-    HEXABLOCKGUI::currentVtkView->SetSelectionMode( ActorSelection ); //default selectionMode
+    HEXABLOCKGUI::currentVtkView->SetSelectionMode( ActorSelection ); //default selectionMode in VTKView
   }
+
+//  if (HEXABLOCKGUI::currentOccView)
+//  {
+//	 //getDisplayer()->globalSelection();//????	//defaut selectionMode in OccView
+//  }
+
 
 //   if ( _patternDataSelectionModel ){
 //     delete _patternDataSelectionModel;
@@ -422,7 +428,6 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
   qDeleteAll(myVTKSelectors);
   myVTKSelectors.clear();
   getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
-
 
   return SalomeApp_Module::deactivateModule( theStudy );
 }
@@ -745,19 +750,41 @@ void HEXABLOCKGUI::studyActivated() //CS_TODO
 void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
 {
   QModelIndex currentIndex = _patternDataTreeView->currentIndex();
+  QVariant currentAssocVariant;
+  QString currentAssocEntry;
 
-  QVariant currentAssocVariant = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE );
-  if ( !currentAssocVariant.isValid() ) return;
+  currentAssocVariant = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE );
+  currentAssocEntry    = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE ).toString();
+  if ( currentAssocVariant.isValid() && !currentAssocEntry.isEmpty() ){
+	  //   _currentModel->allowEdition();
+	    QMenu menu( _patternDataTreeView );
+	    //Remove association
+	    QAction *clearAct = menu.addAction( "Remove association(s)" );
+	    connect( clearAct, SIGNAL(triggered()), this, SLOT(clearAssociations()) );
+	    menu.exec( _patternDataTreeView->mapToGlobal( aPosition) );
+  }
+  else {
 
-  QString currentAssocEntry    = currentIndex.data( HEXA_ASSOC_ENTRY_ROLE ).toString();
-  if ( currentAssocEntry.isEmpty() ) return;
+	  QStandardItem *item = _patternDataModel->itemFromIndex ( currentIndex );
 
-//   _currentModel->allowEdition();
-  QMenu menu( _patternDataTreeView );
-  QAction *clearAct = menu.addAction( "Remove association(s)" );
-  connect( clearAct, SIGNAL(triggered()), this, SLOT(clearAssociations()) );
-  menu.exec( _patternDataTreeView->mapToGlobal( aPosition) );
+	  //We don't do anything for single items having no association
+	  if ( item->type() == VERTEXITEM || item->type() == EDGEITEM ||
+			  item->type() == QUADITEM || item->type() == HEXAITEM) return;
+
+	  QMenu menu( _patternDataTreeView );
+
+	  //Show association(s)
+	  QAction *showAssocAct = menu.addAction( "Show associations" );
+	  connect( showAssocAct, SIGNAL(triggered()), this, SLOT(showAssociations()) );
+
+	  //Clear all associations
+	  QAction *clearAllAssocAct = menu.addAction( "Remove all associations" );
+	  connect( clearAllAssocAct, SIGNAL(triggered()), this, SLOT(clearAllAssociations()) );
+
+	  menu.exec( _patternDataTreeView->mapToGlobal( aPosition) );
+  }
 }
+
 
 void HEXABLOCKGUI::createAndFillDockWidget()
 {
@@ -2450,7 +2477,7 @@ void HEXABLOCKGUI::removeGroup()
       selected = _groupsModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
 
-      //Demande de confirmation de la suppression des groupes (Group)
+      //Confirm the deletion of the group
       if (SUIT_MessageBox::question(
             0,
             tr("Remove Group"),
@@ -2499,7 +2526,7 @@ void HEXABLOCKGUI::removeLaw()
       selected = _meshModel->mapToSource( selected );
       Q_ASSERT(selected.isValid());
 
-      //Demande de confirmation de la suppression des lois (Law)
+      //Confirm the deletion of the law
       if (SUIT_MessageBox::question(
             0,
             tr("Remove Law"),
@@ -2560,6 +2587,58 @@ void HEXABLOCKGUI::clearAssociations()
   _currentModel->clearEltAssociations(iModel);
 
   SUIT_MessageBox::information( 0, tr( "HEXA_INFO" ), tr( "ASSOCIATION CLEARED" ) );
+}
+
+void HEXABLOCKGUI::clearAllAssociations()
+{
+	//Confirm the deletion of the associations
+	if (SUIT_MessageBox::question(
+			0,
+			tr("Clear Associations"),
+			tr("Clear all associations ?"),
+			SUIT_MessageBox::Ok | SUIT_MessageBox::Cancel,
+			SUIT_MessageBox::Cancel
+	) == SUIT_MessageBox::Cancel) return;
+
+	int currentChildIndex = 0;
+	QModelIndex currentIndex = _patternDataModel->mapToSource(_patternDataTreeView->currentIndex());
+	QVariant currentAssocVariant;
+	QString currentAssocEntry;
+
+	QModelIndex currentChild = currentIndex.child(currentChildIndex++, 0);
+	while( currentChild.isValid() ) {
+
+		currentAssocVariant = currentChild.data( HEXA_ASSOC_ENTRY_ROLE );
+		currentAssocEntry = currentChild.data( HEXA_ASSOC_ENTRY_ROLE ).toString();
+		if ( currentAssocVariant.isValid() && !currentAssocEntry.isEmpty() )
+			_currentModel->clearEltAssociations(currentChild);
+
+		currentChild = currentChild.sibling(currentChildIndex++, 0);
+	}
+
+	//SUIT_MessageBox::information( 0, tr( "HEXA_INFO" ), tr( "ASSOCIATION CLEARED" ) );
+}
+
+void HEXABLOCKGUI::showAssociations()
+{
+	QModelIndexList elts;
+	int currentChildIndex = 0;
+	QVariant currentAssocVariant;
+	QString currentAssocEntry;
+	QModelIndex currentIndex = _patternDataTreeView->currentIndex();
+	QModelIndex currentChild = currentIndex.child(currentChildIndex++, 0);
+
+	while( currentChild.isValid() ) {
+
+		currentAssocVariant = currentChild.data( HEXA_ASSOC_ENTRY_ROLE );
+		currentAssocEntry = currentChild.data( HEXA_ASSOC_ENTRY_ROLE ).toString();
+		if ( currentAssocVariant.isValid() && !currentAssocEntry.isEmpty() )
+			elts << currentChild;
+
+		currentChild = currentChild.sibling(currentChildIndex++, 0);
+	}
+	_patternDataSelectionModel-> highlightVTKElts( elts );
+
 }
 
 

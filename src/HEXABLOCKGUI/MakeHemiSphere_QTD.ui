@@ -32,9 +32,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-261</y>
-        <width>329</width>
-        <height>679</height>
+        <y>0</y>
+        <width>330</width>
+        <height>688</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -138,6 +138,9 @@
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
                </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -166,6 +169,9 @@
                </property>
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -237,6 +243,9 @@
                </property>
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -381,6 +390,9 @@
                <property name="maximum">
                 <double>360.000000000000000</double>
                </property>
+               <property name="value">
+                <double>180.000000000000000</double>
+               </property>
               </widget>
              </item>
              <item row="2" column="0" colspan="2">
@@ -426,6 +438,9 @@
                <property name="maximum">
                 <number>1000000</number>
                </property>
+               <property name="value">
+                <number>1</number>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -446,6 +461,9 @@
                <property name="maximum">
                 <number>1000000</number>
                </property>
+               <property name="value">
+                <number>3</number>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -465,6 +483,9 @@
                </property>
                <property name="maximum">
                 <number>1000000</number>
+               </property>
+               <property name="value">
+                <number>1</number>
                </property>
               </widget>
              </item>

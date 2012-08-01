@@ -277,7 +277,13 @@ private slots:
   void setPropagation();
   void computeMesh();
 
+  //Clears associations of a single element (VERTEX, EDGE, QUAD, ...)
   void clearAssociations();
+
+  //Clears associations under a tree (VERTEX_TREE, EDGE_TREE, ...)
+  void clearAllAssociations();
+
+  void showAssociations();
 
 private:
 

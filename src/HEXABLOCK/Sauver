@@ -1,0 +1,13 @@
+#!/bin/sh
+# Comm : Sauvegarde
+
+model=`pwd`
+model=`basename $model`
+saved=motor_saved
+
+umake -clean
+touch _____________________________
+cd ..
+mkdir -p $saved
+###   ./$model/dsave $* -ln internal_doc implem model -d $saved
+./$model/dsave $model -d $saved

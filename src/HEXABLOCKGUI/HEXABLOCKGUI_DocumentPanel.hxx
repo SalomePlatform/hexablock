@@ -139,9 +139,9 @@ namespace HEXABLOCK
           virtual void setMeshSelectionModel( MeshSelectionModel* s );
 
         public slots:
+          //virtual void accept();
           virtual bool apply();
-          virtual void accept();
-          virtual void reject();
+          virtual void close();
           virtual void onHelpRequested();
 
 
@@ -152,7 +152,7 @@ namespace HEXABLOCK
           virtual bool apply(QModelIndex& result) = 0;
 
           virtual void _initInputWidget( Mode editmode )=0; //must be implemented on inherited dialog box
-          virtual QDialogButtonBox* _initButtonBox( Mode editmode );
+          virtual QGroupBox*  _initButtonBox( Mode editmode );
           void _initWidget( Mode editmode ); // call _initInputWidget() & _initButtonBox()
 
           void _initViewManager();
@@ -195,7 +195,7 @@ namespace HEXABLOCK
 
           QMap<HexaWidgetType, QString>  _strHexaWidgetType;
 
-          QPushButton* _applyCloseButton;
+          //QPushButton* _applyCloseButton;
           QPushButton* _applyButton;
 
           QString  _helpFileName;
@@ -790,7 +790,6 @@ namespace HEXABLOCK
         void addLine();
         void pstartChanged( double val );
         void pendChanged( double val );
-	void SetEditCurrentArgument();
 
       private:
         // Preview in GEOM

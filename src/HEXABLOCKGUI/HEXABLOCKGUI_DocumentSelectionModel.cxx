@@ -373,6 +373,54 @@ void PatternDataSelectionModel::_setVTKSelectionMode( const QModelIndex& eltInde
 
 
 
+void PatternDataSelectionModel::highlightVTKElts( const QModelIndexList& elts )
+{
+	if (!elts.size()) return;
+
+	SVTK_ViewWindow* currentVTKViewWindow = _getVTKViewWindow();
+	if ( currentVTKViewWindow == NULL ) return;
+	SVTK_Selector* selector = currentVTKViewWindow->GetSelector();
+	if ( selector == NULL ) return;
+
+	// document selection
+	Document_Actor* docActor = NULL;
+	Handle(SALOME_InteractiveObject) docIO;
+
+	// element highlight
+	TColStd_MapOfInteger aMap;
+	QList<int>::const_iterator anIter;
+	int vtkElemsId;
+
+	// data from model
+	QString docEntry;
+	QVariant docEntryVariant    = elts[0].data( HEXA_DOC_ENTRY_ROLE );
+
+	if ( !docEntryVariant.isValid() ){
+		//INFOS("data from model not valid");
+		return;
+	}
+
+	docEntry = docEntryVariant.toString();
+
+	// Select the document in Salome
+	docActor = dynamic_cast<Document_Actor*>( findActorByEntry( currentVTKViewWindow, docEntry.toLatin1() ) );
+	if ( docActor == NULL) return;
+
+	//   // Set selection mode in VTK view
+//	currentVTKViewWindow->SetSelectionMode(EdgeSelection);
+	docIO = docActor->getIO();
+
+	// Highlight in vtk view the element from document
+	QString edgeEntry;
+	foreach( const QModelIndex& iElt, elts ){
+		edgeEntry = iElt.data( HEXA_ENTRY_ROLE ).toString();
+		vtkElemsId = docActor->vtkElemsId[ edgeEntry.toInt() ];
+		if ( vtkElemsId > 0 ) aMap.Add( vtkElemsId );
+	}
+
+	selector->AddOrRemoveIndex( docIO, aMap, false );
+	currentVTKViewWindow->highlight( docIO, true, true );
+}
 
 // 1 vertex -> 1 point
 // 1 edge   -> n lines + points(deb,fin)
@@ -543,6 +591,7 @@ QModelIndex PatternDataSelectionModel::_geomSelectionChanged( const Handle(SALOM
         setCurrentIndex( eltIndex, QItemSelectionModel::Clear );  //CS_TEST
         setCurrentIndex( eltIndex, QItemSelectionModel::SelectCurrent );
         _theGeomSelectionChanged = false;
+
       } else {
         clearSelection();
       }
@@ -590,6 +639,16 @@ QModelIndex PatternDataSelectionModel::_vtkSelectionChanged( const Handle(SALOME
     _theVtkSelectionChanged = false;
   } else {
     clearSelection();
+  }
+
+//  if (anIOIndex.isValid())
+//	  _selectVTK(anIOIndex);
+
+  if (anIOIndex.isValid())
+  {
+	  QModelIndexList l;
+	  l << anIOIndex;
+  	  highlightVTKElts(l);
   }
 
   MESSAGE("}");

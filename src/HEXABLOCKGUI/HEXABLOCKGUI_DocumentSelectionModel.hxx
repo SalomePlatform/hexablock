@@ -68,6 +68,7 @@ namespace HEXABLOCK
         void setQuadSelection();
         void setHexaSelection();
         void setAllSelection();
+        void highlightVTKElts( const QModelIndexList& elts );
 
         // 
         QModelIndex  indexBy( int role, const QString&  value );

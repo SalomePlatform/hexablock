@@ -74,7 +74,7 @@
           <item>
            <widget class="QRadioButton" name="single_rb">
             <property name="text">
-             <string>Single</string>
+             <string>One edge</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -84,7 +84,7 @@
           <item>
            <widget class="QRadioButton" name="multiple_rb">
             <property name="text">
-             <string>Multiple</string>
+             <string>Line</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -208,31 +208,16 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="QPushButton" name="pb_line_select">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>21</height>
-                  </size>
-                 </property>
+                <widget class="QLabel" name="label_4">
                  <property name="text">
-                  <string/>
-                 </property>
-                 <property name="autoDefault">
-                  <bool>false</bool>
+                  <string>Line : </string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QLineEdit" name="single_line_le">
                  <property name="readOnly">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -580,38 +565,6 @@
   <connection>
    <sender>single_rb</sender>
    <signal>clicked()</signal>
-   <receiver>pb_line_select</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>90</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>61</x>
-     <y>462</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>multiple_rb</sender>
-   <signal>clicked()</signal>
-   <receiver>pb_line_select</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>218</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>61</x>
-     <y>462</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>single_rb</sender>
-   <signal>clicked()</signal>
    <receiver>close_cb</receiver>
    <slot>hide()</slot>
    <hints>
@@ -670,6 +623,38 @@
     <hint type="destinationlabel">
      <x>212</x>
      <y>627</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>single_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>label_4</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>57</x>
+     <y>452</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>multiple_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>label_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>57</x>
+     <y>452</y>
     </hint>
    </hints>
   </connection>

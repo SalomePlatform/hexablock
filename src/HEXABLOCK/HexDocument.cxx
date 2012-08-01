@@ -662,9 +662,9 @@ Elements* Document::prismQuad  (Quad* start, Vector* dir, int nb)
 // ======================================================== prismQuads
 Elements* Document::prismQuads (Quads& tstart, Vector* dir, int nb)
 {
-   if (nb<=0) return NULL;
-
    Elements*  prisme = new Elements (this);
+   if (nb<=0) return prisme;
+
    prisme->prismQuads (tstart, dir, nb);
    return prisme;
 }
@@ -672,9 +672,9 @@ Elements* Document::prismQuads (Quads& tstart, Vector* dir, int nb)
 Elements* Document::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
                                    int crit)
 {
-   if (tlen.size()<=0) return NULL;
-
    Elements*  prisme = new Elements (this);
+   if (tlen.size()<=0) return prisme;
+
    prisme->prismQuadsVec (tstart, dir, tlen, crit);
    return prisme;
 }
@@ -682,10 +682,10 @@ Elements* Document::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
 Elements* Document::joinQuads (Quads& start, Quad* dest, Vertex* v1, 
 		               Vertex* v2, Vertex* v3, Vertex* v4, int nb)
 {
-   if (nb<=0)      return NULL;
-
    update ();
    Elements*  joint = new Elements (this);
+   if (nb<=0)      return joint;
+
    int ier = joint->joinQuads (start, nb, v1, v2, v3, v4, dest);
    if (ier !=HOK)
       printf ("\n ****\n **** Error in joinQuad(s)\n ****\n");
@@ -784,19 +784,20 @@ int Document::removeLaw (Law* loi)
 { 
    for (int nro=1 ; nro<nbr_laws; nro++)
        if (doc_laws [nro] == loi)
-       {
+          {
           //All propagations having this law should now have the default law.
-		  for (int nro=0 ; nro<nbr_propagations ; nro++)
-		  {
-		  	if ( doc_propagation [nro]->getLaw() == loi )
-				doc_propagation [nro]->setLaw(defaultLaw);
-		  }
 
-		  delete doc_laws [nro];
-		  doc_laws.erase (doc_laws.begin()+nro);
-		  nbr_laws= doc_laws.size();
-		  return HOK;
-	    }
+          for (int nl=0 ; nl<nbr_propagations ; nl++)
+              {
+	      if ( doc_propagation [nl]->getLaw() == loi )
+		   doc_propagation [nl]->setLaw(defaultLaw);
+	      }
+
+	   delete doc_laws [nro];
+	   doc_laws.erase (doc_laws.begin()+nro);
+	   nbr_laws= doc_laws.size();
+	   return HOK;
+	   }
 
    return HERR;
 }

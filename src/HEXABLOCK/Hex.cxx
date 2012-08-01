@@ -34,9 +34,11 @@ Hex::Hex ()
 // ======================================================== Destructeur
 Hex::~Hex ()
 {
+#ifndef NO_CASCADE
    int nbre = liste_documents.size();
    for (int nd=0 ; nd<nbre ; nd++) 
        delete liste_documents [nd];
+#endif
 }
 // ======================================================== countDocument
 int Hex::countDocument ()

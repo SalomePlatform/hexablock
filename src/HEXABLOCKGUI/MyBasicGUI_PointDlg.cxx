@@ -401,8 +401,8 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
-      myEditCurrentArgument->setText("");
-      myRefPoint.nullify();
+      //myEditCurrentArgument->setText("");
+      //myRefPoint.nullify();
       GroupRefPoint->PushButton1->setDown(true);
       myParamGroup->hide();
       GroupXYZ->hide();
@@ -420,9 +420,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
-      myEditCurrentArgument->setText("");
-      myEdge.nullify();
-      myRefPoint.nullify();
+//      myEditCurrentArgument->setText("");
+//      myEdge.nullify();
+//      myRefPoint.nullify();
       GroupOnCurve->PushButton1->setDown(true);
       GroupRefPoint->hide();
       GroupLineIntersection->hide();
@@ -442,12 +442,12 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
-      GroupLineIntersection->LineEdit1->setText("");
-      GroupLineIntersection->LineEdit2->setText("");
+//      GroupLineIntersection->LineEdit1->setText("");
+//      GroupLineIntersection->LineEdit2->setText("");
       GroupLineIntersection->LineEdit1->setEnabled(true);
       GroupLineIntersection->LineEdit2->setEnabled(false);
-      myLine1.nullify();
-      myLine2.nullify();
+//      myLine1.nullify();
+//      myLine2.nullify();
       GroupLineIntersection->PushButton1->setDown(true);
       GroupLineIntersection->PushButton2->setDown(false);
       myParamGroup->hide();
@@ -466,8 +466,8 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
-      myEditCurrentArgument->setText("");
-      myFace.nullify();
+      //myEditCurrentArgument->setText("");
+      //myFace.nullify();
       GroupOnSurface->PushButton1->setDown(true);
       GroupRefPoint->hide();
       GroupOnCurve->hide();
@@ -482,9 +482,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     }
   }
 
-  myX->setText("");
-  myY->setText("");
-  myZ->setText("");
+//  myX->setText("");
+//  myY->setText("");
+//  myZ->setText("");
 
   QTimer::singleShot(50, this, SLOT(updateSize()));
 
@@ -524,90 +524,93 @@ bool MyBasicGUI_PointDlg::ClickOnApply()
 //=================================================================================
 void MyBasicGUI_PointDlg::SelectionIntoArgument()
 {
-  MESSAGE("MyBasicGUI_PointDlg::SelectionIntoArgument() myGeomGUI : "<< myGeomGUI);
-  erasePreview();
-  const int id = getConstructorId();
+	MESSAGE("MyBasicGUI_PointDlg::SelectionIntoArgument() myGeomGUI : "<< myGeomGUI);
 
-  if ((id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF)
-       && myEditCurrentArgument != 0)
-  {
-    myEditCurrentArgument->setText("");
-    myX->setText("");
-    myY->setText("");
-    myZ->setText("");
-    myFace.nullify();
-    if (myEditCurrentArgument == GroupOnCurve->LineEdit1)
-      myEdge.nullify();
-    else if (myEditCurrentArgument == GroupOnCurve->LineEdit2)
-      myRefPoint.nullify();
-  }
-  else if (id == GEOM_POINT_INTINT) {
-    myEditCurrentArgument->setText("");
-    if (myEditCurrentArgument == GroupLineIntersection->LineEdit1)
-      myLine1.nullify();
-    else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2)
-      myLine2.nullify();
-  }
+	GEOM::GeomObjPtr aSelectedObject = getSelected(myNeedType);
+	TopoDS_Shape aShape;
+	if (!aSelectedObject || !GEOMBase::GetShape(aSelectedObject.get(), aShape) || aShape.IsNull())
+		return;
 
-  GEOM::GeomObjPtr aSelectedObject = getSelected(myNeedType);
-  TopoDS_Shape aShape;
-  if (aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull()) {
-    QString aName = GEOMBase::GetName(aSelectedObject.get());
-    myBusy = true;
-    if (id == GEOM_POINT_XYZ) {
-      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(aShape));
-      GroupXYZ->SpinBox_DX->setValue(aPnt.X());
-      GroupXYZ->SpinBox_DY->setValue(aPnt.Y());
-      GroupXYZ->SpinBox_DZ->setValue(aPnt.Z());
-    }
-    else if (id == GEOM_POINT_REF) {
-      myRefPoint = aSelectedObject;
-      GroupRefPoint->LineEdit1->setText(aName);
-    }
-    else if (id == GEOM_POINT_EDGE) {
-      myEditCurrentArgument->setText(aName);
-      if (myEditCurrentArgument == GroupOnCurve->LineEdit1) {
-        myEdge = aSelectedObject;
-        if (myEdge && !myRefPoint) {
-          GroupOnCurve->PushButton2->click();
-        }
-      }
-      else if (myEditCurrentArgument == GroupOnCurve->LineEdit2) {
-        myRefPoint = aSelectedObject;
-        if (myRefPoint && !myEdge) {
-          GroupOnCurve->PushButton1->click();
-        }
-      }
-    }
-    else if (id == GEOM_POINT_INTINT) {
-      myEditCurrentArgument->setText(aName);
-      if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
-        myLine1 = aSelectedObject;
-        if (myLine1 && !myLine2) {
-          GroupLineIntersection->PushButton2->setMenu(0);
-          GroupLineIntersection->PushButton2->click();
-          GroupLineIntersection->PushButton2->setDown(true);
-          GroupLineIntersection->PushButton2->setMenu(myBtnPopup);
-        }
-      }
-      else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
-        myLine2 = aSelectedObject;
-        if (myLine2 && !myLine1) {
-          GroupLineIntersection->PushButton1->setMenu(0);
-          GroupLineIntersection->PushButton1->click();
-          GroupLineIntersection->PushButton1->setDown(true);
-          GroupLineIntersection->PushButton1->setMenu(myBtnPopup);
-        }
-      }
-    }
-    else if (id == GEOM_POINT_SURF) {
-      myFace = aSelectedObject;
-      GroupOnSurface->LineEdit1->setText(aName);
-    }
-    myBusy = false;
-  }
+	erasePreview();
+	const int id = getConstructorId();
 
-  displayPreview(true);
+	if ((id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF)
+			&& myEditCurrentArgument != 0)
+	{
+		myEditCurrentArgument->setText("");
+		myX->setText("");
+		myY->setText("");
+		myZ->setText("");
+		myFace.nullify();
+		if (myEditCurrentArgument == GroupOnCurve->LineEdit1)
+			myEdge.nullify();
+		else if (myEditCurrentArgument == GroupOnCurve->LineEdit2)
+			myRefPoint.nullify();
+	}
+	else if (id == GEOM_POINT_INTINT) {
+		myEditCurrentArgument->setText("");
+		if (myEditCurrentArgument == GroupLineIntersection->LineEdit1)
+			myLine1.nullify();
+		else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2)
+			myLine2.nullify();
+	}
+
+	QString aName = GEOMBase::GetName(aSelectedObject.get());
+	myBusy = true;
+	if (id == GEOM_POINT_XYZ) {
+		gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(aShape));
+		GroupXYZ->SpinBox_DX->setValue(aPnt.X());
+		GroupXYZ->SpinBox_DY->setValue(aPnt.Y());
+		GroupXYZ->SpinBox_DZ->setValue(aPnt.Z());
+	}
+	else if (id == GEOM_POINT_REF) {
+		myRefPoint = aSelectedObject;
+		GroupRefPoint->LineEdit1->setText(aName);
+	}
+	else if (id == GEOM_POINT_EDGE) {
+		myEditCurrentArgument->setText(aName);
+		if (myEditCurrentArgument == GroupOnCurve->LineEdit1) {
+			myEdge = aSelectedObject;
+			if (myEdge && !myRefPoint) {
+				GroupOnCurve->PushButton2->click();
+			}
+		}
+		else if (myEditCurrentArgument == GroupOnCurve->LineEdit2) {
+			myRefPoint = aSelectedObject;
+			if (myRefPoint && !myEdge) {
+				GroupOnCurve->PushButton1->click();
+			}
+		}
+	}
+	else if (id == GEOM_POINT_INTINT) {
+		myEditCurrentArgument->setText(aName);
+		if (myEditCurrentArgument == GroupLineIntersection->LineEdit1) {
+			myLine1 = aSelectedObject;
+			if (!myLine2) {
+				GroupLineIntersection->PushButton2->setMenu(0);
+				GroupLineIntersection->PushButton2->click();
+				GroupLineIntersection->PushButton2->setDown(true);
+				GroupLineIntersection->PushButton2->setMenu(myBtnPopup);
+			}
+		}
+		else if (myEditCurrentArgument == GroupLineIntersection->LineEdit2) {
+			myLine2 = aSelectedObject;
+			if (!myLine1) {
+				GroupLineIntersection->PushButton1->setMenu(0);
+				GroupLineIntersection->PushButton1->click();
+				GroupLineIntersection->PushButton1->setDown(true);
+				GroupLineIntersection->PushButton1->setMenu(myBtnPopup);
+			}
+		}
+	}
+	else if (id == GEOM_POINT_SURF) {
+		myFace = aSelectedObject;
+		GroupOnSurface->LineEdit1->setText(aName);
+	}
+	myBusy = false;
+
+
+	displayPreview(true);
 }
 
 
@@ -1232,10 +1235,12 @@ void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
 
 bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
 {
+
   if ( (event->type() != QEvent::FocusIn)
     or (obj != mainFrame()->_vertex_le) ){
     return MyGEOMBase_Skeleton::eventFilter(obj, event);
   }
+
   MESSAGE("MyBasicGUI_PointDlg::eventFilter{");
 
   QVariant       vxVariant;
@@ -1246,7 +1251,9 @@ bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
   _patternDataSelectionModel->setVertexSelection();
 
   vxVariant = mainFrame()->_vertex_le->property("QModelIndex");
-  if ( !vxVariant.isValid() ) return MyGEOMBase_Skeleton::eventFilter(obj, event);
+  if ( !vxVariant.isValid() ) {
+	  return MyGEOMBase_Skeleton::eventFilter(obj, event);
+  }
   vxIndex = vxVariant.value<QModelIndex>();
   _selectionMutex = true;
   MESSAGE("*  selecting the element         : " << vxIndex.data().toString().toStdString());
