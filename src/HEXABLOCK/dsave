@@ -1,0 +1,65 @@
+#!/bin/sh
+# Comm : Proc de sauvegarde de repertoire
+
+appel=$0
+PATH=/usr/bin:$PATH
+
+## ========================================================== Begin
+
+radical=pack
+
+if ( [ -z "$1" ] ) then
+   echo
+   echo " *** Indiquez un repertoire a sauver"
+   echo
+   exit 1
+   fi
+
+radical=`echo $1 | cut -d/ -f1 | cut -d. -f1`
+liste_rep=
+dest=.
+wait_dest=
+h=
+psuff=
+for arg in $*
+    do
+    case $arg in 
+       -setx ) set -x
+         ;;
+       *.tgz ) radical=`echo $arg | cut -d. -f1`
+         ;;
+       -ln ) h=h
+         ;;
+       -d )  wait_dest=ok
+         ;;
+       -m )  psuff="-matin"
+         ;;
+       -s )  psuff="-soir"
+         ;;
+
+       d=* | -d=* )   dest=`echo $arg | cut -d= -f2`
+                 echo dest=$dest
+         ;;
+       * ) if ( [ $wait_dest ] ) then
+              wait_dest=
+              dest=$arg
+           else
+              liste_rep="$liste_rep $arg"
+              radical=$arg
+           fi
+         ;;
+    esac
+    done
+
+suff=`date '+%Y-%m-%d'`
+suff2=`date '+%Y-%m-%d_%H-%M'`
+
+fictar="$dest/$radical-$suff$psuff.tgz"
+if ( [ -f $fictar ] ) then
+   fictar="$dest/$radical-$suff2$psuff.tgz"
+   fi
+
+tar cvfz$h $fictar $liste_rep
+echo
+echo " ... Fichier cree : $fictar"
+

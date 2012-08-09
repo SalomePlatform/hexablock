@@ -1,0 +1,48 @@
+#!/bin/sh
+# Comm : Makefile associe aux tests unitaires
+
+commande=$0
+liste_args="$*"
+
+# =============================================== Begin
+
+test_u=
+opt=
+for arg in $*
+   do
+   case $arg in
+      -setx ) set -x 
+           ;;
+      -clean  ) 
+         rm -rf *.exe *.a *.o *.bak *.brep *~ *.vtk *.cpp *.xml *.exe.stackdump
+           exit
+           ;;
+      -j  ) opt="$opt -j4"
+           ;;
+      -j* ) opt="$opt $arg"
+           ;;
+      -k  ) echo ; echo ; echo ; echo ; echo ; echo ; echo ; echo ; echo
+            echo ; echo ; echo ; echo ; echo ; echo ; echo ; echo ; echo
+           ;;
+      *) if ( [ -z "$test_u" ] ) then
+            test_u=`echo $arg | cut -d. -f1`
+            ishere=`grep -w $test_u test_*.cxx | grep -c tabargs`
+            if ( [ "$ishere" = "0" ] ) then
+               echo "****"
+               echo "**** Programme non trouve : $test_u"
+               echo "****"
+               exit 1
+               fi
+            fi
+   esac
+   done
+
+if ( [ -z "$test_u" ] ) then
+   test_u=test_hexa
+   fi
+
+if ( [ ! -f makefile.ozz ] ) then
+   ./make.make
+   fi
+
+make -f makefile.ozz $opt main=$test_u

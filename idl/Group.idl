@@ -1,0 +1,75 @@
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+#ifndef __Group_idl__
+#define __Group_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "Element.idl"
+
+
+/*!  \ingroup EXAMPLES
+*/
+module HEXABLOCK_ORB
+{
+    enum GroupKind {  HEXA_GROUP,
+                      QUAD_GROUP,
+                      EDGE_GROUP,
+                      HEXANODE_GROUP,
+                      QUADNODE_GROUP,
+                      EDGENODE_GROUP,
+                      VERTEXNODE_GROUP };
+
+    interface Group : SALOME::GenericObj
+    {
+        /*!
+        comment
+        */
+        string getName()
+          raises (SALOME::SALOME_Exception);
+        void setName( in string name )
+          raises (SALOME::SALOME_Exception);
+        GroupKind getKind()
+          raises (SALOME::SALOME_Exception);
+        long addElement( in Element e)
+          raises (SALOME::SALOME_Exception);
+        long countElement()
+          raises (SALOME::SALOME_Exception);
+        Element getElement( in long index )
+          raises (SALOME::SALOME_Exception);
+        long removeElement( in Element elt )
+            raises (SALOME::SALOME_Exception);
+        void clearElement()
+            raises (SALOME::SALOME_Exception);
+    };
+
+//     interface HexaGroup : Group {};
+//     interface QuadGroup : Group {};
+//     interface EdgeGroup : Group {};
+// 
+//     interface HexaNodeGroup : Group {};
+//     interface QuadNodeGroup : Group {};
+//     interface EdgeNodeGroup : Group {};
+//     interface VertexNodeGroup : Group {};
+};
+
+#endif

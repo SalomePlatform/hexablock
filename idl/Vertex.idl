@@ -1,0 +1,68 @@
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+#ifndef __Vertex_idl__
+#define __Vertex_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "GEOM_Gen.idl"
+
+#include "Element.idl"
+
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component 
+*/
+module HEXABLOCK_ORB
+{
+
+    interface Vertex : Element
+    {
+        double getX() raises (SALOME::SALOME_Exception);
+        double getY() raises (SALOME::SALOME_Exception);
+        double getZ() raises (SALOME::SALOME_Exception);
+
+        void setX( in double x ) raises (SALOME::SALOME_Exception);
+        void setY( in double y ) raises (SALOME::SALOME_Exception);
+        void setZ( in double z ) raises (SALOME::SALOME_Exception);
+
+        void setAssociation( in GEOM::GEOM_Object geom_object_vertex )
+            raises (SALOME::SALOME_Exception);
+
+        GEOM::GEOM_Object getAssociation()
+            raises (SALOME::SALOME_Exception);
+
+        void clearAssociation()
+            raises (SALOME::SALOME_Exception);
+
+	void setScalar( in double val ) //CS_NOT_SPEC
+		raises (SALOME::SALOME_Exception);
+
+    };
+
+
+};
+
+#endif
+

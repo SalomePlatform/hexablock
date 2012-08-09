@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Generator" content="Microsoft Word 97">
+   <meta name="GENERATOR" content="Mozilla/4.75 [fr] (Win98; U) [Netscape]">
+   <title>Quelques bugs</title><meta name="qrichtext" content="1"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style type="text/css">
+p, li { white-space: pre-wrap; }</style></head>
+<body>
+&nbsp;
+<table cols="2" width="100%">
+<tbody><tr>
+<td><img src="logo-cs.gif" height="84" width="145"></td>
+
+<td>&nbsp;</td>
+</tr>
+</tbody></table>
+
+<center><a name="YaccDebut"></a>
+<br><br><big><big><b><font size="+3"><big><big>HexaBlock<br><br></big></big></font></b></big></big><b><font size="+3">Quelques Bugs</font></b></center>
+
+<blockquote><i><b><br></b></i></blockquote><p><a href="index.html">Retour</a>
+&nbsp;&nbsp;</p><p><br></p><p>oooooo<br>
+</p><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 016 (Corrigé)</big></big></b></small></p>La fonction cut sur une ligne associée ne gère pas l'association.<br><br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 015 (Corrigé ?)</big></big></b></small></p><span style="font-style: italic;">Salomé crashe une fois sur deux.</span><br><br>Ilsemble que la fonction getBtrep() soit à l'origine de ce dysfonctionnement.<br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 014</big></big></b></small></p><br style="font-style: italic;"><span style="font-style: italic;">
+Une grille créée par makeSpherical ne fournit pas le bon nombre d'hexaèdre maillés</span>.<br><br>...<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 013 (Evolution)</big></big></b></small></p>Association ligne fermée (bielle) <br>Problème de cohérence entre le sens de parcours d'une ligne (un cercle)&nbsp; et les edges associés.<br>Le sens étant différent, les mailles sont "croisées"<br><br>Solution
+retenue : modifier le vertex et l'edge de départ, de façon à "inverser"
+le sens de parcours des edges du modèle de blocs.<br><br><span style="font-weight: bold;">TODO</span> : <br><br>Modifier la spécification de la fonction <span style="font-weight: bold;">associateClosedLine</span> ()<br>&nbsp;L'argument "paramètre" de type réel indique bien un point de départ sur la ligne, mais pas le sens de parcours.<br><br>On décide :&nbsp;<b><big><big></big></big></b><ul><li>de choisir une des deux extrémités de la ligne (on abandonne l'idées des points interrmédiaires)</li><li>de définir l'extrémité au moyen d'un point.</li></ul><br><span style="font-weight: bold;">TODO</span> (2) : <br><br>Cette
+méthode convient pour un contour ferrmé constitué de plusieurs lignes,
+mais pour une courbe fermée unique, l'ambiguité persiste : <span style="font-weight: bold;">A suivre</span> ...<br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><p>
+</p><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><small><b>&nbsp;<big><big>Bug 012 (Corrigé et validé)</big></big></b></small></p><br><span style="font-style: italic;">Erreur intempestive : </span><br style="font-style: italic;"><span style="font-style: italic;">Message : "associateLine : Le contour n'est pas ferm</span>e"<br><br><br>Programme HexDocument_asso.cxx&nbsp; corrigé.<br>(indice modifié suite à une impression de mise au point)<br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><p>
+</p><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><small><b>&nbsp;<big><big>Bug 011 (Corrigé et validé)</big></big></b></small></p><span style="font-style: italic;">Les associations par ligne ouverte provoquent une erreur (détectée par pa partie&nbsp;PLUGIN).<br>Il y a incohérence entre les éléments associés à un edge : les lignes doivent être jointives et limitées entree les deux vertex.<br><br></span>Correction du fichier <span style="font-weight: bold;">HexUseCascade.cxx</span>.Le sens des lignes de Cascade : la paramètre varie parfois de 1 vers 0. <br>Le programme tient désormais compte de cette particularité.<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><p>
+</p><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><small><b>&nbsp;<big><big>Bug 010</big></big></b></small></p><span style="font-style: italic;">Un message résiduel lors du maillage de la bride sans associations.</span><br><br>
+<br>"Bielle:hexas" has not been computed.<br><br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 009 (Corrigé et validé)</big></big></b></small></p><ul style="font-style: italic;"><li>Le fichier &nbsp;BREP associé à la bride est incorrect. </li><li>Il&nbsp;fait sortir de Salome.</li></ul><br>Le fichier bride.brep est corrompu, on ne doit plus s'en servir, il a été supprimé de la base CVS.<br><br>Il est remplacé par une construction directe avec GEOM, cette construction est incluse dans le fichier en attachement.<br><br>La constuction directe de la bride est effective.<br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 008 (Corrigé et validé)</big></big></b></small></p>Cas de la bielle.py. Tous les groupes de maillage affichés par SALOME sont vides.&nbsp;<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><small><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big><big>Bug 007 (Corrigé et validé)</big></big></b></small></p>Le maillage hexaedrique de fonctionne pas. <br>Pris en charge par F. Kloss.<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big>Bug 006 (En cours)</big></b></p><br style="font-style: italic;"><span style="font-style: italic;">Il
+semble que les éléments donnés en résultat de la méthode
+«disconnectEdge» du document ne sont pas des éléments du modèle de
+blocs en cours d'élaboration</span><br style="font-style: italic;"><ul style="font-style: italic;"><li>ce problème intervient dans le cas de la recette de l'enceinte simplifiée</li><li>&nbsp;il
+serait souhaitable que les nouveaux sommets, créés par les méthodes
+pour déconnecter, ne soient pas&nbsp;exactement les mêmes que leurs
+originaux afin d'avoir un visuel immédiat</li></ul><br>Bug non reproduit.<br>Testé en C++ direct puis en python. Voir pièce jointe.<br>Ce script génère deux fichiers vtk corrects.<br>A voir ensemble Jeudi.<br><br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><small><b>&nbsp;<big><big>Bug 005 (Corrigé &amp; validé)</big></big></b></small></p><br style="font-style: italic;"><span style="font-style: italic;">Les
+points de construction (centre de cylindre, etc.) sont aussi maillés ce
+qui donne un maillage incorrect, il y a &nbsp; solutions possible à
+valider avant la correction:</span><br style="font-style: italic;"><span style="font-style: italic;">on distingue 2 notions: </span><br style="font-style: italic;"><ul style="font-style: italic;"><li>points et vertex sont deux entités distinctes comme dans CasCade</li><li>point = vertex comme dans GEOM et HEXABLOCK actuellement, et le mailleur traite uniquement les sommets connexes aux hexaèdres</li></ul>On
+choisit la solution 2. 8 fonctions ajoutées : countUsedVertex () .....
+countUsedHexa(), getUsedVertex (nro), .... getUsedHexa (nro)<br>Ces fonctions devront remplacer les appels à countVertex() .... &nbsp; getVertex(n)&nbsp; dans le mailleur.<br>Les fonctions sont codées et testées unitairement. Le mailleur n'est&nbsp; &nbsp;pas encore modifié.<br><br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big>Bug 004 (Corrigé &amp; validé)</big></b></p><ul style="font-style: italic;"><li>Il y a une incohérence entre la documentation et la fonction doc.addHexaVertices</li></ul><br><br>&nbsp;Le source a été modifié pour être cohérent&nbsp;avec la documentation<br><br><br><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;<br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big>Bug 003 (Corrigé &amp; validé)</big></b></p><br><ul style="font-style: italic;"><li>En Python, il manque toutes les variables, qui sont documentées, telles que Q_A, E_AC, V_ACE, ...</li></ul>Ces informations ont été ajoutées au fichier Elements.idl<br><br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big>Bug 002 (Corrigé &amp; validé)</big></b></p><ul style="font-style: italic;"><li>la méthode «mergeQuads» du document échoue</li><li>cette correction est nécessaire pour le cas de la bride</li></ul><br>1) Sur le cas proposé, l'ordre des deux premiers arguments de la&nbsp; fonction mergeQuads était inversé.<br>L'ordre est mergeQuads (q_cible, q_ancien, v1, v2, v3, v4)<br>Action : Modification du script utilisateur + mise à jour de la &nbsp;documentation.<br><br>2)
+Après correction, il s'avère que les arguments de type
+Vertex&nbsp;&nbsp;v1 ...b4 étaient invalides, lors du second appel à
+mergeQuads, à cause&nbsp; des éléments détruits lors du premier appel.
+Ces éléments sont difficiles à localiser sur le modèle python et
+inutiles dans la mesure ou les deux quadrangles à fusionner sont&nbsp;
+jointifs ; il suffirait d'appeler la fonction closeQuads non
+encore&nbsp; accessible à l'utilisateur python ou IHM<br>On convient de
+modifier l'ordre des tests : On teste d'abord si les&nbsp; quadrangles
+sont jointifs avant de s'intéresser aux vertex passés en&nbsp;
+argument. On pourra alors remplacer les vertex de positionnement par la
+valeur None.<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;<b><big><big></big></big></b></p><br><hr width="100%">
+<p><img src="blue-ball.gif" alt="o" height="12" width="12"><b>&nbsp;<big>Bug 001 (Corrigé &amp; validé)</big></b></p><ul style="font-style: italic;"><li>La méthode «getShape» du document fait sortir de SALOME.</li><li>après la correction, il faudra mettre à jour le fichier&nbsp; «hexablock.py»</li></ul><br>L'objet "shape" associé au document est fourni par la procédure utilisateur : <br><br><span style="font-family: monospace;">bride = geompy.ImportBREP("bride.brep")</span><br style="font-family: monospace;"><span style="font-family: monospace;">doc.setShape(bride)</span><br><br>La méthode setShape, de HexDocument_impl.cxx fonctionne en deux étapes :<br><ol><li>l'argument transmis par le python est un objet <span style="font-weight: bold;">Corba</span> de type GEOM_Object.</li><li>Il est traduit en objet Cascade shape de type TopoDS_Shape (Cascade) via la fonction geomObjectToShape()</li><li>Il est traduit en chaine de cartactères de &nbsp;format BREP par shape2string</li><li>La chaine de caractères, entité portable est associée au document.</li></ol><br>L'objet "shape était relu dans la procédure python systeme "hexablock.py" : <br>shape = doc.getShape(). <br>Or,
+&nbsp;si la méthode setSchape est capable de transformer un GEOM_Object
+en TopoDS_Shape, la réciproque n'est pas présente actuellement dans GEOM<br><br>La
+procédure hexablock.py va donc utiliser une nouvelle procédure
+doc.getBrep(), qui nous permet de transmettre via Corba un objet de
+type standard (chaine de caractères). <br><br> En conséquence, la mise à jour de hexablock.py a été faite et validée.<br><br><p><a href="Bugs.html#YaccDebut">Retour au début</a>&nbsp;</p><p><br></p><hr style="width: 100%; height: 2px;"><br><hr width="100%">
+</body></html>

@@ -1,0 +1,585 @@
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+#ifndef __Document_idl__
+#define __Document_idl__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Exception.idl"
+#include "SALOME_GenericObj.idl"
+
+#include "GEOM_Gen.idl"
+
+#include "Edge.idl"
+#include "Hexa.idl"
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+
+  interface Element;
+  interface Vertex;
+  interface Edge;
+  interface Quad;
+  interface Hexa;
+  interface Vector;
+  interface Cylinder;
+  interface Pipe;
+  interface Elements;
+  interface CrossElements;
+  interface Law;
+  interface Group;
+  interface Propagation;
+
+  typedef sequence<Quad>    Quads;
+  typedef sequence<double>  RealVector;
+  typedef GEOM::GEOM_Object  Shape;
+  typedef sequence<GEOM::GEOM_Object>  Shapes;
+
+  interface Document : SALOME::GenericObj
+  {
+    void purge()
+      raises (SALOME::SALOME_Exception);
+
+    void dump()
+      raises (SALOME::SALOME_Exception);
+    /*!
+    */
+    string getName()
+      raises (SALOME::SALOME_Exception);
+
+    long setName (in string name )
+      raises (SALOME::SALOME_Exception);
+
+    long save( in string fileName )
+      raises (SALOME::SALOME_Exception);
+
+    long saveVtk( in string fname );
+
+    void setLevel (in long debug_level )
+      raises (SALOME::SALOME_Exception);
+
+
+    /*!
+    */
+    void setTolerance( in double tol ) raises (SALOME::SALOME_Exception);
+    double getTolerance() raises (SALOME::SALOME_Exception);
+
+    /*!
+        Sommets
+    */
+    Vertex addVertex( in double x, in double y, in double z )
+        raises (SALOME::SALOME_Exception);
+
+    long countVertex()
+        raises (SALOME::SALOME_Exception);
+
+    Vertex getVertex( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Vertex findVertex( in double x, in double y, in double z )
+        raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        ArÃªtes
+    */
+    Edge addEdge( in Vertex v0, in Vertex v1 )
+        raises (SALOME::SALOME_Exception);
+
+    long countEdge()
+        raises (SALOME::SALOME_Exception);
+
+    Edge getEdge( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Edge findEdge( in Vertex p1, in Vertex p2 )
+        raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        Quadrangles
+    */
+    Quad addQuad( in Edge e0, in Edge e1, in Edge e2, in Edge e3 )
+        raises (SALOME::SALOME_Exception);
+
+    Quad addQuadVertices( in Vertex v0, in Vertex v1, in Vertex v2, in Vertex v3 )
+        raises (SALOME::SALOME_Exception);
+
+    long countQuad()
+        raises (SALOME::SALOME_Exception);
+
+    Quad getQuad( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Quad findQuad( in Vertex v1, in Vertex v2 )
+        raises (SALOME::SALOME_Exception);
+
+
+
+    /*!
+        HexaÃ¨dre
+    */
+    Hexa addHexa( in Quad q0, in Quad q1, in Quad q2, in Quad q3, in Quad q4, in Quad q5 )
+        raises (SALOME::SALOME_Exception);
+
+    Hexa addHexaVertices( in Vertex v1, in Vertex v2, in Vertex v3, in Vertex v4,
+                  in Vertex v5, in Vertex v6, in Vertex v7, in Vertex v8 )
+        raises (SALOME::SALOME_Exception);
+
+    long countHexa()
+        raises (SALOME::SALOME_Exception);
+
+    Hexa getHexa( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Hexa findHexa( in Vertex p1, in Vertex p2 )
+        raises (SALOME::SALOME_Exception);
+
+
+
+    /*!
+        Vecteurs
+    */
+    Vector addVector( in double dx, in double dy, in double dz )
+        raises (SALOME::SALOME_Exception);
+
+    Vector addVectorVertices( in Vertex v1, in Vertex v2 )
+        raises (SALOME::SALOME_Exception);
+
+//     long countVector()
+//         raises (SALOME::SALOME_Exception);
+// 
+//     Vector getVector( in long i )
+//         raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        Cylindre
+    */
+    Cylinder addCylinder( in Vertex base, in Vector direction, in double radius, in double height )
+        raises (SALOME::SALOME_Exception);
+
+//     long countCylinder()
+//         raises (SALOME::SALOME_Exception);
+// 
+//     Cylinder getCylinder( in long i )
+//         raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        Pipe
+    */
+    Pipe addPipe( in Vertex base, in Vector direction,
+                  in double int_radius, in double ext_radius, 
+                  in double height )
+        raises (SALOME::SALOME_Exception);
+
+//     long countPipe()
+//         raises (SALOME::SALOME_Exception);
+// 
+//     Pipe getPipe( in long i )
+//         raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        Remove block
+    */
+    boolean removeHexa( in Hexa h )
+        raises (SALOME::SALOME_Exception);
+
+    boolean removeConnectedHexa( in Hexa h )
+        raises (SALOME::SALOME_Exception);
+
+   /*!
+       Grille cartÃ©siennes
+   */
+    Elements makeCartesian( in Vertex pt, 
+            in Vector vx, in Vector vy, in Vector vz,
+            in long nx, in long ny, in long nz)
+        raises (SALOME::SALOME_Exception);
+
+    Elements makeCartesian1( in Vertex v, 
+            in Vector v1,
+            in long px, in long py, in long pz,
+            in long mx, in long my, in long mz )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Grille cylindrique
+    */
+    Elements makeCylindrical( in Vertex pt,
+          in Vector vex, in Vector vez,
+          in double dr, in double da, in double dl,
+          in long nr, in long na, in long nl,
+          in boolean fill )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Grille cylindrique (variante)
+    */
+    Elements makeCylindricals( in Vertex pt,
+          in Vector vex, in Vector vez,
+          in RealVector tdr, in RealVector tda, in RealVector tdl,
+          in boolean fill )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Grille sphÃ©rique
+    */
+
+    Elements makeSpherical( in Vertex pt,
+        in double rayon,
+        in long n,
+        in double k )
+        raises (SALOME::SALOME_Exception); //CS_TO_DEL
+
+
+    /*!
+        Cylindre dÃ©coupÃ© en blocs
+    */
+//     Elements makeCylinder( in Cylinder cyl, in long nr, in long na, in long nl )
+//         raises (SALOME::SALOME_Exception);//CS_TODO
+    Elements makeCylinder( in Cylinder cyl, in Vector vr, in long nr, in long na, in long nl )
+        raises (SALOME::SALOME_Exception);//CS_NEW CS_NOT_SPEC
+   
+
+    /*!
+        Tuyau decoupe en blocs
+    */
+    Elements makePipe( in Pipe p, in Vector v, in long nr, in long na, in long nl )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        2 Cylindres en T decoupes en blocs
+    */
+    CrossElements makeCylinders( in Cylinder c1, in Cylinder c2 )
+      raises (SALOME::SALOME_Exception);//CS_NEW CS_NOT_SPEC
+
+    /*!
+        2 Tuyau decoupe en intersection decoupees en blocs
+    */
+    Elements makePipes( in Pipe p1, in Pipe p2 )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Prismer des quadrangles
+    */
+    Elements prismQuad( in Quad qd, in Vector v, in long nb )
+        raises (SALOME::SALOME_Exception);
+
+    Elements prismQuads( in Quads qds, in Vector v, in long nb )
+        raises (SALOME::SALOME_Exception);
+
+    Elements prismQuadsVec (in Quads qds, in Vector v, in RealVector thaut, 
+                            in long opt )
+        raises (SALOME::SALOME_Exception);
+
+    Elements joinQuad( in Quad qa, in Quad qb,
+                       in Vertex va1, in Vertex vb1,
+                       in Vertex va2, in Vertex vb2,
+                       in long nb )
+        raises (SALOME::SALOME_Exception);
+
+    Elements joinQuads( in Quads qds,
+                        in Quad qb,
+                        in Vertex va1, in Vertex vb1,
+                        in Vertex va2, in Vertex vb2,
+                        in long nb )
+        raises (SALOME::SALOME_Exception);
+
+                // HexaBlock V3
+    Elements revolutionQuads( in Quads qds, in Vertex ori, in Vector dir, 
+                              in RealVector angles)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements replace( in Quads qds, in Vertex p1, in Vertex c1,
+                      in Vertex p2, in Vertex c2, in Vertex p3, in Vertex c3)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makeSphere (in Vertex center, in Vector vx, in Vector vz, 
+                         in double radius, in double radhole,
+                         in Vertex plorig, 
+                         in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makePartSphere (in Vertex center, in Vector vx, in Vector vz, 
+                             in double  radius, in double radhole,
+                             in Vertex plorig, in double angle,
+                             in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makeRind (in Vertex center, in Vector vx, in Vector vz, 
+                       in double  radext, in double radint, in double radhole,
+                       in Vertex plorig, 
+                       in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+
+    Elements makePartRind (in Vertex center, in Vector vx, in Vector vz, 
+                         in double  radext, in double radint, in double radhole,
+                         in Vertex plorig, in double angle,
+                         in long nrad, in long nang, in long nhaut)
+        raises (SALOME::SALOME_Exception); 
+// 
+// 
+//     /*!
+//         Fusionner 2 Ã©lÃ©ments de mÃªme nature //CS_NOT_SPEC
+//     */
+
+//     Elements mergeQuads( in Quad qa, in Quad qb,
+//                         in Vertex va1, in Vertex vb1,
+//                         in Vertex va2, in Vertex vb2 )
+//         raises (SALOME::SALOME_Exception);
+
+    long mergeQuads( in Quad qa, in Quad qb,
+                        in Vertex va1, in Vertex vb1,
+                        in Vertex va2, in Vertex vb2 )
+        raises (SALOME::SALOME_Exception);//CS_NOT_SPEC //CS_NEW
+
+// 
+//     Elements mergeEdges( in Edge e1, in Edge e2,
+//                         in Vertex v1, in Vertex v2 )
+//         raises (SALOME::SALOME_Exception);
+
+    long mergeEdges( in Edge e1, in Edge e2,
+                        in Vertex v1, in Vertex v2 )
+        raises (SALOME::SALOME_Exception);//CS_NOT_SPEC //CS_NEW
+
+//     Elements mergeVertices( in Vertex v1, in Vertex v2 )
+//         raises (SALOME::SALOME_Exception);
+    long mergeVertices( in Vertex v1, in Vertex v2 )
+        raises (SALOME::SALOME_Exception);//CS_NOT_SPEC //CS_NEW
+
+
+    /*!
+        Deconnecter des elements du modele
+    */
+    Elements disconnectQuad( in Hexa h, in Quad q ) 
+        raises (SALOME::SALOME_Exception);
+
+    Elements disconnectEdge( in Hexa h, in Edge e )
+	raises (SALOME::SALOME_Exception);
+
+    Elements disconnectVertex( in Hexa h,  in Vertex v )
+        raises (SALOME::SALOME_Exception);
+
+    Elements disconnectEdges( in Hexas th, in Edges te )
+	raises (SALOME::SALOME_Exception);
+
+    /*!
+        Couper des hexaÃ¨dres du modÃ¨le
+    */
+    Elements cut( in Edge e, in long nb_of_cuts )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Make elements by transforming elements
+    */
+//     Elements makeTranslation( in Elements e, in Vector vec )
+//         raises (SALOME::SALOME_Exception);
+    Elements makeTranslation( in Elements l, in Vector vec )
+        raises (SALOME::SALOME_Exception);
+// 
+// 
+    Elements makeRotation (in Elements l, in Vertex ver, in Vector vec, in double angle)
+        raises (SALOME::SALOME_Exception);
+    Elements makeScale (in Elements e, in Vertex ver, in double k )
+        raises (SALOME::SALOME_Exception);
+
+    Elements makeSymmetryPoint (in Elements e, in Vertex ver)
+        raises (SALOME::SALOME_Exception);
+
+    Elements makeSymmetryLine (in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+ 
+    Elements makeSymmetryPlane (in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+    Modify elements by transforming elements
+    */
+//     void performTranslation(in Elements e, in Vector vec)
+//         raises (SALOME::SALOME_Exception);
+
+    void performTranslation(in Elements l, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+// 
+    void performRotation(in Elements l, in Vertex ver, in Vector vec, in double angle)
+        raises (SALOME::SALOME_Exception);
+// 
+    void performScale(in Elements e, in Vertex ver, in double k)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryPoint(in Elements e, in Vertex ver)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryLine(in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+
+    void performSymmetryPlane(in Elements e, in Vertex ver, in Vector vec)
+        raises (SALOME::SALOME_Exception);
+// 
+//     /*!
+//                     --------
+//                     MAILLAGE
+//                     --------
+//     */
+// 
+//     /*!
+//         CrÃ©er, Ã©diter et supprimer un groupe
+//     */
+//     HexaGroup addHexaGroup( in string name )
+    Group addHexaGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     QuadGroup addQuadGroup( in string name )
+    Group addQuadGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     EdgeGroup addEdgeGroup( in string name )
+    Group addEdgeGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     HexaNodeGroup addHexaNodeGroup( in string name )
+    Group addHexaNodeGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     QuadNodeGroup addQuadNodeGroup( in string name )
+    Group addQuadNodeGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     EdgeNodeGroup addEdgeNodeGroup( in string name )
+    Group addEdgeNodeGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+//     VertexNodeGroup addVertexNodeGroup( in string name )
+    Group addVertexNodeGroup( in string name )
+        raises (SALOME::SALOME_Exception);
+
+    long removeGroup( in Group g)
+        raises (SALOME::SALOME_Exception);
+
+    long countGroup()
+      raises (SALOME::SALOME_Exception);
+
+    Group getGroup( in long i )
+      raises (SALOME::SALOME_Exception);
+
+    Group findGroup( in string name )
+      raises (SALOME::SALOME_Exception);
+
+
+
+    /*!
+        DÃ©finir une loi de discrÃ©tisation
+    */
+    Law addLaw( in string name, in long nb_nodes )
+        raises (SALOME::SALOME_Exception);
+
+    long countLaw()
+        raises (SALOME::SALOME_Exception);
+
+    Law getLaw( in long i )
+      raises (SALOME::SALOME_Exception);
+
+    void removeLaw( in Law l )
+        raises (SALOME::SALOME_Exception);
+
+    Law findLaw( in string name )
+      raises (SALOME::SALOME_Exception);
+
+
+    /*!
+        Discretization defined on the model of blocks 
+    */
+    long countPropagation()
+        raises (SALOME::SALOME_Exception);
+
+    Propagation getPropagation( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Propagation findPropagation( in Edge e )
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+        Association on lines
+    */
+   long associateOpenedLine (in Edge mstart, in Edges mline, in Shape gstart, 
+                             in double pstart, in Shapes gline, in double pend)
+        raises (SALOME::SALOME_Exception);
+
+   long associateClosedLine (in Vertex mfirst, in Edge mstart, in Edges  mline, 
+                            in Shape  gstart, in double pstart, in boolean inv,
+                            in Shapes gline)
+        raises (SALOME::SALOME_Exception);
+
+   void setShape (in GEOM::GEOM_Object geom_object_vertex )
+            raises (SALOME::SALOME_Exception);
+
+   GEOM::GEOM_Object getShape ()
+            raises (SALOME::SALOME_Exception);
+   string getBrep ()
+            raises (SALOME::SALOME_Exception);
+
+//       Ajouts 05/09/20011
+
+    long countUsedVertex()
+        raises (SALOME::SALOME_Exception);
+    long countUsedEdge()
+        raises (SALOME::SALOME_Exception);
+    long countUsedQuad()
+        raises (SALOME::SALOME_Exception);
+    long countUsedHexa()
+        raises (SALOME::SALOME_Exception);
+
+    Vertex getUsedVertex( in long i )
+        raises (SALOME::SALOME_Exception);
+    Edge getUsedEdge( in long i )
+        raises (SALOME::SALOME_Exception);
+    Quad getUsedQuad( in long i )
+        raises (SALOME::SALOME_Exception);
+    Hexa getUsedHexa( in long i )
+        raises (SALOME::SALOME_Exception);
+
+    Hexa addHexa5Quads (in Quad q1, in Quad q2, in Quad q3, in Quad q4, 
+                        in Quad q5) raises (SALOME::SALOME_Exception);
+    Hexa addHexa4Quads ( in Quad q1, in Quad q2, in Quad q3, in Quad q4)
+         raises (SALOME::SALOME_Exception);
+    Hexa addHexa3Quads ( in Quad q1, in Quad q2, in Quad q3)
+         raises (SALOME::SALOME_Exception);
+    Hexa addHexa2Quads ( in Quad q1, in Quad q2)
+         raises (SALOME::SALOME_Exception);
+
+    boolean removeQuad( in Quad q )
+        raises (SALOME::SALOME_Exception);
+    boolean removeElements( in Elements b )
+        raises (SALOME::SALOME_Exception);
+
+    void clearAssociation ()
+      raises (SALOME::SALOME_Exception);
+  };
+};
+
+
+#endif
+

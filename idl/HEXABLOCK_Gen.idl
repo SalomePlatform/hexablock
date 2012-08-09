@@ -1,0 +1,70 @@
+// Copyright (C) 2009-2012  CEA/DEN, EDF R&D
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
+#ifndef __HEXABLOCK_GEN__
+#define __HEXABLOCK_GEN__
+/*!
+ \defgroup EXAMPLES SALOME EXAMPLES components
+ */
+#include "SALOME_Component.idl"
+#include "SALOME_Exception.idl"
+#include "Document.idl"
+
+
+/*!  \ingroup EXAMPLES
+
+This package contains the interface HEXABLOCK_ORB used 
+for  %HEXABLOCK component as an example in %SALOME application.
+*/
+module HEXABLOCK_ORB
+{
+  /*! \brief Interface of the %HEXABLOCK component
+                                            03/07/2012 : ajout de SALOMEDS::Driver (Abu)
+   */
+  interface HEXABLOCK_Gen : Engines::EngineComponent, SALOMEDS::Driver
+  {
+     /*!
+         Donne le nombre de documents ouverts en session.
+      */
+    void test() raises (SALOME::SALOME_Exception);
+    long countDocument()
+        raises (SALOME::SALOME_Exception);
+
+    Document getDocument(in long i)
+        raises (SALOME::SALOME_Exception);
+
+    void removeDocument( in Document d)
+        raises (SALOME::SALOME_Exception);
+
+    Document addDocument(in string name)
+        raises (SALOME::SALOME_Exception);
+
+    Document loadDocument(in string xmlFilename)
+        raises (SALOME::SALOME_Exception);
+
+    /*!
+      Set the current study
+     */
+    void SetCurrentStudy( in SALOMEDS::Study theStudy );
+
+  };
+};
+
+
+#endif

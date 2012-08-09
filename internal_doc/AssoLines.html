@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Generator" content="Microsoft Word 97">
+   <meta name="GENERATOR" content="Mozilla/4.75 [fr] (Win98; U) [Netscape]">
+   <title>Associations par lignes</title></head>
+<body>
+&nbsp;
+<table cols="2" width="100%">
+<tbody><tr>
+<td><img src="logo-cs.gif" height="84" width="145"></td>
+
+<td>&nbsp;</td>
+</tr>
+</tbody></table>
+
+<center><a name="YaccDebut"></a>
+<br><br><big><big><b><font size="+3"><big><big>HexaBlock<br><br></big></big></font></b></big></big><b><font size="+3">Associations par lignes : précisions</font></b></center>
+
+<blockquote><i><b><br></b></i></blockquote><p><a href="index.html">Retour</a>
+&nbsp;&nbsp;</p><p><br>
+</p><hr width="100%">
+<p><br><b><big><big></big></big></b></p><p class="western" align="justify">Ce document établit les limitations actuelles des associations par lignes.<br>
+</p>
+<p class="western" align="justify"><font size="3">L'utilisateur peut
+définir des associations multiples au moyen de deux fonctions&nbsp;:</font></p>
+<pre class="western"><br></pre><table style="width: 771px; height: 31px; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td><p class="western" align="justify">
+   <font size="3">int  associateOpenedLine (Edge*  mstart, Edges&amp; 
+mline, Shape* gstart, </font>
+</p>
+<p class="western" align="justify">                             <font size="3">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;double
+pstart, Shapes&amp; gline, double pend);</font></p>
+<p class="western" align="justify">   <font size="3">int 
+associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&amp; 
+mline, </font>
+</p>
+<p class="western" align="justify">                             <font size="3">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Shape*
+ gstart, double pstart, Shapes&amp; gline);</font></p></td></tr></tbody></table><pre class="western"></pre>
+
+<p class="western" align="justify"><font size="3"><br>Ces deux fonctions
+appellent la même fonction interne :&nbsp;</font></p>
+
+<table style="width: 771px; height: 31px; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td><p class="western" align="justify">
+   <font size="3">int associateLine
+(Vertex* vfirst, Edge*  mstart, Edges&amp; mline,</font></p><p class="western" align="justify"><font size="3">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Shape*
+ gstart, double pstart, Shapes&amp; gline, double pend);</font></p></td></tr></tbody></table><pre class="western"></pre>
+<p class="western" align="justify">Cette fonction effectue
+les contrôles généraux réalisables par le modèle, trie les edges puis passe la
+main à une fonction d'interface avec Cascade : </p><table style="width: 771px; height: 31px; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td><p class="western" align="justify">
+   <font size="3">int&nbsp;</font><font size="3">associateCascade (Edges&amp; mline, int msens[], Shape* gstart, </font>
+
+</p><p class="western" align="justify"><font size="3">		          Shapes&amp;
+gline, double pstart, double pend, bool clos);</font></p></td></tr></tbody></table><pre class="western"></pre><p class="western" align="justify"><font size="3">Les arguments sont : </font>
+</p>
+<ul><li><p class="western" align="justify"><font size="3">Edges&amp; mline :
+	liste triée des edges </font>
+	</p>
+	</li><li><p class="western" align="justify"><font size="3">int msens[]   :
+	indicateur (V_AMON ou V_AVAL) donnant le sens de chaque edge.</font></p>
+	</li><li><p class="western" align="justify"><font size="3">Shape* gstart : 
+	Forme associée au premier edge. </font>
+	</p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Shapes&amp;
+	gline : Formes associées aux autres edges (peut être vide).</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">double
+	pstart :  Paramètre indiquant le point de départ de la première
+	forme. Si la ligne est ouverte, pstart est compris entre 0 et 1. Si
+	la ligne est fermée, seules les valeurs 0 ou 1 sont acceptées. </span></font></font>
+	</p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">double
+	pend : Paramètre indiquant le point de départ de la dernière
+	forme. Vaut 1 si la ligne est fermée.</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">bool
+	clos        : indique si la ligne est ouverte ou fermée.</span></font></font></p>
+</li></ul>
+<p class="western" style="margin-left: 1.27cm; text-indent: -0.64cm;" align="justify">
+<br>
+</p>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Fonctionnement
+du programme </span></font></font><font color="#000000"><font size="3"><span lang="fr-FR"><b>associateCascade</b></span></font></font><font color="#000000"><font size="3"><span lang="fr-FR">
+: </span></font></font>
+</p>
+<ul><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Ordonner
+	les edges  (fait dans associateLine)</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Transformer
+	les Hexa::Shapes en lignes (TopoDS_Edge) : elles sont rangées dans
+	tabg_line [nblines].</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Créer
+	des courbes (type  BrepAdaptor_Curve*) à partir des lignes, c'est
+	le moyen de calculer le point situé à une certaine abscisse
+	curviligne. Les courbes sont rangées dans tabg_curve[nblines].</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Mémoriser
+	le longueur réelle de chaque courbe et la mémoriser dans
+	tabg_length[nblines]. </span></font></font>
+	</p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Définir
+	les points extrêmes de chaque courbe (type gp_Pnt) et l'enregistrer
+	dans tabg_point [2*nblines].</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Ordonner
+	(et contrôler) les lignes/coubes au moyen de la fonction
+	vertexInLine, laquelle met à jour les tableaux tabg_orig (donne le
+	sens de chaque ligne) et shape_posit (donne le classement des
+	lignes).</span></font></font></p>
+</li></ul>
+<p class="western" style="margin-left: 1.27cm; text-indent: -0.64cm;" align="justify">
+<br>
+</p>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR"></span></font></font></p><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Si
+la ligne globale est continue (les courbes sont jointives deux à
+deux), on peut procéder à l'association ligne/eddge.</span></font></font></p>
+
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Le
+premier point (défini par tab_gcurve[0] et pstart est associé au
+premier vertex (défini par mline[0]-&gt;getVertex (msens[0]).</span></font></font></p>
+<p class="western" align="justify"><br><font color="#000000"><font size="3"><span lang="fr-FR">Il
+	faut ensuite définir la (les) portion(s) de courbe associée(s) à
+	chaque edge.<br>Chaque
+	portion de courbe est définie par la représentation brep de la
+	ligne associée et les paramètres de début et fin. </span></font></font>
+	</p>
+
+<p class="western" align="justify"><br><font color="#000000"><font size="3"><span lang="fr-FR">Une
+	première tentative fut d'utiliser les <span style="font-weight: bold;">abscisses curvilignes</span>
+relatives de chaque type de ligne. Cette tentative fut rejetée d'une
+part car elle ne convenait pas à la bielle (voir dessin en annexe) et
+d'autre part l'idée d'établir une abscisse curviligne sur le modèle de
+bloc contredisait l'idée selon laquelle les coordonnées du modele de
+bloc n'ont pas d'importance.</span></font></font></p>
+
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">On
+se contente d'établir une relation entre les <span style="font-weight: bold;">n  lignes (de la CAO)
+et les m edges (du modèle) </span>(voir figure 1) : </span></font></font>
+</p>
+<ul><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">soit
+	sm1 la position relative du premier vertex du ième edge : on prend
+	sm1 = i/nbedges</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">soit
+	sm2 la position relative du second vertex du ième edge. On a donc 
+	: sm2 = (i+1) /nbedges;</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">soit
+	sg1 la position relative du premier vertex de la jème ligne. On
+	prend :  sg1 = j/nblignes</span></font></font></p>
+	</li><li><p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">soit
+	sg2 la position relative du second vertex de la jème ligne : sg2 =
+	(j+1)/nblignes.</span></font></font></p>
+</li></ul>
+<p class="western" align="justify"><br>
+</p>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Le
+ième edge et la jème ligne s'intersectent si : sg1 &lt; sm2 et sg2
+&gt; sm1.</span></font></font></p>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">On
+doit alors déclarer qu'une portion de la ligne est associée à
+l'edge.</span></font></font></p>
+<p class="western" align="justify"><br>
+</p>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">La
+portion de la ligne est délimitée par les paramètres &nbsp;normalisés (compris entre 0 et 1) :</span></font></font></p><table style="width: 771px; height: 31px; text-align: left; margin-left: auto; margin-right: auto; font-family: monospace;" border="1" cellpadding="2" cellspacing="2"><tbody><tr><td><p class="western" align="justify">
+   <font color="#000000"><font size="3"><span lang="fr-FR">para_deb = sg1 &lt; sm1 ?
+(sm1-sg1)/(sg2-sg1) : 0.0;</span></font></font></p>
+<p class="western" align="justify"><font color="#000000">       
+<font size="3"><span lang="fr-FR">para_fin   = sg2 &gt; sm2 ?
+(sm2-sg1)/(sg2-sg1) : 1.0;</span></font></font></p></td></tr></tbody></table><pre class="western"></pre>
+<p class="western" align="justify"><font color="#000000"><font size="3"><span lang="fr-FR">Le
+second vertex de l'edge est associé si :  sg1 &lt;= sm2 &lt;= sg2</span></font></font></p>
+<p class="western" align="justify"><br>
+</p>
+<div style="text-align: center;"><img style="width: 607px; height: 566px;" alt="Asso ligne" src="AssoLines.gif"><br></div><br><p><a href="#YaccDebut">Retour au début</a>&nbsp;</p><p></p><hr style="width: 100%; height: 2px;"><br><hr width="100%">
+</body></html>
