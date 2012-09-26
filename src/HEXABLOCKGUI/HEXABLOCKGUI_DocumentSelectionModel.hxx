@@ -21,7 +21,6 @@
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
 #include <QItemSelectionModel>
-
 #include <LightApp_SelectionMgr.h>
 
 #include <SVTK_ViewWindow.h>
@@ -69,14 +68,22 @@ namespace HEXABLOCK
         void setHexaSelection();
         void setAllSelection();
         void highlightVTKElts( const QModelIndexList& elts );
+        void highlightEltsWithAssocs(const QModelIndexList& elts);
+        void _highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs );
+        void _highlightGEOM( const QModelIndex & index );
 
-        // 
         QModelIndex  indexBy( int role, const QString&  value );
         QModelIndex  indexBy( int role, const QVariant& var );
+        int getSelectionFilter() const { return _selectionFilter;}
 
         //Salome
         void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
         void SetSelectionMode( Selection_Mode theMode );
+        QModelIndex _geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+        QModelIndex _vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+
+
+        bool salomeNothingSelected;
 
       protected slots:
         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
@@ -88,21 +95,19 @@ namespace HEXABLOCK
         OCCViewer_ViewWindow*  _getOCCViewWindow();
 
         QModelIndex _indexOf( const QString& anIOEntry, int role );
-        void _setVTKSelectionMode( const QModelIndex& eltIndex, SVTK_ViewWindow* vtkViewWindow );
-        void _highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs );
-        void _highlightGEOM( const QModelIndex & index );
+        QModelIndexList _indexListOf( const QString& anEntry, int role );
+        void _setVTKSelectionMode( const QModelIndex& eltIndex );
         void _selectVTK( const QModelIndex & index );
+        SUIT_ViewWindow* initOccViewManager();
 
-        QModelIndex _geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
-        QModelIndex _vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
 
         LightApp_SelectionMgr* _salomeSelectionMgr;
         int                    _selectionFilter;
 
+
         bool _theModelSelectionChanged;
         bool _theVtkSelectionChanged;
         bool _theGeomSelectionChanged;
-
     };
 
 

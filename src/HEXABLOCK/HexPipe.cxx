@@ -31,6 +31,9 @@ Pipe::Pipe (Vertex* b, Vector* v, double ri, double re, double h)
     : Cylinder (b, v, re, h)
 {
     c_int_radius = ri;
+    if (isBad () || c_int_radius <= el_root->getTolerance () 
+                 || c_int_radius >= c_radius)
+        setError ();
 }
 // ========================================================= saveXml 
 void Pipe::saveXml  (XmlWriter* xml)

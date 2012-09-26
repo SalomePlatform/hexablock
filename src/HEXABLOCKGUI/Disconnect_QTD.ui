@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>282</width>
-    <height>623</height>
+    <width>270</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,7 +34,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>50</height>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -129,12 +129,6 @@
          </size>
         </property>
         <layout class="QFormLayout" name="formLayout">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
@@ -145,14 +139,14 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="v_le_rb0">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -171,14 +165,14 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="h_le_rb0">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -205,12 +199,6 @@
          </size>
         </property>
         <layout class="QFormLayout" name="formLayout_2">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
@@ -221,14 +209,14 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="e_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -247,14 +235,14 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="h_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -297,14 +285,14 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="q_le_rb2">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -323,14 +311,14 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="h_le_rb2">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -353,7 +341,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>344</height>
+          <height>16777215</height>
          </size>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -374,7 +362,7 @@
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>131</height>
+             <height>16777215</height>
             </size>
            </property>
            <property name="title">
@@ -384,7 +372,7 @@
             <item>
              <widget class="QListWidget" name="d_edges_lw">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -392,7 +380,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>16777215</height>
+                <height>70</height>
                </size>
               </property>
              </widget>
@@ -417,7 +405,7 @@
            <property name="maximumSize">
             <size>
              <width>16777215</width>
-             <height>131</height>
+             <height>16777215</height>
             </size>
            </property>
            <property name="title">
@@ -427,7 +415,7 @@
             <item>
              <widget class="QListWidget" name="hexas_lw">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -435,7 +423,7 @@
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>16777215</height>
+                <height>70</height>
                </size>
               </property>
              </widget>
@@ -448,19 +436,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
@@ -485,134 +460,6 @@
   <connection>
    <sender>rb1</sender>
    <signal>clicked()</signal>
-   <receiver>widget_4</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>140</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>479</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb2</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_4</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>291</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>479</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb3</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_4</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>223</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>479</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb3</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>223</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb0</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_4</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>167</x>
-     <y>479</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb2</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_3</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>238</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb2</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>271</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>268</x>
-     <y>194</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb0</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_3</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>41</x>
-     <y>49</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>73</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb1</sender>
-   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -623,22 +470,6 @@
     <hint type="destinationlabel">
      <x>143</x>
      <y>109</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb0</sender>
-   <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>94</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>181</x>
-     <y>180</y>
     </hint>
    </hints>
   </connection>
@@ -659,6 +490,54 @@
    </hints>
   </connection>
   <connection>
+   <sender>rb3</sender>
+   <signal>clicked()</signal>
+   <receiver>widget</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb3</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb2</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>rb1</sender>
    <signal>clicked()</signal>
    <receiver>widget_2</receiver>
@@ -675,17 +554,49 @@
    </hints>
   </connection>
   <connection>
-   <sender>rb1</sender>
+   <sender>rb0</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>181</x>
+     <y>180</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb2</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>238</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb0</sender>
    <signal>clicked()</signal>
    <receiver>widget_3</receiver>
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>182</x>
-     <y>38</y>
+     <x>41</x>
+     <y>49</y>
     </hint>
     <hint type="destinationlabel">
-     <x>190</x>
+     <x>73</x>
      <y>310</y>
     </hint>
    </hints>
@@ -707,10 +618,74 @@
    </hints>
   </connection>
   <connection>
+   <sender>rb1</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>190</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb2</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>291</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb1</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb0</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>rb3</sender>
    <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>hide()</slot>
+   <receiver>widget_4</receiver>
+   <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>223</x>
@@ -718,7 +693,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>167</x>
-     <y>120</y>
+     <y>479</y>
     </hint>
    </hints>
   </connection>

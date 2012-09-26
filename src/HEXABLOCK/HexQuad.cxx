@@ -45,6 +45,13 @@ Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
        {
        q_edge [nro] = new Edge (q_vertex[nro], 
                                 q_vertex[(nro+1) MODULO QUAD4]);
+
+       if (BadElement (q_vertex [nro]) || BadElement (q_edge [nro]))
+          setError ();
+       else
+          for (int nv=nro+1 ; nv<QUAD4 ; nv++)
+              if (q_vertex[nv] == q_vertex[nro])
+                 setError ();
        }
 
    majReferences ();
@@ -64,15 +71,24 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
        {
        int prec = (nro+1) MODULO QUAD4; 
        Vertex* node = NULL;
-       int nc  = q_edge[nro] -> inter (q_edge[prec]);
-       if (nc>=0)
-          node = q_edge[nro]->getVertex (nc);
-       else  
-          el_status = 888;
+
+       if (BadElement (q_edge[nro]))
+          setError ();
+       else 
+          {
+          for (int nv=nro+1 ; nv<QUAD4 ; nv++)
+              if (q_edge[nv] == q_edge[nro])
+                  setError ();
+          int nc  = q_edge[nro] -> inter (q_edge[prec]);
+          if (nc>=0)
+             node = q_edge[nro]->getVertex (nc);
+          else  
+             setError (888);
+          }
        q_vertex [prec] = node;
        }
 
-   if (el_status != HOK)
+   if (isBad())
       {
       printf (" +++++++++++++++++++++++++++++++++++++++++++ \n");
       printf (" +++ Quadrangle impossible \n");
@@ -557,4 +573,11 @@ int Quad::setOrientation ()
     printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
     return q_orientation;
 }
+// ========================================================== setAssociation
+void Quad::setAssociation (Shape* forme)
+{
+   clearAssociation ();
+   addAssociation (forme);
+}
 END_NAMESPACE_HEXA
+

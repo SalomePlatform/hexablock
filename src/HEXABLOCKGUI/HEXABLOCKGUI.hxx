@@ -144,6 +144,7 @@ public:
 
   static SVTK_ViewWindow*      currentVtkView;
   static OCCViewer_ViewWindow* currentOccView;
+  static bool assocInProgress;
 
  //HEXABLOCK::GUI::DocumentModel*
 
@@ -193,6 +194,7 @@ public slots:
 protected slots:
   void onWindowActivated( SUIT_ViewWindow* svw);
   void onWindowClosed( SUIT_ViewWindow* svw);
+//  void OnMouseMove( SUIT_ViewWindow*, QMouseEvent* );
 
   virtual void                        onViewManagerAdded( SUIT_ViewManager* );
   virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
@@ -204,9 +206,10 @@ protected:
 //   virtual  CAM_DataModel* createDataModel();
   bool createSComponent();
 //   virtual bool isSelectionCompatible();
+  virtual bool eventFilter(QObject *obj, QEvent *event);
 
   void _showDialogBox( HEXABLOCK::GUI::HexaBaseDialog* diag );
-
+  HEXABLOCK::GUI::HexaBaseDialog* currentDialog;
 
 //   bool _selectFromTree;
   HEXABLOCKGUI_Resource* _myresource;
@@ -304,6 +307,7 @@ private:
   QDockWidget *_dwMesh;          // Hexablock meshing edtion
   QDockWidget *_dwObjectBrowser; // Salome study
   QDockWidget *_dwInputPanel;    // user Input
+
 
   // Dialog Box ( to keep persistent values )
   HEXABLOCK::GUI::VertexDialog*                 _vertexDiag;
@@ -432,17 +436,19 @@ private:
   HEXABLOCK::GUI::MeshSelectionModel           *_meshSelectionModel;
 
   //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
-  SUIT_ViewManager *_suitVM;
+  SUIT_ViewManager *vtkViewManager;
+  SUIT_ViewManager *occViewManager;
   std::map<QString, SUIT_ViewWindow*>  _salomeViewWindows; //  key = entry
 
   // SALOME/QT    SALOME/QT  SALOME/QT    SALOME/QT   SALOME/QT    SALOME/QT  
   std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentModel*>       _documentModels;
   std::map<SUIT_ViewWindow*, HEXABLOCK::GUI::DocumentGraphicView*> _documentView;
-
+  std::map<SUIT_ViewWindow*, bool> graphicViewIsEmpty;
 //   static std::map<HEXABLOCK::GUI::DocumentModel*,  SUIT_ViewWindow*> _salomeViews;
 
 //   int _documentCnt;
   bool _isSaved;
+  bool moduleActivatedOnce;
 
 
   void testDocument();

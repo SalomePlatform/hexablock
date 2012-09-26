@@ -167,11 +167,11 @@ module HEXABLOCK_ORB
     Vector addVectorVertices( in Vertex v1, in Vertex v2 )
         raises (SALOME::SALOME_Exception);
 
-//     long countVector()
-//         raises (SALOME::SALOME_Exception);
-// 
-//     Vector getVector( in long i )
-//         raises (SALOME::SALOME_Exception);
+    long countVector()
+         raises (SALOME::SALOME_Exception);
+
+    Vector getVector( in long i )
+           raises (SALOME::SALOME_Exception);
 
 
     /*!
@@ -180,11 +180,11 @@ module HEXABLOCK_ORB
     Cylinder addCylinder( in Vertex base, in Vector direction, in double radius, in double height )
         raises (SALOME::SALOME_Exception);
 
-//     long countCylinder()
-//         raises (SALOME::SALOME_Exception);
-// 
-//     Cylinder getCylinder( in long i )
-//         raises (SALOME::SALOME_Exception);
+    long countCylinder()
+         raises (SALOME::SALOME_Exception);
+ 
+    Cylinder getCylinder( in long i )
+             raises (SALOME::SALOME_Exception);
 
 
     /*!
@@ -195,11 +195,11 @@ module HEXABLOCK_ORB
                   in double height )
         raises (SALOME::SALOME_Exception);
 
-//     long countPipe()
-//         raises (SALOME::SALOME_Exception);
-// 
-//     Pipe getPipe( in long i )
-//         raises (SALOME::SALOME_Exception);
+     long countPipe()
+          raises (SALOME::SALOME_Exception);
+ 
+     Pipe getPipe( in long i )
+          raises (SALOME::SALOME_Exception);
 
 
     /*!

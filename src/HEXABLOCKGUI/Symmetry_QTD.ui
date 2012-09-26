@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>244</width>
-    <height>466</height>
+    <width>234</width>
+    <height>396</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -107,9 +107,6 @@
       <item>
        <widget class="QWidget" name="widget" native="true">
         <layout class="QFormLayout" name="formLayout">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
@@ -119,9 +116,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -138,23 +141,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="vex_le_rb0">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="vex_le_rb0"/>
          </item>
         </layout>
        </widget>
@@ -171,9 +158,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -191,9 +184,15 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="vex_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -202,23 +201,29 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="vec_le_rb1">
-           <property name="maximumSize">
-            <size>
-             <width>127</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>vector</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="vec_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -237,9 +242,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -257,9 +268,15 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="vex_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -277,9 +294,15 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="vec_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -296,6 +319,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rb0</tabstop>
+  <tabstop>rb1</tabstop>
+  <tabstop>rb2</tabstop>
+  <tabstop>elts_le_rb0</tabstop>
+  <tabstop>elts_le_rb1</tabstop>
+  <tabstop>vex_le_rb1</tabstop>
+  <tabstop>vec_le_rb1</tabstop>
+  <tabstop>elts_le_rb2</tabstop>
+  <tabstop>vex_le_rb2</tabstop>
+  <tabstop>vec_le_rb2</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

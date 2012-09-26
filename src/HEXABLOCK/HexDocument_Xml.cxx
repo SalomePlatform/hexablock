@@ -64,8 +64,15 @@ int get_coords (const string& chaine, double& x, double& y)
    return HOK;
 }
 // ======================================================== parseName
-int parseName (XmlTree* node, EltBase* elt)
+int parseName (XmlTree* node, const string& nom, EltBase* elt)
 {
+   int lg    = nom.size();
+   int nroid = 0;
+   for (int nc=1 ; nc<lg ; nc++)
+       nroid = 10*nroid + nom[nc] - '0';
+   
+   elt->setId (nroid);
+
    const  string& name = node->findValue ("name");
    if (name=="")
       return HERR;
@@ -185,7 +192,7 @@ int Document::parseXml (XmlTree& xml)
        get_coords (coords, px, py, pz);
 
        Vertex*  vertex = addVertex (px, py, pz);
-       parseName (node, vertex);
+       parseName (node, nom, vertex);
        Shape*   shape  = NULL;
        if (brep != "" ) 
           {
@@ -210,7 +217,7 @@ int Document::parseXml (XmlTree& xml)
           get_names (vertices, V_TWO, tname);
           edge = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
           t_edge [nom] = edge;
-          parseName (node, edge);
+          parseName (node, nom, edge);
           }
        else if (type=="Shape" && edge!=NULL)
           {
@@ -236,7 +243,7 @@ int Document::parseXml (XmlTree& xml)
           quad = new Quad (t_edge [tname[0]], t_edge [tname[1]],
                            t_edge [tname[2]], t_edge [tname[3]]);
           t_quad [nom] = quad;
-          parseName (node, quad);
+          parseName (node, nom, quad);
           }
        else if (type=="Shape" && quad!=NULL)
           {
@@ -259,7 +266,7 @@ int Document::parseXml (XmlTree& xml)
                                 t_quad [tname[2]], t_quad [tname[3]],
                                 t_quad [tname[4]], t_quad [tname[5]]);
        t_hexa [nom] = hexa;
-       parseName (node, hexa);
+       parseName (node, nom, hexa);
        }
 
    rubrique = xml.findChild ("ListVectors");
@@ -275,7 +282,7 @@ int Document::parseXml (XmlTree& xml)
 
        Vector* vector = addVector (px, py, pz);
        t_vector [nom] = vector;
-       parseName (node, vector);
+       parseName (node, nom, vector);
        }
 
    rubrique = xml.findChild ("ListDicretizationLaws");

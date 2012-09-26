@@ -26,13 +26,7 @@
 // #include <SVTK_ViewWindow.h>
 #include <SUIT_ViewWindow.h>
 #include <SALOME_Actor.h>
-
-
-
-
-
-
-
+#include <SVTK_InteractorStyle.h>
 #include <QAbstractItemView>
 #include <QMap>
 
@@ -45,7 +39,9 @@
 #include <HexEdge.hxx>
 #include <HexHexa.hxx>
 #include <HexDocument.hxx>
-
+#include <vtkInteractorStyleTrackballCamera.h>
+#include <SVTK_RenderWindowInteractor.h>
+#include <vtkActor2D.h>
 
 // class LightApp_Displayer;
 // class SalomeApp_Application;
@@ -68,6 +64,21 @@ namespace HEXABLOCK
 
     namespace GUI
     {
+		class hexablockInteractorStyle : public SVTK_InteractorStyle
+		{
+		public:
+			hexablockInteractorStyle() {};
+			virtual ~hexablockInteractorStyle() {};
+
+		public:
+			static hexablockInteractorStyle* New()
+			{
+				return new hexablockInteractorStyle;
+			};
+			virtual void HighlightActor2D(vtkActor2D* actor2D) {std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HIGHLIGHT PROP 2D%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;};
+			virtual void HighlightProp(vtkProp* prop) {std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HIGHLIGHT PROP %%%%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;};
+			virtual void HighlightProp3D(vtkProp3D* prop3D) {std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% HIGHLIGHT PROP 3D%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;};
+		};
 
         class Document_Actor : public SALOME_Actor
         {
@@ -162,6 +173,7 @@ namespace HEXABLOCK
             Document_Actor  *_documentActor;
             Associate_Actor *_associateActor;
             bool _currentChanged;
+            bool firstUpdate;
         };
     }
 }

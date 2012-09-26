@@ -41,6 +41,7 @@
 #include <HexLaw.hxx>
 #include <HexPropagation.hxx>
 
+#include "vtkActor.h"
 
 
 Q_DECLARE_METATYPE( HEXA_NS::EltBase* );
@@ -67,7 +68,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    enum {
+    enum HexaType {
       VERTEXITEM = QStandardItem::UserType + 1,
       EDGEITEM,
       QUADITEM,
@@ -82,7 +83,6 @@ namespace HEXABLOCK
       GROUPITEM,
       LAWITEM,
       PROPAGATIONITEM,
-
     };
 
     enum HexaTreeRole { 
@@ -129,195 +129,146 @@ namespace HEXABLOCK
 
 // QVariant::UserType
 
-    class VertexItem : public QStandardItem
+    //===================================================================================
+    class ElementItem : public QStandardItem
     {
       public:
-        VertexItem( HEXA_NS::Vertex* hexaVertex );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+    	ElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole);
+    	ElementItem( HEXA_NS::EltBase* docElement, HexaType ttype, HexaTreeRole treeRole);
+    	virtual QVariant data( int role ) const;
+    	virtual void     setData ( const QVariant& valcont, int role );
+    	int      type () const;
+    	virtual bool     isAssoc() const;
+    	virtual QString  IDptr() const;
+
       private:
-        HEXA_NS::Vertex* _hexaVertex;
+        int                m_type;
+        HEXA_NS::EltBase*  m_DocElt; // Vertex and so.
+    };
+    //===================================================================================
+
+    class GraphicElementItem : public ElementItem
+    {
+      public:
+    	GraphicElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole):
+    		ElementItem( docElement, entry, ttype, treeRole)
+    	{
+    	}
+
+      private:
+        vtkActor* actor;
+        int       IDinActor;
     };
 
-    class EdgeItem : public QStandardItem
+    class StandardElementItem : public ElementItem
     {
-      public:
-        EdgeItem( HEXA_NS::Edge* hexaEdge );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Edge* _hexaEdge;
+       public:
+    	StandardElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole):
+    		ElementItem( docElement, entry, ttype, treeRole)
+    	{
+    	}
     };
 
-    class QuadItem : public QStandardItem
+    class VertexItem : public GraphicElementItem
     {
       public:
-        QuadItem( HEXA_NS::Quad* hexaQuad );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Quad* _hexaQuad;
+        VertexItem( HEXA_NS::Vertex* hexaVertex, QString entry="" );
     };
 
-
-    class HexaItem : public QStandardItem
+    class EdgeItem : public GraphicElementItem
     {
       public:
-        HexaItem( HEXA_NS::Hexa* hexaHexa );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Hexa* _hexaHexa;
+        EdgeItem( HEXA_NS::Edge* hexaEdge, QString entry="" );
     };
-
-
-    class VectorItem : public QStandardItem
+    //-----------------------------------------
+    class QuadItem : public GraphicElementItem
     {
       public:
-        VectorItem( HEXA_NS::Vector* hexaVector );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Vector* _hexaVector;
+        QuadItem( HEXA_NS::Quad* hexaQuad, QString entry="" );
     };
+    //-----------------------------------------
 
-
-    class CylinderItem : public QStandardItem
+    class HexaItem : public GraphicElementItem
     {
       public:
-        CylinderItem( HEXA_NS::Cylinder* hexaCyl );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Cylinder* _hexaCylinder;
+        HexaItem( HEXA_NS::Hexa* hexaHexa, QString entry="" );
     };
+    //-----------------------------------------
 
-
-    class PipeItem : public QStandardItem
+    class VectorItem : public StandardElementItem
     {
       public:
-        PipeItem( HEXA_NS::Pipe* hexaPipe );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Pipe* _hexaPipe;
+        VectorItem( HEXA_NS::Vector* hexaVector, QString entry="" );
     };
+    //-----------------------------------------
 
-
-    class ElementsItem : public QStandardItem
+    class CylinderItem : public StandardElementItem
     {
       public:
-        ElementsItem( HEXA_NS::Elements* hexaElements );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Elements* _hexaElements;
+        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry="" );
     };
+    //-----------------------------------------
 
-    class CrossElementsItem : public QStandardItem
+    class PipeItem : public StandardElementItem
     {
       public:
-        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::CrossElements* _hexaCrossElts;
+        PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry="" );
+    };
+    //-----------------------------------------
+
+    class ElementsItem : public StandardElementItem
+    {
+      public:
+        ElementsItem( HEXA_NS::Elements* hexaElements, QString entry="" );
+    };
+    //-----------------------------------------
+    class CrossElementsItem : public StandardElementItem
+    {
+      public:
+        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry="" );
     };
 
 
-      
 
+    //-----------------------------------------
     class GroupItem : public QStandardItem
     {
-      public:
-        GroupItem( HEXA_NS::Group* hexaGroup );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Group* _hexaGroup;
+    public:
+    	GroupItem( HEXA_NS::Group* hexaGroup );
+    	virtual int type () const;
+    	virtual QVariant data ( int role ) const;
+    	virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+    private:
+    	HEXA_NS::Group* _hexaGroup;
     };
 
 
     class LawItem : public QStandardItem
     {
-      public:
-        LawItem( HEXA_NS::Law* hexaLaw );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Law* _hexaLaw;
+    public:
+    	LawItem( HEXA_NS::Law* hexaLaw );
+    	virtual int type () const;
+    	virtual QVariant data ( int role ) const;
+    	virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+    private:
+    	HEXA_NS::Law* _hexaLaw;
     };
 
 
     class PropagationItem : public QStandardItem
     {
-      public:
-        PropagationItem( HEXA_NS::Propagation* hexaPropagation );
-        virtual int type () const;
-        virtual QVariant data ( int role ) const;
-        virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
-      private:
-        HEXA_NS::Propagation* _hexaPropagation;
+    public:
+    	PropagationItem( HEXA_NS::Propagation* hexaPropagation );
+    	virtual int type () const;
+    	virtual QVariant data ( int role ) const;
+    	virtual void setData ( const QVariant & value, int role ); //= Qt::UserRole + 1 )
+    private:
+    	HEXA_NS::Propagation* _hexaPropagation;
     };
+    //-------------------------------------------------
 
   }
 }
 
 #endif
 
-
-
-
-
-
-// The QStandardItem class provides an item for use with the QStandardItemModel class.
-// 
-// Items usually contain text, icons, or checkboxes.
-// 
-// Each item can have its own background brush which is set with the setBackground() function. The current background brush can be found with background(). The text label for each item can be rendered with its own font and brush. These are specified with the setFont() and setForeground() functions, and read with font() and foreground().
-// 
-// By default, items are enabled, editable, selectable, checkable, and can be used both as the source of a drag and drop operation and as a drop target. Each item's flags can be changed by calling setFlags(). Checkable items can be checked and unchecked with the setCheckState() function. The corresponding checkState() function indicates whether the item is currently checked.
-// 
-// You can store application-specific data in an item by calling setData().
-// 
-// Each item can have a two-dimensional table of child items. This makes it possible to build hierarchies of items. The typical hierarchy is the tree, in which case the child table is a table with a single column (a list).
-// 
-// The dimensions of the child table can be set with setRowCount() and setColumnCount(). Items can be positioned in the child table with setChild(). Get a pointer to a child item with child(). New rows and columns of children can also be inserted with insertRow() and insertColumn(), or appended with appendRow() and appendColumn(). When using the append and insert functions, the dimensions of the child table will grow as needed.
-// 
-// An existing row of children can be removed with removeRow() or takeRow(); correspondingly, a column can be removed with removeColumn() or takeColumn().
-// 
-// An item's children can be sorted by calling sortChildren().
-
-
-// Subclassing
-// 
-// When subclassing QStandardItem to provide custom items, it is possible to define new types for them so that they can be distinguished from the base class. The type() function should be reimplemented to return a new type value equal to or greater than UserType.
-// 
-// Reimplement data() and setData() if you want to perform custom handling of data queries and/or control how an item's data is represented.
-// 
-// Reimplement clone() if you want QStandardItemModel to be able to create instances of your custom item class on demand (see QStandardItemModel::setItemPrototype()).
-// 
-// Reimplement read() and write() if you want to control how items are represented in their serialized form.
-// 
-// Reimplement operator<() if you want to control the semantics of item comparison. operator<() determines the sorted order when sorting items with sortChildren() or with QStandardItemModel::sort().
-
-// QStandardItemModel model;
-//  QStandardItem *parentItem = model.invisibleRootItem();
-//  for (int i = 0; i < 4; ++i) {
-//      QStandardItem *item = new QStandardItem(QString("item %0").arg(i));
-//      parentItem->appendRow(item);
-//      parentItem = item;
-//  }
-
-//  QStandardItem *item = myStandardItemModel->itemFromIndex(index);

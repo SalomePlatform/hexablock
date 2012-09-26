@@ -32,7 +32,7 @@ bool is_out (double val, double orig, double lg);
 
 // ======================================================== Constructeur
 Cylinder::Cylinder(Vertex* b, Vector* v, double r, double h)
-        : EltBase (b->dad())
+        : EltBase (b->dad(), EL_CYLINDER)
 {
     c_base   = b;
     c_dir    = v;
@@ -48,6 +48,17 @@ Cylinder::Cylinder(Vertex* b, Vector* v, double r, double h)
        HexDump (c_dir);
        cout << endl;
        }
+
+    if (c_base==NULL || c_dir==NULL || el_root==NULL)
+       setError ();
+    else 
+       {
+       double tol   = el_root->getTolerance ();
+       double norme = c_dir  ->getNorm ();
+       if (c_radius <= tol || c_height <= tol || norme <= tol)
+           setError ();
+       }
+       
 }
 // ======================================================== rdiffers
 bool rdiffers (double v1, double v2)

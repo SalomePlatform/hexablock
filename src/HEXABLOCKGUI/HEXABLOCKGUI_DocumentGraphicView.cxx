@@ -46,7 +46,9 @@
 #include <vtkRenderer.h>
 #include <vtkActorCollection.h>
 #include <vtkUnstructuredGrid.h>
-
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
+#include <SVTK_View.h>
 // test tutorial (sphere)
 #include <vtkPolyDataMapper.h>
 #include <vtkSphereSource.h>
@@ -97,7 +99,6 @@
 
 using namespace std;
 using namespace HEXABLOCK::GUI;
-
 
 Document_Actor::Document_Actor( HEXA_NS::Document* doc, const QString& entry ):
   SALOME_Actor(),
@@ -326,7 +327,166 @@ Associate_Actor::Associate_Actor( HEXA_NS::Document* doc, const QString& entry)
 //   SetPointRepresentation(true);
 }
 // ===================================================== getUnstructuredGrid
+
 vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
+{
+  vtkUnstructuredGrid* theGrid = vtkUnstructuredGrid::New();
+
+  _doc->reorderFaces(); //CS_TEST
+
+  std::map<int,vtkIdType>   vtkNodeId;
+  std::map<vtkIdType, int>  hexaNodeId;
+
+  // Create points
+  vtkPoints* aPoints = vtkPoints::New();
+  int nbVertex = _doc->countVertex();
+  aPoints->SetNumberOfPoints( nbVertex );
+
+  HEXA_NS::Vertex* v = NULL;
+  int vertexId;
+  for ( int i=0; i <nbVertex; ++i ){
+    v = _doc->getVertex(i);
+    aPoints->SetPoint( i, v->getX()+6, v->getY()+6, v->getZ() );
+    vertexId = reinterpret_cast<intptr_t>(v); //v->getId();
+    vtkNodeId [ vertexId ] = i;
+    hexaNodeId[ i ] = vertexId ;
+//     vtkNodeId [ vertexId ] = i+1;
+//     hexaNodeId[ i+1 ] = vertexId ;
+  }
+
+  theGrid->SetPoints( aPoints );
+  aPoints->Delete();
+//   theGrid->SetCells( 0, 0, 0, 0, 0 );
+
+
+  // Calculate cells size
+  int nb0DElement = _doc->countVertex();
+  int nbEdge      = _doc->countEdge();
+  int nbFace      = _doc->countQuad();
+  int nbVolume    = _doc->countHexa();
+
+  vtkIdType aCellsSize =  2*nb0DElement + 3*nbEdge + ( 4 + 1 )*nbFace + ( 8 + 1 )*nbVolume;
+  vtkIdType aNbCells   =  nb0DElement + nbEdge + nbFace + nbVolume;
+
+  // Create cells
+  vtkCellArray* aConnectivity = vtkCellArray::New();
+  aConnectivity->Allocate( aCellsSize, 0 );
+
+  vtkUnsignedCharArray* aCellTypesArray = vtkUnsignedCharArray::New();
+  aCellTypesArray->SetNumberOfComponents( 1 );
+  aCellTypesArray->Allocate( aNbCells * aCellTypesArray->GetNumberOfComponents() );
+
+  vtkIdList *anIdList = vtkIdList::New();
+  vtkIdType iVtkElem = 0;
+//   vtkIdType iVtkElem = 1; //CS_TEST
+  int       iHexaElem;
+
+  // VERTEX
+  for ( int i=0; i<nb0DElement; ++i ){
+    anIdList->SetNumberOfIds( 1 );
+    v = _doc->getVertex(i);
+    iHexaElem = reinterpret_cast<intptr_t>(v);//v->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+    anIdList->SetId(0, vtkNodeId[iHexaElem]);
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_VERTEX );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // EDGE
+  HEXA_NS::Edge* e = NULL;
+  HEXA_NS::Vertex* vertexElem = NULL;
+  for ( int i=0; i<nbEdge; ++i ){
+    anIdList->SetNumberOfIds( 2 );
+    e = _doc->getEdge(i);
+    iHexaElem = reinterpret_cast<intptr_t>(e); //e->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 2; ++j ){ //j< e->countVertex(); ++j ){
+      vertexElem = e->getVertex( j );
+      anIdList->SetId( j, vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ] );//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_LINE );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // QUAD
+  HEXA_NS::Quad* q = NULL;
+  HEXA_NS::Quad* quadElem = NULL;
+  for ( int i=0; i<nbFace; ++i ){
+    anIdList->SetNumberOfIds( 4 );
+    q = _doc->getQuad(i);
+    iHexaElem = reinterpret_cast<intptr_t>(q); //q->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 4; ++j ){
+      vertexElem = q->getVertex( j );
+      anIdList->SetId( j, vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ] );//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_QUAD );//getCellType( aType, anElem->IsPoly(), aNbNodes ) );
+    ++iVtkElem;
+  }
+
+  // HEXA
+  HEXA_NS::Hexa* h = NULL;
+  HEXA_NS::Hexa* hexaElem = NULL;
+  std::map<int, int> connectivity;
+  connectivity[0] = 0;
+  connectivity[1] = 1;
+  connectivity[2] = 3;
+  connectivity[3] = 2;
+  connectivity[4] = 4;
+  connectivity[5] = 5;
+  connectivity[6] = 7;
+  connectivity[7] = 6;
+  for ( int i=0; i<nbVolume; ++i ){
+    anIdList->SetNumberOfIds( 8 );
+    h = _doc->getHexa(i);
+    iHexaElem = reinterpret_cast<intptr_t>(h); //q->getId();
+    vtkElemsId[iHexaElem] = iVtkElem;
+    hexaElemsId[iVtkElem] = iHexaElem;
+
+    for( vtkIdType j = 0; j< 8; ++j ){
+      vertexElem = h->getVertex( j );// );
+      anIdList->SetId( connectivity[j], vtkNodeId[ reinterpret_cast<intptr_t>(vertexElem) ]);//vertexElem->getId() ]);
+    }
+    aConnectivity->InsertNextCell( anIdList );
+    aCellTypesArray->InsertNextValue( VTK_HEXAHEDRON );
+    ++iVtkElem;
+  }
+
+
+// 0        1      2     3        4     5      6      7
+// V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF,
+//
+// 0        1     3      2        4    5      7      6
+
+  // Insert cells in grid
+  VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
+  aCellLocationsArray->SetNumberOfComponents( 1 );
+  aCellLocationsArray->SetNumberOfTuples( aNbCells );
+//   std::cout << "aNbCells =>" << aNbCells << std::endl;
+
+  aConnectivity->InitTraversal();
+  for( vtkIdType idType = 0, *pts, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
+    aCellLocationsArray->SetValue( idType, aConnectivity->GetTraversalLocation( npts ) );
+  }
+  theGrid->SetCells( aCellTypesArray, aCellLocationsArray,aConnectivity );
+
+  aCellLocationsArray->Delete();
+  aCellTypesArray->Delete();
+  aConnectivity->Delete();
+  anIdList->Delete();
+  //std::cout << "theGrid->GetNumberOfCells()" << theGrid->GetNumberOfCells() << std::endl;
+
+  return theGrid;
+}
+/*
 {
   vtkUnstructuredGrid* theGrid = vtkUnstructuredGrid::New();
 
@@ -355,7 +515,7 @@ vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
   int vertexId;
   for ( int i=0; i <nbVertex; ++i ){
     v = _doc->getVertex(i);
-    aPoints->SetPoint( i, v->getX(), v->getY(), v->getZ() );
+    aPoints->SetPoint( i, v->getX() + 1, v->getY() + 1, v->getZ() );
     vertexId = reinterpret_cast<intptr_t>(v); //v->getId();
     vtkNodeId [ vertexId ] = i;
     hexaNodeId[ i ] = vertexId ;
@@ -388,8 +548,8 @@ vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
   // VERTEX
   for ( int i=0; i<nb0DElement; ++i ){
     anIdList->SetNumberOfIds( 1 );
- // v = _doc->getVertex(i);        // Abu 
-    v = tab_vertex [i];
+    v = _doc->getVertex(i);        // Abu
+    // v = tab_vertex [i];
     iHexaElem = reinterpret_cast<intptr_t>(v);//v->getId();
     vtkElemsId[iHexaElem] = iVtkElem;
     hexaElemsId[iVtkElem] = iHexaElem;
@@ -445,6 +605,7 @@ vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
 
   return theGrid;
 }
+*/
 // =============================================================== Abu : Fin
 
 
@@ -454,7 +615,8 @@ DocumentGraphicView::DocumentGraphicView( LightApp_Application* app, SUIT_ViewWi
       _suitView( suitView ),
       _documentActor( 0 ),
       _associateActor (NULL), // Abu
-      _currentChanged( false )
+      _currentChanged( false ),
+      firstUpdate(true)
 {
 //   MESSAGE("DocumentGraphicView::DocumentGraphicView() app"<<app);
 //   MESSAGE("DocumentGraphicView::DocumentGraphicView() suitView"<<suitView);
@@ -502,6 +664,7 @@ void DocumentGraphicView::update()
   _documentActor  = new Document_Actor( theDocumentImpl, theDocumentEntry );
   theVTKViewWindow->AddActor( _documentActor );
  
+  QString autreDocentry  = "essai";
                                  // -------------------- Abu debut 
   if (HEXA_NS::special_option())
      {
@@ -510,15 +673,30 @@ void DocumentGraphicView::update()
         theVTKViewWindow->RemoveActor( _associateActor );
         _associateActor->Delete();
         }
-     _associateActor = new Associate_Actor( theDocumentImpl, theDocumentEntry );
+  //   _associateActor = new Associate_Actor( theDocumentImpl, theDocumentEntry );
+     _associateActor = new Associate_Actor( theDocumentImpl, autreDocentry );
      theVTKViewWindow->AddActor( _associateActor );
      }
                                  // -------------------- Abu fin
 
   // display HEXABLOCK document model
+//  vtkSmartPointer<hexablockInteractorStyle> style = vtkSmartPointer<hexablockInteractorStyle>::New();
+//  theVTKViewWindow->GetInteractor()->PushInteractorStyle(style);
+//  style->SetCurrentRenderer(theVTKViewWindow->getRenderer());
+
+//  theVTKViewWindow->SetInteractionStyle(0);
+//  theVTKViewWindow->SetDynamicPreSelection (true);
   theVTKViewWindow->getRenderer()->Render();
   theVTKViewWindow->Repaint();
-  theVTKViewWindow->onFitAll();
+  if (firstUpdate)
+  {
+	  theVTKViewWindow->onFitAll();
+	  firstUpdate = false;
+  }
+//  theVTKViewWindow->GetInteractorStyle()->HighlightProp(_documentActor);
+//  theVTKViewWindow->getView()->SetPreselectionProp(0., 1., 0., 2.);
+//  theVTKViewWindow->getView()->SetTransparency(_documentActor->getIO(), 0.2);
+
   // myVTKViewWindow->SetSelectionMode( ActorSelection );
   // theVTKViewWindow->SetSelectionMode( NodeSelection );
   // myVTKViewWindow->SetSelectionMode( FaceSelection );

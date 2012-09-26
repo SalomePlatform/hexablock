@@ -45,6 +45,19 @@ Edge::Edge (Vertex* va, Vertex* vb)
    e_law    = NULL;
    e_clone  = NULL;
 
+   if (isBad())
+      return;
+   else if (BadElement (va) || BadElement (vb))
+      {
+      setError ();
+      return;
+      }
+   else if (va == vb)
+      {
+      setError ();
+      return;
+      }
+
    majReferences ();
 }
 // ======================================================== Constructeur 2
@@ -52,6 +65,8 @@ Edge::Edge (Edge* other)
     : EltBase (other->dad(), EL_EDGE)
 {
    e_vertex [V_AMONT] = e_vertex [V_AVAL ] = NULL;
+   if (BadElement (other))
+      setError ();
 
    e_propag = NOTHING;
    e_way    = true;

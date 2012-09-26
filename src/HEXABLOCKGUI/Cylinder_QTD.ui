@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
+    <width>221</width>
     <height>208</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>5</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -55,14 +55,14 @@
       <item row="1" column="1">
        <widget class="QLineEdit" name="name_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -78,14 +78,14 @@
       <item row="2" column="1">
        <widget class="QLineEdit" name="vex_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -96,9 +96,15 @@
       </item>
       <item row="4" column="1">
        <widget class="QLineEdit" name="vec_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -152,6 +158,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>name_le</tabstop>
+  <tabstop>vex_le</tabstop>
+  <tabstop>vec_le</tabstop>
+  <tabstop>r_spb</tabstop>
+  <tabstop>h_spb</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

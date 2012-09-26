@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
-    <height>440</height>
+    <width>272</width>
+    <height>464</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Rind Construction</string>
@@ -16,6 +22,12 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Result Name</string>
      </property>
@@ -30,14 +42,14 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="name_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -48,21 +60,27 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Arguments</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>center</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="1">
        <widget class="QLineEdit" name="center_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -72,10 +90,37 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>vx</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="vx_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>vz</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <widget class="QLineEdit" name="vz_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -85,14 +130,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="3" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>radext</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="3" column="1">
        <widget class="QDoubleSpinBox" name="radext_spb">
         <property name="decimals">
          <number>6</number>
@@ -105,14 +150,14 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="2">
+      <item row="4" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string>radint</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="4" column="1">
        <widget class="QDoubleSpinBox" name="radint_spb">
         <property name="decimals">
          <number>6</number>
@@ -125,14 +170,14 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0" colspan="2">
+      <item row="5" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>radhole</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="2">
+      <item row="5" column="1">
        <widget class="QDoubleSpinBox" name="radhole_spb">
         <property name="decimals">
          <number>6</number>
@@ -145,17 +190,17 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="2">
+      <item row="6" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
          <string>plorig</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="2">
+      <item row="6" column="1">
        <widget class="QLineEdit" name="plorig_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -165,14 +210,14 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0" colspan="2">
+      <item row="7" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
          <string>nrad</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="2">
+      <item row="7" column="1">
        <widget class="QSpinBox" name="nrad_spb">
         <property name="maximum">
          <number>1000000</number>
@@ -182,14 +227,14 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="0" colspan="2">
+      <item row="8" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
          <string>nang</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="2">
+      <item row="8" column="1">
        <widget class="QSpinBox" name="nang_spb">
         <property name="maximum">
          <number>1000000</number>
@@ -199,14 +244,14 @@
         </property>
        </widget>
       </item>
-      <item row="10" column="0" colspan="2">
+      <item row="9" column="0">
        <widget class="QLabel" name="label_10">
         <property name="text">
          <string>nhaut</string>
         </property>
        </widget>
       </item>
-      <item row="10" column="2">
+      <item row="9" column="1">
        <widget class="QSpinBox" name="nhaut_spb">
         <property name="maximum">
          <number>1000000</number>
@@ -216,7 +261,7 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
+      <item row="10" column="0">
        <widget class="QLabel" name="angle_label">
         <property name="enabled">
          <bool>false</bool>
@@ -226,7 +271,7 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="2">
+      <item row="10" column="1">
        <widget class="QDoubleSpinBox" name="angle_spb">
         <property name="enabled">
          <bool>false</bool>
@@ -242,34 +287,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>vx</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QLineEdit" name="vx_le">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>vz</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="3">
+      <item row="11" column="1">
        <widget class="QCheckBox" name="partial_cb">
         <property name="text">
          <string>Partial</string>
@@ -284,6 +302,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>name_le</tabstop>
+  <tabstop>center_le</tabstop>
+  <tabstop>vx_le</tabstop>
+  <tabstop>vz_le</tabstop>
+  <tabstop>plorig_le</tabstop>
+  <tabstop>radext_spb</tabstop>
+  <tabstop>radint_spb</tabstop>
+  <tabstop>radhole_spb</tabstop>
+  <tabstop>nrad_spb</tabstop>
+  <tabstop>nang_spb</tabstop>
+  <tabstop>nhaut_spb</tabstop>
+  <tabstop>angle_spb</tabstop>
+  <tabstop>partial_cb</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

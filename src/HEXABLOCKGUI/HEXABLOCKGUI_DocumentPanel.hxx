@@ -31,8 +31,13 @@
 #endif
 
 
+#define MAX_WIDTH 16777215
+#define MAX_HEIGHT 16777215
+#define MIN_WIDTH 0
+#define MIN_HEIGHT 0
 
 #include <QShortcut>
+#include <QDockWidget>
 
 #include "ui_Vertex_QTD.h"
 #include "ui_Quad_QTD.h"
@@ -86,8 +91,6 @@
 
 #include "klinkitemselectionmodel.hxx"
 
-
-
 Q_DECLARE_METATYPE(QModelIndex);
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
 Q_DECLARE_METATYPE(GEOM::GeomObjPtr);
@@ -110,6 +113,12 @@ namespace HEXABLOCK
             UPDATE_MODE
           };
 
+          enum ViewType {
+        	  VTK,
+        	  OCC,
+        	  NONE
+          };
+
           // define input widget type => usefull for selection
           typedef HexaTreeRole  HexaWidgetType;
           typedef TopAbs_ShapeEnum/*int */GeomWidgetType; //CS_TODO
@@ -120,30 +129,56 @@ namespace HEXABLOCK
           enum {
             LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
             LW_ASSOC_ROLE,
-            LW_GEOM_OBJ_ROLE
+            LW_GEOM_OBJ_ROLE,
+            LW_DATA_ROLE
           };
 
           HexaBaseDialog( QWidget * parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = 0 );
-          virtual ~HexaBaseDialog();
+          virtual ~HexaBaseDialog(){};
 
           // clear all input widget
-          virtual void clear();
+          virtual void clear(){};
+          ViewType getObjectViewType(QObject* obj);
 
           //  model
-          virtual void setDocumentModel( DocumentModel* m );
+          virtual void setDocumentModel( DocumentModel* m ){ _documentModel = m;}
 
           //  selection
-          virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s );
-          virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
-          virtual void setGroupsSelectionModel( GroupsSelectionModel* s );
-          virtual void setMeshSelectionModel( MeshSelectionModel* s );
+          virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s )
+          { _patternDataSelectionModel = s;}
+
+          virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s )
+          { _patternBuilderSelectionModel = s; }
+
+          virtual void setGroupsSelectionModel( GroupsSelectionModel* s )
+          { _groupsSelectionModel = s; }
+
+          virtual void setMeshSelectionModel( MeshSelectionModel* s )
+          { _meshSelectionModel = s; }
+
+          void resetSizeAndShow(QDockWidget* parent);
+          void lockSizeToSizeHint();
+          void unlockSizeModification();
+          virtual QModelIndexList getAssocsVTK()
+          {
+        	QModelIndexList assocs;
+        	return assocs;
+          }
+          virtual QMultiMap<QString, int> getAssocsGEOM()
+          {
+        	  QMultiMap<QString, int> assocs;
+        	  return assocs;
+          }
+          void clearVTKSelection();
+          void clearOCCSelection();
+
+          bool debugEdgeAssoc; //Temporary
 
         public slots:
           //virtual void accept();
           virtual bool apply();
           virtual void close();
           virtual void onHelpRequested();
-
 
         protected:
           virtual bool eventFilter(QObject *obj, QEvent *event);
@@ -154,9 +189,9 @@ namespace HEXABLOCK
           virtual void _initInputWidget( Mode editmode )=0; //must be implemented on inherited dialog box
           virtual QGroupBox*  _initButtonBox( Mode editmode );
           void _initWidget( Mode editmode ); // call _initInputWidget() & _initButtonBox()
+          QModelIndexList getIndexList(QListWidget* itemsList);
 
           void _initViewManager();
-
 
           void _allowSelection();
           void _disallowSelection();
@@ -164,6 +199,7 @@ namespace HEXABLOCK
 
           bool _allowVTKSelection( QObject* obj );
           bool _allowOCCSelection( QObject* obj );
+          void setOCCSelectionMode(TopAbs_ShapeEnum mode);
           QItemSelectionModel* _getSelector( QObject* obj );
 
 
@@ -172,6 +208,9 @@ namespace HEXABLOCK
 
           void _selectAndHighlight( const QModelIndex& i );
 
+          void _highlightWidget(QObject* obj, Qt::GlobalColor clr);
+
+          void setFocusToNextField();
 
           Mode _editMode;
 
@@ -200,13 +239,21 @@ namespace HEXABLOCK
 
           QString  _helpFileName;
 
+        private:
+          bool _isLineOrListWidget(QObject*);
+          void _updateCurrentObject(QObject*);
+          TopAbs_ShapeEnum currentOCCSelectionMode;
+          void refreshConnects();
+
+
         protected slots:
           virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel ); //from qt model/view selectionManager
           virtual void onCurrentSelectionChanged();//from salome selectionManager
-          virtual void onWindowActivated( SUIT_ViewManager* vm );
+          virtual void onWindowActivated(SUIT_ViewManager*){};
           virtual void updateButtonBox();
           void updateName();
-          void selectElementOfModel();
+          virtual void selectElementOfModel();
+          void highlightSelectedAssocs();
 
     };
 
@@ -306,6 +353,7 @@ namespace HEXABLOCK
         virtual ~HexaDialog();
 
         void clear();
+        virtual QModelIndexList getAssocsVTK();
 
         void setValue(HEXA_NS::Hexa* v);
         HEXA_NS::Hexa* getValue();
@@ -553,14 +601,18 @@ namespace HEXABLOCK
       public:
         PrismQuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~PrismQuadDialog();
-
         void clear();
+        virtual QModelIndexList getAssocsVTK();
 
       public slots:
         virtual bool apply(QModelIndex& result);
 
       protected:
         void _initInputWidget( Mode editmode );
+
+      protected slots:
+		void addHeightItem();
+        void delHeightItem();
 
       private slots:
         void addQuad();
@@ -579,6 +631,7 @@ namespace HEXABLOCK
         virtual ~JoinQuadDialog();
 
         void clear();
+        virtual QModelIndexList getAssocsVTK();
 
       public slots:
         virtual bool apply(QModelIndex& result);
@@ -766,6 +819,8 @@ namespace HEXABLOCK
         EdgeAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~EdgeAssocDialog();
         void clear();
+        virtual QModelIndexList getAssocsVTK();
+        virtual QMultiMap<QString, int> getAssocsGEOM();
 
         void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
 
@@ -783,6 +838,7 @@ namespace HEXABLOCK
         virtual void onCurrentSelectionChanged();
 //         void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
         virtual void onWindowActivated(SUIT_ViewManager*);
+        virtual void selectElementOfGeom();
 
         void deleteEdgeItem();
         void deleteLineItem();
@@ -792,6 +848,7 @@ namespace HEXABLOCK
         void pendChanged( double val );
 
       private:
+//        QModelIndexList currentAssocList;
         // Preview in GEOM
 //         GEOM::GeomObjPtr    _firstLine;
 //         GEOM::GeomObjPtr    _lastLine;
@@ -812,6 +869,8 @@ namespace HEXABLOCK
         QuadAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadAssocDialog();
         void clear();
+        virtual QModelIndexList getAssocsVTK();
+        virtual QMultiMap<QString, int> getAssocsGEOM();
 
       public slots:
         virtual bool apply(QModelIndex& result);
@@ -825,6 +884,7 @@ namespace HEXABLOCK
         virtual void onCurrentSelectionChanged();
         virtual void onWindowActivated(SUIT_ViewManager*);
         void deleteFaceItem();
+        virtual void selectElementOfGeom();
 
       private:
         QList<DocumentModel::GeomObj> _assocs;
@@ -844,6 +904,7 @@ namespace HEXABLOCK
         GroupDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~GroupDialog();
         void clear();
+        virtual QModelIndexList getAssocsVTK();
 
         void setValue(HEXA_NS::Group* v);
         HEXA_NS::Group* getValue();
@@ -916,6 +977,7 @@ namespace HEXABLOCK
       protected slots:
         void updateHelpFileName();
         void deletePropagationItem();
+        virtual void selectElementOfModel();
 
       private:
         HEXA_NS::Propagation *_value;
@@ -962,6 +1024,8 @@ namespace HEXABLOCK
         ReplaceHexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~ReplaceHexaDialog();
         void clear();
+        virtual QModelIndexList getAssocsVTK();
+
 
       public slots:
         virtual bool apply(QModelIndex& result);
@@ -990,6 +1054,7 @@ namespace HEXABLOCK
         QuadRevolutionDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
         virtual ~QuadRevolutionDialog();
         void clear();
+        virtual QModelIndexList getAssocsVTK();
 
       public slots:
         virtual bool apply(QModelIndex& result);

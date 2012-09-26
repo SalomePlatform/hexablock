@@ -156,6 +156,12 @@ GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
 // {
 // }
 
+void Quad_impl::setColor (::CORBA::Double val)
+     throw (SALOME::SALOME_Exception)
+{
+  _quad_cpp->setColor (val);
+}
+
 void Quad_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
 {
   _quad_cpp->setScalar(val);

@@ -116,6 +116,12 @@ void Vertex_impl::clearAssociation()
 }
 
 
+void Vertex_impl::setColor (::CORBA::Double val)
+     throw (SALOME::SALOME_Exception)
+{
+  _vertex_cpp->setColor (val);
+}
+
 void Vertex_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
 {
   _vertex_cpp->setScalar(val);

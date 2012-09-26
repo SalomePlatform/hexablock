@@ -89,9 +89,13 @@ public:
     virtual void replaceEdge   (Edge*   old, Edge*   nouveau);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
+    virtual void  setAssociation (Shape* forme);
+    virtual int   addAssociation (Shape* forme); 
     virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
-    int   addAssociation (Shape* forme); 
+    virtual bool  isAssociated ()           { return tab_assoc.size() > 0  ; }
+
     const Shapes& getAssociations ()        { return tab_assoc ; }
+
 
     virtual void duplicate ();
     Quad* getClone ()               {  return q_clone ; }

@@ -270,16 +270,21 @@ int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,
                                QString& theName )
 {
     SVTK_Selector* theSelector = theWindow->GetSelector();
+
     theName = "";
+
     TColStd_IndexedMapOfInteger aMapIndex;
     theSelector->GetIndex(theIO,aMapIndex);
 
     typedef std::set<int> TIdContainer;
+
     std::set<int> anIdContainer;
+
     for( int i = 1; i <= aMapIndex.Extent(); i++)
       anIdContainer.insert(aMapIndex(i));
 
     std::set<int>::const_iterator anIter = anIdContainer.begin();
+
     for( ; anIter != anIdContainer.end(); anIter++)
       theName += QString(" %1").arg(*anIter);
 
