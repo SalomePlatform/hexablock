@@ -63,7 +63,10 @@ module HEXABLOCK_ORB
 //       void removeAssociation()
 //           raises (SALOME::SALOME_Exception);
 
-      void setScalar( in double val ) //CS_NOT_SPEC
+      void setColor (in double value)
+           raises (SALOME::SALOME_Exception);
+
+      void setScalar( in double val ) //CS_NOT_SPEC --> To delete
 	raises (SALOME::SALOME_Exception);
 
   };

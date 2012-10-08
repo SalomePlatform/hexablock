@@ -98,8 +98,10 @@ protected:
     QButtonGroup*       myRBGroup;             //!< radio button group
     MyDlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
 
+public slots:
+  virtual void close();
+
 protected slots:
-    virtual void        ClickOnCancel();
     virtual void        processPreview();
     void                LineEditReturnPressed();
     void                DeactivateActiveDialog();

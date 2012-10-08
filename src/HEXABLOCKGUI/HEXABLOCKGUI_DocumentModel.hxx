@@ -25,6 +25,8 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
+#include "GEOM_GenericObjPtr.h"
+
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexDocument.hxx"
 
@@ -65,7 +67,7 @@ namespace HEXABLOCK
         QString getName();
         void load( const QString& xmlFileName );
         void save( const QString& xmlFileName );
-
+        struct GeomObj* convertToGeomObj(GEOM::GeomObjPtr geomObjPtr);
         void updateData();
 
         void clearAll();
@@ -104,8 +106,19 @@ namespace HEXABLOCK
         void allowLawSelectionOnly();
 
 
+        HEXA_NS::EltBase* getHexaPtr(const QModelIndex& iElt);
+        template<typename T>
+        T getHexaPtr(QModelIndex iElt)
+        {
+        	if (iElt.isValid())
+        		return iElt.data( HEXA_DATA_ROLE ).value< T >();
+
+        	return NULL;
+        }
+
         void setName( const QModelIndex& iElt, const QString& name );
         bool clearEltAssociations( const QModelIndex& iElt );
+        HEXA_NS::Hexa* getQuadHexa(HEXA_NS::Quad* quad);
 
         //  ************  BUILD HEXABLOCK MODEL ************
         QModelIndex addVertex( double x, double y, double z );
@@ -213,7 +226,7 @@ namespace HEXABLOCK
         //
         QModelIndex prismQuad( const QModelIndex& quad, const QModelIndex& dv, int nb);
         QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, int nb);
-
+        QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, std::vector<double>, int nb=0);
 
         //
         QModelIndex joinQuad( const QModelIndex& start_q, const QModelIndex& dest_q,
@@ -240,7 +253,7 @@ namespace HEXABLOCK
         QModelIndex disconnectVertex( const QModelIndex& h, const QModelIndex& v );
         QModelIndex disconnectEdge( const QModelIndex& h, const QModelIndex& e );
         QModelIndex disconnectQuad( const QModelIndex& h, const QModelIndex& q );
-	QModelIndex disconnectEdges( const QModelIndexList& h, const QModelIndexList& e );
+        QModelIndex disconnectEdges( const QModelIndexList& h, const QModelIndexList& e );
 
         //
         QModelIndex cutEdge( const QModelIndex &e, int nbcuts );

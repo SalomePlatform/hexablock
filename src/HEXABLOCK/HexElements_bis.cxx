@@ -43,6 +43,8 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
 // ====================================================== getHexaIJK
 Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_hx ||  ny<0 || ny>=size_hy || nz<0 || nz>=size_hz)
       return NULL;
    else if (grid_nocart)
@@ -55,6 +57,8 @@ Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
 // ====================================================== getQuadIJ
 Quad* Elements::getQuadIJ (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
    else if (grid_nocart)
@@ -67,6 +71,8 @@ Quad* Elements::getQuadIJ (int nx, int ny, int nz)
 // ====================================================== getQuadJK
 Quad* Elements::getQuadJK (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
    else if (grid_nocart)
@@ -79,6 +85,8 @@ Quad* Elements::getQuadJK (int nx, int ny, int nz)
 // ====================================================== getQuadIK
 Quad* Elements::getQuadIK (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_qx ||  ny<0 || ny>=size_qy || nz<0 || nz>=size_qz)
       return NULL;
    else if (grid_nocart)
@@ -91,6 +99,8 @@ Quad* Elements::getQuadIK (int nx, int ny, int nz)
 // ====================================================== getEdgeI
 Edge* Elements::getEdgeI (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
    else if (grid_nocart)
@@ -103,6 +113,8 @@ Edge* Elements::getEdgeI (int nx, int ny, int nz)
 // ====================================================== getEdgeJ
 Edge* Elements::getEdgeJ (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
    else if (grid_nocart)
@@ -115,6 +127,8 @@ Edge* Elements::getEdgeJ (int nx, int ny, int nz)
 // ====================================================== getEdgeK
 Edge* Elements::getEdgeK (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_ex ||  ny<0 || ny>=size_ey || nz<0 || nz>=size_ez)
       return NULL;
    else if (grid_nocart)
@@ -127,6 +141,8 @@ Edge* Elements::getEdgeK (int nx, int ny, int nz)
 // ====================================================== getVertexIJK
 Vertex* Elements::getVertexIJK (int nx, int ny, int nz)
 {
+   if (isBad())
+      return NULL;
    if (nx<0 || nx>=size_vx ||  ny<0 || ny>=size_vy || nz<0 || nz>=size_vz)
       return NULL;
    else if (grid_nocart)
@@ -196,6 +212,13 @@ void Elements::remove ()
 // ====================================================== makeCylinder
 int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
 {
+   if (BadElement (cyl) || BadElement (vx) ||  nr<=0 || na <=3 || nl <=0
+                        || vx->getNorm () <= Epsil)
+      {
+      setError ();
+      return HERR;
+      }
+
    Vertex* orig = cyl->getBase ();
    Vector* dir  = cyl->getDirection ();
    double  ray  = cyl->getRadius ();
@@ -212,6 +235,13 @@ int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
 // ====================================================== makePipe
 int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
 {
+   if (BadElement (cyl) || BadElement (vx) ||  nr<=0 || na <=3 || nl <=0
+                        || vx->getNorm () <= Epsil)
+      {
+      setError ();
+      return HERR;
+      }
+
    Vertex* orig = cyl->getBase ();
    Vector* dir  = cyl->getDirection ();
    double  ray  = cyl->getRadius ();
@@ -230,6 +260,12 @@ int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
 // ====================================================== prismQuads
 int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
 {
+   if (BadElement (dir) || dir->getNorm () <= Epsil || nbiter <= 0)
+      {
+      setError ();
+      return HERR;
+      }
+
    el_root->markAll (NO_USED);
    int nbcells   = tstart.size ();
    nbr_vertex    = 0;
@@ -261,8 +297,11 @@ int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
                              int mode)
 {
    int nbiter = tlen.size();
-   if (nbiter==0)
+   if (BadElement (dir) || dir->getNorm () <= Epsil || nbiter <= 0)
+      {
+      setError ();
       return HERR;
+      }
 
    el_root->markAll (NO_USED);
    int nbcells   = tstart.size ();
@@ -296,12 +335,16 @@ int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
 int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
                                RealVector &angles)
 {
-   int nbiter = angles.size();
-   if (center==NULL  || axis==NULL || nbiter==0)
+   int nbiter  = angles.size();
+   int nbcells = start.size ();
+   if (BadElement (center)  || BadElement(axis) || nbiter==0 || nbcells==0
+                            || axis->getNorm () <= Epsil)
+      {
+      setError ();
       return HERR;
+      }
 
    el_root->markAll (NO_USED);
-   int nbcells   = start.size ();
    nbr_vertex    = 0;
    nbr_edges     = 0;
 

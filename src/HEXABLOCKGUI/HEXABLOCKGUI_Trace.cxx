@@ -23,11 +23,11 @@
 
 #include "HEXABLOCKGUI_Trace.hxx"
 
-
 #ifdef WNT
 #include <process.h>
 #define getpid _getpid
 #else
+#include <sys/types.h>
 #include <unistd.h>
 #endif
 

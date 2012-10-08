@@ -33,7 +33,7 @@
 
 #define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
 #define BadElement(elt) (elt)==NULL || (elt)->isBad()
-#define ABR_TYPES  "xveqhw????"
+#define ABR_TYPES  "xveqhwgcp????"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -56,12 +56,15 @@ public :
    virtual bool    isBad       ()              { return el_status!=HOK; }
 
    virtual void    setAssociation (Shape* forme);
+   virtual int     addAssociation (Shape* forme);
    virtual void    clearAssociation ()            { el_assoc = NULL  ; }
    virtual void    duplicate ()                   {}
    virtual Shape*  getAssociation ()              { return el_assoc  ; }
+   virtual bool    isAssociated ()                { return el_assoc != NULL  ; }
 
    void copyAssociation    (EltBase* orig);
    void replaceAssociation (EltBase* orig);
+   bool canBeAssociated ();
 
 public :
    virtual void replaceEdge   (Edge* old, Edge* nouveau) 
@@ -82,7 +85,7 @@ public :
    EltBase*  next ()                        { return el_next; }
    void      setNext (EltBase* suivant)     { el_next = suivant; }
    int       getId ()                       { return el_id; }
-   void      setId (int ln)                 { el_id = ln; }
+   void      setId (int ln);
    Document* dad ()                         { return el_root; }
    EnumElt   getType ()                     { return el_type; }
    bool      isHere ()                      { return el_type!=EL_REMOVED; }

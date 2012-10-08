@@ -21,8 +21,6 @@ using namespace std;
 
 static bool db = false;
 
-
-
 // #include <Basics_Utils.hxx>
 // 
 // #include <TDF_Tool.hxx>
@@ -747,7 +745,8 @@ char* HEXABLOCK_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
    if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
         << "IORToLocalPersistentID" << endl;
-   static char empty [8] = "";
+   /// static char empty [8] = "";
+   char*  empty = strdup ("");
    return empty;
 }
 // =================================================== LocalPersistentIDToIOR

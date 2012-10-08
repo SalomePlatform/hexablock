@@ -77,6 +77,12 @@ Vertex_ptr Hexa_impl::getVertex(::CORBA::Long n)
   return result;
 }
 
+void Hexa_impl::setColor (::CORBA::Double val)
+     throw (SALOME::SALOME_Exception)
+{
+  _hexa_cpp->setColor (val);
+}
+
 void Hexa_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
 {
   _hexa_cpp->setScalar(val);

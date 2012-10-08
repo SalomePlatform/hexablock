@@ -17,430 +17,180 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexShape.hxx"
 
 #include <inttypes.h>
 
-/*
-#include <QVariant>*/
-
-
-//#define _DEVDEBUG_
-
-
 using namespace std;
 using namespace HEXABLOCK::GUI;
 
-
-// ----------------------- VERTEX
-
-VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex ):
-  QStandardItem(),
-  _hexaVertex( hexaVertex )
+// ElementItem --------------------------------------------------
+ElementItem::ElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole):
+QStandardItem()
 {
-//   char pName[12];
-  QString name = _hexaVertex->getName(/*pName*/);
-//   QString docEntry = model()->invisibleRootItem()->data(HEXA_ENTRY_ROLE).toString();
-  setText(name);
-//   setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );//Qt::ItemIsEditable);
-  setData( VERTEX_TREE, HEXA_TREE_ROLE );
-  setData( QString::number( reinterpret_cast<intptr_t>(_hexaVertex) ), HEXA_ENTRY_ROLE ); //_hexaVertex->dad()
+	m_DocElt = docElement;
+	m_type   = ttype;
 
-  HEXA_NS::Shape* assoc = hexaVertex->getAssociation();
-  if ( assoc ){
-    QString entry = QString(assoc->ident.c_str());
-    setData( entry + ";" , HEXA_ASSOC_ENTRY_ROLE );
-  }
+	if (m_DocElt != NULL)
+		setText(m_DocElt->getName());
+	setData( treeRole,    HEXA_TREE_ROLE );
+	setData( entry,       HEXA_DOC_ENTRY_ROLE);
+	setData( IDptr(),     HEXA_ENTRY_ROLE );
+
+	//Init assocs entry
+	if (m_DocElt!=NULL && m_DocElt->isAssociated())
+	{
+		QString entry;
+		if (m_type == VERTEXITEM) //Vertex
+		{
+			HEXA_NS::Shape* assoc = m_DocElt->getAssociation();
+			if ( assoc ){
+				entry = QString(assoc->ident.c_str());
+				setData( entry + ";" , HEXA_ASSOC_ENTRY_ROLE );
+			}
+		}
+		else if (m_type == EDGEITEM)
+		{
+			QString entries;
+			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Edge*)m_DocElt)->getAssociations();
+			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
+				entry = (*anAssoc)->ident.c_str();
+				entries += entry + ";";
+			}
+			if ( !entries.isEmpty() )
+				setData( entries, HEXA_ASSOC_ENTRY_ROLE );
+		}
+		else if (m_type == QUADITEM)
+		{
+			QString entries;
+			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Quad*)m_DocElt)->getAssociations();
+			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
+				entry = (*anAssoc)->ident.c_str();
+				entries += entry + ";";
+			}
+			if ( !entries.isEmpty() )
+				setData( entries, HEXA_ASSOC_ENTRY_ROLE );
+		}
+	}
 }
 
-int VertexItem::type() const
-{
-  return VERTEXITEM;
-}
 
+//ElementItem::ElementItem( HEXA_NS::EltBase* docElement, HexaType ttype, HexaTreeRole treeRole):
+//QStandardItem()
+//{
+//	m_DocElt = docElement;
+//	m_type   = ttype;
+//
+//	if (m_DocElt != NULL)
+//		setText(m_DocElt->getName());
+//	setData( treeRole,    HEXA_TREE_ROLE );
+//	setData( IDptr(),     HEXA_ENTRY_ROLE );
+//
+////	if (m_DocElt->isAssociated())
+////		setData(  "Y" ,     HEXA_ASSOC_ENTRY_ROLE );
+//}
 
-
-QVariant VertexItem::data( int role ) const
+//---------------------------------------------------------------
+QVariant ElementItem::data( int role ) const
 {
 	if ( role == HEXA_DATA_ROLE ){
-		return QVariant::fromValue( _hexaVertex );
-	} else if (role == Qt::ForegroundRole ) {
-		HEXA_NS::Shape* assoc = _hexaVertex->getAssociation();
-		if ( assoc )
+		switch(m_type)
+		{
+		case VERTEXITEM: return QVariant::fromValue( (HEXA_NS::Vertex*)m_DocElt );
+		case EDGEITEM: return QVariant::fromValue( (HEXA_NS::Edge*)m_DocElt );
+		case QUADITEM: return QVariant::fromValue( (HEXA_NS::Quad*)m_DocElt );
+		case HEXAITEM: return QVariant::fromValue( (HEXA_NS::Hexa*)m_DocElt );
+		case VECTORITEM: return QVariant::fromValue( (HEXA_NS::Vector*)m_DocElt );
+		case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
+		case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
+		case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
+		case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
+		default: return QVariant::fromValue( m_DocElt );
+		}
+	}
+
+	if (role == Qt::ForegroundRole ) {
+		if ( m_DocElt->isAssociated() )
 			return QColor(Qt::darkGreen);
 		else
 			return QColor(Qt::black);
-	} else {
-		return QStandardItem::data( role );
 	}
+	return QStandardItem::data( role );
 }
 
-void VertexItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaVertex = value.value<HEXA_NS::Vertex*>();
-      emitDataChanged ();
-    } else {
-//       std::cout << " VertexItem::setData( " << role << ", "<< value.toString().toStdString() << " )" <<std::endl;
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
-
-// ----------------------- EDGE
-EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge ):
-  QStandardItem(),
-  _hexaEdge( hexaEdge )
-{
-//   char pName[12];
-//   QString name = _hexaEdge->getName(pName);
-  QString name = _hexaEdge->getName();
-//   std::cout << "EdgeItem name : "<<  name.toStdString() << std::endl;
-  setText(name);
-  setData( EDGE_TREE, HEXA_TREE_ROLE );
-  setData( QString::number( reinterpret_cast<intptr_t>(_hexaEdge) ), HEXA_ENTRY_ROLE );
-
-  QString entries, entry;
-  const HEXA_NS::Shapes& assocs = hexaEdge->getAssociations();
-  for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-    entry = (*anAssoc)->ident.c_str();
-    entries += entry + ";";
-  }
-  if ( !entries.isEmpty() )
-    setData( entries, HEXA_ASSOC_ENTRY_ROLE );
-
-}
-
-
-int EdgeItem::type() const
-{
-  return EDGEITEM;
-}
-
-QVariant EdgeItem::data( int role ) const
+//---------------------------------------------------------------
+void ElementItem::setData ( const QVariant& valcont, int role )
 {
 	if ( role == HEXA_DATA_ROLE ){
-		return QVariant::fromValue( _hexaEdge );
-	} else if (role == Qt::ForegroundRole ) {
-		const HEXA_NS::Shapes& assocs = _hexaEdge->getAssociations();
-		if ( assocs.size()>0 )
-			return QColor(Qt::darkGreen);
-		else
-			return QColor(Qt::black);
+		m_DocElt = valcont.value<HEXA_NS::EltBase*>();
+		emitDataChanged ();
+
 	} else {
-		return QStandardItem::data( role );
+		QStandardItem::setData ( valcont, role );
 	}
 }
+//---------------------------------------------------------------
+int ElementItem::type () const {return m_type;}
+//---------------------------------------------------------------
+bool ElementItem::isAssoc () const {return m_DocElt->isAssociated();}
+//---------------------------------------------------------------
+QString ElementItem::IDptr() const {  return QString::number( reinterpret_cast<intptr_t>(m_DocElt) ); }
 
-void EdgeItem::setData ( const QVariant & value, int role )
+
+// ----------------------- VERTEX (DATA)
+VertexItem::VertexItem( HEXA_NS::Vertex* hexaVertex, QString entry):
+		GraphicElementItem(hexaVertex, entry, VERTEXITEM, VERTEX_TREE)
 {
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaEdge = value.value<HEXA_NS::Edge*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
 }
 
-
-
-
-// ----------------------- QUAD
-QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad ):
-  QStandardItem(),
-  _hexaQuad( hexaQuad )
+// ----------------------- EDGE   (DATA)
+EdgeItem::EdgeItem( HEXA_NS::Edge* hexaEdge, QString entry ):
+		GraphicElementItem(hexaEdge, entry, EDGEITEM, EDGE_TREE)
 {
-//   char pName[12];
-  QString name = _hexaQuad->getName(/*pName*/);
-  setText(name);
-  setData( QUAD_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaQuad)), HEXA_ENTRY_ROLE );
-
-  QString entries, entry;
-  const HEXA_NS::Shapes& assocs = hexaQuad->getAssociations();
-  for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-    entry = (*anAssoc)->ident.c_str();
-    entries += entry + ";";
-  }
-  if ( !entries.isEmpty() )
-    setData( entries, HEXA_ASSOC_ENTRY_ROLE );
 }
 
-
-int QuadItem::type() const
+// ----------------------- QUAD   (DATA)
+QuadItem::QuadItem( HEXA_NS::Quad* hexaQuad, QString entry):
+		GraphicElementItem(hexaQuad, entry, QUADITEM, QUAD_TREE)
 {
-  return QUADITEM;
 }
 
-QVariant QuadItem::data( int role ) const
+// ----------------------- HEXA   (DATA)
+HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa , QString entry):
+		GraphicElementItem(hexaHexa,entry, HEXAITEM, HEXA_TREE)
 {
-	if ( role == HEXA_DATA_ROLE ){
-		return QVariant::fromValue( _hexaQuad );
-	} else if ( role == Qt::ForegroundRole ) {
-		const HEXA_NS::Shapes& assocs = _hexaQuad->getAssociations();
-		if ( assocs.size()>0 )
-			return QColor(Qt::darkGreen);
-		else
-			return QColor(Qt::black);
-	} else {
-		return QStandardItem::data( role );
-	}
 }
 
-void QuadItem::setData ( const QVariant & value, int role )
+// ----------------------- VECTOR   (BUILDER)
+VectorItem::VectorItem( HEXA_NS::Vector* hexaVector, QString entry ):
+		StandardElementItem(hexaVector, entry, VECTORITEM, VECTOR_TREE)
 {
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaQuad = value.value<HEXA_NS::Quad*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
 }
 
-
-
-
-
-// ----------------------- HEXA
-
-HexaItem::HexaItem( HEXA_NS::Hexa* hexaHexa ):
-  QStandardItem(),
-  _hexaHexa( hexaHexa )
+// ----------------------- CYLINDER (BUILDER)
+CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder, QString entry):
+		StandardElementItem(hexaCylinder, entry, CYLINDERITEM, CYLINDER_TREE)
 {
-//   char pName[12];
-  QString name = _hexaHexa->getName(/*pName*/);
-  setText(name);
-  setData( HEXA_TREE, HEXA_TREE_ROLE );
-  setData( QString::number( reinterpret_cast<intptr_t>(_hexaHexa)), HEXA_ENTRY_ROLE );
 }
 
-
-int HexaItem::type() const
+// ----------------------- PIPE     (BUILDER)
+PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry ):
+		StandardElementItem(hexaPipe, entry, PIPEITEM, PIPE_TREE)
 {
-  return HEXAITEM;
 }
 
-QVariant HexaItem::data( int role ) const
+// ----------------------- ELEMENTS      (NOT USED)
+ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements, QString entry ):
+		StandardElementItem(hexaElements, entry, ELEMENTSITEM, ELEMENTS_TREE)
 {
-	if ( role == HEXA_DATA_ROLE ){
-		return QVariant::fromValue( _hexaHexa );
-	}
-	else if ( role == Qt::ForegroundRole ) {
-		return QColor(Qt::black);
-	}
-	else {
-		return QStandardItem::data( role );
-	}
 }
 
-void HexaItem::setData ( const QVariant & value, int role )
+// ----------------------- CROSSELEMENTS (NOT USED)
+CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry ):
+		StandardElementItem(hexaCrossElts, entry, CROSSELEMENTSITEM, CROSSELEMENTS_TREE)
 {
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaHexa = value.value<HEXA_NS::Hexa*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
 }
-
-
-
-
-
-// ----------------------- VECTOR
-VectorItem::VectorItem( HEXA_NS::Vector* hexaVector ):
-  QStandardItem(),
-  _hexaVector( hexaVector )
-{
-//   char pName[12];
-  QString name = _hexaVector->getName(/*pName*/);
-  setText(name);
-  setData( VECTOR_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaVector)), HEXA_ENTRY_ROLE );
-}
-
-int VectorItem::type() const
-{
-  return VECTORITEM;
-}
-
-QVariant VectorItem::data( int role ) const 
-{ 
-    if ( role == HEXA_DATA_ROLE ){
-      return QVariant::fromValue( _hexaVector );
-    } else {
-      return QStandardItem::data( role );
-    }
-}
-
-void VectorItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaVector = value.value<HEXA_NS::Vector*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
-
-
-// ----------------------- CYLINDER
-CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder):
-  QStandardItem(),
-  _hexaCylinder( hexaCylinder )
-{
-//   char pName[12];
-  QString name = _hexaCylinder->getName(/*pName*/);
-  setText(name);
-  setData( CYLINDER_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaCylinder)), HEXA_ENTRY_ROLE );
-}
-
-int CylinderItem::type() const
-{
-  return CYLINDERITEM;
-}
-
-QVariant CylinderItem::data( int role ) const 
-{ 
-    if ( role == HEXA_DATA_ROLE ){
-      return QVariant::fromValue( _hexaCylinder );
-    } else {
-      return QStandardItem::data( role );
-    }
-}
-
-void CylinderItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaCylinder = value.value<HEXA_NS::Cylinder*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
-
-
-// ----------------------- PIPE
-PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe ):
-  QStandardItem(),
-  _hexaPipe( hexaPipe )
-{
-//   char pName[12];
-  QString name = _hexaPipe->getName(/*pName*/);
-  setText(name);
-  setData( PIPE_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaPipe)), HEXA_ENTRY_ROLE );
-}
-
-int PipeItem::type() const
-{
-  return PIPEITEM;
-}
-
-QVariant PipeItem::data( int role ) const 
-{ 
-    if ( role == HEXA_DATA_ROLE ){
-      return QVariant::fromValue( _hexaPipe );
-    } else {
-      return QStandardItem::data( role );
-    }
-}
-
-void PipeItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaPipe = value.value<HEXA_NS::Pipe*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
-
-// ----------------------- ELEMENTS
-ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements ):
-  QStandardItem(),
-  _hexaElements( hexaElements )
-{
-//   char pName[12];
-  QString name = _hexaElements->getName(/*pName*/);
-  setText(name);
-  setData( ELEMENTS_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaElements)), HEXA_ENTRY_ROLE );
-}
-
-int ElementsItem::type() const
-{
-  return ELEMENTSITEM;
-}
-
-QVariant ElementsItem::data( int role ) const 
-{ 
-    if ( role == HEXA_DATA_ROLE ){
-      return QVariant::fromValue( _hexaElements );
-    } else {
-      return QStandardItem::data( role );
-    }
-}
-
-void ElementsItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaElements = value.value<HEXA_NS::Elements*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
-
-// ----------------------- CROSSELEMENTS
-CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts ):
-  QStandardItem(),
-  _hexaCrossElts( hexaCrossElts )
-{
-//   char pName[12];
-  QString name = _hexaCrossElts->getName(/*pName*/);
-  setText(name);
-  setData( CROSSELEMENTS_TREE, HEXA_TREE_ROLE );
-  setData( QString::number(reinterpret_cast<intptr_t>(_hexaCrossElts)), HEXA_ENTRY_ROLE );
-}
-
-int CrossElementsItem::type() const
-{
-  return CROSSELEMENTSITEM;
-}
-
-QVariant CrossElementsItem::data( int role ) const 
-{ 
-    if ( role == HEXA_DATA_ROLE ){
-      return QVariant::fromValue( _hexaCrossElts );
-    } else {
-      return QStandardItem::data( role );
-    }
-}
-
-void CrossElementsItem::setData ( const QVariant & value, int role )
-{
-    if ( role == HEXA_DATA_ROLE ){
-      _hexaCrossElts = value.value<HEXA_NS::CrossElements*>();
-      emitDataChanged ();
-    } else {
-      QStandardItem::setData ( value, role );
-    }
-}
-
-
 
 // ----------------------- GROUP
 GroupItem::GroupItem( HEXA_NS::Group* hexaGroup ):
@@ -459,8 +209,8 @@ int GroupItem::type() const
   return GROUPITEM;
 }
 
-QVariant GroupItem::data( int role ) const 
-{ 
+QVariant GroupItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaGroup );
     } else {
@@ -497,8 +247,8 @@ int LawItem::type() const
   return LAWITEM;
 }
 
-QVariant LawItem::data( int role ) const 
-{ 
+QVariant LawItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaLaw);
     } else {
@@ -536,8 +286,8 @@ int PropagationItem::type() const
   return PROPAGATIONITEM;
 }
 
-QVariant PropagationItem::data( int role ) const 
-{ 
+QVariant PropagationItem::data( int role ) const
+{
     if ( role == HEXA_DATA_ROLE ){
       return QVariant::fromValue( _hexaPropagation );
     } else {
@@ -554,3 +304,6 @@ void PropagationItem::setData ( const QVariant & value, int role )
       QStandardItem::setData ( value, role );
     }
 }
+//-------------------------------------------------
+
+

@@ -54,6 +54,12 @@ class GEOMBASE_EXPORT MyGEOMBase_Helper
 public:
   MyGEOMBase_Helper( SUIT_Desktop* );
   virtual ~MyGEOMBase_Helper();
+  GEOM_Displayer*  getDisplayer();
+  void localSelection( const ObjectList&, const int );
+  void localSelection( GEOM::GEOM_Object_ptr, const int );
+  void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
+  void globalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
 
 protected:
   static GEOM::GEOM_Gen_ptr getGeomEngine();
@@ -87,12 +93,12 @@ protected:
                          const bool = true );
   void erasePreview    ( const bool = true );
 
-  void localSelection( const ObjectList&, const int );
-  void localSelection( GEOM::GEOM_Object_ptr, const int );
+//  void localSelection( const ObjectList&, const int );
+//  void localSelection( GEOM::GEOM_Object_ptr, const int );
   void activate( const int );
-  void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
-  void globalSelection( const TColStd_MapOfInteger&, const bool = false );
-  void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
+//  void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
+//  void globalSelection( const TColStd_MapOfInteger&, const bool = false );
+//  void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
   void updateViewer    ();
 
   void prepareSelection( const ObjectList&, const int );
@@ -172,7 +178,7 @@ protected:
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}
 
-  GEOM_Displayer*             getDisplayer();
+//  GEOM_Displayer*             getDisplayer();
   SUIT_Desktop*               getDesktop() const;
 
   virtual void                setIsApplyAndClose( const bool theFlag );

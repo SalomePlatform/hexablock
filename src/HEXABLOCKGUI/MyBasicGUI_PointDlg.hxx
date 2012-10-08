@@ -140,8 +140,6 @@ private slots:
   void                               updateSize();
 
 
-
-
 // HEXABLOCK
 public:
   void setDocumentModel( HEXABLOCK::GUI::DocumentModel* m );
@@ -156,6 +154,8 @@ protected:
   virtual void showEvent ( QShowEvent * event );
   void _initInputWidget();
   void _initViewManager();
+  void _highlightWidget(QObject* obj, Qt::GlobalColor clr);
+  bool _isLineOrListWidget(QObject*);
 
 protected slots:
   void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );

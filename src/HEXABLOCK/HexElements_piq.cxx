@@ -442,7 +442,7 @@ int Elements::replaceHexas (Quads& liste, Vertex* p1, Vertex* c1,
         replaceHexa (nh,   &pattern, pil_hexa[nh-1]);
         }
 
-    for (int nh=1 ; nh<=nbh ; nh++)
+    for (int nh=0 ; nh<=nbh ; nh++)
         pil_quad[nh]->remove ();
 
     extrudeQuad (&pattern);

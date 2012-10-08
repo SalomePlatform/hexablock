@@ -34,6 +34,8 @@
 
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
+#include "HEXABLOCKGUI_DocumentItem.hxx"
+#include "HEXABLOCKGUI_DocumentPanel.hxx"
 
 namespace HEXABLOCK
 {
@@ -44,6 +46,7 @@ namespace HEXABLOCK
           Q_OBJECT
       
       public:
+          void closeDialog();
           DocumentDelegate( QDockWidget *dw, QObject *parent = 0);
 
           QWidget *createEditor( QWidget *parent,
@@ -54,32 +57,34 @@ namespace HEXABLOCK
 
           void setModelData( QWidget            *editor,
                              QAbstractItemModel *model,
-                             const QModelIndex  &index ) const;
+                             const QModelIndex  &index ) const {};
 
-          void updateEditorGeometry( QWidget *editor,
+          virtual void updateEditorGeometry( QWidget *editor,
                                      const QStyleOptionViewItem &option,
-                                     const QModelIndex &index ) const;
+                                     const QModelIndex &index ) const {};
 
-         // can be used by editor
-          void setDocumentModel( DocumentModel* m );
+          //Can be used by editor
+          void setDocumentModel( DocumentModel* m ){_documentModel = m;}
 
-          //  selection
-          void setPatternDataSelectionModel( PatternDataSelectionModel* s );
-          void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s );
-          void setGroupsSelectionModel( /*QItemSelectionModel**/ GroupsSelectionModel* s );
-          void setMeshSelectionModel( MeshSelectionModel* s );
+          //Selections
+          void setPatternDataSelectionModel( PatternDataSelectionModel* s ){_patternDataSelectionModel = s;}
+          void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s ){_patternBuilderSelectionModel = s;}
+          void setGroupsSelectionModel( GroupsSelectionModel* s ){_groupsSelectionModel = s ;}
+          void setMeshSelectionModel( MeshSelectionModel* s ){_meshSelectionModel = s;}
 
-          virtual bool editorEvent ( QEvent * event, 
-                                     QAbstractItemModel * model, 
-                                     const QStyleOptionViewItem & option, 
-                                     const QModelIndex & index );
+      protected:
+          mutable QWidget* _currentEditor;
+          virtual bool editorEvent ( QEvent * event,
+        		  QAbstractItemModel * model,
+        		  const QStyleOptionViewItem & option, const QModelIndex & index );
+          virtual bool 	eventFilter ( QObject * editor, QEvent * event );
 
       public slots:
 //           void onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint);
 //           void onCommitData ( QWidget * editor );
 
       private:
-          QDockWidget *_dw; // editor's container 
+          QDockWidget* _dw; // creator's container
 
           // can be used by editor
           DocumentModel*                _documentModel;

@@ -496,6 +496,14 @@ int Elements::makeCylindricalGrid (Vertex* orig, Vector* base, Vector* haut,
                             RealVector& tdr, RealVector& tda, RealVector& tdh, 
                             bool fill)
 {
+   if (BadElement (orig) || BadElement(base) || BadElement(haut) 
+       || base->getNorm () <= Epsil || haut->getNorm () <= Epsil
+       || tdr.size () <= 0 || tda.size () <= 0 || tdh.size () <= 0)
+      {
+      setError ();
+      return HERR;
+      }
+
    int nr = tdr.size() - 1;
    int na = tda.size();
    int nl = tdh.size();
@@ -505,7 +513,7 @@ int Elements::makeCylindricalGrid (Vertex* orig, Vector* base, Vector* haut,
        angle += tda[nro];
 
    resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = angle >= 360.0;
+   cyl_closed = angle >= 359.9;
 
    int ier = makeBasicCylinder (tdr, tda, tdh, fill);
    if (ier!=HOK) 

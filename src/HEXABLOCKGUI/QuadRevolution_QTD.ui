@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>279</width>
-    <height>451</height>
+    <width>235</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -31,7 +31,7 @@
      <property name="title">
       <string>Result Name</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="label_15">
         <property name="text">
@@ -42,14 +42,14 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="name_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -70,34 +70,41 @@
       <string>Arguments</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
+      <item row="0" column="0">
        <widget class="QLabel" name="quadsLabel">
         <property name="text">
          <string>Quads : </string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2" rowspan="2">
-       <widget class="QListWidget" name="quads_lw"/>
+      <item row="0" column="1">
+       <widget class="QListWidget" name="quads_lw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="1" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string>Center : </string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="1" column="1">
        <widget class="QLineEdit" name="center_pt_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -110,18 +117,24 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="2" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>Axis     :</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
+      <item row="2" column="1">
        <widget class="QLineEdit" name="axis_vec_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -134,7 +147,24 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Angles : </string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" rowspan="4">
+       <widget class="QListWidget" name="angles_lw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
        <widget class="QPushButton" name="add_angle_pb">
         <property name="enabled">
          <bool>true</bool>
@@ -150,7 +180,7 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
+      <item row="5" column="0">
        <widget class="QPushButton" name="del_angle_pb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -163,14 +193,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Angles : </string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
+      <item row="6" column="0">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -182,9 +205,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="4" column="2" rowspan="5">
-       <widget class="QListWidget" name="angles_lw"/>
       </item>
      </layout>
     </widget>

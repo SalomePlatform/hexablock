@@ -29,22 +29,30 @@ EltBase::EltBase (Document* doc, EnumElt type)
 {
    el_root   = doc;
    el_type   = type;
-   el_id     = el_root->doc_nbr_elt [type];
+   el_id     = 0;
 
    el_next   = NULL;
    el_assoc  = NULL;
    el_status = HOK;
    el_mark   = 0;
 
-   el_root->doc_nbr_elt  [type] ++;
-   el_root->doc_last_elt [type] -> el_next = this;
-   el_root->doc_last_elt [type] = this;
+   // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
+
+   if (el_root==NULL)
+      {
+      el_name  = "NoValid";
+      setError ();
+      return;
+      }
+
+   el_id    = el_root->doc_nbr_elt [el_type];
+   el_root->doc_nbr_elt  [el_type] ++;
+   el_root->doc_last_elt [el_type] -> el_next = this;
+   el_root->doc_last_elt [el_type] = this;
    el_root->setDeprecated (1);
 
-   // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
    char buffer [16];
-   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
-   el_name = buffer;
+   el_name = getName (buffer);
 }
 // =================================================== Destructeur
 EltBase::~EltBase ()
@@ -139,6 +147,12 @@ void EltBase::setAssociation (Shape* forme)
    if (el_root->debug (2))
        cout << "  Vertex " << el_name << " : setAssociation" << endl;
 }
+// ========================================================= addAssociation
+int EltBase::addAssociation (Shape* forme)
+{
+   setAssociation (forme);
+   return HOK;
+}
 // ========================================================= dumpRef 
 void EltBase::dumpRef ()
 {
@@ -162,6 +176,26 @@ void EltBase::dumpRef ()
        }
 
    printf ("\n");
+}
+// ========================================================= addAssociation
+bool EltBase::canBeAssociated ()
+{
+   bool rep =   isValid() && isHere() 
+            && (el_type==EL_VERTEX || el_type==EL_EDGE || el_type==EL_QUAD);
+   return rep;
+}
+// ========================================================= addAssociation
+void EltBase::setId (int ln)
+{
+   char buffer [16];
+   bool defname = el_name == getName (buffer);
+
+   el_id     = ln;
+   int maxid = std::max (el_root->doc_nbr_elt[el_type], ln+1);
+
+   el_root->doc_nbr_elt[el_type] = maxid;
+   if (defname) 
+      el_name = getName (buffer);
 }
 
 END_NAMESPACE_HEXA

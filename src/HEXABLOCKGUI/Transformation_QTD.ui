@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>483</height>
+    <width>239</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
@@ -95,9 +95,6 @@
       <item>
        <widget class="QWidget" name="widget" native="true">
         <layout class="QFormLayout" name="formLayout">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
-         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
@@ -109,7 +106,7 @@
           <widget class="QLineEdit" name="elts_le_rb0">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -135,7 +132,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -154,7 +151,7 @@
           <widget class="QLineEdit" name="elts_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -174,7 +171,7 @@
           <widget class="QLineEdit" name="vex_le_rb1">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -220,7 +217,7 @@
           <widget class="QLineEdit" name="elts_le_rb2">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -240,7 +237,7 @@
           <widget class="QLineEdit" name="vex_le_rb2">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -260,7 +257,7 @@
           <widget class="QLineEdit" name="vec_le_rb2">
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -313,6 +310,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rb0</tabstop>
+  <tabstop>rb1</tabstop>
+  <tabstop>rb2</tabstop>
+  <tabstop>elts_le_rb0</tabstop>
+  <tabstop>vec_le_rb0</tabstop>
+  <tabstop>elts_le_rb1</tabstop>
+  <tabstop>vex_le_rb1</tabstop>
+  <tabstop>elts_le_rb2</tabstop>
+  <tabstop>vex_le_rb2</tabstop>
+  <tabstop>vec_le_rb2</tabstop>
+  <tabstop>k_spb</tabstop>
+  <tabstop>angle_spb</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

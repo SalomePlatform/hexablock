@@ -90,8 +90,11 @@ void Edge_impl::setName(const char* name)
   _edge_cpp->setName (name);
 }
 
-
-
+void Edge_impl::setColor (::CORBA::Double val)
+     throw (SALOME::SALOME_Exception)
+{
+  _edge_cpp->setColor (val);
+}
 
 void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
 {

@@ -251,10 +251,6 @@ MyBasicGUI_PointDlg::~MyBasicGUI_PointDlg()
 {
 }
 
-
-
-
-
 //=================================================================================
 // function : Init()
 // purpose  :
@@ -314,10 +310,11 @@ void MyBasicGUI_PointDlg::Init()
   /* signals and slots connections */
   if ( myGeomGUI ){
     connect(myGeomGUI,      SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-    connect(myGeomGUI,      SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
+    connect(myGeomGUI,      SIGNAL(SignalCloseAllDialogs()),        this, SLOT(close()));
   }
   //connect(buttonOk(),     SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),  SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+//  connect( closeButton, SIGNAL(clicked()), this, SLOT(close()) );
 
   connect(this,           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
@@ -499,7 +496,7 @@ void MyBasicGUI_PointDlg::ClickOnOk()
 {
   setIsApplyAndClose(true);
   if (onAccept())
-    ClickOnCancel();
+    close();
 }
 
 //=================================================================================
@@ -512,7 +509,11 @@ bool MyBasicGUI_PointDlg::ClickOnApply()
     return false;
 
   initName();
-  ConstructorsClicked(getConstructorId());
+//  ConstructorsClicked(getConstructorId());
+
+  //Set selection mode to the last selected mode
+  globalSelection(); // close local contexts, if any
+  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 
   return true;
 }
@@ -1026,12 +1027,12 @@ void MyBasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     GroupOnCurve->SpinBox_DX->setVisible(isParam || isLength);
     if (isParam){
       initSpinBox(GroupOnCurve->SpinBox_DX, 0., 1., 0.1, "parametric_precision");
-      GroupOnCurve->SpinBox_DX->setValue(0.5);
+//      GroupOnCurve->SpinBox_DX->setValue(0.5);
       GroupOnCurve->TextLabel3->setText(tr("GEOM_PARAMETER"));
     }
     else if (isLength){
       initSpinBox(GroupOnCurve->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision");
-      GroupOnCurve->SpinBox_DX->setValue(0.0);
+//      GroupOnCurve->SpinBox_DX->setValue(0);
       GroupOnCurve->TextLabel3->setText(tr("GEOM_LENGTH"));
     }
   }
@@ -1189,6 +1190,10 @@ void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const Q
   foreach( const QModelIndex& iunsel, unsel.indexes() ){
     MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
   }
+
+  if (_patternDataSelectionModel)
+	  _patternDataSelectionModel->highlightEltsWithAssocs(sel.indexes());
+
   if ( _selectionMutex ) return;
   if ( _currentObj != mainFrame()->_vertex_le ) return;
 
@@ -1231,15 +1236,51 @@ void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
   }
 }
 
+// ============================================================== _isLineOrListWidget
+/*
+ * Return true is the widget is a line or a list
+ * false otherwise.
+ */
+bool MyBasicGUI_PointDlg::_isLineOrListWidget(QObject *widget)
+{
+	if (widget == NULL) return false;
+
+	QLineEdit   	*lineEdit = dynamic_cast<QLineEdit*>(widget);
+	QListWidget *listWidget = dynamic_cast<QListWidget*>(widget);
+	return (lineEdit != NULL) || (listWidget != NULL);
+
+}//_isLineOrListWidget
+
+
+
+// ============================================================== _highlightWidget
+/*
+ * Highlight the given widget with the given color.
+ */
+void MyBasicGUI_PointDlg::_highlightWidget(QObject *obj, Qt::GlobalColor clr)
+{
+	if (!_isLineOrListWidget(obj)) return;
+
+	QWidget *widget = dynamic_cast<QWidget*>(obj); //sure it's not NULL (_isLineOrListWidget(obj))
+	QPalette palette1 = widget->palette();
+	palette1.setColor(widget->backgroundRole(), clr);
+	widget->setPalette(palette1);
+
+}//_highlightWidget
 
 
 bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
 {
 
+//  if (event->type() == QEvent::FocusOut)
+//	  _highlightWidget(obj, Qt::white);
+//
+//  else
   if ( (event->type() != QEvent::FocusIn)
     or (obj != mainFrame()->_vertex_le) ){
     return MyGEOMBase_Skeleton::eventFilter(obj, event);
   }
+//  _highlightWidget(obj, Qt::yellow);
 
   MESSAGE("MyBasicGUI_PointDlg::eventFilter{");
 

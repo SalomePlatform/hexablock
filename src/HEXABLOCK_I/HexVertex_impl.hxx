@@ -47,6 +47,7 @@ public:
   GEOM::GEOM_Object_ptr getAssociation() throw (SALOME::SALOME_Exception);
   void clearAssociation() throw (SALOME::SALOME_Exception);
 
+  void setColor (::CORBA::Double val)  throw (SALOME::SALOME_Exception);
   void setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception);
 
   void dump() throw (SALOME::SALOME_Exception);

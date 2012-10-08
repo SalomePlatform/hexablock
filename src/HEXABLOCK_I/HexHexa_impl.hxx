@@ -39,6 +39,7 @@ public:
   Edge_ptr getEdge(::CORBA::Long n) throw (SALOME::SALOME_Exception);
   Vertex_ptr getVertex(::CORBA::Long n) throw (SALOME::SALOME_Exception);
 
+  void setColor (::CORBA::Double val)  throw (SALOME::SALOME_Exception);
   void setScalar( ::CORBA::Double val ) throw (SALOME::SALOME_Exception);
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);

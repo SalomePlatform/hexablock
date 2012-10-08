@@ -38,7 +38,8 @@ public:
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
     virtual void clearAssociation  ()      { tab_assoc.clear() ; }
     virtual void setAssociation (Shape* forme);
-    int    addAssociation (Shape* forme);
+    virtual bool isAssociated ()           { return tab_assoc.size() > 0  ; }
+    virtual int  addAssociation (Shape* forme);
 
     Edge (Vertex* va, Vertex* vb);
     Edge (Edge* other);

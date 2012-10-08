@@ -194,6 +194,15 @@ void Elements::resize (EnumGrid type, int nx, int ny, int nz, int nplus)
 int Elements::makeCartesianGrid (Vertex* orig, Vector* v1, Vector* v2, 
                    Vector* v3, int px, int py, int pz, int mx, int my, int mz)
 {
+   if (BadElement (orig) || BadElement(v1) || BadElement(v2) || BadElement(v3)
+                         || px<=0 || py<=0 || pz <= 0
+       || v1->getNorm () <= Epsil || v2->getNorm () <= Epsil
+       || v3->getNorm () <= Epsil)
+      {
+      setError ();
+      return HERR;
+      }
+
    resize (GR_CARTESIAN, px+mx, py+my, pz+mz);
 
    makeCartesianNodes (orig, v1, v2, v3, px, py, pz, mx, my, mz);
@@ -205,6 +214,13 @@ int Elements::makeCartesianGrid (Vertex* orig, Vector* v1, Vector* v2,
 int Elements::makeCylindricalGrid (Vertex* c, Vector* b, Vector* h, 
          double dr, double da, double dl, int nr, int na, int nl, bool fill)
 {
+   if (BadElement (c) || BadElement(b) || BadElement(h)
+       || nr<=0 || na<=0 || nl <= 0 || dr < Epsil || da < Epsil || dl < Epsil 
+       || b->getNorm () <= Epsil || h->getNorm () <= Epsil)
+      {
+      setError ();
+      return HERR;
+      }
    resize (GR_CYLINDRIC, nr, na, nl);
    cyl_closed = da >= 360.0;
    makeCylindricalNodes (c, b, h, dr, da, dl, nr, na, nl, fill);
@@ -215,12 +231,15 @@ int Elements::makeCylindricalGrid (Vertex* c, Vector* b, Vector* h,
 // ====================================================== makeSphericalGrid
 int Elements::makeSphericalGrid (Vertex* c, Vector* dv, int nb, double  k)
 {
-   resize (GR_SPHERIC, nb);
+   if (BadElement (c) || BadElement(dv) 
+       || nb<=0 || k < Epsil 
+       || dv->getDx()<=Epsil || dv->getDy()<=Epsil || dv->getDz()<=Epsil)
+      {
+      setError ();
+      return HERR;
+      }
 
-   if (nb<0) 
-      return HERR;
-   else if (dv->getDx()<=ZEROR || dv->getDy()<=ZEROR || dv->getDz()<=ZEROR)
-      return HERR;
+   resize (GR_SPHERIC, nb);
 
    Vertex* i_node [HV_MAXI];    // Les noeuds de l'hexa englobant
    Edge*   i_edge [HE_MAXI];    // Les noeuds de l'hexa englobant
@@ -436,6 +455,7 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
           printf ("\n");
           printf (" *** joinQuads : donnees incorrectes\n");
           printf (" *** le %deme quadrangle de depart est NULL\n", nro);
+          setError ();
           return HERR;
           }
        else if (face->getNbrParents()>1)
@@ -444,7 +464,8 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
           printf (" *** joinQuads : donnees incorrectes\n");
           printf (" *** le %deme quadrangle de depart n'est pas une " 
                   "face externe\n", nro);
-          face->dump ();        
+          face->dump ();
+          setError ();
           return HERR;
           }
        orig [nro]->setMark (nro);
@@ -479,12 +500,18 @@ int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
       }
 
    if (e_orig==NULL || e_dest==NULL)
+      {
+      setError ();
       return HERR;
+      }
 
    StrOrient orient (v1, v3, v2, v4);
    int ier =  this   ->coupler (0, cible, &orient);
    if (ier!=HOK)
-       return HERR;
+      {
+      setError ();
+      return HERR;
+      }
    ier = orig[0]->coupler (cible, &orient, this);
    return ier;
 }

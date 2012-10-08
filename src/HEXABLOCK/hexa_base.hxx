@@ -114,7 +114,7 @@ BEGIN_NAMESPACE_HEXA
 
 enum EnumCoord  { dir_x, dir_y, dir_z, DIM3 };
 enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR, 
-                  EL_REMOVED, EL_MAXI };
+                  EL_GRID, EL_CYLINDER, EL_PIPE, EL_REMOVED, EL_MAXI };
 
 enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
                   HexaNode, QuadNode, EdgeNode, VertexNode};

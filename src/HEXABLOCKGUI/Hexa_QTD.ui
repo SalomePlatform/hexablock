@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>217</width>
-    <height>387</height>
+    <width>215</width>
+    <height>412</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -20,15 +20,18 @@
    <string>Hexahedron Construction</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
-   </property>
    <item>
     <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Result Name</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="label_15">
         <property name="text">
@@ -39,14 +42,14 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="name_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>127</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -66,7 +69,7 @@
      <property name="title">
       <string>Hexa</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QRadioButton" name="quads_rb">
         <property name="sizePolicy">
@@ -101,12 +104,24 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Arguments</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QListWidget" name="quads_lw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select a quad</string>
         </property>
@@ -114,6 +129,12 @@
       </item>
       <item>
        <widget class="QListWidget" name="vertices_lw">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip">
          <string>Select a vertex</string>
         </property>
@@ -124,24 +145,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>name_le</tabstop>
+  <tabstop>quads_lw</tabstop>
+  <tabstop>vertices_lw</tabstop>
+  <tabstop>quads_rb</tabstop>
+  <tabstop>vertices_rb</tabstop>
+ </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>quads_rb</sender>
-   <signal>clicked()</signal>
-   <receiver>quads_lw</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>74</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>135</x>
-     <y>220</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>quads_rb</sender>
    <signal>clicked()</signal>
@@ -155,6 +167,22 @@
     <hint type="destinationlabel">
      <x>173</x>
      <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>quads_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>quads_lw</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>

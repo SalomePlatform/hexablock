@@ -462,17 +462,17 @@ Vector_ptr Document_impl::addVectorVertices( Vertex_ptr v0In, Vertex_ptr v1In )
 }
 
 
-// ::CORBA::Long Document_impl::countVector() throw (SALOME::SALOME_Exception)
-// {
-//   return  _document_cpp->countVector();
-// }
-// 
-// Vector_ptr Document_impl::getVector(::CORBA::Long i) throw (SALOME::SALOME_Exception)
-// {
-//   HEXA_NS::Vector* h = _document_cpp->getVector(i);
-//   Vector_impl* servantCorba = new Vector_impl(h);
-//   return servantCorba->_this();
-// }
+::CORBA::Long Document_impl::countVector() throw (SALOME::SALOME_Exception)
+{
+   return  _document_cpp->countVector();
+}
+ 
+Vector_ptr Document_impl::getVector(::CORBA::Long i) throw (SALOME::SALOME_Exception)
+{
+   HEXA_NS::Vector* h = _document_cpp->getVector(i);
+   Vector_impl* servantCorba = new Vector_impl(h);
+   return servantCorba->_this();
+}
 
 
 Cylinder_ptr Document_impl::addCylinder( Vertex_ptr baseIn, Vector_ptr directionIn,
@@ -499,18 +499,17 @@ throw (SALOME::SALOME_Exception)
   return result;
 }
 
-// ::CORBA::Long Document_impl::countCylinder() throw (SALOME::SALOME_Exception)
-// {
-//   return  _document_cpp->countCylinder();
-// }
-// 
-// 
-// Cylinder_ptr Document_impl::getCylinder(::CORBA::Long i) throw (SALOME::SALOME_Exception)
-// {
-//   HEXA_NS::Cylinder* c = _document_cpp->getCylinder(i);
-//   Cylinder_impl* servantCorba = new Cylinder_impl(c);
-//   return servantCorba->_this();
-// }
+::CORBA::Long Document_impl::countCylinder() throw (SALOME::SALOME_Exception)
+{
+   return  _document_cpp->countCylinder();
+}
+ 
+Cylinder_ptr Document_impl::getCylinder(::CORBA::Long i) throw (SALOME::SALOME_Exception)
+{
+   HEXA_NS::Cylinder* c = _document_cpp->getCylinder(i);
+   Cylinder_impl* servantCorba = new Cylinder_impl(c);
+   return servantCorba->_this();
+}
 
 
 Pipe_ptr Document_impl::addPipe( Vertex_ptr baseIn, Vector_ptr directionIn,
@@ -538,17 +537,17 @@ throw (SALOME::SALOME_Exception)
 }
 
 
-// ::CORBA::Long Document_impl::countPipe() throw (SALOME::SALOME_Exception)
-// {
-//   return  _document_cpp->countPipe();
-// }
-// 
-// Pipe_ptr Document_impl::getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception)
-// {
-//   HEXA_NS::Pipe* p = _document_cpp->getPipe(i);
-//   Pipe_impl* servantCorba = new Pipe_impl(p);
-//   return servantCorba->_this();
-// }
+::CORBA::Long Document_impl::countPipe() throw (SALOME::SALOME_Exception)
+{
+   return  _document_cpp->countPipe();
+}
+ 
+Pipe_ptr Document_impl::getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception)
+{
+   HEXA_NS::Pipe* p = _document_cpp->getPipe(i);
+   Pipe_impl* servantCorba = new Pipe_impl(p);
+   return servantCorba->_this();
+}
 
 ::CORBA::Boolean Document_impl::removeHexa(Hexa_ptr hIn) throw (SALOME::SALOME_Exception)
 {
@@ -1376,7 +1375,6 @@ Group_ptr Document_impl::addEdgeNodeGroup(const char* name) throw (SALOME::SALOM
   }
   return result;
 }
-
 
 Group_ptr Document_impl::addVertexNodeGroup(const char* name) throw (SALOME::SALOME_Exception)
 {

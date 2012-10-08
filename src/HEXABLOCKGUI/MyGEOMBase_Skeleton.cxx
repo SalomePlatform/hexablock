@@ -111,10 +111,10 @@ void MyGEOMBase_Skeleton::Init()
     myGeomGUI->SetActiveDialogBox( this );
 
   /* signals and slots connections */
-  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( buttonCancel(), SIGNAL( clicked() ), this, SLOT( close() ) );
   if ( myGeomGUI ) {
     connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
-    connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+    connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( close() ) );
   }
 
   // connect help button on a private slot that displays help information
@@ -199,13 +199,23 @@ void MyGEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
   aStringAttrib->SetValue(aValue.c_str());
 }
 
+
+// ========================================================================== close
+// function : close()
+// purpose  : close the dockwidget
 //=================================================================================
-// function : ClickOnCancel()
-// purpose  :
-//=================================================================================
-void MyGEOMBase_Skeleton::ClickOnCancel()
+void MyGEOMBase_Skeleton::close()
 {
-  close();
+//	_currentObj = NULL;
+
+	//Clear VTK selection
+//	clearVTKSelection();
+
+	//Clear OCC selection
+//	clearOCCSelection();
+
+	//Close the dialog box
+	if (parentWidget()) parentWidget()->close();
 }
 
 //=================================================================================

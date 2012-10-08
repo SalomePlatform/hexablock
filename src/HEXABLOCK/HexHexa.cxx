@@ -170,11 +170,11 @@ void Hexa::controlerFaces  ()
 {
    for (int n1=0 ; n1<HQ_MAXI ; n1++) 
        {
-       if (h_quad [n1] == NULL)
+       if (BadElement (h_quad [n1]))
           {
           el_root->putError (W_H_NULL_QUAD, 
                              el_root->glob->namofHexaQuad (n1));
-          el_status = 886;
+          setError (886);
           return;
           }
        for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
@@ -183,7 +183,7 @@ void Hexa::controlerFaces  ()
               el_root->putError (W_H_EQ_QUAD, 
                          el_root->glob->namofHexaQuad (n1), 
                          el_root->glob->namofHexaQuad (n2));
-              el_status = 888;
+              setError (888);
               }
        }
 }
@@ -192,11 +192,11 @@ void Hexa::controlerSommets  ()
 {
    for (int n1=0 ; n1<HV_MAXI ; n1++) 
        {
-       if (h_vertex [n1] == NULL)
+       if (BadElement (h_vertex [n1]))
           {
           el_root->putError (W_H_NULL_QUAD, 
                              el_root->glob->namofHexaVertex (n1));
-          el_status = 886;
+          setError (886);
           return;
           }
        for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
@@ -205,7 +205,7 @@ void Hexa::controlerSommets  ()
               el_root->putError (W_H_EQ_QUAD, 
                          el_root->glob->namofHexaVertex (n1), 
                          el_root->glob->namofHexaVertex (n2));
-              el_status = 888;
+              setError (888);
               }
        }
 }

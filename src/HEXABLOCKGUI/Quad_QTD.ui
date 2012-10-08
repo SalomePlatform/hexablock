@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>255</width>
-    <height>437</height>
+    <width>216</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>5</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -81,6 +81,12 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>5</width>
@@ -90,32 +96,44 @@
      <property name="title">
       <string>Arguments</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string> Name </string>
-        </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QWidget" name="widget_3" native="true">
+        <layout class="QFormLayout" name="formLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string> Name </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="name_le">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="name_le">
+      <item>
+       <widget class="QWidget" name="widget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>127</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QWidget" name="widget" native="true">
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
           <widget class="QLabel" name="label">
@@ -126,9 +144,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="v0_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -146,9 +170,15 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="v1_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -166,9 +196,15 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="v2_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -186,15 +222,21 @@
          </item>
          <item row="3" column="1">
           <widget class="QLineEdit" name="v3_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>127</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -206,8 +248,14 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item>
        <widget class="QWidget" name="widget_2" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
@@ -218,9 +266,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="e0_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -238,9 +292,15 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="e1_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -258,9 +318,15 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="e2_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -278,15 +344,21 @@
          </item>
          <item row="3" column="1">
           <widget class="QLineEdit" name="e3_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>127</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>127</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -303,6 +375,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>rb0</tabstop>
+  <tabstop>rb1</tabstop>
+  <tabstop>name_le</tabstop>
+  <tabstop>v0_le_rb0</tabstop>
+  <tabstop>v1_le_rb0</tabstop>
+  <tabstop>v2_le_rb0</tabstop>
+  <tabstop>v3_le_rb0</tabstop>
+  <tabstop>e0_le_rb1</tabstop>
+  <tabstop>e1_le_rb1</tabstop>
+  <tabstop>e2_le_rb1</tabstop>
+  <tabstop>e3_le_rb1</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

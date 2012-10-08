@@ -386,12 +386,13 @@ void Elements::assoSphere (Vertex* ori, Edge* t_edge[], Quad* t_quad[])
 // ====================================================== makeSphericalGrid
 int Elements::makeSphericalGrid (Vertex* c, double rayon, int nb, double  k)
 {
-   resize (GR_SPHERIC, nb);
+   if (nb<=0 || rayon <=Epsil || k <= Epsil || BadElement (c))
+      {
+      setError ();
+      return HERR;
+      }
 
-   if (nb<0) 
-      return HERR;
-   else if (rayon <=ZEROR)
-      return HERR;
+   resize (GR_SPHERIC, nb);
 
    Vertex* i_node [HV_MAXI];    // Les noeuds de l'hexa englobant
    Edge*   i_edge [HE_MAXI];    // Les noeuds de l'hexa englobant
