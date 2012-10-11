@@ -5660,7 +5660,7 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
 
 	SUIT_OverrideCursor wc;
 
-	QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
+	QString command = QString("import hexablock ; hexablock_mesh = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
     								  .arg( _name->text() )
     								  .arg( _documentModel->documentEntry() )
     								  .arg( _dim->value() )
