@@ -68,6 +68,7 @@ static bool db = false;
 
 
 #include "HEXABLOCK.hxx"
+#include "HEXABLOCK_version.h"
 #include "utilities.h"
 
 #include "HexDocument_impl.hxx"
@@ -829,4 +830,14 @@ CORBA::Boolean HEXABLOCK_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
         << "Load" << endl;
 
    return false;
+}
+// =========================================================== Version information
+
+char* HEXABLOCK_Gen_i::getVersion()
+{
+#if HEXABLOCK_DEVELOPMENT
+  return CORBA::string_dup(HEXABLOCK_VERSION_STR"dev");
+#else
+  return CORBA::string_dup(HEXABLOCK_VERSION_STR);
+#endif
 }

@@ -234,6 +234,7 @@ public :
                                CORBA::Boolean isMultiFile,
                                CORBA::Boolean isASCII);
 
+  char* getVersion();
 
 #if 0
   virtual std::string GetIOR();

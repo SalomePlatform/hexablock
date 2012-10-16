@@ -79,6 +79,7 @@ libHEXABLOCKEngine_la_CPPFLAGS = \
 	$(GEOM_CXXFLAGS) \
 	$(CAS_CPPFLAGS) \
 	-I$(srcdir)/../HEXABLOCK \
+	-I$(top_builddir) \
 	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 
