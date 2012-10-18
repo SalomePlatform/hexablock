@@ -186,3 +186,17 @@ def mesh(doc, name=None, dim=3, container="FactoryServer"):
     meshexa.Compute()
 
     return meshexa
+
+# Get a document from the current study
+# -------------------------------------
+
+def getFromStudy(entry):
+    study = salome.myStudy
+    sobject = study.FindObjectID(entry)
+    builder = study.NewBuilder()
+    ok, ior = builder.FindAttribute(sobject, "AttributeIOR")
+    obj = salome.orb.string_to_object(ior.Value())
+    doc = obj._narrow(Document)
+
+    return doc
+
