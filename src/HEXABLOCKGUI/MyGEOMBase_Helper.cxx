@@ -1297,74 +1297,74 @@ static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& ty
 //================================================================
 QList<GEOM::GeomObjPtr> MyGEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict )
 {
-  SUIT_Session* session = SUIT_Session::session();
-  QList<GEOM::GeomObjPtr> result;
+    SUIT_Session* session = SUIT_Session::session();
+    QList<GEOM::GeomObjPtr> result;
 
-  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* selMgr = app->selectionMgr();
-    if ( selMgr ) {
-      SALOME_ListIO selected;
-      selMgr->selectedObjects( selected );
-      SALOME_ListIteratorOfListIO it( selected );
-      bool stopped = false;
-      for ( ; it.More() && !stopped; it.Next() ) {
-	Handle(SALOME_InteractiveObject) IO = it.Value();
-	GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
-	if ( object ) {
-	  TColStd_IndexedMapOfInteger subShapes;
-	  selMgr->GetIndexes( IO, subShapes );
-	  int nbSubShapes = subShapes.Extent();
-	  if ( nbSubShapes == 0 ) {
-	    // global selection
-	    if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
-	      result << object;
-	      if ( count > 0 ) {
-		if ( strict && result.count() > count ) {
-		  result.clear();
-		  stopped = true;
-		}
-		else if ( !strict && result.count() == count )
-		  stopped = true;
-	      }
-	    }
-	    else if ( strict ) {
-	      result.clear();
-	      stopped = true;
-	    }
-	  }
-	  else {
-	    // local selection
-	    for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
-	      int idx = subShapes( i );
-	      GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
-	      if ( !subShape ) {
-		// sub-shape is not yet published in the study
-		GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-		subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
-	      }
-	      if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
-		result << subShape;
-		if ( count > 0 ) {
-		  if ( strict && result.count() > count ) {
-		    result.clear();
-		    stopped = true;
-		  }
-		  else if ( !strict && result.count() == count )
-		    stopped = true;
-		}
-	      }
-	      else if ( strict ) {
-		result.clear();
-		stopped = true;
-	      }
-	    }
-	  }
-	}
-      }
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+    if ( app ) {
+        LightApp_SelectionMgr* selMgr = app->selectionMgr();
+        if ( selMgr ) {
+            SALOME_ListIO selected;
+            selMgr->selectedObjects( selected );
+            SALOME_ListIteratorOfListIO it( selected );
+            bool stopped = false;
+            for ( ; it.More() && !stopped; it.Next() ) {
+                Handle(SALOME_InteractiveObject) IO = it.Value();
+                GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
+                if ( object ) {
+                    TColStd_IndexedMapOfInteger subShapes;
+                    selMgr->GetIndexes( IO, subShapes );
+                    int nbSubShapes = subShapes.Extent();
+                    if ( nbSubShapes == 0 ) {
+                        // global selection
+                        if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
+                            result << object;
+                            if ( count > 0 ) {
+                                if ( strict && result.count() > count ) {
+                                    result.clear();
+                                    stopped = true;
+                                }
+                                else if ( !strict && result.count() == count )
+                                    stopped = true;
+                            }
+                        }
+                        else if ( strict ) {
+                            result.clear();
+                            stopped = true;
+                        }
+                    }
+                    else {
+                        // local selection
+                        for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
+                            int idx = subShapes( i );
+                            GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
+                            if ( !subShape ) {
+                                // sub-shape is not yet published in the study
+                                GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+                                subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
+                            }
+                            if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
+                                result << subShape;
+                                if ( count > 0 ) {
+                                    if ( strict && result.count() > count ) {
+                                        result.clear();
+                                        stopped = true;
+                                    }
+                                    else if ( !strict && result.count() == count )
+                                        stopped = true;
+                                }
+                            }
+                            else if ( strict ) {
+                                result.clear();
+                                stopped = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
-  return result;
+    return result;
 }
 
 //================================================================

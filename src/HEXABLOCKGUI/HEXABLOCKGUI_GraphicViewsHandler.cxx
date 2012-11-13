@@ -87,19 +87,12 @@ SVTK_ViewWindow* GraphicViewsHandler::createVtkWindow() const
 {
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
     if( anApp == NULL) return NULL;
-    SUIT_ViewManager* vmgr = anApp->getViewManager( SVTK_Viewer::Type(), false );
-    SVTK_ViewWindow* view;
 
-    if (vmgr == NULL) //No Vtk view manager, so create one
-    {
-        vmgr = anApp->getViewManager( SVTK_Viewer::Type(), true );
-        view = dynamic_cast<SVTK_ViewWindow*>(vmgr->getActiveView());
-        view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
-        return view;
-    }
-
-    view = dynamic_cast<SVTK_ViewWindow*>(vmgr->createViewWindow());
+    SUIT_ViewManager* vmgr = anApp->newViewManager (SVTK_Viewer::Type());
+    SVTK_ViewWindow* view = dynamic_cast<SVTK_ViewWindow*>(vmgr->getActiveView());
+    if (view == NULL) return NULL;
     view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
+
     return view;
 }
 
@@ -126,19 +119,11 @@ OCCViewer_ViewWindow* GraphicViewsHandler::createOccWindow() const
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
     if( anApp == NULL) return NULL;
 
-    SUIT_ViewManager* vmgr = anApp->getViewManager( OCCViewer_Viewer::Type(), false );
-    OCCViewer_ViewWindow* view;
-
-    if (vmgr == NULL) //No Vtk view manager, so create one
-    {
-        vmgr = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
-        view = dynamic_cast<OCCViewer_ViewWindow*>(vmgr->getActiveView());
-        view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
-        return view;
-    }
-
-    view = dynamic_cast<OCCViewer_ViewWindow*>(vmgr->createViewWindow());
+    SUIT_ViewManager* vmgr = anApp->newViewManager (OCCViewer_Viewer::Type());
+    OCCViewer_ViewWindow* view = dynamic_cast<OCCViewer_ViewWindow*>(vmgr->getActiveView());
+    if (view == NULL) return NULL;
     view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
+
     return view;
 }
 

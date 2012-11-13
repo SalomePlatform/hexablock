@@ -310,7 +310,10 @@ void HEXABLOCKGUI::restoreGraphicViews()
     if (currentDocGView == NULL)
         newDocument();
     else if (currentDocGView->getViewWindow() == NULL)
+    {
         currentDocGView->setViewWindow(graphicViewsHandler->createVtkWindow());
+        currentDocGView->getViewWindow()->installEventFilter(this);
+    }
 
     MESSAGE("}");
 }
@@ -319,7 +322,6 @@ void HEXABLOCKGUI::restoreGraphicViews()
 bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 {
     DEBTRACE("HEXABLOCKGUI::activateModule");
-
 
     /*HexaBlock can be launched in only one application*/
     if (myApplication == NULL)
@@ -330,7 +332,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
     //leave without activating
     SalomeApp_Application* currentApplication =  dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
     if (myApplication != currentApplication) return false;
-
 
     bool bOk = SalomeApp_Module::activateModule( theStudy );
     if ( !bOk ) return false;
@@ -347,29 +348,21 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
     //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
 
 
-//      vtkViewManager = getApp()->getViewManager(SVTK_Viewer::Type(), true); //create the view manager if it doesn't exist
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
     SUIT_ViewManager* vm;// = currentOccGView->getViewWindow()->getViewManager();
     ViewManagerList OCCViewManagers, VTKViewManagers;
-////
+//////
     application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
     QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
     while ( itOCC.hasNext() && (vm = itOCC.next()) )
-    {
         myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
-//        MESSAGE("========= WHILE:: OCC SELECTOR =======");
-    }
-//    MESSAGE("========= END WHILE 1=======");
-//        vm = currentDocGView->getViewWindow()->getViewManager();
+
     application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
     QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
     while ( itVTK.hasNext() && (vm = itVTK.next()) )
-    {
         myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
-//        MESSAGE("========= WHILE:: VTK SELECTOR =======");
-    }
-//    MESSAGE("========= END WHILE 2=======");
+
     //NPAL 19674
     SALOME_ListIO selected;
     sm->selectedObjects( selected );
@@ -400,8 +393,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
             updateObjBrowser(); // objects can be removed
         }
 
-    //restore graphic views
-//    restoreGraphicViews();
     if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
             currentOccGView->getViewWindow()->installEventFilter(this);
 
@@ -409,9 +400,10 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
     if (currentDocGView != NULL)
     {
         switchModel(currentDocGView);
-//        switchOnGraphicView(currentDocGView);
-//        showOnlyActor();
         showAllMenus();
+
+        if (currentDocGView->getViewWindow() != NULL)
+            currentDocGView->getViewWindow()->installEventFilter(this);
     }
     else
         initialMenus();
@@ -474,6 +466,9 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     //Must be done for all views later
     if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
         currentOccGView->getViewWindow()->removeEventFilter(this);
+
+    if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
+        currentDocGView->getViewWindow()->removeEventFilter(this);
 
     //switch off current document graphic view
     switchOffGraphicView(currentDocGView);
@@ -637,7 +632,10 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
     if (docGView->getViewWindow() == NULL)
     {
         if (currentDocGView == NULL || currentDocGView->getViewWindow() == NULL)
+        {
             docGView->setViewWindow(graphicViewsHandler->createVtkWindow());
+            docGView->getViewWindow()->installEventFilter(this);
+        }
         else
             docGView->setViewWindow(currentDocGView->getViewWindow());
 
@@ -750,8 +748,8 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 //    if (sm == NULL) return;
 //
 //    //VTK
-    if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
-    {
+//    if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
+//    {
 //        //VTK View Manager added
 //
 //        myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
@@ -770,13 +768,13 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 //                sr->setEnabled(true);
 //
 //        sm->setSelectedObjects( selected, true );   //NPAL 19674
-
-        return;
-    }
+//
+//        return;
+//    }
 
     //OCC
-    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
-    {
+//    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+//    {
         //OCC View added
 
 //        myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
@@ -803,7 +801,7 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 //                       this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
 //              connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
 //                       this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
-    }
+//    }
 }
 
 void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
@@ -823,12 +821,12 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
     }
 
     //OCC
-    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
-    {
+//    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+//    {
         //OCC View removed
 //        qDeleteAll(myOCCSelectors);
 //        myOCCSelectors.clear();
-    }
+//    }
 }
 
 void HEXABLOCKGUI::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected  )
@@ -2230,7 +2228,10 @@ void HEXABLOCKGUI::switchOnGraphicView(VtkDocumentGraphicView* dgview)
        if (currentDocGView->getViewWindow() != NULL)
            dgview->setViewWindow(currentDocGView->getViewWindow());
        else
+       {
            dgview->setViewWindow(graphicViewsHandler->createVtkWindow());
+           dgview->getViewWindow()->installEventFilter(this);
+       }
    }
    dgview->getViewWindow()->setFocus();
 
@@ -2404,7 +2405,10 @@ void HEXABLOCKGUI::newDocument()
     if (currentDocGView != NULL)
     {
         if (currentDocGView->getViewWindow() == NULL)
+        {
             currentDocGView->setViewWindow(graphicViewsHandler->createVtkWindow());
+            currentDocGView->getViewWindow()->installEventFilter(this);
+        }
 
           // Create a new document with the current window
           newGraphicView = graphicViewsHandler->createDocumentGraphicView(
@@ -2421,6 +2425,7 @@ void HEXABLOCKGUI::newDocument()
                                         docEntry_Doc.first, this ),
                                         graphicViewsHandler->createVtkWindow(),
                                         application()->desktop() );
+          newGraphicView->getViewWindow()->installEventFilter(this);
     }
 
     if (newGraphicView == NULL)
@@ -2479,7 +2484,10 @@ void HEXABLOCKGUI::loadDocument( const QString &inFile )
             //Need a new document
            newDocument();
         else if (currentDocGView->getViewWindow() == NULL) //there's a document without a view
+        {
            currentDocGView->setViewWindow(graphicViewsHandler->createVtkWindow());
+           currentDocGView->getViewWindow()->installEventFilter(this);
+        }
 
         if (!currentDocGView->isEmpty())
             //we can only have one document for a graphic view
@@ -3163,9 +3171,8 @@ bool HEXABLOCKGUI::eventFilter(QObject *obj, QEvent *event)
         if ( occWindow != NULL ) occWindow->setFocus();
 
         //VTK
-//        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
-//        if (vtkWindow != NULL)
-//          vtkWindow->setFocus();
+        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
+        if (vtkWindow != NULL) vtkWindow->setFocus();
 
         //Don't pass the signal
         return true;

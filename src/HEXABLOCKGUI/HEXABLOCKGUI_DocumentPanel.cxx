@@ -4947,13 +4947,13 @@ void EdgeAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
 
          if (single_rb->isChecked())
             single_edge_le->setFocus();
-         else if (multiple_rb->isChecked())
-            {
-               if (close_cb->isChecked())
-                  first_vex_le->setFocus();
-               else
-                  edges_lw->setFocus();
-            }
+//         else if (multiple_rb->isChecked())
+//            {
+//               if (close_cb->isChecked())
+//                  first_vex_le->setFocus();
+//               else
+//                  edges_lw->setFocus();
+//            }
    }
    else if ( vmType == OCCViewer_Viewer::Type() ){
          globalSelection2(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any

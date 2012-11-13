@@ -47,7 +47,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-5</y>
+        <y>0</y>
         <width>223</width>
         <height>618</height>
        </rect>
@@ -672,6 +672,22 @@
     <hint type="destinationlabel">
      <x>57</x>
      <y>452</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>close_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pend_spb</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>569</y>
     </hint>
    </hints>
   </connection>
