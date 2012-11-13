@@ -94,14 +94,14 @@ KasLine::~KasLine ()
 // === Creation de la quincaillerie associee a une shape 
 void KasLine::defineLine (Shape* asso, double deb, double fin)
 {
-   lig_brep  = asso->getBrep ();
-   lig_ident = asso->getName ();
-   lig_ior   = asso->getIor  ();
+   lig_brep  = asso->getBrep  ();
+   lig_ident = asso->getIdent ();
+   lig_ior   = asso->getIor   ();
 
    if (fin<0.0)
       {
-      lig_debut = asso->debut;
-      lig_fin   = asso->fin;
+      lig_debut = asso->getStart();;
+      lig_fin   = asso->getEnd();;
       }
    else if (deb >= UnEpsil)
       {
@@ -299,7 +299,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
 void KasLine::assoEdge (Edge* edge, double para1, double para2, int vass)
 {
    Shape* shape = new Shape (lig_brep);
-   shape->setName   (lig_ident);
+   shape->setIdent  (lig_ident);
    shape->setIor    (lig_ior);
    shape->setBounds (para1, para2);
 

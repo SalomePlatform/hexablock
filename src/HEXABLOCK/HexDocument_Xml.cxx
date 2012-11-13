@@ -23,7 +23,7 @@
 #include <libgen.h>               // Pour basename
 #include <cstdlib>               // Pour atoi et atof
 
-#include "HexEltBase.hxx"
+#include "Hex.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
@@ -112,7 +112,7 @@ int Document::loadXml (cpchar ficname)
 {
    XmlTree xml("");
    string filename = ficname;
-   doc_name     = basename ((pchar)ficname);
+   el_name         = basename ((pchar)ficname);
 
    static const int NbExt = 3;
    static cpchar t_ext [NbExt] = { ".xml", ".XML", ".Xml" };
@@ -120,14 +120,14 @@ int Document::loadXml (cpchar ficname)
    bool   noext = true;
    for (int nx = 0; nx < NbExt && noext ; nx++)
        {
-       ici   = doc_name.rfind (t_ext[nx]);
-       noext = ici < 0 || ici > doc_name.size();
+       ici   = el_name.rfind (t_ext[nx]);
+       noext = ici < 0 || ici > el_name.size();
        }
 
    if (noext)
       filename += ".xml"; 
    else
-      doc_name.erase (ici, 4);
+      el_name.erase (ici, 4);
 
    int ier = xml.parseFile (filename);
    if (ier!=HOK) 
@@ -139,12 +139,23 @@ int Document::loadXml (cpchar ficname)
 // ======================================================== setXml
 int Document::setXml (cpchar flux)
 {
+   int posit = 0;
+   int ier   = setXml (flux, posit);
+   return ier;
+}
+// ======================================================== setXml
+int Document::setXml (cpchar flux, int& posit)
+{
    XmlTree xml("");
-   xml.parseFlow (flux);
 
-   int    ier = parseXml (xml);
+   int ier = xml.parseStream (flux, posit);
+   if (ier!=HOK) 
+      return ier;
+
+   ier = parseXml (xml);
    if (ier==HOK) 
       doc_saved = true;
+
    return ier;
 }
 // ======================================================== parseShape
@@ -159,7 +170,7 @@ Shape* Document::parseShape (XmlTree* node)
    
    Shape* shape = new Shape (brep);
    shape->setBounds (pdeb, pfin);
-   shape->setName   (ident);
+   shape->setIdent  (ident);
 
    return shape;
 }
@@ -176,8 +187,8 @@ int Document::parseXml (XmlTree& xml)
    vector <string> tname;
 
    const  string& name = xml.findValue ("name");
-   if (name != "")
-       doc_name = name;
+   if (name != el_name)
+       setName (name.c_str());
 
    XmlTree* rubrique = xml.findChild ("ListVertices");
    int nbrelts       = rubrique->getNbrChildren ();
@@ -397,20 +408,42 @@ int Document::parseXml (XmlTree& xml)
 // ======================================================== save
 int Document::save (const char* ficxml)
 {
-   int    ier = genXml (ficxml);
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   int ier  = doc_xml->setFileName (ficxml);
+   if (ier != HOK)
+      return ier;
+
+   ier = genXml ();
+   return ier;
+}
+// ======================================================== appendXml
+int Document::appendXml (pfile fstudy)
+{
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   doc_xml->setFile (fstudy);
+
+   int    ier = genXml ();
    return ier;
 }
 // ======================================================== getXml
 cpchar Document::getXml ()
 {
-   int ier = genXml (NULL);
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   doc_xml->setStream ();
+   int ier = genXml ();
    if (ier!=HOK)
       return NULL;
 
    return doc_xml->getXml ();
 }
 // ======================================================== genXml
-int Document::genXml (cpchar filename)
+int Document::genXml ()
 {
                                        // -- 1) Raz numerotation precedente
    markAll (NO_COUNTED);
@@ -420,9 +453,9 @@ int Document::genXml (cpchar filename)
    if (doc_xml==NULL)
        doc_xml = new XmlWriter ();
 
-   doc_xml->openXml  (filename);
+   doc_xml->startXml ();
    doc_xml->openMark ("Document");
-   doc_xml->addAttribute ("name", doc_name);
+   doc_xml->addAttribute ("name", el_name);
    doc_xml->endMark ();
 
    cpchar balise [] = {"ListXXXX", 
@@ -561,6 +594,86 @@ int Document::saveVtk (cpchar nomfic)
           cell->colorNodes (vtk);
        }
 
+   fclose (vtk);
+   return HOK;
+}
+
+// ====================================================== saveVtk
+// ==== Nouvelle formule
+int Document::saveVtk0 (cpchar nomfic)
+{
+   int nbnodes = doc_nbr_elt [EL_VERTEX];
+   int nbcells = countHexa ();
+
+   pfile vtk = fopen (nomfic, "w");
+   if (vtk==NULL)
+      {
+      cout << " ****" << endl;
+      cout << " **** Document::saveVtk : " << endl;
+      cout << " **** Can't open file "     << endl;
+      cout << " ****" << endl;
+
+      }
+   fprintf (vtk, "# vtk DataFile Version 3.1\n");
+   fprintf (vtk, "%s \n", nomfic);
+   fprintf (vtk, "ASCII\n");
+   fprintf (vtk, "DATASET UNSTRUCTURED_GRID\n");
+   fprintf (vtk, "POINTS %d float\n", nbnodes);
+
+                                           // -- 1) Les noeuds
+   Real3 koord;
+   static const double minvtk = 1e-30;
+#define Koord(p) koord[p]<minvtk && koord[p]>-minvtk ? 0 : koord[p]
+
+   int last_nro = 0;
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Vertex* node = static_cast <Vertex*> (elt);
+       if (node->isHere())
+          {
+          int nro = node->getId ();
+          for (int np = last_nro ; np < nro ; np++)
+               fprintf (vtk, "0 0 0\n");
+
+          node->getPoint (koord);
+          fprintf (vtk, "%g %g %g\n", Koord(dir_x), Koord(dir_y), Koord(dir_z));
+          last_nro = nro+1;
+          }
+       }
+
+   for (int np = last_nro ; np < nbnodes  ; np++)
+        fprintf (vtk, "0 0 0\n");
+
+                                           // -- 2) Les hexas
+
+   fprintf (vtk, "CELLS %d %d\n", nbcells, nbcells*(HV_MAXI+1));
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->printHexaVtk (vtk);
+       }
+
+   fprintf (vtk, "CELL_TYPES %d\n", nbcells);
+   for (int nro=0 ; nro<nbcells ; nro++)
+       fprintf (vtk, "%d\n", HE_MAXI);
+
+/****************************
+   fprintf (vtk, "POINT_DATA %d \n", nbnodes);
+   fprintf (vtk, "SCALARS A float\n");
+   fprintf (vtk, "LOOKUP_TABLE default\n");
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->colorNodes (vtk);
+       }
+*********************************/
    fclose (vtk);
    return HOK;
 }

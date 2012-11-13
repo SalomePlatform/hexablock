@@ -24,11 +24,11 @@ proceeds in three stages:
 
 .. _guiassovertex:
 
-Associate to a vertex of the geometry
-=====================================
+Vertex Association
+==================
 
 To associate a vertex of the model of blocks to a vertex of the geometry in
-the **Main Menu** select **Model -> Make Vertex association**
+the **Main Menu** select **Association -> Make Vertex association**
 
 **Arguments:**
 
@@ -37,19 +37,48 @@ the **Main Menu** select **Model -> Make Vertex association**
 
 The dialogue box to associate to a vertex of the geometry is:
 
-.. image:: _static/gui_ass_vertex.png
+.. image:: _static/gui_vertex_assoc_coordinates.png
    :align: center
 
 .. centered::
    Associate to a Vertex of the Geometry
+   
+see: :ref:`guiassovertex2`
+
+see: :ref:`tuiassovertex2`
 
 .. _guiassoedge:
 
-Associate to edge or lines of the geometry
-==========================================
+Edge(s) Association
+===================
 
 To associate edge(s) of the model of blocks to line(s) of the geometry in
-the **Main Menu** select **Model -> Make Edge Association**
+the **Main Menu** select **Association -> Make Edge Association**
+
+.. _guiassooneedge:
+
+One edge
+--------
+
+**Arguments:**
+
+- one edge of the model of blocks,
+- one line of the geometry,
+- Start: starting point on the line,
+- End: ending point on the line.
+
+The dialogue box to associate one edge or wire of the geometry is:
+
+.. image:: _static/gui_ass_edge.png
+   :align: center
+
+.. centered::
+   Associate an Edge or Wire of the Geometry
+
+.. _guiassoedges:
+
+Line
+----
 
 **Arguments:**
 
@@ -57,12 +86,13 @@ the **Main Menu** select **Model -> Make Edge Association**
 - one or several edges of the model of blocks,
 - one or several lines of the geometry,
 - choose to associate a closed line or an opened line,
+- choose to associte a closed line with inversion (only if "closed line" is selected),
 - Start: starting point on the line,
 - End: ending point on the line.
 
 The dialogue box to associate to edges or wires of the geometry is:
 
-.. image:: _static/gui_ass_edge.png
+.. image:: _static/gui_ass_edges.png
    :align: center
 
 .. centered::
@@ -70,11 +100,11 @@ The dialogue box to associate to edges or wires of the geometry is:
 
 .. _guiassoface:
 
-Associate to a face of the geometry
-===================================
+Quadrangle Association
+======================
 
 To associate a quadrangle of the model of blocks to a face of the geometry in
-the **Main Menu** select **Model -> Make Quadrangle association**
+the **Main Menu** select **Association -> Make Quadrangle association**
 
 **Arguments:**
 
@@ -88,6 +118,20 @@ The dialogue box to associate to a face or a shell of the geometry is:
 
 .. centered::
    Associate to a Face or a Shell of the Geometry
+
+
+Note
+----
+
+Face association (implicite or explicite) is not necessary for:
+
+- planar faces, 
+- cylindrical faces,
+- conical faces.
+
+Only edges association (implicite) on segments or arcs of cirle is necessary.
+
+This case is illustrated by an example :ref:`here <tuiassocfacenote>`.
 
 
 TUI command: :ref:`tuiassoquadtogeom`

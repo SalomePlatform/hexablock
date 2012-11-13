@@ -24,13 +24,14 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <ctime>
 #include <sys/stat.h>
 
 BEGIN_NAMESPACE_HEXA
 
 static int debug_level = NOTHING;
 
-// ========================================================= prod_scalaire
+// ========================================================= on_debug
 bool on_debug ()
 {
    if (debug_level == NOTHING)
@@ -178,5 +179,58 @@ bool special_option ()
 void set_special_option (bool opt)
 {
    current_option = opt ? 1 : 0;
+}
+// ====================================================== sizeof_file
+int sizeof_file (cpchar filename)
+{
+   struct stat status;
+
+   int ier = stat  (filename, &status);
+   if (ier == HOK)
+      return status.st_size;
+   else
+      return NOTHING;
+}
+// ====================================================== read_file
+char* read_file (cpchar filename, int& size)
+{
+   size = 0;
+
+   struct stat status;
+   int ier = stat  (filename, &status);
+   if (ier != HOK)
+      return  NULL;
+
+   FILE* fic = fopen (filename, "r");
+   if (fic == NULL)
+      return  NULL;
+
+   int   lgalloc = status.st_size;
+   char* buffer  = (char*) malloc (lgalloc+1);
+   if (buffer == NULL)
+      return  NULL;
+
+   for (int car = fgetc (fic) ; car!=EOF && size<lgalloc ; car = fgetc(fic))
+       buffer [size++] = car;
+   fclose (fic);
+
+   printf ("read_file : lgalloc=%d, size=%d\n", lgalloc, size);
+   buffer [size++] = EOS;
+   return buffer;
+}
+// ====================================================== get_time
+cpchar get_time (string& buffer)
+{
+   char   quand[24];
+   time_t tps;
+   time (&tps);
+   struct tm *temps = localtime (&tps);
+
+   sprintf (quand, "%d/%02d/%02d %02d:%02d:%02d",
+            1900 + temps->tm_year, temps->tm_mon+1, temps->tm_mday,
+            temps->tm_hour, temps->tm_min, temps->tm_sec);
+
+    buffer = quand;
+    return buffer.c_str();
 }
 END_NAMESPACE_HEXA

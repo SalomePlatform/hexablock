@@ -7,7 +7,7 @@
 Edge
 ====
 
-To create an **Edge** in the **Main Menu** select **Model -> Add Edge**.
+To create an **Edge** in the **Main Menu** select **Model -> Construction -> Add Edge**.
 
 There are two algorithms to create an **Edge**.
 
@@ -34,7 +34,7 @@ The dialogue box to create an edge from a vertex and a vector is:
    :align: center
 
 .. centered::
-   Add Edge from vertices
+   Add Edge from a vertex and a vector
 
 
 TUI command: :ref:`tuiedge`

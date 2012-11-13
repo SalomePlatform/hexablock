@@ -24,7 +24,6 @@
 #define __ELT_BASE_H
 
 #include "hexa_base.hxx"
-#include "HexDocument.hxx"
 #include <vector>
 
 #define HexDump(x) {printf(#x " = "); if (x) x->dump(); else printf("NULL\n");}
@@ -33,7 +32,6 @@
 
 #define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
 #define BadElement(elt) (elt)==NULL || (elt)->isBad()
-#define ABR_TYPES  "xveqhwgcp????"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -81,6 +79,9 @@ public :
    virtual  void dump ();
    virtual  void saveXml (XmlWriter* xml)   {}
    virtual  void majReferences () { }
+   virtual  char*  makeVarName (char* nom);
+
+   static   char* makeName  (int type, int id, char* name);
 
    EltBase*  next ()                        { return el_next; }
    void      setNext (EltBase* suivant)     { el_next = suivant; }
@@ -102,6 +103,7 @@ public :
    int   getMark ()                   { return el_mark; }
    void  setMark (int ln)             { el_mark = ln ; }
    char* getName   (pchar nom);
+   char* getNextName   (pchar nom);
    void  printName (cpchar sep=" ");
    void  dumpRef ();
 
@@ -109,7 +111,7 @@ public :
    void   setName (const string& nom) { el_name = nom ; }
    void   setName (cpchar nom)        { el_name = nom ; }
 
-   bool   debug (int niv=0) { return el_root->getLevel() > niv ; } 
+   bool   debug (int niv=0);
 
 protected :
    EnumElt   el_type;

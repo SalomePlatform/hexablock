@@ -72,14 +72,18 @@ void Vertex_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex)
   throw (SALOME::SALOME_Exception)
 {
   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(geom_object_vertex);
+
 //   HEXABLOCK::HEXABLOCK* gen = HEXABLOCK::GetHEXABLOCKGen();
 //   TopoDS_Shape shape = gen->geomObjectToShape(geom_object_vertex);
+
   string strBrep = shape2string( shape );
   CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_vertex );
-  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-  s->ior   = anIOR.in(); 
-  s->ident = geom_object_vertex->GetStudyEntry(); //geom_object_vertex->GetEntry()
-  _vertex_cpp->setAssociation(s);
+  HEXA_NS::Shape* msh = new HEXA_NS::Shape( strBrep );
+     //geom_object_vertex->GetEntry()
+
+  msh->setIor   (anIOR.in()); 
+  msh->setIdent (geom_object_vertex->GetStudyEntry()); 
+  _vertex_cpp->setAssociation(msh);
 
 //   _association = GEOM::GEOM_Object::_duplicate( geom_object_vertex );
 }
@@ -93,17 +97,24 @@ GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
   GEOM::GEOM_Object_var geomObj; // = new GEOM::GEOM_Object;
   CORBA::Object_var corbaObj;
 
-  HEXA_NS::Shape* s = _vertex_cpp->getAssociation();
-  if (s != NULL){
-      if ( !s->ior.empty() ){ // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
-        if ( !CORBA::is_nil( corbaObj ) ){
-          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+  HEXA_NS::Shape* msh = _vertex_cpp->getAssociation();
+  if (msh == NULL)
+     return geomObj._retn();
+                     // geom object from current session
+  string ior = msh->getIor();
+  if (NOT ior.empty() )
+     {
+     corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( ior.c_str() );
+     if (NOT CORBA::is_nil( corbaObj ) )
+        {
+        geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
         }
-      } else { // no geom object => we have to built it
-          geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( s->getBrep() );
       }
-  }
+  else 
+        // no geom object => we have to built it
+      {
+      geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( msh->getBrep() );
+      }
 
   return geomObj._retn();
 }

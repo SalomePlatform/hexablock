@@ -7,7 +7,7 @@ Make elements by transforming elements
 ======================================
 
 To make elements by transforming elements in the **Main Menu** select
-**Model -> Make transformation**.
+**Model -> Operation -> Make transformation**.
 
 .. _guimaketranslation:
 
@@ -81,8 +81,8 @@ Make elements by rotation
 **Arguments:**
 
 - elements,
-- vector direction,
 - vertex,
+- vector direction,
 - angle.
 
 

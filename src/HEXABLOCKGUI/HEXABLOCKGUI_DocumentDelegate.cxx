@@ -39,11 +39,6 @@ using namespace HEXABLOCK::GUI;
 DocumentDelegate::DocumentDelegate(QDockWidget *dw, QObject *parent)
     : QItemDelegate(parent),
       _dw(dw),
-      _documentModel(0),
-      _patternDataSelectionModel(0),
-      _patternBuilderSelectionModel(0),
-      _groupsSelectionModel(0),
-      _meshSelectionModel(0),
       _currentEditor(NULL)
 {
 //   connect( this, SIGNAL( closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint) ),
@@ -89,17 +84,8 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     case PROPAGATION_TREE : editor = new PropagationDialog(_dw, HexaBaseDialog::INFO_MODE); break;
   }
   if ( editor != NULL ){
-    if ( _documentModel )                editor->setDocumentModel( _documentModel );
-    if ( _patternDataSelectionModel )
-    {
-    	editor->setPatternDataSelectionModel( _patternDataSelectionModel );
-//    	_patternDataSelectionModel->currentDialog = editor;
-    }
-    if ( _patternBuilderSelectionModel ) editor->setPatternBuilderSelectionModel( _patternBuilderSelectionModel);
-    if ( _groupsSelectionModel )         editor->setGroupsSelectionModel( _groupsSelectionModel );
-    if ( _meshSelectionModel )           editor->setMeshSelectionModel( _meshSelectionModel);
-
     HEXABLOCKGUI::assocInProgress = false;
+
     //show the editor in the dockwidget
     editor->resetSizeAndShow(_dw);
   }
@@ -130,48 +116,51 @@ void DocumentDelegate::setEditorData( QWidget *editor,
   MESSAGE("DocumentDelegate::setEditorData(){");
   MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
 
-//   HexaBaseDialog* editor = dynamic_cast<HexaBaseDialog*>( editor );
+  HexaBaseDialog* hexaEditor = dynamic_cast<HexaBaseDialog*>( editor );
+  if (hexaEditor == NULL) return;
+  DocumentModel* documentModel = hexaEditor->getDocumentModel();
+  if (documentModel == NULL) return;
 
   switch ( index.data(HEXA_TREE_ROLE).toInt() ){
     case VERTEX_TREE : {
 //      HEXA_NS::Vertex *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
-      HEXA_NS::Vertex *value = _documentModel->getHexaPtr<HEXA_NS::Vertex *>(index);
+      HEXA_NS::Vertex *value = documentModel->getHexaPtr<HEXA_NS::Vertex *>(index);
       VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
       vertexEditor->setValue(value);
     }
     break;
     case EDGE_TREE : {
-      HEXA_NS::Edge *value = _documentModel->getHexaPtr<HEXA_NS::Edge*>(index);
+      HEXA_NS::Edge *value = documentModel->getHexaPtr<HEXA_NS::Edge*>(index);
       EdgeDialog *edgeEditor = static_cast<EdgeDialog*>(editor);
       edgeEditor->setValue(value);
     }
     break;
     case QUAD_TREE : {
-      HEXA_NS::Quad *value = _documentModel->getHexaPtr<HEXA_NS::Quad*>(index);
+      HEXA_NS::Quad *value = documentModel->getHexaPtr<HEXA_NS::Quad*>(index);
       QuadDialog *quadEditor = static_cast<QuadDialog*>(editor);
       quadEditor->setValue(value);
     }
     break;
     case HEXA_TREE : {
-      HEXA_NS::Hexa *value = _documentModel->getHexaPtr<HEXA_NS::Hexa*>(index);
+      HEXA_NS::Hexa *value = documentModel->getHexaPtr<HEXA_NS::Hexa*>(index);
       HexaDialog *hexaEditor = static_cast<HexaDialog*>(editor);
       hexaEditor->setValue(value);
     }
     break;
     case VECTOR_TREE : {
-      HEXA_NS::Vector *value = _documentModel->getHexaPtr<HEXA_NS::Vector*>(index);
+      HEXA_NS::Vector *value = documentModel->getHexaPtr<HEXA_NS::Vector*>(index);
       VectorDialog *vectorEditor = static_cast<VectorDialog*>(editor);
       vectorEditor->setValue(value);
     }
     break;
     case CYLINDER_TREE : {
-      HEXA_NS::Cylinder *value = _documentModel->getHexaPtr<HEXA_NS::Cylinder*>(index);
+      HEXA_NS::Cylinder *value = documentModel->getHexaPtr<HEXA_NS::Cylinder*>(index);
       CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
       cylinderEditor->setValue(value);
     }
     break;
     case PIPE_TREE : {
-      HEXA_NS::Pipe *value = _documentModel->getHexaPtr<HEXA_NS::Pipe*>(index);
+      HEXA_NS::Pipe *value = documentModel->getHexaPtr<HEXA_NS::Pipe*>(index);
       PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
       pipeEditor->setValue(value);
     }
@@ -225,8 +214,13 @@ bool DocumentDelegate::editorEvent ( QEvent                     *event,
 bool DocumentDelegate::eventFilter ( QObject * editor, QEvent * event )
 {
 	if ( event->type() == QEvent::FocusOut ){
-		//((QWidget*) editor->parent())->close();
-		return true;
+		return true; //do nothing for this signal
 	}
+	else if (event->type() == QEvent::HideToParent && editor != NULL)
+	{
+	    //close the current editor when the tree is reduced
+	    ((QWidget*) editor->parent())->close();
+	}
+
 	return false;
 }

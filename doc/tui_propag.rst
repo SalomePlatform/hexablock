@@ -36,12 +36,4 @@ Set the way where the law is applied on the propagation::
     propa.setWay(bo)
 
 
-Example
--------
-
-::
-
-  import hexablock
-  doc = hexablock.addDocument()
-
 GUI command: :ref:`guipropag`

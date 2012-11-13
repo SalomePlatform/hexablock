@@ -40,11 +40,6 @@ static bool db = false;
 
 ////////////
 
-
-
-
-
-
 #include <TCollection_AsciiString.hxx>
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS.hxx>
@@ -74,7 +69,7 @@ static bool db = false;
 #include "HexDocument_impl.hxx"
 #include <string>
 
-// #include "SALOMEDS_Tool.hxx"
+#include "SALOMEDS_Tool.hxx"
 // #include "SALOMEDSImpl_TMPFile.hxx"
 
 using namespace HEXABLOCK_ORB;
@@ -107,7 +102,8 @@ HEXABLOCK_Gen_i::HEXABLOCK_Gen_i(CORBA::ORB_ptr orb,
   _poa = PortableServer::POA::_duplicate(poa);
   _orb = CORBA::ORB::_duplicate(orb);
   _id = _poa->activate_object(_thisObj);
-  _engine_cpp = new HEXA_NS::Hex;
+//_engine_cpp = new HEXA_NS::Hex;
+  _engine_cpp = HEXA_NS::Hex::getInstance ();
   _geomClient = NULL;
   _HEXABLOCKGen = this;
   MESSAGE("ALRRRRRIGHTTTTT");
@@ -246,7 +242,7 @@ Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
 void HEXABLOCK_Gen_i::test()
 {
-  MESSAGE("HEEEEEEEEEEEEEEYYYYYYYYYYY");
+  MESSAGE("La boite a rythmes a tue le Rock'Roll");
 }
 
 CORBA::Long HEXABLOCK_Gen_i::countDocument()
@@ -259,7 +255,9 @@ CORBA::Long HEXABLOCK_Gen_i::countDocument()
 Document_ptr HEXABLOCK_Gen_i::getDocument(CORBA::Long i)
 {
     HEXA_NS::Document *doc=_engine_cpp->getDocument(i);
-    if ( doc == NULL ) return Document::_nil();
+    if ( doc == NULL ) 
+        return Document::_nil();
+
     Document_impl *servantCorba = new Document_impl( GetPOA(), doc );
     return servantCorba->_this();
 }
@@ -274,6 +272,16 @@ void HEXABLOCK_Gen_i::removeDocument(HEXABLOCK_ORB::Document_ptr docIn)
   }
 }
 
+Document_ptr HEXABLOCK_Gen_i::findDocument(const char* name)
+{
+   HEXA_NS::Document *doc=_engine_cpp->findDocument (name);
+
+   if (doc==NULL)
+      return Document::_nil();
+
+   Document_impl *servantCorba=new Document_impl( GetPOA(), doc);
+   return servantCorba->_this();
+}
 
 Document_ptr HEXABLOCK_Gen_i::addDocument(const char* name)
 {
@@ -499,60 +507,30 @@ int HEXABLOCK_Gen_i::RegisterObject(CORBA::Object_ptr theObject)
 }
 
 
-// SMESH::SMESH_Mesh_ptr SMESH_Gen_i::createMesh()
-//      throw ( SALOME::SALOME_Exception )
-
-
 char* HEXABLOCK_Gen_i::ComponentDataType()
 {
-//   if(MYDEBUG) MESSAGE( "HEXABLOCK_Gen_i::ComponentDataType" );
   return CORBA::string_dup( "HEXABLOCK" );
 }
-
-
-
-// SMESH_Mesh* SMESH_Gen::CreateMesh(int theStudyId, bool theIsEmbeddedMode)
-//   throw(SALOME_Exception)
-// {
-//   Unexpect aCatch(SalomeException);
-//   MESSAGE("SMESH_Gen::CreateMesh");
-// 
-//   // Get studyContext, create it if it does'nt exist, with a SMESHDS_Document
-//   StudyContextStruct *aStudyContext = GetStudyContext(theStudyId);
-// 
-//   // create a new SMESH_mesh object
-//   SMESH_Mesh *aMesh = new SMESH_Mesh(_localId++,
-//                                      theStudyId,
-//                                      this,
-//                                      theIsEmbeddedMode,
-//                                      aStudyContext->myDocument);
-//   aStudyContext->mapMesh[_localId] = aMesh;
-// 
-//   return aMesh;
-// }
-
-
 
 
 Document_ptr HEXABLOCK_Gen_i::createDoc (const char* name)
                               throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
-//   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::createMesh" );
 
   // Get or create the GEOM_Client instance
   try {
-    HEXA_NS::Document *d   = _engine_cpp->addDocument (name);
-    Document_impl *docImpl = new Document_impl( GetPOA(), d );
+      HEXA_NS::Document *doc  = NULL;
+      doc = _engine_cpp->addDocument (name);
+      Document_impl *docImpl = new Document_impl( GetPOA(), doc );
 
     // activate the CORBA servant of Mesh
     Document_var docServant = Document::_narrow( docImpl->_this() );
     /* int nextId = */    RegisterObject( docServant );
-//     if(MYDEBUG) MESSAGE( "Add mesh to map with id = "<< nextId);
+
     return docServant._retn();
   }
   catch (SALOME_Exception& S_ex) {
-//     THROW_SALOME_CORBA_EXCEPTION( S_ex.what(), SALOME::BAD_PARAM );
   }
   return Document::_nil();
 }
@@ -561,7 +539,6 @@ Document_ptr HEXABLOCK_Gen_i::createDocInStudy (const char* name)
                               throw ( SALOME::SALOME_Exception )
 {
   Unexpect aCatch(SALOME_SalomeException);
-//   if(MYDEBUG) MESSAGE( "SMESH_Gen_i::CreateMesh" );
   // create mesh
   Document_var doc = this->createDoc (name);
 
@@ -571,10 +548,6 @@ Document_ptr HEXABLOCK_Gen_i::createDocInStudy (const char* name)
     aStudyBuilder->NewCommand();  // There is a transaction
     SALOMEDS::SObject_var aSO = PublishDoc( myCurrentStudy, doc.in() );
     aStudyBuilder->CommitCommand();
-//     if ( !aSO->_is_nil() ) {
-//       // Update Python script
-//       TPythonDump() << aSO << " = " << this << ".CreateEmptyMesh()";
-//     }
   }
 
   return doc._retn();
@@ -645,23 +618,14 @@ void HEXABLOCK_Gen_i::SetCurrentStudy( SALOMEDS::Study_ptr theStudy )
 }
 
 
-
-
-
-
 TopoDS_Shape string2shape( const string& brep )
 {
   TopoDS_Shape shape;
 
-//   istringstream streamBrep(brep.c_str());
   istringstream streamBrep(brep);
-//   char* chaine = new char[brep.size()];
-//   strcpy(chaine, brep.c_str()); 
-//   istringstream streamBrep( chaine );
 
   BRep_Builder aBuilder;
   BRepTools::Read(shape, streamBrep, aBuilder);
-//   BRepTools::Read(shape, brep, aBuilder);
   return shape;
 }
 
@@ -678,9 +642,7 @@ TopoDS_Shape string2shape( const string& brep )
 string shape2string( const TopoDS_Shape& aShape )
 {
   ostringstream streamShape;
-//   string  strShape;
   BRepTools::Write(aShape, streamShape);
-//   BRepTools::Write(aShape, strShape);
 
   return streamShape.str();
 }
@@ -746,9 +708,8 @@ char* HEXABLOCK_Gen_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 {
    if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
         << "IORToLocalPersistentID" << endl;
-   /// static char empty [8] = "";
-   char*  empty = strdup ("");
-   return empty;
+   const char* empty = "";
+   return CORBA::string_dup (empty);
 }
 // =================================================== LocalPersistentIDToIOR
 char* HEXABLOCK_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
@@ -758,8 +719,9 @@ char* HEXABLOCK_Gen_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
 {
    if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
         << "LocalPersistentIDToIOR" << endl;
-   static char empty [8] = "";
-   return empty;
+
+   const char* empty = "";
+   return CORBA::string_dup (empty);
 }
 //   
 // =========================================================== CanCopy
@@ -794,11 +756,6 @@ SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PasteInto(const SALOMEDS::TMPFile& fic,
         << "PasteInto" << endl;
    return NULL;
 }
-// ======================================================== CanPublishInStudy
-// bool HEXABLOCK_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
-// {
-   // return NULL;
-// }
 // =========================================================== CanPaste
 SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PublishInStudy (SALOMEDS::Study_ptr stud,
                                        SALOMEDS::SObject_ptr theSObject,
@@ -811,25 +768,94 @@ SALOMEDS::SObject_ptr HEXABLOCK_Gen_i::PublishInStudy (SALOMEDS::Study_ptr stud,
    return NULL;
 }
 // =========================================================== Save
-SALOMEDS::TMPFile* HEXABLOCK_Gen_i::Save( 
-                                     const SALOMEDS::SComponent_ptr compo,
-                                     const char* theURL,
-                                     bool isMultiFile)
+SALOMEDS::TMPFile* HEXABLOCK_Gen_i::Save(const SALOMEDS::SComponent_ptr compo,
+                                         const char* theURL,
+                                         bool isMultiFile)
 {
    if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
         << "Save" << endl;
-   return NULL;
+
+   string tmp_fic = SALOMEDS_Tool::GetTmpDir();
+// tmp_fic += "hexablock.xml";
+   tmp_fic  = "hexablock.xml";
+   cpchar  fic_study = tmp_fic.c_str();
+
+   int   len_buffer = 4;
+   char* ch_buffer  = NULL;
+   int ier = _engine_cpp->saveAllDocs (fic_study);
+   if (ier==HOK)
+      ch_buffer  = Hex::read_file (fic_study, len_buffer);
+   else
+      ch_buffer  = strdup ("<0>");
+
+   CORBA::Octet*      oct_buffer = (CORBA::Octet*) ch_buffer;
+   SALOMEDS::TMPFile* oct_stream = new SALOMEDS::TMPFile (len_buffer, 
+                                              len_buffer, oct_buffer, 1);
+   return oct_stream;
 }
 // =========================================================== Load
 CORBA::Boolean HEXABLOCK_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
-                      const SALOMEDS::TMPFile& theStream,
+                      const SALOMEDS::TMPFile& stream,
                       const char* theURL,
                       bool isMultiFile)
 {
    if (db) cout << " +++++++ Je suis passe par  HEXABLOCK_Gen_i::"
         << "Load" << endl;
 
-   return false;
+   char *ch_buffer = (char*) stream.NP_data();
+
+   int ier = _engine_cpp->loadAllDocs (ch_buffer);
+   return ier==HOK;
+}
+
+// =========================================================== addDocInStudy
+CORBA::Long HEXABLOCK_Gen_i::addDocInStudy (Document_ptr doc_in)
+                             throw ( SALOME::SALOME_Exception )
+{
+   if (CORBA::is_nil(myCurrentStudy))
+      return 986;
+
+   Document_impl* doc_servant = ::DownCast <Document_impl*> (doc_in);
+   if (doc_servant == NULL)
+      return 987;
+
+   HEXA_NS::Document* doc = doc_servant->GetImpl();
+   if (doc == NULL)
+      return 988;
+
+   cpchar name = doc->getName();
+   PutData (name);
+   
+   SALOMEDS::StudyBuilder_var study_builder = myCurrentStudy->NewBuilder();
+   // study_builder->NewCommand();  // There is a transaction ???
+
+
+   SALOMEDS::SObject_var obj = ObjectToSObject( myCurrentStudy, doc_in );
+   if ( obj->_is_nil() )
+      {
+      SALOMEDS::SComponent_var father = PublishComponent( myCurrentStudy );
+      if ( father->_is_nil() )
+          return 989;
+
+   // SALOMEDS::SObject_var 
+   // s_obj = HEXABLOCK_Gen_i::ObjectToSObject( my_current_study, doc_in ); ???
+   // if ( obj->_is_nil() ) --> C'est le cas
+
+      SALOMEDS::SObject_var s_obj = study_builder->NewObject (father);
+      obj = s_obj._retn();
+      if ( obj->_is_nil() )
+         return 981;
+      }
+
+  SALOMEDS::GenericAttribute_var attrib;
+  SALOMEDS::AttributeName_var    attname;
+
+  attrib  = study_builder->FindOrCreateAttribute( obj, "AttributeName" );
+  attname = SALOMEDS::AttributeName::_narrow( attrib );
+  attname->SetValue (name);
+                                  /// ----------- Fin de SetName
+  // study_builder->CommitCommand(); ???
+  return HOK;
 }
 // =========================================================== Version information
 

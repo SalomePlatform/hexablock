@@ -62,6 +62,7 @@
 
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
+#include "HEXABLOCKGUI_OccGraphicView.hxx"
 
 
 
@@ -338,7 +339,11 @@ SALOME_Prs* MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
     return 0;
 
   SALOME_View*      view = NULL;
-  SUIT_ViewManager* vman = HEXABLOCKGUI::currentOccView->getViewManager();
+
+  SUIT_ViewManager* vman = NULL;
+  if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
+      vman = HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager();
+
   SUIT_ViewModel* vmodel = NULL;
   if ( vman )
     vmodel = vman->getViewModel();

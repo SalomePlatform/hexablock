@@ -16,7 +16,7 @@ Add a new empty document in the session::
     doc = hexablock.addDocument(name)
 
 
-Add a new document loaded from a "xml" file::
+Add a new document loaded from a *xml* file::
 
     doc2 = hexablock.loadDocument(filename)
 
@@ -24,13 +24,25 @@ Get the number of opened document in the session::
 
     nd = hexablock.countDocument()
 
-Get the document number "i"::
+Get the document number *i*::
 
     doc_i = hexablock.getDocument(i)
-
+    
 Remove a document in the session::
 
     hexablock.removeDocument(doc_i)
+    
+Set the current study::
+
+	hexablock.SetCurrentStudy(theStudy)
+
+Get a document from the current study::
+
+	doc = hexablock.getFromStudy(doc_entry)
+	
+Add a document in the current study::
+
+	hexablock.addToStudy(doc)
 
 A tool to dump a model of block::
 

@@ -11,27 +11,30 @@ Cut hexahedra from the model of blocks::
 
     elts = doc.cut(an_edge, nb_of_cuts)
 
+Operations on *elts*: :ref:`tuielements2`
+
 This method enables to cut in two (or more) a series of hexahedra using a series of edges propagation.
 
 
 Example
 -------
 
-::
+.. literalinclude:: test_doc/cut_hexa/cut_hexa.py
+   :linenos:
 
-    import hexablock 
-    doc = hexablock.addDocument()
 
-    size_x = 2
-    size_y = 1
-    size_z = 1
+.. image:: _static/non_cut_hexa.png
+   :align: center
 
-    orig = doc.addVertex(0, 0, 0)
-    dirVr = doc.addVector(1, 1, 1)
+.. centered::
+   Initial hexa
+   
+   
+.. image:: _static/cut_hexa.png
+   :align: center
 
-    grid = doc.makeCartesian1(orig, dirVr, size_x, size_y, size_z, 0, 0, 0) 
-    arete = grid.getEdgeK(0, 0, 0)
-
-    doc.cut(arete, 1)
+.. centered::
+   Cut hexa
+   
 
 GUI command: :ref:`guicuthexa`

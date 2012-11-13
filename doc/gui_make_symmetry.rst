@@ -7,7 +7,7 @@ Make elements by symmetry
 =========================
 
 To make elements by symmetry elements in the **Main Menu** select
-**Model -> Make symmetry**.
+**Model -> Operation -> Make symmetry**.
 
 .. _guimakepoint:
 
@@ -28,7 +28,25 @@ The dialogue box to make elements by point symmetry is:
 
 .. centered::
    Make Elements by point symmetry
+   
+Example
+-------
 
+.. image:: _static/sph_grid_for_make_sym_examle.png
+   :align: center
+
+.. centered::
+   Spherical grid
+
+A point symmetry on the *Spherical grid* gives the following result:
+
+.. image:: _static/make_point_symmetry.png
+   :align: center
+
+.. centered::
+   Point symmetry on *Spherical grid*
+   
+   
 .. _guimakeline:
 
 Make elements by line symmetry
@@ -48,10 +66,22 @@ The dialogue box to make elements by line symmetry is:
 .. centered::
    Make Elements by Line Symmetry
 
+Example
+-------
+   
+A line symmetry on the *Spherical grid* gives the following result:
+
+.. image:: _static/make_line_symmetry.png
+   :align: center
+
+.. centered::
+   Line symmetry on *Spherical grid*
+   
+
 .. _guimakeplan:
 
-Make elements by plan symmetry
-==============================
+Make elements by plane symmetry
+===============================
 
 **Arguments:**
 
@@ -59,11 +89,25 @@ Make elements by plan symmetry
 - vertex,
 - vector.
 
-The dialogue box to make elements by plan symmetry is:
+The dialogue box to make elements by plane symmetry is:
 
 .. image:: _static/gui_make_plan_symmetry.png
    :align: center
 
 .. centered::
-   Make Elements by Plan Symmetry
+   Make Elements by Plane Symmetry
+   
+   
+Example
+-------
+   
+A plane symmetry on the *Spherical grid* gives the following result:
 
+.. image:: _static/make_plan_symmetry.png
+   :align: center
+
+.. centered::
+   Plane symmetry on *Spherical grid*
+   
+   
+TUI command: :ref:`tuimakesymmetry`

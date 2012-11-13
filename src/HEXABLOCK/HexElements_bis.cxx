@@ -52,7 +52,9 @@ Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
 
    int nro = nx + size_hx*ny + size_hx*size_hy*nz; 
 
-   return tab_hexa [nro]; 
+   DumpStart  ("getHexaIJK", nx << ny << nz);
+   DumpReturn (tab_hexa [nro]);
+   return      tab_hexa [nro]; 
 }
 // ====================================================== getQuadIJ
 Quad* Elements::getQuadIJ (int nx, int ny, int nz)
@@ -66,6 +68,9 @@ Quad* Elements::getQuadIJ (int nx, int ny, int nz)
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz 
                 + size_qx*size_qy*size_qz*dir_z;
+
+   DumpStart  ("getQuadIJ", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
    return tab_quad [nro]; 
 }
 // ====================================================== getQuadJK
@@ -80,6 +85,8 @@ Quad* Elements::getQuadJK (int nx, int ny, int nz)
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz; // + dir_x*...
 
+   DumpStart  ("getQuadJK", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
    return tab_quad [nro]; 
 }
 // ====================================================== getQuadIK
@@ -94,6 +101,8 @@ Quad* Elements::getQuadIK (int nx, int ny, int nz)
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz + size_qx*size_qy*size_qz;
 
+   DumpStart  ("getQuadIK", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
    return tab_quad [nro]; 
 }
 // ====================================================== getEdgeI
@@ -108,6 +117,8 @@ Edge* Elements::getEdgeI (int nx, int ny, int nz)
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz;
 
+   DumpStart  ("getEdgeI", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
    return tab_edge [nro]; 
 }
 // ====================================================== getEdgeJ
@@ -122,6 +133,8 @@ Edge* Elements::getEdgeJ (int nx, int ny, int nz)
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz + size_ex*size_ey*size_ez;
 
+   DumpStart  ("getEdgeJ", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
    return tab_edge [nro]; 
 }
 // ====================================================== getEdgeK
@@ -136,6 +149,9 @@ Edge* Elements::getEdgeK (int nx, int ny, int nz)
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz 
                 + size_ex*size_ey*size_ez*dir_z;
+
+   DumpStart  ("getEdgeK", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
    return tab_edge [nro]; 
 }
 // ====================================================== getVertexIJK
@@ -150,6 +166,8 @@ Vertex* Elements::getVertexIJK (int nx, int ny, int nz)
 
    int nro = nx + size_vx*ny + size_vx*size_vy*nz; 
 
+   DumpStart  ("getVertexIJK", nx << ny << nz);
+   DumpReturn (tab_vertex [nro]);
    return tab_vertex [nro]; 
 }
 // ====================================================== setVertex

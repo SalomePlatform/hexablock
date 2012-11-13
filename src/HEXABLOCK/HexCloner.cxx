@@ -110,7 +110,7 @@ Edge* Cloner::clonerEdge (Edge* orig)
        string trep;
        transfo_brep (brep, matrice, trep);
        Shape* tshape = new Shape (trep);
-       tshape->setBounds (shape->debut, shape->fin);
+       tshape->setBounds (shape->getStart(), shape->getEnd());
        copie ->addAssociation (tshape);
        if (db)
           {

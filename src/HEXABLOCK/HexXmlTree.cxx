@@ -101,18 +101,19 @@ int XmlTree::parseFile (const string& ficnom)
    int ier = parseXml ();
    return ier;
 }
-// ====================================================== parseFlow
-int XmlTree::parseFlow (cpchar flux)
+// ====================================================== parseStream
+int XmlTree::parseStream (cpchar flux, int& posit)
 {
    fic_buffer  = "";
    len_buffer  = 0;
    nro_ligne   = 0;
    fic_pos     = 1988;
 
-   xml_flow    = flux;
-   pos_flow    = 0;
+   xml_flow = flux;
+   pos_flow = posit;
 
-   int ier = parseXml ();
+   int ier  = parseXml ();
+   posit    = pos_flow;
    return ier;
 }
 // ====================================================== parseXml
@@ -151,6 +152,8 @@ int XmlTree::parseXml ()
               getItem (nom, M_IDENT);
               getItem (foo, M_END);
               node = node -> getParent ();
+              if (node==NULL)
+                 return HOK;
               break;
 
          case M_CLOSE :

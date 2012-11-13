@@ -65,7 +65,7 @@
          </size>
         </property>
         <property name="title">
-         <string>Quad</string>
+         <string>Quad of the model</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
@@ -93,7 +93,7 @@
          </size>
         </property>
         <property name="title">
-         <string>Face(s)</string>
+         <string>Face(s) of the geometry</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>

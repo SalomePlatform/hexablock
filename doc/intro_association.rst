@@ -28,7 +28,7 @@ of the model to the geometry, an alternative way exists: the first two
 steps above can be replaced by a new stage called association by lines
 (see :ref:`assolines`).
 
-.. image:: _static/association2.PNG
+.. image:: _static/association2.png
    :align: center
 
 .. centered::
@@ -66,8 +66,7 @@ For each vertex, the association is made in three steps:
 
 - Choose a vertex of the model to associate.
 - Choose the way of associating among the 4 possibilities described above.
-- Specify the point on the geometry, the process depends on the
-  previous choice:
+- Specify the point on the geometry, the process depends on the previous choice:
     - case of an existing vertex: selection and highlight on the
       vertices of the geometry solely
     - case of a point taken on an edge of the geometry: selection
@@ -90,8 +89,7 @@ applies four different algorithms in the following order:
 
 - the first algorithm determines a wire between the two vertices by
   taking the shortest way.
-- if that wire does not exist, then another wire is build in the
-  following manner:
+- if that wire does not exist, then another wire is build in the following manner:
     - compute the normals to the two vertices,
     - compute the mean normal of the two previous normals,
     - build the plan passing through the two vertices and this
@@ -115,10 +113,8 @@ Associate the quadrangles
 This step is optional. The model quadrangles association is
 automatic. The three cases are processed:
 
-- all the geometric faces exist then the nodes are computed on these
-  faces,
-- the faces do exist but some pieces are missing because of the new
-  edges or vertices, in that case two strategies are deployed:
+- all the geometric faces exist then the nodes are computed on these faces,
+- the faces do exist but some pieces are missing because of the new edges or vertices, in that case two strategies are deployed:
     - automatic construction of the missing faces from the contour lines,
     - or association of new faces build in the geometry,
 - there are no associated faces to the quadrangle of the model:

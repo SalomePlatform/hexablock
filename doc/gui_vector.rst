@@ -6,7 +6,7 @@
 Vector
 ======
 
-To create a **Vector** in the **Main Menu** select **Model -> Add vector**.
+To create a **Vector** in the **Main Menu** select **Model -> Construction -> Add vector**.
 
 There are two methods to create a **Vector**.
 

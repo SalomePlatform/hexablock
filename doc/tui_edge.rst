@@ -9,10 +9,14 @@ Edges
 
 Manage the edges of the document.
 
-Add an edge in the document::
+Add an edge, defined by two vertices, in the document::
 
     edge_12 = doc.addEdge(vertex_1, vertex_2)
 
+Add an edge, defined by one vertex and one vector, in the document::
+
+    edge_12 = doc.addEdgeVector(vertex, vector)
+    
 Get the number of all edges in the document::
 
     sum_a = doc.countEdge()
@@ -20,6 +24,10 @@ Get the number of all edges in the document::
 Get the number of edges used only in the model of blocks::
 
     sum_u = doc.countUsedEdge()
+    
+Get the edges used by the model of blocks
+
+.. literalinclude:: test_doc/edge/edge.py
 
 Get an edge of the document::
 

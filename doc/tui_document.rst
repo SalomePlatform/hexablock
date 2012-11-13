@@ -29,6 +29,26 @@ Set the tolerance need to find element::
 Get the tolerance::
 
     tol = doc.getTolerance()
+  
+Set Debug level (long)::
+  
+	doc.setLevel(debug_level)
 
+Removes elements of type Quad Edge or Vertex not belonging to an Hexa::
 
+	doc.purge()
+	
+Associate a shape to the document::
+
+	doc.setShape(shape)
+
+Gets the shape associated to the document:: 
+	
+	doc.getShape()
+
+Gets the Brep associated to the document::
+
+	doc.getBrep()
+	
+	
 GUI command: :ref:`guidocument`

@@ -73,7 +73,7 @@ module HEXABLOCK_ORB
 //             raises (SALOME::SALOME_Exception);
 
      void setColor (in double val)
-	raises (SALOME::SALOME_Exception);
+	raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
 
      void setScalar( in double val ) //CS_NOT_SPEC --> To delete
 	raises (SALOME::SALOME_Exception);

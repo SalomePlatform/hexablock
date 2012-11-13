@@ -48,8 +48,11 @@ salomeinclude_HEADERS = \
 	Hex.hxx \
 	HexPipe.hxx \
 	HexShape.hxx \
+	HexNewShape.hxx \
+	HexSubShape.hxx \
 	HexXmlTree.hxx \
 	HexCrossElements.hxx \
+	HexDumpStudy.hxx \
 	HexAnaQuads.hxx \
 	HexKasPoint.hxx \
 	HexKasLine.hxx \
@@ -85,11 +88,14 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexPipe.cxx \
 	HexLaw.cxx \
 	HexShape.cxx \
+	HexNewShape.cxx \
+	HexSubShape.cxx \
 	HexDocument_trans.cxx \
 	HexDocument_Xml.cxx \
 	HexDocument.cxx \
 	HexXmlTree.cxx \
 	HexXmlWriter.cxx \
+	HexDumpStudy.cxx \
 	HexCrossElements.cxx \
 	HexCrossElements_build.cxx \
 	Hex.cxx              \

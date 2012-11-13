@@ -287,7 +287,10 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
 
    cross_center = cross_cyl2->interCylinder (cross_cyl1, at_left, at_right);
    if (cross_center==NULL)
+      {
+      setError (HERR);
       return HERR;
+      }
 
    if (at_left)                     cyl_left = IS_HERE;
    else if (grid_type == GR_BIPIPE) cyl_left = NO_PIPE;

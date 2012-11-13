@@ -33,37 +33,68 @@ XmlWriter::XmlWriter  ()
    xml_level = 0;
    xml_pos   = 0;
    on_file   = true;
+   xml_mode  = InaStudy;
 }
-// ========================================================= openXml 
-int XmlWriter::openXml (cpchar nomfic)
+// ========================================================= setStream
+int XmlWriter::setStream ()
+{
+   xml_mode  = InaStream;
+   xml_file  = NULL;
+   on_file   = false;
+
+   return HOK;
+}
+// ========================================================= setFile
+int XmlWriter::setFile (pfile afile)
+{
+   xml_mode  = InaStudy;
+   xml_file  = afile;
+   on_file   = true;
+
+   if (xml_file==NULL)
+      {
+      xml_file = stdout;
+      xml_mode  = InaStream;
+      return HERR;
+      }
+
+   return HOK;
+}
+// ========================================================= setFileName 
+int XmlWriter::setFileName (cpchar nomfic)
+{
+   xml_mode  = InaFile;
+   xml_file  = stdout;
+   on_file   = true;
+
+   bool suff = true;
+   int  pext = strlen (nomfic) - 4;
+   if (pext > 0)
+      {
+      string sext = &nomfic[pext];
+      set_minus (sext);
+      suff = sext != ".xml";
+      }
+
+   string fname = nomfic;
+   if (suff) 
+      fname   += ".xml";
+
+   xml_file = fopen (fname.c_str(), "w");
+   if (xml_file==NULL)
+      {
+      xml_file = stdout;
+      return HERR;
+      }
+
+   return HOK;
+}
+// ========================================================= startXml 
+int XmlWriter::startXml ()
 {
    xml_level  = 0;
    xml_pos    = 0;
    xml_buffer = "";
-   xml_file   = stdout;
-   on_file    = false;
-
-   if (nomfic != NULL)
-      {
-      on_file   = true;
-      bool suff = true;
-      int  pext = strlen (nomfic) - 4;
-      if (pext > 0)
-         {
-         string sext = &nomfic[pext];
-         set_minus (sext);
-         suff = sext != ".xml";
-         }
-      string fname = nomfic;
-      if (suff) 
-         fname   += ".xml";
-      xml_file = fopen (fname.c_str(), "w");
-      if (xml_file==NULL)
-         {
-         xml_file = stdout;
-         return HERR;
-         }
-      }
 
    ecrire ("<?xml version='1.0'?>");
    return HOK;
@@ -74,10 +105,11 @@ void XmlWriter::closeXml ()
    while (NOT pile_mark.empty())
        closeMark ();
 
-   if (xml_file!=stdout)
+   if (xml_mode == InaFile && xml_file!=stdout)
+      {
       fclose (xml_file);
-
-   xml_file = stdout;
+      xml_file = stdout;
+      }
 }
 // ========================================================= addMark 
 void XmlWriter::addMark (cpchar balise, bool jump)

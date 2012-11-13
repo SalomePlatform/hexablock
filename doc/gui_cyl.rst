@@ -7,7 +7,7 @@
 Cylinder
 ========
 
-To create a **Cylinder** in the **Main Menu** select **Model -> Add Cylinder**.
+To create a **Cylinder** in the **Main Menu** select **Model -> Construction -> Add Cylinder**.
 
 **Arguments:** a vertex, a vector, a radius and a height.
 

@@ -7,7 +7,7 @@
 Quadrangle
 ==========
 
-To create a **Quadrangle** in the **Main Menu** select **Model -> Add Quadrangle**.
+To create a **Quadrangle** in the **Main Menu** select **Model -> Construction -> Add Quadrangle**.
 
 There are two algorithms to create a **Quadrangle**.
 

@@ -29,7 +29,7 @@ The TUI script to import geometrical objects from a BREP file is::
 
 The following images depict different CADs for the construction of models:
 
-.. image:: _static/cad_bielle.PNG
+.. image:: _static/cad_bielle.png
    :align: center
 
 .. centered::
@@ -38,20 +38,20 @@ The following images depict different CADs for the construction of models:
 (see :ref:`intropython`)
 
 
-.. image:: _static/bride.PNG
+.. image:: _static/bride.png
    :align: center
 
 .. centered::
    Bridle
 
-.. image:: _static/intersec_cyl.PNG
+.. image:: _static/intersec_cyl.png
    :align: center
 
 .. centered::
    Intersection of cylinders
 
 
-.. image:: _static/tuyau_courbe.PNG
+.. image:: _static/tuyau_courbe.png
    :align: center
 
 .. centered::

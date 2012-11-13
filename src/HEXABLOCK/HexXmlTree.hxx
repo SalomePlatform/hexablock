@@ -38,8 +38,8 @@ public :
    XmlTree (const string& name, XmlTree* dad=NULL);
   ~XmlTree ();
 
-   int  parseFile (const string& name);
-   int  parseFlow (cpchar flow);
+   int  parseFile   (const string& name);
+   int  parseStream (cpchar flux, int& posit);
 
    cpchar getName  ()   { return item_name.c_str() ; }
    int    getNbrAttributs  ()   { return nbr_attributs ; }

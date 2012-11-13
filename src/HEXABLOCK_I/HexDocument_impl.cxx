@@ -145,7 +145,7 @@ Vertex_ptr Document_impl::findVertex(::CORBA::Double x, ::CORBA::Double y, ::COR
   return result;
 }
 
-
+// ======================================================== addEdge
 Edge_ptr Document_impl::addEdge(Vertex_ptr v0In, Vertex_ptr v1In)
   throw(SALOME::SALOME_Exception)
 {
@@ -159,6 +159,27 @@ Edge_ptr Document_impl::addEdge(Vertex_ptr v0In, Vertex_ptr v1In)
     HEXA_NS::Vertex* v0 = v0InServant->GetImpl();
     HEXA_NS::Vertex* v1 = v1InServant->GetImpl();
     HEXA_NS::Edge* e = _document_cpp->addEdge( v0, v1 );
+    if ( e != NULL ){
+      Edge_impl* servantCorba = new Edge_impl(e);
+      result = servantCorba->_this();
+    }
+  }
+  return result;
+}
+// ======================================================== addEdgeVector
+Edge_ptr Document_impl::addEdgeVector (Vertex_ptr v0In, Vector_ptr w1In)
+  throw(SALOME::SALOME_Exception)
+{
+  Edge_ptr result = Edge::_nil();
+
+  Vertex_impl* v0InServant = ::DownCast<Vertex_impl*>( v0In );
+  Vector_impl* w1InServant = ::DownCast<Vector_impl*>( w1In );
+  ASSERT( v0InServant );
+  ASSERT( w1InServant );
+  if ( v0InServant &&  w1InServant ) {
+    HEXA_NS::Vertex* v0 = v0InServant->GetImpl();
+    HEXA_NS::Vector* w1 = w1InServant->GetImpl();
+    HEXA_NS::Edge* e = _document_cpp->addEdgeVector ( v0, w1 );
     if ( e != NULL ){
       Edge_impl* servantCorba = new Edge_impl(e);
       result = servantCorba->_this();
@@ -836,7 +857,7 @@ CrossElements_ptr Document_impl::makeCylinders(Cylinder_ptr c1In, Cylinder_ptr c
   return result;
 }
 
-Elements_ptr Document_impl::makePipes( Pipe_ptr p1In, Pipe_ptr p2In)
+CrossElements_ptr Document_impl::makePipes( Pipe_ptr p1In, Pipe_ptr p2In)
    throw (SALOME::SALOME_Exception)
 {
    Pipe_impl* p1Servant = ::DownCast<Pipe_impl*>( p1In );
@@ -848,8 +869,8 @@ Elements_ptr Document_impl::makePipes( Pipe_ptr p1In, Pipe_ptr p2In)
      HEXA_NS::Pipe* p1= p1Servant->GetImpl();
      HEXA_NS::Pipe* p2= p2Servant->GetImpl();
  
-     HEXA_NS::Elements* l = _document_cpp->makePipes( p1, p2);
-     Elements_impl* servantCorba = new Elements_impl(l);
+     HEXA_NS::CrossElements* l = _document_cpp->makePipes( p1, p2);
+     CrossElements_impl* servantCorba = new CrossElements_impl(l);
      return servantCorba->_this();
    }
 }
@@ -1631,6 +1652,17 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   HexDisplay (ier);
   return ier;
 }
+// ---------------------------------------------- Ajouts Hexa5
+// ===================================================== addShape
+void Document_impl::addShape (GEOM::GEOM_Object_ptr gobject, const char* name)
+                   throw(SALOME::SALOME_Exception)
+{
+   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()
+                       ->geomObjectToShape(gobject);
+    
+   _document_cpp->addShape (shape, name);
+   return;
+}
 // ---------------------------------------------- Ajouts Abu Sept 2011
 // ===================================================== setShape
 void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
@@ -1638,6 +1670,7 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
 {
   TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()
                        ->geomObjectToShape(geom_object);
+
   CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object);
 
   string strBrep = shape2string( shape );
@@ -1645,8 +1678,8 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
             << strBrep.size() << std::endl;
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
 
-  s->ior   = anIOR.in(); 
-  s->ident = geom_object->GetStudyEntry();
+  s->setIor   (anIOR.in()); 
+  s->setIdent (geom_object->GetStudyEntry());
 
   std::cout << " ............  Shape creee" << std::endl;
   _document_cpp->setShape (s);
@@ -1662,9 +1695,10 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
 
   if (s != NULL)
      {
-     if ( !s->ior.empty() )
+     string ior = s->getIor ();
+     if ( NOT ior.empty() )
         { // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( ior.c_str() );
         if ( !CORBA::is_nil( corbaObj ) )
            {
            geomObj = GEOM::GEOM_Object::_narrow( corbaObj );

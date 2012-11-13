@@ -23,19 +23,23 @@
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
 
-#include "hexa_base.hxx"
+#include "HexEltBase.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Document
+class NewShape;
+
+class Document : public EltBase
 {
                                    // Fonctions utilisateur
 public :
                                    // Fonctions globales
-   const char* getName ()              { return doc_name.c_str() ; }
    bool        isSaved ()              { return doc_saved ; } 
    int setName (const char* name);
-   int save    (const char* ficxml);
+
+   int save      (const char* ficxml); // Genere le xml dans un seul fichier 
+   int appendXml (pfile fstudy);       // Genere le xml dans un fichier ouvert
+   cpchar getXml ();                   // Genere le xml et rend un flux
 
    int  getLevel ()                    { return doc_db ; }
    void setLevel (int niv);
@@ -52,8 +56,11 @@ public :
 
                                    // Creation d'elements
    Vertex* addVertex (double x=0.0, double y=0.0, double z=0.0);
-   Edge*   addEdge   (Vertex* va, Vertex* vb);
-   Edge*   addEdge   (Vertex* va, Vector* vec);
+   Edge*   addEdge       (Vertex* va, Vertex* vb);
+   Edge*   addEdgeVector (Vertex* va, Vector* vec);
+
+   Edge*   addEdge   (Vertex* va, Vector* vec)             // A supprimer
+                     { return addEdgeVector (va, vec) ; }  // (comptibilite)
 
    Quad*   addQuadVertices   (Vertex* v1, Vertex* v2, Vertex* v3, Vertex* v4);
    Quad*   addQuad   (Edge* v1, Edge* v2, Edge* v3, Edge* v4);
@@ -68,7 +75,9 @@ public :
    Elements* makeCartesian   (Vertex* v, Vector* v1, 
                        int px, int py, int pz, int mx=0, int my=0, int mz=0);
    Elements* makeCartesian   (Vertex* v, Vector* v1, Vector* v2, Vector* v3, 
-                       int px, int py, int pz, int mx=0, int my=0, int mz=0);
+                       int px, int py, int pz);
+   Elements* makeCartesian1  (Vertex* v, Vector* v1, Vector* v2, Vector* v3, 
+                       int px, int py, int pz, int mx, int my, int mz);
 
    Elements* makeCylindrical (Vertex* c, Vector* b, Vector* h, double dr, 
              double da, double dl, int nr, int na, int nl, bool fill=false);
@@ -138,7 +147,7 @@ public :
    Elements* cut (Edge* edge, int nbcuts);
 
    Group* addGroup    (cpchar name, EnumGroup kind);
-   Group* getGroup    (int nro)        { return doc_group [nro];  }
+   Group* getGroup    (int nro);
    Group* findGroup   (cpchar name);
    int    removeGroup (Group* grp);
    int    countGroup  ()               { return (int) doc_group.size(); }
@@ -162,9 +171,9 @@ public :
    int countCylinder ()            { return doc_cylinder.size(); }
    int countPipe ()                { return doc_pipe.size(); }
 
-   Vector*   getVector   (int nro)   { return doc_vector [nro]; }
-   Cylinder* getCylinder (int nro)   { return doc_cylinder [nro]; }
-   Pipe*     getPipe     (int nro)   { return doc_pipe [nro]; }
+   Vector*   getVector   (int nro);
+   Cylinder* getCylinder (int nro);
+   Pipe*     getPipe     (int nro);
 
    void purge ();
    int  associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
@@ -172,9 +181,6 @@ public :
    int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
                              Shape*  gstart, double pstart, bool inv, 
                              Shapes& gline);
-
-   void   setShape (Shape* forme)           { doc_shape = forme ; }
-   Shape* getShape ()                       { return doc_shape  ; }
 
    // --------------------------------------------------- Evols Hexa3
 
@@ -234,19 +240,21 @@ public :
    void getAssoVertices (Vertices& tabelt);
 
 public:
-    Document (cpchar name);
+    Document (cpchar name, Hex* dad=NULL);
    ~Document ();
 
     int    loadXml (cpchar name);
     int    setXml  (cpchar flux);
-    cpchar getXml  ();
+    int    setXml  (cpchar flux, int& position);
 
     EltBase* getFirstEltBase (EnumElt type) { return doc_first_elt [type]; }
     EltBase* getLastEltBase  (EnumElt type) { return doc_last_elt  [type]; }
+    int      getNbrElt  (EnumElt type)      { return doc_nbr_elt   [type]; }
     void     setDeprecated (int level=1);
 
     void dump ();
     void markAll (int marque, int type=-1);
+    int  saveVtk0 (cpchar nomfic); 
     int  saveVtk  (cpchar nomfic); 
     int  saveVtk  (cpchar radical, int &nro); 
 
@@ -261,11 +269,27 @@ public:
     void  reorderFaces ();
     void  reorderQuads ();
 
+   // --------------------------------------------------- Evols Hexa5
+   cpchar getNextName (EnumElt type, string& name); 
+   string getNextName (EnumElt type);
+
+   virtual char* makeVarName (char* name);
+   void    lockDump();
+   void    restoreDump();
+   bool    isEmpty ();
+
+   void   setShape (Shape* forme)  { doc_shape = forme ; }
+   Shape* getShape ()              { return doc_shape  ; }
+
+   void   addShape   (TopoDS_Shape& forme, const char* name);
+   int    countShape ()            { return doc_tab_shape.size() ; }
+
+
 public:
    Globale* glob;
 
 private :
-   int   genXml   (cpchar filename);
+   int   genXml   (); 
    int   parseXml (XmlTree& xml);
 
    void  replaceVertex (Vertex* v1, Vertex* v2);
@@ -309,7 +333,6 @@ private :
    int  doc_db;
    int  nbr_errors;
 
-   std::string doc_name; 
    EltBase* doc_first_elt [EL_MAXI];
    EltBase* doc_last_elt  [EL_MAXI];
    int      doc_nbr_elt   [EL_MAXI];
@@ -343,6 +366,14 @@ private :
    int nbr_used_quads;
    int nbr_used_edges;
    int nbr_used_vertex;
+
+   // --------------------------------------------------- HexaBlock v5
+
+   static int doc_number;
+   char      doc_ident [8];
+   Hex*      hex_parent;
+   
+   std::vector <NewShape*> doc_tab_shape;
 };
 // ========================================================= saveVtk (avec nro)
 inline int Document::saveVtk  (cpchar radical, int &nro)

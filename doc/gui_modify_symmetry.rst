@@ -7,7 +7,7 @@
 Modify elements by symmetry
 ===========================
 
-To modify elements by symmetry elements in the **Main Menu** select **Model -> Perform Symmetry**.
+To modify elements by symmetry elements in the **Main Menu** select **Model -> Operation -> Perform Symmetry**.
 
 .. _guimodifypoint:
 
@@ -48,8 +48,8 @@ The dialogue box to modify elements by line symmetry is:
 
 .. _guimodifyplan:
 
-Modify elements by plan symmetry
-================================
+Modify elements by plane symmetry
+=================================
 
 **Arguments:**
 
@@ -57,12 +57,13 @@ Modify elements by plan symmetry
 - vertex,
 - vector.
 
-The dialogue box to modify elements by plan symmetry is:
+The dialogue box to modify elements by plane symmetry is:
 
 .. image:: _static/gui_modify_plan_symmetry.png
    :align: center
 
 .. centered::
-   Modify Elements by Plan Symmetry
+   Modify Elements by Plane Symmetry
 
  
+TUI command: :ref:`tuimodifysymmetry`

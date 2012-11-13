@@ -79,6 +79,7 @@ public:
     virtual void duplicate ();
     Edge*   getClone ()                     {  return e_clone ;   }
     double* getVector (double vecteur[]);
+    string  makeDefinition ();
 
 private:
     friend class Cloner;

@@ -36,7 +36,7 @@ static bool db=false;
 BEGIN_NAMESPACE_HEXA
 
 // ====================================================== Constructeur
-Elements::Elements (Document* doc) : EltBase (doc)
+Elements::Elements (Document* doc) : EltBase (doc, EL_GRID)
 {
    glob  = Globale::getInstance ();
 
@@ -56,7 +56,8 @@ Elements::Elements (Document* doc) : EltBase (doc)
    prism_vec   = false;
 }
 // ====================================================== Constructeur
-Elements::Elements (Document* doc, int nx, int ny, int nz) : EltBase (doc)
+Elements::Elements (Document* doc, int nx, int ny, int nz) 
+        : EltBase (doc, EL_GRID)
 {
    glob  = Globale::getInstance ();
 

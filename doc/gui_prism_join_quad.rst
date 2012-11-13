@@ -13,11 +13,18 @@ Prism and join quadrangles
 Prism Quadrangles
 =================
 
-To prism from quadrangles in the **Main Menu** select **Model -> Prism Quadrangles**.
+To prism from quadrangles in the **Main Menu** select **Model -> Operation -> Prism Quadrangles**.
 
 From a list of quadrangles, a set of hexahedra is created.
 
-**Arguments:** list of quadrangles, a vector (direction) and the number of layers.
+Regular
+-------
+
+**Arguments:** 
+
+- a list of quadrangles
+- a vector (direction)
+- the number of layers
 
 The dialogue box to prism from quadrangles is:
 
@@ -37,7 +44,37 @@ Example:
 
 .. centered::
    Prism Quads
+   
 
+Irregular
+---------
+
+**Arguments:** 
+
+- a list of quadrangles
+- a vector (direction)
+- a list of heights (a height for each layer - ascending)
+
+The dialogue box to prism from quadrangles irregular mode is:
+
+
+.. image:: _static/gui_prism_quads_irregular.png
+   :align: center
+
+.. centered::
+   Prism From Quadrangles (Irregular mode)
+
+
+
+Example:
+
+.. image:: _static/prisme_gui2.png
+   :align: center
+
+.. centered::
+   Irregular Prism Quads
+   
+TUI command: :ref:`tuiprismquad`
 
 
 .. _joinquad:
@@ -45,7 +82,7 @@ Example:
 Join Quadrangles
 ================
 
-To join quadrangles in the **Main Menu** select **Model -> Join Quadrangles**.
+To join quadrangles in the **Main Menu** select **Model -> Operation -> Join Quadrangles**.
 
 .. image:: _static/gui_join_quads.png
    :align: center
@@ -58,8 +95,8 @@ The following data are required:
 
 - From
     - Quadrangles: the set of quadrangles to be joined and from which hexahedra will be created.
-    - Point a: a vertex belonging to the set of quadrangles.
-    - Point b: a vertex belonging to the set of quadrangles.
+    - Point a: a vertex belonging to the first quadrangle of the set of quadrangles.
+    - Point b: a vertex, consecutive to previous Point a, belonging to the first quadrangle.
 
 - To
     - Quadrangle: a quadrangle from the set of targeted quadrangles.
@@ -70,4 +107,5 @@ The following data are required:
     - size: number of layers of hexahedra issued from the operation.
 
 
-TUI command: :ref:`tuiprismjoinquad`
+TUI command: :ref:`tuijoinquad`
+

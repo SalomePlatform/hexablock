@@ -10,7 +10,7 @@ Appendix: naming rule to find elements in an hexahedron
 Definition of an hexahedron
 ===========================
 
-.. image:: _static/HEXAHEDRON.PNG
+.. image:: _static/hexahedron.png
    :align: center
 
 

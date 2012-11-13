@@ -62,7 +62,7 @@ module HEXABLOCK_ORB
       raises (SALOME::SALOME_Exception);
 
     void dump()
-      raises (SALOME::SALOME_Exception);
+      raises (SALOME::SALOME_Exception); //CS_NOT_SPEC
     /*!
     */
     string getName()
@@ -102,9 +102,12 @@ module HEXABLOCK_ORB
 
 
     /*!
-        ArÃªtes
+        Aretes
     */
     Edge addEdge( in Vertex v0, in Vertex v1 )
+        raises (SALOME::SALOME_Exception);
+
+    Edge addEdgeVector ( in Vertex v0, in Vector w1 )
         raises (SALOME::SALOME_Exception);
 
     long countEdge()
@@ -138,7 +141,7 @@ module HEXABLOCK_ORB
 
 
     /*!
-        HexaÃ¨dre
+        Hexaedre
     */
     Hexa addHexa( in Quad q0, in Quad q1, in Quad q2, in Quad q3, in Quad q4, in Quad q5 )
         raises (SALOME::SALOME_Exception);
@@ -212,7 +215,7 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
    /*!
-       Grille cartÃ©siennes
+       Grille cartesiennes
    */
     Elements makeCartesian( in Vertex pt, 
             in Vector vx, in Vector vy, in Vector vz,
@@ -245,18 +248,18 @@ module HEXABLOCK_ORB
         raises (SALOME::SALOME_Exception);
 
     /*!
-        Grille sphÃ©rique
+        Grille spherique
     */
 
     Elements makeSpherical( in Vertex pt,
         in double rayon,
         in long n,
         in double k )
-        raises (SALOME::SALOME_Exception); //CS_TO_DEL
+        raises (SALOME::SALOME_Exception); 
 
 
     /*!
-        Cylindre dÃ©coupÃ© en blocs
+        Cylindre decoupe en blocs
     */
 //     Elements makeCylinder( in Cylinder cyl, in long nr, in long na, in long nl )
 //         raises (SALOME::SALOME_Exception);//CS_TODO
@@ -279,7 +282,7 @@ module HEXABLOCK_ORB
     /*!
         2 Tuyau decoupe en intersection decoupees en blocs
     */
-    Elements makePipes( in Pipe p1, in Pipe p2 )
+    CrossElements makePipes( in Pipe p1, in Pipe p2 )
         raises (SALOME::SALOME_Exception);
 
     /*!
@@ -343,7 +346,7 @@ module HEXABLOCK_ORB
 // 
 // 
 //     /*!
-//         Fusionner 2 Ã©lÃ©ments de mÃªme nature //CS_NOT_SPEC
+//         Fusionner 2 elements de meme nature //CS_NOT_SPEC
 //     */
 
 //     Elements mergeQuads( in Quad qa, in Quad qb,
@@ -387,7 +390,7 @@ module HEXABLOCK_ORB
 	raises (SALOME::SALOME_Exception);
 
     /*!
-        Couper des hexaÃ¨dres du modÃ¨le
+        Couper des hexaedres du modele
     */
     Elements cut( in Edge e, in long nb_of_cuts )
         raises (SALOME::SALOME_Exception);
@@ -446,7 +449,7 @@ module HEXABLOCK_ORB
 //     */
 // 
 //     /*!
-//         CrÃ©er, Ã©diter et supprimer un groupe
+//         Creer, editer et supprimer un groupe
 //     */
 //     HexaGroup addHexaGroup( in string name )
     Group addHexaGroup( in string name )
@@ -491,7 +494,7 @@ module HEXABLOCK_ORB
 
 
     /*!
-        DÃ©finir une loi de discrÃ©tisation
+        Definir une loi de discretisation
     */
     Law addLaw( in string name, in long nb_nodes )
         raises (SALOME::SALOME_Exception);
@@ -533,6 +536,8 @@ module HEXABLOCK_ORB
                             in Shapes gline)
         raises (SALOME::SALOME_Exception);
 
+//       Shape
+
    void setShape (in GEOM::GEOM_Object geom_object_vertex )
             raises (SALOME::SALOME_Exception);
 
@@ -571,12 +576,17 @@ module HEXABLOCK_ORB
          raises (SALOME::SALOME_Exception);
 
     boolean removeQuad( in Quad q )
-        raises (SALOME::SALOME_Exception);
+        raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
     boolean removeElements( in Elements b )
         raises (SALOME::SALOME_Exception);
 
     void clearAssociation ()
       raises (SALOME::SALOME_Exception);
+                 
+                    // Hexa 5
+
+    void addShape (in GEOM::GEOM_Object geom_object_vertex, in string name)
+           raises (SALOME::SALOME_Exception);
   };
 };
 

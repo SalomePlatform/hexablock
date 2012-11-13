@@ -26,6 +26,7 @@
 #include <GEOM_Displayer.h>
 #include <SALOME_ListIO.hxx>
 #include <SALOMEconfig.h>
+#include <SUIT_ViewWindow.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
 #include <QString>
@@ -60,6 +61,10 @@ public:
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
   void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
+  void erasePreview    ( const bool = true );
+
+  void localSelection(SUIT_ViewWindow *view, const int theMode);
+  void globalSelection2( SUIT_ViewWindow *view, const bool update = false  );
 
 protected:
   static GEOM::GEOM_Gen_ptr getGeomEngine();
@@ -91,7 +96,6 @@ protected:
   void displayPreview  ( const SALOME_Prs* prs, 
                          const bool append = false, 
                          const bool = true );
-  void erasePreview    ( const bool = true );
 
 //  void localSelection( const ObjectList&, const int );
 //  void localSelection( GEOM::GEOM_Object_ptr, const int );

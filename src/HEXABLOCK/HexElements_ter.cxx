@@ -22,6 +22,7 @@
 
 #include "HexElements.hxx"
 
+#include "HexDocument.hxx"
 #include "HexVector.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
@@ -483,7 +484,7 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
              string brep   = shape->getBrep();
              translate_brep (brep, vdir1, trep);
              Shape* tshape = new Shape (trep);
-             tshape->setBounds (shape->debut, shape->fin);
+             tshape->setBounds (shape->getStart(), shape->getEnd());
              dest->addAssociation (tshape);
              }
           }
@@ -544,7 +545,7 @@ int Elements::prismAssociation (Edge* orig, Edge* dest, int nh, Edge* dir)
              //   translate_brep (brep, vdir, trep);
              transfo_brep (brep, &gen_matrix, trep);
              Shape* tshape = new Shape (trep);
-             tshape->setBounds (shape->debut, shape->fin);
+             tshape->setBounds (shape->getStart(), shape->getEnd());
              dest->addAssociation (tshape);
              }
           }

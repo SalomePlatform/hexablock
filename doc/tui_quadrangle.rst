@@ -23,6 +23,11 @@ Get the number of all quadrangles of the document::
 Get the number of used quadrangles in the model of blocks::
 
     sum_u = doc.countUsedQuad()
+    
+Get the quads used by the model of blocks
+
+.. literalinclude:: test_doc/quad/quad.py
+
 
 Get a quadrangle of the document::
 

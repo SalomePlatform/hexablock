@@ -32,7 +32,7 @@ class Shape
 public :
     Shape (string brep);
     string getBrep  () { return b_rep; }
-    string getName  () { return ident; }
+    string getIdent () { return ident; }
     string getIor   () { return ior; }
 
     double getStart () { return debut;  }
@@ -40,7 +40,7 @@ public :
     void   getBounds (double& pdeb, double& pfin)  { pdeb=debut ; pfin = fin; }
 
     void  setBrep   (string brep)               { b_rep = brep; }
-    void  setName   (string name)               { ident = name; }
+    void  setIdent  (string name)               { ident = name; }
     void  setIor    (string val)                { ior   = val; }
 
     void  setBounds (double pdeb, double pfin)  { debut = pdeb ; fin = pfin; }
@@ -49,13 +49,12 @@ public :
 
     void  saveXml   (XmlWriter* xml);
 
-public :
+private :
     double debut;
     double fin;
     string ident;
     string ior;
 
-private :
     std::string b_rep;
 };
 END_NAMESPACE_HEXA

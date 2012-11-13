@@ -46,15 +46,20 @@ namespace HEXABLOCK
           Q_OBJECT
       
       public:
+          /// close the editor
           void closeDialog();
+
           DocumentDelegate( QDockWidget *dw, QObject *parent = 0);
 
+          /// create the editor
           QWidget *createEditor( QWidget *parent,
                                  const QStyleOptionViewItem &option,
                                  const QModelIndex &index) const;
 
+          /// set editor's data
           void setEditorData( QWidget *editor, const QModelIndex &index) const;
 
+          /// set the editor's model
           void setModelData( QWidget            *editor,
                              QAbstractItemModel *model,
                              const QModelIndex  &index ) const {};
@@ -62,15 +67,6 @@ namespace HEXABLOCK
           virtual void updateEditorGeometry( QWidget *editor,
                                      const QStyleOptionViewItem &option,
                                      const QModelIndex &index ) const {};
-
-          //Can be used by editor
-          void setDocumentModel( DocumentModel* m ){_documentModel = m;}
-
-          //Selections
-          void setPatternDataSelectionModel( PatternDataSelectionModel* s ){_patternDataSelectionModel = s;}
-          void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s ){_patternBuilderSelectionModel = s;}
-          void setGroupsSelectionModel( GroupsSelectionModel* s ){_groupsSelectionModel = s ;}
-          void setMeshSelectionModel( MeshSelectionModel* s ){_meshSelectionModel = s;}
 
       protected:
           mutable QWidget* _currentEditor;
@@ -85,14 +81,6 @@ namespace HEXABLOCK
 
       private:
           QDockWidget* _dw; // creator's container
-
-          // can be used by editor
-          DocumentModel*                _documentModel;
-
-          PatternDataSelectionModel*    _patternDataSelectionModel;
-          PatternBuilderSelectionModel* _patternBuilderSelectionModel;
-          GroupsSelectionModel*         _groupsSelectionModel; 
-          MeshSelectionModel*           _meshSelectionModel;
 
       private slots:
           void commitEditor();

@@ -22,6 +22,7 @@
 
 #include "HexElements.hxx"
 #include "HexEdge.hxx"
+#include "HexDocument.hxx"
 
 #ifndef NO_CASCADE
 #include "HexKasBiCylinder.hxx"
@@ -322,9 +323,9 @@ void geom_dump_asso (Edge* edge)
           double* fin = asso_line.getEnd    ();
           double  lg  = asso_line.getLength ();
           printf (" Longueur = %g\n", lg);
-          printf (" Debut = %g = (%g, %g, %g)\n", shape->debut, 
+          printf (" Debut = %g = (%g, %g, %g)\n", shape->getStart(), 
                                                   deb[0], deb[1], deb[2]);
-          printf (" Fin   = %g = (%g, %g, %g)\n", shape->fin, 
+          printf (" Fin   = %g = (%g, %g, %g)\n", shape->getEnd(), 
                                                   fin[0], fin[1], fin[2]);
           }
        }
@@ -535,6 +536,20 @@ void set_debug_asso (bool boule)
    if (db)
        printf (" ... Traces actives dans  HexAssoElements_asso.cxx\n");
 }
+// ====================================================== clean_brep
+void clean_brep (string& brep)
+{
+   TopoDS_Shape  shape;
+   BRep_Builder  builder;
+   istringstream stream_brep (brep);
+
+   BRepTools::Read  (shape, stream_brep, builder);
+   BRepTools::Clean (shape);
+
+   ostringstream    stream_shape;
+   BRepTools::Write (shape, stream_shape);
+   brep = stream_shape.str();
+}
 END_NAMESPACE_HEXA
       
 // ------------------------------------------------------------------------
@@ -613,6 +628,10 @@ int geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
 int geom_asso_cylcyl (Edge* edge)
 {
    return HOK;
+}
+// ====================================================== clean_brep
+void clean_brep (string& brep)
+{
 }
 END_NAMESPACE_HEXA
 #endif

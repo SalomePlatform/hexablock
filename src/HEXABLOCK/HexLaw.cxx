@@ -25,7 +25,7 @@ BEGIN_NAMESPACE_HEXA
 int Law::last_law_id = 0;
 
 // ================================================== Constructeur
-Law::Law (cpchar name, int nbnodes)
+Law::Law (Document* dad, cpchar name, int nbnodes) : EltBase (dad, EL_LAW)
 {
    nbr_nodes = nbnodes;
    law_id = last_law_id++;
@@ -37,14 +37,15 @@ Law::Law (cpchar name, int nbnodes)
    if (!_nom.empty())
 	law_name = _nom;
    else {
-   	char buffer [16];
-   	sprintf (buffer, "l%04d", law_id);
-        law_name = std::string(buffer);
+	char buffer [16];
+    sprintf (buffer, "l%04d", law_id);
+    law_name = std::string(buffer);
    }
 
    law_type  = Uniform;
    law_coefficient = 0.0;
 }
+
 // ================================================== Constructeur 2
 Law::Law (Law* other)
 {
@@ -52,6 +53,14 @@ Law::Law (Law* other)
    law_name        = other->law_name ;
    law_type        = other->law_type ;
    law_coefficient = other->law_coefficient;
+   el_root         = other->el_root;
+}
+
+// ========================================================= getNextName
+char* Law::getNextName  (pchar buffer)
+{
+   sprintf (buffer, "l%04d", last_law_id);
+   return   buffer;
 }
 
 END_NAMESPACE_HEXA

@@ -6,16 +6,20 @@
 Discretize on the propagation edges
 ===================================
 
-To define a propagation in the **Main Menu** select **Mesh -> Set Propagation**.
+To define a law for a propagation or a list of propagations in the **Main Menu** select **Mesh -> Set Propagation**.
 
-**Arguments:** a law and a direction.
+**Arguments:** 
 
-The dialogue box for creating a propagation is:
+ - a List of propagations
+ - a Law
+ - direction (way)
+
+The dialogue box for setting a law for a propagation or a list of propagations is:
 
 .. image:: _static/gui_propagation.png
    :align: center
 
 .. centered::
-   Propagation
+   Setting propagations' law
 
 TUI command: :ref:`tuipropag`

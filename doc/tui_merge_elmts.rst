@@ -18,6 +18,7 @@ where:
 
 va1 : vertex of the quadrangle qa to merge with the vertex vb1 of the
 quadrangle qb.
+
 va2 : vertex of the quadrangle qa to merge with the vertex vb2 of the
 quadrangle qb.
 

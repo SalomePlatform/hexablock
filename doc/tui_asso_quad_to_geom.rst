@@ -74,4 +74,38 @@ Associate a closed line::
 
     l = doc.associateClosedLine(mfirst, mstart, mline, gstart, pstart, gline)
 
+.. _tuiassocfacenote:
+
+Note for face association
+=========================
+
+Face association (implicite or explicite) is not necessary for:
+
+- planar faces, 
+- cylindrical faces,
+- conical faces.
+
+Only edges association (implicite) on segments or arcs of cirle is necessary.
+
+The following example show a model of block on which there isn't faces association but only 
+implicite edges association on arcs of circle.
+ 
+ 
+Example
+-------
+
+.. literalinclude:: test_doc/test_cone/test_cone.py
+   :linenos:
+
+
+Result
+------
+
+.. image:: _static/cone_mesh.png
+   :align: center
+
+.. centered::
+   Cone mesh
+   
+   
 GUI command: :ref:`guiassoquadtogeom`

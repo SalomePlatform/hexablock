@@ -7,7 +7,7 @@ Quad revolution
 ===============
 
 
-To make a **Quad revolution** in the **Main Menu** select **Model -> Quad Revolution**.
+To make a **Quad revolution** in the **Main Menu** select **Model -> Operation -> Quad Revolution**.
 
 .. image:: _static/gui_quadrevolution.png
    :align: center
@@ -19,14 +19,10 @@ To make a **Quad revolution** in the **Main Menu** select **Model -> Quad Revolu
 
 The following data are required:
 
-- Result Name
-    - name: name of the elements created (**optional**).
-
-- Arguments
-    - Quads: a set of quadrangles from which hexahedrons will be created (select quads).
-    - Center: center of rotation (select a vertex).
-    - Axis: axis of rotation (select a vector).
-    - Angles: a set of angle (in degrees). Specify the rotation's angle at each step of it.
+   - Quads: a set of quadrangles from which hexahedrons will be created (select quads).
+   - Center: center of rotation (select a vertex).
+   - Axis: axis of rotation (select a vector).
+   - Angles: a set of angle (in degrees). Specify the rotation's angle at each step of it.
 
 
 Here is an example where the selected quadrangles are highlighted:
@@ -36,7 +32,7 @@ Here is an example where the selected quadrangles are highlighted:
 
 .. centered::
    Quad selection
-
+   
 
 The result:
 

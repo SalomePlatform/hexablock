@@ -6,7 +6,7 @@
 Create grids
 ============
 
-To create a **Grid** in the **Main Menu** select **Model -> Make Grid**.
+To create a **Grid** in the **Main Menu** select **Model -> Construction -> Make Grid**.
 
 Three kinds of grid can be created:
 
@@ -65,8 +65,8 @@ The following data are required:
 
 - Cylinder
     - center: coordinates of the cylinder base center (select a vertex).
+    - axis: direction vector of the cylinder (select a vector).
     - base: base vector of the cylinder (select a vector).
-    - height: vertical vector of the cylinder (select a vector).
 
 - Grid
     - radius: size and number of elements from the center.
@@ -82,26 +82,7 @@ Elements size of the grid can be irregular (differents sizes). Select the adequa
 
 .. centered::
    Dialogue Box for a Cylindrical grid (irregular size)
-
-
-The result is an array of hexahedra which are arranged along the
-radial axis first, then the angular axis, then according to the layers
-and then possibly hexahedra filling the central part.
-
-The filling of the central part of the cylinder is made​ according to the two following cases:
-
-.. image:: _static/cyl_grid2.PNG
-   :align: center
-
-.. centered::
-   Filling of the central part of the cylinder in the case the number of angular elements is odd na = 5.
-
-.. image:: _static/cyl_grid1.PNG
-   :align: center
-
-.. centered::
-   Filling of the central part of the cylinder in the case the number of angular elements is even na = 4.
-
+   
 
 The result:
 
@@ -146,7 +127,7 @@ To create a spherical grid, select radio button **Spherical**:
 The following data are required:
 
 - the center (vertex) of the central hexahedron,
-- the vector corresponding to the diametrically opposite vertex to the initial vertex,
+- the radius of the internal hexahedron
 - the number of embedded hexahedra (nb),
 - the coefficient of growth (k).
 

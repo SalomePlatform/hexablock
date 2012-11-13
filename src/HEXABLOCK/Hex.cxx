@@ -21,15 +21,20 @@
 //
 #include "Hex.hxx"
 
+#include "HexEltBase.hxx"
 #include "HexDocument.hxx"
+#include "HexGlobale.hxx"
 #include <clocale>
 
 BEGIN_NAMESPACE_HEXA
+
+Hex* Hex::first_instance = NULL;
 
 // ======================================================== Constructeur
 Hex::Hex ()
 {
    setlocale (LC_NUMERIC, "C");
+   glob = Globale::getInstance ();
 }
 // ======================================================== Destructeur
 Hex::~Hex ()
@@ -56,6 +61,10 @@ Document* Hex::getDocument (int nro)
 // ======================================================== removeDocument
 void Hex::removeDocument (Document* doc)
 {
+   bool actif = glob->dump.start ("hexablock", "removeDocument");
+   if (actif)
+       glob->dump << doc;
+
    int nbre = liste_documents.size();
    for (int nd=0 ; nd<nbre ; nd++) 
        {
@@ -63,24 +72,130 @@ void Hex::removeDocument (Document* doc)
           {
           liste_documents.erase (liste_documents.begin()+nd);
           delete doc;
+          glob->dump.close (actif);
           return;
           }
        }
                       // Pas trouve dans la liste. On detruit quand meme
+    glob->dump.close (actif);
     delete doc;
 }
 // ======================================================== addDocument
 Document* Hex::addDocument (cpchar nomdoc)
 {
-   Document* doc = new Document (nomdoc);
+   bool actif = glob->dump.start ("hexablock", "addDocument");
+   if (actif)
+       glob->dump << nomdoc;
+
+   string name;
+   makeName (nomdoc, name);
+   Document* doc = new Document (name.c_str(), this);
+
    liste_documents.push_back (doc);
+
+   glob->dump.close (actif, doc);
    return doc;
 }
 // ======================================================== loadDocument
-Document* Hex::loadDocument (const char* filename)
+Document* Hex::loadDocument (cpchar filename)
 {
-   Document* doc = addDocument ("xxxx");
+   bool actif = glob->dump.start ("hexablock", "loadDocument");
+   if (actif)
+       glob->dump << filename;
+
+   Document* doc = addDocument ("default");
    doc->loadXml (filename);
+
+   glob->dump.close (actif, doc);
    return doc;
+}
+// ======================================================== loadAllDocs
+int Hex::loadAllDocs (cpchar stream)
+{
+   int posit  = 0;
+   int car    = ' '; 
+   int nbdocs = 0;
+
+   while ( (car=stream[posit++]) != '>')
+         if (car>='0' && car <='9')
+            nbdocs = 10*nbdocs + car - '0';
+            
+   for (int nro = 0; nro<nbdocs ; nro++)
+       {
+       Document* doc = addDocument ("xxxx");
+       doc->setXml (stream, posit);
+       }
+
+   PutData (posit);
+   return HOK;
+}
+// ======================================================== saveAllDocs
+int Hex::saveAllDocs (cpchar filename)
+{
+   FILE* fic = fopen (filename, "w");
+   if (fic==NULL)
+      return HERR;
+
+   int nbdocs = countDocument ();
+   fprintf (fic, "<%d>", nbdocs);
+
+   for (int nro = 0; nro<nbdocs ; nro++)
+       {
+       Document* doc = getDocument (nro);
+       if (doc!=NULL)
+           doc->appendXml (fic);
+       }
+
+   fclose  (fic);
+   return HOK;
+}
+// ======================================================== findDocument
+Document* Hex::findDocument (cpchar name)
+{
+   int nbdocs   = liste_documents.size();
+   for (int nro = 0; nro<nbdocs ; nro++)
+       {
+       Document*  doc = getDocument (nro);
+       cpchar docname = doc->getName ();
+       if (doc!=NULL && Cestegal (name, doc->getName ()))
+          return doc;
+       }
+   return NULL;
+}
+// ======================================================== makeName
+void Hex::makeName (cpchar radical, string& name)
+{
+   char cnum [8];
+   int  numero = 0;
+   while (true)
+       {
+       name = radical;
+       if (numero>0)
+          {
+          sprintf (cnum, "_%d", numero);
+          name += cnum;
+          }
+       numero ++;
+       if (findDocument (name)==NULL)
+          return;
+       }
+}
+// ======================================================== lockDump
+void Hex::lockDump ()
+{
+   glob->dump.lock ();
+}
+// ======================================================== restoreDump
+void Hex::restoreDump ()
+{
+   glob->dump.restore (DumpActif);
+}
+// ====================================================== getInstance
+Hex* Hex::getInstance  ()
+{
+   if (first_instance==NULL) 
+       first_instance = new Hex ();
+
+   return first_instance;
 }
 END_NAMESPACE_HEXA

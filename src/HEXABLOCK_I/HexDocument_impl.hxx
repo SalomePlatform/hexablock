@@ -56,7 +56,10 @@ public:
   ::CORBA::Long countVertex() throw (SALOME::SALOME_Exception);
   Vertex_ptr getVertex(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Vertex_ptr findVertex(::CORBA::Double x, ::CORBA::Double y, ::CORBA::Double z) throw (SALOME::SALOME_Exception);
-  Edge_ptr addEdge(Vertex_ptr v0, Vertex_ptr v1) throw (SALOME::SALOME_Exception);
+  Edge_ptr addEdge(Vertex_ptr v0, Vertex_ptr v1) 
+                   throw (SALOME::SALOME_Exception);
+  Edge_ptr addEdgeVector (Vertex_ptr v0, Vector_ptr w1) 
+                   throw (SALOME::SALOME_Exception);
   ::CORBA::Long countEdge() throw (SALOME::SALOME_Exception);
   Edge_ptr getEdge(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Edge_ptr findEdge(Vertex_ptr p1, Vertex_ptr p2) throw (SALOME::SALOME_Exception);
@@ -103,9 +106,9 @@ Pipe_ptr getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception);
                 throw (SALOME::SALOME_Exception);
 
 //   Elements_ptr makeCylinders(Cylinder_ptr c1, Cylinder_ptr c2) throw (SALOME::SALOME_Exception);
-    CrossElements_ptr makeCylinders(Cylinder_ptr cyl1, Cylinder_ptr cyl2) throw (SALOME::SALOME_Exception);
+  CrossElements_ptr makeCylinders(Cylinder_ptr cyl1, Cylinder_ptr cyl2) throw (SALOME::SALOME_Exception);
 
-   Elements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2) throw (SALOME::SALOME_Exception);
+  CrossElements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2) throw (SALOME::SALOME_Exception);
 
   Elements_ptr prismQuad(Quad_ptr qd, Vector_ptr v, ::CORBA::Long nb)
                throw (SALOME::SALOME_Exception);
@@ -271,6 +274,11 @@ public:
 
   void setLevel(::CORBA::Long level)       throw (SALOME::SALOME_Exception);
   void clearAssociation ()                 throw (SALOME::SALOME_Exception);
+
+                          // Hexa 5
+
+  void addShape (GEOM::GEOM_Object_ptr geom_object, const char* name)
+          throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Document *_document_cpp;

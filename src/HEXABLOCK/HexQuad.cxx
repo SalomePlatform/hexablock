@@ -24,11 +24,14 @@
 #include "HexDocument.hxx"
 #include "HexHexa.hxx"
 #include "HexElements.hxx"
+#include "HexGlobale.hxx"
 
 #include "HexXmlWriter.hxx"
 #include "HexShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
+
+bool db = false;
 
 // ======================================================== Constructeur
 Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
@@ -111,7 +114,7 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
 
    majReferences ();
 }
-// ======================================================== Constructeur bis
+// ======================================================== Constructeur ter
 Quad::Quad (Quad* other)
     : EltBase (other->dad(), EL_QUAD)
 {
@@ -122,6 +125,28 @@ Quad::Quad (Quad* other)
        }
    q_orientation = Q_UNDEFINED;
    q_clone       = NULL;
+}
+// ============================================================  getEdge
+Edge* Quad::getEdge (int nro) 
+{
+   Edge* elt = NULL;
+   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_edge [nro]->isValid())
+      elt = q_edge [nro]; 
+
+   DumpStart  ("getEdge", nro);
+   DumpReturn (elt);
+   return elt;
+}
+// ============================================================  getVertex
+Vertex* Quad::getVertex (int nro) 
+{
+   Vertex* elt = NULL;
+   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_vertex [nro]->isValid())
+      elt = q_vertex [nro]; 
+
+   DumpStart  ("getVertex", nro);
+   DumpReturn (elt);
+   return elt;
 }
 // ========================================================= majReferences 
 void Quad::majReferences ()
@@ -371,6 +396,7 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
        }
    //             TODO : traiter l'erreur
    cout << " ... Probleme dans Quad::getOpposedEdge :" << endl;
+   HexDisplay (el_name);
    PutName (start);
    PutName (vaprim);
    PutName (vbprim);
@@ -524,7 +550,7 @@ static cpchar t_ori[] = {"Q_INSIDE", "Q_DIRECT", "Q_INVERSE", "Q_UNDEF"};
 void Quad::setOrientation (int ori)
 {
     q_orientation = ori;
-    if (ori==Q_DIRECT || ori==Q_INVERSE)
+    if (db && (ori==Q_DIRECT || ori==Q_INVERSE))
        printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
 }
 // ======================================================== setOrientation
@@ -570,7 +596,8 @@ int Quad::setOrientation ()
 
     double pmixte = prod_mixte (vi, vj, vk);
     q_orientation = pmixte > ZEROR ? Q_DIRECT : Q_INVERSE;
-    printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
+    if (db) 
+       printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
     return q_orientation;
 }
 // ========================================================== setAssociation

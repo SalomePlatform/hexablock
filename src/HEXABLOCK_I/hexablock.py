@@ -30,10 +30,16 @@ import HEXABLOCKPlugin
 
 geompy = smesh.geompy
 
+# Gives the component name
+# -----------------------------------------------------------
+
+def moduleName() :
+    return "HEXABLOCK"
+
 # Load HEXABLOCK componant
 # ------------------------
 
-component = salome.lcc.FindOrLoadComponent("FactoryServer", "HEXABLOCK")
+component = salome.lcc.FindOrLoadComponent("FactoryServer", moduleName())
 component = component._narrow(HEXABLOCK_Gen)
 
 for k in dir(component):
@@ -42,6 +48,12 @@ for k in dir(component):
     globals()[k] = getattr(component, k)
 
 del k
+
+# Gives the component 
+# -----------------------------------------------------------
+
+def getEngine() :
+    return component
 
 # Add laws on propagations based on min or max segment length
 # -----------------------------------------------------------
@@ -154,11 +166,7 @@ def mesh(doc, name=None, dim=3, container="FactoryServer"):
     study = salome.myStudy
 
     if type(doc) == type(""):
-        sobject = study.FindObjectID(doc)
-        builder = study.NewBuilder()
-        ok, ior = builder.FindAttribute(sobject, "AttributeIOR")
-        obj = salome.orb.string_to_object(ior.Value())
-        doc = obj._narrow(Document)
+        doc = component.findDocument (doc)
 
     shape = doc.getShape()
     if shape == None:
@@ -168,16 +176,16 @@ def mesh(doc, name=None, dim=3, container="FactoryServer"):
         name = doc.getName()
 
     geompy.addToStudy(shape, name)
-    component = salome.lcc.FindOrLoadComponent(container, "SMESH")
-    component.init_smesh(study, geompy.geom)
-    meshexa = component.Mesh(shape)
+    comp_smesh = salome.lcc.FindOrLoadComponent(container, "SMESH")
+    comp_smesh.init_smesh(study, geompy.geom)
+    meshexa = comp_smesh.Mesh(shape)
 
     so = "libHexaBlockEngine.so"
 
-    algo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(component, "HEXABLOCK_3D", so)
+    algo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
     meshexa.mesh.AddHypothesis(shape, algo)
 
-    hypo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(component, "HEXABLOCK_Parameters", so)
+    hypo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_Parameters", so)
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     hypo.SetDocument(doc)
@@ -191,12 +199,56 @@ def mesh(doc, name=None, dim=3, container="FactoryServer"):
 # -------------------------------------
 
 def getFromStudy(entry):
-    study = salome.myStudy
-    sobject = study.FindObjectID(entry)
-    builder = study.NewBuilder()
-    ok, ior = builder.FindAttribute(sobject, "AttributeIOR")
-    obj = salome.orb.string_to_object(ior.Value())
-    doc = obj._narrow(Document)
+    study    = salome.myStudy
+    sobject  = study.FindObjectID(entry)
+    if sobject == None :
+       print " **** Entry ", entry, " is undefined"
+       return None
+
+    builder  = study.NewBuilder()
+    ok, attname = builder.FindAttribute(sobject, "AttributeName")
+    docname  = attname.Value()
+    doc = component.findDocument(docname)
+    if doc == None :
+       print " **** Entry ", entry, " doesn't correspond to an HexaBlock Document"
 
     return doc
 
+# Find or create HexaBlock Study Component
+# -------------------------------------
+
+def findOrCreateComponent( study, builder ):
+    father = study.FindComponent( moduleName() )
+    if father is None:
+       father = builder.NewComponent( moduleName() )
+       attr = builder.FindOrCreateAttribute( father, "AttributeName" )
+       attr.SetValue( "HexaBlock" )
+       attr = builder.FindOrCreateAttribute( father, "AttributePixMap" )
+       ### attr.SetPixMap( "ICON_OBJBROWSER_HEXABLOCK" )
+       attr.SetPixMap( "ICO_MODULE_HEXABLOCK_SMALL" )
+       builder.DefineComponentInstance( father, getEngine() )
+
+    return father
+
+# Add a document in the current study
+# -------------------------------------
+
+def addToStudy(doc):
+    if doc == None :
+       print " *** addToStudy : Bad Document Pointer"
+       return
+
+    study   = salome.myStudy
+    builder = study.NewBuilder()
+    father  = findOrCreateComponent( study, builder )
+    name    = doc.getName ()
+
+    present = study.FindObjectByName(name, moduleName())
+    if present != [] :
+       print " *** addToStudy : Document ", name, "is already in the study"
+       return
+
+    object  = builder.NewObject( father )
+    attr    = builder.FindOrCreateAttribute( object, "AttributeName" )
+    attr.SetValue( name )
+    return object.GetID ()

@@ -6,7 +6,7 @@
 Example: Python script for a connecting rod
 ===========================================
 
-.. image:: _static/cad_bielle.PNG
+.. image:: _static/cad_bielle.png
    :align: center
 
 .. centered::

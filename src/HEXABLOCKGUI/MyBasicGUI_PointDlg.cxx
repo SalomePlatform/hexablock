@@ -60,6 +60,7 @@
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
 #include "HEXABLOCKGUI.hxx"
+#include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
 #define PARAM_VALUE 0
 #define COORD_VALUE 1
@@ -314,6 +315,7 @@ void MyBasicGUI_PointDlg::Init()
   }
   //connect(buttonOk(),     SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(),  SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect(buttonHelp(), SIGNAL(clicked()), this, SLOT(onHelpRequested()) );
 //  connect( closeButton, SIGNAL(clicked()), this, SLOT(close()) );
 
   connect(this,           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
@@ -338,6 +340,15 @@ void MyBasicGUI_PointDlg::Init()
   connect(GroupRefPoint->SpinBox_DY,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupRefPoint->SpinBox_DZ,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
 
+  connect( mainFrame()->RadioButton1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( mainFrame()->RadioButton2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( mainFrame()->RadioButton3, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( mainFrame()->RadioButton4, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( mainFrame()->RadioButton5, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( myParamCoord->button(PARAM_VALUE), SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( myParamCoord->button(LENGTH_VALUE), SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+  connect( myParamCoord->button(COORD_VALUE), SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+
   if ( myGeomGUI ){
     connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this,  SLOT(SetDoubleSpinBoxStep(double)));
 
@@ -348,6 +359,65 @@ void MyBasicGUI_PointDlg::Init()
   initName(tr("GEOM_VERTEX"));
 
   ConstructorsClicked(0);
+}
+
+//=================================================================================
+// function : onHelpRequested()
+// purpose  : show help in web browser
+//=================================================================================
+void MyBasicGUI_PointDlg::onHelpRequested()
+{
+	LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+	if ( app )
+		//     app->onHelpContextModule( myGeometryGUI ? app->moduleName( myGeometryGUI->moduleName() ) : QString( "" ), _helpFileName );
+		app->onHelpContextModule( "HEXABLOCK", myHelpFileName );
+
+	else {
+		QString platform;
+#ifdef WIN32
+		platform = "winapplication";
+#else
+		platform = "application";
+#endif
+
+		SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
+				QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+				arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
+				QObject::tr( "BUT_OK" ) );
+	}
+}
+
+//===============================================================
+// function : updateHelpFileName()
+// purpose  : update the help file according to the current panel
+//===============================================================
+void MyBasicGUI_PointDlg::updateHelpFileName()
+{
+	if ( sender() == mainFrame()->RadioButton1 ){
+		setHelpFileName("gui_asso_quad_to_geom.html#associate-to-a-vertex-of-the-geometry");
+	} else if ( sender() == mainFrame()->RadioButton2 ){
+		setHelpFileName("gui_asso_vertex_to_geom.html#by-a-reference");
+	} else if ( sender() == mainFrame()->RadioButton3 ){
+		setHelpFileName("gui_asso_vertex_to_geom.html#by-an-edge-and-a-parameter");
+	} else if ( sender() == mainFrame()->RadioButton4 ){
+		setHelpFileName("gui_asso_vertex_to_geom.html#by-intersection-of-two-lines-or-wires");
+	} else if ( sender() == mainFrame()->RadioButton5 ){
+		setHelpFileName("gui_asso_vertex_to_geom.html#by-a-face-and-two-parameters");
+	} else if (sender() == myParamCoord->button(PARAM_VALUE)){
+		if (mainFrame()->RadioButton3->isChecked()){
+			setHelpFileName("gui_asso_vertex_to_geom.html#by-an-edge-and-a-parameter");
+		} else if (mainFrame()->RadioButton5->isChecked()){
+			setHelpFileName("gui_asso_vertex_to_geom.html#by-a-face-and-two-parameters");
+		}
+	} else if (sender() == myParamCoord->button(LENGTH_VALUE)){
+			setHelpFileName("gui_asso_vertex_to_geom.html#by-an-edge-and-a-length");
+	} else if (sender() == myParamCoord->button(COORD_VALUE)){
+		if (mainFrame()->RadioButton3->isChecked()){
+			setHelpFileName("gui_asso_vertex_to_geom.html#by-an-edge-and-coordinates");
+		} else if (mainFrame()->RadioButton5->isChecked()){
+			setHelpFileName("gui_asso_vertex_to_geom.html#by-a-face-and-coordinates");
+		}
+	}
 }
 
 //=================================================================================
@@ -1130,12 +1200,19 @@ void MyBasicGUI_PointDlg::_initInputWidget()
   mainFrame()->_vertex_le->setValidator( validator );
 }
 
+void MyBasicGUI_PointDlg::clear()
+{
+
+    mainFrame()->_vertex_le->clear();
+    mainFrame()->_vertex_le->setProperty("QModelIndex", QVariant());
+}
+
 void MyBasicGUI_PointDlg::_initViewManager()
 {
   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
   _mgr   = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
-  _vtkVm = anApp->getViewManager( SVTK_Viewer::Type(),      true );
-  _occVm = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
+  _vtkVm = anApp->getViewManager( SVTK_Viewer::Type(),      false );
+  _occVm = anApp->getViewManager( OCCViewer_Viewer::Type(), false );
   SUIT_ViewManager* activeVm = anApp->activeViewManager();
   onWindowActivated ( activeVm );
 }
@@ -1289,7 +1366,7 @@ bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
 
   _currentObj = obj;
 //   HEXABLOCKGUI::currentVtkView->raise();
-  _patternDataSelectionModel->setVertexSelection();
+  HEXABLOCKGUI::currentDocGView->setVertexSelection();
 
   vxVariant = mainFrame()->_vertex_le->property("QModelIndex");
   if ( !vxVariant.isValid() ) {

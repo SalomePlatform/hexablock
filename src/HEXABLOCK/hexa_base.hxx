@@ -17,8 +17,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
+
+#define DumpActif false
 
 #ifndef _HEXA_BASE_H_
 #define _HEXA_BASE_H_
@@ -110,14 +113,29 @@ using namespace std;
  * ----------------------------------------------------- */
 
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
+
+#ifndef NO_CASCADE
+class  TopoDS_Shape;
+#else
+typedef int  TopoDS_Shape;
+typedef int  TopTools_IndexedMapOfShape;
+#endif
+
 BEGIN_NAMESPACE_HEXA
 
 enum EnumCoord  { dir_x, dir_y, dir_z, DIM3 };
 enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR, 
-                  EL_GRID, EL_CYLINDER, EL_PIPE, EL_REMOVED, EL_MAXI };
+                  EL_GRID, EL_CYLINDER, EL_PIPE, EL_GROUP, EL_LAW,
+                  EL_SHAPE, EL_SUBSHAPE,  
+                  EL_REMOVED, EL_MAXI };
+
+const cpchar ABR_TYPES = "xveqhwtcpglsu???";
 
 enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
                   HexaNode, QuadNode, EdgeNode, VertexNode};
+
+                  // Origine des shapes
+enum EnumShape { SH_NONE, SH_IMPORT, SH_CYLINDER, SH_INTER, SH_SPHERE };
 
                 //  Modes de remplissage des grilles cylindriques
 enum EnumCyl   { CYL_NOFILL, CYL_CL4, CYL_CL6, CYL_CLOSED, CYL_PEER, CYL_ODD};
@@ -151,6 +169,7 @@ enum EnumQDirection {Q_INSIDE, Q_DIRECT, Q_INVERSE, Q_UNDEFINED, Q_WAITING };
 
 enum { CylSmall=0, CylBig=1, NxInt=1, NxExt=2 };
 
+class Hex;
 class Document;
 class EltBase;
 
@@ -175,7 +194,6 @@ class  SphericalGrid;
 class  CrossElements;
 
 struct  StrOrient;
-class   Shape;
 class   Globale;
 class   Propagation;
 class   Law;
@@ -184,11 +202,20 @@ class   Group;
 class   AnaQuads;
 class   Pattern;
 
+class   Shape;
+class   SubShape;
+class   Association;
+class   NewShape;  // 1) Shape -> OldShape, 2) NewShape->Shape 
+class   OldShape;
+
 typedef std::vector <Hexa*>  Hexas;
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;
-typedef std::vector <double> RealVector;
+
+typedef std::vector <EltBase*>    TabElts;
+typedef std::vector <double>      RealVector;
+typedef std::vector <std::string> TabText;
 
 typedef double Real;
 typedef double Real3 [DIM3];
@@ -211,13 +238,17 @@ int     normer_vecteur (double v1[]);
 double carre       (double val);
 bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
 
-bool   on_debug();
-int    niv_debug();
+bool   on_debug();     // == getenv ("HEXA_DB") > 0
+int    niv_debug();    // Implemente prochainement
 
 void   set_minus (string& chaine);
 
 bool   special_option ();
 void   set_special_option (bool opt);
+
+int   sizeof_file (cpchar filename);
+char* read_file   (cpchar filename, int& size);
+cpchar get_time   (string& buffer);
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;

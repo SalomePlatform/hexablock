@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
 #include "HexEdge.hxx"
 #include "HexVertex.hxx"
@@ -239,6 +240,19 @@ void Edge::setAssociation (Shape* forme)
 {
    clearAssociation ();
    addAssociation (forme);
+}
+// ======================================================== makeDefinition
+string Edge::makeDefinition ()
+{
+   string definition = el_name;
+
+   definition += " = (";
+   definition += e_vertex [V_AMONT]->getName();
+   definition += ",";
+   definition += e_vertex [V_AVAL]->getName();
+   definition += ")";
+
+   return definition;
 }
 END_NAMESPACE_HEXA
 

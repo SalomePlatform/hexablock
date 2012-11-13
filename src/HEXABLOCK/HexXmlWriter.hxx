@@ -34,8 +34,10 @@ public :
    XmlWriter ();
   ~XmlWriter ()    { closeXml () ; }
 
-   int    openXml  (string& nom)     { return openXml (nom.c_str()); }
-   int    openXml  (cpchar nom=NULL);
+   int    setFileName (cpchar filename);  // Un seul xml par fichier
+   int    setFile     (pfile  afile);     // Plusieurs xml par fichier
+   int    setStream   ();                 // Sauvegarde par flux
+   int    startXml ();
    void   closeXml ();
    cpchar getXml   ()                { return xml_buffer.c_str();    }
 
@@ -57,7 +59,9 @@ private :
     void addMot   (cpchar  mot);
 
 private :
+    enum  {InaFile, InaStudy, InaStream} xml_mode;
     enum  {xml_decal=3, xml_size=80};
+
     pfile  xml_file;
     int    xml_level;
     int    xml_pos;

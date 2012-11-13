@@ -46,7 +46,7 @@ QStandardItem()
 		{
 			HEXA_NS::Shape* assoc = m_DocElt->getAssociation();
 			if ( assoc ){
-				entry = QString(assoc->ident.c_str());
+				entry = QString(assoc->getIdent().c_str());
 				setData( entry + ";" , HEXA_ASSOC_ENTRY_ROLE );
 			}
 		}
@@ -55,7 +55,7 @@ QStandardItem()
 			QString entries;
 			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Edge*)m_DocElt)->getAssociations();
 			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-				entry = (*anAssoc)->ident.c_str();
+				entry = (*anAssoc)->getIdent().c_str();
 				entries += entry + ";";
 			}
 			if ( !entries.isEmpty() )
@@ -66,7 +66,7 @@ QStandardItem()
 			QString entries;
 			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Quad*)m_DocElt)->getAssociations();
 			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-				entry = (*anAssoc)->ident.c_str();
+				entry = (*anAssoc)->getIdent().c_str();
 				entries += entry + ";";
 			}
 			if ( !entries.isEmpty() )

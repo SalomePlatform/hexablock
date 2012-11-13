@@ -33,11 +33,14 @@ Shape::Shape  (string brep)
    fin    = 1;
    ident  = "";
 }
+void clean_brep (string& brep);
 // ====================================================== saveXml
 void Shape::saveXml (XmlWriter* xml)
 {
    char interval [80];
    sprintf (interval, "%g %g", debut, fin);
+
+   clean_brep (b_rep);          // Test Abu
 
    xml->openMark     ("Shape");
    xml->addAttribute ("interval", interval);

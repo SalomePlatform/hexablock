@@ -24,5 +24,14 @@ Get the number of vector in the document::
 Get a vector of the document::
 
      vector_i = doc.getVector(i)
+     
+Get the norm of a vector::
+
+	norm = vector_i.getNorm()
+	
+Get the angle on X::
+
+	angle = vector_i.getAngleX()
+	
 
 GUI command: :ref:`guivector`

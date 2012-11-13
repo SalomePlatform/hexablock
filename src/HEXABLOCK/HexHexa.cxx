@@ -339,6 +339,23 @@ void Hexa::printHexa  (pfile vtk)
 
    fprintf (vtk, "\n");
 }
+// ======================================================= printHexaVtk
+void Hexa::printHexaVtk (pfile vtk)
+{
+   fprintf (vtk, "%d", HV_MAXI);
+
+   fprintf (vtk, " %d", h_vertex[V_ACE]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_ACF]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_ADF]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_ADE]->getId ());
+
+   fprintf (vtk, " %d", h_vertex[V_BCE]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_BCF]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_BDF]->getId ());
+   fprintf (vtk, " %d", h_vertex[V_BDE]->getId ());
+
+   fprintf (vtk, "\n");
+}
 // ======================================================== hasFreEdges
 bool Hexa::hasFreeEdges ()
 {

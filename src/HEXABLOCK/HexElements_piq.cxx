@@ -26,6 +26,7 @@
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
+#include "HexDocument.hxx"
 
 #include <cmath>
 #include <map>

@@ -77,11 +77,11 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
   string      strBrep = shape2string( aShape );
 
   CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_2D );
-  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-  s->ior     = anIOR.in();
-  s->ident   = geom_object_2D->GetStudyEntry();
+  HEXA_NS::Shape* msh = new HEXA_NS::Shape( strBrep );
+  msh->setIor   (anIOR.in());
+  msh->setIdent (geom_object_2D->GetStudyEntry());
 
-  ok = _quad_cpp->addAssociation( s );
+  ok = _quad_cpp->addAssociation( msh );
 //   _associations.push_back(GEOM::GEOM_Object::_duplicate( geom_object_2D ));
   return ok;
 }
@@ -96,19 +96,6 @@ void Quad_impl::clearAssociation()
 
 GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
   throw (SALOME::SALOME_Exception)
-// {
-//   GEOM::ListOfGO* result = new GEOM::ListOfGO;
-//   result->length( _associations.size() );
-// 
-//   CORBA::ULong i = 0;
-//   for ( std::vector<GEOM::GEOM_Object_ptr>::const_iterator iter = _associations.begin();
-// 	iter != _associations.end();
-//         ++iter){
-// //       (*result)[i++] = *iter;
-//       (*result)[i++] = GEOM::GEOM_Object::_duplicate( *iter );
-//   }
-//   return result;
-// }
 {
   TopoDS_Shape aShape;
   const std::vector<HEXA_NS::Shape*> shapes = _quad_cpp->getAssociations();
@@ -122,15 +109,21 @@ GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
   CORBA::ULong i = 0;
   for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
 	iter != shapes.end();
-        ++iter ){
-      if ( !(*iter)->ior.empty() ){ // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
-        if ( !CORBA::is_nil( corbaObj ) ){
+        ++iter )
+      {
+      HEXA_NS::Shape* msh = *iter;
+      string ior = msh->getIor (); 
+      if ( NOT ior.empty() )  // geom object from current session
+         {
+        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object (ior.c_str());
+        if ( NOT CORBA::is_nil( corbaObj ) ){
           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-        }
-      } else { // no geom object => we have to built it
-        geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( (*iter)->getBrep() );
-      }
+          }
+         } 
+      else   // no geom object => we have to built it
+         {
+        geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( msh->getBrep() );
+         }
       (*result)[ i++ ] = geomObj._retn();
   }
 

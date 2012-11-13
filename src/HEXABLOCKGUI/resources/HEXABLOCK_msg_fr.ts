@@ -46,6 +46,29 @@
     </message>
 </context>
 <context>
+    <name>HEXABLOCKGUI</name>
+    <message>
+	<source>CLEAR_ASSOCIATIONS</source>
+	<translation>Suppression des associations</translation>
+    </message>
+    <message>
+	<source>CLEAR_ALL_ASSOCIATIONS_ON</source>
+	<translation>Supprimer toutes les associations sur les</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_VERTEX</source>
+        <translation>Sommets</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_EDGE</source>
+        <translation>Arêtes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_QUAD</source>
+        <translation>Quadrangles</translation>
+    </message>
+</context>
+<context>
     <name>HEXABLOCK::GUI::DocumentModel</name>
     <message>
         <source>TREE_ITEM_VERTEX</source>
@@ -105,6 +128,17 @@
     <message>
         <source>CANNOT MAKE EDGE ASSOCIATION</source>
         <translation>Impossible d&apos;associer les arêtes</translation>
+    </message>
+</context>
+<context>
+    <name>HEXABLOCK::GUI::QuadAssocDialog</name>
+    <message>
+        <source>ERR_ERROR</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <source>CANNOT MAKE QUAD ASSOCIATION</source>
+        <translation>Impossible d&apos;associer les faces</translation>
     </message>
 </context>
 <context>

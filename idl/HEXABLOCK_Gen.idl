@@ -42,7 +42,6 @@ module HEXABLOCK_ORB
      /*!
          Donne le nombre de documents ouverts en session.
       */
-    void test() raises (SALOME::SALOME_Exception);
     long countDocument()
         raises (SALOME::SALOME_Exception);
 
@@ -55,6 +54,9 @@ module HEXABLOCK_ORB
     Document addDocument(in string name)
         raises (SALOME::SALOME_Exception);
 
+    Document findDocument(in string name)
+        raises (SALOME::SALOME_Exception);
+
     Document loadDocument(in string xmlFilename)
         raises (SALOME::SALOME_Exception);
 
@@ -62,6 +64,11 @@ module HEXABLOCK_ORB
       Set the current study
      */
     void SetCurrentStudy( in SALOMEDS::Study theStudy );
+
+    long addDocInStudy (in Document doc)
+        raises (SALOME::SALOME_Exception);
+
+    void test() raises (SALOME::SALOME_Exception);
 
   };
 };

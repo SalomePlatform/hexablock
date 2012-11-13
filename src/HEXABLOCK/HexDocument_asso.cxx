@@ -17,16 +17,18 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
-
+#include "HexNewShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
+static bool db = on_debug ();  // == getenv ("HEXA_DB") > 0
+
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
 int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline, 
@@ -58,7 +60,6 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
                     Shape*  gstart, double pstart, Shapes& gline, double pend,
                     bool inv)
 {
-   db = on_debug ();
    char buffer [16], cnum [8];
    int  nbseg  = mline.size ();
    bool closed = vfirst != NULL;
@@ -237,5 +238,13 @@ void Document::clearAssociation ()
            clear_association (elt);
        }
 }
+// ====================================================== addShape
+void Document::addShape (TopoDS_Shape& topo, cpchar name)
+{
+   NewShape* shape = new NewShape (this);
+   doc_tab_shape.push_back (shape);
 
+   shape->setName  (name);
+   shape->setShape (topo);
+}
 END_NAMESPACE_HEXA

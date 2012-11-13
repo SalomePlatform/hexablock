@@ -44,7 +44,7 @@ Group::Group (cpchar nom, EnumGroup grp)
    else {
    	char buffer [16];
    	sprintf (buffer, "g%04d", grp_id);
-        grp_name = std::string(buffer);
+   	grp_name = std::string(buffer);
    }
    
    grp_kind = grp;
@@ -128,6 +128,14 @@ void Group::saveXml (XmlWriter* xml)
        }
    xml->closeMark ();
 }
+
+// ========================================================= getNextName
+char* Group::getNextName  (pchar buffer)
+{
+   sprintf (buffer, "g%04d", last_grp_id);
+   return   buffer;
+}
+
 // ======================================================== getKind
 EnumGroup Group::getKind (cpchar kind)
 {

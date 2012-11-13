@@ -67,7 +67,7 @@ two following methods:
 Example of simple model of blocks
 =================================
 
-.. image:: _static/ex1.PNG
+.. image:: _static/ex1.png
    :align: center
 
 .. centered::

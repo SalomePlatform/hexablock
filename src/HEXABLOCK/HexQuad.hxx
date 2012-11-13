@@ -126,24 +126,6 @@ inline int Quad::addAssociation (Shape* forme)
        tab_assoc.push_back (forme);
    return HOK;
 }
-// ============================================================  getEdge
-inline Edge* Quad::getEdge (int nro) 
-{
-   Edge* elt = NULL;
-   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_edge [nro]->isValid())
-      elt = q_edge [nro]; 
-
-   return elt;
-}
-// ============================================================  getVertex
-inline Vertex* Quad::getVertex (int nro) 
-{
-   Vertex* elt = NULL;
-   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_vertex [nro]->isValid())
-      elt = q_vertex [nro]; 
-
-   return elt;
-}
 // ======================================================== commonEdge
 inline Edge* Quad::commonEdge (Quad* other)
 {

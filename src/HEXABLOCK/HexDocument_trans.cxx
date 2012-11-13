@@ -88,6 +88,7 @@ int Document::performSymmetryPlane (Elements* elts, Vertex* ver, Vector* vec)
    int    ier = elts->transform (&matrice);
    return ier;
 }
+
 // ==================================================== performSymmetryLine
 int Document::performSymmetryLine (Elements* elts, Vertex* ver, Vector* vec)
 { 

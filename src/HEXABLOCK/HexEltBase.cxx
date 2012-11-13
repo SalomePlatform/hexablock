@@ -128,10 +128,24 @@ cpchar EltBase::getName  ()
 // ========================================================= getName 
 char* EltBase::getName  (pchar buffer)
 {
+   return makeName (el_type, el_id, buffer);
+}
+// ========================================================= makeName 
+char* EltBase::makeName  (int type, int id, char* name)
+{
 // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
-   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
+   sprintf (name, "%c%04d", ABR_TYPES[type], id);
+   return   name;
+}
+
+// ========================================================= getNextName
+char* EltBase::getNextName  (pchar buffer)
+{
+// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
+   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id + 1);
    return   buffer;
 }
+
 // ========================================================= printName 
 void EltBase::printName  (cpchar sep)
 {
@@ -196,6 +210,20 @@ void EltBase::setId (int ln)
    el_root->doc_nbr_elt[el_type] = maxid;
    if (defname) 
       el_name = getName (buffer);
+}
+// ========================================================= makeVarName
+char* EltBase::makeVarName (char* nom)
+{
+   static cpchar PREFIX[]  = {"Undef", "Node",  "Edge",  "Quad",  "Hexa", 
+                              "Vect",  "Grid",  "Cyl",  "Pipe", "Group", "Law",
+                              "Xxxx",  "Xxxx",  "Xxxx" };
+   sprintf (nom, "%s%d", PREFIX[el_type], el_id);
+   return   nom;
+}
+// ========================================================= debug
+bool EltBase::debug (int niv)
+{ 
+   return el_root != NULL && el_root->getLevel() > niv ; 
 }
 
 END_NAMESPACE_HEXA

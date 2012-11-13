@@ -20,6 +20,10 @@ Get the number of all vertices of the document::
 Get the number of vertices used only by the model of blocks::
 
     sum_u = doc.countUsedVertex()
+    
+Get the vertices used by the model of blocks
+
+.. literalinclude:: test_doc/vertex/vertex.py
 
 Get a vertex of the document::
 

@@ -26,7 +26,6 @@
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
-#include <SUIT_ViewWindow.h>
 #include <SUIT_ViewModel.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
@@ -42,6 +41,7 @@
 #include <SALOME_Prs.h>
 
 #include <OCCViewer_ViewModel.h>
+#include <SOCC_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
 #include <TColStd_MapOfInteger.hxx>
@@ -169,7 +169,7 @@ void MyGEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateVi
   if ( !object->_is_nil() ) {
     QString entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.toLatin1().constData(), 
+      entry.toLatin1().constData(),
       "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
   }
 }
@@ -255,7 +255,7 @@ void MyGEOMBase_Helper::displayPreview( const bool   display,
     erasePreview( update );
     return;
   }
-  
+
   isPreview = true;
   QString msg;
   if ( !isValid( msg ) )
@@ -478,6 +478,73 @@ void MyGEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mod
   ObjectList objList;
   objList.push_back( obj );
   localSelection( objList, mode );
+}
+
+//================================================================
+// Beta version
+// Function : localSelection
+// Purpose  : Activate selection of subshapes in accordance with mode
+//            theMode is from TopAbs_ShapeEnum
+//================================================================
+void MyGEOMBase_Helper::localSelection(SUIT_ViewWindow *view, const int theMode )
+{
+    SUIT_Session* session = SUIT_Session::session();
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+    if ( app == NULL || view == NULL ) return;
+
+    LightApp_SelectionMgr* sm = app->selectionMgr();
+
+    // remove all filters from selection
+    sm->clearFilters();
+
+    SALOME_View* vf = dynamic_cast<SALOME_View*>(view->getViewManager()->getViewModel());
+    if (vf == NULL) return;
+
+    SALOME_Prs* prs = vf->CreatePrs( NULL );
+    vf->LocalSelection( prs, theMode );
+    delete prs;  // delete presentation because displayer is its owner
+}
+
+
+
+//================================================================
+// Beta version
+// Function : globalSelection2
+// Purpose  : Activate selection of subshapes. Set selection filters
+//            in accordance with mode. theMode is from GEOMImpl_Types
+// mode = GEOM_ALLOBJECTS
+//================================================================
+void MyGEOMBase_Helper::globalSelection2(SUIT_ViewWindow *view, const bool update )
+{
+    SUIT_Session* session = SUIT_Session::session();
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+    if ( app == NULL || view == NULL ) return;
+
+    SALOME_View* vf = dynamic_cast<SALOME_View*>(view->getViewManager()->getViewModel());
+    if ( vf == NULL ) return;
+
+    // Close local context
+    vf->GlobalSelection( update );
+
+    // Set selection filters in accordance with current mode
+    LightApp_SelectionMgr* sm = app->selectionMgr();
+    if ( !sm )
+        return;
+
+
+    //@ aSel->ClearIndex();
+
+    sm->clearFilters();
+
+    // Remove filters from AIS_InteractiveContext
+    Handle(AIS_InteractiveContext) ic;
+    SOCC_Viewer* viewer = dynamic_cast<SOCC_Viewer*>( vf );
+    if ( viewer )
+    {
+        ic = viewer->getAISContext();
+        if ( !ic.IsNull() )
+            ic->RemoveFilters();
+    }
 }
 
 
@@ -1079,7 +1146,7 @@ GEOM::GEOM_Object_ptr MyGEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_p
   }
   if (inStudy)
     return aReturnObject._retn();
-  
+
   return GEOM::GEOM_Object::_nil();
 }
 
@@ -1093,7 +1160,7 @@ GEOM::GEOM_Object_ptr MyGEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_p
 {
   GEOM::GEOM_Object_var object;
   bool found = false;
-  
+
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( study ) {
     _PTR(Study) studyDS = study->studyDS();
@@ -1116,7 +1183,7 @@ GEOM::GEOM_Object_ptr MyGEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_p
       }
     }
   }
-  
+
   return object._retn();
 }
 
@@ -1136,7 +1203,7 @@ void MyGEOMBase_Helper::addSubshapesToStudy()
 // Returns valid object if only one object of the specified type is selected
 // (no matter global or local selection is activated). If \a type is TopAbs_SHAPE,
 // geometrical object of any valid type is expected.
-// 
+//
 // \param type type of the object to be obtained from selection
 // \return selected geometrical object or nil object if selection is not satisfactory
 //================================================================
@@ -1155,7 +1222,7 @@ GEOM::GeomObjPtr MyGEOMBase_Helper::getSelected( TopAbs_ShapeEnum type )
 // (no matter global or local selection is activated). The list of allowed
 // shape types is passed via \a types. If \a types includes TopAbs_SHAPE,
 // geometrical object of any valid type is expected.
-// 
+//
 // \param types list of allowed shape types for the objects to be obtained from selection
 // \return selected geometrical object or nil object if selection is not satisfactory
 //================================================================
@@ -1175,7 +1242,7 @@ GEOM::GeomObjPtr MyGEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& 
 //
 // The \a type parameter specifies allowed type of the object(s) being selected.
 // The \a count parameter specifies exact number of the objects to be retrieved from selection.
-// The \a strict parameter specifies policy being applied to the selection. 
+// The \a strict parameter specifies policy being applied to the selection.
 // If \a count < 0, then any number of the selected objects is valid (including 0).
 // In this case, if \a strict is \c true (default), all selected objects should satisfy
 // the specified \a type.
@@ -1183,7 +1250,7 @@ GEOM::GeomObjPtr MyGEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& 
 // In this case, if \a strict is \c true (default), function returns empty list if total number of selected
 // objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
 // function returns valid list of objects if at least \a count objects satisfy specified \a type.
-// 
+//
 // \param type type of the object(s) to be obtained from selection
 // \param count number of items to be retrieved from selection
 // \param strict selection policy
@@ -1214,7 +1281,7 @@ static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& ty
 //
 // The \a types parameter specifies allowed types of the object(s) being selected.
 // The \a count parameter specifies exact number of the objects to be retrieved from selection.
-// The \a strict parameter specifies policy being applied to the selection. 
+// The \a strict parameter specifies policy being applied to the selection.
 // If \a count < 0, then any number of the selected objects is valid (including 0).
 // In this case, if \a strict is \c true (default), all selected objects should satisfy
 // the specified \a type.
@@ -1222,7 +1289,7 @@ static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& ty
 // In this case, if \a strict is \c true (default), function returns empty list if total number of selected
 // objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
 // function returns valid list of objects if at least \a count objects satisfy specified \a type.
-// 
+//
 // \param types list of allowed shape types for the objects to be obtained from selection
 // \param count number of items to be retrieved from selection
 // \param strict selection policy
