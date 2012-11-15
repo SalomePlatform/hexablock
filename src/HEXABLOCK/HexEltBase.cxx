@@ -138,14 +138,6 @@ char* EltBase::makeName  (int type, int id, char* name)
    return   name;
 }
 
-// ========================================================= getNextName
-char* EltBase::getNextName  (pchar buffer)
-{
-// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
-   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id + 1);
-   return   buffer;
-}
-
 // ========================================================= printName 
 void EltBase::printName  (cpchar sep)
 {

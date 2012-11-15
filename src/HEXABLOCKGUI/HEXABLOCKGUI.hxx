@@ -201,10 +201,6 @@ public:
                               bool saveCurrentDlg = true);
   void showDockWidgets(bool isVisible);
 
-  //Elements' default name
-  const char* getDefaultName(HEXA_NS::EnumElt type);
-  const char* getDefaultName0(HEXA_NS::EnumElt type);
-
   HEXABLOCK::GUI::VtkDocumentGraphicView* getCurrentVtkGraphicView();
   HEXABLOCK::GUI::VtkDocumentGraphicView* getDocument(SalomeApp_DataObject* studyObject);
   HEXABLOCK::GUI::DocumentModel* getCurrentModel();

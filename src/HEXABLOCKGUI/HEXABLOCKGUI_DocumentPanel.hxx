@@ -207,6 +207,7 @@ namespace HEXABLOCK
     virtual void onHelpRequested();
     void highlightSelectedAssocs();
     void refreshHighlight();
+    virtual void onWindowActivated(SUIT_ViewManager*){};
 
     protected:
     virtual bool eventFilter(QObject *obj, QEvent *event);
@@ -215,7 +216,7 @@ namespace HEXABLOCK
     virtual bool apply(QModelIndex& result) = 0;
 
     //Gives a default name to an element according to the last created
-    void updateDefaultName(QLineEdit* name_field, QModelIndex& last);
+    void updateDefaultName(QLineEdit* name_field, HEXA_NS::EnumElt type);
 
     virtual void _initInputWidget( Mode editmode )=0; //must be implemented on inherited dialog box
     virtual QGroupBox*  _initButtonBox( Mode editmode );
@@ -265,7 +266,6 @@ namespace HEXABLOCK
     protected slots:
     virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel ); //from qt model/view selectionManager
     virtual void onCurrentSelectionChanged();//from salome selectionManager
-    virtual void onWindowActivated(SUIT_ViewManager*){};
     virtual void updateButtonBox();
     void updateName();
     virtual void selectElementOfModel();
@@ -841,6 +841,7 @@ namespace HEXABLOCK
     public slots:
     virtual bool apply(QModelIndex& result);
     virtual void close();
+    virtual void onWindowActivated(SUIT_ViewManager*);
 
     protected:
     virtual void _initInputWidget( Mode editmode );
@@ -852,7 +853,6 @@ namespace HEXABLOCK
     protected slots:
     virtual void onCurrentSelectionChanged();
     //         void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
-    virtual void onWindowActivated(SUIT_ViewManager*);
     virtual void selectElementOfGeom();
     void updateHelpFileName();
 
@@ -891,6 +891,7 @@ namespace HEXABLOCK
     public slots:
     virtual bool apply(QModelIndex& result);
     virtual void close();
+    virtual void onWindowActivated(SUIT_ViewManager*);
 
     protected:
     virtual void _initInputWidget( Mode editmode );
@@ -899,7 +900,6 @@ namespace HEXABLOCK
 
     protected slots:
     virtual void onCurrentSelectionChanged();
-    virtual void onWindowActivated(SUIT_ViewManager*);
     void deleteFaceItem();
     virtual void selectElementOfGeom();
 

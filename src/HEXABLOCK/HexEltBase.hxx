@@ -103,7 +103,6 @@ public :
    int   getMark ()                   { return el_mark; }
    void  setMark (int ln)             { el_mark = ln ; }
    char* getName   (pchar nom);
-   char* getNextName   (pchar nom);
    void  printName (cpchar sep=" ");
    void  dumpRef ();
 

@@ -17,7 +17,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ 
+// See http://www.salome-platform.org/
 // or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
@@ -31,18 +31,18 @@ static bool db = on_debug ();  // == getenv ("HEXA_DB") > 0
 
 
 int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens);
-int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline, 
+int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
                     double pstart, double pend, bool closed, bool inv=false);
 
 // ====================================================== associateOpenedLine
-int Document::associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
+int Document::associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart,
                                    double pstart, Shapes& gline, double pend)
 {
    int ier = associateLine (NULL, mstart, mline, gstart, pstart, gline, pend);
    return ier;
 }
 // ====================================================== associateClosedLine
-int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline, 
+int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
                          Shape*  gstart, double pstart, bool inv, Shapes& gline)
 {
    if (vfirst == NULL)
@@ -51,12 +51,12 @@ int Document::associateClosedLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       return HERR;
       }
 
-   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline, 
+   int ier = associateLine (vfirst, mstart, mline, gstart, pstart, gline,
                             1.0, inv);
    return ier;
 }
 // ====================================================== associateClosedLine
-int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline, 
+int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
                     Shape*  gstart, double pstart, Shapes& gline, double pend,
                     bool inv)
 {
@@ -69,10 +69,10 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       putError (W_ASSO_LINE4);
       return HERR;
       }
-                // Contour ferme : 
+                // Contour ferme :
                 // Le vertex de depart n'appartient pas a l'edge de depart
    int istart = mstart->index (vfirst);
-   if (closed && istart == NOTHING) 
+   if (closed && istart == NOTHING)
       {
       putError (W_ASSO_LINE2, vfirst->getName (buffer));
       return HERR;
@@ -119,7 +119,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       {
       pnode = mstart->getVertex (sens);
       nedge = vertexInLine (pnode, mline, tab_sens);
-      if (nedge == NOTHING) 
+      if (nedge == NOTHING)
          {
          sens  = V_AVAL;
          pnode = mstart->getVertex (sens);
@@ -134,44 +134,38 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
       nedge = vertexInLine (pnode, mline, tab_sens);
       }
 
-   HexDisplay (nbseg);
-
-   if (nedge == NOTHING) 
+   if (nedge == NOTHING)
       {
       putError (W_ASSO_LINE, mstart->getName (buffer));
       return HERR;
       }
 
    Edges        les_edges;
-   vector <int> les_orig; 
+   vector <int> les_orig;
    les_edges.push_back (mstart);
    les_orig .push_back (1-sens);
-   HexDisplay (nedge);
-   cout << " ........................................ Marque 1" << endl;
-   if (nbseg>0) 
+   if (nbseg>0)
       {
       les_edges.push_back (mline[nedge]);
       les_orig. push_back (tab_sens[nedge]);
       }
 
-   cout << " ........................................ Marque 2" << endl;
-   if (db) 
-      printf (" mstart  [%d] = mline[%d][%d] = %s\n", sens, nedge, 
+   if (db)
+      printf (" mstart  [%d] = mline[%d][%d] = %s\n", sens, nedge,
                                   tab_sens [nedge], pnode->getName(buffer));
 
-   cout << " ........................................ Marque 3" << endl;
    for (int ns = 1 ; ns < nbseg ; ns++)
        {
        Vertex* pnode = mline[nedge]->getVertex (1-tab_sens [nedge]);
        int nro = vertexInLine (pnode, mline, tab_sens);
-       if (nro == NOTHING) 
+       if (nro == NOTHING)
           {
           sprintf (cnum, "%d", nedge);
           putError (W_ASSO_LINE2, cnum, mline[nedge]->getName (buffer));
           return HERR;
           }
-       if (db) 
-          printf (" mline[%d][%d] = mline[%d][%d] = %s\n", nedge, 
+       if (db)
+          printf (" mline[%d][%d] = mline[%d][%d] = %s\n", nedge,
                1-tab_sens [nedge], nro, tab_sens [nro], pnode->getName(buffer));
        nedge = nro;
        les_edges.push_back (mline    [nedge]);
@@ -188,7 +182,7 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
           }
        }
    **************************/
-    
+
    if (closed)
       {
       Vertex* tete  = les_edges [0]    ->getVertex (les_orig[0]);
@@ -203,8 +197,8 @@ int Document::associateLine (Vertex* vfirst, Edge*  mstart, Edges& mline,
          return HERR;
          }
       }
-   
-   int ier = associateShapes (les_edges, &les_orig[0], gstart, gline, pstart, 
+
+   int ier = associateShapes (les_edges, &les_orig[0], gstart, gline, pstart,
                               pend, closed, inv);
    return ier;
 }
@@ -221,11 +215,11 @@ int vertexInLine (Vertex* mfirst, Edges& mline, vector<int> &tsens)
               if (mline[ned]->getVertex (ns) == mfirst)
                  {
                  tsens [ned] = ns;
-                 return ned; 
+                 return ned;
                  }
               }
        }
- 
+
    return NOTHING;
 }
 // ====================================================== vertexInLine

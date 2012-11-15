@@ -208,7 +208,6 @@ void DocumentModel::load()
 
 void DocumentModel::load( const QString& xmlFileName ) // Fill Data
 {
-    MESSAGE("HEXABLOCKGUI::load()  => "<<xmlFileName.toStdString());
     _hexaDocument->loadXml(xmlFileName.toLocal8Bit().constData() );
     clearAll();
 
@@ -231,7 +230,6 @@ bool DocumentModel::isEmpty() const
 
 void DocumentModel::save( const QString& xmlFileName )
 {
-    MESSAGE("HEXABLOCKGUI::save()  => "<<xmlFileName.toStdString());
     _hexaDocument->save( xmlFileName.toLocal8Bit().constData() );
 }
 
@@ -249,7 +247,7 @@ void DocumentModel::updateData()
     emit patternDataChanged();
 }
 
-void DocumentModel::clearAll() 
+void DocumentModel::clearAll()
 {
     clearData();
     clearBuilder();
@@ -278,7 +276,7 @@ void DocumentModel::clearBuilder()
     _crossElementsDirItem->removeRows(0, _crossElementsDirItem->rowCount() );
 }
 
-void DocumentModel::clearAssociation() 
+void DocumentModel::clearAssociation()
 {
     //CS_TODO
 }
@@ -332,7 +330,7 @@ void DocumentModel::fillData()
 }
 
 
-void DocumentModel::fillBuilder() 
+void DocumentModel::fillBuilder()
 {
     HEXA_NS::Vector *v     = NULL;
     VectorItem      *vItem = NULL;
@@ -460,16 +458,12 @@ Qt::ItemFlags DocumentModel::flags(const QModelIndex &index) const
 
 void DocumentModel::allowEdition()
 {
-    MESSAGE("DocumentModel::allowEdition(){");
     _disallowEdition = false;
-    MESSAGE("}");
 }
 
 void DocumentModel::disallowEdition()
 {
-    MESSAGE("DocumentModel::disallowEdition (){");
     _disallowEdition = true;
-    MESSAGE("}");
 }
 
 void DocumentModel::allowDataSelectionOnly()
@@ -822,12 +816,12 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
     return quadIndex;
 }
 
-QModelIndex DocumentModel::addHexaVertices( 
+QModelIndex DocumentModel::addHexaVertices(
         const QModelIndex &iv0, const QModelIndex &iv1,
         const QModelIndex &iv2, const QModelIndex &iv3,
         const QModelIndex &iv4, const QModelIndex &iv5,
         const QModelIndex &iv6, const QModelIndex &iv7 )
-{ 
+{
     QModelIndex iHexa;
 
     HEXA_NS::Vertex* hv0 = getHexaPtr<HEXA_NS::Vertex*>(iv0);
@@ -876,7 +870,7 @@ QModelIndex DocumentModel::addHexaQuad( const QModelIndex &i_q0, const QModelInd
 }
 
 QModelIndex DocumentModel::addHexaQuads( const QModelIndexList &iquads)
-{ 
+{
     QModelIndex hexaIndex;
 
     HEXA_NS::Hexa* hh = NULL;
@@ -1054,7 +1048,7 @@ QModelIndex DocumentModel::makeCylindrical( const QModelIndex& i_pt,
     return eltsIndex;
 }
 
-QModelIndex DocumentModel::makeCylindricals( 
+QModelIndex DocumentModel::makeCylindricals(
         const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& iheight,
         QList< double> radius, QList<double> angles, QList<double> heights,
         bool fill ) //HEXA3
@@ -1138,9 +1132,9 @@ QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIn
     return iElts;
 }
 
-QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex& ivecx, 
+QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex& ivecx,
         int nr, int na, int nl )
-{ 
+{
     QModelIndex iElts;
 
     HEXA_NS::Pipe*   hPipe  = getHexaPtr<HEXA_NS::Pipe*>(ipipe);
@@ -1177,7 +1171,7 @@ QModelIndex DocumentModel::makeCylinders(const QModelIndex& icyl1, const QModelI
 
 //
 QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelIndex& ipipe2 )
-{ 
+{
     QModelIndex iCrossElts;
 
     HEXA_NS::Pipe* hPipe1  = getHexaPtr<HEXA_NS::Pipe*>(ipipe1);
@@ -1194,7 +1188,7 @@ QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelInd
     return iCrossElts;
 }
 
-QModelIndex DocumentModel::makeRind( const QModelIndex& icenter, 
+QModelIndex DocumentModel::makeRind( const QModelIndex& icenter,
         const QModelIndex& ivecx, const QModelIndex& ivecz,
         double  radext, double radint, double radhole,
         const QModelIndex& iplorig,
@@ -1222,7 +1216,7 @@ QModelIndex DocumentModel::makeRind( const QModelIndex& icenter,
     return iElts;
 }
 
-QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter, 
+QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter,
         const QModelIndex& ivecx, const QModelIndex& ivecz,
         double  radext, double radint, double radhole,
         const QModelIndex& iplorig, double angle,
@@ -1250,7 +1244,7 @@ QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter,
     return iElts;
 }
 
-QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter, 
+QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter,
         const QModelIndex& ivecx, const QModelIndex& ivecz,
         double radius, double radhole,
         const QModelIndex& iplorig,
@@ -1278,7 +1272,7 @@ QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter,
     return iElts;
 }
 
-QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter, 
+QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter,
         const QModelIndex& ivecx, const QModelIndex& ivecz,
         double  radius, double radhole,
         const QModelIndex& iplorig, double angle,
@@ -1354,7 +1348,7 @@ bool DocumentModel::removeConnectedHexa( const QModelIndex& ihexa )
 }
 
 QModelIndex DocumentModel::prismQuad( const QModelIndex& iquad, const QModelIndex& ivec, int nb)
-{ 
+{
     QModelIndex iElts;
 
     HEXA_NS::Quad*   hQuad = getHexaPtr<HEXA_NS::Quad*>(iquad);
@@ -1446,7 +1440,7 @@ QModelIndex DocumentModel::joinQuad(
     return iElts;
 }
 
-QModelIndex DocumentModel::joinQuads( 
+QModelIndex DocumentModel::joinQuads(
         const QModelIndexList& iquadsstart, const QModelIndex& iquaddest,
         const QModelIndex& iv0, const QModelIndex& iv1,
         const QModelIndex& iv2, const QModelIndex& iv3,
@@ -1689,7 +1683,7 @@ QModelIndex DocumentModel::makeScale( const QModelIndex& ielts, const QModelInde
 
 
 
-QModelIndex DocumentModel::makeRotation( const QModelIndex& ielts, 
+QModelIndex DocumentModel::makeRotation( const QModelIndex& ielts,
         const QModelIndex& iv,
         const QModelIndex& ivec, double angle )
 {
@@ -1730,7 +1724,7 @@ QModelIndex DocumentModel::makeSymmetryPoint( const QModelIndex& ielts, const QM
 }
 
 
-QModelIndex DocumentModel::makeSymmetryLine( const QModelIndex& ielts, 
+QModelIndex DocumentModel::makeSymmetryLine( const QModelIndex& ielts,
         const QModelIndex& iv,
         const QModelIndex& ivec )
 {
@@ -1967,13 +1961,11 @@ void DocumentModel::addAssociation( const QModelIndex& iElt, const DocumentModel
 
 QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex& iElt )
 {
-    MESSAGE("DocumentModel::getAssociations( "<< iElt.data().toString().toStdString() << " )" );
     QList<DocumentModel::GeomObj> res;
     DocumentModel::GeomObj        assoc;
 
     //std::cout << "getAssociations() start"  << std::endl;
     if ( data(iElt, HEXA_TREE_ROLE) == VERTEX_TREE ){
-        MESSAGE("*  of a Vertex");
         //    HEXA_NS::Vertex* hVex = data(iElt, HEXA_DATA_ROLE).value<HEXA_NS::Vertex *>();
         HEXA_NS::Vertex *hVex = getHexaPtr<HEXA_NS::Vertex *>(iElt);
         HEXA_NS::Shape* hShape = hVex->getAssociation();
@@ -1992,13 +1984,9 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
                 assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
                 assoc.name  = _assocName[assoc.entry];
             }
-            MESSAGE("*  assoc.entry"  << assoc.entry.toStdString() );
-            MESSAGE("*  assoc.subid"  << assoc.subid.toStdString() );
-            MESSAGE("*  -----------" );
             res << assoc;
         }
     } else if ( data(iElt, HEXA_TREE_ROLE) == EDGE_TREE ){
-        MESSAGE("*  of an Edge");
         HEXA_NS::Edge*   hEdge = getHexaPtr<HEXA_NS::Edge *>(iElt);
         HEXA_NS::Shapes  hShapes = hEdge->getAssociations();
         QStringList shapeID;
@@ -2010,23 +1998,15 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
             assoc.start = (*it)->getStart();
             assoc.end   = (*it)->getEnd();
 
-            MESSAGE("*  assoc.ident " << (*it)->getIdent() );
             shapeID = QString( (*it)->getIdent().c_str() ).split(",");
             if ( shapeID.count() == 2 ){
                 assoc.entry = shapeID[0];
                 assoc.subid = shapeID[1].isEmpty()? QString::number(-1) : shapeID[1];
                 assoc.name  = _assocName[assoc.entry];
             }
-            MESSAGE("*  assoc.entry" << assoc.entry.toStdString() );
-            MESSAGE("*  assoc.subid" << assoc.subid.toStdString() );
-            MESSAGE("*  assoc.brep"  << assoc.brep.toStdString() );
-            MESSAGE("*  assoc.start" << assoc.start );
-            MESSAGE("*  assoc.end"   << assoc.end );
-            MESSAGE("*  -----------" );
             res << assoc;
         }
     } else if ( data(iElt, HEXA_TREE_ROLE) == QUAD_TREE ){
-        MESSAGE("*  of a Quad");
         HEXA_NS::Quad*   hQuad  = getHexaPtr<HEXA_NS::Quad*>(iElt);
         HEXA_NS::Shapes  hShapes = hQuad->getAssociations();
         QStringList shapeID;
@@ -2037,12 +2017,6 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
             assoc.brep  = (*it)->getBrep().c_str();
             assoc.start = (*it)->getStart();
             assoc.end   = (*it)->getEnd();
-            MESSAGE("*  assoc.entry" << assoc.entry.toStdString() );
-            MESSAGE("*  assoc.subid" << assoc.subid.toStdString() );
-            //       MESSAGE("*  assoc.brep"  << assoc.brep.toStdString() );
-            //       MESSAGE("*  assoc.start" << assoc.start );
-            //       MESSAGE("*  assoc.end"   << assoc.end );
-            MESSAGE("*  -----------" );
             shapeID = QString( (*it)->getIdent().c_str() ).split(",");
             if ( shapeID.count() == 2 ){
                 assoc.entry = shapeID[0];
@@ -2054,20 +2028,18 @@ QList<DocumentModel::GeomObj> DocumentModel::getAssociations( const QModelIndex&
         }
     }
 
-    MESSAGE("}" );
     return res;
 }
 
-//         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart, 
+//         int associateOpenedLine (Edge*  mstart, Edges&  mline, Shape* gstart,
 //                              double pstart, Shapes& gline, double pend);
-//         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline, 
+//         int  associateClosedLine (Vertex* mfirst, Edge*  mstart, Edges&  mline,
 //                              Shape*  gstart, double pstart, Shapes& gline);
 bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
         const GeomObjList&     assocs,
         double pstart,
         double pend )
 {
-    MESSAGE("DocumentModel::associateOpenedLine() ");
     bool ret = false;
     HEXA_NS::Edge*  mstart = NULL;
     HEXA_NS::Edges  mline;
@@ -2081,10 +2053,8 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
         hedge = getHexaPtr<HEXA_NS::Edge*>(iedge);
         if ( mstart == NULL ){
             mstart = hedge;
-            MESSAGE("*    mstart" << iedge.data().toString().toStdString() );
         } else {
             mline.push_back( hedge );
-            MESSAGE("*    mline :" << iedge.data().toString().toStdString() );
         }
     }
 
@@ -2098,31 +2068,18 @@ bool DocumentModel::associateOpenedLine( const QModelIndexList& iedges,
 
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
-            MESSAGE("*    gstart->debut" << gstart->getStart());
-            MESSAGE("*    gstart->fin"   << gstart->getEnd());
-            MESSAGE("*    gstart->ident" << gstart->getIdent());
-            MESSAGE("*    gstart->getBrep()" << gstart->getBrep());
-            //             pstart = anAssoc.start;
         } else {
             gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
-            MESSAGE("*    gline->debut" << hshape->getStart());
-            MESSAGE("*    gline->fin"   << hshape->getEnd());
-            MESSAGE("*    gline->ident" << hshape->getIdent());
-            MESSAGE("*    gline->getBrep()" << hshape->getBrep());
         }
     }
     //     pend = assocs.last().end;
-    MESSAGE("*    pstart" << pstart );
-    MESSAGE("*    pend"   << pend );
 
     int r = _hexaDocument->associateOpenedLine( mstart, mline,
             gstart, pstart, gline, pend );
     if ( r == HOK ){
         updateData();
-        MESSAGE("*    DocumentModel:: associateOpenedLine() => OK ");
         ret = true;
     } else if ( r == HERR ){
-        MESSAGE("*    DocumentModel:: associateOpenedLine() => ERR ");
         ret = false;
     }
     delete gstart; //CS_TODO : delete gline?
@@ -2135,7 +2092,6 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
         double pstart,
         bool   inv )
 {
-    MESSAGE("DocumentModel::associateClosedLine() ");
     bool ret = false;
     HEXA_NS::Vertex* mfirst = getHexaPtr<HEXA_NS::Vertex*>(ivertex);
     HEXA_NS::Edge*   mstart = NULL;
@@ -2150,10 +2106,8 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
         hedge = getHexaPtr<HEXA_NS::Edge*>(iedge);
         if ( mstart == NULL ){
             mstart = hedge;
-            MESSAGE("*    mstart" << iedge.data().toString().toStdString() );
         } else {
             mline.push_back( hedge );
-            MESSAGE("*    mline :" << iedge.data().toString().toStdString() );
         }
     }
 
@@ -2167,19 +2121,10 @@ bool DocumentModel::associateClosedLine( const  QModelIndex& ivertex,
         if ( gstart == NULL ){
             gstart = hshape; // CS_TODO :gstart.debut = pstart ??
             //             pstart = anAssoc.start;
-            MESSAGE("*    gstart->debut" << gstart->getStart());
-            MESSAGE("*    gstart->fin"   << gstart->getEnd  ());
-            MESSAGE("*    gstart->ident" << gstart->getIdent());
-            MESSAGE("*    gstart->getBrep()" << gstart->getBrep());
         } else {
             gline.push_back( hshape ); //CS_TODO : hshape.fin = pend ??
-            MESSAGE("*    gline->debut" << hshape->getStart());
-            MESSAGE("*    gline->fin"   << hshape->getEnd());
-            MESSAGE("*    gline->ident" << hshape->getIdent());
-            MESSAGE("*    gline->getBrep()" << hshape->getBrep());
         }
     }
-    MESSAGE("*    pstart" << pstart );
 
     int r = _hexaDocument->associateClosedLine( mfirst, mstart, mline,
             gstart, pstart, inv, gline );
@@ -2351,7 +2296,7 @@ bool DocumentModel::setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, 
     return ret;
 }
 
-// 
+//
 bool  DocumentModel::removeLaw( const QModelIndex& ilaw )
 {
     HEXA_NS::Law* hLaw = data(ilaw, HEXA_DATA_ROLE).value<HEXA_NS::Law *>();
@@ -2452,7 +2397,6 @@ QString PatternDataModel::documentEntry()
 
 Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const
 {
-    //   MESSAGE("PatternDataModel::flags() "<< index.data().toString().toStdString() );
     Qt::ItemFlags flags;
 
     DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
@@ -2495,7 +2439,7 @@ PatternBuilderModel::PatternBuilderModel( QObject * parent ) :
     setFilterRegExp ( QRegExp(builderRegExp ) );
 }
 
-PatternBuilderModel::~PatternBuilderModel() 
+PatternBuilderModel::~PatternBuilderModel()
 {
 }
 
@@ -2539,7 +2483,7 @@ AssociationsModel::AssociationsModel( QObject * parent ) :
     setFilterRegExp ( QRegExp(assocRegExp) );
 }
 
-AssociationsModel::~AssociationsModel() 
+AssociationsModel::~AssociationsModel()
 {
 }
 
@@ -2582,7 +2526,7 @@ GroupsModel::GroupsModel( QObject * parent ) :
     setFilterRegExp ( QRegExp(groupsRegExp ) );
 }
 
-GroupsModel::~GroupsModel() 
+GroupsModel::~GroupsModel()
 {
 }
 
@@ -2635,7 +2579,7 @@ MeshModel::MeshModel( QObject * parent ) :
     setFilterRegExp ( QRegExp(meshRegExp) );
 }
 
-MeshModel::~MeshModel() 
+MeshModel::~MeshModel()
 {
 }
 

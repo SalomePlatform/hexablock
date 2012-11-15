@@ -55,7 +55,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-static bool db = false;
+static bool db = on_debug ();
 static const double TolAsso = 1e-2;    // Tolerance pour les associations
 
 void arrondir (double &val);
@@ -63,7 +63,6 @@ void arrondir (double &val);
 // ======================================================= Constructeur
 KasLine::KasLine ()
 {
-   db = on_debug ();
    lig_brep     = "";
    lig_debut    = 0;
    lig_fin      = 1;
@@ -91,7 +90,7 @@ KasLine::~KasLine ()
    delete geom_curve;
 }
 // ========================================================= defineLine
-// === Creation de la quincaillerie associee a une shape 
+// === Creation de la quincaillerie associee a une shape
 void KasLine::defineLine (Shape* asso, double deb, double fin)
 {
    lig_brep  = asso->getBrep  ();
@@ -108,7 +107,7 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
       lig_debut = fin;
       lig_fin   = deb ;
       }
-   else 
+   else
       {
       lig_debut = deb;
       lig_fin   = fin;
@@ -135,9 +134,9 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
    geom_length = geom_total_length * fabs (lig_fin-lig_debut);
 
                                // Extremites
-   GCPnts_AbscissaPoint s1 (*geom_curve, geom_total_length*lig_debut, 
+   GCPnts_AbscissaPoint s1 (*geom_curve, geom_total_length*lig_debut,
                              geom_curve->FirstParameter());
-   GCPnts_AbscissaPoint s2 (*geom_curve, geom_total_length*lig_fin, 
+   GCPnts_AbscissaPoint s2 (*geom_curve, geom_total_length*lig_fin,
                              geom_curve->FirstParameter());
 
    par_mini     = s1.Parameter ();
@@ -146,7 +145,7 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
    end_gpoint   = geom_curve->Value (par_maxi);
    majCoord ();
 
-   if (db) 
+   if (db)
       {
       Echo (" ____________________________________  KasLine::defineLine");
       HexDisplay (deb);
@@ -165,7 +164,7 @@ void KasLine::defineLine (Shape* asso, double deb, double fin)
 // ========================================================= assoPoint
 void KasLine::assoPoint (double abscis, Vertex* node)
 {
-   GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
+   GCPnts_AbscissaPoint s1 (*geom_curve, abscis,
                              geom_curve->FirstParameter());
    double gparam       = s1.Parameter ();
    gp_Pnt pnt_asso = geom_curve->Value (gparam);
@@ -182,7 +181,7 @@ void KasLine::assoPoint (double abscis, Vertex* node)
          car= ' ';
       printf (" ... assoPoint%c: v=%s (%g,%g,%g), p=%g", car,
            node->getName(), node->getX(), node->getY(), node->getZ(), abscis);
- 
+
       printf (" -> (%g,%g,%g)\n", coord[dir_x], coord[dir_y], coord[dir_z]);
       }
 }
@@ -192,7 +191,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
    if (sm2 < start_absc) return;
    if (sm1 > end_absc)   return;
 
-   Vertex* segment[V_TWO] = { edge->getVertex (vorig), 
+   Vertex* segment[V_TWO] = { edge->getVertex (vorig),
                               edge->getVertex (1-vorig) };
 
    double vpara1 = lig_debut + (sm1-start_absc)/geom_total_length;
@@ -216,8 +215,8 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
       cout << " ligpara = [ " << lig_debut << ", " << lig_fin << " ]" << endl;
       cout << " absc    = [ " << start_absc << ", " << end_absc << " ]\n" ;
 
-      cout << " Edge    = " << edge->getName() << 
-	              " = [ " << segment[0]->getName() << ", " 
+      cout << " Edge    = " << edge->getName() <<
+                      " = [ " << segment[0]->getName() << ", "
            << ","             << segment[1]->getName() << endl;
       cout << " smx     = [ " << sm1    << ", " << sm2    << " ]" << endl;
       cout << " vparam  = [ " << vpara1 << ", " << vpara2 << " ]" << endl;
@@ -234,7 +233,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
                                                     lpara1, lpara2);
       }
 
-                               // ---------------Association du vertex 
+                               // ---------------Association du vertex
    double hparam = geom_inverse ? vpara2 : vpara1;
    double smx   = sm1;
    double absc1 = start_absc - TolAsso*geom_total_length;
@@ -250,7 +249,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
                                           // .....  Coordonnees du point
 
              double abscis = geom_total_length*hparam;
-             GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
+             GCPnts_AbscissaPoint s1 (*geom_curve, abscis,
                                        geom_curve->FirstParameter());
              double gparam       = s1.Parameter ();
              gp_Pnt pnt_asso = geom_curve->Value (gparam);
@@ -262,7 +261,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              if (db)
                 {
                 double* ass = gpoint.getCoord();
-                printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
+                printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n",
                     node->getName(), node->getX(), node->getY(), node->getZ(),
                     ass[dir_x], ass[dir_y], ass[dir_z], hparam, smx);
                 }
@@ -270,7 +269,7 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
          else if (db)
              {
              double abscis = geom_total_length*hparam;
-             GCPnts_AbscissaPoint s1 (*geom_curve, abscis, 
+             GCPnts_AbscissaPoint s1 (*geom_curve, abscis,
                                     geom_curve->FirstParameter());
              double gparam   = s1.Parameter ();
              gp_Pnt pnt_asso = geom_curve->Value (gparam);
@@ -280,14 +279,14 @@ void KasLine::associate (Edge* edge, double sm1, double sm2, int vorig)
              gpoint.definePoint (pnt_asso);
              double* ass = gpoint.getCoord();
              // gpoint.associate (node);
-             printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n", 
+             printf (" Asso Point %s (%g,%g,%g) -> (%g,%g,%g) p=%g s=%g\n",
                      node->getName(),
                      node->getX(), node->getY(), node->getZ(),
                      ass[dir_x], ass[dir_y], ass[dir_z], hparam, smx);
 
              gpoint.definePoint (node);
              ass = gpoint.getCoord();
-             printf ("               ignore car deja associe a (%g,%g, %g)\n", 
+             printf ("               ignore car deja associe a (%g,%g, %g)\n",
                      ass[dir_x], ass[dir_y], ass[dir_z]);
              }
           }
@@ -305,11 +304,11 @@ void KasLine::assoEdge (Edge* edge, double para1, double para2, int vass)
 
    edge ->addAssociation (shape);
 
-   if (db) printf (" ... Asso Edge %s -> (%g,%g)\n", 
+   if (db) printf (" ... Asso Edge %s -> (%g,%g)\n",
            edge->getName(), para1, para2);
 
    double lg = geom_total_length;
-   switch (vass) 
+   switch (vass)
       {
       case V_AMONT :
            assoPoint (para1*lg, edge->getVertex (V_AMONT));
@@ -353,13 +352,15 @@ void KasLine::inverser ()
       {
       lig_fin  = lig_debut;
       lig_debut = 0;
-      cout << " ... inverser : fin = debut = " << lig_fin << endl;
+      if (db)
+         cout << " ... inverser : fin = debut = " << lig_fin << endl;
       }
    else if (lig_fin > Epsil && lig_fin < UnEpsil)
       {
       lig_debut = lig_fin;
       lig_fin   = 1;
-      cout << " ... inverser : debut = fin = " << lig_debut  << endl;
+      if (db)
+          cout << " ... inverser : debut = fin = " << lig_debut  << endl;
       }
 
    geom_inverse = NOT geom_inverse;
@@ -377,7 +378,7 @@ void KasLine::setRank (int nro, int sens, double& abscisse)
 
    if (db)
       {
-      cout << "KasLine::setRank : nro = " << nro << " sens="  << sens 
+      cout << "KasLine::setRank : nro = " << nro << " sens="  << sens
            <<  " = (" << start_absc << ", " << end_absc << ")" << endl;
       }
 }
@@ -406,11 +407,11 @@ double KasLine::findParam (double* coord)
    double gparam = projector.LowerDistanceParameter();
    if (gparam <par_mini || gparam>par_maxi)
       {
-      // cout << " Rejet : " << gparam << " not in (" << par_mini 
+      // cout << " Rejet : " << gparam << " not in (" << par_mini
       //                              << ", " << par_maxi << ")" << endl;
       return -1.0;
       }
- 
+
    gp_Pnt rpoint = geom_curve->Value (gparam);
    if (NOT same_coords (gpoint, rpoint))
       {
@@ -422,8 +423,8 @@ double KasLine::findParam (double* coord)
    GeomAdaptor_Curve  adapt_curve (handle);
    double abscis = GCPnts_AbscissaPoint::Length (adapt_curve, umin, gparam);
    double hparam = abscis/geom_total_length;
-  
-   // gparam = (gparam-par_mini) / (par_maxi-par_mini); 
+
+   // gparam = (gparam-par_mini) / (par_maxi-par_mini);
    return hparam;
 }
 // ========================================================= arrondir

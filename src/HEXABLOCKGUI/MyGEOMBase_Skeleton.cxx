@@ -19,6 +19,7 @@
 
 #include "MyGEOMBase_Skeleton.hxx"
 #include "GEOMBase.h"
+#include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
 #include "MyDlgRef.hxx"
 #include <GeometryGUI.h>
@@ -54,7 +55,6 @@ MyGEOMBase_Skeleton::MyGEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* 
 //   setAttribute( Qt::WA_DeleteOnClose );
 
   setModal( modal );
-  MESSAGE("MyGEOMBase_Skeleton::MyGEOMBase_Skeleton()");
 
   myMainFrame = new MyDlgRef_Skeleton( this );
   QVBoxLayout* topLayout = new QVBoxLayout( this );
@@ -208,11 +208,12 @@ void MyGEOMBase_Skeleton::close()
 {
 //	_currentObj = NULL;
 
-	//Clear VTK selection
-//	clearVTKSelection();
+	//Clear VTK selection //no need to test if the graphic view exist
+    HEXABLOCKGUI::currentDocGView->clearSelection();
 
 	//Clear OCC selection
-//	clearOCCSelection();
+    if (HEXABLOCKGUI::currentOccGView != NULL)
+        HEXABLOCKGUI::currentOccGView->clearSelection();
 
 	//Close the dialog box
 	if (parentWidget()) parentWidget()->close();
@@ -248,7 +249,7 @@ void MyGEOMBase_Skeleton::LineEditReturnPressed()
 void MyGEOMBase_Skeleton::DeactivateActiveDialog()
 {
   this->setEnabled( false );
-  globalSelection();
+  globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow());
   if ( myGeomGUI ) {
     myGeomGUI->SetActiveDialogBox( 0 );
     disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );

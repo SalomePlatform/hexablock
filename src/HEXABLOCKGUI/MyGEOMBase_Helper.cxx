@@ -91,7 +91,6 @@ MyGEOMBase_Helper::MyGEOMBase_Helper( SUIT_Desktop* desktop )
 //================================================================
 MyGEOMBase_Helper::~MyGEOMBase_Helper()
 {
-  MESSAGE("DESSSSSSSSSSTTTRRRRUUUCCCCCCCCCCCTTTTOOOOORRRRR");
   //rnv: Fix for the "IPAL21922 : WinTC5.1.4: incorrect quit salome"
   if ( !SUIT_Session::session()->activeApplication() || !SUIT_Session::session()->activeApplication()->desktop() )
     return;
@@ -514,7 +513,7 @@ void MyGEOMBase_Helper::localSelection(SUIT_ViewWindow *view, const int theMode 
 //            in accordance with mode. theMode is from GEOMImpl_Types
 // mode = GEOM_ALLOBJECTS
 //================================================================
-void MyGEOMBase_Helper::globalSelection2(SUIT_ViewWindow *view, const bool update )
+void MyGEOMBase_Helper::globalSelection(SUIT_ViewWindow *view, const bool update )
 {
     SUIT_Session* session = SUIT_Session::session();
     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -861,7 +860,6 @@ bool MyGEOMBase_Helper::onAccept( const bool publish, const bool useTransaction 
 
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
-    MESSAGE("MyGEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
                                QObject::tr("WRN_WARNING"),
                                QObject::tr("WRN_STUDY_LOCKED"),

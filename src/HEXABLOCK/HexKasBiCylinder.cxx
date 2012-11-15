@@ -50,7 +50,7 @@
 #include "HexEdge.hxx"
 #include "HexShape.hxx"
 #include "HexDiagnostics.hxx"
-                                    // Cercles 
+                                    // Cercles
 #include <GEOMImpl_CircleDriver.hxx>
 #include <GEOMImpl_ICircle.hxx>
 
@@ -84,7 +84,7 @@ void KasBiCylinder::purge ()
     no_inter = true;
     inter_line.clear ();
 }
-// ====================================================== defineCyls 
+// ====================================================== defineCyls
 int KasBiCylinder::defineCyls (double* borig,  double* bnorm, double* bbase,
                               double  brayon, double  bhaut,
                               double* sorig,  double* snorm, double* sbase,
@@ -165,9 +165,11 @@ int KasBiCylinder::defineCyls (double* borig,  double* bnorm, double* bbase,
          // TopoDS_Edge ligne = explo.Current();
          explo.Next ();
 
-         cout << "____________________________________ Ligne suivante" << endl;
+         if (db)
+            cout << "____________________________________ Ligne suivante"
+            << endl;
          geom_make_brep (ligne, crep);
-         if (db) 
+         if (db)
             {
             cout << "----  save_brep inter" << nbrep+1 << ".brep" << endl;
             save_brep ("inter", crep, nbrep);
@@ -184,7 +186,7 @@ int KasBiCylinder::defineCyls (double* borig,  double* bnorm, double* bbase,
 // === Trouve le(s) ligne(s) contenant ce vertex et le(s) parametre(s)
 int KasBiCylinder::anaVertex (Vertex* node, int* tline, double* tpara)
 {
-   Real3  point; 
+   Real3  point;
    node->getPoint (point);
    int nbsol = 0;
    int nblines = inter_line.size();
@@ -194,10 +196,10 @@ int KasBiCylinder::anaVertex (Vertex* node, int* tline, double* tpara)
        double param = inter_line[nl]->findParam (point);
        if (param>=0)
           {
-          if (db) 
-              cout << " ... findParam " << node->getName() 
-                   << ", point=(" << point[0] << ", " << point[1] 
-                                 << ", " << point[2] 
+          if (db)
+              cout << " ... findParam " << node->getName()
+                   << ", point=(" << point[0] << ", " << point[1]
+                                 << ", " << point[2]
                    << "), nl=" << nl << ", param=" << param << endl;
           if (nbsol>=2)
              return nbsol;
@@ -241,7 +243,7 @@ int KasBiCylinder::associate (Edge* edge)
 
    if (sol1==0 || sol2==0)
       return HERR;
-                                // Ligne commune ? 
+                                // Ligne commune ?
    for (int ns1=0 ; ns1<sol1 ; ns1++)
        {
        int nlig = tline1[ns1];
@@ -264,10 +266,10 @@ int KasBiCylinder::associate (Edge* edge)
                   inter_line[nlig]->assoEdge (edge, 0.0, param2, V_AVAL);
                   }
               return HOK;
-              }  
+              }
            }
        }
-   
+
     inter_line[tline1[0]]->assoEdge (edge, tparam1[0],    1.0,  V_AMONT);
     inter_line[tline2[0]]->assoEdge (edge, 0,      tparam2[0], V_AVAL);
     return HOK;
@@ -285,10 +287,11 @@ int geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
 // ====================================================== geom_asso_cylcyl
 int geom_asso_cylcyl (Edge* edge)
 {
-   cout << " ___________________________________ geom_asso_cylcyl " 
-        << edge->getName () << " = (" << edge->getVertex(0)->getName () 
-                            << ","  << edge->getVertex(1)->getName () 
-        << ")" << endl;
+   if (db)
+      cout << " ___________________________________ geom_asso_cylcyl "
+           << edge->getName () << " = (" << edge->getVertex(0)->getName ()
+                               << ","  << edge->getVertex(1)->getName ()
+           << ")" << endl;
 
    int ier = current_bicyl.associate (edge);
    return ier;

@@ -97,7 +97,6 @@ HEXABLOCK_Gen_i::HEXABLOCK_Gen_i(CORBA::ORB_ptr orb,
 	const char *interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
-  MESSAGE("activate object");
   _thisObj = this ;
   _poa = PortableServer::POA::_duplicate(poa);
   _orb = CORBA::ORB::_duplicate(orb);
@@ -106,7 +105,6 @@ HEXABLOCK_Gen_i::HEXABLOCK_Gen_i(CORBA::ORB_ptr orb,
   _engine_cpp = HEXA_NS::Hex::getInstance ();
   _geomClient = NULL;
   _HEXABLOCKGen = this;
-  MESSAGE("ALRRRRRIGHTTTTT");
 }
 
 //=============================================================================
@@ -153,7 +151,6 @@ Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 					      CORBA::Boolean /*isMultiFile*/,
 					      CORBA::Boolean& isValidScript)
 {
-  MESSAGE("DumpPython DumpPython DumpPython DumpPython");
   std::cout << "DumpPython DumpPython DumpPython DumpPython" << std::endl;
   isValidScript = true;  // to avoid dump python operation failing
   Engines::TMPFile_var aStreamFile = new Engines::TMPFile(0);
@@ -242,7 +239,6 @@ Engines::TMPFile* HEXABLOCK_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
 void HEXABLOCK_Gen_i::test()
 {
-  MESSAGE("La boite a rythmes a tue le Rock'Roll");
 }
 
 CORBA::Long HEXABLOCK_Gen_i::countDocument()
@@ -656,7 +652,6 @@ extern "C"
 			       const char *instanceName, 
 		       	       const char *interfaceName)
   {
-    MESSAGE("PortableServer::ObjectId * HEXABLOCKEngine_factory()");
     SCRUTE(interfaceName);
     HEXABLOCK_Gen_i *myHEXABLOCK 
       = new HEXABLOCK_Gen_i(orb, poa, contId, instanceName, interfaceName);

@@ -27,6 +27,10 @@
 #ifdef WNT
 #include <process.h>
 #define getpid _getpid
+#else                         // Modification INCKA AD
+#include<stdio.h>
+#include<sys/types.h>
+#include <unistd.h>
 #endif
 
 namespace HEXABLOCK{

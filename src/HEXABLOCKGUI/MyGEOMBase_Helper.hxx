@@ -64,7 +64,7 @@ public:
   void erasePreview    ( const bool = true );
 
   void localSelection(SUIT_ViewWindow *view, const int theMode);
-  void globalSelection2( SUIT_ViewWindow *view, const bool update = false  );
+  void globalSelection( SUIT_ViewWindow *view, const bool update = false  );
 
 protected:
   static GEOM::GEOM_Gen_ptr getGeomEngine();

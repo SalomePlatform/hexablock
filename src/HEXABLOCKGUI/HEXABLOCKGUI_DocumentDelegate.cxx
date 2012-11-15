@@ -52,10 +52,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
                                          const QStyleOptionViewItem &option,
                                          const QModelIndex          &index ) const
 {
-  MESSAGE("DocumentDelegate::createEditor(){");
-  MESSAGE("*  parent is: " << parent);
-  MESSAGE("*  _dw    is: " << _dw);
-  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
 
   //close current editor if there's one before creating a new one
   if (_currentEditor != NULL)
@@ -70,8 +66,9 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   if ( !_dw->isVisible() ) _dw->setVisible(true);
 
   switch ( index.data(HEXA_TREE_ROLE).toInt() ){
-    case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::UPDATE_MODE);   break;
-    case EDGE_TREE :     editor = new EdgeDialog(_dw, /*HexaBaseDialog::NEW_MODE*/HexaBaseDialog::INFO_MODE);     break;
+//  case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::UPDATE_MODE);   break; //Modification
+    case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
+    case EDGE_TREE :     editor = new EdgeDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case QUAD_TREE :     editor = new QuadDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case HEXA_TREE :     editor = new HexaDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case VECTOR_TREE :   editor = new VectorDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
@@ -80,7 +77,7 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   //   case ELEMENTS_TREE :  break;
   //   case CROSSELEMENTS_TREE : break;
     case GROUP_TREE       : editor = new GroupDialog(_dw, HexaBaseDialog::INFO_MODE/*UPDATE_MODE*/); break;
-    case LAW_TREE         : editor = new LawDialog(_dw, HexaBaseDialog::UPDATE_MODE); break;
+    case LAW_TREE         : editor = new LawDialog(_dw, HexaBaseDialog::INFO_MODE); break;
     case PROPAGATION_TREE : editor = new PropagationDialog(_dw, HexaBaseDialog::INFO_MODE); break;
   }
   if ( editor != NULL ){
@@ -92,7 +89,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   else
 	  _dw->close();
 
-  MESSAGE("}");
 
   _currentEditor = editor;
   return editor;
@@ -113,9 +109,6 @@ void DocumentDelegate::closeDialog()
 void DocumentDelegate::setEditorData( QWidget *editor,
                                       const QModelIndex &index) const
 {
-  MESSAGE("DocumentDelegate::setEditorData(){");
-  MESSAGE("*  item   is: " << index.data(Qt::DisplayRole).toString().toStdString());
-
   HexaBaseDialog* hexaEditor = dynamic_cast<HexaBaseDialog*>( editor );
   if (hexaEditor == NULL) return;
   DocumentModel* documentModel = hexaEditor->getDocumentModel();
@@ -187,7 +180,6 @@ void DocumentDelegate::setEditorData( QWidget *editor,
     break;
   }
 
-  MESSAGE("}");
 }
 
 
@@ -196,6 +188,7 @@ bool DocumentDelegate::editorEvent ( QEvent                     *event,
                                      const QStyleOptionViewItem &option,
                                      const QModelIndex          &index )
 {
+/************************************************************
 	MESSAGE("DocumentDelegate::editorEvent(){");
 	MESSAGE("*  item   is: " << index.data().toString().toStdString());
 	MESSAGE("*  event  is: " << event->type() );
@@ -208,6 +201,7 @@ bool DocumentDelegate::editorEvent ( QEvent                     *event,
 	}
 
 	//return QItemDelegate::editorEvent ( event, model, option, index );
+ *************************************************************/
 	return false;
 }
 

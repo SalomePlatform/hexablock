@@ -170,8 +170,6 @@ QModelIndexList SelectionModel::indexListOf( const QString& anEntry, int role )
 
 void SelectionModel::salomeSelectionChanged()
 {
-  MESSAGE("PatternDataSelectionModel::salomeSelectionChanged(){");
-
   try {
 
     if ( HEXABLOCKGUI::selectionMgr() == NULL ) return;
@@ -179,7 +177,6 @@ void SelectionModel::salomeSelectionChanged()
   //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
     HEXABLOCKGUI::selectionMgr()->selectedObjects( salomeSelected, NULL, false );
     if ( salomeSelected.IsEmpty() ){
-      MESSAGE("*  salomeSelected.IsEmpty()");
       salomeNothingSelected = true;
       clearSelection();
       return;
@@ -191,7 +188,6 @@ void SelectionModel::salomeSelectionChanged()
     //Handle selection according to the source
     if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::VTK)
        {
-          MESSAGE("*  OK : selection from VTK");
           for( ; it.More(); it.Next()){
                 anIObject = it.Value(); //anIObject->getName()
                 vtkSelectionChanged( anIObject ); // or VTK?...
@@ -199,7 +195,6 @@ void SelectionModel::salomeSelectionChanged()
        }
     else if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::OCC)
        {
-          MESSAGE("*  OK : selection from OCC");
           for( ; it.More(); it.Next()){
                 anIObject = it.Value(); //anIObject->getName()
                 geomSelectionChanged( anIObject );// or VTK?...
@@ -210,13 +205,11 @@ void SelectionModel::salomeSelectionChanged()
   } catch ( ... ) {
     MESSAGE("*  Unknown exception was cought !!!");
   }
-  MESSAGE("}");
 }
 
 
 QModelIndexList SelectionModel::getSelectionFromModel(const Handle(SALOME_InteractiveObject)& anIObject)
 {
-   MESSAGE("SelectionModel::getSelectionFromModel(const Handle(SALOME_InteractiveObject)& anIObject){");
    QModelIndexList selectedIndexes;
 
    //verify if the IOBject is valid and from VTK selection
@@ -248,7 +241,6 @@ QModelIndexList SelectionModel::getSelectionFromModel(const Handle(SALOME_Intera
          }
    }
 
-   MESSAGE("}");
    return selectedIndexes;
 }
 
@@ -256,7 +248,6 @@ QModelIndexList SelectionModel::getSelectionFromModel(const Handle(SALOME_Intera
 //Returns the element of the model which is associated to the Interactive object
 QModelIndexList SelectionModel::getSelectionAssociactions(const Handle(SALOME_InteractiveObject)& anIObject)
 {
-   MESSAGE("SelectionModel::getSelectionAssociactions(const Handle(SALOME_InteractiveObject)& anIObject){");
    QModelIndexList assocsIndexes;
 
    //verify if the selection is really from OCC View
@@ -285,7 +276,6 @@ QModelIndexList SelectionModel::getSelectionAssociactions(const Handle(SALOME_In
             }
    }
 
-   MESSAGE("}");
    return assocsIndexes;
 }
 
@@ -315,15 +305,10 @@ PatternDataSelectionModel::~PatternDataSelectionModel()
 
 void PatternDataSelectionModel::onCurrentChanged( const QModelIndex & current, const QModelIndex & previous )
 {
-  MESSAGE("PatternDataSelectionModel::onCurrentChanged(){");
-  MESSAGE("*  current  : " << current.data().toString().toStdString());
-  MESSAGE("*  previous : " << previous.data().toString().toStdString());
-
   //Setting the selection mode of the selected item from the treeview
   HEXABLOCKGUI::currentDocGView->setSelectionMode( current );
   HEXABLOCKGUI::currentOccGView->setSelectionMode( current );
 
-  MESSAGE("}");
 }
 
 void PatternDataSelectionModel::highlightEltsWithAssocs(const QModelIndexList& elts)
@@ -340,26 +325,15 @@ void PatternDataSelectionModel::highlightEltsWithAssocs(const QModelIndexList& e
 
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-    MESSAGE("PatternDataSelectionModel::onSelectionChanged(){");
-    foreach( const QModelIndex& isel, selected.indexes() ){
-        MESSAGE("*  selected : " << isel.data().toString().toStdString());
-    }
-    foreach( const QModelIndex& iunsel, deselected.indexes() ){
-        MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
-    }
-
 //    _theModelSelectionChanged = true;
     QModelIndexList indexes = selected.indexes();
     highlightEltsWithAssocs(indexes);
 //    _theModelSelectionChanged = false;
-
-    MESSAGE("}");
 }
 
 
 void PatternDataSelectionModel::geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
-   MESSAGE("PatternDataSelectionModel::geomSelectionChanged(){");
    if (HEXABLOCKGUI::assocInProgress) return;
 
    QModelIndexList assocsIndexes = getSelectionAssociactions(anIObject);
@@ -381,13 +355,11 @@ void PatternDataSelectionModel::geomSelectionChanged( const Handle(SALOME_Intera
    else //more than one element associated: just highlight them in the vtk view
          HEXABLOCKGUI::currentDocGView->highlight(assocsIndexes);
 
-   MESSAGE("}");
 }
 
 
 void PatternDataSelectionModel::vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
 {
-   MESSAGE("PatternDataSelectionModel::vtkSelectionChanged(){");
 
    QModelIndexList selectedIndexes =  getSelectionFromModel(anIObject);
    if (selectedIndexes.count() == 0)
@@ -433,7 +405,6 @@ void PatternDataSelectionModel::vtkSelectionChanged( const Handle(SALOME_Interac
    setCurrentIndex( anIOIndex, QItemSelectionModel::SelectCurrent );
    //    _theVtkSelectionChanged = false;
 
-   MESSAGE("}");
 }
 
 
@@ -461,14 +432,12 @@ GroupsSelectionModel::~GroupsSelectionModel()
 
 void GroupsSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  MESSAGE("GroupsSelectionModel::onSelectionChanged");
   try {
     //     if ( _salomeSelectionMgr == NULL ) return;
     //     _salomeSelectionMgr->clearSelected();
     //   erasePreview(true);
     QModelIndexList indexes = selected.indexes();
     for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-      MESSAGE( "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() );
       HEXABLOCKGUI::currentDocGView->highlightGroups( *i_index );
     }
 
@@ -509,12 +478,10 @@ MeshSelectionModel::~MeshSelectionModel()
 
 void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  MESSAGE("MeshSelectionModel::onSelectionChanged");
   try {
 
     QModelIndexList indexes = selected.indexes();
     for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-      MESSAGE( "entry selected" << i_index->data( HEXA_ENTRY_ROLE ).toString().toStdString() );
       HEXABLOCKGUI::currentDocGView->highlightPropagation( *i_index );
     }
 
@@ -543,7 +510,7 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 // void PatternDataSelectionModel::activateSelection()
 // {
 //   erasePreview(false);
-// 
+//
 //   // local selection
 //   if (!myObject->_is_nil() && !isAllSubShapes())
 //   {
@@ -557,38 +524,38 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //         myIsHiddenMain = true;
 //       }
 //     }
-// 
+//
 //     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
-// 
+//
 //     SUIT_ViewWindow* aViewWindow = 0;
 //     SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
 //     if (activeStudy)
 //       aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
 //     if (aViewWindow == 0) return;
-// 
+//
 //     SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
 //     if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
 //         aViewManager->getType() != SVTK_Viewer::Type())
 //       return;
-// 
+//
 //     SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
 //     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
 //     if (aView == 0) return;
-// 
+//
 //     //TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myObject);
-// 
+//
 //     TopTools_IndexedMapOfShape aSubShapesMap;
 //     TopExp::MapShapes(myShape, aSubShapesMap);
 //     CORBA::String_var aMainEntry = myObject->GetStudyEntry();
 //     QString anEntryBase = aMainEntry.in();
-// 
+//
 //     TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
 //     for (; anExp.More(); anExp.Next())
 //     {
 //       TopoDS_Shape aSubShape = anExp.Current();
 //       int index = aSubShapesMap.FindIndex(aSubShape);
 //       QString anEntry = anEntryBase + QString("_%1").arg(index);
-// 
+//
 //       SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
 //       if (aPrs) {
 //         displayPreview(aPrs, true, false); // append, do not update
@@ -597,7 +564,7 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //     aDisplayer->UpdateViewer();
 //     aDisplayer->SetDisplayMode(prevDisplayMode);
 //   }
-// 
+//
 //   globalSelection(GEOM_ALLSHAPES);
 // }
 
@@ -612,12 +579,12 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //     LightApp_DataOwner* anOwher = new LightApp_DataOwner( anEntry );
 //     aList.append( anOwher );
 //   }
-// 
+//
 //   SUIT_Session* session = SUIT_Session::session();
 //   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
 //   if ( !app )
 //     return false;
-// 
+//
 //   LightApp_SelectionMgr* aMgr = app->selectionMgr();
 //   if ( !aMgr )
 //     return false;
@@ -631,14 +598,14 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //   SMESH_Actor* anActor = SMESH::FindActorByObject(myMesh);
 //   if (!anActor || !anActor->hasIO())
 //     return;
-// 
+//
 //   Handle(SALOME_InteractiveObject) anIO = anActor->getIO();
 //   //mySelectionMgr->clearSelected();
 //   //mySelectionMgr->AddIObject(anIO, false);
 //   SALOME_ListIO aList;
 //   aList.Append(anIO);
 //   mySelectionMgr->setSelectedObjects(aList, false);
-// 
+//
 //   // Remove filter corresponding to the current type from viewer
 //   int aType = myTable->GetType();
 //   int aFilterId = SMESH::UnknownFilter;
@@ -647,19 +614,19 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //   else if (aType == SMESH::VOLUME) aFilterId = SMESH::VolumeFilter;
 //   Handle(VTKViewer_Filter) aFilter = SMESH::GetFilter(aFilterId);
 //   SMESH::RemoveFilter(aFilterId);
-// 
+//
 //   // get vtk ids
 //   TColStd_MapOfInteger aMap;
 //   QList<int>::const_iterator anIter;
 //   for (anIter = theIds.begin(); anIter != theIds.end(); ++anIter) {
 //     aMap.Add(*anIter);
 //   }
-// 
+//
 //   // Set new selection
 //   activeViewWindow->AddOrRemoveIndex(anIO, aMap, false);
 //   if ( SVTK_ViewWindow* aViewWindow = SMESH::GetViewWindow( mySMESHGUI ))
 //     aViewWindow->highlight( anIO, true, true );
-// 
+//
 //   // insert previously stored filter in viewer if necessary
 //   if (!aFilter.IsNull())
 //     SMESH::SetFilter(aFilter);
@@ -691,10 +658,10 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 // {
 //   if (myBusy) return;
 //   myMeshActor = 0;
-// 
+//
 //   SALOME_ListIO aList;
 //   mySelectionMgr->selectedObjects(aList,SVTK_Viewer::Type());
-// 
+//
 //   if (aList.Extent() == 1) {
 //     Handle(SALOME_InteractiveObject) anIO = aList.First();
 //     myMeshActor = SMESH::FindActorByEntry(anIO->getEntry());
@@ -717,7 +684,7 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //       }
 //     }
 //   }
-// 
+//
 //   reset();
 // }
 
@@ -733,27 +700,27 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 // {
 //   std::cout << "PatternDataSelectionModel::highlightGEOM go find ASSOCIATION for"<< anEltIndex.data().toString().toStdString()<<std::endl;
 // // HEXABLOCKGUI::currentDocGView->getViewWindow()
-// 
+//
 //   QList<DocumentModel::GeomObj> assocList;
-// 
+//
 //   DocumentModel               *docModel = NULL;
 //   const QSortFilterProxyModel *pModel   = NULL;
 // //   const QStandardItemModel    *smodel
 // //   const QAbstractItemModel    *theModel = NULL;
-// 
+//
 //   pModel = dynamic_cast<const QSortFilterProxyModel *>( model() );
-// 
+//
 //   std::cout << "pModel "<< pModel << std::endl;
 //   if ( pModel ){
 //     std::cout << "if ( pModel ){"<< std::endl;
-//     docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() ); 
+//     docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() );
 //     if ( docModel ){
 //       std::cout << "if ( docModel ){"<< std::endl;
 //       assocList = docModel->getAssociations( pModel->mapToSource(anEltIndex) );
 //     }
 //   }
-// 
-// 
+//
+//
 //   _PTR(Study)   aStudy = GetActiveStudyDocument();
 //   _PTR(SObject) aSChild;
 //   CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
@@ -767,25 +734,25 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 // //           double  start;
 // //           double  end;
 // //         };
-// 
+//
 //   QVariant treeVariant = pModel->mapToSource(anEltIndex).data( HEXA_TREE_ROLE );
 //   int eltType;
 //   if ( !treeVariant.isValid() ) return;
 //   eltType = treeVariant.toInt();
-// 
+//
 // //   GEOM::GeomObjPtr
 // //   GEOM::GEOM_Object_ptr firstLine;  //firstLine.nullify();//
 //   GEOM::GEOM_Object_var firstLine = GEOM::GEOM_Object::_nil();  //GEOM::GeomObjPtr
 //   GEOM::GEOM_Object_var lastLine  = GEOM::GEOM_Object::_nil();
 //   double firstParameter = 0.2; //CS_TODO
 //   double lastParameter  = 0.4; //CS_TODO
-// 
+//
 //   foreach( const DocumentModel::GeomObj& anAssoc, assocList ){
 //     std::cout << "FOUND=> " << anAssoc.entry.toStdString() << std::endl;
 //     aSChild = aStudy->FindObjectID( anAssoc.entry.toStdString() );
 //     aCorbaObj = corbaObj(aSChild);
 //     assoc = GEOM::GEOM_Object::_narrow(aCorbaObj);
-// 
+//
 //     if ( !CORBA::is_nil(assoc) ){
 //       std::cout << "geom to highlight =>" << anAssoc.name.toStdString() << std::endl;
 // //       objects.push_back(assoc._retn());
@@ -814,7 +781,7 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //     GEOM::GEOM_IBasicOperations_var anOper = _geomEngine->GetIBasicOperations( getStudyId() );
 //     GEOM::GEOM_Object_var firstPoint = anOper->MakePointOnCurve( firstLine, firstParameter );
 //     GEOM::GEOM_Object_var lastPoint  = anOper->MakePointOnCurve( lastLine, lastParameter );
-// 
+//
 // //     std::cout << "firstPoint->_is_nil() =>" << firstPoint->_is_nil() << std::endl;
 //     std::cout << "lastPoint->_is_nil() =>"  << lastPoint->_is_nil() << std::endl;
 //     if ( !( CORBA::is_nil(firstPoint) ) )// !firstPoint->_is_nil() )
@@ -823,4 +790,4 @@ void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, co
 //         displayPreview( lastPoint._retn(), true );
 //   }*/
 // }
-// 
+//

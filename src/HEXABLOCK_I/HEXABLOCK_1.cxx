@@ -43,7 +43,6 @@ using namespace HEXABLOCK_ORB;
 //=============================================================================
 bool HEXABLOCK_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 {
-  if(MYDEBUG) MESSAGE("CanPublishInStudy - "<<!CORBA::is_nil(myCurrentStudy));
   if(CORBA::is_nil(myCurrentStudy))
     return false;
   
@@ -52,7 +51,6 @@ bool HEXABLOCK_Gen_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
     return true;
 
 
-  if(MYDEBUG) MESSAGE("CanPublishInStudy--CANT");
   return false;
 }
 
@@ -151,7 +149,6 @@ SALOMEDS::SComponent_ptr HEXABLOCK_Gen_i::PublishComponent(SALOMEDS::Study_ptr t
 {
   if ( CORBA::is_nil( theStudy ))
     return SALOMEDS::SComponent::_nil();
-  if(MYDEBUG) MESSAGE("PublishComponent");
 
   SALOMEDS::SComponent_var father =
     SALOMEDS::SComponent::_narrow( theStudy->FindComponent( ComponentDataType() ) );

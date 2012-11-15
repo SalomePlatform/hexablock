@@ -146,7 +146,6 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags
                   _applyButton(NULL),
                   debugEdgeAssoc(false)
 {
-   MESSAGE("HexaBaseDialog::HexaBaseDialog() dynamic_cast<SUIT_Desktop*>(parent->parent()) =>" << dynamic_cast<SUIT_Desktop*>(parent->parent()) );
    _strHexaWidgetType[VERTEX_TREE] = tr( "VERTEX" );
    _strHexaWidgetType[EDGE_TREE]   = tr( "EDGE" );
    _strHexaWidgetType[QUAD_TREE]   = tr( "QUAD" );
@@ -281,8 +280,11 @@ void HexaBaseDialog::onCurrentSelectionChanged()
 void HexaBaseDialog::setFocusToNextField()
 {
    activateWindow ();
-   _highlightWidget(_currentObj, Qt::white);
-   if (!debugEdgeAssoc) focusNextChild ();
+   if (!HEXABLOCKGUI::assocInProgress)
+   {
+       _highlightWidget(_currentObj, Qt::white);
+       focusNextChild ();
+   }
 }
 
 // ============================================================== _initButtonBox
@@ -340,7 +342,6 @@ void HexaBaseDialog::_initViewManager()
 // ============================================================== apply
 bool HexaBaseDialog::apply()
 {
-   MESSAGE("HexaBaseDialog::apply()");
    QModelIndex iNew;
    bool applied = apply(iNew);
    if ( applied ){
@@ -375,14 +376,13 @@ void HexaBaseDialog::clearVTKSelection()
 
 void HexaBaseDialog::clearOCCSelection()
 {
-    HEXABLOCKGUI::currentOccGView->clearSelection();
+    if (HEXABLOCKGUI::currentOccGView != NULL)
+        HEXABLOCKGUI::currentOccGView->clearSelection();
 }
 
 // ============================================================== close
 void HexaBaseDialog::close()
 {
-    MESSAGE("HexaBaseDialog::close()");
-   //	_currentObj = NULL;
 
    //Clear vtk selection
     clearVTKSelection();
@@ -473,22 +473,18 @@ void HexaBaseDialog::_selectAndHighlight( const QModelIndex& i )
 // ============================================================== _allowSelection
 void HexaBaseDialog::_allowSelection()
 {
-   MESSAGE("HexaBaseDialog::_allowSelection(){");
    if ( getDocumentModel() ){
          getDocumentModel()->disallowEdition();
    }
-   MESSAGE("}");
 }
 
 // ============================================================== _disallowSelection
 void HexaBaseDialog::_disallowSelection()
 {
-   MESSAGE("HexaBaseDialog::_disallowSelection(){");
    if ( getDocumentModel() ){
          getDocumentModel()->allowEdition();
    }
    HEXABLOCKGUI::currentDocGView->setAllSelection();
-   MESSAGE("}");
 }
 
 
@@ -496,15 +492,10 @@ void HexaBaseDialog::_disallowSelection()
 bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
 {
 
-   MESSAGE("HexaBaseDialog::_allowVTKSelection(){");
    bool isOk = false;
 
-   //	MESSAGE("*  getCurrentVtkView()->raise()");
-   //	getCurrentVtkView()->raise();
-   //	getCurrentVtkView()->setFocus();
    QVariant v  = obj->property("HexaWidgetType");
    HexaWidgetType wType = v.value<HexaWidgetType>();
-   MESSAGE("*  HexaWidgetType property is " << wType );
 
    switch (wType){
    case VERTEX_TREE:
@@ -527,17 +518,14 @@ bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
       //    case GROUP_TREE:      //selector = getGroupsSelectionModel();
       //    case LAW_TREE:
       //    case PROPAGATION_TREE: // selector = getMeshSelectionModel();
-   default : MESSAGE("NOT YET");
+   default :;
    }
-   MESSAGE("}");
    return isOk;
 }
 
 // ============================================================== _allowOCCSelection
 bool HexaBaseDialog::_allowOCCSelection( QObject* obj )
 {
-   MESSAGE("HexaBaseDialog::_allowOCCCSelection(){");
-
    QVariant v  = obj->property("GeomWidgetType");
    GeomWidgetType wType = v.value<GeomWidgetType>();
    HEXABLOCKGUI::currentOccGView->setSelectionMode(wType);
@@ -549,22 +537,17 @@ bool HexaBaseDialog::_allowOCCSelection( QObject* obj )
 QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
 {
    QItemSelectionModel* selector = NULL;
-   MESSAGE("HexaBaseDialog::_getSelector(){");
 
    QString objectName = obj->objectName();
    QString className = obj->metaObject()->className();
-   MESSAGE("*  obj->objectName() is "<< objectName.toStdString() ); //toStdString()
-   MESSAGE("*  obj->metaObject()->className() is "<< className.toStdString() );
 
    HexaWidgetType wtype;
    QVariant v  = obj->property("HexaWidgetType");
    if ( !v.isValid() ) {
-         MESSAGE("*  no HexaWidgetType property");
          return NULL;
    }
 
    wtype = v.value<HexaWidgetType>();
-   MESSAGE("*  HexaWidgetType property is " << wtype);
 
    switch (wtype){
    case VERTEX_TREE:
@@ -579,9 +562,8 @@ QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
    case GROUP_TREE: selector = getGroupsSelectionModel(); break;
    case LAW_TREE:
    case PROPAGATION_TREE: selector = getMeshSelectionModel(); break;
-   default : MESSAGE("NOT YET");
+   default : ;
    }
-   MESSAGE("}");
    return selector;
 }
 
@@ -592,8 +574,6 @@ QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
  */
 bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit*  le )
 {
-   MESSAGE("HexaBaseDialog::_onSelectionChanged(const QItemSelection& sel, QLineEdit*  le)");
-   MESSAGE("*  le is "<< le->objectName().toStdString() );
    QModelIndexList l = sel.indexes();
    if ( l.count() == 0 ) return false;
 
@@ -608,7 +588,6 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
 
    // check selection compatibility between selection and widget
    if ( selType != wType ){
-         MESSAGE("*  bad selection : " << selType << " is not  " << wType );
          SUIT_MessageBox::information( 0,
                tr("HEXA_INFO"),
                tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg(_strHexaWidgetType[wType]));
@@ -624,7 +603,6 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
    if (selected.isValid() && lineEdit != NULL)
       setFocusToNextField();
 
-   MESSAGE("}");
    return true;
 }
 
@@ -635,8 +613,6 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
  */
 bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget* lw )
 {
-   MESSAGE("HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget* lw )");
-   MESSAGE("*  lw is "<< lw->objectName().toStdString() );
    QModelIndexList l = sel.indexes();
 
    if ( l.count() == 0 ) return false;
@@ -655,7 +631,6 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
       //     if ( lw->count() == maxSize) break;
       selType = isel.data(HEXA_TREE_ROLE).toInt();
       if ( selType != wType ){ // check selection compatibility between selection and widget
-            MESSAGE("*  bad selection : " << selType<< " is not  " << wType );
             SUIT_MessageBox::information( 0,
                   tr("HEXA_INFO"),
                   tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
@@ -672,7 +647,6 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
             updateButtonBox();
       }
    }
-   MESSAGE("}");
    return true;
 }
 
@@ -683,25 +657,10 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
  */
 void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-   MESSAGE( "HexaBaseDialog::onSelectionChanged(){" );
    QString className = metaObject()->className();
-   MESSAGE( "*  I am                          : " << className.toStdString() );
-   MESSAGE( "*  sender is                     : " << sender() );
-   MESSAGE( "*  patternDataSelectionModel    : " << getPatternDataSelectionModel() );
-   MESSAGE( "*  patternBuilderSelectionModel : " << getPatternBuilderSelectionModel() );
-   MESSAGE( "*  groupsSelectionModel         : " << getGroupsSelectionModel() );
-   MESSAGE( "*  meshSelectionModel           : " << getMeshSelectionModel() );
 
    //	highlightSelectedAssocs();
    QItemSelectionModel* selector = dynamic_cast<QItemSelectionModel*>(sender());
-   MESSAGE( "*  selector           : " << selector);
-
-   foreach( const QModelIndex& isel, sel.indexes() ){
-      MESSAGE("*  selected : " << isel.data().toString().toStdString());
-   }
-   foreach( const QModelIndex& iunsel, unsel.indexes() ){
-      MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
-   }
 
    if ( _selectionMutex ) return;
 
@@ -722,15 +681,12 @@ void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
          selector->clearSelection();
    }
 
-   MESSAGE("}");
 }
 
 // ============================================================== showEvent
 void HexaBaseDialog::showEvent( QShowEvent * event )
 {
-   MESSAGE("HexaBaseDialog::showEvent(){");
    QString className = metaObject()->className();
-   MESSAGE( "*  I am                          : " << className.toStdString() );
 
    if (getDocumentModel() == NULL)
    {
@@ -781,16 +737,13 @@ void HexaBaseDialog::showEvent( QShowEvent * event )
    connectDocumentGraphicView();
 
    QDialog::showEvent ( event );
-   MESSAGE("}");
 }
 
 
 // ============================================================== hideEvent
 void HexaBaseDialog::hideEvent ( QHideEvent * event )
 {
-   MESSAGE("HexaBaseDialog::hideEvent(){");
    QString className = metaObject()->className();
-   MESSAGE( "*  I am                          : " << className.toStdString() );
    if (getDocumentModel() == NULL) return;
 
    //Disconnection salome selection signals
@@ -816,7 +769,6 @@ void HexaBaseDialog::hideEvent ( QHideEvent * event )
    getDocumentModel()->allowEdition();
 
    QDialog::hideEvent( event );
-   MESSAGE("}");
 }
 
 // ============================================================== updateButtonBox
@@ -846,15 +798,14 @@ void HexaBaseDialog::updateName()
 }
 
 // ============================================================== updateDefaultName
-void HexaBaseDialog::updateDefaultName(QLineEdit* name_field, QModelIndex& last)
+void HexaBaseDialog::updateDefaultName(QLineEdit* name_field, HEXA_NS::EnumElt type)
 {
-   if (getDocumentModel() == NULL) return;
-   if (name_field == NULL || getDocumentModel()->getHexaPtr(last) == NULL)
-      return;
+   if (getDocumentModel() == NULL || name_field == NULL) return;
 
-   char buffer [16];
-   const char *defaultName = getDocumentModel()->getHexaPtr(last)->getNextName(buffer);
-   name_field->setText(defaultName);
+   HEXA_NS::Document* doc = getDocumentModel()->getHexaDocument();
+   if (doc == NULL) return;
+
+   name_field->setText(doc->getNextName(type).c_str());
 }
 
 // ============================================================== selectElementOfModel
@@ -863,7 +814,6 @@ void HexaBaseDialog::updateDefaultName(QLineEdit* name_field, QModelIndex& last)
 
 void HexaBaseDialog::selectElementOfModel()
 {
-   MESSAGE("HexaBaseDialog::selectElementOfModel()");
    if (getPatternDataSelectionModel() == NULL) return;
 
    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
@@ -879,13 +829,11 @@ void HexaBaseDialog::selectElementOfModel()
       index = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
       if ( index.isValid() )
       {
-          MESSAGE( "*  selecting the element : " << index.data().toString().toStdString() );
           getPatternDataSelectionModel()->select( index, QItemSelectionModel::Select );
       }
    }
    _selectionMutex = false;
 
-   MESSAGE("}");
 }
 
 // ============================================================== _isLineOrListWidget
@@ -951,22 +899,16 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
    if ( event->type() == QEvent::FocusOut ){
          QString className = obj->metaObject()->className();
          QString objectName = obj->objectName();
-         MESSAGE("QEvent::FocusOut : I am "<< objectName.toStdString() );
-         MESSAGE("QEvent::FocusOut : I am "<< className.toStdString() );
    }
 
    if ( event->type() == QEvent::FocusIn ){
          QString className  = obj->metaObject()->className();
          QString objectName = obj->objectName();
-         MESSAGE("QEvent::FocusIn : I am "<< objectName.toStdString() );
-         MESSAGE("QEvent::FocusIn : I am "<< className.toStdString() );
 
    }
    else return false;
 
 
-   MESSAGE("HexaBaseDialog::eventFilter{");
-   MESSAGE("*  QEvent::FocusIn");
 
    /* ON FOCUS ON A WIDGET*/
 
@@ -1027,7 +969,6 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
 
    } else { //If the widget contains an hexa element, select it in model/view
          if ( lineEdit ){ //element can be from lineEdit
-               MESSAGE("*  on QLineEdit");
                v = lineEdit->property("QModelIndex");
                if ( !v.isValid() ) {
                      //return QObject::eventFilter(obj, event);
@@ -1036,19 +977,12 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
                index = v.value<QModelIndex>();
 
                _selectionMutex = true;
-               MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
-               MESSAGE("*  with selector : " << selector);
-               MESSAGE( "*  patternDataSelectionModel    : " << getPatternDataSelectionModel() );
-               MESSAGE( "*  patternBuilderSelectionModel : " << getPatternBuilderSelectionModel() );
-               MESSAGE( "*  groupsSelectionModel         : " << getGroupsSelectionModel() );
-               MESSAGE( "*  meshSelectionModel           : " << getMeshSelectionModel() );
                selector->select( index, QItemSelectionModel::Clear );
                selector->select( index, QItemSelectionModel::Select );
                _selectionMutex = false;
          }
 
          if ( dialog ){ //element can be from a dialog box
-               MESSAGE("*  on Dialog");
                v = dialog->property("QModelIndex");
                if ( !v.isValid() ) {
                      //return QObject::eventFilter(obj, event);
@@ -1056,14 +990,12 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
                }
                index = v.value<QModelIndex>();
                _selectionMutex = true;
-               MESSAGE("*  selecting the element : " << index.data().toString().toStdString());
                selector->select( index, QItemSelectionModel::Clear );
                selector->select( index, QItemSelectionModel::Select );
                _selectionMutex = false;
          }
 
    }
-   MESSAGE("eventFilter}");
    return false;
 }
 
@@ -1082,6 +1014,9 @@ VertexDialog::VertexDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
          setWindowTitle( tr("Vertex Construction") );
    } else if ( editmode == UPDATE_MODE ){
          setWindowTitle( tr("Vertex Modification") );
+   }
+   else if ( editmode == INFO_MODE){
+       setWindowTitle( tr("Vertex Information") );
    }
 }
 
@@ -1103,6 +1038,14 @@ void VertexDialog::_initInputWidget( Mode editmode )
 //   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
    name_le->installEventFilter(this);
 
+   if (editmode == INFO_MODE)
+   {
+       name_le->setReadOnly(true);
+       x_spb->setReadOnly(true);
+       y_spb->setReadOnly(true);
+       z_spb->setReadOnly(true);
+   }
+
    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
 
@@ -1117,7 +1060,6 @@ void VertexDialog::clear()
 // ============================================================== setValue
 void VertexDialog::setValue(HEXA_NS::Vertex* v)
 {
-   MESSAGE("*  setValue : " << v);
    //0) Name
    name_le->setText( v->getName() );
 
@@ -1126,10 +1068,8 @@ void VertexDialog::setValue(HEXA_NS::Vertex* v)
    y_spb->setValue( v->getY() );
    z_spb->setValue( v->getZ() );
 
-   MESSAGE("*  patternDataSelectionModel  : " << getPatternDataSelectionModel() );
    if ( getPatternDataSelectionModel() != NULL ){
          QModelIndex iv = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
-         MESSAGE("*  selecting the element : " << iv.data().toString().toStdString());
 
          setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
          name_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
@@ -1187,7 +1127,10 @@ bool VertexDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iVertex, newName );
 
-   updateDefaultName(name_le, iVertex);
+   //the default name in the dialog box
+   HEXA_NS::Vertex* v = getDocumentModel()->getHexaPtr<HEXA_NS::Vertex*>(iVertex);
+   if (v != NULL)
+       updateDefaultName(name_le, v->getType());
 
    // to select/highlight result
    result = patternDataModel->mapFromSource(iVertex);
@@ -1202,8 +1145,8 @@ bool VertexDialog::apply(QModelIndex& result)
 
 // ============================================================== Constructeur
 EdgeDialog::EdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                    HexaBaseDialog(parent, editmode, f),
-								                                                                                                                    _value(0)
+ HexaBaseDialog(parent, editmode, f),
+ _value(0)
 {
    _helpFileName = "gui_edge.html";
    setupUi( this );
@@ -1217,7 +1160,7 @@ EdgeDialog::EdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
          rb1->hide();
    }
    else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Vertex Modification") );
+         setWindowTitle( tr("Edge Modification") );
    }
 
    rb0->click();
@@ -1260,6 +1203,9 @@ void EdgeDialog::_initInputWidget( Mode editmode )
    v1_le_rb0->setReadOnly(true);
    vex_le_rb1->setReadOnly(true);
    vec_le_rb1->setReadOnly(true);
+
+   if (editmode == INFO_MODE)
+       name_le->setReadOnly(true);
 
    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
 
@@ -1358,7 +1304,9 @@ bool EdgeDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iEdge, newName );
 
-   updateDefaultName(name_le, iEdge);
+   //update the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    result = patternDataModel->mapFromSource(iEdge);
 
@@ -1440,6 +1388,9 @@ void QuadDialog::_initInputWidget( Mode editmode )
    e1_le_rb1->setReadOnly(true);
    e2_le_rb1->setReadOnly(true);
    e3_le_rb1->setReadOnly(true);
+
+   if (editmode == INFO_MODE)
+       name_le->setReadOnly(true);
 
    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
 }
@@ -1599,7 +1550,9 @@ bool QuadDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iQuad, newName );
 
-   updateDefaultName(name_le, iQuad);
+   //the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    // to select/highlight result
    result = patternDataModel->mapFromSource(iQuad);
@@ -1677,6 +1630,9 @@ void HexaDialog::_initInputWidget( Mode editmode )
 
    connect( vertices_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
    connect( quads_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
+
+   if (editmode == INFO_MODE)
+       name_le->setReadOnly(true);
 }
 
 // ============================================================== clear
@@ -1883,7 +1839,9 @@ bool HexaDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iHexa, newName );
 
-   updateDefaultName(name_le, iHexa);
+   //update the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    // to select/highlight result
    result = patternDataModel->mapFromSource(iHexa);
@@ -1941,9 +1899,10 @@ void VectorDialog::_initInputWidget( Mode editmode )
    v1_le_rb1->installEventFilter(this);
 
    if ( editmode == INFO_MODE ){
-         dx_spb_rb0->setReadOnly(true);
-         dy_spb_rb0->setReadOnly(true);
-         dz_spb_rb0->setReadOnly(true);
+       name_le->setReadOnly(true);
+       dx_spb_rb0->setReadOnly(true);
+       dy_spb_rb0->setReadOnly(true);
+       dz_spb_rb0->setReadOnly(true);
    }
 
    v0_le_rb1->setReadOnly(true);
@@ -2030,7 +1989,9 @@ bool VectorDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iVector, newName );
 
-   updateDefaultName(name_le, iVector);
+   //update the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    // to select/highlight result
    result = patternBuilderModel->mapFromSource(iVector);
@@ -2081,6 +2042,13 @@ void CylinderDialog::_initInputWidget( Mode editmode )
 
    vex_le->setReadOnly(true);
    vec_le->setReadOnly(true);
+
+   if (editmode == INFO_MODE)
+   {
+       name_le->setReadOnly(true);
+       r_spb->setReadOnly(true);
+       h_spb->setReadOnly(true);
+   }
 
    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
@@ -2171,7 +2139,9 @@ bool CylinderDialog::apply(QModelIndex& result)
    if (!newName.isEmpty()) /*{*/
       getDocumentModel()->setName( iCyl, newName );
 
-   updateDefaultName(name_le, iCyl);
+   //update the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    // to select/highlight result
    result = patternBuilderModel->mapFromSource(iCyl);
@@ -2229,9 +2199,10 @@ void PipeDialog::_initInputWidget( Mode editmode )
 
 
    if ( editmode == INFO_MODE ){
-         ir_spb->setReadOnly(true);
-         er_spb->setReadOnly(true);
-         h_spb->setReadOnly(true);
+       name_le->setReadOnly(true);
+       ir_spb->setReadOnly(true);
+       er_spb->setReadOnly(true);
+       h_spb->setReadOnly(true);
    }
 
    vex_le->setReadOnly(true);
@@ -2330,7 +2301,9 @@ bool PipeDialog::apply(QModelIndex& result)
    if ( !newName.isEmpty() )/*{*/
       getDocumentModel()->setName( iPipe, newName );
 
-   updateDefaultName(name_le, iPipe);
+   //update the default name in the dialog box
+   if (_value != NULL)
+       updateDefaultName(name_le, _value->getType());
 
    // to select/highlight result
    result = patternBuilderModel->mapFromSource(iPipe);
@@ -2445,18 +2418,6 @@ void MakeGridDialog::clear()
 
    height_le_rb1->clear();
    modelUnregister(height_le_rb1);
-
-   random_param_w->clear();
-   modelUnregister(random_param_w);
-
-   radius_lw->clear();
-   modelUnregister(radius_lw);
-
-   angle_lw->clear();
-   modelUnregister(angle_lw);
-
-   height_lw->clear();
-   modelUnregister(height_lw);
 
    vex_le_rb2->clear();
    modelUnregister(vex_le_rb2);
@@ -4873,8 +4834,6 @@ QMultiMap<QString, int> EdgeAssocDialog::getAssocsGEOM()
 
 void EdgeAssocDialog::selectElementOfGeom()
 {
-   MESSAGE("HexaBaseDialog::selectElementOfGeom()");
-
    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
    if ( !currentListWidget ) return;
 
@@ -4893,7 +4852,6 @@ void EdgeAssocDialog::selectElementOfGeom()
    if (geomElts.size() > 0 && getPatternDataSelectionModel() != NULL)
        HEXABLOCKGUI::currentOccGView->highlight(geomElts);
 
-   MESSAGE("}");
 }
 
 // ============================================================== clear
@@ -4942,29 +4900,23 @@ void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
 // ============================================================== onWindowActivated
 void EdgeAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
 {
-   QString vmType = vm->getType();
-   if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
+    QString vmType = vm->getType();
+    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
 
-         if (single_rb->isChecked())
+        if (single_rb->isChecked())
             single_edge_le->setFocus();
-//         else if (multiple_rb->isChecked())
-//            {
-//               if (close_cb->isChecked())
-//                  first_vex_le->setFocus();
-//               else
-//                  edges_lw->setFocus();
-//            }
-   }
-   else if ( vmType == OCCViewer_Viewer::Type() ){
-         globalSelection2(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
-//         localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
-         localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_EDGE);
+        else if (multiple_rb->isChecked() && focusWidget() != first_vex_le )
+                edges_lw->setFocus();
+    }
+    else if ( vmType == OCCViewer_Viewer::Type() ){
+        globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
+        localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_EDGE);
 
-         if (single_rb->isChecked())
+        if (single_rb->isChecked())
             single_line_le->setFocus();
-         else if (multiple_rb->isChecked())
+        else if (multiple_rb->isChecked() && focusWidget() != first_vex_le)
             lines_lw->setFocus();
-   }
+    }
 }
 
 // ============================================================== createOperation
@@ -4976,9 +4928,6 @@ GEOM::GEOM_IOperations_ptr EdgeAssocDialog::createOperation()
 // ============================================================== execute
 bool EdgeAssocDialog::execute(ObjectList& objects)
 {
-   MESSAGE("execute(){");
-   MESSAGE("*    objects.size()" << objects.size() );
-
    bool res = false;
 
    GEOM::GEOM_Object_var anObj;
@@ -4990,35 +4939,27 @@ bool EdgeAssocDialog::execute(ObjectList& objects)
          objects.push_back(anObj._retn());
          res = true;
    }
-   MESSAGE("}execute()");
    return res;
 }
 
 // ============================================================== pstartChanged
 void EdgeAssocDialog::pstartChanged( double val )
 {
-   MESSAGE("pstartChanged("<<val<<") { ");
    QListWidgetItem* lineItem = lines_lw->item( 0 );
    if (!lineItem) return;
-   //   MESSAGE("data : "<<lineItem->text().toStdString());
    _currentLine = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
    _currentParameter = pstart_spb->value();
-//   displayPreview(true);
-   MESSAGE("}pstartChanged()");
 }
 
 // ============================================================== pendChanged
 void EdgeAssocDialog::pendChanged( double val )
 {
-   MESSAGE("pendChanged("<<val<<") { ");
    //   if ( _lastLine->_is_nil() ) return;
    QListWidgetItem* lineItem = lines_lw->item( lines_lw->count()-1 );
    if (!lineItem) return;
-   //   MESSAGE("data : "<<lineItem->text().toStdString());
    _currentLine      = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
    _currentParameter = pend_spb->value();
 //   displayPreview(true);
-   MESSAGE("}pendChanged()");
 }
 
 // ============================================================== onCurrentSelectionChanged
@@ -5118,8 +5059,6 @@ bool EdgeAssocDialog::apply(QModelIndex& result)
          for (int r = 0; r < lines_lw->count(); ++r){
                item = lines_lw->item(r);
                aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-               MESSAGE(" assocs => " << aLine.name.toStdString() );
-               MESSAGE(" assocs => " << aLine.brep.toStdString() );
                assocs << aLine;
          }
 
@@ -5240,8 +5179,6 @@ QMultiMap<QString, int> QuadAssocDialog::getAssocsGEOM()
 
 void QuadAssocDialog::selectElementOfGeom()
 {
-   MESSAGE("HexaBaseDialog::selectElementOfGeom()");
-
    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
    if ( !currentListWidget ) return;
 
@@ -5260,7 +5197,6 @@ void QuadAssocDialog::selectElementOfGeom()
    if (geomElts.size() > 0 && getPatternDataSelectionModel() != NULL)
        HEXABLOCKGUI::currentOccGView->highlight(geomElts);
 
-   MESSAGE("}");
 }
 
 void QuadAssocDialog::clear()
@@ -5319,7 +5255,7 @@ void QuadAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) )
       quad_le->setFocus();
    else if ( vmType == OCCViewer_Viewer::Type() ){
-         globalSelection2(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
+         globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
 //         localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
          localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_FACE);
          faces_lw->setFocus();
@@ -5451,6 +5387,12 @@ void GroupDialog::_initInputWidget( Mode editmode )
          connect(kind_cb,  SIGNAL(activated(int)), this, SLOT(onKindChanged(int)) );
    }
 
+   if ( editmode == INFO_MODE)
+   {
+       name_le->setReadOnly(true);
+       kind_cb->setEnabled(false);
+   }
+
    connect(eltBase_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
 }
 
@@ -5469,7 +5411,6 @@ void GroupDialog::clear()
 void GroupDialog::onKindChanged(int index)
 {
    //   onKind
-   MESSAGE("GroupDialog::onKindChanged(" << index << ") ");
    switch ( kind_cb->itemData(index).toInt() ){
    case HEXA_NS::HexaCell:
    case HEXA_NS::HexaNode:
@@ -5644,6 +5585,9 @@ LawDialog::LawDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
    } else if ( editmode == UPDATE_MODE ){
          setWindowTitle( tr("Law Modification") );
    }
+   else if ( editmode == INFO_MODE){
+       setWindowTitle( tr("Law Information") );
+   }
 }
 
 // ============================================================== Destructeur
@@ -5671,6 +5615,14 @@ void LawDialog::_initInputWidget( Mode editmode )
    QMap<HEXA_NS::KindLaw, QString>::ConstIterator iKind;
    for( iKind = strKind.constBegin(); iKind != strKind.constEnd(); ++iKind )
       kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
+
+   if (editmode == INFO_MODE)
+   {
+       name_le->setReadOnly(true);
+       nb_nodes_spb->setReadOnly(true);
+       coeff_spb->setReadOnly(true);
+       kind_cb->setEnabled(false);
+   }
 
 }
 
@@ -5821,6 +5773,9 @@ void PropagationDialog::_initInputWidget( Mode editmode )
 
    law_le->setReadOnly(true);
 
+   if ( editmode == INFO_MODE)
+       way_cb->setEnabled(false);
+
    connect( delPropagationShortcut, SIGNAL(activated()), this, SLOT(deletePropagationItem()) );
    connect( propagations_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
 }
@@ -5876,7 +5831,6 @@ void PropagationDialog::setValue(HEXA_NS::Propagation* p)
 
 void PropagationDialog::selectElementOfModel()
 {
-   MESSAGE("HexaBaseDialog::selectElementOfModel()");
    if (!getMeshSelectionModel()) return;
 
    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
@@ -5891,13 +5845,11 @@ void PropagationDialog::selectElementOfModel()
       index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
       if ( index.isValid() )
          {
-            MESSAGE( "*  selecting the element : " << index.data().toString().toStdString() );
             getMeshSelectionModel()->select( index, QItemSelectionModel::Select );
          }
    }
    _selectionMutex = false;
 
-   MESSAGE("}");
 }
 
 
@@ -5929,7 +5881,6 @@ bool PropagationDialog::apply(QModelIndex& result)
          SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
          return false;
    }
-   MESSAGE("iLaw.isValid()         => " << iLaw.isValid() );
 
    for (int r = 0; r < propagations_lw->count(); ++r){
          item = propagations_lw->item(r);
@@ -5938,7 +5889,6 @@ bool PropagationDialog::apply(QModelIndex& result)
                SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
                return false;
          }
-         MESSAGE("iPropagation.isValid() => " << iPropagation.isValid() );
 
          //fill it and select it
          isOk = getDocumentModel()->setPropagation( iPropagation, iLaw, way );
@@ -6543,6 +6493,21 @@ void MakeHemiSphereDialog::_initInputWidget( Mode editmode )
 // ============================================================== clear
 void MakeHemiSphereDialog::clear()
 {
+    sphere_center_le->clear();
+    modelUnregister(sphere_center_le);
+
+    hole_axis_le->clear();
+    modelUnregister(hole_axis_le);
+
+    cross_pt_le->clear();
+    modelUnregister(cross_pt_le);
+
+    cross_vec_le->clear();
+    modelUnregister(cross_vec_le);
+
+    radial_vec_le->clear();
+    modelUnregister(radial_vec_le);
+
     modelUnregister(this);
 }
 
@@ -6710,7 +6675,6 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
 
 // QVariant v = lineEdit->property("index");
 //           if ( v.isValid() ){
-//             MESSAGE("*  get index ... " );
 //             QModelIndex i = v.value<QModelIndex>();
 //             _selectionMutex = true;
 //             getPatternDataSelectionModel()->select( i, QItemSelectionModel::Clear );

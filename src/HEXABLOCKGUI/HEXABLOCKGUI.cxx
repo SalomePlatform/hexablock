@@ -129,6 +129,7 @@ using namespace std;
 using namespace HEXABLOCK::GUI;
 
 int  HEXABLOCKGUI::_oldStudyId = -1;
+//bool jepeux = false;
 
 HEXABLOCK_ORB::HEXABLOCK_Gen_var HEXABLOCKGUI::_hexaEngine  = HEXABLOCK_ORB::HEXABLOCK_Gen::_nil();
 // SMESH::SMESH_Gen_var             HEXABLOCKGUI::_smeshEngine = SMESH::SMESH_Gen::_nil();
@@ -280,7 +281,6 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
 void HEXABLOCKGUI::viewManagers( QStringList& list ) const
 {
     DEBTRACE("HEXABLOCKGUI::viewManagers");
-    MESSAGE("HEXABLOCKGUI::viewManagers");
     //   foreach (const QString &str, list)
     //     MESSAGE("HEXABLOCKGUI::viewManagers"<<str.toStdString() );
     //   list.append( QxScene_Viewer::Type() );
@@ -290,7 +290,6 @@ void HEXABLOCKGUI::viewManagers( QStringList& list ) const
 
 void HEXABLOCKGUI::restoreGraphicViews()
 {
-    MESSAGE("HEXABLOCKGUI::viewManagers");
 
     //Init OCC
     if (currentOccGView == NULL)
@@ -315,7 +314,6 @@ void HEXABLOCKGUI::restoreGraphicViews()
         currentDocGView->getViewWindow()->installEventFilter(this);
     }
 
-    MESSAGE("}");
 }
 
 
@@ -430,8 +428,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 
 bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 {
-    MESSAGE("HEXABLOCKGUI::deactivateModule");
-
     disconnect( getApp()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
             this, SLOT(onWindowActivated( SUIT_ViewWindow* )) );
     disconnect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
@@ -447,7 +443,7 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     {
         //defaut selectionMode in OccView
         getApp()->selectionMgr()->clearSelected();
-        geomBaseHelper->globalSelection2(currentOccGView->getViewWindow());
+        geomBaseHelper->globalSelection(currentOccGView->getViewWindow());
 //        geomBaseHelper->localSelection(GEOM::GEOM_Object::_nil(), TopAbs_SHAPE);
         if (currentOccGView != NULL)
             geomBaseHelper->localSelection(currentOccGView->getViewWindow(), TopAbs_SHAPE);
@@ -488,7 +484,6 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 
 bool HEXABLOCKGUI::renameAllowed( const QString& entry) const
 {
-    //   MESSAGE("HEXABLOCKGUI::renameAllowed");
     SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
     SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
     SalomeApp_DataObject* obj = appStudy ? dynamic_cast<SalomeApp_DataObject*>(appStudy->findObjectByEntry(entry)) : 0;
@@ -499,7 +494,6 @@ bool HEXABLOCKGUI::renameAllowed( const QString& entry) const
 
 bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
 {
-    MESSAGE("HEXABLOCKGUI::renameObject");
 
     bool result = false;
     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication());
@@ -598,7 +592,6 @@ VtkDocumentGraphicView* HEXABLOCKGUI::getDocument(SalomeApp_DataObject* studyObj
 void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 {
     DEBTRACE("HEXABLOCKGUI::onObjectBrowserClick");
-    MESSAGE(" HEXABLOCKGUI::onObjectBrowserClick");
     // we want to switch automatically to the right view windows
 //    QWidget *viewWindow = NULL;
 
@@ -653,7 +646,6 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 void HEXABLOCKGUI::onWindowActivated( SUIT_ViewWindow* svw)
 {
     DEBTRACE("HEXABLOCKGUI::onWindowActivated");
-    MESSAGE("HEXABLOCKGUI::onWindowActivated");
 //    OCCViewer_ViewWindow* anOccVw = dynamic_cast<OCCViewer_ViewWindow*>(svw);
 
     //update the current occ view
@@ -679,7 +671,6 @@ void HEXABLOCKGUI::onWindowActivated( SUIT_ViewWindow* svw)
 void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 {
     DEBTRACE("HEXABLOCKGUI::onWindowClosed");
-    MESSAGE("HEXABLOCKGUI::onWindowClosed");
 
 
     //Decharger le model correspondant (VTK)
@@ -739,60 +730,51 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 {
     DEBTRACE("HEXABLOCKGUI::onViewManagerAdded");
-    MESSAGE("HEXABLOCKGUI::onViewManagerAdded");
 
     connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
             this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
 
-//    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
-//    if (sm == NULL) return;
-//
-//    //VTK
-//    if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
-//    {
-//        //VTK View Manager added
-//
-//        myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
-//
-//        //NPAL 19674
-//        SALOME_ListIO selected;
-//        sm->selectedObjects( selected );
-//        sm->clearSelected();
-//
-//        // disable VTK selectors
-//        sm->setEnabled( false, SVTK_Viewer::Type() );
-//
-//        QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
-//        while ( itVTKSel.hasNext() )
-//            if ( LightApp_VTKSelector* sr = itVTKSel.next() )
-//                sr->setEnabled(true);
-//
-//        sm->setSelectedObjects( selected, true );   //NPAL 19674
-//
-//        return;
-//    }
+    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+    if (sm == NULL) return;
+
+    //VTK
+    if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
+    {
+        //VTK View Manager added
+
+        LightApp_VTKSelector* sr = new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm );
+        myVTKSelectors.append( sr );
+
+        //NPAL 19674
+        SALOME_ListIO selected;
+        sm->selectedObjects( selected );
+        sm->clearSelected();
+
+        sm->setEnabled( false, SVTK_Viewer::Type() );
+        sr->setEnabled(true);
+
+        sm->setSelectedObjects( selected, true );   //NPAL 19674
+
+        return;
+    }
 
     //OCC
-//    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
-//    {
-        //OCC View added
+    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+    {
+//        //OCC View added
 
-//        myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
-//
-//        //NPAL 19674
-//        SALOME_ListIO selected;
-//        sm->selectedObjects( selected );
-//        sm->clearSelected();
-//
-//        // disable OCC selectors
-//        sm->setEnabled( false, OCCViewer_Viewer::Type() );
-//
-//        QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
-//        while ( itOCCSel.hasNext() )
-//            if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-//                sr->setEnabled(true);
-//
-//        sm->setSelectedObjects( selected, true );   //NPAL 19674
+        GEOMGUI_OCCSelector* sr = new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm );
+        myOCCSelectors.append( sr );
+
+        //NPAL 19674
+        SALOME_ListIO selected;
+        sm->selectedObjects( selected );
+        sm->clearSelected();
+
+        sm->setEnabled( false, OCCViewer_Viewer::Type() );
+        sr->setEnabled(true);
+
+        sm->setSelectedObjects( selected, true );   //NPAL 19674
 
 //              qDebug( "connect" );
 //              connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
@@ -801,13 +783,12 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
 //                       this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
 //              connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
 //                       this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
-//    }
+    }
 }
 
 void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
 {
     DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");
-    MESSAGE("HEXABLOCKGUI::::onViewManagerRemoved");
 
     if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
     {
@@ -815,19 +796,41 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
         if (getApp()->activeModule()->moduleName().compare("HEXABLOCK") == 0)
             initialMenus();
 
-//        qDeleteAll(myVTKSelectors);
-//        myVTKSelectors.clear();
+        //remove its selector
+        QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+        while ( itVTKSel.hasNext() )
+        {
+            if ( LightApp_VTKSelector* sr = itVTKSel.next())
+            {
+                if (sr->viewer() == vm->getViewModel())
+                {
+                   myVTKSelectors.removeOne(sr);
+                   return;
+                }//if
+            }//if
+        }//while
         return;
-    }
+    }//if
 
     //OCC
-//    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
-//    {
-        //OCC View removed
-//        qDeleteAll(myOCCSelectors);
-//        myOCCSelectors.clear();
-//    }
+    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+    {
+        //OCC View removed: remove its selector
+        QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+        while ( itOCCSel.hasNext() )
+        {
+            if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+            {
+                if (sr->viewer() == vm->getViewModel())
+                {
+                    myOCCSelectors.removeOne(sr);
+                    return;
+                }//if
+            }//if
+        }//while
+    }//if
 }
+
 
 void HEXABLOCKGUI::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected  )
 {
@@ -1785,7 +1788,6 @@ void HEXABLOCKGUI::showMeshMenus(bool show)
 
 void HEXABLOCKGUI::showActor()
 {
-    MESSAGE("HEXABLOCKGUI::showOnlyActor()");
     //TODO: Implement the real one (this is not show only actor, but show actor)
     VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
     if (currentVtkGView == NULL || currentVtkGView->getViewWindow() == NULL ||
@@ -1811,7 +1813,6 @@ void HEXABLOCKGUI::showActor()
 
 void HEXABLOCKGUI::showOnlyActor()
 {
-    MESSAGE("HEXABLOCKGUI::showOnlyActor()");
     VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
     if (currentVtkGView == NULL || currentVtkGView->getViewWindow() == NULL ||
             currentVtkGView->isEmpty() || currentVtkGView->getDocumentActor() == NULL)
@@ -1860,7 +1861,6 @@ void HEXABLOCKGUI::showOnlyActor()
 
 void HEXABLOCKGUI::hideActor()
 {
-    MESSAGE("HEXABLOCKGUI::hideActor()");
     VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
     if (currentVtkGView == NULL || currentVtkGView->isEmpty() ||
           currentVtkGView->getViewWindow() == NULL ||
@@ -2194,6 +2194,7 @@ void HEXABLOCKGUI::clearDialogs()
     std::set<HexaBaseDialog*>::const_iterator debut (currentModelDialogs.begin()),
                                   fin   (currentModelDialogs.end());
     for(;debut!=fin;++debut) (*debut)->clear();
+
     if (_vertexAssocDiag != NULL) _vertexAssocDiag->clear(); //not a subclass of HexaBaseDialog
 
     currentModelDialogs.clear(); //empty the used dialogs list
@@ -2271,7 +2272,6 @@ void HEXABLOCKGUI::switchOffGraphicView(VtkDocumentGraphicView* dgview, bool sav
 void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
 {
     DEBTRACE("HEXABLOCKGUI::switchModel " << dgview);
-    MESSAGE("HEXABLOCKGUI::switchModel " << dgview);
 
     if (dgview == NULL /*|| dgview == currentDocGView*/ ) //Need to switch?
     {
@@ -2288,7 +2288,13 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     }
 
     //clear the dialogs used by the current model so they can be used by the new model
-    if (currentDocGView != dgview) clearDialogs();
+    if (currentDocGView != dgview)
+    {
+      clearDialogs();
+//      jepeux = false;
+//      currentDialog = NULL;
+      // detruitDialog();
+    }
 
     _patternDataTreeView->setModel(dgview->getPatternDataModel());
     _patternBuilderTreeView->setModel(dgview->getPatternBuilderModel());
@@ -2314,6 +2320,14 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     showOnlyActor();
     showAllMenus();
 }
+
+// void detruitDialog() {
+   // currentDialog = NULL;
+
+   // if (_sdjfgjh) delete _sdjfgjh;
+
+
+// }
 
 
 
@@ -2374,6 +2388,8 @@ pair <QString, HEXA_NS::Document*> HEXABLOCKGUI::newHexaDocument()
 void HEXABLOCKGUI::newDocument()
 {
     DEBTRACE("HEXABLOCKGUI::newDocument");
+
+//    MESSAGE("===== NEW DOCUMENT: je commence ! " << jepeux);
 
     createSComponent();
     QMainWindow *aParent = application()->desktop();
@@ -2444,6 +2460,10 @@ void HEXABLOCKGUI::newDocument()
 //    SalomeApp_DataModel::updateTree (aComponent, HEXABLOCKGUI::activeStudy());
     getApp()->updateObjectBrowser();
     showAllMenus();
+//    jepeux = true;
+//    for (double i=0; i < 10000000000000000; ++i);
+
+//    MESSAGE("===== NEW DOCUMENT: j'ai fini!");
 
 }
 
@@ -2561,46 +2581,8 @@ void HEXABLOCKGUI::slot_modelChanged(const QModelIndex &topLeft, const QModelInd
     //     }
 }
 
-// ============================================================== getDefaultName0
-const char* HEXABLOCKGUI::getDefaultName0(HEXA_NS::EnumElt type)
-{
-    switch(type){
-    case HEXA_NS::EL_VERTEX: return "v0000";
-    case HEXA_NS::EL_EDGE:   return "e0000";
-    case HEXA_NS::EL_QUAD:   return "q0000";
-    case HEXA_NS::EL_HEXA:   return "h0000";
-    case HEXA_NS::EL_VECTOR: return "w0000";
-    case HEXA_NS::EL_CYLINDER: return "c0000";
-    case HEXA_NS::EL_PIPE:     return "c0000";
-    case HEXA_NS::EL_NONE:     return "x0000";
-    }
-    return "";
-}
-
-// ============================================================== getDefaultName
-const char* HEXABLOCKGUI::getDefaultName(HEXA_NS::EnumElt type)
-{
-   VtkDocumentGraphicView* dgview = getCurrentVtkGraphicView();
-    if ( dgview == NULL || dgview->isEmpty())
-       return getDefaultName0(type);
-
-    DocumentModel* currentModel = dgview->getDocumentModel();
-    if ( currentModel == NULL) return "";
-
-    HEXA_NS::Document* doc = currentModel->getHexaDocument();
-    if (doc == NULL) return "";
-
-    HEXA_NS::EltBase* eltBase = doc->getLastEltBase(type);
-    if (eltBase == NULL || doc->getNbrElt(type) == 0)
-       return getDefaultName0(type);
-
-    char buffer[16];
-    return eltBase->getNextName(buffer);
-}
-
 void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 {
-    MESSAGE("HEXABLOCKGUI::_showDialogBox()");
     if (diag == NULL || _dwInputPanel == NULL ||
             getCurrentVtkGraphicView() == NULL) return;
 
@@ -2642,8 +2624,11 @@ void HEXABLOCKGUI::addVertex()
         _vertexDiag = new VertexDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _vertexDiag );
-    if (_vertexDiag != NULL)
-        _vertexDiag->name_le->setText(getDefaultName(HEXA_NS::EL_VERTEX));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_vertexDiag != NULL && doc != NULL)
+        _vertexDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_VERTEX).c_str());
 }
 
 void HEXABLOCKGUI::addEdge()
@@ -2652,8 +2637,11 @@ void HEXABLOCKGUI::addEdge()
         _edgeDiag = new EdgeDialog( _dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _edgeDiag );
-    if (_edgeDiag != NULL)
-        _edgeDiag->name_le->setText(getDefaultName(HEXA_NS::EL_EDGE));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_edgeDiag != NULL && doc != NULL)
+        _edgeDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_EDGE).c_str());
 }
 
 void HEXABLOCKGUI::addQuad()
@@ -2663,8 +2651,11 @@ void HEXABLOCKGUI::addQuad()
 
     }
     _showDialogBox( _quadDiag );
-    if (_quadDiag != NULL)
-        _quadDiag->name_le->setText(getDefaultName(HEXA_NS::EL_QUAD));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_quadDiag != NULL && doc != NULL)
+        _quadDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_QUAD).c_str());
 }
 
 void HEXABLOCKGUI::addHexa()
@@ -2673,8 +2664,11 @@ void HEXABLOCKGUI::addHexa()
         _hexaDiag = new HexaDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _hexaDiag );
-    if (_hexaDiag != NULL)
-        _hexaDiag->name_le->setText(getDefaultName(HEXA_NS::EL_HEXA));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_hexaDiag != NULL && doc != NULL)
+        _hexaDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_HEXA).c_str());
 }
 
 void HEXABLOCKGUI::addVector()
@@ -2683,8 +2677,11 @@ void HEXABLOCKGUI::addVector()
         _vectorDiag = new VectorDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _vectorDiag );
-    if (_vectorDiag != NULL)
-        _vectorDiag->name_le->setText(getDefaultName(HEXA_NS::EL_VECTOR));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_vectorDiag != NULL && doc != NULL)
+        _vectorDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_VECTOR).c_str());
 }
 
 void HEXABLOCKGUI::addCylinder()
@@ -2693,8 +2690,11 @@ void HEXABLOCKGUI::addCylinder()
         _cylinderDiag = new CylinderDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _cylinderDiag );
-    if (_cylinderDiag != NULL)
-        _cylinderDiag->name_le->setText(getDefaultName(HEXA_NS::EL_CYLINDER));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_cylinderDiag != NULL && doc != NULL)
+        _cylinderDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
 }
 
 
@@ -2704,8 +2704,11 @@ void HEXABLOCKGUI::addPipe()
         _pipeDiag = new PipeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _pipeDiag );
-    if (_pipeDiag != NULL)
-        _pipeDiag->name_le->setText(getDefaultName(HEXA_NS::EL_CYLINDER));
+
+    //set default name
+    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+    if (_pipeDiag != NULL && doc != NULL)
+        _pipeDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
 }
 
 
@@ -2757,8 +2760,6 @@ void HEXABLOCKGUI::makeHemiSphere()  // NEW HEXA3
         _makeHemiSphereDiag = new MakeHemiSphereDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _makeHemiSphereDiag );
-//    if (_makeHemiSphereDiag != NULL)
-//        _makeHemiSphereDiag->name_le->setText(getDefaultName(HEXA_NS::EL_NONE));
 }
 
 
@@ -2854,8 +2855,6 @@ void HEXABLOCKGUI::replaceHexa()    // NEW HEXA3
         _replaceHexaDiag = new ReplaceHexaDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _replaceHexaDiag );
-//    if (_replaceHexaDiag != NULL)
-//        _replaceHexaDiag->name_le->setText(getDefaultName(HEXA_NS::EL_NONE));
 }
 
 
@@ -2865,8 +2864,6 @@ void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
         _quadRevolutionDiag = new QuadRevolutionDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
     }
     _showDialogBox( _quadRevolutionDiag );
-//    if (_quadRevolutionDiag != NULL)
-//        _quadRevolutionDiag->name_le->setText(getDefaultName(HEXA_NS::EL_NONE));
 }
 
 
@@ -2881,7 +2878,6 @@ void HEXABLOCKGUI::quadRevolution() // NEW HEXA3
 
 void HEXABLOCKGUI::assocVertex()
 {
-    MESSAGE("HEXABLOCKGUI::assocVertex()");
     if (!_dwInputPanel) return;
     QWidget* d = dynamic_cast<SUIT_Desktop*>(_dwInputPanel->parent());
 
@@ -3162,24 +3158,51 @@ LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
 
 bool HEXABLOCKGUI::eventFilter(QObject *obj, QEvent *event)
 {
+    if ( currentDialog == NULL )//{
+        return false;
+//    }
+//    if (currentDialog->isHidden())
+//        return false;
+
     if ( event->type() == QEvent::Enter ){ // ENTER EVENT
 
         // The window acquire the focus when the cursor enter
 
+//        MESSAGE("======== JE PEUX ===== " << jepeux);
+//        if (!jepeux)
+//            {
+//            MESSAGE("======== JE NE PEUX PAS ===== " << jepeux);
+//            return false;
+//            }
+
         //OCC - window enter
         OCCViewer_ViewWindow* occWindow = dynamic_cast<OCCViewer_ViewWindow*>(obj);
-        if ( occWindow != NULL ) occWindow->setFocus();
+        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
+
+        if ( occWindow != NULL)
+        {
+            if (!occWindow->hasFocus())
+                occWindow->setFocus();
+            if (currentDialog != NULL && !currentDialog->isHidden())
+                currentDialog->onWindowActivated(occWindow->getViewManager());
+        }
 
         //VTK
-        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
-        if (vtkWindow != NULL) vtkWindow->setFocus();
+        //SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
+        if ( vtkWindow != NULL)
+        {
+            if (!vtkWindow->hasFocus())
+                vtkWindow->setFocus();
+            if (currentDialog != NULL && !currentDialog->isHidden())
+                currentDialog->onWindowActivated(vtkWindow->getViewManager());
+        }
 
         //Don't pass the signal
         return true;
     }
     else
-//     standard event processing
-    return QObject::eventFilter(obj, event);
+        //standard event processing
+        return QObject::eventFilter(obj, event);
 }
 
 QStringList HEXABLOCKGUI::getQuickDirList()

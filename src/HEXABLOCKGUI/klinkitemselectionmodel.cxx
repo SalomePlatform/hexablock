@@ -85,7 +85,7 @@ void KLinkItemSelectionModel::select(const QModelIndex &index, QItemSelectionMod
 
 void KLinkItemSelectionModel::select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command)
 {
-  std::cout<<"KLinkItemSelectionModel::select(const QItemSelection &selection"<<std::endl;
+//  std::cout<<"KLinkItemSelectionModel::select(const QItemSelection &selection"<<std::endl;
 
   Q_FOREACH(const QItemSelectionRange &range, selection){
 //     if (range.isEmpty()){
@@ -93,14 +93,14 @@ void KLinkItemSelectionModel::select(const QItemSelection &selection, QItemSelec
 //     } else {
 //       std::cout<<"range    NOT EMPTY"<<std::endl;
 //     }
-    if (range.isValid()){
-      std::cout<<"range    VALID"<<std::endl;
-      std::cout<<"count           =>"<<range.indexes().count()<<std::endl;
-      Q_FOREACH(const QModelIndex &i, range.indexes())
-        std::cout<< " KLinkItemSelectionModel::select =====> " << i.data().toString().toStdString() << std::endl;
-    } else {
-      std::cout<<"range    NOT VALID"<<std::endl;
-    }
+//    if (range.isValid()){
+//      std::cout<<"range    VALID"<<std::endl;
+//      std::cout<<"count           =>"<<range.indexes().count()<<std::endl;
+//      Q_FOREACH(const QModelIndex &i, range.indexes())
+//        std::cout<< " KLinkItemSelectionModel::select =====> " << i.data().toString().toStdString() << std::endl;
+//    } else {
+//      std::cout<<"range    NOT VALID"<<std::endl;
+//    }
   }
 
 

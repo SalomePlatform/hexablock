@@ -24,7 +24,7 @@ using namespace std;
 
 #include "HEXABLOCK.hxx"
 #include "HexDocument_impl.hxx"
-// 
+//
 
 #include "HexVertex_impl.hxx"
 #include "HexEdge_impl.hxx"
@@ -83,7 +83,7 @@ HEXA_NS::Document* Document_impl::GetImpl() throw (SALOME::SALOME_Exception)
   return ret;
 }
 
-::CORBA::Long Document_impl::setName(const char* name) 
+::CORBA::Long Document_impl::setName(const char* name)
                              throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ret = _document_cpp->setName(name);
@@ -487,7 +487,7 @@ Vector_ptr Document_impl::addVectorVertices( Vertex_ptr v0In, Vertex_ptr v1In )
 {
    return  _document_cpp->countVector();
 }
- 
+
 Vector_ptr Document_impl::getVector(::CORBA::Long i) throw (SALOME::SALOME_Exception)
 {
    HEXA_NS::Vector* h = _document_cpp->getVector(i);
@@ -524,7 +524,7 @@ throw (SALOME::SALOME_Exception)
 {
    return  _document_cpp->countCylinder();
 }
- 
+
 Cylinder_ptr Document_impl::getCylinder(::CORBA::Long i) throw (SALOME::SALOME_Exception)
 {
    HEXA_NS::Cylinder* c = _document_cpp->getCylinder(i);
@@ -562,7 +562,7 @@ throw (SALOME::SALOME_Exception)
 {
    return  _document_cpp->countPipe();
 }
- 
+
 Pipe_ptr Document_impl::getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception)
 {
    HEXA_NS::Pipe* p = _document_cpp->getPipe(i);
@@ -597,7 +597,7 @@ Pipe_ptr Document_impl::getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception
     if ( ok == HOK )
       return true;
     else
-      return false; 
+      return false;
   }
 }
 
@@ -640,7 +640,7 @@ Elements_ptr Document_impl::makeCartesian( Vertex_ptr ptIn,
 
 
 Elements_ptr Document_impl::makeCartesian1(
-    Vertex_ptr vxIn, 
+    Vertex_ptr vxIn,
     Vector_ptr vr1In,
     ::CORBA::Long px, ::CORBA::Long py, ::CORBA::Long pz,
     ::CORBA::Long mx, ::CORBA::Long my, ::CORBA::Long mz )
@@ -704,7 +704,7 @@ Elements_ptr Document_impl::makeCylindrical( Vertex_ptr ptIn,
 }
 
 // =================================================== makeCylindricals
-Elements_ptr Document_impl::makeCylindricals (Vertex_ptr ptin, 
+Elements_ptr Document_impl::makeCylindricals (Vertex_ptr ptin,
                            Vector_ptr vexin, Vector_ptr vezin,
         const RealVector& tdr, const RealVector& tda, const RealVector& tdl,
        	::CORBA::Boolean fill)
@@ -724,19 +724,19 @@ Elements_ptr Document_impl::makeCylindricals (Vertex_ptr ptin,
      return result;
 
   std::vector <CORBA::Double> cdr, cda, cdl;
-  for ( int nro = 0; nro < tdr.length(); nro++) 
+  for ( int nro = 0; nro < tdr.length(); nro++)
       cdr.push_back (tdr[nro]);
 
-  for ( int nro = 0; nro < tda.length(); nro++) 
+  for ( int nro = 0; nro < tda.length(); nro++)
       cda.push_back (tda[nro]);
 
-  for ( int nro = 0; nro < tdl.length(); nro++) 
+  for ( int nro = 0; nro < tdl.length(); nro++)
       cdl.push_back (tdl[nro]);
 
   HEXA_NS::Vertex*  pt  = ptServant->GetImpl();
   HEXA_NS::Vector*  vex = vexServant->GetImpl();
   HEXA_NS::Vector*  vez = vezServant->GetImpl();
-  HEXA_NS::Elements* grid = _document_cpp->makeCylindricals ( pt, vex, vez, 
+  HEXA_NS::Elements* grid = _document_cpp->makeCylindricals ( pt, vex, vez,
                                                       cdr, cda, cdl, fill );
   if ( grid != NULL )
      {
@@ -756,7 +756,7 @@ Elements_ptr Document_impl::makeCylindricals (Vertex_ptr ptin,
 // {
 //   Vertex_impl* ptServant = ::DownCast<Vertex_impl*>( ptIn );
 //   ASSERT( ptServant );
-// 
+//
 //   if ( ptServant ) {
 //     HEXA_NS::Vertex* pt = ptServant->GetImpl();
 //     HEXA_NS::Elements* l = _document_cpp->makeSpherical( pt,  dx, dy, dz, n );
@@ -790,7 +790,7 @@ Elements_ptr Document_impl::makeSpherical(
 
 
 
-  
+
 
 
 // Elements_ptr Document_impl::makeCylinder(Cylinder_ptr cylIn, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl)
@@ -816,14 +816,14 @@ Elements_ptr Document_impl::makeCylinder(Cylinder_ptr cylIn, Vector_ptr vrIn, ::
   return result;
 }
 
-Elements_ptr Document_impl::makePipe( Pipe_ptr pIn, Vector_ptr vrIn,  
+Elements_ptr Document_impl::makePipe( Pipe_ptr pIn, Vector_ptr vrIn,
                          ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl)
    throw (SALOME::SALOME_Exception)
 {
    Pipe_impl*   pServant  = ::DownCast<Pipe_impl*>( pIn );
    Vector_impl* vrServant = ::DownCast<Vector_impl*>( vrIn );
    ASSERT( pServant );
- 
+
    if ( pServant ) {
      HEXA_NS::Pipe*   p   = pServant ->GetImpl();
      HEXA_NS::Vector* vr  = vrServant->GetImpl();
@@ -864,11 +864,11 @@ CrossElements_ptr Document_impl::makePipes( Pipe_ptr p1In, Pipe_ptr p2In)
    Pipe_impl* p2Servant = ::DownCast<Pipe_impl*>( p2In );
    ASSERT( p1Servant );
    ASSERT( p2Servant );
- 
+
    if ( p1Servant && p2Servant ) {
      HEXA_NS::Pipe* p1= p1Servant->GetImpl();
      HEXA_NS::Pipe* p2= p2Servant->GetImpl();
- 
+
      HEXA_NS::CrossElements* l = _document_cpp->makePipes( p1, p2);
      CrossElements_impl* servantCorba = new CrossElements_impl(l);
      return servantCorba->_this();
@@ -1001,7 +1001,6 @@ Elements_ptr Document_impl::joinQuads(const Quads& qdsIn, Quad_ptr qbIn, Vertex_
     HEXA_NS::Vertex* va2 = va2Servant->GetImpl();
     HEXA_NS::Vertex* vb2 = vb2Servant->GetImpl();
 
-//     MESSAGE("joinQuads  AAAAAAAAAAAAA");
     HEXA_NS::Quads qds;
     for ( int i = 0; i < qdsIn.length(); i++) {
       Quad_impl* qServant = ::DownCast<Quad_impl*>( qdsIn[i] );
@@ -1037,7 +1036,7 @@ Elements_ptr Document_impl::joinQuads(const Quads& qdsIn, Quad_ptr qbIn, Vertex_
 
   ASSERT( qaServant );
   ASSERT( qbServant );
-  //   ASSERT( va1Servant ); Controle supprime Abu 
+  //   ASSERT( va1Servant ); Controle supprime Abu
   //   ASSERT( vb1Servant );
   //   ASSERT( va2Servant );
   //   ASSERT( vb2Servant );
@@ -1117,7 +1116,7 @@ Elements_ptr Document_impl::joinQuads(const Quads& qdsIn, Quad_ptr qbIn, Vertex_
 }
 
 
-Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn) 
+Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn)
              throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
@@ -1141,7 +1140,7 @@ Elements_ptr Document_impl::disconnectQuad(Hexa_ptr hexIn, Quad_ptr quadIn)
   return result;
 }
 
-Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn) 
+Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn)
              throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
@@ -1165,7 +1164,7 @@ Elements_ptr Document_impl::disconnectEdge(Hexa_ptr hexIn, Edge_ptr edgeIn)
   return result;
 }
 
-Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn) 
+Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn)
              throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
@@ -1190,14 +1189,14 @@ Elements_ptr Document_impl::disconnectVertex(Hexa_ptr hexIn, Vertex_ptr vxIn)
   return result;
 }
 // ====================================================== disconnectEdges
-Elements_ptr Document_impl::disconnectEdges (const Hexas& hexas_in, 
-                                             const Edges& edges_in) 
+Elements_ptr Document_impl::disconnectEdges (const Hexas& hexas_in,
+                                             const Edges& edges_in)
              throw (SALOME::SALOME_Exception)
 {
    Elements_ptr result = Elements::_nil();
 
    std::vector <HEXA_NS::Hexa*> tab_hexas;
-   for (int i = 0; i < hexas_in.length(); i++) 
+   for (int i = 0; i < hexas_in.length(); i++)
        {
        Hexa_impl* im_hexa = ::DownCast<Hexa_impl*> ( hexas_in[i] );
        ASSERT( im_hexa );
@@ -1206,7 +1205,7 @@ Elements_ptr Document_impl::disconnectEdges (const Hexas& hexas_in,
        }
 
    std::vector <HEXA_NS::Edge*> tab_edges;
-   for (int i = 0; i < edges_in.length(); i++) 
+   for (int i = 0; i < edges_in.length(); i++)
        {
        Edge_impl* im_edge = ::DownCast<Edge_impl*> ( edges_in[i] );
        ASSERT( im_edge );
@@ -1225,7 +1224,7 @@ Elements_ptr Document_impl::disconnectEdges (const Hexas& hexas_in,
   return result;
 }
 // ====================================================== cut
-Elements_ptr Document_impl::cut(Edge_ptr eIn, ::CORBA::Long nb_of_cuts) 
+Elements_ptr Document_impl::cut(Edge_ptr eIn, ::CORBA::Long nb_of_cuts)
                             throw (SALOME::SALOME_Exception)
 {
   Elements_ptr result = Elements::_nil();
@@ -1431,7 +1430,7 @@ Group_ptr Document_impl::getGroup(::CORBA::Long i) throw (SALOME::SALOME_Excepti
 {
   Group_ptr result  = Group::_nil();
   HEXA_NS::Group* g = _document_cpp->getGroup(i);
-  if ( g != NULL ){ //CS_TODO 
+  if ( g != NULL ){ //CS_TODO
     Group_impl* servantCorba = new Group_impl(g);
     result = servantCorba->_this();
   }
@@ -1443,7 +1442,7 @@ Group_ptr Document_impl::findGroup(const char* name) throw (SALOME::SALOME_Excep
 {
   Group_ptr result  = Group::_nil();
   HEXA_NS::Group* g = _document_cpp->findGroup(name);
-  if ( g != NULL ){ //CS_TODO 
+  if ( g != NULL ){ //CS_TODO
     Group_impl* servantCorba = new Group_impl(g);
     result = servantCorba->_this();
   }
@@ -1458,7 +1457,7 @@ Law_ptr Document_impl::addLaw(const char* name, ::CORBA::Long nb_nodes) throw (S
   HEXA_NS::Law* l = _document_cpp->addLaw(name, nb_nodes);
   if ( l != NULL ){
     Law_impl* servantCorba = new Law_impl(l);
-    result = servantCorba->_this(); 
+    result = servantCorba->_this();
   }
 
   return result;
@@ -1521,9 +1520,9 @@ Propagation_ptr Document_impl::getPropagation(::CORBA::Long i) throw (SALOME::SA
 
   HEXA_NS::Propagation* p = _document_cpp->getPropagation(i);
 //   //CS_Test
-// 
+//
 //   const HEXA_NS::Edges& edges_cpp = p->getEdges();
-// 
+//
 // //   HEXA_NS::Edges::const_iterator itertest = edges_cpp.begin();
 // //   itertest != edges_cpp.end();
 //   for ( HEXA_NS::Edges::const_iterator iter = edges_cpp.begin();
@@ -1560,12 +1559,12 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   return result;
 }
 // ======================================================= associateOpenedLine
-::CORBA::Long Document_impl::associateOpenedLine (Edge_ptr   mstart, 
-                            const Edges&          mline, 
-                            GEOM::GEOM_Object_ptr gstart, 
-                            ::CORBA::Double       pstart, 
-                            const Shapes&         gline, 
-                            ::CORBA::Double       pend) 
+::CORBA::Long Document_impl::associateOpenedLine (Edge_ptr   mstart,
+                            const Edges&          mline,
+                            GEOM::GEOM_Object_ptr gstart,
+                            ::CORBA::Double       pstart,
+                            const Shapes&         gline,
+                            ::CORBA::Double       pend)
                       throw (SALOME::SALOME_Exception)
 {
    Edge_impl* im_start = ::DownCast<Edge_impl*>( mstart );
@@ -1575,7 +1574,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
       return HERR;
 
    std::vector <HEXA_NS::Edge*> md_line;
-   for (int i = 0; i < mline.length(); i++) 
+   for (int i = 0; i < mline.length(); i++)
        {
        Edge_impl* im_edge = ::DownCast<Edge_impl*> ( mline[i] );
        ASSERT( im_edge );
@@ -1588,7 +1587,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
    HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
 
    std::vector <HEXA_NS::Shape*> gg_line;
-   for (int i = 0; i < gline.length(); i++) 
+   for (int i = 0; i < gline.length(); i++)
        {
        shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
        b_rep = shape2string( shape );
@@ -1600,23 +1599,23 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
 
   HEXA_NS::Edge* md_start = im_start->GetImpl();
 
-  ::CORBA::Long ier = _document_cpp->associateOpenedLine (md_start, md_line, 
+  ::CORBA::Long ier = _document_cpp->associateOpenedLine (md_start, md_line,
                                           gg_start, pstart, gg_line, pend);
   return ier;
 }
 
 // ======================================================= associateClosedLine
-::CORBA::Long Document_impl::associateClosedLine (Vertex_ptr mfirst, 
-                            Edge_ptr                mstart, 
-                            const Edges&            mline, 
-                            GEOM::GEOM_Object_ptr   gstart, 
-                            ::CORBA::Double         pstart, 
-                            ::CORBA::Boolean        inv, 
+::CORBA::Long Document_impl::associateClosedLine (Vertex_ptr mfirst,
+                            Edge_ptr                mstart,
+                            const Edges&            mline,
+                            GEOM::GEOM_Object_ptr   gstart,
+                            ::CORBA::Double         pstart,
+                            ::CORBA::Boolean        inv,
                             const Shapes&           gline)
                       throw (SALOME::SALOME_Exception)
 {
    std::vector <HEXA_NS::Edge*> md_line;
-   for (int i = 0; i < mline.length(); i++) 
+   for (int i = 0; i < mline.length(); i++)
        {
        Edge_impl* im_edge = ::DownCast<Edge_impl*> ( mline[i] );
        ASSERT( im_edge );
@@ -1629,7 +1628,7 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
    HEXA_NS::Shape* gg_start = new HEXA_NS::Shape( b_rep );
 
    std::vector <HEXA_NS::Shape*> gg_line;
-   for (int i = 0; i < gline.length(); i++) 
+   for (int i = 0; i < gline.length(); i++)
        {
        shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(gline[i]);
        b_rep = shape2string( shape );
@@ -1645,11 +1644,8 @@ Propagation_ptr Document_impl::findPropagation(Edge_ptr eIn) throw (SALOME::SALO
   HEXA_NS::Vertex* md_first = im_first->GetImpl();
   HEXA_NS::Edge*   md_start = im_start->GetImpl();
 
-  printf (" +++ HexDocument_impl.cxx : Appel de associateClosedLine \n");
-
-  ::CORBA::Long ier = _document_cpp->associateClosedLine (md_first, md_start, 
+  ::CORBA::Long ier = _document_cpp->associateClosedLine (md_first, md_start,
                                      md_line, gg_start, pstart, inv, gg_line);
-  HexDisplay (ier);
   return ier;
 }
 // ---------------------------------------------- Ajouts Hexa5
@@ -1659,7 +1655,7 @@ void Document_impl::addShape (GEOM::GEOM_Object_ptr gobject, const char* name)
 {
    TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()
                        ->geomObjectToShape(gobject);
-    
+
    _document_cpp->addShape (shape, name);
    return;
 }
@@ -1674,16 +1670,12 @@ void Document_impl::setShape (GEOM::GEOM_Object_ptr geom_object)
   CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object);
 
   string strBrep = shape2string( shape );
-  std::cout << "setShape ---------> len(strBrep) = "
-            << strBrep.size() << std::endl;
   HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
 
-  s->setIor   (anIOR.in()); 
+  s->setIor   (anIOR.in());
   s->setIdent (geom_object->GetStudyEntry());
 
-  std::cout << " ............  Shape creee" << std::endl;
   _document_cpp->setShape (s);
-  std::cout << " ............  Shape associee" << std::endl;
 }
 // ===================================================== getShape
 GEOM::GEOM_Object_ptr Document_impl::getShape ()
@@ -1703,7 +1695,7 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
            {
            geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
            }
-        } 
+        }
       else  // no geom object => we have to built it
         {
         geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( s->getBrep() );
@@ -1723,7 +1715,7 @@ GEOM::GEOM_Object_ptr Document_impl::getShape ()
   if (s != NULL)
      {
      string strBrep = s->getBrep();
-     std::cout << "getShape -->len (getBrep) = " 
+     std::cout << "getShape -->len (getBrep) = "
                << strBrep.size() << std::endl;
      TopoDS_Shape shape = string2shape( strBrep );
      std::cout << "getShape -->string2shape->" << std::endl;
@@ -1740,12 +1732,12 @@ char* Document_impl::getBrep () throw (SALOME::SALOME_Exception)
 
    HEXA_NS::Shape* shape = _document_cpp->getShape();
    if (shape != NULL)
-       {    
+       {
        string b_rep = shape->getBrep();
        brep = b_rep.c_str();
        // brep = shape->getBrep().c_str();
-       }    
-     
+       }
+
   if (brep == NULL)
       brep = "";
   return CORBA::string_dup (brep);
@@ -1757,13 +1749,13 @@ char* Document_impl::getName () throw (SALOME::SALOME_Exception)
   return CORBA::string_dup (name);
 }
 // ===================================================== countUsedVertex
-::CORBA::Long Document_impl::countUsedVertex() 
+::CORBA::Long Document_impl::countUsedVertex()
          throw (SALOME::SALOME_Exception)
 {
   return  _document_cpp->countUsedVertex();
 }
 // ===================================================== getUsedVertex
-Vertex_ptr Document_impl::getUsedVertex(::CORBA::Long i) 
+Vertex_ptr Document_impl::getUsedVertex(::CORBA::Long i)
         throw (SALOME::SALOME_Exception)
 {
   Vertex_ptr result   = Vertex::_nil();
@@ -1777,13 +1769,13 @@ Vertex_ptr Document_impl::getUsedVertex(::CORBA::Long i)
   return result;
 }
 // ===================================================== countUsedEdge
-::CORBA::Long Document_impl::countUsedEdge() 
+::CORBA::Long Document_impl::countUsedEdge()
          throw (SALOME::SALOME_Exception)
 {
   return  _document_cpp->countUsedEdge();
 }
 // ===================================================== getUsedEdge
-Edge_ptr Document_impl::getUsedEdge(::CORBA::Long i) 
+Edge_ptr Document_impl::getUsedEdge(::CORBA::Long i)
         throw (SALOME::SALOME_Exception)
 {
   Edge_ptr result   = Edge::_nil();
@@ -1797,13 +1789,13 @@ Edge_ptr Document_impl::getUsedEdge(::CORBA::Long i)
   return result;
 }
 // ===================================================== countUsedQuad
-::CORBA::Long Document_impl::countUsedQuad() 
+::CORBA::Long Document_impl::countUsedQuad()
          throw (SALOME::SALOME_Exception)
 {
   return  _document_cpp->countUsedQuad();
 }
 // ===================================================== getUsedQuad
-Quad_ptr Document_impl::getUsedQuad(::CORBA::Long i) 
+Quad_ptr Document_impl::getUsedQuad(::CORBA::Long i)
         throw (SALOME::SALOME_Exception)
 {
   Quad_ptr result   = Quad::_nil();
@@ -1817,13 +1809,13 @@ Quad_ptr Document_impl::getUsedQuad(::CORBA::Long i)
   return result;
 }
 // ===================================================== countUsedHexa
-::CORBA::Long Document_impl::countUsedHexa() 
+::CORBA::Long Document_impl::countUsedHexa()
          throw (SALOME::SALOME_Exception)
 {
   return  _document_cpp->countUsedHexa();
 }
 // ===================================================== getUsedHexa
-Hexa_ptr Document_impl::getUsedHexa(::CORBA::Long i) 
+Hexa_ptr Document_impl::getUsedHexa(::CORBA::Long i)
         throw (SALOME::SALOME_Exception)
 {
   Hexa_ptr result   = Hexa::_nil();
@@ -1837,7 +1829,7 @@ Hexa_ptr Document_impl::getUsedHexa(::CORBA::Long i)
   return result;
 }
 // ===================================================== addHexa5Quads
-Hexa_ptr Document_impl::addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, 
+Hexa_ptr Document_impl::addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3,
                                        Quad_ptr q4, Quad_ptr q5)
                         throw (SALOME::SALOME_Exception)
 {
@@ -1873,7 +1865,7 @@ Hexa_ptr Document_impl::addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3,
   return result;
 }
 // ===================================================== addHexa4Quads
-Hexa_ptr Document_impl::addHexa4Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, 
+Hexa_ptr Document_impl::addHexa4Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3,
                                        Quad_ptr q4)
                         throw (SALOME::SALOME_Exception)
 {
@@ -1964,7 +1956,7 @@ Hexa_ptr Document_impl::addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
 }
 
 // ===================================================== removeQuad
-::CORBA::Boolean Document_impl::removeQuad(Quad_ptr quad) 
+::CORBA::Boolean Document_impl::removeQuad(Quad_ptr quad)
                  throw (SALOME::SALOME_Exception)
 {
   Quad_impl* hServant = ::DownCast<Quad_impl*>( quad );
@@ -1980,7 +1972,7 @@ Hexa_ptr Document_impl::addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
   }
 }
 // ===================================================== removeElements
-::CORBA::Boolean Document_impl::removeElements(Elements_ptr bloc) 
+::CORBA::Boolean Document_impl::removeElements(Elements_ptr bloc)
                  throw (SALOME::SALOME_Exception)
 {
   Elements_impl* hServant = ::DownCast<Elements_impl*>( bloc );
@@ -1996,8 +1988,8 @@ Hexa_ptr Document_impl::addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
   }
 }
 // ===================================================== revolutionQuads
-Elements_ptr Document_impl::revolutionQuads (const Quads& start, 
-                                    Vertex_ptr center, Vector_ptr axis, 
+Elements_ptr Document_impl::revolutionQuads (const Quads& start,
+                                    Vertex_ptr center, Vector_ptr axis,
                                     const RealVector &angles)
            throw (SALOME::SALOME_Exception)
 {
@@ -2013,7 +2005,7 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
       return result;
 
    HEXA_NS::Quads t_start;
-   for ( int nq = 0; nq < start.length(); nq++) 
+   for ( int nq = 0; nq < start.length(); nq++)
        {
        Quad_impl* v_quad = ::DownCast<Quad_impl*> (start[nq]);
        ASSERT( v_quad );
@@ -2022,7 +2014,7 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
        }
 
    std::vector <CORBA::Double> t_angles;
-   for ( int na = 0; na < angles.length(); na++) 
+   for ( int na = 0; na < angles.length(); na++)
        {
        CORBA::Double alpha = angles[na];
        t_angles.push_back (alpha);
@@ -2030,7 +2022,7 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
 
    HEXA_NS::Vector*   i_axis   = v_axis  ->GetImpl();
    HEXA_NS::Vertex*   i_center = v_center->GetImpl();
-   HEXA_NS::Elements* i_elts   = _document_cpp->revolutionQuads (t_start, 
+   HEXA_NS::Elements* i_elts   = _document_cpp->revolutionQuads (t_start,
                                  i_center, i_axis, t_angles);
    if (i_elts != NULL)
       {
@@ -2041,7 +2033,7 @@ Elements_ptr Document_impl::revolutionQuads (const Quads& start,
    return result;
 }
 // ===================================================== prismQuadsVec
-Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir, 
+Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir,
                                     const RealVector &thaut, ::CORBA::Long opt)
            throw (SALOME::SALOME_Exception)
 {
@@ -2054,7 +2046,7 @@ Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir,
       return result;
 
    HEXA_NS::Quads t_start;
-   for ( int nq = 0; nq < start.length(); nq++) 
+   for ( int nq = 0; nq < start.length(); nq++)
        {
        Quad_impl* v_quad = ::DownCast<Quad_impl*> (start[nq]);
        ASSERT( v_quad );
@@ -2063,14 +2055,14 @@ Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir,
        }
 
    std::vector <CORBA::Double> t_haut;
-   for ( int na = 0; na < thaut.length(); na++) 
+   for ( int na = 0; na < thaut.length(); na++)
        {
        CORBA::Double alpha = thaut[na];
        t_haut.push_back (alpha);
        }
 
    HEXA_NS::Vector*   i_dir  = v_dir  ->GetImpl();
-   HEXA_NS::Elements* i_elts = _document_cpp->prismQuadsVec (t_start, 
+   HEXA_NS::Elements* i_elts = _document_cpp->prismQuadsVec (t_start,
                                  i_dir, t_haut, opt);
    if (i_elts != NULL)
       {
@@ -2082,8 +2074,8 @@ Elements_ptr Document_impl::prismQuadsVec (const Quads& start, Vector_ptr dir,
 }
 // ===================================================== makeSphere
 
-Elements_ptr Document_impl::replace (const Quads& pattern, 
-                                     Vertex_ptr p1, Vertex_ptr c1, 
+Elements_ptr Document_impl::replace (const Quads& pattern,
+                                     Vertex_ptr p1, Vertex_ptr c1,
                                      Vertex_ptr p2, Vertex_ptr c2,
                                      Vertex_ptr p3, Vertex_ptr c3)
            throw (SALOME::SALOME_Exception)
@@ -2106,7 +2098,7 @@ Elements_ptr Document_impl::replace (const Quads& pattern,
       return result;
 
    HEXA_NS::Quads t_pattern;
-   for ( int nq = 0; nq < pattern.length(); nq++) 
+   for ( int nq = 0; nq < pattern.length(); nq++)
        {
        Quad_impl* v_quad = ::DownCast<Quad_impl*> (pattern[nq]);
        ASSERT( v_quad );
@@ -2123,7 +2115,7 @@ Elements_ptr Document_impl::replace (const Quads& pattern,
    HEXA_NS::Vertex*   i_c2 = v_c2->GetImpl();
    HEXA_NS::Vertex*   i_c3 = v_c3->GetImpl();
 
-   HEXA_NS::Elements* i_elts   = _document_cpp->replace (t_pattern, 
+   HEXA_NS::Elements* i_elts   = _document_cpp->replace (t_pattern,
                                        i_p1, i_c1, i_p2, i_c2, i_p3, i_c3);
    if (i_elts != NULL)
       {
@@ -2134,9 +2126,9 @@ Elements_ptr Document_impl::replace (const Quads& pattern,
    return result;
 }
 // ===================================================== makeSphere
-Elements_ptr Document_impl::makeSphere (Vertex_ptr center, Vector_ptr vx, 
-                            Vector_ptr vz, ::CORBA::Double radius, 
-                            ::CORBA::Double radhole, Vertex_ptr plorig, 
+Elements_ptr Document_impl::makeSphere (Vertex_ptr center, Vector_ptr vx,
+                            Vector_ptr vz, ::CORBA::Double radius,
+                            ::CORBA::Double radhole, Vertex_ptr plorig,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception)
 {
@@ -2169,8 +2161,8 @@ Elements_ptr Document_impl::makeSphere (Vertex_ptr center, Vector_ptr vx,
    return result;
 }
 // ===================================================== makePartSphere
-Elements_ptr Document_impl::makePartSphere (Vertex_ptr center, Vector_ptr vx, 
-                            Vector_ptr vz, ::CORBA::Double  radius, 
+Elements_ptr Document_impl::makePartSphere (Vertex_ptr center, Vector_ptr vx,
+                            Vector_ptr vz, ::CORBA::Double  radius,
                             ::CORBA::Double radhole,
                              Vertex_ptr plorig, ::CORBA::Double angle,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
@@ -2194,7 +2186,7 @@ Elements_ptr Document_impl::makePartSphere (Vertex_ptr center, Vector_ptr vx,
    HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
    HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
 
-   HEXA_NS::Elements* i_elts  = _document_cpp->makePartSphere (i_center, i_x, 
+   HEXA_NS::Elements* i_elts  = _document_cpp->makePartSphere (i_center, i_x,
                       i_z, radius, radhole, i_orig, angle, nrad, nang, nhaut);
 
    if (i_elts != NULL)
@@ -2206,10 +2198,10 @@ Elements_ptr Document_impl::makePartSphere (Vertex_ptr center, Vector_ptr vx,
    return result;
 }
 // ===================================================== makeRind
-Elements_ptr Document_impl::makeRind (Vertex_ptr center, Vector_ptr vx, 
-                                      Vector_ptr vz, 
-                 ::CORBA::Double  radext, ::CORBA::Double radint, 
-                 ::CORBA::Double radhole, Vertex_ptr plorig, 
+Elements_ptr Document_impl::makeRind (Vertex_ptr center, Vector_ptr vx,
+                                      Vector_ptr vz,
+                 ::CORBA::Double  radext, ::CORBA::Double radint,
+                 ::CORBA::Double radhole, Vertex_ptr plorig,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception)
 {
@@ -2230,7 +2222,7 @@ Elements_ptr Document_impl::makeRind (Vertex_ptr center, Vector_ptr vx,
    HEXA_NS::Vector* i_x      = v_x     ->GetImpl();
    HEXA_NS::Vector* i_z      = v_z     ->GetImpl();
 
-   HEXA_NS::Elements* i_elts  = _document_cpp->makeRind (i_center, i_x, i_z, 
+   HEXA_NS::Elements* i_elts  = _document_cpp->makeRind (i_center, i_x, i_z,
                     radext, radint, radhole, i_orig, nrad, nang, nhaut);
 
    if (i_elts != NULL)
@@ -2242,9 +2234,9 @@ Elements_ptr Document_impl::makeRind (Vertex_ptr center, Vector_ptr vx,
    return result;
 }
 // ===================================================== makePartRind
-Elements_ptr Document_impl::makePartRind (Vertex_ptr center, Vector_ptr vx, 
-                                          Vector_ptr vz, 
-                       ::CORBA::Double radext, ::CORBA::Double radint, 
+Elements_ptr Document_impl::makePartRind (Vertex_ptr center, Vector_ptr vx,
+                                          Vector_ptr vz,
+                       ::CORBA::Double radext, ::CORBA::Double radint,
                        ::CORBA::Double radhole,
                        Vertex_ptr plorig, ::CORBA::Double angle,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
@@ -2279,7 +2271,7 @@ Elements_ptr Document_impl::makePartRind (Vertex_ptr center, Vector_ptr vx,
    return result;
 }
 // ================================================== makeScale
-Elements_ptr Document_impl::makeScale (Elements_ptr lIn, Vertex_ptr pIn, 
+Elements_ptr Document_impl::makeScale (Elements_ptr lIn, Vertex_ptr pIn,
                                        ::CORBA::Double k)
                             throw (SALOME::SALOME_Exception)
 {
@@ -2384,8 +2376,8 @@ Elements_ptr Document_impl::makeSymmetryPoint (Elements_ptr lIn, Vertex_ptr pIn)
   return result;
 }
 // ================================================== performScale
-void Document_impl::performScale (Elements_ptr lIn, Vertex_ptr pIn, 
-                                  ::CORBA::Double k) 
+void Document_impl::performScale (Elements_ptr lIn, Vertex_ptr pIn,
+                                  ::CORBA::Double k)
      throw (SALOME::SALOME_Exception)
 {
   Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
@@ -2401,8 +2393,8 @@ void Document_impl::performScale (Elements_ptr lIn, Vertex_ptr pIn,
   }
 }
 // ================================================== performSymmetryPlane
-void Document_impl::performSymmetryPlane (Elements_ptr lIn, Vertex_ptr pIn, 
-                                          Vector_ptr vecIn) 
+void Document_impl::performSymmetryPlane (Elements_ptr lIn, Vertex_ptr pIn,
+                                          Vector_ptr vecIn)
      throw (SALOME::SALOME_Exception)
 {
   Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );
@@ -2421,8 +2413,8 @@ void Document_impl::performSymmetryPlane (Elements_ptr lIn, Vertex_ptr pIn,
   }
 }
 // ================================================== performSymmetryLine
-void Document_impl::performSymmetryLine (Elements_ptr lIn, Vertex_ptr pIn, 
-                                          Vector_ptr vecIn) 
+void Document_impl::performSymmetryLine (Elements_ptr lIn, Vertex_ptr pIn,
+                                          Vector_ptr vecIn)
      throw (SALOME::SALOME_Exception)
 {
   Elements_impl* lServant = ::DownCast<Elements_impl*>( lIn );

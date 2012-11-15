@@ -41,7 +41,6 @@ using namespace HEXABLOCK::GUI;
 VtkDocumentGraphicView* GraphicViewsHandler::createDocumentGraphicView(DocumentModel* docModel,
                                                                      SVTK_ViewWindow* wnd, QWidget* parent)
 {
-    MESSAGE("GraphicViewsHandler::createDocumentGraphicView(DocumentModel* docModel, SVTK_ViewWindow* wnd, QWidget* parent)");
 
 //    if (wnd == NULL) return NULL;
 //    VtkDocumentGraphicView* dgview = getDocumentGraphicView(wnd);
@@ -50,7 +49,6 @@ VtkDocumentGraphicView* GraphicViewsHandler::createDocumentGraphicView(DocumentM
 //    docGraphicViews[wnd] = new VtkDocumentGraphicView(docModel, wnd, parent);
 //    return docGraphicViews[wnd];
     return new VtkDocumentGraphicView(docModel, wnd, parent);
-    MESSAGE("}");
 }
 
 /*====================================================== getDocumentGraphicView
@@ -58,12 +56,8 @@ VtkDocumentGraphicView* GraphicViewsHandler::createDocumentGraphicView(DocumentM
  *=============================================================================*/
 VtkDocumentGraphicView* GraphicViewsHandler::getDocumentGraphicView(SVTK_ViewWindow* view) const
 {
-    MESSAGE("GraphicViewsHandler::getDocumentGraphicView(SVTK_ViewWindow* view)");
-
     if (view == NULL || !docGraphicViews.contains(view)) return NULL;
     return docGraphicViews[view];
-
-    MESSAGE("}");
 }
 
 /*====================================================== getOrCreateVtkWindow

@@ -104,9 +104,6 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* p
   QWidget* w = centralWidget();
   QString objectName = w->objectName();
   QString className = w->metaObject()->className();
-  MESSAGE("*  centralWidget() " << w );
-  MESSAGE("*  centralWidget()->objectName() is "<< objectName.toStdString() ); //toStdString()
-  MESSAGE("*  centralWidget()->metaObject()->className() is "<< className.toStdString() );
 ;
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_POINT")));
@@ -258,8 +255,6 @@ MyBasicGUI_PointDlg::~MyBasicGUI_PointDlg()
 //=================================================================================
 void MyBasicGUI_PointDlg::Init()
 {
-  MESSAGE("MyBasicGUI_PointDlg::Init() ");
-
   GroupOnCurve->LineEdit1->setReadOnly(true);
   GroupOnCurve->LineEdit2->setReadOnly(true);
   GroupOnSurface->LineEdit1->setReadOnly(true);
@@ -307,7 +302,6 @@ void MyBasicGUI_PointDlg::Init()
   initSpinBox(GroupOnSurface->SpinBox_DY, 0., 1., step, "parametric_precision");
   GroupOnSurface->SpinBox_DY->setValue(0.5);
 
-  MESSAGE("MyBasicGUI_PointDlg::Init() : myGeomGUI " << myGeomGUI);
   /* signals and slots connections */
   if ( myGeomGUI ){
     connect(myGeomGUI,      SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
@@ -444,13 +438,12 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 {
 //   HEXABLOCKGUI::currentOccView->raise();
 //   HEXABLOCKGUI::currentOccView->setFocus();
-  MESSAGE("MyBasicGUI_PointDlg::ConstructorsClicked("<< constructorId << ")");
   switch (constructorId) {
   case GEOM_POINT_XYZ:
     {
-      globalSelection(); // close local contexts, if any
+      globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
       GroupRefPoint->hide();
       GroupOnCurve->hide();
@@ -463,9 +456,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     }
   case GEOM_POINT_REF:
     {
-      globalSelection(); // close local contexts, if any
+      globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
       myNeedType = TopAbs_VERTEX;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       //myEditCurrentArgument->setText("");
@@ -482,9 +475,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     }
   case GEOM_POINT_EDGE:
     {
-      globalSelection(); // close local contexts, if any
+      globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
       myNeedType = TopAbs_EDGE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
 //      myEditCurrentArgument->setText("");
@@ -504,9 +497,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     }
   case GEOM_POINT_INTINT:
     {
-      globalSelection(); // close local contexts, if any
+      globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
       myNeedType = TopAbs_EDGE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
 //      GroupLineIntersection->LineEdit1->setText("");
@@ -528,9 +521,9 @@ void MyBasicGUI_PointDlg::ConstructorsClicked(int constructorId)
     }
   case GEOM_POINT_SURF:
     {
-      globalSelection(); // close local contexts, if any
+      globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
       myNeedType = TopAbs_FACE;
-      localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+      localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       //myEditCurrentArgument->setText("");
@@ -582,8 +575,8 @@ bool MyBasicGUI_PointDlg::ClickOnApply()
 //  ConstructorsClicked(getConstructorId());
 
   //Set selection mode to the last selected mode
-  globalSelection(); // close local contexts, if any
-  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+  globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
+  localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 
   return true;
 }
@@ -595,8 +588,6 @@ bool MyBasicGUI_PointDlg::ClickOnApply()
 //=================================================================================
 void MyBasicGUI_PointDlg::SelectionIntoArgument()
 {
-	MESSAGE("MyBasicGUI_PointDlg::SelectionIntoArgument() myGeomGUI : "<< myGeomGUI);
-
 	GEOM::GeomObjPtr aSelectedObject = getSelected(myNeedType);
 	TopoDS_Shape aShape;
 	if (!aSelectedObject || !GEOMBase::GetShape(aSelectedObject.get(), aShape) || aShape.IsNull())
@@ -696,15 +687,15 @@ void MyBasicGUI_PointDlg::SetEditCurrentArgument()
   if (send == GroupRefPoint->PushButton1) {
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
-    globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
+    localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_VERTEX);
   }
   else if (send == GroupOnCurve->PushButton1) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
-    globalSelection(); // close local contexts, if any
+    globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
     myNeedType = TopAbs_EDGE;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
     GroupOnCurve->PushButton2->setDown(false);
     GroupOnCurve->LineEdit1->setEnabled(true);
     GroupOnCurve->LineEdit2->setEnabled(false);
@@ -712,9 +703,9 @@ void MyBasicGUI_PointDlg::SetEditCurrentArgument()
   else if (send == GroupOnCurve->PushButton2) {
     GroupOnCurve->LineEdit2->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit2;
-    globalSelection(); // close local contexts, if any
+    globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
     myNeedType = TopAbs_VERTEX;
-    localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+    localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
     GroupOnCurve->PushButton1->setDown(false);
     GroupOnCurve->LineEdit2->setEnabled(true);
     GroupOnCurve->LineEdit1->setEnabled(false);
@@ -723,8 +714,8 @@ void MyBasicGUI_PointDlg::SetEditCurrentArgument()
   {
     GroupOnSurface->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnSurface->LineEdit1;
-    globalSelection(); // close local contexts, if any
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+    globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
+    localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_FACE);
   }
   else if (send == GroupLineIntersection->PushButton1) {
     GroupLineIntersection->LineEdit1->setFocus();
@@ -754,7 +745,6 @@ void MyBasicGUI_PointDlg::SetEditCurrentArgument()
 //=================================================================================
 void MyBasicGUI_PointDlg::enterEvent(QEvent*)
 {
-  MESSAGE( "MyBasicGUI_PointDlg::enterEvent() ");
   if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
@@ -766,7 +756,6 @@ void MyBasicGUI_PointDlg::enterEvent(QEvent*)
 //=================================================================================
 void MyBasicGUI_PointDlg::ActivateThisDialog()
 {
-  MESSAGE( "MyBasicGUI_PointDlg::ActivateThisDialog() ");
   MyGEOMBase_Skeleton::ActivateThisDialog();
 
   if ( myGeomGUI ){
@@ -783,7 +772,6 @@ void MyBasicGUI_PointDlg::ActivateThisDialog()
 //=================================================================================
 void MyBasicGUI_PointDlg::DeactivateActiveDialog()
 {
-  MESSAGE( "MyBasicGUI_PointDlg::DeactivateActiveDialog() ");
   // myGeomGUI->SetState(-1);
   MyGEOMBase_Skeleton::DeactivateActiveDialog();
 }
@@ -1125,9 +1113,9 @@ void MyBasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 //=================================================================================
 void MyBasicGUI_PointDlg::onBtnPopup(QAction* a)
 {
-  globalSelection(); // close local contexts, if any
+  globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
   myNeedType = myActions[a] == SelectEdge ? TopAbs_EDGE : TopAbs_WIRE;
-  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
+  localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), myNeedType);
 }
 
 //=================================================================================
@@ -1220,8 +1208,6 @@ void MyBasicGUI_PointDlg::_initViewManager()
 
 // bool MyBasicGUI_PointDlg::_onSelectionChanged( const QItemSelection& sel, QLineEdit*  le )
 // {
-//   MESSAGE("HexaBaseDialog::_onSelectionChanged(const QItemSelection& sel, QLineEdit*  le)");
-//   MESSAGE("*  le is "<< le->objectName().toStdString() );
 //   QModelIndexList l = sel.indexes();
 //   if ( l.count() == 0 ) return false;
 //
@@ -1236,7 +1222,6 @@ void MyBasicGUI_PointDlg::_initViewManager()
 //
 //   // check selection compatibility between selection and widget
 //   if ( selType != wType ){
-//     MESSAGE("*  bad selection : " << selType << " is not  " << wType );
 //     SUIT_MessageBox::information( 0,
 //       tr("HEXA_INFO"),
 //       tr("Bad selection type: please select a %1").arg( _strHexaWidgetType[wType]) );
@@ -1246,7 +1231,6 @@ void MyBasicGUI_PointDlg::_initViewManager()
 //   //fill the lineEdit if selection is OK
 //   le->setText( selected.data().toString() );// name
 //   le->setProperty("QModelIndex",  QVariant::fromValue(selected) );
-//   MESSAGE("}");
 //   return true;
 // }
 
@@ -1254,19 +1238,8 @@ void MyBasicGUI_PointDlg::_initViewManager()
 
 void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-  MESSAGE( "HexaBaseDialog::onSelectionChanged(){" );
   QString className = metaObject()->className();
-  MESSAGE( "*  I am                          : " << className.toStdString() );
-  MESSAGE( "*  sender is                     : " << sender() );
   QItemSelectionModel* selector = dynamic_cast<QItemSelectionModel*>(sender());
-  MESSAGE( "*  selector           : " << selector);
-
-  foreach( const QModelIndex& isel, sel.indexes() ){
-    MESSAGE("*  selected : " << isel.data().toString().toStdString());
-  }
-  foreach( const QModelIndex& iunsel, unsel.indexes() ){
-    MESSAGE("*  unselected : " << iunsel.data().toString().toStdString());
-  }
 
   if (_patternDataSelectionModel)
 	  _patternDataSelectionModel->highlightEltsWithAssocs(sel.indexes());
@@ -1288,19 +1261,16 @@ void MyBasicGUI_PointDlg::onSelectionChanged( const QItemSelection& sel, const Q
       selOk = true;
     } else {
       _patternDataSelectionModel->clearSelection();
-      MESSAGE("*  bad selection : " << selType << " is not  " << HEXABLOCK::GUI::VERTEX_TREE );
       SUIT_MessageBox::information( 0,
         tr("HEXA_INFO"),
         tr("Bad selection type: please select a %1").arg( "VERTEX" ) );
     }
   }
-  MESSAGE("}");
 }
 
 
 void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
 {
-  MESSAGE( "getConstructorId()"<< getConstructorId() );
   SUIT_ViewWindow* v = vm->getActiveView();
   QString vmType = vm->getType();
   if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
@@ -1308,7 +1278,6 @@ void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
   } else if ( vmType == OCCViewer_Viewer::Type() ){
 //     lines_lw->setFocus();
 //     ConstructorsClicked(0);
-    MESSAGE( "getConstructorId()"<< getConstructorId() );
     ConstructorsClicked( getConstructorId() );
   }
 }
@@ -1359,8 +1328,6 @@ bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
   }
 //  _highlightWidget(obj, Qt::yellow);
 
-  MESSAGE("MyBasicGUI_PointDlg::eventFilter{");
-
   QVariant       vxVariant;
   QModelIndex    vxIndex;
 
@@ -1374,19 +1341,15 @@ bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
   }
   vxIndex = vxVariant.value<QModelIndex>();
   _selectionMutex = true;
-  MESSAGE("*  selecting the element         : " << vxIndex.data().toString().toStdString());
-  MESSAGE("*  _patternDataSelectionModel    : " << _patternDataSelectionModel );
   _patternDataSelectionModel->select( vxIndex, QItemSelectionModel::Clear );
   _patternDataSelectionModel->select( vxIndex, QItemSelectionModel::Select );
   _selectionMutex = false;
-  MESSAGE("}");
   return false;
 }
 
 
 void MyBasicGUI_PointDlg::hideEvent ( QHideEvent * event )
 {
-  MESSAGE("MyBasicGUI_PointDlg::hideEvent(){");
   disconnect( _patternDataSelectionModel, SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
                 this,                     SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
   disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()), this, SLOT(onCurrentSelectionChanged()) );
@@ -1395,12 +1358,10 @@ void MyBasicGUI_PointDlg::hideEvent ( QHideEvent * event )
   _documentModel->allowEdition();
   DeactivateActiveDialog();
   MyGEOMBase_Skeleton::hideEvent( event );
-  MESSAGE("}");
 }
 
 void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
 {
-  MESSAGE("MyBasicGUI_PointDlg::showEvent(){");
   _documentModel->disallowEdition();
   //     _patternDataSelectionModel->clearSelection();
   connect( _patternDataSelectionModel, SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
@@ -1412,15 +1373,12 @@ void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
 
   SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() );
 
-  MESSAGE( "XXXXXXXXXXX   myGeomGUI  => " << myGeomGUI );
   if ( !myGeomGUI && app )
     myGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
 
-  MESSAGE( "YYYYYYYYYYYYY myGeomGUI  => " << myGeomGUI );
 
   ActivateThisDialog();
   MyGEOMBase_Skeleton::showEvent ( event );
-  MESSAGE("}");
 }
 
 
@@ -1428,7 +1386,6 @@ void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
 
 bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransaction )
 {
-  MESSAGE("MyBasicGUI_PointDlg::onAccept()");
 
   GEOM::GEOM_Object_ptr newVertex;
   QString               newVertexEntry;
@@ -1443,7 +1400,6 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
 
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
-    MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
                                QObject::tr("WRN_WARNING"),
                                QObject::tr("WRN_STUDY_LOCKED"),
@@ -1502,9 +1458,7 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
             TopoDS_Shape aShape;
             GEOMBase::GetShape( newVertex, aShape );
             if ( !aShape.IsNull() ){
-              MESSAGE("!aShape.IsNull()");
               newVertexName = GEOMBase::GetName( newVertex );
-              MESSAGE("newVertexName "<< newVertexName.toStdString());
               newVertexBrep = HEXABLOCK::GUI::shape2string( aShape ).c_str();
             }
 
@@ -1566,16 +1520,13 @@ bool MyBasicGUI_PointDlg::onAccept( const bool publish, const bool useTransactio
       aPoint.name  = newVertexName;
       aPoint.entry = newVertexEntry;
       aPoint.brep  = newVertexBrep;
-      MESSAGE(" aPoint.name"  <<  aPoint.name.toStdString() );
-      MESSAGE(" aPoint.entry" <<  aPoint.entry.toStdString() );
-      MESSAGE(" aPoint.brep"  <<  aPoint.brep.toStdString() );
       _documentModel->addAssociation( iVertex, aPoint );
       // to select/highlight result
 //       _patternDataSelectionModel->clearSelection();
 //       mainFrame()->_vertex_le->setFocus();
 
-//       globalSelection();
-//       localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+//       globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow());
+//       localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_VERTEX);
       _patternDataSelectionModel->select( patternDataModel->mapFromSource(iVertex), QItemSelectionModel::Clear );
       _patternDataSelectionModel->select( patternDataModel->mapFromSource(iVertex), QItemSelectionModel::Select );
       _currentObj = NULL;
