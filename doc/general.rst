@@ -6,77 +6,42 @@
 Introduction to HEXABLOCK 
 #########################
 
-.. Within the SALOME framework, a CAD module (GEOM) and a meshing
-   module (SMESH) are developed. This tools enable the construction
-   of hexahedrical meshes by means of a CAD cutting in blocks (the
-   method of blocks) topologically equivalent to hexahedra. Once this
-   cutting performed, the mesh construction is easy, but the method of
-   blocks can be touchy if the piece to mesh is complex.
+With SALOME framework, a CAD component (GEOM) and a meshing component (SMESH) are developed.
+These tools enable to construct hexahedral meshes:
 
-Goals
-=====
+- by means of a CAD cutting in blocks topologically equivalent to hexahedra with GEOM component,
 
-The HexaBlock module is designed to help users to build hexahedrical meshes
-via the method by blocks. The two fundamental choices are:
+- and generate a hexahedral mesh with SMESH component.
 
-- To execute the method by blocks where the user has to determine the needed blocks.
-- To simplify all other tasks to obtain the mesh (in particular by
-  using directly the geometry to mesh).
+The HEXABLOCK component of SALOME is designed to help users to build hexahedral meshes:
 
-Solution
-========
+- with also the block method,
 
-Finding a compound of blocks is in charge of users.
- 
-HexaBlock enables to define a mesh with hexahedra in five stages:
+-  but without modify the geometry.
 
-- Load and create a geometry without constraint.
-- Search a compound of blocks (mental working).
-- Create a model of blocks:
+Like other SALOME components, HEXABLOCK can also be used in two ways:
 
-  - Logic realization of this division with operations on blocks.
-  - Regardless of the geometry to be meshed in terms of shape and placement.
+- by using Graphic User Interface,
 
-- Associate this model of blocks to the geometry:
-
-  - Associate all the vertices of the model to the geometry.
-  - If necessary, associate edges of the model to the geometry.
-  - If necessary, associate quads of the model to the geometry.
-
-- Generate the mesh:
-
-  - Create discretization laws.
-  - Discretize the edges.
-  - Define mesh groups.
-  - Setting the mesh generation.
-
-Two ways of working are possible:
-
-- *Graphic User Interface*
-- *Python Scripting*
+- by writing Python Script.
 
 
-Presentation of the stages
-==========================
+Stages to obtain hexahedral mesh
+================================
 
-- The construction of the real CAD (see :ref:`cad`).
-
-- The creation of a model of blocks (see :ref:`blockmethod`).
-
-- The association of this model of blocks to the geometry (see :ref:`assomodelgeo`).
-
-- The mesh generation (see :ref:`generatemesh`).
-
-
+HEXABLOCK component enables to define a mesh with hexahedra in 5 stages:
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    cad.rst
    block_method.rst
    intro_association.rst
    intro_groups.rst
    intro_mesh.rst
+
+.. toctree::
+   :maxdepth: 1
+
    intro_python.rst
    annexe.rst
-   

@@ -2,9 +2,9 @@
 
 .. _assomodelgeo:
 
-==========================================
-Associate a model of blocks to a geometry
-==========================================
+================================================
+Associate this model of blocks with the geometry
+================================================
 
 Associate the model to the geometry means that the geometry to mesh is
 "raw" for this application. In other words, there will be no

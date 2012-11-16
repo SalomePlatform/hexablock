@@ -2,9 +2,9 @@
 
 .. _intro_groups:
 
-====================================
-Define groups on the model of blocks
-====================================
+========================================
+Define the groups on the model of blocks
+========================================
 
 A group is characterized by the three following components:
 

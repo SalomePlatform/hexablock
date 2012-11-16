@@ -2,9 +2,9 @@
 
 .. _mesh:
 
-======================
-Meshing with Hexahedra
-======================
+============================
+Generate the hexahedral mesh
+============================
 
 The main stages to mesh with HexaBlock are:
 
