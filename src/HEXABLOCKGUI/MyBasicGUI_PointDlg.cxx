@@ -95,9 +95,6 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* p
     myBusy (false),
     _documentModel(0),
     _patternDataSelectionModel(0),
-    _mgr(0),
-    _vtkVm(0),
-    _occVm(0),
     _currentObj(0),
     _selectionMutex(false)
 {
@@ -236,7 +233,7 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(GeometryGUI* theGeometryGUI, QWidget* p
 
   /* HEXABLOCK */
   _initInputWidget();
-  _initViewManager();
+//  _initViewManager();
   /* HEXABLOCK */
 }
 
@@ -1197,12 +1194,12 @@ void MyBasicGUI_PointDlg::clear()
 
 void MyBasicGUI_PointDlg::_initViewManager()
 {
-  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-  _mgr   = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
-  _vtkVm = anApp->getViewManager( SVTK_Viewer::Type(),      false );
-  _occVm = anApp->getViewManager( OCCViewer_Viewer::Type(), false );
-  SUIT_ViewManager* activeVm = anApp->activeViewManager();
-  onWindowActivated ( activeVm );
+//  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+//  _mgr   = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
+//  _vtkVm = anApp->getViewManager( SVTK_Viewer::Type(),      false );
+//  _occVm = anApp->getViewManager( OCCViewer_Viewer::Type(), false );
+//  SUIT_ViewManager* activeVm = anApp->activeViewManager();
+//  onWindowActivated ( activeVm );
 }
 
 
@@ -1350,14 +1347,29 @@ bool MyBasicGUI_PointDlg::eventFilter(QObject *obj, QEvent *event)
 
 void MyBasicGUI_PointDlg::hideEvent ( QHideEvent * event )
 {
-  disconnect( _patternDataSelectionModel, SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
-                this,                     SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-  disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()), this, SLOT(onCurrentSelectionChanged()) );
-  disconnect( _vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
-  disconnect( _occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
-  _documentModel->allowEdition();
-  DeactivateActiveDialog();
-  MyGEOMBase_Skeleton::hideEvent( event );
+    disconnect( _patternDataSelectionModel, SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
+    //Disconnection salome selection signals
+    if (HEXABLOCKGUI::selectionMgr() != NULL)
+        disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()),
+                this, SLOT(onCurrentSelectionChanged()) );
+
+    //Disconnect vtk window activation signals
+    if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
+        disconnect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(),
+                SIGNAL( activated(SUIT_ViewManager*) ),
+                this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+
+    //Disconnect occ window activation signals
+    if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
+        disconnect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
+                SIGNAL( activated(SUIT_ViewManager*) ),
+                this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+
+    _documentModel->allowEdition();
+    DeactivateActiveDialog();
+    MyGEOMBase_Skeleton::hideEvent( event );
 }
 
 void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
@@ -1365,10 +1377,33 @@ void MyBasicGUI_PointDlg::showEvent( QShowEvent * event )
   _documentModel->disallowEdition();
   //     _patternDataSelectionModel->clearSelection();
   connect( _patternDataSelectionModel, SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
-              this,                    SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(onCurrentSelectionChanged()) );
-  connect( _vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
-  connect( _occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+              this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
+  //Connect to salome selection signals
+  if (HEXABLOCKGUI::selectionMgr() != NULL)
+  {
+      connect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
+              this, SLOT(onCurrentSelectionChanged()), Qt::UniqueConnection );
+  }
+
+  //Connect to vtk window activation signals
+  if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
+  {
+      connect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(), SIGNAL( activated(SUIT_ViewManager*) ),
+                 this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
+  }
+
+  //connect to occ window activation signals
+  if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
+  {
+      connect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
+              SIGNAL( activated(SUIT_ViewManager*) ),
+              this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
+  }
+
+//  connect( _mgr, SIGNAL(currentSelectionChanged()), this, SLOT(onCurrentSelectionChanged()) );
+//  connect( _vtkVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+//  connect( _occVm, SIGNAL( activated(SUIT_ViewManager*) ), this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
 
 
   SalomeApp_Application* app = (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() );

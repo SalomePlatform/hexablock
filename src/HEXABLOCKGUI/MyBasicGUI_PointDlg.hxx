@@ -168,9 +168,6 @@ protected slots:
 private:
   HEXABLOCK::GUI::DocumentModel*              _documentModel;
   HEXABLOCK::GUI::PatternDataSelectionModel*  _patternDataSelectionModel;
-  LightApp_SelectionMgr*                      _mgr;
-  SUIT_ViewManager*                           _vtkVm;
-  SUIT_ViewManager*                           _occVm;
 //   QLineEdit*                                  _vertex_le;
 
   QObject*                                    _currentObj;

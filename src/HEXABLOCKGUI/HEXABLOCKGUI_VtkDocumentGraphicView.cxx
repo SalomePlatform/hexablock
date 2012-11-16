@@ -669,6 +669,7 @@ void VtkDocumentGraphicView::setSelectionMode( const QModelIndex& eltIndex )
     case HEXA_DIR_TREE :   setHexaSelection();  break;
     case PROPAGATION_TREE :
     case PROPAGATION_DIR_TREE :   setEdgeSelection(); break;
+    default: setAllSelection();
 //  CellSelection,
 //  EdgeOfCellSelection,
 //  VolumeSelection,

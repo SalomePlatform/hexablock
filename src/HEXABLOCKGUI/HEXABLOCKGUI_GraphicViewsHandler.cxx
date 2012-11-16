@@ -79,6 +79,8 @@ SVTK_ViewWindow* GraphicViewsHandler::getOrCreateVtkWindow() const
  *=============================================================================*/
 SVTK_ViewWindow* GraphicViewsHandler::createVtkWindow() const
 {
+    QPoint oldPos = QCursor::pos();
+    QCursor::setPos(0., 0.);
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
     if( anApp == NULL) return NULL;
 
@@ -87,6 +89,12 @@ SVTK_ViewWindow* GraphicViewsHandler::createVtkWindow() const
     if (view == NULL) return NULL;
     view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
 
+    for (int i=0; i < 100; ++i)
+    {
+        sleep(0.01);
+        QCursor::setPos(0., 0.);
+    }
+    QCursor::setPos(oldPos.x(), oldPos.y());
     return view;
 }
 
@@ -110,6 +118,8 @@ OCCViewer_ViewWindow* GraphicViewsHandler::getOrCreateOccWindow() const
  *=============================================================================*/
 OCCViewer_ViewWindow* GraphicViewsHandler::createOccWindow() const
 {
+    QPoint oldPos = QCursor::pos();
+    QCursor::setPos(0., 0.);
     SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>(SUIT_Session::session()->activeApplication());
     if( anApp == NULL) return NULL;
 
@@ -118,6 +128,13 @@ OCCViewer_ViewWindow* GraphicViewsHandler::createOccWindow() const
     if (view == NULL) return NULL;
     view->setWindowTitle(QObject::tr("HEXABLOCK") + " : " + view->windowTitle());
 
+    for (int i=0; i < 100; ++i)
+    {
+        sleep(0.01);
+        QCursor::setPos(0., 0.);
+    }
+
+    QCursor::setPos(oldPos.x(), oldPos.y());
     return view;
 }
 

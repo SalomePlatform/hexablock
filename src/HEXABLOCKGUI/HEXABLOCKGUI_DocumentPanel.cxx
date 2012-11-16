@@ -144,7 +144,8 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags
                   _selectionMutex( false ),
                   // _applyCloseButton(0),
                   _applyButton(NULL),
-                  debugEdgeAssoc(false)
+                  debugEdgeAssoc(false),
+                  autoFocusSwitch(true)
 {
    _strHexaWidgetType[VERTEX_TREE] = tr( "VERTEX" );
    _strHexaWidgetType[EDGE_TREE]   = tr( "EDGE" );
@@ -275,16 +276,30 @@ void HexaBaseDialog::onCurrentSelectionChanged()
    highlightSelectedAssocs();
 }
 
+void HexaBaseDialog::clearCurrentObjectFocus()
+{
+    QWidget* currentWidget = dynamic_cast<QWidget*>(_currentObj);
+    if (currentWidget != NULL)
+    {
+        currentWidget->clearFocus();
+        _currentObj = NULL;
+    }
+}
+
 // ============================================================= setFocusToNextField
 //Sets focus to the next field of the current object
 void HexaBaseDialog::setFocusToNextField()
 {
    activateWindow ();
-   if (!HEXABLOCKGUI::assocInProgress)
+
+   if (!HEXABLOCKGUI::assocInProgress && autoFocusSwitch)
    {
        _highlightWidget(_currentObj, Qt::white);
        focusNextChild ();
    }
+
+   if (!_isLineOrListWidget(focusWidget())) clearVTKSelection();
+
 }
 
 // ============================================================== _initButtonBox
@@ -371,6 +386,8 @@ bool HexaBaseDialog::apply()
 void HexaBaseDialog::clearVTKSelection()
 {
     HEXABLOCKGUI::currentDocGView->clearSelection();
+//    setFocus();
+    _highlightWidget(_currentObj, Qt::white);
 //   _disallowSelection();
 }
 
@@ -518,7 +535,7 @@ bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
       //    case GROUP_TREE:      //selector = getGroupsSelectionModel();
       //    case LAW_TREE:
       //    case PROPAGATION_TREE: // selector = getMeshSelectionModel();
-   default :;
+   default: HEXABLOCKGUI::currentDocGView->setAllSelection();
    }
    return isOk;
 }
@@ -703,9 +720,6 @@ void HexaBaseDialog::showEvent( QShowEvent * event )
    //Connect to salome selection signals
    if (HEXABLOCKGUI::selectionMgr() != NULL)
    {
-//       disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()),
-//               this, SLOT(onCurrentSelectionChanged()) );
-
        connect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
                this, SLOT(onCurrentSelectionChanged()), Qt::UniqueConnection );
    }
@@ -713,10 +727,6 @@ void HexaBaseDialog::showEvent( QShowEvent * event )
    //Connect to vtk window activation signals
    if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
    {
-//       disconnect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(),
-//           SIGNAL( activated(SUIT_ViewManager*) ),
-//           this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
-
        connect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(), SIGNAL( activated(SUIT_ViewManager*) ),
                   this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
    }
@@ -724,10 +734,6 @@ void HexaBaseDialog::showEvent( QShowEvent * event )
    //connect to occ window activation signals
    if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
    {
-//       disconnect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
-//               SIGNAL( activated(SUIT_ViewManager*) ),
-//               this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
-
        connect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
                SIGNAL( activated(SUIT_ViewManager*) ),
                this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
@@ -1567,8 +1573,8 @@ bool QuadDialog::apply(QModelIndex& result)
 // ============================================================== HexaDialog
 
 HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                    HexaBaseDialog(parent, editmode, f),
-								                                                                                                                    _value(0)
+HexaBaseDialog(parent, editmode, f),
+_value(0)
 {
    _helpFileName = "gui_hexahedron.html";
    setupUi( this );
@@ -1633,6 +1639,7 @@ void HexaDialog::_initInputWidget( Mode editmode )
 
    if (editmode == INFO_MODE)
        name_le->setReadOnly(true);
+
 }
 
 // ============================================================== clear
@@ -2331,8 +2338,16 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, Mode editmode, Qt::WindowFlags 
 
    _helpFileName = "creategrids.html#guicartgrid";
    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
 
 
@@ -3012,6 +3027,7 @@ void RemoveHexaDialog::_initInputWidget( Mode editmode )
    hexa_le->setValidator( validator );
    hexa_le->installEventFilter(this);
    hexa_le->setReadOnly(true);
+   autoFocusSwitch = false;
 }
 
 // ============================================================== clear
@@ -3464,9 +3480,16 @@ MergeDialog::MergeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 
    _helpFileName = "gui_merge_elmts.html#merge-two-vertices";
    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
+   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
+   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb2, SIGNAL(cliked()), this, SLOT(clearVTKSelection()) );
+   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
 
 // ============================================================== Destructeur
@@ -3540,8 +3563,6 @@ void MergeDialog::_initInputWidget( Mode editmode )
    v3_le_rb2->setReadOnly(true);
    q0_le_rb2->setReadOnly(true);
    q1_le_rb2->setReadOnly(true);
-
-
 }
 
 
@@ -3681,9 +3702,21 @@ DisconnectDialog::DisconnectDialog( QWidget* parent, Mode editmode, Qt::WindowFl
    _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
 
    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
    connect( rb3, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+   connect( rb3, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+   connect( rb3, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
 }
 
 // ============================================================== Destructeur
@@ -3748,6 +3781,7 @@ void DisconnectDialog::_initInputWidget( Mode editmode )
    connect( hexas_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
    connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
    connect( delHexaShortcut, SIGNAL(activated()), this, SLOT(deleteHexaItem()) );
+   autoFocusSwitch = false;
 
 }
 

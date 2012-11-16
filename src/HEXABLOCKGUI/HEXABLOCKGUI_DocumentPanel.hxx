@@ -195,10 +195,8 @@ namespace HEXABLOCK
         QMultiMap<QString, int> assocs;
         return assocs;
                                                   }
-      void clearVTKSelection();
-      void clearOCCSelection();
-
       bool debugEdgeAssoc; //Temporary
+      bool autoFocusSwitch;
 
     public slots:
     //virtual void accept();
@@ -208,6 +206,9 @@ namespace HEXABLOCK
     void highlightSelectedAssocs();
     void refreshHighlight();
     virtual void onWindowActivated(SUIT_ViewManager*){};
+    void clearVTKSelection();
+    void clearOCCSelection();
+    void clearCurrentObjectFocus();
 
     protected:
     virtual bool eventFilter(QObject *obj, QEvent *event);

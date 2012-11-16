@@ -20,6 +20,7 @@
 #include "MyGEOMBase_Helper.hxx"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
+#include "HEXABLOCKGUI.hxx"
 
 #include <GeometryGUI.h>
 
@@ -47,6 +48,7 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
+#include <AIS_ListIteratorOfListOfInteractive.hxx>
 
 //To disable automatic genericobj management, the following line should be commented.
 //Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
@@ -1303,6 +1305,23 @@ QList<GEOM::GeomObjPtr> MyGEOMBase_Helper::getSelected( const QList<TopAbs_Shape
         LightApp_SelectionMgr* selMgr = app->selectionMgr();
         if ( selMgr ) {
             SALOME_ListIO selected;
+
+            //======================================
+//            SUIT_DataOwnerPtrList selectedDataOwner;
+//            AIS_ListOfInteractive listOfSelected;
+//
+//            if (HEXABLOCKGUI::currentOccSelector != NULL)
+//                HEXABLOCKGUI::currentOccSelector->viewer()->getSelectedObjects(listOfSelected);
+//
+//            AIS_ListIteratorOfListOfInteractive it (listOfSelected);
+//            while (it.More ())
+//            {
+//                //do something with the current item : it.Value ()
+//                selected.Append(it.Value());
+//                it.Next ();
+//            }
+            //======================================
+
             selMgr->selectedObjects( selected );
             SALOME_ListIteratorOfListIO it( selected );
             bool stopped = false;

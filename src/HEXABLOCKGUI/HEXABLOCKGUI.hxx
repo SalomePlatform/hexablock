@@ -161,6 +161,7 @@ public:
   static MyGEOMBase_Helper*    geomBaseHelper;
   static bool assocInProgress;
   static SalomeApp_Application* myApplication;
+  static GEOMGUI_OCCSelector* currentOccSelector;
 
  //HEXABLOCK::GUI::DocumentModel*
 
@@ -189,6 +190,7 @@ public:
 
   void initialMenus();
   void showAllMenus();
+  void updateSelectors();
 
 //   void showBaseMenus(bool show);
 //   void showEditionMenus(bool show);

@@ -175,6 +175,11 @@ void SelectionModel::salomeSelectionChanged()
     if ( HEXABLOCKGUI::selectionMgr() == NULL ) return;
     SALOME_ListIO salomeSelected;
   //   _salomeSelectionMgr->selectedObjects( salomeSelected, SVTK_Viewer::Type() );//salomeSelected.Extent()
+//    if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::VTK)
+//        HEXABLOCKGUI::selectionMgr()->selectedObjects( salomeSelected, SVTK_Viewer::Type());
+//    else if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::OCC)
+//        HEXABLOCKGUI::selectionMgr()->selectedObjects( salomeSelected, OCCViewer_Viewer::Type() );
+
     HEXABLOCKGUI::selectionMgr()->selectedObjects( salomeSelected, NULL, false );
     if ( salomeSelected.IsEmpty() ){
       salomeNothingSelected = true;
@@ -187,23 +192,23 @@ void SelectionModel::salomeSelectionChanged()
 
     //Handle selection according to the source
     if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::VTK)
-       {
-          for( ; it.More(); it.Next()){
-                anIObject = it.Value(); //anIObject->getName()
-                vtkSelectionChanged( anIObject ); // or VTK?...
-          }
-       }
+    {
+        for( ; it.More(); it.Next()){
+            anIObject = it.Value(); //anIObject->getName()
+            vtkSelectionChanged( anIObject ); // or VTK?...
+        }
+    }
     else if (HEXABLOCKGUI::getActiveViewType() == HEXABLOCKGUI::OCC)
-       {
-          for( ; it.More(); it.Next()){
-                anIObject = it.Value(); //anIObject->getName()
-                geomSelectionChanged( anIObject );// or VTK?...
-          }
-       }
+    {
+        for( ; it.More(); it.Next()){
+            anIObject = it.Value(); //anIObject->getName()
+            geomSelectionChanged( anIObject );// or VTK?...
+        }
+    }
 
     salomeNothingSelected = false;
   } catch ( ... ) {
-    MESSAGE("*  Unknown exception was cought !!!");
+      MESSAGE("*  Unknown exception was cought !!!");
   }
 }
 
