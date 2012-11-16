@@ -155,7 +155,7 @@ def test_lorraine () :
 
 # ================================================================= Begin
 
-doc = test_lorraine  ()
+doc = test_double_t  ()
 
 law = doc.addLaw("Uniform", 4)
 
