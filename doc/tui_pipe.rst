@@ -32,6 +32,7 @@ Access to the pipes of the document::
     np = doc.countPipe()
     pik = doc.getPipe(index)
 
+More operations: *Pipe* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guipipe`
 

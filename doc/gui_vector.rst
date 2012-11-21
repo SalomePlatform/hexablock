@@ -8,6 +8,9 @@ Vector
 
 To create a **Vector** in the **Main Menu** select **Model -> Construction -> Add vector**.
 
+There is no construction of blocks.
+Vector is an intermediate object built in order to make the dialog boxes of blocks construction more concise.
+
 There are two methods to create a **Vector**.
 
 Create with dx, dy, dz

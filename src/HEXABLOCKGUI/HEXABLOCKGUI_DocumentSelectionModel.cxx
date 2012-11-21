@@ -142,6 +142,7 @@ QModelIndex SelectionModel::indexOf( const QString& anEntry, int role )
   QModelIndex eltIndex; // element (vertex, edge, quad) of model
   const QAbstractItemModel* theModel = model();
   if ( !theModel ) return eltIndex;
+
   QModelIndexList theIndexes = theModel->match( theModel->index(0, 0),
                                           role,
                                           anEntry,
@@ -233,7 +234,6 @@ QModelIndexList SelectionModel::getSelectionFromModel(const Handle(SALOME_Intera
    Document_Actor* docActor = dynamic_cast<Document_Actor*>( findActorByEntry( HEXABLOCKGUI::currentDocGView->getViewWindow(),
                                                                                        anIOEntry.toLatin1() ) );
    if ( !docActor ) return selectedIndexes;
-
    QStringList idList = aText.split(" ");
    foreach( const QString& id, idList )
    {
@@ -242,10 +242,10 @@ QModelIndexList SelectionModel::getSelectionFromModel(const Handle(SALOME_Intera
             //find selection in the model
             anhexaElemsId = docActor->hexaElemsId[ id.toInt() ];
             anIOEntry = QString::number( anhexaElemsId );
+
             selectedIndexes << indexOf( anIOEntry, HEXA_ENTRY_ROLE );
          }
    }
-
    return selectedIndexes;
 }
 
@@ -387,6 +387,7 @@ void PatternDataSelectionModel::vtkSelectionChanged( const Handle(SALOME_Interac
                   {
                      //get the selected quad
                      HEXA_NS::Quad* quad = docModel->getHexaPtr<HEXA_NS::Quad*>(anIOIndex);
+
                      if (quad != NULL)
                         {
                            //get the hexa the quad belongs to

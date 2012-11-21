@@ -317,62 +317,6 @@ void HEXABLOCKGUI::restoreGraphicViews()
 
 }
 
-void HEXABLOCKGUI::updateSelectors()
-{
-    myVTKSelectors.clear();
-    myOCCSelectors.clear();
-
-
-    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
-    SUIT_ViewManager* vm = NULL;
-    ViewManagerList OCCViewManagers, VTKViewManagers;
-
-    application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
-    QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
-    while ( itOCC.hasNext() && (vm = itOCC.next()) )
-        myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ));
-
-    application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
-    QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
-    while ( itVTK.hasNext() && (vm = itVTK.next()) )
-        myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
-
-    //NPAL 19674
-    SALOME_ListIO selected;
-//    sm->selectedObjects( selected );
-    sm->clearSelected();
-
-
-    // disable OCC selectors
-    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
-    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
-    while ( itOCCSel.hasNext() )
-        if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-            sr->setEnabled(true);
-
-    // disable VTK selectors
-    getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
-    QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
-    while ( itVTKSel.hasNext() )
-        if ( LightApp_VTKSelector* sr = itVTKSel.next() )
-            sr->setEnabled(true);
-
-    //connect close signal to vtk view manager
-    vm = getApp()->getViewManager(SVTK_Viewer::Type(), false);
-    if (vm != NULL)
-    {
-        connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
-                this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
-    }
-
-    //connect close signal to occ view manager
-    vm = getApp()->getViewManager(OCCViewer_Viewer::Type(), false);
-    if (vm != NULL)
-    {
-        connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
-                this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
-    }
-}
 
 bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 {
@@ -402,7 +346,57 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
             this, SLOT( onObjectBrowserClick(const QModelIndex&) ), Qt::UniqueConnection );
     //       connect( getApp(),   SIGNAL(studyClosed()), _genericGui,SLOT  (onCleanOnExit()));
 
-    updateSelectors();
+    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+
+    SUIT_ViewManager* vm;
+    ViewManagerList OCCViewManagers, VTKViewManagers;
+
+    application()->viewManagers( OCCViewer_Viewer::Type(), OCCViewManagers );
+    QListIterator<SUIT_ViewManager*> itOCC( OCCViewManagers );
+    while ( itOCC.hasNext() && (vm = itOCC.next()) )
+        myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
+
+    application()->viewManagers( SVTK_Viewer::Type(), VTKViewManagers );
+    QListIterator<SUIT_ViewManager*> itVTK( VTKViewManagers );
+    while ( itVTK.hasNext() && (vm = itVTK.next()) )
+        myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
+
+    //NPAL 19674
+    SALOME_ListIO selected;
+    sm->selectedObjects( selected );
+    sm->clearSelected();
+
+    // disable OCC selectors
+    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+    QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+    while ( itOCCSel.hasNext() )
+        if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+            sr->setEnabled(true);
+
+    // disable VTK selectors
+    getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+    QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+    while ( itVTKSel.hasNext() )
+        if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+            sr->setEnabled(true);
+
+    sm->setSelectedObjects( selected, true );   //NPAL 19674
+
+    //connect close signal to vtk view manager
+    vm = getApp()->getViewManager(SVTK_Viewer::Type(), false);
+    if (vm != NULL)
+    {
+        connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
+                this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
+    }
+
+    //connect close signal to occ view manager
+    vm = getApp()->getViewManager(OCCViewer_Viewer::Type(), false);
+    if (vm != NULL)
+    {
+        connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
+                this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
+    }
 
     _hexaEngine->SetCurrentStudy(SALOMEDS::Study::_nil());
     if ( SalomeApp_Study* s = dynamic_cast<SalomeApp_Study*>( theStudy ))
@@ -454,13 +448,13 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
             geomBaseHelper->localSelection(currentOccGView->getViewWindow(), TopAbs_SHAPE);
     }
 
-//    qDeleteAll(myOCCSelectors);
+    qDeleteAll(myOCCSelectors);
     myOCCSelectors.clear();
-    getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+    getApp()->selectionMgr()->setEnabled( true, OCCViewer_Viewer::Type() );
 
-//    qDeleteAll(myVTKSelectors);
+    qDeleteAll(myVTKSelectors);
     myVTKSelectors.clear();
-    getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+    getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
 
     bool bOk = SalomeApp_Module::deactivateModule( theStudy );
 
@@ -472,7 +466,7 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
         currentDocGView->getViewWindow()->removeEventFilter(this);
 
     //switch off current document graphic view
-//    switchOffGraphicView(currentDocGView);
+    switchOffGraphicView(currentDocGView);
 
     //...and hide menus
     setMenuShown( false );
@@ -575,17 +569,19 @@ VtkDocumentGraphicView* HEXABLOCKGUI::getDocument(SalomeApp_DataObject* studyObj
         HEXA_NS::Document* document = directory->findDocument(studyObject->name().toStdString());
         if (document == NULL) return NULL;    //No document found
 
+        DocumentModel* docModel = new DocumentModel(document, studyObject->entry(), this );
+        if (!docModel) {
+            MESSAGE("Doc model creation failed!");
+            return NULL;
+        }
         dgview = graphicViewsHandler->createDocumentGraphicView(
-                                                 new DocumentModel(
-                                                       document,
-                                                       studyObject->entry(), this ),
+                                                       docModel,
                                                        NULL/*viewWindow*/,
                                                        application()->desktop() );
         if (dgview == NULL) return NULL;
 
-        //Document loading
-        dgview->loadDocument();
-//        dgview->update();
+        //update the data tree
+//        dgview->loadDocument();
         docs[studyObject->entry()] = dgview;
     }
 
@@ -741,72 +737,37 @@ void HEXABLOCKGUI::onViewManagerAdded( SUIT_ViewManager*  vm)
     connect( vm, SIGNAL( tryCloseView( SUIT_ViewWindow * ) ),
             this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
 
-    updateSelectors();
-//    LightApp_SelectionMgr* sm = getApp()->selectionMgr();
-//    if (sm == NULL) return;
-//
-//    //VTK
-//    if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
-//    {
-//        //VTK View Manager added
-//
-//        //Process only if it's our view manager
-////        SUIT_ViewManager* myVm = NULL;
-////        if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
-////            myVm = currentDocGView->getViewWindow()->getViewManager();
-//
-////        if (myVm != vm) return;
-//
-//        LightApp_VTKSelector* sr = new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm );
-//        myVTKSelectors.append( sr );
-//
-//        //NPAL 19674
-//        SALOME_ListIO selected;
-////        sm->selectedObjects( selected );
-//        sm->clearSelected();
-//
-//        sm->setEnabled( false, SVTK_Viewer::Type() );
-//        sr->setEnabled(true);
-//
-//        sm->setSelectedObjects( selected, true );   //NPAL 19674
-//
-//        return;
-//    }
+    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
+      {
+        LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+        myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 
-    //OCC
-//    if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
-//    {
-//        //OCC View added
-//
-//        //Process only if it's our view manager
-////        SUIT_ViewManager* myVm = NULL;
-////        if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
-////            myVm = currentOccGView->getViewWindow()->getViewManager();
-////
-////        if (myVm != vm) return;
-//
-//        GEOMGUI_OCCSelector* sr = new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm );
-//        myOCCSelectors.append( sr );
-//
-//        //NPAL 19674
-//        SALOME_ListIO selected;
-////        sm->selectedObjects( selected );
-//        sm->clearSelected();
-//
-//        sm->setEnabled( false, OCCViewer_Viewer::Type() );
-//        sr->setEnabled(true);
-//
-//        sm->setSelectedObjects( selected, true );   //NPAL 19674
-//
-//        //initialize the current occ selector
-//        currentOccSelector = sr;
-//    }
+        // disable OCC selectors
+        getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
+        QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
+        while ( itOCCSel.hasNext() )
+          if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
+            sr->setEnabled(true);
+      }
+      else if ( vm->getType() == SVTK_Viewer::Type() )
+      {
+        LightApp_SelectionMgr* sm = getApp()->selectionMgr();
+        myVTKSelectors.append( new LightApp_VTKSelector( dynamic_cast<SVTK_Viewer*>( vm->getViewModel() ), sm ) );
+
+        // disable VTK selectors
+        getApp()->selectionMgr()->setEnabled( false, SVTK_Viewer::Type() );
+        QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
+        while ( itVTKSel.hasNext() )
+          if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+            sr->setEnabled(true);
+      }
 }
 
 void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
 {
     DEBTRACE("HEXABLOCKGUI::::onViewManagerRemoved");
 
+    SUIT_ViewModel* viewer = vm->getViewModel();
     if (vm != NULL && vm->getType() == SVTK_Viewer::Type())
     {
         //VTK View Manager removed
@@ -830,18 +791,14 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
         //remove its selector
         QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
         while ( itVTKSel.hasNext() )
-        {
-            if ( LightApp_VTKSelector* sr = itVTKSel.next())
-            {
-                if (sr->viewer() == vm->getViewModel())
+            if ( LightApp_VTKSelector* sr = itVTKSel.next() )
+                if ( sr->viewer() == viewer )
                 {
-                   myVTKSelectors.removeOne(sr);
-                   return;
-                }//if
-            }//if
-        }//while
+                    delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
+                    break;
+                }
         return;
-    }//if
+    }
 
     //OCC
     if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
@@ -849,18 +806,13 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
         //OCC View removed: remove its selector
         QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
         while ( itOCCSel.hasNext() )
-        {
             if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-            {
-                if (sr->viewer() == vm->getViewModel())
+                if ( sr->viewer() == viewer )
                 {
-                    myOCCSelectors.removeOne(sr);
-                    currentOccSelector = NULL;
-                    return;
-                }//if
-            }//if
-        }//while
-    }//if
+                    delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
+                    break;
+                }
+    }
 }
 
 
@@ -1460,27 +1412,27 @@ void HEXABLOCKGUI::createActions()
 
     QPixmap pix;
     //Show actor
-    _showAct = createAction(_menuId++,
-            tr("Show"),
-            QIcon(pix),
-            tr("Show"),
-            tr("Show the actor"),
-            0, aParent, false, this, SLOT(showActor()));
+//    _showAct = createAction(_menuId++,
+//            tr("Show"),
+//            QIcon(pix),
+//            tr("Show"),
+//            tr("Show the actor"),
+//            0, aParent, false, this, SLOT(showActor()));
     //Hide actor
-    _hideAct = createAction(_menuId++,
-            tr("Hide"),
-            QIcon(pix),
-            tr("Hide"),
-            tr("Hide the actor"),
-            0, aParent, false, this, SLOT(hideActor()));
+//    _hideAct = createAction(_menuId++,
+//            tr("Hide"),
+//            QIcon(pix),
+//            tr("Hide"),
+//            tr("Hide the actor"),
+//            0, aParent, false, this, SLOT(hideActor()));
 
     //Show only
-    _showOnlyAct = createAction(_menuId++,
-            tr("Show Only"),
-            QIcon(pix),
-            tr("Show Only"),
-            tr("Show only this actor"),
-            0, aParent, false, this, SLOT(showOnlyActor()));
+//    _showOnlyAct = createAction(_menuId++,
+//            tr("Show Only"),
+//            QIcon(pix),
+//            tr("Show Only"),
+//            tr("Show only this actor"),
+//            0, aParent, false, this, SLOT(showOnlyActor()));
 
 
     //   _newAct->setShortcut( Qt::CTRL + Qt::SHIFT + Qt::Key_N ); // --- QKeySequence::New ambiguous in SALOME
@@ -1521,7 +1473,7 @@ void HEXABLOCKGUI::createMenus()
     createMenu( _addEdge,   subMenuId );
     createMenu( _addQuad,   subMenuId );
     createMenu( _addHexa,   subMenuId );
-    createMenu( separator(), subMenuId);
+    createMenu( separator(), subMenuId );
 
     // Pattern Builder
     createMenu( _addVector, subMenuId );
@@ -1624,22 +1576,23 @@ void HEXABLOCKGUI::createTools()
     createTool( _addEdge, aToolId );
     createTool( _addQuad, aToolId );
     createTool( _addHexa, aToolId );
-    //createTool( separator(), aToolId );
+    createTool( separator(), aToolId );
 
     // Pattern Builder
     createTool( _addVector, aToolId );
     createTool( _addCylinder, aToolId );
     createTool( _addPipe, aToolId );
-    //createTool( separator(), aToolId );
+    createTool( separator(), aToolId );
 
     createTool( _makeGrid,  aToolId );
+    createTool( _makeHemiSphere,   aToolId );
+    createTool( separator(), aToolId );
     createTool( _makeCylinder, aToolId );
     createTool( _makePipe,     aToolId );
     createTool( _makeCylinders,aToolId );
     createTool( _makePipes,    aToolId );
     //   createTool( _makeRind,     aToolId);
-    createTool( _makeHemiSphere,   aToolId );
-    //createTool( separator(), aToolId );
+//    createTool( separator(), aToolId );
 
     // Pattern Data Edition
     aToolId = createTool ( tr( "Operation" ) );
@@ -1836,10 +1789,8 @@ void HEXABLOCKGUI::showActor()
     if (aStudy == NULL || vman == NULL) return;
 
     Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),
-            VISIBILITY_PROP, 1 );
-    geomBaseHelper->getDisplayer()->setVisibilityState(anIO->getEntry(),
-            Qtx::ShownState);
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 1 );
+    displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
 }
 
 void HEXABLOCKGUI::showOnlyActor()
@@ -1870,10 +1821,8 @@ void HEXABLOCKGUI::showOnlyActor()
             anIO = actor->getIO();
             if( anIO->hasEntry())
             {
-                aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),
-                            VISIBILITY_PROP, 0 );
-                geomBaseHelper->getDisplayer()->setVisibilityState(anIO->getEntry(),
-                        Qtx::HiddenState);
+                aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 0 );
+                displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
             }//if
         }//if
     }//while
@@ -1884,10 +1833,8 @@ void HEXABLOCKGUI::showOnlyActor()
     currentVtkGView->update();
     currentVtkGView->getViewWindow()->onFitAll();
     anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),
-            VISIBILITY_PROP, 1 );
-    geomBaseHelper->getDisplayer()->setVisibilityState(anIO->getEntry(),
-            Qtx::ShownState);
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 1 );
+    displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
 }
 
 void HEXABLOCKGUI::hideActor()
@@ -1897,7 +1844,7 @@ void HEXABLOCKGUI::hideActor()
           currentVtkGView->getViewWindow() == NULL ||
           currentVtkGView->getDocumentActor() == NULL) return;
 
-    currentVtkGView->getViewWindow()->setFocus();
+//    currentVtkGView->getViewWindow()->setFocus();
     currentVtkGView->getViewWindow()->Erase(currentVtkGView->getDocumentActor()->getIO());
     currentVtkGView->getViewWindow()->onFitAll();
 
@@ -1907,13 +1854,9 @@ void HEXABLOCKGUI::hideActor()
     if (aStudy == NULL || vman == NULL) return;
 
     Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),
-            VISIBILITY_PROP, 0 );
-    geomBaseHelper->getDisplayer()->setVisibilityState(anIO->getEntry(),
-            Qtx::HiddenState);
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 0 );
+    displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
 }
-
-
 
 
 VtkDocumentGraphicView* HEXABLOCKGUI::getCurrentVtkGraphicView()
@@ -2352,6 +2295,7 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     }
     currentDocGView->getViewWindow()->setFocus();
     showOnlyActor();
+    currentDocGView->getDocumentModel()->refresh();
     showAllMenus();
 }
 
@@ -3192,41 +3136,26 @@ LightApp_SelectionMgr* HEXABLOCKGUI::selectionMgr()
 
 bool HEXABLOCKGUI::eventFilter(QObject *obj, QEvent *event)
 {
-    if ( currentDialog == NULL )//{
-        return false;
-//    }
-//    if (currentDialog->isHidden())
-//        return false;
+    if ( currentDialog == NULL ) return false;
 
     if ( event->type() == QEvent::Enter ){ // ENTER EVENT
 
         // The window acquire the focus when the cursor enter
 
-//        MESSAGE("======== JE PEUX ===== " << jepeux);
-//        if (!jepeux)
-//        {
-//            MESSAGE("======== JE NE PEUX PAS ===== " << jepeux);
-//            return false;
-//        }
-
         //OCC - window enter
         OCCViewer_ViewWindow* occWindow = dynamic_cast<OCCViewer_ViewWindow*>(obj);
-        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
-
         if ( occWindow != NULL)
         {
-            if (!occWindow->hasFocus())
-                occWindow->setFocus();
+            if (!occWindow->hasFocus()) occWindow->setFocus();
             if (currentDialog != NULL && !currentDialog->isHidden())
                 currentDialog->onWindowActivated(occWindow->getViewManager());
         }
 
         //VTK
-        //SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
+        SVTK_ViewWindow* vtkWindow = dynamic_cast<SVTK_ViewWindow*>(obj);
         if ( vtkWindow != NULL)
         {
-            if (!vtkWindow->hasFocus())
-                vtkWindow->setFocus();
+            if (!vtkWindow->hasFocus()) vtkWindow->setFocus();
             if (currentDialog != NULL && !currentDialog->isHidden())
                 currentDialog->onWindowActivated(vtkWindow->getViewManager());
         }
@@ -3271,11 +3200,6 @@ HEXABLOCKGUI_EXPORT char* getModuleVersion()
 //                                             int dim,
 //                              const std::string& container )
 // {
-
-//            if (HEXABLOCKGUI::currentDocGView != NULL && HEXABLOCKGUI::currentDocGView->getViewWindow())
-//                bool oldState = HEXABLOCKGUI::currentDocGView->getViewWindow()->blockSignals(true);
-            //            if (HEXABLOCKGUI::currentDocGView != NULL && HEXABLOCKGUI::currentDocGView->getViewWindow())
-            //                            HEXABLOCKGUI::currentDocGView->getViewWindow()->blockSignals(oldState);
 
 //   SalomeApp_Application* app = getApp();
 //   int activeStudyId = app->activeStudy()->id();

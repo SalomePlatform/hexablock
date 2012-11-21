@@ -71,7 +71,7 @@ Filling rule is illustrated by different case-tests:
 
 
 Example (irregular mode)
-----------------------
+------------------------
 
 .. literalinclude:: test_doc/grid/irregular_cylindrical.py
    :linenos:

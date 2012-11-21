@@ -45,4 +45,6 @@ Find a quadrangle in the document::
  
     quad_f = doc.findQuad(vertex_1, vertex_2)
 
+More operations: *Quad* inherits :ref:`Element <tuielement>`.
+
 GUI command: :ref:`guiquadrangles`

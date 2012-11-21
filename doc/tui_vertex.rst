@@ -45,5 +45,6 @@ Find a vertex in the document (with a tolerance)::
 
     vertex_f = doc.findVertex(x, y, z)
 
+More operations: *Vertex* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guivertex`

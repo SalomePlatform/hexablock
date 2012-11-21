@@ -30,5 +30,6 @@ Access to the cylinders of the document::
     nc = doc.countCylinder()
     cylk = doc.getCylinder(ind)
 
+More operations: *Cylinder* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guicylinder`

@@ -42,5 +42,6 @@ Find an edge in the document::
 
     edge_f = doc.findEdge(vertex_1, vertex_2)
 
+More operations: *Edge* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guiedge`

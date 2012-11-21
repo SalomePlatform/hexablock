@@ -7,11 +7,18 @@
 Elements
 ========
 
+You must be careful with the signification of the word "element", when it is used with singular or plural form : 
+
+  - The class "Element" is a basic class. The classes Vertex, Edge, Quad an Hexa inherit from the Element Class. This class is used to call common function like getName(), setName() ...
+
+  - The class "Elements" (plural) represents a set of Elements (vertices, edges, quads an hexaedras). This class is used to implements grids or result of ome complex operations (join, prism, ...)
+
 
 .. _tuielement:
 
 Element
 =======
+
 
 Set a name of an element::
 
@@ -35,18 +42,6 @@ Dump an element::
 Elements
 ========
 
-Add an empty set of elements::
-
-    elts = doc.addElements()
-
-Add an element in a set of elements::
-
-    elts.addElement(element)
-
-Remove an element in a set of elements::
-
-    elts.removeElement(element)
-    
 Remove a set of elements from a document::
 
 	doc.removeElements(elts)
@@ -138,15 +133,6 @@ Specialized access to all hexahedra::
     
 with:
      0 <= i < ni, 0 <= j < nj, 0 <= k < nk
-
-Remove all elements in a set of elements::
-
-    elts.clearElement()
-
-Access to the elements of the document::
-    
-    nel  = doc.countElements()
-    elts = doc.getElements(index)
 
 
 .. _tuicrosselements:

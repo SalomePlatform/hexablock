@@ -45,7 +45,6 @@ It provides the toolset allowing to:
 
    gui_component.rst
    gui_document.rst
-   gui_association.rst
    gui_vertex.rst
    gui_edge.rst
    gui_quadrangle.rst
@@ -67,6 +66,7 @@ It provides the toolset allowing to:
    gui_make_symmetry.rst
    gui_modify_elmts.rst
    gui_modify_symmetry.rst
+   gui_association.rst
    gui_asso_quad_to_geom.rst
    gui_asso_vertex_to_geom.rst
    gui_groups.rst

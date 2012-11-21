@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>230</width>
-    <height>268</height>
+    <width>291</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>266</width>
-        <height>624</height>
+        <width>269</width>
+        <height>682</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -459,14 +459,14 @@
  <tabstops>
   <tabstop>scrollArea</tabstop>
   <tabstop>sphere_center_le</tabstop>
-  <tabstop>hole_axis_le</tabstop>
-  <tabstop>cross_pt_le</tabstop>
-  <tabstop>cross_vec_le</tabstop>
-  <tabstop>radial_vec_le</tabstop>
   <tabstop>sphere_radext_spb</tabstop>
   <tabstop>sphere_radint_spb</tabstop>
   <tabstop>sphere_rind_cb</tabstop>
+  <tabstop>hole_axis_le</tabstop>
   <tabstop>hole_rad_spb</tabstop>
+  <tabstop>cross_pt_le</tabstop>
+  <tabstop>cross_vec_le</tabstop>
+  <tabstop>radial_vec_le</tabstop>
   <tabstop>radial_angle_spb</tabstop>
   <tabstop>radial_partial_cb</tabstop>
   <tabstop>ngrid_rad_spb</tabstop>

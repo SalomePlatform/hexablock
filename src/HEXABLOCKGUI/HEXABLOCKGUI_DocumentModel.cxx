@@ -247,6 +247,20 @@ void DocumentModel::updateData()
     emit patternDataChanged();
 }
 
+void DocumentModel::refresh()
+{
+    clearAll();
+
+    fillData();
+    fillBuilder();
+    fillAssociation();
+    fillGroups();
+    fillMesh();
+
+    emit patternDataChanged();
+
+}
+
 void DocumentModel::clearAll()
 {
     clearData();

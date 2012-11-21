@@ -2,9 +2,9 @@
 
 .. _annexe:
 
-======
+=======================================================
 Appendix: naming rule to find elements in an hexahedron
-======
+=======================================================
 
 
 Definition of an hexahedron

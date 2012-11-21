@@ -33,5 +33,6 @@ Get the angle on X::
 
 	angle = vector_i.getAngleX()
 	
+More operations: *Vector* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guivector`

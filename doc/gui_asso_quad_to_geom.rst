@@ -60,6 +60,8 @@ the **Main Menu** select **Association -> Make Edge Association**
 One edge
 --------
 
+Only one edge of the model is associated.
+
 **Arguments:**
 
 - one edge of the model of blocks,
@@ -80,6 +82,8 @@ The dialogue box to associate one edge or wire of the geometry is:
 Line
 ----
 
+One or several edges and vertices of the model are associated.
+ 
 **Arguments:**
 
 - starting vertex (only if "closed line" is selected),

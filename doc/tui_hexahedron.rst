@@ -65,4 +65,6 @@ Add an hexahedron with 2 quads::
 
 	doc.addHexa2Quads (qa, qb)
 
+More operations: *Hexa* inherits :ref:`Element <tuielement>`.
+
 GUI command: :ref:`guihexahedron`

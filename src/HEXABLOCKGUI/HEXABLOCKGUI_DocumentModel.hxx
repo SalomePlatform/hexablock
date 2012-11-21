@@ -71,6 +71,7 @@ namespace HEXABLOCK
       void save( const QString& xmlFileName );
       struct GeomObj* convertToGeomObj(GEOM::GeomObjPtr geomObjPtr);
       void updateData();
+      void refresh(); //refresh data
       bool isEmpty() const;
 
       void clearAll();

@@ -699,10 +699,8 @@ void VtkDocumentGraphicView::highlight( const QModelIndexList& elts )
 {
 
     if (elts.size() == 0 || viewWindow == NULL || documentActor == NULL) return;
-
     SVTK_Selector* selector = viewWindow->GetSelector();
     if ( selector == NULL ) return;
-
 //    //   Set selection mode in VTK view
 //    viewWindow->SetSelectionMode(VolumeSelection);
 
@@ -719,7 +717,6 @@ void VtkDocumentGraphicView::highlight( const QModelIndexList& elts )
             if ( vtkElemsId > 0 ) aMap.Add( vtkElemsId );
         }
     }
-
     selector->AddOrRemoveIndex( documentActor->getIO(), aMap, false ); //true
     viewWindow->highlight( documentActor->getIO(), true, true );
     documentActor->highlight( false ); //unhighlight de la bounding box rouge
