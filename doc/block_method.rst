@@ -17,8 +17,8 @@ A block (or a hexahedron) is a volume defined by:
 A model of blocks is a set of blocks.
 
 And for each quadrangle of a model of blocks, this quadrangle is:
-    - or a free face
-    - or a face shared between 2 blocks
+    - a face belong one block
+    - a face shared between 2 blocks
 
 How to find a model of blocks ?
 ===============================
@@ -35,7 +35,7 @@ HEXABLOCK component has a lot of tool to build this model of blocks:
 
 - basic functions:
     - create one hexahedron
-    - create a hexahedra with 2, 3, 4 or 5 quadrangles
+    - create a hexahedra with 2, 3, 4, 5 or 6 quadrangles
     - remove hexahedra
 
 - grid building:
@@ -49,7 +49,7 @@ HEXABLOCK component has a lot of tool to build this model of blocks:
     - for two intersected cylinders
     - for two intersected pipes
     - for hemisphere
-    - for ring
+    - for rind
 
 - powerfull functions:
     - prism quadrangles
@@ -85,4 +85,4 @@ Example of simple model of blocks
    :align: center
 
 .. centered::
-   An exemple of a model with 12 blocks
+   An exemple of model of blocks with 12 blocks

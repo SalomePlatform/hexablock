@@ -142,5 +142,3 @@ The description of this step is:
 - When all points of the model of blocks are associated, it is still
   possible to complete with step 2 above (see :ref:`assoedges`) to
   finish the association of needed edges.
-
-See TUI  scripts and GUI part.

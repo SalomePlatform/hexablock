@@ -26,13 +26,10 @@ Like other SALOME components, HEXABLOCK can also be used in two ways:
 - by writing Python Script.
 
 
-Stages to obtain hexahedral mesh
-================================
-
 HEXABLOCK component enables to define a mesh with hexahedra in 5 stages:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    cad.rst
    block_method.rst
@@ -41,7 +38,7 @@ HEXABLOCK component enables to define a mesh with hexahedra in 5 stages:
    intro_mesh.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    intro_python.rst
    annexe.rst

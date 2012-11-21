@@ -6,19 +6,23 @@
 Define the groups on the model of blocks
 ========================================
 
+All groups are defined on the model of blocks.
+
 A group is characterized by the three following components:
 
-- its type
+- its kind of group (on cells or on nodes)
 - its name
 - its elements
 
-The six following classes define all the kind of group:
+There are 3 kinds of group of cells:
 
-- group3d for groups of hexahedra,
-- group2d for groups of facets,
-- group1d for groups of segments,
-- group0dVertices for groups of nodes on the edges,
-- group0dFaces for groups of of nodes on the faces,
-- group0dBlocks for groups of nodes in the blocks,
+- 1D cells (segments) based on edges of the model of blocks
+- 2D cells (quadrangles) based on quadrangles of the model of blocks
+- 3D cells (hexahedra) based on hexahedra of the model of blocks
 
-See TUI  scripts and GUI part.
+There are 4 kinds of group of nodes that are belong:
+
+- the vertices of the model of blocks
+- the edges of the model of blocks
+- the quadrangles of the model of blocks
+- the hexahedra of the model of blocks
