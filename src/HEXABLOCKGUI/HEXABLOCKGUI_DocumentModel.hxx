@@ -114,7 +114,7 @@ namespace HEXABLOCK
       T getHexaPtr(QModelIndex iElt)
       {
         if (iElt.isValid())
-          return iElt.data( HEXA_DATA_ROLE ).value< T >();
+          return iElt.data( HEXA_DATA_ROLE ).template value< T >();
 
         return NULL;
       }
