@@ -43,6 +43,7 @@ salomeinclude_HEADERS = \
 	HexPropagation_impl.hxx \
 	HexQuad_impl.hxx \
 	HexVector_impl.hxx \
+	HexNewShape_impl.hxx \
 	HexVertex_impl.hxx
 
 # Scripts to be installed
@@ -59,6 +60,7 @@ dist_libHEXABLOCKEngine_la_SOURCES = \
 	HexQuad_impl.cxx \
 	HexHexa_impl.cxx \
 	HexVector_impl.cxx \
+	HexNewShape_impl.cxx \
 	HexElements_impl.cxx \
 	HexCrossElements_impl.cxx \
 	HexCylinder_impl.cxx \
@@ -79,6 +81,7 @@ libHEXABLOCKEngine_la_CPPFLAGS = \
 	$(GEOM_CXXFLAGS) \
 	$(CAS_CPPFLAGS) \
 	-I$(srcdir)/../HEXABLOCK \
+	-I$(top_builddir) \
 	-I$(top_builddir)/idl \
 	-I$(top_builddir)/salome_adm/unix
 

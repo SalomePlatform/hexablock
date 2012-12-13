@@ -35,15 +35,7 @@ The dialogue box to create a law is:
 Remove law
 ==========
 
-To remove a discretization law in the **Main Menu** select **Mesh -> Remove Law**.
-
-
-.. image:: _static/gui_remove_law.png
-   :align: center
-
-.. centered::
-   Remove law
-
+To remove a group from the model, in the **Mesh Tab's Tree View** select the Law you want to remove then click on **Mesh -> Remove Law** in the main menu.
 
 
 TUI command: :ref:`tuidiscretelaw`

@@ -6,7 +6,7 @@
 Disconnect elements
 ===================
 
-To disconnect elements in the **Main Menu** select **Model -> Disconnect**.
+To disconnect elements in the **Main Menu** select **Model -> Operation -> Disconnect**.
 
 .. _guidiscoquad:
 
@@ -15,7 +15,7 @@ Disconnect a quadrangle
 
 **Arguments:**
 
-- q: the quadrangle to disconnect.
+- quad: the quadrangle to disconnect.
 - from hexa: the hexahedron to disconnect the quadrangle from.
 
 The dialogue box to disconnect a quadrangle is:
@@ -35,6 +35,25 @@ Example:
 .. centered::
    Disconnect a Quadrangle
 
+.. _guidiscoedges:
+
+Disconnect edges
+==================
+
+**Arguments:**
+
+- edges: the edges to disconnect.
+- hexas: the hexahedrons to disconnect the edges from.
+
+
+The dialogue box to disconnect edges is:
+
+
+.. image:: _static/gui_disco_edges.png
+   :align: center
+
+.. centered::
+   Disconnect Edges
 
 .. _guidiscoedge:
 
@@ -43,7 +62,7 @@ Disconnect an edge
 
 **Arguments:**
 
-- e: the edge to disconnect.
+- edge: the edge to disconnect.
 - from hexa: the hexahedron to disconnect the edge from.
 
 
@@ -63,7 +82,7 @@ Disconnect a vertex
 
 **Arguments:**
 
-- v: the vertex to disconnect.
+- vertex: the vertex to disconnect.
 - from hexa: the hexahedron to disconnect the vertex from.
 
 

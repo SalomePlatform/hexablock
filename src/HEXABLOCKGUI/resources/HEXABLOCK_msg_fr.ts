@@ -46,6 +46,29 @@
     </message>
 </context>
 <context>
+    <name>HEXABLOCKGUI</name>
+    <message>
+	<source>CLEAR_ASSOCIATIONS</source>
+	<translation>Suppression des associations</translation>
+    </message>
+    <message>
+	<source>CLEAR_ALL_ASSOCIATIONS_ON</source>
+	<translation>Supprimer toutes les associations sur les</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_VERTEX</source>
+        <translation>Sommets</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_EDGE</source>
+        <translation>Arêtes</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_QUAD</source>
+        <translation>Quadrangles</translation>
+    </message>
+</context>
+<context>
     <name>HEXABLOCK::GUI::DocumentModel</name>
     <message>
         <source>TREE_ITEM_VERTEX</source>
@@ -84,6 +107,18 @@
         <translation>Eléments de croix</translation>
     </message>
     <message>
+        <source>TREE_ITEM_EXPSHAPE</source>
+        <translation>Géométries explicites</translation>
+    </message>
+     <message>
+        <source>TREE_ITEM_IMPSHAPE</source>
+        <translation>Géométries implicites</translation>
+    </message>
+     <message>
+        <source>TREE_ITEM_CLOUD_OF_POINT</source>
+        <translation>Nuage de points</translation>
+    </message>
+    <message>
         <source>TREE_ITEM_GROUP</source>
         <translation>Groupes</translation>
     </message>
@@ -105,6 +140,17 @@
     <message>
         <source>CANNOT MAKE EDGE ASSOCIATION</source>
         <translation>Impossible d&apos;associer les arêtes</translation>
+    </message>
+</context>
+<context>
+    <name>HEXABLOCK::GUI::QuadAssocDialog</name>
+    <message>
+        <source>ERR_ERROR</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <source>CANNOT MAKE QUAD ASSOCIATION</source>
+        <translation>Impossible d&apos;associer les faces</translation>
     </message>
 </context>
 <context>
@@ -184,6 +230,22 @@
         <translation>Eléments de croix</translation>
     </message>
     <message>
+        <source>GEOMSHAPE</source>
+        <translation>Geométrie</translation>
+    </message>
+    <message>
+        <source>GEOMPOINT</source>
+        <translation>Sommet Geom</translation>
+    </message>
+    <message>
+        <source>GEOMEDGE</source>
+        <translation>Arête Geom</translation>
+    </message>
+    <message>
+        <source>GEOMFACE</source>
+        <translation>Face Geom</translation>
+    </message>
+    <message>
         <source>GROUP</source>
         <translation>Groupe</translation>
     </message>
@@ -214,6 +276,10 @@
     <message>
         <source>HEXA_INFO</source>
         <translation>HexaBlock</translation>
+    </message>
+    <message>
+        <source>UNKNOWN_GEOMETRY</source>
+        <translation>Geométrie inconnue!</translation>
     </message>
     <message>
         <source>%1: Bad type selected
@@ -1239,6 +1305,18 @@ Choisissez un(e) %2.</translation>
     <message>
         <source>MEN_FILE</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+    	<source>MODEL_INFO</source>
+    	<translation>Info du model</translation>
+    </message>
+    <message>
+    	<source>ADD_SHAPE</source>
+    	<translation>Ajout d'une géométrie</translation>
+    </message>
+    <message>
+    	<source>ADD_SHAPE_FAILED</source>
+    	<translation>L'ajout de la géométrie a échoué!</translation>
     </message>
 </context>
 <context>

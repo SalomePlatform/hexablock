@@ -35,7 +35,6 @@
 #include "HexVertex.hxx"
 
 #include "HexPropagation.hxx"
-#include "HexShape.hxx"
 #include "HexLaw.hxx"
 #include "HexMatrix.hxx"
 #include "HexCramer.hxx"
@@ -152,7 +151,7 @@ int test_cartesi1 ()
                Hex::Hexa* cell = grid->getHexaIJK (nx, ny, nz);
                cell->remove ();
                }
-   
+
    doc->setLevel (1);
    print_propagations (doc);
    grid->saveVtk ("grid_cart.vtk");
@@ -235,13 +234,13 @@ int test_joint (int nbargs, cpchar tabargs[])
    Hex::Vertex*   orig2 = doc->addVertex  (dimx/2.0,0,8);
    Hex::Vector*   vectj = doc->addVector (0,1,0);
    Hex::Vector*   vecti = doc->addVector (1,0,0);
-   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj, 
+   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj,
                    1, 180, 1,        dimz,dimy,dimx);
 
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
-   Hex::Quad* cible = grid2->getQuadJK (dimz, mx, my); 
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
+   Hex::Quad* cible = grid2->getQuadJK (dimz, mx, my);
 
    Hex::Vertex* v1 = prems->getVertex (0);
    Hex::Vertex* v3 = prems->getVertex (1);
@@ -258,12 +257,12 @@ int test_joint (int nbargs, cpchar tabargs[])
 
    liste.push_back (prems);
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
-          liste.push_back (grid1->getQuadIJ (nx, my, dimz)); 
+       if (nx!=mx)
+          liste.push_back (grid1->getQuadIJ (nx, my, dimz));
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
-          liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
+       if (ny!=my)
+          liste.push_back (grid1->getQuadIJ (mx, ny, dimz));
 
    doc->saveVtk ("joint1.vtk");
    const int hauteur = 5;
@@ -279,10 +278,10 @@ int test_joint (int nbargs, cpchar tabargs[])
    int indice0 = joint->findVertex (v1);
    HexDisplay (indice0);
 
-   for (int nh=0 ; nh<nbr_surf_vertex ; nh++) 
+   for (int nh=0 ; nh<nbr_surf_vertex ; nh++)
        joint->getVertex(nh)->setScalar (5);
 
-   for (int nh=0 ; nh<=hauteur ; nh++) 
+   for (int nh=0 ; nh<=hauteur ; nh++)
        joint->getVertex(nh*nbr_surf_vertex)->setScalar (3);
 
    doc->saveVtk ("joint2.vtk");
@@ -308,20 +307,20 @@ int test_prism (int nbargs, cpchar tabargs[])
    int my = dimy/2;
    Hex::Quads liste1, liste2;
 
-   liste1.push_back (grid1->getQuadIJ (mx, my, dimz)); 
-   liste2.push_back (grid1->getQuadIJ (mx, my, 0)); 
+   liste1.push_back (grid1->getQuadIJ (mx, my, dimz));
+   liste2.push_back (grid1->getQuadIJ (mx, my, 0));
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
+       if (nx!=mx)
           {
-          liste1.push_back (grid1->getQuadIJ (nx, my, dimz)); 
-          liste2.push_back (grid1->getQuadIJ (nx, my, 0)); 
+          liste1.push_back (grid1->getQuadIJ (nx, my, dimz));
+          liste2.push_back (grid1->getQuadIJ (nx, my, 0));
           }
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
+       if (ny!=my)
           {
-          liste1.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
-          liste2.push_back (grid1->getQuadIJ (mx, ny, 0)); 
+          liste1.push_back (grid1->getQuadIJ (mx, ny, dimz));
+          liste2.push_back (grid1->getQuadIJ (mx, ny, 0));
           }
 
    Hex::RealVector tlen;
@@ -331,7 +330,7 @@ int test_prism (int nbargs, cpchar tabargs[])
        dh = 2*dh + 1;
        tlen.push_back (dh);
        }
-   
+
    const int nbiter = 5;
    doc->saveVtk ("prisme1.vtk");
    Hex::Elements* prisme2 = doc->prismQuads    (liste2, dir2, nbiter);
@@ -345,7 +344,7 @@ int test_prism (int nbargs, cpchar tabargs[])
    PutData (prisme1->countQuad());
    PutData (prisme1->countEdge());
    PutData (prisme1->countVertex());
-   
+
    for (int nro=0 ; nro <nbiter  ; nro++)
        {
        Hex::Hexa* cell = prisme2-> getHexa (nbiter+nro);
@@ -372,23 +371,23 @@ int test_revolution9 (int nbargs, cpchar tabargs[])
 
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
    Hex::Quads liste;
 
    liste.push_back (prems);
    prems -> setScalar (5);
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
+       if (nx!=mx)
           {
-          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz); 
+          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz);
           liste.push_back (cell);
           cell -> setScalar (5);
           }
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
+       if (ny!=my)
           {
-          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz); 
+          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz);
           liste.push_back (cell);
           cell -> setScalar (5);
           }
@@ -442,14 +441,14 @@ int test_revolution (int nbargs, cpchar tabargs[])
    int na = 6;
    int nl = 1;
 
-   Hex::Elements* grid = doc->makeCylindrical (ori, vx,vz, dr,da,dl, 
+   Hex::Elements* grid = doc->makeCylindrical (ori, vx,vz, dr,da,dl,
                                                nr,na,nl, false);
 
    Hex::Quads liste;
    for (int nx=0; nx<nr; nx++)
        for (int ny=0; ny<na; ny++)
            {
-           Hex::Quad* cell = grid->getQuadIJ (nx, ny, nl); 
+           Hex::Quad* cell = grid->getQuadIJ (nx, ny, nl);
            liste.push_back (cell);
            cell -> setScalar (5);
            }
@@ -510,23 +509,23 @@ int test_coude (int nbargs, cpchar tabargs[])
                                                 nr, 10, nl, false);
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
    Hex::Quads liste;
 
    liste.push_back (prems);
    prems -> setScalar (5);
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
+       if (nx!=mx)
           {
-          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz); 
+          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz);
           liste.push_back (cell);
           cell -> setScalar (5);
           }
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
+       if (ny!=my)
           {
-          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz); 
+          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz);
           liste.push_back (cell);
           cell -> setScalar (5);
           }
@@ -633,14 +632,6 @@ int test_gen_xml (int nbargs, cpchar tabargs[])
    Hex::Edge*   arete   = cell->getEdge (0);
    Hex::Vertex* noeud   = cell->getVertex (0);
 
-   Hex::Shape* shape1 = new Hex::Shape("riri");
-   Hex::Shape* shape2 = new Hex::Shape("fifi");
-   Hex::Shape* shape3 = new Hex::Shape("loulou");
-
-   noeud->setAssociation (shape1);
-   arete->setAssociation (shape2);
-   face ->setAssociation (shape3);
-
    Hex::Law* law1 = doc->addLaw("loi1", 1);
    Hex::Law* law2 = doc->addLaw("loi2", 2);
    Hex::Law* law3 = doc->addLaw("loi3", 3);
@@ -685,14 +676,6 @@ int test_string_xml (int nbargs, cpchar tabargs[])
    Hex::Edge*   arete   = cell->getEdge (0);
    Hex::Vertex* noeud   = cell->getVertex (0);
 
-   Hex::Shape* shape1 = new Hex::Shape("riri");
-   Hex::Shape* shape2 = new Hex::Shape("fifi");
-   Hex::Shape* shape3 = new Hex::Shape("loulou");
-
-   noeud->setAssociation (shape1);
-   arete->setAssociation (shape2);
-   face ->setAssociation (shape3);
-
    Hex::Law* law1 = doc->addLaw("loi1", 1);
    Hex::Law* law2 = doc->addLaw("loi2", 2);
    Hex::Law* law3 = doc->addLaw("loi3", 3);
@@ -728,7 +711,7 @@ int test_relecture (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    cpchar nomdoc = "Essai";
-   if (nbargs>1) 
+   if (nbargs>1)
       nomdoc = tabargs[1];
    Hex::Document* doc = mon_ex.loadDocument (nomdoc);
 
@@ -792,7 +775,7 @@ int test_separ ()
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
-   //  Hex::Elements*  grid = 
+   //  Hex::Elements*  grid =
    doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    doc ->saveVtk ("separ.vtk");
@@ -864,57 +847,6 @@ int test_grille_cyl (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
-// ================================================== test_asso_line
-int test_asso_line (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
-
-   Hex::Vector* vz = doc->addVector (0,0,1);
-   Hex::Vector* vx = doc->addVector (1,0,0);
-
-   double dr = 1;
-   double dl = 1;
-   int    nr = 2;
-   int    nl = 3;
-   int    ntheta = 8;
-
-   Hex::Elements *c1 = NULL;
-
-   c1 = doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, ntheta, nl, true);
-
-   Hex::Edges m_line;
-   Hex::Edge* m_start = c1->getEdgeJ (nr, 1, 0);
-
-   for (int na=2 ; na<ntheta ; na++)
-       {
-       Hex::Edge*  arete = c1->getEdgeJ (nr, na, 0);
-       arete->setScalar (5);
-       m_line.push_back (arete);
-       }
-
-   // m_line.push_back (c1->getEdgeJ (nr, 0, 2));
-   // m_line.push_back (NULL);
-   Hex::Shape* gstart = NULL;
-   Hex::Shapes gline;
-   double pstart = 0 , pend = 0;
-
-   int ier = doc-> associateOpenedLine (m_start, m_line, 
-                                        gstart,  pstart, gline, pend);
-   HexDisplay (ier);
-   doc->saveVtk ("asso_line.vtk");
-
-  m_line.push_back (c1->getEdgeJ (nr, 0, 0));
-   Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
-   ier = doc-> associateClosedLine (m_first, m_start, m_line, 
-                                        gstart, pstart, false, gline);
-   HexDisplay (ier);
-   // doc->dump ();
-
-   return HOK;
-}
 // ===================================================== test_cylindrical
 int test_cylindrical (int nbargs, cpchar tabargs[])
 {
@@ -935,7 +867,7 @@ int test_cylindrical (int nbargs, cpchar tabargs[])
    int na = 8;
    int nl = 2;
 
-   if (nbargs>1) 
+   if (nbargs>1)
       {
       na = atoi (tabargs[1]);
       HexDisplay (na);
@@ -943,7 +875,7 @@ int test_cylindrical (int nbargs, cpchar tabargs[])
           na = 8;
       }
 
-   if (nbargs>2) 
+   if (nbargs>2)
       {
       da = atof (tabargs[2]);
       HexDisplay (da);
@@ -1070,9 +1002,9 @@ int del_tranche (Hex::CrossElements* grid, int cyl, int ni, int nk, int dr=1)
    for (int nj = 0 ; nj < 8 ; nj++)
         del_hexa (grid, cyl, ni, nj, nk, dr);
 
-   if (dr==1) 	
+   if (dr==1)
       save_vtk ();
-   printf ("del_tranche (g=%d, i=%d, k=%d) : fic = %d\n", 
+   printf ("del_tranche (g=%d, i=%d, k=%d) : fic = %d\n",
                          cyl, ni, nk, nbr_vtk-1);
    return nbr_vtk;
 }
@@ -1297,7 +1229,7 @@ int test_lorraine(int nbargs, cpchar tabargs[])
    //           vc3 = grid2->getVertexIJK (Hex::CylSmall, 0,0,0);
                                      //    Cyl     i     j     k
    Hex::Quad* qb = grid1-> getQuadIJ (Hex::CylBig, nx_ext, Hex::S_E, 4);
-   Hex::Quad* qh = grid2-> getQuadIJ (Hex::CylSmall, nx_ext, Hex::S_N, 0); 
+   Hex::Quad* qh = grid2-> getQuadIJ (Hex::CylSmall, nx_ext, Hex::S_N, 0);
 
    Hex::Vertex* vb0 = qb->getVertex (3);
    Hex::Vertex* vb1 = qb->getVertex (2);
@@ -1322,11 +1254,11 @@ int test_lorraine(int nbargs, cpchar tabargs[])
    for (int ny=1; ny<Hex::S_MAXI; ny++)
        {
        int ns = (ny + Hex::S_N) MODULO Hex::S_MAXI;
-       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_ext, ns, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_ext, ns, 0));
        }
 
    for (int ny=0; ny<4 ;  ny++)
-       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_int, ny, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_int, ny, 0));
 
    int hauteur = 3;
    doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, hauteur);
@@ -1521,9 +1453,9 @@ void contraction (Hex::Hexa* hexa, Hex::Elements* grid)
 
    for (int nro=0; nro<Hex::HV_MAXI ; nro++)
        {
-       cg [0] += hexa->getVertex(nro)->getX()/Hex::HV_MAXI; 
-       cg [1] += hexa->getVertex(nro)->getY()/Hex::HV_MAXI; 
-       cg [2] += hexa->getVertex(nro)->getZ()/Hex::HV_MAXI; 
+       cg [0] += hexa->getVertex(nro)->getX()/Hex::HV_MAXI;
+       cg [1] += hexa->getVertex(nro)->getY()/Hex::HV_MAXI;
+       cg [2] += hexa->getVertex(nro)->getZ()/Hex::HV_MAXI;
        }
 
    int nbvertex = grid->countVertex();
@@ -1607,7 +1539,7 @@ int test_propagation ()
 
    Hex::Vertex*   orig = doc->addVertex (0,0,0);
    Hex::Vector*   dir  = doc->addVector (1,1,1);
-   //  Hex::Elements* grid = 
+   //  Hex::Elements* grid =
    doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    int nb = doc->countPropagation ();
@@ -1665,7 +1597,7 @@ int test_move ()
    Hex::Hexa* cube    = grid->getHexa (1);
    Hex::Quad* dessous = cube->getQuad (Hex::Q_A);
    dessous->dump();
-   
+
    Hex::Elements* grid2 = doc->makeTranslation (grid, devant);
    /* Hex::Elements* grid3 = doc->makeTranslation (grid, agauche); */
    Hex::Hexa* cube2     = grid2->getHexa (1);
@@ -1866,10 +1798,10 @@ int test_remove ()
    return HOK;
 }
 // ================================================== init_vec
-void init_vec (Hex::RealVector& tab, double n0=0, double n1=0, double n2=0, 
-               double n3=0, double n4=0, double n5=0, double n6=0, 
+void init_vec (Hex::RealVector& tab, double n0=0, double n1=0, double n2=0,
+               double n3=0, double n4=0, double n5=0, double n6=0,
                double n7=0, double n8=0, double n9=0, double n10=0,
-               double n11=0, double n12=0, double n13=0, double n14=0, 
+               double n11=0, double n12=0, double n13=0, double n14=0,
                double n15=0, double n16=0)
 {
    if (n0>0.0) tab.push_back (n0);
@@ -1905,7 +1837,7 @@ int test_cylindricals (int nbargs, cpchar tabargs[])
 
    /******************
    init_vec (tdr, 2, 1, 0.5);
-   init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5, 
+   init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5,
                    5, 10, 15, 20, 25, 30, 35, 40);
    init_vec (tdl, 1, 2, 3 );
 

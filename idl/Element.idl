@@ -30,8 +30,8 @@ module HEXABLOCK_ORB
 {
   interface Element : SALOME::GenericObj
   {
-      void dump ()                    raises (SALOME::SALOME_Exception);
-      void printName ()               raises (SALOME::SALOME_Exception);
+      void dump ()                    raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
+      void printName ()               raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
       string getName ()               raises (SALOME::SALOME_Exception);
       void   setName (in string name) raises (SALOME::SALOME_Exception);
   };

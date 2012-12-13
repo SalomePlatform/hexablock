@@ -32,7 +32,7 @@
 
 /*!  \ingroup EXAMPLES
 
-This package contains the interface HEXABLOCK_ORB used 
+This package contains the interface HEXABLOCK_ORB used
 for  %HEXABLOCK component as an example in %SALOME application.
 */
 module HEXABLOCK_ORB
@@ -52,37 +52,18 @@ module HEXABLOCK_ORB
     Vertex getVertex( in long n ) raises (SALOME::SALOME_Exception);
     boolean getWay() raises (SALOME::SALOME_Exception);
 
-    long addAssociation (in GEOM::GEOM_Object geom_object_1D, in double debut, in double val ) //CS_NOT_SPEC
-      raises (SALOME::SALOME_Exception);
-
-      void clearAssociation ( ) 
+    void clearAssociation ( )
           raises (SALOME::SALOME_Exception);
 
-//     sequence<EdgeAssociation> getAssociations() //CS_NOT_SPEC
-    EdgeAssociations getAssociations() //CS_NOT_SPEC CS_WARNING: not working when reloading a document
-      raises (SALOME::SALOME_Exception);
+    void setColor (in double val)
+	 raises (SALOME::SALOME_Exception);
 
-//     void addAssociation( in GEOM::GEOM_Object geom_object_1D, in double debut, in double val )
-//       raises (SALOME::SALOME_Exception);
-//     GEOM_Objects getAssociations() raises (SALOME::SALOME_Exception);
-
-//     GEOM_Objects GEOM::GEOM_Object getAssociation()
-//             raises (SALOME::SALOME_Exception);
-
-//     void removeAssociation()
-//             raises (SALOME::SALOME_Exception);
-
-     void setColor (in double val)
-	raises (SALOME::SALOME_Exception);
-
-     void setScalar( in double val ) //CS_NOT_SPEC --> To delete
-	raises (SALOME::SALOME_Exception);
-
+    long addAssociation (in NewShape geom, in long subid, in double debut,
+                                                          in double fin )
+                       raises (SALOME::SALOME_Exception);
   };
 
   typedef sequence<Edge>  Edges;
-
-
 };
 
 #endif

@@ -92,6 +92,8 @@ Globale::Globale  ()
    setOpposedQuad  ( Q_A, Q_B );
    setOpposedQuad  ( Q_C, Q_D );
    setOpposedQuad  ( Q_E, Q_F );
+
+   dump_study = DumpActif; 
 }
 // ====================================================== getInstance
 Globale* Globale::getInstance  ()

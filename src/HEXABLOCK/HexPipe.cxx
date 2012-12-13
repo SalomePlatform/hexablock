@@ -20,6 +20,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HexPipe.hxx"
+
+#include "HexDocument.hxx"
 #include "HexVertex.hxx"
 #include "HexVector.hxx"
 #include "HexXmlWriter.hxx"

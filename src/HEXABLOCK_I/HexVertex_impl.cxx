@@ -24,11 +24,10 @@ using namespace std;
 
 #include "hexa_base.hxx"
 #include "HexVertex_impl.hxx"
-#include "HexShape.hxx"
+#include "HexNewShape_impl.hxx"
 
 Vertex_impl::Vertex_impl( HEXA_NS::Vertex *ptrCpp ):
 _vertex_cpp( ptrCpp )
-// _association( GEOM::GEOM_Object::_nil() )
 {
 }
 
@@ -67,48 +66,6 @@ void Vertex_impl::setZ(  CORBA::Double z ) throw(SALOME::SALOME_Exception)
   _vertex_cpp->setZ(z);
 }
 
-
-void Vertex_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_vertex)
-  throw (SALOME::SALOME_Exception)
-{
-  TopoDS_Shape shape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape(geom_object_vertex);
-//   HEXABLOCK::HEXABLOCK* gen = HEXABLOCK::GetHEXABLOCKGen();
-//   TopoDS_Shape shape = gen->geomObjectToShape(geom_object_vertex);
-  string strBrep = shape2string( shape );
-  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_vertex );
-  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-  s->ior   = anIOR.in(); 
-  s->ident = geom_object_vertex->GetStudyEntry(); //geom_object_vertex->GetEntry()
-  _vertex_cpp->setAssociation(s);
-
-//   _association = GEOM::GEOM_Object::_duplicate( geom_object_vertex );
-}
-
-
-GEOM::GEOM_Object_ptr Vertex_impl::getAssociation()
-  throw (SALOME::SALOME_Exception)
-{
-//   GEOM::GEOM_Object_var result = GEOM::GEOM_Object::_nil();
-//   GEOM::GEOM_Object_ptr result = GEOM::GEOM_Object::_nil();
-  GEOM::GEOM_Object_var geomObj; // = new GEOM::GEOM_Object;
-  CORBA::Object_var corbaObj;
-
-  HEXA_NS::Shape* s = _vertex_cpp->getAssociation();
-  if (s != NULL){
-      if ( !s->ior.empty() ){ // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( s->ior.c_str() );
-        if ( !CORBA::is_nil( corbaObj ) ){
-          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-        }
-      } else { // no geom object => we have to built it
-          geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( s->getBrep() );
-      }
-  }
-
-  return geomObj._retn();
-}
-
-
 void Vertex_impl::clearAssociation()
       throw (SALOME::SALOME_Exception)
 {
@@ -120,11 +77,6 @@ void Vertex_impl::setColor (::CORBA::Double val)
      throw (SALOME::SALOME_Exception)
 {
   _vertex_cpp->setColor (val);
-}
-
-void Vertex_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
-{
-  _vertex_cpp->setScalar(val);
 }
 
 void Vertex_impl::dump() throw (SALOME::SALOME_Exception)
@@ -143,9 +95,35 @@ char* Vertex_impl::getName() throw (SALOME::SALOME_Exception)
 {
   return CORBA::string_dup( _vertex_cpp->getName() );
 }
+// ========================================================== setAssociation
+::CORBA::Long Vertex_impl::setAssociation (NewShape_ptr  geom,
+                                             ::CORBA::Long subid)
+                                      throw (SALOME::SALOME_Exception)
+{
+  NewShape_impl*     im_shape = ::DownCast<NewShape_impl*> (geom );
+  HEXA_NS::NewShape* md_shape = im_shape->GetImpl();
+
+  ::CORBA::Long ier = _vertex_cpp->setAssociation (md_shape, subid);
+  return ier;
+}
 // ========================================================= setName
-void Vertex_impl::setName(const char* name) 
+void Vertex_impl::setName(const char* name)
      throw (SALOME::SALOME_Exception)
 {
   _vertex_cpp->setName (name);
+}
+// ========================================================= getAssoX
+CORBA::Double Vertex_impl::getAssoX() throw(SALOME::SALOME_Exception)
+{
+  return _vertex_cpp->getAssoX();
+}
+// ========================================================= getAssoY
+CORBA::Double Vertex_impl::getAssoY() throw(SALOME::SALOME_Exception)
+{
+  return _vertex_cpp->getAssoY();
+}
+// ========================================================= getAssoZ
+CORBA::Double Vertex_impl::getAssoZ() throw(SALOME::SALOME_Exception)
+{
+  return _vertex_cpp->getAssoZ();
 }

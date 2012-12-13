@@ -70,10 +70,10 @@ static QItemSelection klink_removeInvalidRanges(const QItemSelection &selection)
   Q_FOREACH(const QItemSelectionRange &range, selection)
   {
 
-    Q_FOREACH(const QModelIndex &i, range.indexes ())
-    {
-//       std::cout<< " =====> " << i.data().toString().toStdString() << std::endl;
-    }
+//    Q_FOREACH(const QModelIndex &i, range.indexes ())
+//    {
+////       std::cout<< " =====> " << i.data().toString().toStdString() << std::endl;
+//    }
     if (!range.isValid())
       continue;
 //     std::cout<< " is VALID !!"<< std::endl;

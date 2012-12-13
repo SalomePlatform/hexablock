@@ -48,9 +48,6 @@ module HEXABLOCK_ORB
       Edge getEdgeK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
       Vertex getVertexIJK(in long part, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception);
 
-      // Tutaux en T (like castles in scotland)
-      long crossCylinders (in Cylinder cyl1, in Cylinder cyl2) raises (SALOME::SALOME_Exception);
-
       long saveVtk( in string fname );//CS_NOT_SPEC
   };
 

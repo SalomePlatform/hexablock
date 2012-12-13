@@ -22,6 +22,8 @@
 
 #include "GEOM_GEOMBase.hxx"
 #include "MyGEOMBase_Helper.hxx"
+#include "HEXABLOCKGUI_OccGraphicView.hxx"
+#include "HEXABLOCKGUI.hxx"
 
 #include <QDialog>
 

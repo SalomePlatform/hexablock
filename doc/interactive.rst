@@ -66,7 +66,9 @@ It provides the toolset allowing to:
    gui_make_symmetry.rst
    gui_modify_elmts.rst
    gui_modify_symmetry.rst
+   gui_association.rst
    gui_asso_quad_to_geom.rst
+   gui_asso_vertex_to_geom.rst
    gui_groups.rst
    gui_discret_law.rst
    gui_propag.rst

@@ -74,6 +74,6 @@ for nh in range(height):
 
 
 file_name = os.path.join(os.environ['TMP'], 'joint.vtk')
-elts.saveVtk(file_name)
+####  elts.saveVtk(file_name)
 
 print "...test join OK"

@@ -130,7 +130,7 @@ module HEXABLOCK_ORB
       Quad getQuad( in long n ) raises (SALOME::SALOME_Exception);
       Hexa getHexa( in long n ) raises (SALOME::SALOME_Exception);
 
-      long findVertex( in Vertex p ) raises (SALOME::SALOME_Exception);
+      long findVertex( in Vertex p ) raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
 
       Vertex  getVertexIJK( in long x, in long y, in long  z)
         raises (SALOME::SALOME_Exception);
@@ -158,7 +158,7 @@ module HEXABLOCK_ORB
 //       Edge  getEdge1( in EnumCoord dir, in long nx, in long ny, in long nz) raises (SALOME::SALOME_Exception); //CS_NOT_SPEC
 
       long saveVtk( in string fname )
-           raises (SALOME::SALOME_Exception);
+           raises (SALOME::SALOME_Exception);//CS_NOT_SPEC
 
       void clearAssociation ()
            raises (SALOME::SALOME_Exception);

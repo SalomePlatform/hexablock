@@ -23,12 +23,11 @@
 #include <libgen.h>               // Pour basename
 #include <cstdlib>               // Pour atoi et atof
 
-#include "HexEltBase.hxx"
+#include "Hex.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"
 #include "HexHexa.hxx"
-#include "HexShape.hxx"
 
 #include "HexElements.hxx"
 
@@ -40,6 +39,11 @@
 #include "HexPropagation.hxx"
 #include "HexLaw.hxx"
 #include "HexGroup.hxx"
+
+#include "HexNewShape.hxx"
+#include "HexVertexShape.hxx"
+#include "HexEdgeShape.hxx"
+#include "HexFaceShape.hxx"
 
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
@@ -70,7 +74,7 @@ int parseName (XmlTree* node, const string& nom, EltBase* elt)
    int nroid = 0;
    for (int nc=1 ; nc<lg ; nc++)
        nroid = 10*nroid + nom[nc] - '0';
-   
+
    elt->setId (nroid);
 
    const  string& name = node->findValue ("name");
@@ -112,7 +116,7 @@ int Document::loadXml (cpchar ficname)
 {
    XmlTree xml("");
    string filename = ficname;
-   doc_name     = basename ((pchar)ficname);
+   el_name         = basename ((pchar)ficname);
 
    static const int NbExt = 3;
    static cpchar t_ext [NbExt] = { ".xml", ".XML", ".Xml" };
@@ -120,17 +124,17 @@ int Document::loadXml (cpchar ficname)
    bool   noext = true;
    for (int nx = 0; nx < NbExt && noext ; nx++)
        {
-       ici   = doc_name.rfind (t_ext[nx]);
-       noext = ici < 0 || ici > doc_name.size();
+       ici   = el_name.rfind (t_ext[nx]);
+       noext = ici < 0 || ici > el_name.size();
        }
 
    if (noext)
-      filename += ".xml"; 
+      filename += ".xml";
    else
-      doc_name.erase (ici, 4);
+      el_name.erase (ici, 4);
 
    int ier = xml.parseFile (filename);
-   if (ier!=HOK) 
+   if (ier!=HOK)
       return ier;
 
    ier = parseXml (xml);
@@ -139,29 +143,24 @@ int Document::loadXml (cpchar ficname)
 // ======================================================== setXml
 int Document::setXml (cpchar flux)
 {
-   XmlTree xml("");
-   xml.parseFlow (flux);
-
-   int    ier = parseXml (xml);
-   if (ier==HOK) 
-      doc_saved = true;
+   int posit = 0;
+   int ier   = setXml (flux, posit);
    return ier;
 }
-// ======================================================== parseShape
-Shape* Document::parseShape (XmlTree* node)
+// ======================================================== setXml
+int Document::setXml (cpchar flux, int& posit)
 {
-   const  string& ident = node->findValue ("ident");
-   const  string& inter = node->findValue ("interval");
-   const  string& brep  = node->findValue ("brep");
+   XmlTree xml("");
 
-   double pdeb, pfin;
-   get_coords (inter, pdeb, pfin);
-   
-   Shape* shape = new Shape (brep);
-   shape->setBounds (pdeb, pfin);
-   shape->setName   (ident);
+   int ier = xml.parseStream (flux, posit);
+   if (ier!=HOK)
+      return ier;
 
-   return shape;
+   ier = parseXml (xml);
+   if (ier==HOK)
+      doc_saved = true;
+
+   return ier;
 }
 // ======================================================== parseXml
 int Document::parseXml (XmlTree& xml)
@@ -175,31 +174,42 @@ int Document::parseXml (XmlTree& xml)
    map <std::string, Vector*> t_vector;
    vector <string> tname;
 
+   const  string& version = xml.findValue ("version");
+   if (version == "")
+       {
+       cout << " **** Format du fichier XML perime"
+            << endl;
+       return HERR;
+       }
    const  string& name = xml.findValue ("name");
-   if (name != "")
-       doc_name = name;
+   if (name != el_name)
+       setName (name.c_str());
+
+   parseShapes (xml);
 
    XmlTree* rubrique = xml.findChild ("ListVertices");
    int nbrelts       = rubrique->getNbrChildren ();
 
+   Vertex* vertex = NULL;
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
+       const string& type = node->getName();
        double px, py, pz;
-       const  string& nom    = node->findValue ("id");
-       const  string& coords = node->findValue ("coord");
-       const  string& brep   = node->findValue ("shape");
-       get_coords (coords, px, py, pz);
-
-       Vertex*  vertex = addVertex (px, py, pz);
-       parseName (node, nom, vertex);
-       Shape*   shape  = NULL;
-       if (brep != "" ) 
+       if (type=="Vertex")
           {
-          shape = new Shape (brep);
-          vertex->setAssociation (shape); 
+          const  string& nom    = node->findValue ("id");
+          const  string& coords = node->findValue ("coord");
+          get_coords (coords, px, py, pz);
+
+          vertex = addVertex (px, py, pz);
+          parseName (node, nom, vertex);
+          t_vertex [nom] = vertex;
           }
-       t_vertex [nom] = vertex;
+       else if (type=="Asso")
+          {
+          parseAssociation (node, vertex);
+          }
        }
 
    rubrique = xml.findChild ("ListEdges");
@@ -219,10 +229,9 @@ int Document::parseXml (XmlTree& xml)
           t_edge [nom] = edge;
           parseName (node, nom, edge);
           }
-       else if (type=="Shape" && edge!=NULL)
+       else if (type=="Asso")
           {
-          Shape* shape = parseShape (node);
-          edge->addAssociation (shape);
+          parseAssociation (node, edge);
           }
        }
 
@@ -245,10 +254,9 @@ int Document::parseXml (XmlTree& xml)
           t_quad [nom] = quad;
           parseName (node, nom, quad);
           }
-       else if (type=="Shape" && quad!=NULL)
+       else if (type=="Asso")
           {
-          Shape* shape = parseShape (node);
-          quad->addAssociation (shape);
+          parseAssociation (node, quad);
           }
        }
 
@@ -315,7 +323,7 @@ int Document::parseXml (XmlTree& xml)
        const  string& nmedge  = node->findValue ("edge");
        const  string& nmlaw   = node->findValue ("law");
        //  const  string& nmway   = node->findValue ("way");
-       
+
        edge     = t_edge [nmedge];
        Law* law = findLaw (nmlaw.c_str());
        //  bool way = nmway == "true";
@@ -328,7 +336,7 @@ int Document::parseXml (XmlTree& xml)
        {
        rubrique = pipe ? xml.findChild ("ListPipes")
                        : xml.findChild ("ListCylinders");
-                 
+
        nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
 
        for (int nro=0 ; nro < nbrelts ; nro++)
@@ -338,7 +346,7 @@ int Document::parseXml (XmlTree& xml)
            const  string& cdir    = node->findValue ("c_dir"   );
            const  string& cradius = node->findValue ("c_radius");
            const  string& cheight = node->findValue ("c_height");
-       
+
            Vertex* base    = t_vertex [cbase];
            Vector* dir     = t_vector [cdir];
            double radius  = atof (cradius.c_str());
@@ -376,7 +384,7 @@ int Document::parseXml (XmlTree& xml)
            {
            node = ndgroup ->getChild (nelt);
            const string& id = node->findValue ("id");
-           switch (type) 
+           switch (type)
               {
               case EL_HEXA : groupe->addElement (t_hexa [id]);
                    break;
@@ -387,8 +395,8 @@ int Document::parseXml (XmlTree& xml)
               case EL_VERTEX :
               default      : groupe->addElement (t_vertex [id]);
                    break;
-              } 
-           } 
+              }
+           }
        }
 
 
@@ -397,21 +405,44 @@ int Document::parseXml (XmlTree& xml)
 // ======================================================== save
 int Document::save (const char* ficxml)
 {
-   int    ier = genXml (ficxml);
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   int ier  = doc_xml->setFileName (ficxml);
+   if (ier != HOK)
+      return ier;
+
+   ier = genXml ();
+   return ier;
+}
+// ======================================================== appendXml
+int Document::appendXml (pfile fstudy)
+{
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   doc_xml->setFile (fstudy);
+
+   int    ier = genXml ();
    return ier;
 }
 // ======================================================== getXml
 cpchar Document::getXml ()
 {
-   int ier = genXml (NULL);
+   if (doc_xml==NULL)
+       doc_xml = new XmlWriter ();
+
+   doc_xml->setStream ();
+   int ier = genXml ();
    if (ier!=HOK)
       return NULL;
 
    return doc_xml->getXml ();
 }
 // ======================================================== genXml
-int Document::genXml (cpchar filename)
+int Document::genXml ()
 {
+   const int HexVersion = 1;
                                        // -- 1) Raz numerotation precedente
    markAll (NO_COUNTED);
    if (maj_propagation)
@@ -420,12 +451,13 @@ int Document::genXml (cpchar filename)
    if (doc_xml==NULL)
        doc_xml = new XmlWriter ();
 
-   doc_xml->openXml  (filename);
+   doc_xml->startXml ();
    doc_xml->openMark ("Document");
-   doc_xml->addAttribute ("name", doc_name);
+   doc_xml->addAttribute ("name",    el_name);
+   doc_xml->addAttribute ("version", HexVersion);
    doc_xml->endMark ();
 
-   cpchar balise [] = {"ListXXXX", 
+   cpchar balise [] = {"ListXXXX",
           "ListVertices", "ListEdges", "ListQuads", "ListHexas", "ListVectors",
           "ListXXXX" };
 
@@ -467,6 +499,12 @@ int Document::genXml (cpchar filename)
    doc_xml->addMark ("ListGroups");
    for (int nro=0 ; nro<nombre ; nro++)
        doc_group[nro]->saveXml (doc_xml);
+   doc_xml->closeMark (true);
+
+   nombre = countShape ();
+   doc_xml->addMark ("ListShapes");
+   for (int nro=0 ; nro<nombre ; nro++)
+       doc_tab_shape[nro]->saveXml (doc_xml);
    doc_xml->closeMark ();
 
    doc_xml->closeMark ();
@@ -490,7 +528,7 @@ void Document::markAll (int marque, int type)
        }
 }
 // ====================================================== saveVtk
-int Document::saveVtk (cpchar nomfic)
+int Document::saveVtk0 (cpchar nomfic)
 {
                                            // -- 1) Raz numerotation precedente
    markAll (NO_COUNTED, EL_VERTEX);
@@ -561,6 +599,86 @@ int Document::saveVtk (cpchar nomfic)
           cell->colorNodes (vtk);
        }
 
+   fclose (vtk);
+   return HOK;
+}
+
+// ====================================================== saveVtk
+// ==== Nouvelle formule
+int Document::saveVtk (cpchar nomfic)
+{
+   int nbnodes = doc_nbr_elt [EL_VERTEX];
+   int nbcells = countHexa ();
+
+   pfile vtk = fopen (nomfic, "w");
+   if (vtk==NULL)
+      {
+      cout << " ****" << endl;
+      cout << " **** Document::saveVtk : " << endl;
+      cout << " **** Can't open file "     << endl;
+      cout << " ****" << endl;
+
+      }
+   fprintf (vtk, "# vtk DataFile Version 3.1\n");
+   fprintf (vtk, "%s \n", nomfic);
+   fprintf (vtk, "ASCII\n");
+   fprintf (vtk, "DATASET UNSTRUCTURED_GRID\n");
+   fprintf (vtk, "POINTS %d float\n", nbnodes);
+
+                                           // -- 1) Les noeuds
+   Real3 koord;
+   static const double minvtk = 1e-30;
+#define Koord(p) koord[p]<minvtk && koord[p]>-minvtk ? 0 : koord[p]
+
+   int last_nro = 0;
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Vertex* node = static_cast <Vertex*> (elt);
+       if (node->isHere())
+          {
+          int nro = node->getId ();
+          for (int np = last_nro ; np < nro ; np++)
+               fprintf (vtk, "0 0 0\n");
+
+          node->getPoint (koord);
+          fprintf (vtk, "%g %g %g\n", Koord(dir_x), Koord(dir_y), Koord(dir_z));
+          last_nro = nro+1;
+          }
+       }
+
+   for (int np = last_nro ; np < nbnodes  ; np++)
+        fprintf (vtk, "0 0 0\n");
+
+                                           // -- 2) Les hexas
+
+   fprintf (vtk, "CELLS %d %d\n", nbcells, nbcells*(HV_MAXI+1));
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->printHexaVtk (vtk);
+       }
+
+   fprintf (vtk, "CELL_TYPES %d\n", nbcells);
+   for (int nro=0 ; nro<nbcells ; nro++)
+       fprintf (vtk, "%d\n", HE_MAXI);
+
+/****************************
+   fprintf (vtk, "POINT_DATA %d \n", nbnodes);
+   fprintf (vtk, "SCALARS A float\n");
+   fprintf (vtk, "LOOKUP_TABLE default\n");
+
+   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+                 elt = elt->next())
+       {
+       Hexa* cell = static_cast <Hexa*> (elt);
+       if (cell!=NULL && cell->isHere())
+          cell->colorNodes (vtk);
+       }
+*********************************/
    fclose (vtk);
    return HOK;
 }
@@ -647,7 +765,7 @@ void Document::majReferences ()
 // ======================================================== dump
 void Document::dump ()
 {
-   cpchar nom_type [] = { "Elments non classes", 
+   cpchar nom_type [] = { "Elments non classes",
           "Sommets", "Aretes", "Faces", "Hexaedres", "Elements detruits" };
 
    for (int type=EL_VERTEX ; type <= EL_HEXA ; type++)
@@ -688,5 +806,93 @@ void Document::hputError (cpchar mess, EltBase* e1, EltBase* e2)
    if (e2!=NULL) e2->getName (name2);
 
    putError (mess, name1, name2);
+}
+// ======================================================== parseSubShape
+SubShape* Document::parseSubShape (XmlTree* node)
+{
+   const string& name  = node->findValue   ("shape");
+   int           subid = node->findInteger ("subid");
+   NewShape*     shape = findShape (name);
+   if (shape==NULL)
+       return NULL;
+
+   SubShape* sub_shape = shape->findSubShape (subid);
+   return    sub_shape;
+}
+// ======================================================== parseAssociation (v)
+void Document::parseAssociation (XmlTree* node, Vertex* vertex)
+{
+   SubShape* shape = parseSubShape (node);
+   if (shape==NULL || vertex==NULL)
+       return;
+
+   if (shape->getDim()!=0)
+      return;
+   VertexShape* vshape = static_cast <VertexShape*> (shape);
+   vertex->setAssociation (vshape);
+}
+// ======================================================== parseAssociation (e)
+void Document::parseAssociation (XmlTree* node, Edge* edge)
+{
+   SubShape* shape = parseSubShape (node);
+   if (shape==NULL || edge==NULL)
+       return;
+
+   if (shape->getDim()!=1)
+      return;
+
+   const  string& inter = node->findValue ("interval");
+   double pdeb, pfin;
+   get_coords (inter, pdeb, pfin);
+
+   EdgeShape* line = static_cast <EdgeShape*> (shape);
+   edge->addAssociation (line, pdeb, pfin);
+}
+// ======================================================== parseAssociation (q)
+void Document::parseAssociation (XmlTree* node, Quad* quad)
+{
+   SubShape* shape = parseSubShape (node);
+   if (shape==NULL || quad==NULL)
+       return;
+
+   if (shape->getDim()!=2)
+      return;
+   FaceShape* face = static_cast <FaceShape*> (shape);
+   quad->addAssociation (face);
+}
+// ======================================================== parseShapes
+void Document::parseShapes (XmlTree& root)
+{
+   XmlTree* rubrique = root.findChild ("ListShapes");
+   int nbrelts       = rubrique->getNbrChildren ();
+
+   for (int nro=0 ; nro < nbrelts ; nro++)
+       {
+       XmlTree*      node = rubrique->getChild (nro);
+       const string& type = node->getName();
+       if (type=="Shape")
+          {
+          const string& nom   = node->findValue   ("id"  );
+          int           orig  = node->findInteger ("type");
+          const string& brep  = node->findValue   ("brep");
+          NewShape*     shape = new NewShape (this, (EnumShape)orig);
+
+          parseName (node, nom, shape);
+          shape->setBrep (brep);
+          doc_tab_shape.push_back (shape);
+          }
+       else if (type=="Cloud")
+          {
+          int nbvert = node->getNbrChildren ();
+          for (int nv=0 ; nv < nbvert ; nv++)
+              {
+              Real3    point;
+              XmlTree* sommet = node->getChild (nv);
+              const  string& coords = sommet->findValue ("coord");
+              get_coords (coords, point[dir_x], point[dir_y], point[dir_z]);
+              doc_cloud->addPoint (point);
+              }
+          }
+       }
 }
 END_NAMESPACE_HEXA

@@ -22,14 +22,16 @@
 #ifndef __LAW_H_
 #define __LAW_H_
 
+#include "HexEltBase.hxx"
 #include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Law 
+class Law : public EltBase  
 {
 public:
    const char* getName ()          { return law_name.c_str() ; }
+   char* getNextName  (pchar buffer);
    int     getNodes ()             { return nbr_nodes ; }
    double  getCoefficient ()       { return law_coefficient ; }
    KindLaw getKind ()              { return law_type ;  }
@@ -40,7 +42,7 @@ public:
    void    setKind (cpchar  type);
    int     setName (cpchar  nom);
 
-    Law (cpchar name, int nbnodes);
+    Law (Document* dad, cpchar name, int nbnodes);
     Law (Law* other);
     void saveXml (XmlWriter* xml);
 

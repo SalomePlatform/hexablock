@@ -25,6 +25,7 @@
 
 #include "hexa_base.hxx"
 #include "HexEdge.hxx"
+#include "HexNewShape_impl.hxx"
 
 using namespace HEXABLOCK_ORB;
 
@@ -43,25 +44,23 @@ public:
 
   ::CORBA::Boolean getWay() throw (SALOME::SALOME_Exception);
   Vertex_ptr getVertex(::CORBA::Long n) throw (SALOME::SALOME_Exception);
-//   void setAssociation(GEOM::GEOM_Object_ptr geom_object_1D) throw (SALOME::SALOME_Exception);
-//   GEOM::GEOM_Object_ptr getAssociation() throw (SALOME::SALOME_Exception);
-  ::CORBA::Long addAssociation( GEOM::GEOM_Object_ptr geom_object_1D, double debut, double fin ) //CS_NOT_SPEC
-      throw (SALOME::SALOME_Exception);
   void clearAssociation() throw (SALOME::SALOME_Exception);
 
-  EdgeAssociations* getAssociations () //CS_NOT_SPEC
+   ::CORBA::Long countAssociation ()
       throw (SALOME::SALOME_Exception);
 
   void setColor (::CORBA::Double val)  throw (SALOME::SALOME_Exception);
-  void setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception);
   void dump() throw (SALOME::SALOME_Exception);
   void printName() throw (SALOME::SALOME_Exception);
   char* getName() throw (SALOME::SALOME_Exception);
   void  setName (const char* name) throw (SALOME::SALOME_Exception);
 
+  ::CORBA::Long addAssociation (NewShape_ptr geom, ::CORBA::Long subid,
+                                double debut, double fin )
+                         throw (SALOME::SALOME_Exception);
+
 private:
   HEXA_NS::Edge*      _edge_cpp;
-  std::vector<Assoc>  _associations;
 };
 
 #endif

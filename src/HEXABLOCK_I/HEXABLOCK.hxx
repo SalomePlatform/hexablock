@@ -141,6 +141,7 @@ public:
     Document_ptr getDocument(::CORBA::Long i);
     void removeDocument(Document_ptr d); //CS_TODO
     Document_ptr addDocument  (const char* name);
+    Document_ptr findDocument (const char* name);
     Document_ptr loadDocument (const char* xmlFilename);
 
     GEOM_Client* getGeomClient();
@@ -178,9 +179,11 @@ public:
 
 
 
-  Document_ptr createDoc(const char* name) 
+  Document_ptr createDoc        (const char* name) 
                throw ( SALOME::SALOME_Exception );
-  Document_ptr createDocInStudy(const char* name)
+  Document_ptr createDocInStudy (const char* name)
+               throw ( SALOME::SALOME_Exception );
+  CORBA::Long  addDocInStudy    (Document_ptr doc)
                throw ( SALOME::SALOME_Exception );
 
   //-----------------------------------------------------------------------//
@@ -234,6 +237,7 @@ public :
                                CORBA::Boolean isMultiFile,
                                CORBA::Boolean isASCII);
 
+  char* getVersion();
 
 #if 0
   virtual std::string GetIOR();
@@ -324,6 +328,8 @@ private :
 
   map<int, StudyContext*>   myStudyContextMap;  // Map of study context objects
   SALOMEDS::Study_var       myCurrentStudy;     // Current study
+
+  bool   first_document;
 
 };
 

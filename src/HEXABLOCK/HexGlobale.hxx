@@ -1,3 +1,6 @@
+
+// Singleton : Var globales : Disposition sommets/aretes/faces d'un hexaedre
+
 // Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
@@ -14,15 +17,15 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
-
-// Singleton : Var globales : Disposition sommets/aretes/faces d'un hexaedre
 
 #ifndef _HEX_GLOBALE_H
 #define _HEX_GLOBALE_H
 
 #include "hexa_base.hxx"
+#include "HexDumpStudy.hxx"
 
 /* -----------------------------------------------------
 
@@ -70,7 +73,10 @@ public :
    void setArgs  (int nbargs, cpchar tabargs[]);
    int  findArg  (cpchar opt);
    bool isinArgs (cpchar opt)  { return findArg (opt) >= 0; }
-   cpchar getArg  (int nro)    { return nro>=nbr_args ? NULL : tab_args[nro]; }
+   cpchar getArg (int nro)     { return nro>=nbr_args ? NULL : tab_args[nro]; }
+
+public  :
+   DumpStudy dump;
 
 private :
    Globale ();         // Constructeur prive
@@ -87,6 +93,7 @@ private :
 private :
    int     nbr_args;
    cpchar* tab_args;
+   bool    dump_study;
 
    int         coord_vertex [HV_MAXI] [DIM3];
    EnumHVertex edge_vertex  [HE_MAXI] [V_TWO];

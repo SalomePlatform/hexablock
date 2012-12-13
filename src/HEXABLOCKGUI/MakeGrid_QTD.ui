@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
-    <height>1083</height>
+    <width>226</width>
+    <height>266</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>276</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -66,8 +66,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>254</width>
-        <height>1061</height>
+        <width>189</width>
+        <height>1057</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -747,33 +747,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_2">
-                  <property name="text">
-                   <string>base</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="base_le_rb1">
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Select a vector</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_4">
                   <property name="text">
-                   <string>vector</string>
+                   <string>axis</string>
                   </property>
                  </widget>
                 </item>
@@ -790,6 +767,29 @@
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="base_le_rb1">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Select a vector</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>base</string>
                   </property>
                  </widget>
                 </item>
@@ -858,8 +858,14 @@
                <property name="decimals">
                 <number>6</number>
                </property>
+               <property name="minimum">
+                <double>0.000000000000000</double>
+               </property>
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>1.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -910,6 +916,9 @@
                <property name="maximum">
                 <double>1000000000.000000000000000</double>
                </property>
+               <property name="value">
+                <double>1.000000000000000</double>
+               </property>
               </widget>
              </item>
             </layout>
@@ -945,8 +954,8 @@
   <tabstop>vex_le_rb0</tabstop>
   <tabstop>vec_le_rb0</tabstop>
   <tabstop>center_le_rb1</tabstop>
-  <tabstop>base_le_rb1</tabstop>
   <tabstop>height_le_rb1</tabstop>
+  <tabstop>base_le_rb1</tabstop>
   <tabstop>vex_le_rb2</tabstop>
   <tabstop>nx_spb_rb0</tabstop>
   <tabstop>ny_spb_rb0</tabstop>

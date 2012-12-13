@@ -80,6 +80,7 @@ public:
     void moveNodes  (Matrix* matrice);       // transfo controlee ds un ensemble
     void transform  (Matrix* matrice);       // transfo indivituelle
     void printHexa  (pfile vtk);             // Impression de la cellule 
+    void printHexaVtk (pfile vtk);           // Impression de la cellule 
     virtual void majReferences();            // M.A.J relation "utilise par"
 
     bool hasFreeEdges  ();

@@ -203,6 +203,10 @@
             <source>ICO_WIRE</source>
             <translation>build_wire.png</translation>
         </message>
+	<message>
+            <source>ICO_MODULE_HEXABLOCK_SMALL</source>
+            <translation>ModuleHexablock15x15.png</translation>
+        </message>
 
     </context>
 </TS>

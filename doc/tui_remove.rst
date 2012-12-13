@@ -16,7 +16,7 @@ Remove all hexahedra connected of the model of blocks::
     doc.removeConnectedHexa(hexa)
 
 
-.. image:: _static/remove3.PNG
+.. image:: _static/remove33.png
    :align: center
 
 

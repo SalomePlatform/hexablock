@@ -45,6 +45,6 @@ nk = 8
 grid = doc.makeCartesian(orig, dx, dy, dz, ni, nj, nk)
 
 file_name = os.path.join(os.environ['TMP'], 'grille_cartesienne.vtk')
-grid.saveVtk(file_name)
+####  grid.saveVtk(file_name)
 
 print "...test grille cartesienne OK"

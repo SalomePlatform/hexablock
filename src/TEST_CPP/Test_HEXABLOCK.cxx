@@ -51,14 +51,14 @@ int main (int nbargs, cpchar tabargs [])
    TestUnit (test_coude );
    TestUnit (test_count );
    TestUnit (test_decoupage );
-   TestUnit (test_gen_xml );
-   TestUnit (test_string_xml );
+   // TestUnit (test_gen_xml );
+   // TestUnit (test_string_xml );
    ///   TestUnit (test_relecture );
    TestUnit (test_spherical);
    TestUnit (test_grille_cyl );
    TestUnit (test_cylindrical );
    TestUnit (test_cylinder );
-   TestUnit (test_xml_cylinder );
+   // TestUnit (test_xml_cylinder );
    TestUnit (test_pipe );
    TestUnit (test_joint2 );
    TestUnit (test_croix );

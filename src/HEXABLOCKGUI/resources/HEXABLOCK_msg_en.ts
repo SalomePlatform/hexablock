@@ -46,6 +46,41 @@
     </message>
 </context>
 <context>
+    <name>HEXABLOCKGUI</name>
+    <message>
+	<source>CLEAR_ASSOCIATIONS</source>
+	<translation>Clear associations</translation>
+    </message>
+    <message>
+	<source>CLEAR_ALL_ASSOCIATIONS_ON</source>
+	<translation>Clear all associations on</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_VERTEX</source>
+        <translation>Vertices</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_EDGE</source>
+        <translation>Edges</translation>
+    </message>
+    <message>
+        <source>TREE_ITEM_QUAD</source>
+        <translation>Quadrangles</translation>
+    </message>
+    <message>
+    	<source>MODEL_INFO</source>
+    	<translation>Model Information</translation>
+    </message>
+    <message>
+    	<source>ADD_SHAPE</source>
+    	<translation>Add geometry</translation>
+    </message>
+    <message>
+    	<source>ADD_SHAPE_FAILED</source>
+    	<translation>Add geometry failed!</translation>
+    </message>
+</context>
+<context>
     <name>HEXABLOCK::GUI::DocumentModel</name>
     <message>
         <source>TREE_ITEM_VERTEX</source>
@@ -84,6 +119,18 @@
         <translation>Cross Elements</translation>
     </message>
     <message>
+        <source>TREE_ITEM_EXPSHAPE</source>
+        <translation>Explicit geometries</translation>
+    </message>
+     <message>
+        <source>TREE_ITEM_IMPSHAPE</source>
+        <translation>Implicit geometries</translation>
+    </message>
+     <message>
+        <source>TREE_ITEM_CLOUD_OF_POINT</source>
+        <translation>Cloud of points</translation>
+    </message>
+    <message>
         <source>TREE_ITEM_GROUP</source>
         <translation>Groups</translation>
     </message>
@@ -94,6 +141,17 @@
     <message>
         <source>TREE_ITEM_PROPAGATION</source>
         <translation>Propagations</translation>
+    </message>
+</context>
+<context>
+    <name>HEXABLOCK::GUI::QuadAssocDialog</name>
+    <message>
+        <source>ERR_ERROR</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <source>CANNOT MAKE QUAD ASSOCIATION</source>
+        <translation>Cannot make quad association</translation>
     </message>
 </context>
 <context>
@@ -184,6 +242,22 @@
         <translation>Cross Elements</translation>
     </message>
     <message>
+        <source>GEOMSHAPE</source>
+        <translation>Geom Shape</translation>
+    </message>
+    <message>
+        <source>GEOMPOINT</source>
+        <translation>Geom Vertex</translation>
+    </message>
+    <message>
+        <source>GEOMEDGE</source>
+        <translation>Geom Edge</translation>
+    </message>
+    <message>
+        <source>GEOMFACE</source>
+        <translation>Geom Face</translation>
+    </message>
+    <message>
         <source>GROUP</source>
         <translation>Group</translation>
     </message>
@@ -214,6 +288,10 @@
     <message>
         <source>HEXA_INFO</source>
         <translation>HexaBlock</translation>
+    </message>
+        <message>
+        <source>UNKNOWN_GEOMETRY</source>
+        <translation>Unknown Geometry!</translation>
     </message>
     <message>
         <source>%1: Bad type selected

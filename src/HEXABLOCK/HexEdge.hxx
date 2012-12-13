@@ -36,10 +36,7 @@ public:
 public:
     virtual void saveXml (XmlWriter* xml);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
-    virtual void clearAssociation  ()      { tab_assoc.clear() ; }
-    virtual void setAssociation (Shape* forme);
-    virtual bool isAssociated ()           { return tab_assoc.size() > 0  ; }
-    virtual int  addAssociation (Shape* forme);
+    virtual void clearAssociation ();
 
     Edge (Vertex* va, Vertex* vb);
     Edge (Edge* other);
@@ -74,11 +71,21 @@ public:
     void setScalar (double valeur);
     void setColor  (double valeur)          { setScalar (valeur) ; }
 
-    const Shapes & getAssociations ()       { return tab_assoc ;  }
+    const Shapes & getAssociations ()       { return tab_shapes ;  }
 
     virtual void duplicate ();
-    Edge*   getClone ()                     {  return e_clone ;   }
+    Edge*   getClone  ()                    { return e_clone ;   }
     double* getVector (double vecteur[]);
+    string  makeDefinition ();
+
+    virtual int  addAssociation (Shape* forme) {return HOK;}   // Perime Hexa5
+    virtual void setAssociation (Shape* forme) {}              // Perime Hexa5
+
+    int addAssociation (NewShape*  geom,   int subid, double deb, double fin);
+    int addAssociation (EdgeShape* gline, double deb, double fin);
+    int checkAssociation ();
+    int countAssociation () { return tab_assoc.size () ; }
+    AssoEdge* getAssociation (int nro);
 
 private:
     friend class Cloner;
@@ -88,7 +95,8 @@ private:
     bool    e_way;     // Sens de propagation
     Law*    e_law;     // Le soleil brille, brille, brille
 
-    Shapes tab_assoc;
+    Shapes    tab_shapes;
+    AssoEdges tab_assoc;
 };
 
 // ----------------------------------------------- Inlining
@@ -173,7 +181,8 @@ inline void Edge::duplicate  ()
    e_clone = new Edge (GetClone (e_vertex [V_AMONT]),
                        GetClone (e_vertex [V_AVAL ]));
 
-   e_clone->tab_assoc = tab_assoc;
+   e_clone->tab_shapes = tab_shapes;
+   e_clone->tab_assoc  = tab_assoc;
 }
 // =============================================================== getVector
 inline double* Edge::getVector (double vecteur[])

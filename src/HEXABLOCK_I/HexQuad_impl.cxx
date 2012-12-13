@@ -26,7 +26,6 @@ using namespace std;
 #include "HexQuad_impl.hxx"
 #include "HexVertex_impl.hxx"
 #include "HexEdge_impl.hxx"
-#include "HexShape.hxx"
 
 Quad_impl::Quad_impl( HEXA_NS::Quad *ptrCpp ):_quad_cpp(ptrCpp)
 {
@@ -68,22 +67,14 @@ Vertex_ptr Quad_impl::getVertex(::CORBA::Long n)
 
 
 
-::CORBA::Long Quad_impl::addAssociation( GEOM::GEOM_Object_ptr geom_object_2D)
+::CORBA::Long Quad_impl::addAssociation(NewShape_ptr geom, ::CORBA::Long subid)
   throw (SALOME::SALOME_Exception)
 {
-  ::CORBA::Long ok;
+  NewShape_impl*     im_shape = ::DownCast<NewShape_impl*> (geom );
+  HEXA_NS::NewShape* md_shape = im_shape->GetImpl();
 
-  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_2D );
-  string      strBrep = shape2string( aShape );
-
-  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_2D );
-  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-  s->ior     = anIOR.in();
-  s->ident   = geom_object_2D->GetStudyEntry();
-
-  ok = _quad_cpp->addAssociation( s );
-//   _associations.push_back(GEOM::GEOM_Object::_duplicate( geom_object_2D ));
-  return ok;
+  ::CORBA::Long ier = _quad_cpp->addAssociation (md_shape, subid);
+  return ier;
 }
 
 void Quad_impl::clearAssociation()
@@ -91,70 +82,6 @@ void Quad_impl::clearAssociation()
 {
   _quad_cpp->clearAssociation ();
 }
-
-
-
-GEOM::ListOfGO* Quad_impl::getAssociations() //CS_NOT_SPEC
-  throw (SALOME::SALOME_Exception)
-// {
-//   GEOM::ListOfGO* result = new GEOM::ListOfGO;
-//   result->length( _associations.size() );
-// 
-//   CORBA::ULong i = 0;
-//   for ( std::vector<GEOM::GEOM_Object_ptr>::const_iterator iter = _associations.begin();
-// 	iter != _associations.end();
-//         ++iter){
-// //       (*result)[i++] = *iter;
-//       (*result)[i++] = GEOM::GEOM_Object::_duplicate( *iter );
-//   }
-//   return result;
-// }
-{
-  TopoDS_Shape aShape;
-  const std::vector<HEXA_NS::Shape*> shapes = _quad_cpp->getAssociations();
-
-  GEOM::ListOfGO* result = new GEOM::ListOfGO;
-  result->length( shapes.size() );
-
-  CORBA::Object_var     corbaObj;
-  GEOM::GEOM_Object_var geomObj;
-  HEXABLOCK_ORB::EdgeAssociation assoc;
-  CORBA::ULong i = 0;
-  for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
-	iter != shapes.end();
-        ++iter ){
-      if ( !(*iter)->ior.empty() ){ // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
-        if ( !CORBA::is_nil( corbaObj ) ){
-          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-        }
-      } else { // no geom object => we have to built it
-        geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( (*iter)->getBrep() );
-      }
-      (*result)[ i++ ] = geomObj._retn();
-  }
-
-  return result;
-}
-
-
-
-
-
-
-
-
-// void Quad_impl::setAssociation(GEOM::GEOM_Object_ptr geom_object_2D) throw (SALOME::SALOME_Exception)
-// {
-// }
-// 
-// GEOM::GEOM_Object_ptr Quad_impl::getAssociation() throw (SALOME::SALOME_Exception)
-// {
-// }
-// 
-// void Quad_impl::removeAssociation() throw (SALOME::SALOME_Exception)
-// {
-// }
 
 void Quad_impl::setColor (::CORBA::Double val)
      throw (SALOME::SALOME_Exception)
@@ -183,7 +110,7 @@ char* Quad_impl::getName() throw (SALOME::SALOME_Exception)
  return CORBA::string_dup( _quad_cpp->getName() );
 }
 // ========================================================= setName
-void Quad_impl::setName(const char* name) 
+void Quad_impl::setName(const char* name)
      throw (SALOME::SALOME_Exception)
 {
   _quad_cpp->setName (name);

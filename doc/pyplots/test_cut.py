@@ -41,13 +41,13 @@ arete = grid.getEdgeK(0, 0, 0)
 ## doc.dump()
 
 file_name = os.path.join(os.environ['TMP'], 'no_decoupe.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 doc.cut(arete, 1)
 
 # doc.dump()
 file_name = os.path.join(os.environ['TMP'], 'decoupe.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 
 print "...test cut hexaedra OK"

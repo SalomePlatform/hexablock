@@ -32,7 +32,7 @@
 
 /*!  \ingroup EXAMPLES
 
-This package contains the interface HEXABLOCK_ORB used 
+This package contains the interface HEXABLOCK_ORB used
 for  %HEXABLOCK component as an example in %SALOME application.
 */
 module HEXABLOCK_ORB
@@ -45,25 +45,13 @@ module HEXABLOCK_ORB
       Vertex getVertex( in long n )
           raises (SALOME::SALOME_Exception);
 
-//       void addAssociation( in GEOM::GEOM_Object geom_object_2D )
-//           raises (SALOME::SALOME_Exception);
-// 
-//       GEOM_Objects getAssociations()
-//           raises (SALOME::SALOME_Exception);
-
-      void clearAssociation ( ) 
+      void clearAssociation ( )
           raises (SALOME::SALOME_Exception);
 
-      long addAssociation( in GEOM::GEOM_Object geom_object_2D ) //CS_NOT_SPEC
-          raises (SALOME::SALOME_Exception);
+      long addAssociation (in NewShape geom, in long subid) //
+                   raises (SALOME::SALOME_Exception);
 
-      GEOM::ListOfGO getAssociations() //CS_NOT_SPEC CS_WARNING: not working when reloading a document
-          raises (SALOME::SALOME_Exception);
-// 
-//       void removeAssociation()
-//           raises (SALOME::SALOME_Exception);
-
-      void setColor (in double value)
+      void setColor (in double value)//CS_NOT_SPEC
            raises (SALOME::SALOME_Exception);
 
       void setScalar( in double val ) //CS_NOT_SPEC --> To delete

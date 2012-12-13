@@ -2,9 +2,9 @@
 
 .. _mesh:
 
-======================
-Meshing with Hexahedra
-======================
+============================
+Generate the hexahedral mesh
+============================
 
 The main stages to mesh with HexaBlock are:
 
@@ -79,7 +79,7 @@ The groups are defined on the model of blocks and the main types of groups are:
 - groups of edges
 - groups of nodes
 
-.. image:: _static/EX2.PNG
+.. image:: _static/ex2.png
    :align: center
 
 .. centered::
@@ -139,20 +139,20 @@ Examples
 Linear approximation of the discretization of faces
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing1.PNG
+.. image:: _static/meshing1.png
    :align: center
 
 
 Geometric face and meshing by approximation
 ''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing2.PNG
+.. image:: _static/meshing2.png
    :align: center
 
 
 Geometric face and meshing by approximation and projection
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing3.PNG
+.. image:: _static/meshing3.png
    :align: center
  

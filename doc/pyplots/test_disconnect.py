@@ -68,12 +68,12 @@ edge.setScalar(5)
 vertex.setScalar(5)
 
 file_name = os.path.join(os.environ['TMP'], 'disconnect1.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 doc.disconnectQuad(hexa1, quad)
 
 file_name = os.path.join(os.environ['TMP'], 'disconnect2.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 
 print "...test disconnect elements OK"

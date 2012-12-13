@@ -10,7 +10,7 @@ Cut hexahedra
 This method allows to cut in two (or more) a series of hexahedra
 using a series of edges propagation.
 
-To cut an hexahedra in the **Main Menu** select **Model -> Cut Hexahedra**.
+To cut an hexahedra in the **Main Menu** select **Model -> Operation -> Cut Hexahedra**.
 
 **Arguments:** an edge and the number of cuts (nb).
 

@@ -23,14 +23,9 @@
 #ifndef _KAS_FUNCTIONS_HXX
 #define _KAS_FUNCTIONS_HXX
 
-#ifndef NO_CASCADE
+class gp_Pnt;
 
 #include "HexGlobale.hxx"
-
-#include <gp_Pnt.hxx>
-#include <TopoDS_Shape.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepTools.hxx>
 
 BEGIN_NAMESPACE_HEXA
 
@@ -42,9 +37,13 @@ int geom_asso_cylcyl (Edge* edge);
 
 bool same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsil2=1e-6);
 void save_brep   (cpchar nom, string brep, int& nro);
-void geom_make_brep (TopoDS_Shape& shape, string& brep);
+void clean_brep  (string& brep);
+
+void geom_make_brep  (TopoDS_Shape& shape, string& brep);
+int  geom_brep2point (rcstring brep, double& px, double& py, double& pz);
+int  geom_brep2shape (rcstring brep, TopoDS_Shape& shape);
+
+TopoDS_Shape geom_brep2shape (rcstring brep);
 
 END_NAMESPACE_HEXA
 #endif
-#else             // NO_CASCADE
-#endif            // NO_CASCADE

@@ -33,15 +33,54 @@
 #include "MyGEOMBase_Helper.hxx"
 
 #include "klinkitemselectionmodel.hxx"
-#include "HEXABLOCKGUI_DocumentModel.hxx"
-
 
 class OCCViewer_ViewWindow;
+
 
 namespace HEXABLOCK
 {
   namespace GUI
   {
+
+    class SelectionModel: public QItemSelectionModel
+    {
+        Q_OBJECT
+
+        public:
+
+            SelectionModel( QAbstractItemModel * model );
+            virtual ~SelectionModel();
+
+            QModelIndex  indexBy( int role, const QString&  value );
+            QModelIndex  indexBy( int role, const QVariant& var );
+            QModelIndex indexOf( const QString& anIOEntry, int role );
+            QModelIndexList indexListOf( const QString& anEntry, int role );
+            void setIgnoreSignal(bool state) { ignoreSignal = state; }
+
+            virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
+            virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
+
+            bool salomeNothingSelected;
+
+       protected slots:
+
+            virtual void onCurrentChanged( const QModelIndex & current,
+                    const QModelIndex & previous ) {}
+
+            virtual void onSelectionChanged( const QItemSelection & selected,
+                    const QItemSelection & deselected ) {}
+
+            void salomeSelectionChanged(); // Salome to Qt
+
+       protected:
+            QModelIndexList getSelectionFromModel(const Handle(SALOME_InteractiveObject)& anIObject);
+            QModelIndexList getSelectionAssociactions(const Handle(SALOME_InteractiveObject)& anIObject);
+
+            bool ignoreSignal;
+//            bool _theModelSelectionChanged;
+//            bool _theVtkSelectionChanged;
+//            bool _theGeomSelectionChanged;
+    };
 
     class PatternBuilderSelectionModel: public KLinkItemSelectionModel
     {
@@ -53,8 +92,7 @@ namespace HEXABLOCK
         }
     };
 
-    class PatternDataSelectionModel : public QItemSelectionModel,
-                                      public MyGEOMBase_Helper
+    class PatternDataSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -62,57 +100,43 @@ namespace HEXABLOCK
         PatternDataSelectionModel( QAbstractItemModel * model );
         virtual ~PatternDataSelectionModel();
 
-        void setVertexSelection();
-        void setEdgeSelection();
-        void setQuadSelection();
-        void setHexaSelection();
-        void setAllSelection();
-        void highlightVTKElts( const QModelIndexList& elts );
         void highlightEltsWithAssocs(const QModelIndexList& elts);
-        void _highlightGEOM( const QMultiMap<QString, int>&  entrySubIDs );
-        void _highlightGEOM( const QModelIndex & index );
-
-        QModelIndex  indexBy( int role, const QString&  value );
-        QModelIndex  indexBy( int role, const QVariant& var );
-        int getSelectionFilter() const { return _selectionFilter;}
+        QModelIndexList getGeomAssociations(const QModelIndex& dataIndex);
 
         //Salome
-        void setSalomeSelectionMgr( LightApp_SelectionMgr* mgr );
-        void SetSelectionMode( Selection_Mode theMode );
-        QModelIndex _geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
-        QModelIndex _vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
-
-
-        bool salomeNothingSelected;
+        virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+        virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
 
       protected slots:
-        void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
-        void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-        void salomeSelectionChanged(); // Salome to Qt
+        virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        virtual void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
-      private:
-        SVTK_ViewWindow*       _getVTKViewWindow();
-        OCCViewer_ViewWindow*  _getOCCViewWindow();
+    };
 
-        QModelIndex _indexOf( const QString& anIOEntry, int role );
-        QModelIndexList _indexListOf( const QString& anEntry, int role );
-        void _setVTKSelectionMode( const QModelIndex& eltIndex );
-        void _selectVTK( const QModelIndex & index );
-        SUIT_ViewWindow* initOccViewManager();
+    class PatternGeomSelectionModel : public SelectionModel
+    {
+        Q_OBJECT
 
+    public:
+        PatternGeomSelectionModel( QAbstractItemModel * model );
+        virtual ~PatternGeomSelectionModel();
 
-        LightApp_SelectionMgr* _salomeSelectionMgr;
-        int                    _selectionFilter;
+        QModelIndex getModelIndex(const Handle(SALOME_InteractiveObject)& anIObject);
 
+//        void highlightEltsWithAssocs(const QModelIndexList& elts);
+//
+//        //Salome
+//        virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+//        virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
 
-        bool _theModelSelectionChanged;
-        bool _theVtkSelectionChanged;
-        bool _theGeomSelectionChanged;
+    protected slots:
+        virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        virtual void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
     };
 
 
-
-    class GroupsSelectionModel : public QItemSelectionModel
+    class GroupsSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -120,22 +144,15 @@ namespace HEXABLOCK
         GroupsSelectionModel( QAbstractItemModel * model );
         virtual ~GroupsSelectionModel();
 
-        QModelIndex  indexBy( int role, const QVariant& var );
-
       protected slots:
-//         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
-        void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
-      private:
-        SVTK_ViewWindow* _getVTKViewWindow();
-        void _highlightGroups( const QModelIndex& eltIndex );
+//      virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        virtual void onSelectionChanged( const QItemSelection & selected,
+                                            const QItemSelection & deselected );
 
     };
 
 
-
-
-    class MeshSelectionModel : public QItemSelectionModel
+    class MeshSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -143,15 +160,10 @@ namespace HEXABLOCK
         MeshSelectionModel( QAbstractItemModel * model );
         virtual ~MeshSelectionModel();
 
-        QModelIndex  indexBy( int role, const QVariant& var );
-
       protected slots:
-//         void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
-        void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-
-      private:
-        SVTK_ViewWindow* _getVTKViewWindow();
-        void _highlightPropagation( const QModelIndex& eltIndex );
+//      virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
+        virtual void onSelectionChanged( const QItemSelection & selected,
+                const QItemSelection & deselected );
 
     };
 

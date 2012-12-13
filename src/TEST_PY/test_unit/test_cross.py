@@ -48,6 +48,7 @@ def test_pipes () :
     pipe2 = doc.addPipe   (ori2, vx, ni2, nr2, nl2)
     grid  = doc.makePipes (pipe1, pipe2)
 
+    doc.save    ("pipes")
     doc.saveVtk ("pipes.vtk")
     return doc
 
@@ -78,6 +79,7 @@ def test_croix () :
 # ================================================================= Begin
 
 doc = test_pipes  ()
+doc.setLevel (747)
 
 law = doc.addLaw("Uniform", 4)
 
@@ -85,5 +87,5 @@ for j in range(doc.countPropagation()):
     propa = doc.getPropagation(j)
     propa.setLaw(law) 
 
-mesh_hexas = hexablock.mesh(doc, "maillage:hexas")
+mesh_hexas = hexablock.mesh (doc, "maillage:hexas")
 

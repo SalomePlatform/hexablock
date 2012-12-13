@@ -28,7 +28,9 @@
 #include "HexVertex.hxx"
 
 #include "HexElements.hxx"
-#include "HexShape.hxx"
+#include "HexVertexShape.hxx"
+#include "HexEdgeShape.hxx"
+#include "HexFaceShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -44,30 +46,20 @@ Cloner::Cloner  (Matrix* mat)
 // ============================================================== clonerVertex
 Vertex* Cloner::clonerVertex (Vertex* orig)
 {
-    if (orig == NULL)
-        return orig;
+   if (orig == NULL)
+       return orig;
 
-    Vertex* copie = clone_vertex [orig];
-    if (copie != NULL)
-        return copie;
+   Vertex* copie = clone_vertex [orig];
+   if (copie != NULL)
+       return copie;
 
-    copie = new Vertex (orig);
-    matrice -> perform (copie);
-    clone_vertex [orig] = copie;
+   copie = new Vertex (orig);
+   matrice -> perform (copie);
+   clone_vertex [orig] = copie;
 
-   Shape* tshape = copie->getAssociation ();
-   Shape* shape  = orig ->getAssociation ();
-   if (tshape != NULL || shape == NULL)
-      return copie;
-
-   string brep  = shape->getBrep();
-   string trep;
-   transfo_brep (brep, matrice, trep);
-   tshape = new Shape (trep);
-   copie ->setAssociation (tshape);
    if (db)
       {
-      printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName  (), 
+      printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName  (),
                                                         copie->getName ());
       }
    return copie;
@@ -96,10 +88,11 @@ Edge* Cloner::clonerEdge (Edge* orig)
       orig ->printName ("\n");
       }
 
-   const  Shapes & new_asso = copie->getAssociations ();
-   int    nbass             = new_asso.size();
-   if (nbass!=0) 
-      return copie;
+/***********************
+   // const  Shapes & new_asso = copie->getAssociations ();  TODO  New Shape
+   // int    nbass             = new_asso.size();
+   // if (nbass!=0)
+      // return copie;
 
    const Shapes & tab_asso = orig->getAssociations ();
    nbass             = tab_asso.size();
@@ -110,17 +103,17 @@ Edge* Cloner::clonerEdge (Edge* orig)
        string trep;
        transfo_brep (brep, matrice, trep);
        Shape* tshape = new Shape (trep);
-       tshape->setBounds (shape->debut, shape->fin);
+       tshape->setBounds (shape->getStart(), shape->getEnd());
        copie ->addAssociation (tshape);
        if (db)
           {
-          printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName (), 
+          printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName (),
                                                             copie->getName ());
           geom_dump_asso (orig );
           geom_dump_asso (copie);
           }
        }
-
+***************************************************/
    return copie;
 }
 // ============================================================== clonerQuad
@@ -135,18 +128,18 @@ Quad* Cloner::clonerQuad (Quad* orig)
 
    copie = new Quad (orig);
 
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        copie->q_edge [nro] = clonerEdge (orig->q_edge [nro]);
 
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        copie->q_vertex [nro] = clonerVertex (orig->q_vertex [nro]);
 
    copie->majReferences ();
    clone_quad [orig] = copie;
-
+/*******************************************************************
    const  Shapes & new_asso = copie->getAssociations ();
    int    nbass             = new_asso.size();
-   if (nbass!=0) 
+   if (nbass!=0)
       return copie;
 
    const Shapes & tab_asso = orig->getAssociations ();
@@ -160,10 +153,11 @@ Quad* Cloner::clonerQuad (Quad* orig)
        Shape* tshape = new Shape (trep);
        copie ->addAssociation (tshape);
        if (db)
-          printf ( " --- Asso (%s) -> asso (%s)\n", orig ->getName (), 
+          printf ( " --- Asso (%s) -> asso (%s)\n", orig ->getName (),
                                                     copie->getName ());
        }
 
+***************************************************/
    return copie;
 }
 // ============================================================== clonerHexa
@@ -180,10 +174,10 @@ Hexa* Cloner::clonerHexa (Hexa* orig)
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
        copie->h_quad [nro] = clonerQuad (orig->h_quad [nro]);
 
-   for (int nro=0 ; nro<HE_MAXI ; nro++) 
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
        copie->h_edge [nro] = clonerEdge (orig->h_edge [nro]);
 
-   for (int nro=0 ; nro<HV_MAXI ; nro++) 
+   for (int nro=0 ; nro<HV_MAXI ; nro++)
        copie->h_vertex [nro] = clonerVertex (orig->h_vertex [nro]);
 
    copie->majReferences ();

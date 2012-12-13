@@ -33,7 +33,7 @@ enum { MiddleSlice1=NbrSlices1/2};
 enum { Cyl1=CylSmall, Cyl2=CylBig };
 enum { NO_CYL=-1, NO_PIPE=0, IS_HERE=1 };
 
-class CrossElements : public Elements 
+class CrossElements : public Elements
 {
 public:
    virtual int countHexa   () { return nbr_hexas ; }
@@ -62,7 +62,7 @@ public:
    void dumpHexas  ();
 
 private :
- 
+
    void resize ();
    void fillGrid   (int cyl, int deb=-1, int fin=-1);
    void fillCenter (int cyl, int deb, int fin);
@@ -73,7 +73,7 @@ private :
    void copyEdge (int d1, int i, int j, int k, int d2, int i2, int j2, int k2);
    void copyQuad (int d1, int i, int j, int k, int d2, int i2, int j2, int k2);
 
-   void setVertex (int cyl, int nx, int ny, int nz, double px, double py, 
+   void setVertex (int cyl, int nx, int ny, int nz, double px, double py,
                                                                double pz);
 
    void setVertex (Vertex* vv, int cyl, int nx, int ny, int nz);
@@ -81,9 +81,9 @@ private :
    void setQuad   (Quad* quad, int cyl, int dir, int nx, int ny, int nz);
    void setHexa   (Hexa* cell, int cyl, int nx, int ny, int nz);
 
-   Edge* addEdge   (Vertex* v1, Vertex* v2, int cyl, int dir, int nx, 
+   Edge* addEdge   (Vertex* v1, Vertex* v2, int cyl, int dir, int nx,
                                                     int ny, int nz);
-   Quad* addQuad   (Edge* e1, Edge* e2, Edge* e3, Edge* e4, int cyl, int dir, 
+   Quad* addQuad   (Edge* e1, Edge* e2, Edge* e3, Edge* e4, int cyl, int dir,
                    int nx, int ny, int nz);
    Hexa* addHexa   (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf,
                    int cyl, int nx, int ny, int nz);
@@ -99,12 +99,15 @@ private :
 
    void assoCylinder  (int cyl, double* normal);
    void assoSlice     (int cyl, double* base, double* norm, int nx, int zlice);
-   void assoArc    (int cyl, int nx, int ny, int nz, string& brep, double ray);
+   void assoArc    (int cyl, int nx, int ny, int nz, int subid);
+   void assoArcMid (double mid[], int nx, int ny, int nz, double ray, int subid);
    void assoBigMiddle (double* base, double* normal, int nzlice);
    int  assoIntersection (int nx, int nzlice, double* snorm, double* bnorm);
+   void adjustAsso       (int nx, int ny, int nz, int sens);
 
 
-   double getAngle  (int cyl, int ny);
+   double getAngle  (int cyl, int ny, int nz=0);
+   double getAngleInter (int cyl, int nz);
    void   addSlice  (int cyl, int ni, int nk, double px, double rayon=-1);
    void   addVertex (int cyl, int ni, int nj, int nk, double px, double rayon);
    void   majIntersection ();
@@ -123,12 +126,14 @@ private :
     int  size_vz[BiCyl], size_hz[BiCyl];
     int  nbr_hexas1, nbr_quads1, nbr_edges1, nbr_vertex1;
 
-    double angle_inter [BiCyl];
+    double angle_inter     [BiCyl];
+    double angle_intermed;
     double cross_rayon [BiCyl][SizeRay];
     double big_hauteur [size_v2z];
 
     bool  at_right,  at_left;
     int   cyl_right, cyl_left;
+    NewShape* grid_geom;
 };
 END_NAMESPACE_HEXA
 #endif

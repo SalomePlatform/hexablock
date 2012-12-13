@@ -32,7 +32,6 @@
 #include "HexVertex.hxx"
 
 #include "HexPropagation.hxx"
-#include "HexShape.hxx"
 #include "HexLaw.hxx"
 #include "HexMatrix.hxx"
 
@@ -92,12 +91,12 @@ void ModelTest::_print_propagations (Hex::Document* doc)
 //    Hex::Hex mon_ex;
 //    Hex::Document* doc = mon_ex.addDocument ();
 //    Hex::Vertex*  orig = doc->addVertex (0,0,0);
-// 
+//
 //    int    ncouches = 1;
 //    double k = 0.8;
 //    Hex::Vector*   decal  = doc->addVector (1,1,1);
 //    Hex::Elements* sphere = doc->makeSpherical (orig, decal, ncouches, k);
-// 
+//
 //    for (int nc=0 ; nc <= ncouches ; nc++)
 //        {
 //        Hex::Hexa* cell = sphere->getStrate (nc, Hex::Q_A);
@@ -105,14 +104,14 @@ void ModelTest::_print_propagations (Hex::Document* doc)
 //        // sphere->getStrate (nc, Hex::Q_A)->remove ();
 //        // sphere->getStrate (nc, Hex::Q_B)->remove ();
 //        }
-// 
+//
 //    sphere->saveVtk ("sphere.vtk");
 //    CPPUNIT_ASSERT( true );
 // }
 // ======================================================== Test_cartesi1
 void ModelTest::Test_cartesi1 ()
 {
-   
+
    const int size_x = 15;
    const int size_y = 12;
    const int size_z = 8;
@@ -133,7 +132,7 @@ void ModelTest::Test_cartesi1 ()
                Hex::Hexa* cell = grid->getHexaIJK (nx, ny, nz);
                cell->remove ();
                }
-   
+
    doc->setLevel (1);
    _print_propagations (doc);
    grid->saveVtk ("grid_cart.vtk");
@@ -157,7 +156,7 @@ int ModelTest::_afficher (cpchar nom, Hex::EltBase* elt)
 // ======================================================== Test_find
 void ModelTest::Test_find ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 2;
    const int size_z = 2;
@@ -202,7 +201,7 @@ void ModelTest::Test_find ()
 // ======================================================== Test_joint
 void ModelTest::Test_joint ()
 {
-   
+
    const int dimx = 11;
    const int dimy = 11;
    const int dimz = 2;
@@ -218,13 +217,13 @@ void ModelTest::Test_joint ()
    Hex::Vertex*   orig2 = doc->addVertex  (dimx/2.0,0,8);
    Hex::Vector*   vectj = doc->addVector (0,1,0);
    Hex::Vector*   vecti = doc->addVector (1,0,0);
-   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj, 
+   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj,
                    1, 180, 1,        dimz,dimy,dimx);
 
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
-   Hex::Quad* cible = grid2->getQuadJK (dimz, mx, my); 
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
+   Hex::Quad* cible = grid2->getQuadJK (dimz, mx, my);
 
 
    Hex::Vertex* v1 = prems->getVertex (0);
@@ -237,14 +236,14 @@ void ModelTest::Test_joint ()
 
    liste.push_back (prems);
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
-          liste.push_back (grid1->getQuadIJ (nx, my, dimz)); 
+       if (nx!=mx)
+          liste.push_back (grid1->getQuadIJ (nx, my, dimz));
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
-          liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
+       if (ny!=my)
+          liste.push_back (grid1->getQuadIJ (mx, ny, dimz));
 
-   // Hex::Elements* joint = 
+   // Hex::Elements* joint =
    //
    doc->joinQuads  (liste, cible, v1, v2, v3, v4, 5);
    doc->saveVtk ("joint.vtk");
@@ -254,7 +253,7 @@ void ModelTest::Test_joint ()
 // ======================================================== Test_prism
 void ModelTest::Test_prism ()
 {
-   
+
    const int dimx = 11;
    const int dimy = 11;
    const int dimz = 2;
@@ -269,17 +268,17 @@ void ModelTest::Test_prism ()
 
    int mx = dimx/2;
    int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
+   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
    Hex::Quads liste;
 
    liste.push_back (prems);
    for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx) 
-          liste.push_back (grid1->getQuadIJ (nx, my, dimz)); 
+       if (nx!=mx)
+          liste.push_back (grid1->getQuadIJ (nx, my, dimz));
 
    for (int ny=0; ny<dimy; ny++)
-       if (ny!=my) 
-          liste.push_back (grid1->getQuadIJ (mx, ny, dimz)); 
+       if (ny!=my)
+          liste.push_back (grid1->getQuadIJ (mx, ny, dimz));
 
    doc->prismQuads  (liste, dir, 5);
    doc->saveVtk ("prisme.vtk");
@@ -291,22 +290,22 @@ void ModelTest::Test_prism ()
 // ======================================================== Test_prism2
 void ModelTest::Test_prism2 ()
 {
-    
+
     const int dimx = 11;
     const int dimy = 11;
     const int dimz = 2;
-    
+
     Hex::Hex mon_ex;
     Hex::Document* doc = mon_ex.addDocument ("foo");
-    
+
     Hex::Vertex* orig1 = doc->addVertex (0,0,0);
     Hex::Vector* dir   = doc->addVector (1,1,1);
-    
+
     Hex::Elements* grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
-    
+
     int mx = dimx/2;
     int my = dimy/2;
-    Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz); 
+    Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
     Hex::Elements*  prism = doc->prismQuad(prems, dir, 5);
 
     int nbHexa = prism->countHexa();
@@ -315,10 +314,6 @@ void ModelTest::Test_prism2 ()
     std::cout << "getHexa(1) " << hp1 << std::endl;
     Hex::Vertex*   hp1_v0 = hp1->getVertex(0);
     std::cout << "getVertex ->" << hp1_v0 << std::endl;
-    Hex::Shape* s = new Hex::Shape("la shape");
-    std::cout << "new Hex::Shape->" << s << std::endl;
-    hp1_v0->setAssociation(s);
-    std::cout <<  "setAssociation ->" << std::endl;
     doc->saveVtk ("prisme2.vtk");
 
     CPPUNIT_ASSERT( true );
@@ -334,7 +329,7 @@ void ModelTest::Test_prism2 ()
 // ======================================================== Test_hexa1
 void ModelTest::Test_hexa1 ()
 {
-   
+
    const int size_x = 1;
    const int size_y = 1;
    const int size_z = 1;
@@ -343,7 +338,7 @@ void ModelTest::Test_hexa1 ()
    Hex::Document* doc = mon_ex.addDocument ("foo");
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
-   //  Hex::Elements*  grid = 
+   //  Hex::Elements*  grid =
    doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    doc ->dump ();
@@ -353,7 +348,7 @@ void ModelTest::Test_hexa1 ()
 // ======================================================== Test_decoupage
 void ModelTest::Test_decoupage ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 1;
    const int size_z = 1;
@@ -380,7 +375,7 @@ void ModelTest::Test_decoupage ()
 // ======================================================== Test_gen_xml
 void ModelTest::Test_gen_xml ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 2;
    const int size_z = 2;
@@ -396,14 +391,6 @@ void ModelTest::Test_gen_xml ()
    Hex::Quad*   face    = cell->getQuad (0);
    Hex::Edge*   arete   = cell->getEdge (0);
    Hex::Vertex* noeud   = cell->getVertex (0);
-
-   Hex::Shape* shape1 = new Hex::Shape("riri");
-   Hex::Shape* shape2 = new Hex::Shape("fifi");
-   Hex::Shape* shape3 = new Hex::Shape("loulou");
-
-   noeud->setAssociation (shape1);
-   arete->setAssociation (shape2);
-   face ->setAssociation (shape3);
 
    Hex::Law* law1 = doc->addLaw("loi1", 1);
    Hex::Law* law2 = doc->addLaw("loi2", 2);
@@ -433,7 +420,7 @@ void ModelTest::Test_gen_xml ()
 // ======================================================== Test_relecture
 void ModelTest::Test_relecture ()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.loadDocument ("Essai");
 
@@ -447,7 +434,7 @@ void ModelTest::Test_relecture ()
 // ======================================================== Test_clone
 void ModelTest::Test_clone ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 2;
    const int size_z = 2;
@@ -474,7 +461,7 @@ void ModelTest::Test_clone ()
 // ======================================================== Test_separ
 void ModelTest::Test_separ ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 2;
    const int size_z = 2;
@@ -484,7 +471,7 @@ void ModelTest::Test_separ ()
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
-   //  Hex::Elements*  grid = 
+   //  Hex::Elements*  grid =
    doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    doc ->saveVtk ("separ.vtk");
@@ -495,34 +482,34 @@ void ModelTest::Test_separ ()
 // // ======================================================== Test_cyl_karima
 // void ModelTest::Test_cyl_karima ()
 // {
-//    
+//
 //    Hex::Hex mon_ex;
 //    Hex::Document* doc = mon_ex.addDocument ("foo");
-// 
+//
 //    Hex::Vertex* c2 = doc->addVertex (0,0,0);
 //    Hex::Vector* dz = doc->addVector (0,0,1);
 //    Hex::Vector* dx = doc->addVector (1,0,0);
-// 
+//
 //    double dr = 4.12;
-// 
+//
 //    double a2 = 180;
 //    int    l2 = 70;
-// 
+//
 //    int nr2 = 5;
 //    int na2 = 5;
 //    int nl2 = 1;
-// 
-// /* Hex::Elements* cyl2 = */ doc->makeCylindrical (c2, dx, dz, dr, a2, l2, 
+//
+// /* Hex::Elements* cyl2 = */ doc->makeCylindrical (c2, dx, dz, dr, a2, l2,
 //                                                   nr2, na2, nl2, false );
 //    doc->saveVtk ("cyl_karima.vtk");
 //    // doc->dump ();
-// 
+//
 //    CPPUNIT_ASSERT( true );
 // }
 // ================================================== Test_grille_cyl
 void ModelTest::Test_grille_cyl ()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ("foo");
 
@@ -558,7 +545,7 @@ void ModelTest::Test_grille_cyl ()
 // ===================================================== Test_cylinder
 void ModelTest::Test_cylinder ()
 {
-   
+
    int    nvtk    = 0;
    cpchar fic_vtk = "cylindre";
 
@@ -598,7 +585,7 @@ void ModelTest::myTest_croix ()
 
 //   Hex::Vector* dx1 = doc->addVector( -1, 0, 0 );
 //   Hex::Vector* dz1 = doc->addVector( 0, 0, 1 );
-//   
+//
 //   Hex::Vertex* c_pte_1 = doc->addVertex ( 195., 0., 220. );
 //   Hex::Vertex* c_grd_1 = doc->addVertex ( 300., 0., 400. );
 //   Hex::Cylinder* cyl_pte_1 = doc->addCylinder( c_pte_1 , dz1 , 25 , 360 );
@@ -607,7 +594,7 @@ void ModelTest::myTest_croix ()
 
   Hex::Vector* dx2 = doc->addVector(-1, 0, 0 );
   Hex::Vector* dz2 = doc->addVector( 0, 0, 1 );
-  
+
   Hex::Vertex* c_pte_2 = doc->addVertex( 110., 0. , 400. );
   Hex::Vertex* c_grd_2 = doc->addVertex( 0.  , 0. , 0. );
 
@@ -639,7 +626,7 @@ void ModelTest::myTest_croix ()
 // ======================================================== Test_croix
 void ModelTest::Test_croix ()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ("foo");
 
@@ -710,7 +697,7 @@ void ModelTest::Test_croix ()
 // ======================================================== Test_pipes
 void ModelTest::Test_pipes ()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ("foo");
 
@@ -737,7 +724,7 @@ void ModelTest::Test_pipes ()
 // ======================================================== Test_lorraine
 void ModelTest::Test_lorraine()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ("foo");
 
@@ -773,7 +760,7 @@ void ModelTest::Test_lorraine()
    //           vc3 = grid2->getVertexIJK (Hex::Cyl1, 0,0,0);
                                      //    Cyl     i     j     k
    Hex::Quad* qb = grid1-> getQuadIJ (Hex::Cyl2, nx_ext, Hex::S_E, 4);
-   Hex::Quad* qh = grid2-> getQuadIJ (Hex::Cyl1, nx_ext, Hex::S_N, 0); 
+   Hex::Quad* qh = grid2-> getQuadIJ (Hex::Cyl1, nx_ext, Hex::S_N, 0);
 
    Hex::Vertex* vb0 = qb->getVertex (3);
    Hex::Vertex* vb1 = qb->getVertex (2);
@@ -798,11 +785,11 @@ void ModelTest::Test_lorraine()
    for (int ny=1; ny<Hex::S_MAXI; ny++)
        {
        int ns = (ny + Hex::S_N) MODULO Hex::S_MAXI;
-       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_ext, ns, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_ext, ns, 0));
        }
 
    for (int ny=0; ny<4 ;  ny++)
-       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_int, ny, 0)); 
+       hliste.push_back (grid2->getQuadIJ (Hex::Cyl1, nx_int, ny, 0));
 
    doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, 5);
    doc->saveVtk ("lorraine.vtk");
@@ -812,7 +799,7 @@ void ModelTest::Test_lorraine()
 // ======================================================== Test_disconnect
 void ModelTest::Test_disconnect ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 2;
    const int size_z = 1;
@@ -871,7 +858,7 @@ void ModelTest::Test_disconnect ()
 // ======================================================== Test_propagation
 void ModelTest::Test_propagation ()
 {
-   
+
    const int size_x = 2;
    const int size_y = 1;
    const int size_z = 1;
@@ -881,7 +868,7 @@ void ModelTest::Test_propagation ()
 
    Hex::Vertex*   orig = doc->addVertex (0,0,0);
    Hex::Vector*   dir  = doc->addVector (1,1,1);
-   //  Hex::Elements* grid = 
+   //  Hex::Elements* grid =
    doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    int nb = doc->countPropagation ();
@@ -918,7 +905,7 @@ void ModelTest::Test_propagation ()
 // ======================================================== Test_move
 void ModelTest::Test_move ()
 {
-   
+
    const int size_x = 1;
    const int size_y = 1;
    const int size_z = 2;
@@ -940,7 +927,7 @@ void ModelTest::Test_move ()
    Hex::Hexa* cube    = grid->getHexa (1);
    Hex::Quad* dessous = cube->getQuad (Hex::Q_A);
    dessous->dump();
-   
+
    Hex::Elements* grid2 = doc->makeTranslation (grid, devant);
    /* Hex::Elements* grid3 = doc->makeTranslation (grid, agauche); */
    Hex::Hexa* cube2     = grid2->getHexa (1);
@@ -959,7 +946,7 @@ void ModelTest::Test_move ()
 // ======================================================== Test_deux_cyl
 void ModelTest::Test_deux_cyl ()
 {
-   
+
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ("foo");
 
@@ -977,10 +964,10 @@ void ModelTest::Test_deux_cyl ()
    int    na = 6;
    int    nl = 10;
 
-   /* Hex::Elements* cyl1 = */ doc->makeCylindrical(orig1, vy,vz, dr, da, 
+   /* Hex::Elements* cyl1 = */ doc->makeCylindrical(orig1, vy,vz, dr, da,
                                        dl,nr,na,nl);
 
-   /* Hex::Elements* cyl2 = */ doc->makeCylindrical(orig2, vz,vx, dr/2, da, 
+   /* Hex::Elements* cyl2 = */ doc->makeCylindrical(orig2, vz,vx, dr/2, da,
                                        dl,nr,na,nl);
    doc->saveVtk ("deux_cylindres.vtk");
    CPPUNIT_ASSERT( true );
@@ -988,7 +975,7 @@ void ModelTest::Test_deux_cyl ()
 // ======================================================== Test_move2
 void ModelTest::Test_transfo ()
 {
-   
+
    const int size_x = 1;
    const int size_y = 1;
    const int size_z = 2;

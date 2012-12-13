@@ -25,9 +25,15 @@
 #include "HexVector.hxx"
 
 #include "HexXmlWriter.hxx"
-#include "HexShape.hxx"
+#include "HexDocument.hxx"
+#include "HexOldShape.hxx"
+#include "HexNewShape.hxx"
+#include "HexVertexShape.hxx"
+#include "HexKas_functions.hxx"
 
 BEGIN_NAMESPACE_HEXA
+
+static bool db =  on_debug ();  // == getenv ("HEXA_DB") > 0
 
 // ====================================================== Constructeur
 Vertex::Vertex  (Document* doc, double x, double y, double z)
@@ -37,38 +43,47 @@ Vertex::Vertex  (Document* doc, double x, double y, double z)
    gc_y = v_y = y;
    gc_z = v_z = z;
 
+   v_shape  = NULL;
    v_scalar = 0;
    v_clone  = NULL;
 }
-// ========================================================= getParent 
+// ========================================================= getParent
 Edge* Vertex::getParent  (int nro)
 {
    return static_cast <Edge*> (getFather (nro));
 }
-// ========================================================= saveXml 
+// ========================================================= saveXml
 void Vertex::saveXml  (XmlWriter* xml)
 {
    char buffer[12], coord[80];
 
-   sprintf (coord, "%g %g %g", v_x,v_y,v_z);
+   sprintf (coord, "%g %g %g", v_x, v_y, v_z);
 
    xml->openMark     ("Vertex");
    xml->addAttribute ("id",    getName (buffer));
    xml->addAttribute ("coord", coord);
-   if (el_name!=buffer) 
+   if (el_name!=buffer)
        xml->addAttribute ("name", el_name);
-   if (el_assoc!=NULL)
-      xml->addAttribute ("shape", el_assoc->getBrep().c_str());
    xml->closeMark ();
+
+   if (v_shape != NULL)
+      {
+      sprintf (coord, "%g %g %g", gc_x, gc_y, gc_z);
+      v_shape->callXml (xml);
+      xml->addAttribute ("coord", coord);
+      xml->closeMark ();
+      }
+
+// if (el_assoc!=NULL) xml->addAttribute ("shape", el_assoc->getBrep().c_str());
 }
-// ========================================================= translate 
+// ========================================================= translate
 void  Vertex::translate  (Vector* vecteur, double fact)
 {
     v_x += fact*vecteur->getDx ();
     v_y += fact*vecteur->getDy ();
     v_z += fact*vecteur->getDz ();
 }
-// ========================================================= createMiddle 
+// ========================================================= createMiddle
 Vertex* Vertex::createMiddle  (Vertex* left, Vertex* right)
 {
     Vertex* milieu = new Vertex (left);
@@ -78,5 +93,78 @@ Vertex* Vertex::createMiddle  (Vertex* left, Vertex* right)
     milieu->v_z = (left->v_z + right->v_z) / 2;
 
     return milieu;
+}
+// ========================================================= setAssociation
+int Vertex::setAssociation (VertexShape* forme)
+{
+   if (forme==NULL)
+      return HERR;
+
+   forme->addAssociation (this);
+   forme->getCoords (gc_x, gc_y, gc_z);
+   v_shape = forme;
+
+   if (db) cout << " Vertex "           << el_name
+                << " setAssociation-> " << forme->getName ()
+                << " = (" << gc_x << ", " << gc_y << ", " << gc_z << ") \n" ;
+
+   is_associated = true;
+   return HOK;
+}
+// ========================================================= setAssociation
+int Vertex::setAssociation (NewShape* geom, int subid)
+{
+   if (geom==NULL)
+      return HERR;
+
+   VertexShape* shape = geom->findVertex (subid);
+   if (shape==NULL)
+      return HERR;
+
+   int ier = setAssociation (shape);
+   return ier;
+}
+// ========================================================= setAssociation
+int Vertex::setAssociation (double* point)
+{
+   NewShape* cloud = el_root->getCloud();
+
+   int subid = cloud->addPoint (point);
+   int ier   = setAssociation  (cloud, subid);
+   return ier;
+}
+// ========================================================= setAssociation
+int Vertex::setAssociation (double px, double py, double pz)
+{
+   Real3 point = { px, py, pz };
+   int   ier   = setAssociation (point);
+   return ier;
+}
+// ========================================================= clearAssociation
+void Vertex::clearAssociation ()
+{
+   v_shape = NULL;
+   is_associated = false;
+}
+// ========================================================= getAssoCoord
+void Vertex::getAssoCoord (double &px, double &py, double &pz)
+{
+   if (is_associated)
+      {
+      px = gc_x;
+      py = gc_y;
+      pz = gc_z;
+      }
+   else
+      {
+      px = v_x;
+      py = v_y;
+      pz = v_z;
+      }
+}
+// ========================================================= getAssoCoord
+void Vertex::getAssoCoord (double* point)
+{
+   getAssoCoord (point[dir_x], point[dir_y], point[dir_z]);
 }
 END_NAMESPACE_HEXA

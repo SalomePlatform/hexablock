@@ -38,10 +38,10 @@ public:
 
   Edge_ptr getEdge(::CORBA::Long n) throw (SALOME::SALOME_Exception);
   Vertex_ptr getVertex(::CORBA::Long n) throw (SALOME::SALOME_Exception);
-//   void setAssociation(GEOM::GEOM_Object_ptr geom_object_2D) throw (SALOME::SALOME_Exception);
-//   GEOM::GEOM_Object_ptr getAssociation() throw (SALOME::SALOME_Exception);
-  ::CORBA::Long addAssociation ( GEOM::GEOM_Object_ptr geom_object_2D) //CS_NOT_SPEC
-      throw (SALOME::SALOME_Exception);
+
+  ::CORBA::Long addAssociation (NewShape_ptr geom, ::CORBA::Long subid)
+                         throw (SALOME::SALOME_Exception);
+
   GEOM::ListOfGO* getAssociations () //CS_NOT_SPEC
       throw (SALOME::SALOME_Exception);
 
@@ -57,7 +57,6 @@ public:
 
 private:
   HEXA_NS::Quad *_quad_cpp;
-//   std::vector<GEOM::GEOM_Object_ptr> _associations;
 };
 
 #endif

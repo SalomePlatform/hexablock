@@ -25,7 +25,7 @@ using namespace std;
 
 #include "HexVertex_impl.hxx"
 #include "HexEdge_impl.hxx"
-#include "HexShape.hxx"
+#include "HexNewShape_impl.hxx"
 
 using namespace HEXABLOCK_ORB;
 
@@ -43,12 +43,6 @@ HEXA_NS::Edge* Edge_impl::GetImpl()
 
 ::CORBA::Boolean Edge_impl::getWay() throw (SALOME::SALOME_Exception)
 {
-//   bool way = _edge_cpp->getWay();
-//   if ( way == true ) {
-//     return CORBA::TRUE;
-//   else {
-//     return CORBA::FALSE;
-//   }
   return _edge_cpp->getWay();
 }
 
@@ -84,132 +78,41 @@ char* Edge_impl::getName() throw (SALOME::SALOME_Exception)
 }
 
 // ========================================================= setName
-void Edge_impl::setName(const char* name) 
+void Edge_impl::setName(const char* name)
      throw (SALOME::SALOME_Exception)
 {
   _edge_cpp->setName (name);
 }
 
+// ========================================================= setColor
 void Edge_impl::setColor (::CORBA::Double val)
      throw (SALOME::SALOME_Exception)
 {
   _edge_cpp->setColor (val);
 }
 
-void Edge_impl::setScalar( ::CORBA::Double val )throw (SALOME::SALOME_Exception)
-{
-  _edge_cpp->setScalar(val);
-}
-
-
-::CORBA::Long Edge_impl::addAssociation( GEOM::GEOM_Object_ptr geom_object_1D, double debut, double fin )
-  throw (SALOME::SALOME_Exception)
-{
-  ::CORBA::Long ok;
-  TopoDS_Shape aShape = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->geomObjectToShape( geom_object_1D );
-  string      strBrep = shape2string( aShape );
-  CORBA::String_var anIOR = HEXABLOCK_Gen_i::GetORB()->object_to_string( geom_object_1D );
-  HEXA_NS::Shape* s = new HEXA_NS::Shape( strBrep );
-  s->ior   = anIOR.in(); //geom_object_1D->GetStudyEntry(); GetEntry()
-  s->ident = geom_object_1D->GetStudyEntry();
-  s->debut = debut;
-  s->fin   = fin;
-  ok       = _edge_cpp->addAssociation( s );
-
-//   Edge_impl::Assoc assoc;
-//   assoc.geomObj = GEOM::GEOM_Object::_duplicate( geom_object_1D );
-//   assoc.debut   = debut;
-//   assoc.fin     = fin;
-//   _associations.push_back(assoc);
-
-  return ok;
-}
-
+// ========================================================= clearAssociation
 void Edge_impl::clearAssociation()
       throw (SALOME::SALOME_Exception)
 {
   _edge_cpp->clearAssociation ();
 }
 
-
-
-// EdgeAssociations* Edge_impl::getAssociations() //CS_NOT_SPEC
-//   throw (SALOME::SALOME_Exception)
-// {
-//   HEXABLOCK_ORB::EdgeAssociations* result = new HEXABLOCK_ORB::EdgeAssociations;
-//   result->length( _associations.size() );
-// 
-//   HEXABLOCK_ORB::EdgeAssociation assoc;
-//   CORBA::ULong i = 0;
-//   for ( std::vector<Edge_impl::Assoc>::const_iterator iter = _associations.begin();
-// 	iter != _associations.end();
-//         ++iter){
-// //       assoc.geomObj = (*iter).geomObj;
-//       assoc.geomObj = GEOM::GEOM_Object::_duplicate( (*iter).geomObj );
-//       assoc.debut = (*iter).debut;
-//       assoc.fin   = (*iter).fin;
-//       (*result)[i++] = assoc;
-//   }
-//   return result;
-// }
-
-
-
-
-EdgeAssociations* Edge_impl::getAssociations ()
+// =========================================================== countAssociation
+::CORBA::Long Edge_impl::countAssociation ()
   throw (SALOME::SALOME_Exception)
 {
-  HEXABLOCK_ORB::EdgeAssociations* result = new HEXABLOCK_ORB::EdgeAssociations;
-//   HEXABLOCK_ORB::GEOM_Object_ptr ge;
-//   GEOM::GEOM_Object_ptr ge;
-  TopoDS_Shape aShape;
-  const std::vector<HEXA_NS::Shape*> shapes = _edge_cpp->getAssociations();
-
-  result->length( shapes.size() );
-  HEXABLOCK_ORB::EdgeAssociation assoc;
-  CORBA::ULong i = 0;
-  CORBA::Object_var corbaObj;
-  GEOM::GEOM_Object_var geomObj;
-
-//   std::cout << "XXXXXXXX shapes "<< shapes.size() << std::endl;
-  for ( std::vector<HEXA_NS::Shape*>::const_iterator iter = shapes.begin();
-	iter != shapes.end();
-        ++iter ){
-//       ge = GEOM::GEOM_Object::_duplicate(HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape )); 
-//       ge = HEXABLOCK_ORB::GEOM_Edge::_duplicate(HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape ));
-//       ge = HEXABLOCK::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
-//       ge->debut( (*iter)->debut );
-//       ge->fin( (*iter)->fin );
-//       assoc.geomObj = GEOM::GEOM_Object::_duplicate( (*iter).geomObj );
-//       aShape = string2shape( (*iter)->getBrep());
-//       assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->shapeToGeomObject( aShape );
-
-//       if ( !(*iter)->ior.empty() ){
-//         corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
-//         if ( !CORBA::is_nil( corbaObj ) ){
-//           geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-//           assoc.geomObj = geomObj._retn();
-//           assoc.debut   = (*iter)->debut;
-//           assoc.fin     = (*iter)->fin;
-//           (*result)[ i++ ] = assoc;
-//         }
-//       }
-      assoc.debut   = (*iter)->debut;
-      assoc.fin     = (*iter)->fin;
-
-      if ( !(*iter)->ior.empty() ){ // geom object from current session
-        corbaObj = HEXABLOCK_Gen_i::GetORB()->string_to_object( (*iter)->ior.c_str() );
-        if ( !CORBA::is_nil( corbaObj ) ){
-          geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
-          assoc.geomObj = geomObj._retn();
-        }
-      } else { // no geom object => we have to built it
-        assoc.geomObj = HEXABLOCK_Gen_i::GetHEXABLOCKGen()->brepToGeomObject( (*iter)->getBrep() );
-      }
-
-      (*result)[ i++ ] = assoc;
-  }
-  return result;
+  return _edge_cpp->countAssociation ();
 }
+// ========================================================= addAssociation
+::CORBA::Long Edge_impl::addAssociation (NewShape_ptr geom,
+                                         ::CORBA::Long subid,
+                                         double debut, double fin )
+                                    throw (SALOME::SALOME_Exception)
+{
+  NewShape_impl*     im_shape = ::DownCast<NewShape_impl*> (geom );
+  HEXA_NS::NewShape* md_shape = im_shape->GetImpl();
 
-
+  ::CORBA::Long ier = _edge_cpp->addAssociation (md_shape, subid, debut, fin);
+  return ier;
+}

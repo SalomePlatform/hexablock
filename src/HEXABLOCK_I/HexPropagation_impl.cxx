@@ -45,19 +45,12 @@ HEXABLOCK_ORB::Edges* Propagation_impl::getEdges() throw (SALOME::SALOME_Excepti
   HEXABLOCK_ORB::Edges* result = new HEXABLOCK_ORB::Edges;
 
   const HEXA_NS::Edges& edges_cpp = _propagation_cpp->getEdges();
-//   HEXA_NS::Edges edges_cpp = _propagation_cpp->getEdges();
-  std::cout<<"XX edges_cpp.size() ->"<<edges_cpp.size()<<std::endl;
 
   CORBA::ULong i = 0;
   result->length( edges_cpp.size() );
-//   HEXA_NS::Edges::const_iterator itertest = edges_cpp.begin();
-//   itertest != edges_cpp.end();
   for ( HEXA_NS::Edges::const_iterator iter = edges_cpp.begin();
 	iter != edges_cpp.end();
         ++iter){
-//       printf ("     (");
-//       (*iter)->getVertex (0)->printName (", ");
-//       (*iter)->getVertex (1)->printName (")\n");
       Edge_impl *servantEdge = new Edge_impl( *iter );
       (*result)[ i++ ] = servantEdge->_this();
 
@@ -65,26 +58,6 @@ HEXABLOCK_ORB::Edges* Propagation_impl::getEdges() throw (SALOME::SALOME_Excepti
   return result;
 }
 
-
-// HEXABLOCK_ORB::Ways* Propagation_impl::getWays() throw (SALOME::SALOME_Exception)
-// {
-//   HEXABLOCK_ORB::Ways* result = new HEXABLOCK_ORB::Ways;
-//   const vector<bool>& ways_cpp = _propagation_cpp->getWays();
-// 
-//   CORBA::ULong i = 0;
-//   result->length( ways_cpp.size() );
-//   for ( vector<bool>::const_iterator iter = ways_cpp.begin();
-// 	iter != ways_cpp.end(); ++iter ){
-//     (*result)[ i++ ] = *iter;
-// //     if (*iter == true ) {
-// //       (*result)[ i++ ] = ::CORBA::TRUE;
-// //     } else {
-// //       (*result)[ i++ ] = ::CORBA::FALSE;
-// //     }
-//   }
-//   return result;
-// 
-// }
 
 void Propagation_impl::setLaw(HEXABLOCK_ORB::Law_ptr lawIn) throw (SALOME::SALOME_Exception)
 {

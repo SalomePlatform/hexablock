@@ -6,7 +6,7 @@
 Merge elements
 ==============
 
-To merge elements in the **Main Menu** select **Model -> Merge**.
+To merge elements in the **Main Menu** select **Model -> Operation -> Merge**.
 
 .. _guimergequads:
 
@@ -15,11 +15,12 @@ Merge two quadrangles
 
 **Arguments:**
 
-- 2 quadrangles (q1 and q2),
-- 4 vertices (v1, v2, v3, v4).
+- 2 quadrangles (quad 1 and quad 2),
+- 4 vertices (vertex 1a, vertex 2a, vertex 1b, vertex 2b).
 
-v1: vertex of the quadrangle *q1* to merge with the vertex *v2* of the quadrangle *q2*.
-v3: vertex of the quadrangle *q1* to merge with the vertex *v4* of the quadrangle *q2*.
+vertex 1a: vertex of the quadrangle *quad 1* to merge with the vertex *vertex 2a* of the quadrangle *quad 2*.
+
+vertex 1b: vertex of the quadrangle *quad 1* to merge with the vertex *vertex 2b* of the quadrangle *quad 2*.
 
 
 The dialogue box to merge two quadrangles is:
@@ -38,10 +39,10 @@ Merge two edges
 
 **Arguments:**
 
-- 2 edges (e1 and e2),
-- 2 vertices (v1 and v2).
+- 2 edges (edge 1 and edge 2),
+- 2 vertices (vertex 1 and vertex 2).
 
-v1: vertex of the edge *e1* to merge with the vertex *v2* of the edge *e2*.
+vertex 1: vertex of the edge *edge 1* to merge with the vertex *vertex 2* of the edge *edge 2*.
 
 The dialogue box to merge two edges is:
 
@@ -56,7 +57,7 @@ The dialogue box to merge two edges is:
 Merge two vertices
 ==================
 
-**Arguments:** 2 vertices (v1 and v2).
+**Arguments:** 2 vertices (vertex 1 and vertex 2).
 
 
 The dialogue box to merge two vertices is:

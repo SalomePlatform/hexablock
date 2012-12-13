@@ -28,15 +28,15 @@
 
 #include "Element.idl"
 
-
 /*!  \ingroup EXAMPLES
 
-This package contains the interface HEXABLOCK_ORB used 
-for  %HEXABLOCK component 
+This package contains the interface HEXABLOCK_ORB used
+for  %HEXABLOCK component
 */
 module HEXABLOCK_ORB
 {
 
+    interface NewShape;
     interface Vertex : Element
     {
         double getX() raises (SALOME::SALOME_Exception);
@@ -47,20 +47,19 @@ module HEXABLOCK_ORB
         void setY( in double y ) raises (SALOME::SALOME_Exception);
         void setZ( in double z ) raises (SALOME::SALOME_Exception);
 
-        void setAssociation( in GEOM::GEOM_Object geom_object_vertex )
-            raises (SALOME::SALOME_Exception);
-
-        GEOM::GEOM_Object getAssociation()
-            raises (SALOME::SALOME_Exception);
-
         void clearAssociation()
             raises (SALOME::SALOME_Exception);
 
         void setColor (in double value)
              raises (SALOME::SALOME_Exception);
 
-	void setScalar( in double val ) //CS_NOT_SPEC --> To delete
-		raises (SALOME::SALOME_Exception);
+        long setAssociation ( in NewShape geom, in long subid)
+                     raises (SALOME::SALOME_Exception);
+
+        double getAssoX () raises (SALOME::SALOME_Exception);
+        double getAssoY () raises (SALOME::SALOME_Exception);
+        double getAssoZ () raises (SALOME::SALOME_Exception);
+
 
     };
 

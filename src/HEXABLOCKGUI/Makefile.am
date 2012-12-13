@@ -40,8 +40,12 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_Trace.cxx \
     HEXABLOCKGUI_Resource.hxx \
     HEXABLOCKGUI_Resource.cxx \
-    HEXABLOCKGUI_DocumentGraphicView.hxx \
-    HEXABLOCKGUI_DocumentGraphicView.cxx \
+    HEXABLOCKGUI_VtkDocumentGraphicView.hxx \
+    HEXABLOCKGUI_VtkDocumentGraphicView.cxx \
+    HEXABLOCKGUI_OccGraphicView.hxx \
+    HEXABLOCKGUI_OccGraphicView.cxx \
+    HEXABLOCKGUI_GraphicViewsHandler.hxx \
+    HEXABLOCKGUI_GraphicViewsHandler.cxx \
     HEXABLOCKGUI_DocumentModel.hxx \
     HEXABLOCKGUI_DocumentModel.cxx \
     HEXABLOCKGUI_DocumentSelectionModel.hxx \
@@ -97,13 +101,15 @@ UIC_FILES = \
 	ui_QuadRevolution_QTD.h \
 	ui_MakeRind_QTD.h \
 	ui_ReplaceHexa_QTD.h \
-	ui_MakeHemiSphere_QTD.h
+	ui_MakeHemiSphere_QTD.h\
+	ui_ModelInfo_QTD.h\
+	ui_AddShapeDialog_QTD.h
 
 
 # MOC pre-processing
 MOC_FILES = \
     HEXABLOCKGUI_moc.cxx \
-    HEXABLOCKGUI_DocumentGraphicView_moc.cxx \
+    HEXABLOCKGUI_VtkDocumentGraphicView_moc.cxx \
     HEXABLOCKGUI_DocumentPanel_moc.cxx \
     HEXABLOCKGUI_DocumentDelegate_moc.cxx \
     HEXABLOCKGUI_DocumentSelectionModel_moc.cxx \
@@ -160,9 +166,11 @@ BUILT_SOURCES = $(UIC_FILES)
 
 # resources files
 ICONS =  \
+	resources/LightApp.xml \
 	resources/SalomeApp.xml \
 	resources/HEXABLOCKCatalog.xml \
 	resources/ModuleHexablock.png \
+	resources/ModuleHexablock15x15.png\
 	resources/new_document.png \
 	resources/load_document.png \
 	resources/save_document.png \

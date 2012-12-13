@@ -48,9 +48,9 @@ public:
     virtual Edge*   getEdge   (int  nro);
     virtual Vertex* getVertex (int  nro);
 
-    virtual int countEdge   () { return QUAD4; } 
-    virtual int countVertex () { return QUAD4; } 
- 
+    virtual int countEdge   () { return QUAD4; }
+    virtual int countVertex () { return QUAD4; }
+
 public:
     Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd);
     Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed);
@@ -89,66 +89,46 @@ public:
     virtual void replaceEdge   (Edge*   old, Edge*   nouveau);
     virtual void replaceVertex (Vertex* old, Vertex* nouveau);
 
-    virtual void  setAssociation (Shape* forme);
-    virtual int   addAssociation (Shape* forme); 
-    virtual void  clearAssociation  ()      { tab_assoc.clear() ; }
-    virtual bool  isAssociated ()           { return tab_assoc.size() > 0  ; }
+    virtual void  setAssociation (Shape* forme) {}              // PERIME
+    virtual int   addAssociation (Shape* forme) {return HOK ; } // PERIME
 
-    const Shapes& getAssociations ()        { return tab_assoc ; }
+    virtual void  clearAssociation  ();
+
+    // const Shapes& getAssociations ()        { return tab_shapes ; }
 
 
     virtual void duplicate ();
     Quad* getClone ()               {  return q_clone ; }
 
-    Edge* getOpposEdge     (Edge* arete);   // Version simplifiee 
-    Edge* getPerpendicular (Edge* arete, Vertex* node); 
+    Edge* getOpposEdge     (Edge* arete);   // Version simplifiee
+    Edge* getPerpendicular (Edge* arete, Vertex* node);
     int   getOrientation ()            { return q_orientation; }
     int   setOrientation ();
     void  setOrientation (int ori);
+                                                      // Hexa5
+    int   addAssociation (NewShape*  forme, int subid);
+    int   addAssociation (FaceShape* forme);
+    int   countAssociation ()                     { return tab_assoc.size () ; }
+    FaceShape* getAssociation (int nro);
 
 private:
     friend class Cloner;
     Quad* getBrother (StrOrient* orient);
-    
+
 private:
     Edge*   q_edge   [QUAD4];
     Vertex* q_vertex [QUAD4];
     Quad*   q_clone;
-    int     q_orientation; 
+    int     q_orientation;
 
-    Shapes tab_assoc;
+    FaceShapes tab_assoc;
 };
 // ----------------------------------------------- Inlining
-// ========================================================== addAssociation
-inline int Quad::addAssociation (Shape* forme)
-{
-   if (forme != NULL)
-       tab_assoc.push_back (forme);
-   return HOK;
-}
-// ============================================================  getEdge
-inline Edge* Quad::getEdge (int nro) 
-{
-   Edge* elt = NULL;
-   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_edge [nro]->isValid())
-      elt = q_edge [nro]; 
-
-   return elt;
-}
-// ============================================================  getVertex
-inline Vertex* Quad::getVertex (int nro) 
-{
-   Vertex* elt = NULL;
-   if (nro >=0 && nro < QUAD4 && el_status == HOK && q_vertex [nro]->isValid())
-      elt = q_vertex [nro]; 
-
-   return elt;
-}
 // ======================================================== commonEdge
 inline Edge* Quad::commonEdge (Quad* other)
 {
-   for (int ne1=0 ; ne1<QUAD4 ; ne1++) 
-       for (int ne2=0 ; ne2<QUAD4 ; ne2++) 
+   for (int ne1=0 ; ne1<QUAD4 ; ne1++)
+       for (int ne2=0 ; ne2<QUAD4 ; ne2++)
            if (q_edge [ne1] == other->q_edge [ne2])
               return q_edge [ne1];
 
@@ -158,8 +138,8 @@ inline Edge* Quad::commonEdge (Quad* other)
 // ======================================================== Inter
 inline int Quad::inter (Quad* other, int& nother)
 {
-   for (int ne1=0 ; ne1<QUAD4 ; ne1++) 
-       for (int ne2=0 ; ne2<QUAD4 ; ne2++) 
+   for (int ne1=0 ; ne1<QUAD4 ; ne1++)
+       for (int ne2=0 ; ne2<QUAD4 ; ne2++)
            if (q_edge [ne1] == other->q_edge [ne2])
               {
               nother = ne2;
@@ -204,7 +184,7 @@ inline Edge* Quad::findEdge (Vertex* v1, Vertex* v2)
 inline int Quad::indexVertex  (Vertex* elt)
 {
    for (int n1=0 ; n1< QUAD4 ; n1++)
-       if (elt == q_vertex[n1]) 
+       if (elt == q_vertex[n1])
           return n1;
 
    return NOTHING;
@@ -213,7 +193,7 @@ inline int Quad::indexVertex  (Vertex* elt)
 inline int Quad::indexEdge  (Edge* elt)
 {
    for (int n1=0 ; n1< QUAD4 ; n1++)
-       if (elt == q_edge[n1]) 
+       if (elt == q_edge[n1])
           return n1;
 
    return NOTHING;
@@ -228,11 +208,11 @@ inline void Quad::setScalar  (double val)
 inline void Quad::duplicate  ()
 {
    q_orientation  = Q_UNDEFINED;
-   q_clone = new Quad (GetClone (q_edge [E_A]), 
-                       GetClone (q_edge [E_B]), 
-                       GetClone (q_edge [E_C]), 
+   q_clone = new Quad (GetClone (q_edge [E_A]),
+                       GetClone (q_edge [E_B]),
+                       GetClone (q_edge [E_C]),
                        GetClone (q_edge [E_D]));
-   q_clone->tab_assoc = tab_assoc;
+   q_clone->tab_assoc  = tab_assoc;
 }
 END_NAMESPACE_HEXA
 #endif

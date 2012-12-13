@@ -88,6 +88,7 @@ int Document::performSymmetryPlane (Elements* elts, Vertex* ver, Vector* vec)
    int    ier = elts->transform (&matrice);
    return ier;
 }
+
 // ==================================================== performSymmetryLine
 int Document::performSymmetryLine (Elements* elts, Vertex* ver, Vector* vec)
 { 
@@ -243,8 +244,6 @@ void Document::dumpPropagation ()
 void Document::reorderFaces ()
 {
    majReferences ();
-   Real3 cg, orig, pi, pj, vi, vj, vk;
-
    for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
                  elt = elt->next())
        {

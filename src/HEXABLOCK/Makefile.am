@@ -24,8 +24,8 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Files to be installed
 # ===============================================================
 #
-# 	
-# header files  
+#
+# header files
 salomeinclude_HEADERS = \
 	HexGroup.hxx \
 	HexCylinder.hxx \
@@ -48,8 +48,18 @@ salomeinclude_HEADERS = \
 	Hex.hxx \
 	HexPipe.hxx \
 	HexShape.hxx \
+	HexOldShape.hxx \
+	HexNewShape.hxx \
+	HexSubShape.hxx \
+	HexVertexShape.hxx \
+	HexEdgeShape.hxx \
+	HexFaceShape.hxx \
+	HexBiCylinderShape.hxx \
+	HexAssoEdge.hxx \
 	HexXmlTree.hxx \
 	HexCrossElements.hxx \
+	HexBiCylinder.hxx \
+	HexDumpStudy.hxx \
 	HexAnaQuads.hxx \
 	HexKasPoint.hxx \
 	HexKasLine.hxx \
@@ -85,13 +95,22 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexPipe.cxx \
 	HexLaw.cxx \
 	HexShape.cxx \
+	HexNewShape.cxx \
+	HexSubShape.cxx \
 	HexDocument_trans.cxx \
+	HexVertexShape.cxx \
+	HexEdgeShape.cxx \
+	HexFaceShape.cxx \
+	HexBiCylinderShape.cxx \
+	HexAssoEdge.cxx \
 	HexDocument_Xml.cxx \
 	HexDocument.cxx \
 	HexXmlTree.cxx \
 	HexXmlWriter.cxx \
+	HexDumpStudy.cxx \
 	HexCrossElements.cxx \
 	HexCrossElements_build.cxx \
+	HexBiCylinder.cxx \
 	Hex.cxx              \
 	HexDocument_asso.cxx \
 	HexDocument_quads.cxx \
@@ -102,7 +121,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 
 # libHEXABLOCKimpl_la_CPPFLAGS = \
 # 	-I$(top_builddir)/salome_adm/unix
-# 
+#
 # libHEXABLOCKimpl_la_LDFLAGS = \
 # 	-lOpUtil
 

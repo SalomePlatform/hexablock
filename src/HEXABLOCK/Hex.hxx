@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
 
 #ifndef __HEX_H
@@ -30,19 +31,34 @@ BEGIN_NAMESPACE_HEXA
 class Hex
 {
 public:
+   static Hex* getInstance ();
+
    int       countDocument ();
    Document* getDocument (int nro);
    void      removeDocument (Document* doc);
 
-   Document* addDocument  (const char* name="default");
-   Document* loadDocument (const char* name);
+   Document* addDocument  (cpchar name="default");
+   Document* loadDocument (cpchar name);
+   Document* findDocument (cpchar name);
+   Document* findDocument (const string& name) 
+             { return findDocument (name.c_str()) ; }
 
+   int loadAllDocs (cpchar flow);
+   int saveAllDocs (cpchar filename);
+   void makeName   (cpchar radical, string& name);
+
+   void lockDump();
+   void restoreDump();
+     
+// private:
              //  Constructeur + destructeur
     Hex ();
    ~Hex ();
 
 private:
+   static Hex* first_instance;
    vector <Document*> liste_documents;
+   Globale*    glob;
 };
 
 END_NAMESPACE_HEXA

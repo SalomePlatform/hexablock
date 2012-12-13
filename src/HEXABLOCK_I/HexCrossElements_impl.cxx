@@ -139,35 +139,11 @@ Hexa_ptr CrossElements_impl::getHexaIJK(::CORBA::Long part, ::CORBA::Long x, ::C
   return result;
 }
 
-::CORBA::Long CrossElements_impl::crossCylinders(Cylinder_ptr c1In, Cylinder_ptr  c2In)
-throw (SALOME::SALOME_Exception)
-{
-  ::CORBA::Long result;
-  Cylinder_impl* c1InServant = ::DownCast<Cylinder_impl*>( c1In );
-  Cylinder_impl* c2InServant = ::DownCast<Cylinder_impl*>( c2In );
-
-  ASSERT( c1InServant );
-  ASSERT( c2InServant );
-
-  if ( c1InServant &&  c2InServant ) {
-    HEXA_NS::Cylinder* c1 = c1InServant->GetImpl();
-    HEXA_NS::Cylinder* c2 = c2InServant->GetImpl();
-
-    result = _crossElements_cpp->crossCylinders(c1,c2);
-  }
-  return result;
-
-}
-
-
-
 ::CORBA::Long CrossElements_impl::saveVtk(const char* fname) throw (SALOME::SALOME_Exception)
 {
   ::CORBA::Long ret = _crossElements_cpp->saveVtk( fname );
   return ret;
 }
-
-
 
 void CrossElements_impl::dump() throw (SALOME::SALOME_Exception)
 {

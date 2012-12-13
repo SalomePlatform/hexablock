@@ -95,6 +95,7 @@ RSTFILES= \
 	general.rst                 \
 	gui.rst                     \
 	gui_asso_quad_to_geom.rst   \
+	gui_asso_vertex_to_geom.rst \
 	gui_blocks_for_cyl_pipe.rst \
 	gui_component.rst           \
 	gui_cut_hexa.rst            \
@@ -112,6 +113,7 @@ RSTFILES= \
 	gui_mesh.rst                \
 	gui_modify_elmts.rst        \
 	gui_modify_symmetry.rst     \
+	gui_association.rst         \
 	gui_pipe.rst                \
 	gui_prism_join_quad.rst     \
 	gui_propag.rst              \
@@ -119,7 +121,7 @@ RSTFILES= \
 	gui_quad_revolution.rst	    \
 	gui_remove.rst              \
 	gui_replace_hexa.rst	    \
-	gui_hemisphere.rst	    \
+	gui_hemisphere.rst          \
 	gui_vector.rst              \
 	gui_vertex.rst              \
 	index.rst                   \
@@ -132,20 +134,26 @@ RSTFILES= \
 	python.rst                  \
 	tui.rst                     \
 	tui_asso_quad_to_geom.rst   \
+	tui_asso_vertex_to_geom.rst \
 	tui_blocks_for_cyl_pipe.rst \
 	tui_cartgrid.rst            \
 	tui_component.rst           \
 	tui_cut_hexa.rst            \
+	tui_make_symmetry.rst       \
+	tui_perform_symmetry.rst    \
 	tui_cylgrid.rst             \
 	tui_cyl.rst                 \
 	tui_disc_elmts.rst          \
+	tui_quad_revolution.rst     \
 	tui_discret_law.rst         \
+	tui_association.rst         \
 	tui_document.rst            \
 	tui_edge.rst                \
 	tui_elements.rst            \
 	tui_groups.rst              \
 	tui_hexahedron.rst          \
 	tui_make_elmts.rst          \
+	tui_hemisphere_rind.rst     \
 	tui_merge_elmts.rst         \
 	tui_mesh.rst                \
 	tui_modify_elmts.rst        \
@@ -154,6 +162,7 @@ RSTFILES= \
 	tui_propag.rst              \
 	tui_quadrangle.rst          \
 	tui_remove.rst              \
+	tui_replace_hexa.rst        \
 	tui_sphergrid.rst           \
 	tui_vector.rst              \
 	tui_vertex.rst

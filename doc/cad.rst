@@ -2,34 +2,21 @@
 
 .. _cad:
 
-=======
-The CAD
-=======
+=============================================
+Import or build a geometry without constraint
+=============================================
 
+A main feature of HEXABLOCK is to define a geometry without constraint for hexahedral meshing.
 
+The user has two ways to define the geometry for meshing:
 
-The geometry to mesh is defined by a set of independent shapes, these
-shapes are external references to the GEOM module of SALOME. The
-shapes of this set can be faces and/or solids. In HexaBlock module you
-can:
+- import a geometry from a STEP, IGES or BREP file,
 
-- use a geometry defined in GEOM module
-- import geometrical objects from BREP, IGES, STEP files.
+- build a geometry with GEOM component.
 
-The TUI script to import geometrical objects from a BREP file is::
+The following pictures show different geometries for exemples:
 
-    import os
-    import GEOM
-    import SALOMEDS
-    import hexablock
-
-    # Example of import from STEP 
-    # get a path of the STEP file containing the CAD
-    STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
-
-The following images depict different CADs for the construction of models:
-
-.. image:: _static/cad_bielle.PNG
+.. image:: _static/cad_bielle.png
    :align: center
 
 .. centered::
@@ -38,20 +25,20 @@ The following images depict different CADs for the construction of models:
 (see :ref:`intropython`)
 
 
-.. image:: _static/bride.PNG
+.. image:: _static/bride.png
    :align: center
 
 .. centered::
    Bridle
 
-.. image:: _static/intersec_cyl.PNG
+.. image:: _static/intersec_cyl.png
    :align: center
 
 .. centered::
    Intersection of cylinders
 
 
-.. image:: _static/tuyau_courbe.PNG
+.. image:: _static/tuyau_courbe.png
    :align: center
 
 .. centered::

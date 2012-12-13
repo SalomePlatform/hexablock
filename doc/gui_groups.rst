@@ -35,14 +35,7 @@ To define groups on the model in the **Main Menu** select **Groups -> Add Group*
 Remove group
 ============
 
-To remove a group from the model in the **Main Menu** select **Groups -> Remove Group**.
-
-
-.. image:: _static/gui_remove_group.png
-   :align: center
-
-.. centered::
-   Remove group
+To remove a group from the model, in the **Groups Tab's Tree View** select the group you want to remove then click on **Groups -> Remove Group** in the main menu.
 
 
 TUI command: :ref:`tuigroups`

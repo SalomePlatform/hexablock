@@ -39,18 +39,18 @@ grid = doc.makeCartesian1(orig, dirVr, size_x, size_y, size_z, 0, 0,
 orig.setScalar(2)
 
 file_name = os.path.join(os.environ['TMP'], 'transfo0.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 devant = doc.addVector(5, 0, 0)
 grid2 = doc.makeTranslation(grid, devant)
 
 file_name = os.path.join(os.environ['TMP'], 'transfo_translation.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 grid4 = doc.makeRotation(grid2, orig, dirVr, 45)
 
 file_name = os.path.join(os.environ['TMP'], 'transfo_rotation.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 
 print "...test make elements by transforming elements OK"

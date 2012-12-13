@@ -45,6 +45,6 @@ nl = height
 elts = doc.makeCylinder(cyl, vb, nr, na, nl)
 
 file_name = os.path.join(os.environ['TMP'], 'cylindre.vtk')
-elts.saveVtk(file_name)
+####  elts.saveVtk(file_name)
 
 print "...test cylindre OK"

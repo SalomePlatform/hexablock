@@ -77,7 +77,7 @@ def test_hexa_quads_5 () :
 
 # ========================================================== test_hexa_quads_ab
 def test_hexa_quads_ab () :
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsAB");
     grid = add_grid (doc, 1, 1, 3)
     vtk.save ()
@@ -105,7 +105,7 @@ def test_hexa_quads_ab () :
 
 # ========================================================== test_hexa_quads_ac
 def test_hexa_quads_ac () :
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsAC");
     grid = add_grid (doc, 2, 1, 2)
     vtk.save ()
@@ -134,7 +134,7 @@ def test_hexa_quads_ac () :
 # ======================================================= test_hexa_quads_acd
 def test_hexa_quads_acd () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsACD");
     grid = add_grid (doc, 3, 1, 2)
     vtk.save ()
@@ -163,7 +163,7 @@ def test_hexa_quads_acd () :
 # ======================================================= test_hexa_quads_ace
 def test_hexa_quads_ace () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsACE");
     grid = add_grid (doc, 2, 2, 2)
     vtk.save ()
@@ -191,7 +191,7 @@ def test_hexa_quads_ace () :
 # ======================================================= test_hexa_quads_abcd
 def test_hexa_quads_abcd () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsABCD");
     grid = add_grid (doc, 3, 1, 3)
     vtk.save ()
@@ -218,7 +218,7 @@ def test_hexa_quads_abcd () :
 # ======================================================= test_hexa_quads_abce
 def test_hexa_quads_abce () :
 
-    doc  = hexablock.addDocument()
+    doc  = hexablock.addDocument ("default")
     vtk  = FileVtk (doc, "HexaQuadsABCE");
     grid = add_grid (doc, 3, 2, 2)
     vtk.save ()

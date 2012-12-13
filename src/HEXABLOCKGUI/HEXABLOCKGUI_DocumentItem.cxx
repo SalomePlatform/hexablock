@@ -19,6 +19,9 @@
 
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexShape.hxx"
+#include "HEXABLOCKGUI_SalomeTools.hxx"
+#include "HEXABLOCKGUI_DocumentModel.hxx"
+#include "HexAssoEdge.hxx"
 
 #include <inttypes.h>
 
@@ -33,7 +36,9 @@ QStandardItem()
 	m_type   = ttype;
 
 	if (m_DocElt != NULL)
+	{
 		setText(m_DocElt->getName());
+	}
 	setData( treeRole,    HEXA_TREE_ROLE );
 	setData( entry,       HEXA_DOC_ENTRY_ROLE);
 	setData( IDptr(),     HEXA_ENTRY_ROLE );
@@ -44,19 +49,29 @@ QStandardItem()
 		QString entry;
 		if (m_type == VERTEXITEM) //Vertex
 		{
-			HEXA_NS::Shape* assoc = m_DocElt->getAssociation();
-			if ( assoc ){
-				entry = QString(assoc->ident.c_str());
-				setData( entry + ";" , HEXA_ASSOC_ENTRY_ROLE );
-			}
+		    HEXA_NS::Vertex* vertex = (HEXA_NS::Vertex*) m_DocElt;
+		    double assocX, assocY, assocZ;
+			vertex->getAssoCoord(assocX, assocY, assocZ);
+			entry = QString::number(assocX)+","+QString::number(assocY)+","+QString::number(assocZ);
+			setData( entry, HEXA_ASSOC_ENTRY_ROLE );
 		}
 		else if (m_type == EDGEITEM)
 		{
 			QString entries;
-			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Edge*)m_DocElt)->getAssociations();
-			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-				entry = (*anAssoc)->ident.c_str();
-				entries += entry + ";";
+			HEXA_NS::Edge* edge = (HEXA_NS::Edge*) m_DocElt;
+			HEXA_NS::NewShape* mainShape;
+			HEXA_NS::EdgeShape* geomEdge;
+			HEXA_NS::AssoEdge* anEdgeAssoc;
+			int nbAssocs = edge->countAssociation();
+			for (int i = 0; i < nbAssocs; ++i)
+			{
+			    anEdgeAssoc = edge->getAssociation(i);
+			    if (anEdgeAssoc == NULL) continue;
+			    geomEdge = anEdgeAssoc->getEdgeShape();
+			    if (geomEdge == NULL) continue;
+			    mainShape = geomEdge->getParentShape();
+			    if (mainShape == NULL) continue;    // => les generatrices ne sont pas gerees pour le moment
+			    entries += QString(mainShape->getName())+","+QString::number(geomEdge->getIdent())+";";
 			}
 			if ( !entries.isEmpty() )
 				setData( entries, HEXA_ASSOC_ENTRY_ROLE );
@@ -64,32 +79,23 @@ QStandardItem()
 		else if (m_type == QUADITEM)
 		{
 			QString entries;
-			const HEXA_NS::Shapes& assocs = ((HEXA_NS::Quad*)m_DocElt)->getAssociations();
-			for( HEXA_NS::Shapes::const_iterator anAssoc = assocs.begin(); anAssoc != assocs.end(); ++anAssoc ){
-				entry = (*anAssoc)->ident.c_str();
-				entries += entry + ";";
+			HEXA_NS::Quad* quad = (HEXA_NS::Quad*) m_DocElt;
+			HEXA_NS::NewShape* mainShape;
+			HEXA_NS::FaceShape* geomFace;
+			int nbAssocs = quad->countAssociation();
+			for (int i = 0; i < nbAssocs; ++i)
+			{
+			    geomFace = quad->getAssociation(i);
+			    if (geomFace == NULL) continue;
+			    mainShape = geomFace->getParentShape();
+			    if (mainShape == NULL) continue;
+			    entries += QString(mainShape->getName()) + "," + QString::number(geomFace->getIdent()) + ";";
 			}
 			if ( !entries.isEmpty() )
 				setData( entries, HEXA_ASSOC_ENTRY_ROLE );
 		}
 	}
 }
-
-
-//ElementItem::ElementItem( HEXA_NS::EltBase* docElement, HexaType ttype, HexaTreeRole treeRole):
-//QStandardItem()
-//{
-//	m_DocElt = docElement;
-//	m_type   = ttype;
-//
-//	if (m_DocElt != NULL)
-//		setText(m_DocElt->getName());
-//	setData( treeRole,    HEXA_TREE_ROLE );
-//	setData( IDptr(),     HEXA_ENTRY_ROLE );
-//
-////	if (m_DocElt->isAssociated())
-////		setData(  "Y" ,     HEXA_ASSOC_ENTRY_ROLE );
-//}
 
 //---------------------------------------------------------------
 QVariant ElementItem::data( int role ) const
@@ -106,6 +112,10 @@ QVariant ElementItem::data( int role ) const
 		case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
 		case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
 		case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
+		case GEOMSHAPEITEM: return QVariant::fromValue( (HEXA_NS::NewShape*) m_DocElt );
+		case GEOMPOINTITEM: return QVariant::fromValue( (HEXA_NS::VertexShape*) m_DocElt );
+		case GEOMEDGEITEM:  return QVariant::fromValue( (HEXA_NS::EdgeShape*) m_DocElt );
+		case GEOMFACEITEM:  return QVariant::fromValue( (HEXA_NS::FaceShape*) m_DocElt );
 		default: return QVariant::fromValue( m_DocElt );
 		}
 	}
@@ -189,6 +199,37 @@ ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements, QString entry ):
 // ----------------------- CROSSELEMENTS (NOT USED)
 CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry ):
 		StandardElementItem(hexaCrossElts, entry, CROSSELEMENTSITEM, CROSSELEMENTS_TREE)
+{
+}
+
+// ----------------------- GEOM     (GEOMETRY)
+GeomItem::GeomItem( HEXA_NS::EltBase* geomShape, QString entry, HexaType ttype, HexaTreeRole treeRole, HEXA_NS::EltBase* assoc ):
+        StandardElementItem(geomShape, entry, ttype, treeRole),
+        association(assoc)
+{
+}
+
+// ----------------------- GEOM SHAPE     (GEOMETRY)
+GeomShapeItem::GeomShapeItem( HEXA_NS::NewShape* shape, HEXA_NS::EltBase* assoc ):
+        GeomItem(shape, QString(), GEOMSHAPEITEM, GEOMSHAPE_TREE, assoc)
+{
+}
+
+// ----------------------- GEOM POINT     (GEOMETRY)
+GeomPointItem::GeomPointItem( HEXA_NS::VertexShape* geomPoint, HEXA_NS::Vertex* associatedVertex ):
+        GeomItem(geomPoint, QString(), GEOMPOINTITEM, GEOMPOINT_TREE, associatedVertex)
+{
+}
+
+// ----------------------- GEOM EDGE     (GEOMETRY)
+GeomEdgeItem::GeomEdgeItem( HEXA_NS::EdgeShape* geomEdge, HEXA_NS::Edge* associatedEdge ):
+        GeomItem(geomEdge, QString(), GEOMEDGEITEM, GEOMEDGE_TREE, associatedEdge)
+{
+}
+
+// ----------------------- GEOM FACE     (GEOMETRY)
+GeomFaceItem::GeomFaceItem( HEXA_NS::FaceShape* geomFace, HEXA_NS::Quad* associatedQuad ):
+        GeomItem(geomFace, QString(), GEOMFACEITEM, GEOMFACE_TREE, associatedQuad)
 {
 }
 

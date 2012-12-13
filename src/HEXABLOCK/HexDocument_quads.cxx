@@ -48,7 +48,7 @@ static bool db = false;
 Document* Document::copyDocument ()
 {
    string nom = "CopyOf_";
-   nom += doc_name;
+   nom += el_name;
  
    Document* clone = new Document (nom.c_str());
 
@@ -786,20 +786,21 @@ bool only_in_hexas (Hexas& thexas, Quad* quad)
 // ========================================================= only_in_hexas
 bool only_in_hexas (Hexas& thexas, Edge*  edge)
 {
+   return false;
    int nbp = edge->getNbrParents();
    for (int nq=0 ; nq <nbp ; nq++)
        {
        Quad* quad = edge->getParent   (nq); 
        if (NOT only_in_hexas (thexas, quad))
           {
-          cout << " ... inMoreHexas " << edge->getName() << endl; 
+          cout << " ... inMoreHexas " << edge->makeDefinition() << endl; 
           return false;
           }
        }
-   cout << " ... only_in_hexas " << edge->getName() << endl; 
+   cout << " ... only_in_hexas " << edge->makeDefinition() << endl; 
    return true;
 }
-// ========================================================= only_in_hexas
+// ========================================================= replace_vertex
 void replace_vertex (Hexas& thexas, Vertex* node,  Vertex* par)
 {
    int nbh = thexas.size();

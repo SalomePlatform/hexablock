@@ -1,5 +1,5 @@
 
-// Class : Element de base des Vertex/Edge/Quad, etc... 
+// Class : Element de base des Vertex/Edge/Quad, etc...
 
 // Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
@@ -24,7 +24,6 @@
 #define __ELT_BASE_H
 
 #include "hexa_base.hxx"
-#include "HexDocument.hxx"
 #include <vector>
 
 #define HexDump(x) {printf(#x " = "); if (x) x->dump(); else printf("NULL\n");}
@@ -33,18 +32,12 @@
 
 #define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
 #define BadElement(elt) (elt)==NULL || (elt)->isBad()
-#define ABR_TYPES  "xveqhwgcp????"
 
 BEGIN_NAMESPACE_HEXA
 
-class EltBase 
+class EltBase
 {
 public :
-   virtual Hexa*   getHexa   (int nro)  { return NULL; }
-   virtual Quad*   getQuad   (int nro)  { return NULL; }
-   virtual Edge*   getEdge   (int nro)  { return NULL; }
-   virtual Vertex* getVertex (int nro)  { return NULL; }
-
    virtual int     countHexa   ()  { return 0; }
    virtual int     countQuad   ()  { return 0; }
    virtual int     countEdge   ()  { return 0; }
@@ -55,21 +48,16 @@ public :
    virtual bool    isValid     ()              { return el_status==HOK; }
    virtual bool    isBad       ()              { return el_status!=HOK; }
 
-   virtual void    setAssociation (Shape* forme);
-   virtual int     addAssociation (Shape* forme);
-   virtual void    clearAssociation ()            { el_assoc = NULL  ; }
    virtual void    duplicate ()                   {}
-   virtual Shape*  getAssociation ()              { return el_assoc  ; }
-   virtual bool    isAssociated ()                { return el_assoc != NULL  ; }
+   virtual void    clearAssociation ()            {}
 
-   void copyAssociation    (EltBase* orig);
-   void replaceAssociation (EltBase* orig);
-   bool canBeAssociated ();
+   // void copyAssociation    (EltBase* orig);
+   // void replaceAssociation (EltBase* orig);
 
 public :
-   virtual void replaceEdge   (Edge* old, Edge* nouveau) 
+   virtual void replaceEdge   (Edge* old, Edge* nouveau)
                                { printf ("rep-edge\n") ; }
-   virtual void replaceVertex (Vertex* old, Vertex* nouveau) 
+   virtual void replaceVertex (Vertex* old, Vertex* nouveau)
                                { printf ("rep-vertex\n") ; }
 
    EltBase (Document* doc, EnumElt type=EL_NONE);
@@ -81,6 +69,9 @@ public :
    virtual  void dump ();
    virtual  void saveXml (XmlWriter* xml)   {}
    virtual  void majReferences () { }
+   virtual  char*  makeVarName (char* nom);
+
+   static   char* makeName  (int type, int id, char* name);
 
    EltBase*  next ()                        { return el_next; }
    void      setNext (EltBase* suivant)     { el_next = suivant; }
@@ -90,14 +81,14 @@ public :
    EnumElt   getType ()                     { return el_type; }
    bool      isHere ()                      { return el_type!=EL_REMOVED; }
    bool      isDeleted ()                   { return el_type==EL_REMOVED; }
-             
-                 // On s'occupe des parents 
+
+                 // On s'occupe des parents
 
    void  razReferences ()         { el_parent.clear() ; }
    void  addParent (EltBase* dad) { if (dad) el_parent.push_back(dad) ; }
    int   getNbrParents ()         { return el_parent.size() ; }
    bool  hasParents ();
-   EltBase* getFather  (int nro);  
+   EltBase* getFather  (int nro);
 
    int   getMark ()                   { return el_mark; }
    void  setMark (int ln)             { el_mark = ln ; }
@@ -109,52 +100,47 @@ public :
    void   setName (const string& nom) { el_name = nom ; }
    void   setName (cpchar nom)        { el_name = nom ; }
 
-   bool   debug (int niv=0) { return el_root->getLevel() > niv ; } 
+   bool   debug (int niv=0);
+   bool   isAssociated ()             { return is_associated ; }
 
 protected :
    EnumElt   el_type;
    EltBase*  el_next;
    int       el_id;
    Document* el_root;
-   Shape*    el_assoc;
    string    el_name;
 
    int       el_status;
    int       el_mark;
+   bool      is_associated;
    std::vector <EltBase*> el_parent;
 };
 // ========================================================= dump
 inline void EltBase::dump ()
 {
    printf ("Elt%d  Nro=%04d", el_type, el_id);
-   dumpRef() ; 
+   dumpRef() ;
 }
 
-// ========================================================= getFather 
+// ========================================================= getFather
 inline EltBase* EltBase::getFather  (int nro)
 {
    EltBase* elt = NULL;
-   if (nro >= 0 && nro < (int) el_parent.size() && isHere() 
+   if (nro >= 0 && nro < (int) el_parent.size() && isHere()
                 && el_parent[nro]->isHere())
       elt = el_parent[nro];
 
    return elt;
 }
-// ========================================================= hasParents 
+// ========================================================= hasParents
 inline bool EltBase::hasParents ()
 {
    int nbp = el_parent.size();
-   for (int nro=0 ; nro<nbp ; nro++)	      
+   for (int nro=0 ; nro<nbp ; nro++)
        if (el_parent[nro]!=NULL && el_parent[nro]->isHere())
           return true;
 
    return false;
-}
-// ========================================================= clear_association
-inline void clear_association (EltBase* elt)
-{
-   if (elt != NULL && elt->isHere() && elt->isValid())
-       elt -> clearAssociation ();
 }
 END_NAMESPACE_HEXA
 #endif

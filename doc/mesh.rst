@@ -117,20 +117,20 @@ Examples
 Linear approximation of the discretization of faces
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing1.PNG
+.. image:: _static/meshing1.png
    :align: center
 
 
 Geometric face and meshing by approximation
 ''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing2.PNG
+.. image:: _static/meshing2.png
    :align: center
 
 
 Geometric face and meshing by approximation and projection
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. image:: _static/meshing3.PNG
+.. image:: _static/meshing3.png
    :align: center
  

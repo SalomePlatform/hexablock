@@ -46,6 +46,6 @@ nl = 5
 elts = doc.makePipe(pi, vb, nr, na, nl)
 
 file_name = os.path.join(os.environ['TMP'], 'pipe.vtk')
-elts.saveVtk(file_name)
+####  elts.saveVtk(file_name)
 
 print "...test pipe OK"

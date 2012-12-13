@@ -17,8 +17,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
+
+#define DumpActif false
 
 #ifndef _HEXA_BASE_H_
 #define _HEXA_BASE_H_
@@ -37,16 +40,16 @@ typedef FILE*       pfile;
 #define Cestnonvide(c1)  c1[0]
 
                      // Pour rendre les operateurs plus visibles
-#define NOT    !  
+#define NOT    !
 #define XOR    ^
 #define MODULO %
 #define INOT   `
 // #define IOR    |
 #define IAND   &
-                    // Chaines de bits 
+                    // Chaines de bits
 #define DeuxPuissance(n) (1 << (n))
 
-                     // Codes retour d'une fonction 
+                     // Codes retour d'une fonction
 #define HOK  0       // Code retour=0 :  deroulement correct
 #define HERR 1       // Code retour>0 = numero d'erreur, 1 par defaut
 #define NOTHING -1   // Code retour fonction de recherche d'un index
@@ -70,6 +73,8 @@ typedef FILE*       pfile;
                        // Conventions C++
 #include <string>
 #include <vector>
+
+typedef const std::string& rcstring;
                        // Impressions de mise au point
 #include <iostream>
 using namespace std;
@@ -84,15 +89,15 @@ using namespace std;
 //  #define Destroy(obj)    { delete obj       ;  obj=NULL   ;            }
 //  #define Deltable(table) { delete [] table  ;  table=NULL ;            }
 
-// ---------------------------------- Definitions propres a HEXA 
+// ---------------------------------- Definitions propres a HEXA
 #define HEXA_NS Hex
 #define BEGIN_NAMESPACE_HEXA namespace Hex {
 #define END_NAMESPACE_HEXA   }
 
 /* -----------------------------------------------------
 
-                // ---- Numerotation des faces (%x) 
-                   
+                // ---- Numerotation des faces (%x)
+
        6=bed  +----bd-----+ bdf=7
              /|          /|
            be |   B    bf |
@@ -106,23 +111,41 @@ using namespace std;
           | ae    A   | af              | /
           |/          |/                |/
     0=ace +----ac-----+ acf=1           +----->  x
-                
+
  * ----------------------------------------------------- */
 
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
+
+#ifndef NO_CASCADE
+class  TopoDS_Shape;
+#else
+typedef int  TopoDS_Shape;
+typedef int  TopTools_IndexedMapOfShape;
+#endif
+
+class  BRepAdaptor_Curve;
+
 BEGIN_NAMESPACE_HEXA
 
 enum EnumCoord  { dir_x, dir_y, dir_z, DIM3 };
-enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR, 
-                  EL_GRID, EL_CYLINDER, EL_PIPE, EL_REMOVED, EL_MAXI };
+enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR,
+                  EL_GRID, EL_CYLINDER, EL_PIPE, EL_GROUP, EL_LAW,
+                  EL_SHAPE, EL_SUBSHAPE,
+                  EL_REMOVED, EL_MAXI };
 
-enum EnumGroup  { HexaCell, QuadCell, EdgeCell, 
+const cpchar ABR_TYPES = "xveqhwtcpglsu???";
+
+enum EnumGroup  { HexaCell, QuadCell, EdgeCell,
                   HexaNode, QuadNode, EdgeNode, VertexNode};
+
+                  // Origine des shapes
+enum EnumShape { SH_NONE, SH_IMPORT, SH_CYLINDER, SH_INTER, SH_SPHERE,
+                 SH_CLOUD };
 
                 //  Modes de remplissage des grilles cylindriques
 enum EnumCyl   { CYL_NOFILL, CYL_CL4, CYL_CL6, CYL_CLOSED, CYL_PEER, CYL_ODD};
-enum EnumGrid   { GR_NONE, GR_CARTESIAN, GR_CYLINDRIC, GR_SPHERIC, GR_JOINT, 
-                  GR_BICYL, GR_BIPIPE, GR_REPLACE, 
+enum EnumGrid   { GR_NONE, GR_CARTESIAN, GR_CYLINDRIC, GR_SPHERIC, GR_JOINT,
+                  GR_BICYL, GR_BIPIPE, GR_REPLACE,
                   GR_HEMISPHERIC, GR_RIND, GR_PART_SPHERIC, GR_PART_RIND };
                 //  Sommets de la decomposition canonique du bicylindre
                 // 0    1     2    3     4    5     6    7     8
@@ -140,17 +163,18 @@ enum EnumQuad   { E_A, E_B, E_C, E_D, QUAD4 };
           //      z=0   z=1   y=0   y=1   x=0  x=1
 enum EnumHQuad   {Q_A,  Q_B,  Q_C,  Q_D,  Q_E, Q_F,  HQ_MAXI};
 
-enum EnumHEdge   {E_AC, E_AD, E_BC, E_BD, 
+enum EnumHEdge   {E_AC, E_AD, E_BC, E_BD,
                   E_AE, E_AF, E_BE, E_BF,
                   E_CE, E_CF, E_DE, E_DF,  HE_MAXI };
 
-enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF, 
+enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF,
                   HV_MAXI };
 
 enum EnumQDirection {Q_INSIDE, Q_DIRECT, Q_INVERSE, Q_UNDEFINED, Q_WAITING };
 
 enum { CylSmall=0, CylBig=1, NxInt=1, NxExt=2 };
 
+class Hex;
 class Document;
 class EltBase;
 
@@ -173,9 +197,9 @@ class  Elements;
 class  GridElements;
 class  SphericalGrid;
 class  CrossElements;
+class  BiCylinder;
 
 struct  StrOrient;
-class   Shape;
 class   Globale;
 class   Propagation;
 class   Law;
@@ -184,11 +208,29 @@ class   Group;
 class   AnaQuads;
 class   Pattern;
 
+class   Shape;
+class   SubShape;
+class   VertexShape;
+class   EdgeShape;
+class   FaceShape;
+class   AssoEdge;
+class   NewShape;  // 1) Shape -> OldShape, 2) NewShape->Shape
+typedef Shape OldShape;
+
 typedef std::vector <Hexa*>  Hexas;
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;
-typedef std::vector <double> RealVector;
+typedef std::vector <NewShape*>  NewShapes;
+typedef std::vector <SubShape*>  SubShapes;
+typedef std::vector <AssoEdge*>  AssoEdges;
+typedef std::vector <FaceShape*> FaceShapes;
+typedef std::vector <EdgeShape*> EdgeShapes;
+
+typedef std::vector <EltBase*>    TabElts;
+typedef std::vector <double>      RealVector;
+typedef std::vector <int>         IntVector;
+typedef std::vector <std::string> TabText;
 
 typedef double Real;
 typedef double Real3 [DIM3];
@@ -211,13 +253,18 @@ int     normer_vecteur (double v1[]);
 double carre       (double val);
 bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
 
-bool   on_debug();
-int    niv_debug();
+bool   on_debug();     // == getenv ("HEXA_DB") > 0
+bool   in_test ();     // == getenv ("HEXA_TEST") > 0
+int    niv_debug();    // Implemente prochainement
 
 void   set_minus (string& chaine);
 
 bool   special_option ();
 void   set_special_option (bool opt);
+
+int   sizeof_file (cpchar filename);
+char* read_file   (cpchar filename, int& size);
+cpchar get_time   (string& buffer);
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;

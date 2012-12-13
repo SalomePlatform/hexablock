@@ -73,6 +73,8 @@
 #include "ui_MakeRind_QTD.h"
 #include "ui_ReplaceHexa_QTD.h"
 #include "ui_MakeHemiSphere_QTD.h"
+#include "ui_ModelInfo_QTD.h"
+#include "ui_AddShapeDialog_QTD.h"
 
 
 #include "MyGEOMBase_Helper.hxx"
@@ -87,9 +89,12 @@
 
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
+#include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 // #include "HEXABLOCKGUI_SalomeTools.hxx"
+#include "HEXABLOCKGUI.hxx"
 
 #include "klinkitemselectionmodel.hxx"
+
 
 Q_DECLARE_METATYPE(QModelIndex);
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::DocumentModel::GeomObj);
@@ -101,1018 +106,1091 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog,
-                                                             public MyGEOMBase_Helper
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog, public MyGEOMBase_Helper
     {
-        Q_OBJECT
+      Q_OBJECT
 
-        public:
-          enum Mode {
-            NEW_MODE,
-            INFO_MODE,
-            UPDATE_MODE
-          };
+    public:
+      enum Mode {
+        NEW_MODE,
+        INFO_MODE,
+        UPDATE_MODE
+      };
 
-          enum ViewType {
-        	  VTK,
-        	  OCC,
-        	  NONE
-          };
+      // define input widget type => usefull for selection
+      typedef HexaTreeRole  HexaWidgetType;
+      typedef TopAbs_ShapeEnum/*int */GeomWidgetType; //CS_TODO
 
-          // define input widget type => usefull for selection
-          typedef HexaTreeRole  HexaWidgetType;
-          typedef TopAbs_ShapeEnum/*int */GeomWidgetType; //CS_TODO
+      // TopAbs_ShapeEnum aType = TopAbs_EDGE;
 
-// TopAbs_ShapeEnum aType = TopAbs_EDGE;
-
-          // listwidget
-          enum {
-            LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
+      // listwidget
+      enum {
+        LW_QMODELINDEX_ROLE = Qt::UserRole + 1,
             LW_ASSOC_ROLE,
             LW_GEOM_OBJ_ROLE,
             LW_DATA_ROLE
-          };
+      };
 
-          HexaBaseDialog( QWidget * parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = 0 );
-          virtual ~HexaBaseDialog(){};
+      HexaBaseDialog( QWidget * parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = 0 );
+      virtual ~HexaBaseDialog(){};
 
-          // clear all input widget
-          virtual void clear(){};
-          ViewType getObjectViewType(QObject* obj);
+      // clear all input widget
+      virtual void clear(){};
 
-          //  model
-          virtual void setDocumentModel( DocumentModel* m ){ _documentModel = m;}
+      void connectDocumentGraphicView(VtkDocumentGraphicView* docGView = NULL);
+      void disconnectDocumentGraphicView(VtkDocumentGraphicView* docGView = NULL);
 
-          //  selection
-          virtual void setPatternDataSelectionModel( PatternDataSelectionModel* s )
-          { _patternDataSelectionModel = s;}
+      SVTK_ViewWindow* getCurrentVtkView() const {
+          return HEXABLOCKGUI::currentDocGView->getViewWindow();
+      }
 
-          virtual void setPatternBuilderSelectionModel( PatternBuilderSelectionModel* s )
-          { _patternBuilderSelectionModel = s; }
+      //get model
+      DocumentModel* getDocumentModel() const {
+         return HEXABLOCKGUI::currentDocGView->getDocumentModel();
+      }
 
-          virtual void setGroupsSelectionModel( GroupsSelectionModel* s )
-          { _groupsSelectionModel = s; }
+      PatternDataModel* getPatternDataModel() const {
+          return HEXABLOCKGUI::currentDocGView->getPatternDataModel();
+      }
 
-          virtual void setMeshSelectionModel( MeshSelectionModel* s )
-          { _meshSelectionModel = s; }
+      PatternGeomModel* getPatternGeomModel() const {
+          return HEXABLOCKGUI::currentDocGView->getPatternGeomModel();
+      }
 
-          void resetSizeAndShow(QDockWidget* parent);
-          void lockSizeToSizeHint();
-          void unlockSizeModification();
-          virtual QModelIndexList getAssocsVTK()
-          {
-        	QModelIndexList assocs;
-        	return assocs;
-          }
-          virtual QMultiMap<QString, int> getAssocsGEOM()
-          {
-        	  QMultiMap<QString, int> assocs;
-        	  return assocs;
-          }
-          void clearVTKSelection();
-          void clearOCCSelection();
+      PatternBuilderModel* getPatternBuilderModel() const {
+          return HEXABLOCKGUI::currentDocGView->getPatternBuilderModel();
+      }
 
-          bool debugEdgeAssoc; //Temporary
+      GroupsModel* getGroupsModel() const {
+          return HEXABLOCKGUI::currentDocGView->getGroupsModel();
+      }
 
-        public slots:
-          //virtual void accept();
-          virtual bool apply();
-          virtual void close();
-          virtual void onHelpRequested();
+      MeshModel* getMeshModel() const {
+          return HEXABLOCKGUI::currentDocGView->getMeshModel();
+      }
 
-        protected:
-          virtual bool eventFilter(QObject *obj, QEvent *event);
-          virtual void hideEvent ( QHideEvent * event );
-          virtual void showEvent ( QShowEvent * event );
-          virtual bool apply(QModelIndex& result) = 0;
+      //get selection patterns from the current graphic view
+      PatternDataSelectionModel* getPatternDataSelectionModel() const {
+         return HEXABLOCKGUI::currentDocGView->getPatternDataSelectionModel();
+      }
 
-          virtual void _initInputWidget( Mode editmode )=0; //must be implemented on inherited dialog box
-          virtual QGroupBox*  _initButtonBox( Mode editmode );
-          void _initWidget( Mode editmode ); // call _initInputWidget() & _initButtonBox()
-          QModelIndexList getIndexList(QListWidget* itemsList);
+      PatternBuilderSelectionModel* getPatternBuilderSelectionModel() const {
+         return HEXABLOCKGUI::currentDocGView->getPatternBuilderSelectionModel();
+      }
 
-          void _initViewManager();
+      PatternGeomSelectionModel* getPatternGeomSelectionModel() const {
+          return HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
+      }
 
-          void _allowSelection();
-          void _disallowSelection();
-          QItemSelectionModel* _allowSelection( HexaWidgetType wtype );
+      GroupsSelectionModel* getGroupsSelectionModel() const {
+         return HEXABLOCKGUI::currentDocGView->getGroupsSelectionModel();
+      }
 
-          bool _allowVTKSelection( QObject* obj );
-          bool _allowOCCSelection( QObject* obj );
-          void setOCCSelectionMode(TopAbs_ShapeEnum mode);
-          QItemSelectionModel* _getSelector( QObject* obj );
+      MeshSelectionModel* getMeshSelectionModel() const {
+         return HEXABLOCKGUI::currentDocGView->getMeshSelectionModel();
+      }
+
+      HEXABLOCKGUI::ViewType getObjectViewType(QObject* obj);
+      void modelUnregister(QWidget* widget); //unlink the widget from the model
+      void resetSizeAndShow(QDockWidget* parent);
+      void lockSizeToSizeHint();
+      void unlockSizeModification();
+      virtual QModelIndexList getAssocsVTK()
+      {
+        QModelIndexList assocs;
+        return assocs;
+      }
+      virtual QMultiMap<QString, int> getAssocsGEOM()
+      {
+        QMultiMap<QString, int> assocs;
+        return assocs;
+      }
+      virtual void setCurrentGeomObj(DocumentModel::GeomObj* geomObj) {}
+
+      bool debugEdgeAssoc; //Temporary
+      bool autoFocusSwitch;
+
+    public slots:
+    //virtual void accept();
+    virtual bool apply();
+    virtual void close();
+    virtual void onHelpRequested();
+    void highlightSelectedAssocs();
+    void refreshHighlight();
+    virtual void onWindowActivated(SUIT_ViewManager*){};
+    void clearVTKSelection();
+    void clearOCCSelection();
+    void clearCurrentObjectFocus();
+
+    protected:
+    virtual bool eventFilter(QObject *obj, QEvent *event);
+    virtual void hideEvent ( QHideEvent * event );
+    virtual void showEvent ( QShowEvent * event );
+    virtual bool apply(QModelIndex& result) = 0;
+
+    //Gives a default name to an element according to the last created
+    void updateDefaultName(QLineEdit* name_field, HEXA_NS::EnumElt type);
+    DocumentModel::GeomObj* getGeomObj(const QModelIndex& index);
+
+    virtual void _initInputWidget( Mode editmode )=0; //must be implemented on inherited dialog box
+    virtual QGroupBox*  _initButtonBox( Mode editmode );
+    void _initWidget( Mode editmode ); // call _initInputWidget() & _initButtonBox()
+    QModelIndexList getIndexList(QListWidget* itemsList);
+
+    void _initViewManager();
+
+    void _allowSelection();
+    void _disallowSelection();
+    QItemSelectionModel* _allowSelection( HexaWidgetType wtype );
+
+    bool _allowVTKSelection( QObject* obj );
+    bool _allowOCCSelection( QObject* obj );
+    QItemSelectionModel* _getSelector( QObject* obj );
 
 
-          bool _onSelectionChanged( const QItemSelection& sel, QLineEdit*   le );
-          bool _onSelectionChanged( const QItemSelection& sel, QListWidget* lw );
+    bool _onSelectionChanged( const QItemSelection& sel, QLineEdit*   le );
+    bool _onSelectionChanged( const QItemSelection& sel, QListWidget* lw );
 
-          void _selectAndHighlight( const QModelIndex& i );
+    void _selectAndHighlight( const QModelIndex& i );
 
-          void _highlightWidget(QObject* obj, Qt::GlobalColor clr);
+    void _highlightWidget(QObject* obj, Qt::GlobalColor clr);
 
-          void setFocusToNextField();
+    void setFocusToNextField();
 
-          Mode _editMode;
+    void _updateCurrentObject(QObject*);
 
-          DocumentModel*       _documentModel;
+    Mode _editMode;
 
-          // user selection
-          PatternDataSelectionModel*    _patternDataSelectionModel;
-          PatternBuilderSelectionModel* _patternBuilderSelectionModel;
-          GroupsSelectionModel*         _groupsSelectionModel;
-          MeshSelectionModel*           _meshSelectionModel;
+    QMap<QObject*, QModelIndex>   _index;
+    QObject*                      _currentObj;
 
-          QMap<QObject*, QModelIndex>   _index;
-          QObject*                      _currentObj;
+    int                           _expectedSelection;
+    bool                          _selectionMutex;
 
-          int                           _expectedSelection;
-          bool                          _selectionMutex;
+    QMap<HexaWidgetType, QString>  _strHexaWidgetType;
 
-          LightApp_SelectionMgr*        _mgr;
-          SUIT_ViewManager*             _vtkVm;
-          SUIT_ViewManager*             _occVm;
+    //QPushButton* _applyCloseButton;
+    QPushButton* _applyButton;
 
-          QMap<HexaWidgetType, QString>  _strHexaWidgetType;
+    QString  _helpFileName;
 
-          //QPushButton* _applyCloseButton;
-          QPushButton* _applyButton;
+    private:
+    bool _isLineOrListWidget(QObject*);
 
-          QString  _helpFileName;
-
-        private:
-          bool _isLineOrListWidget(QObject*);
-          void _updateCurrentObject(QObject*);
-          TopAbs_ShapeEnum currentOCCSelectionMode;
-          void refreshConnects();
-
-
-        protected slots:
-          virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel ); //from qt model/view selectionManager
-          virtual void onCurrentSelectionChanged();//from salome selectionManager
-          virtual void onWindowActivated(SUIT_ViewManager*){};
-          virtual void updateButtonBox();
-          void updateName();
-          virtual void selectElementOfModel();
-          void highlightSelectedAssocs();
+    protected slots:
+    virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel ); //from qt model/view selectionManager
+    virtual void onCurrentSelectionChanged();//from salome selectionManager
+    virtual void updateButtonBox();
+    void updateName();
+    virtual void selectElementOfModel();
 
     };
 
 
 
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexDialog : public HexaBaseDialog,
-					                   public Ui::VertexDialog
+    public Ui::VertexDialog
     {
       Q_OBJECT
 
-      public:
-        VertexDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~VertexDialog();
+    public:
+      VertexDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~VertexDialog();
 
-        void clear();
+      void clear();
 
-        void setValue(HEXA_NS::Vertex* v);
-        HEXA_NS::Vertex* getValue();
+      void setValue(HEXA_NS::Vertex* v);
+      HEXA_NS::Vertex* getValue();
 
-        void setIndex(const QModelIndex& i);
+      void setIndex(const QModelIndex& i);
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Vertex     *_value;
-        QModelIndex         _ivalue;
+    private:
+    HEXA_NS::Vertex     *_value;
+    QModelIndex         _ivalue;
     };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeDialog : public HexaBaseDialog,
-                                                       public Ui::EdgeDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeDialog : public HexaBaseDialog,
+    public Ui::EdgeDialog
+    {
       Q_OBJECT
 
-      public:
-        EdgeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~EdgeDialog();
+    public:
+      EdgeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~EdgeDialog();
 
-        void clear();
+      void clear();
 
-        void setValue(HEXA_NS::Edge* e);
-        HEXA_NS::Edge* getValue();
+      void setValue(HEXA_NS::Edge* e);
+      HEXA_NS::Edge* getValue();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+      void _initInputWidget( Mode editmode );
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
 
-      private:
-        HEXA_NS::Edge *_value;
-        QModelIndex   _ivalue;
+    private:
+    HEXA_NS::Edge *_value;
+    QModelIndex   _ivalue;
     };
 
 
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadDialog : public HexaBaseDialog,
-					                 public Ui::QuadDialog
+    public Ui::QuadDialog
     {
       Q_OBJECT
 
-      public:
-        QuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~QuadDialog();
+    public:
+      QuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~QuadDialog();
 
-        void clear();
+      void clear();
 
-        void setValue(HEXA_NS::Quad* v);
-        HEXA_NS::Quad* getValue();
+      void setValue(HEXA_NS::Quad* v);
+      HEXA_NS::Quad* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Quad    *_value;
-        QModelIndex      _ivalue;
+    private:
+    HEXA_NS::Quad    *_value;
+    QModelIndex      _ivalue;
     };
 
 
 
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaDialog : public HexaBaseDialog,
-                                                         public Ui::HexaDialog
+    public Ui::HexaDialog
     {
       Q_OBJECT
 
-      public:
-        HexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~HexaDialog();
+    public:
+      HexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~HexaDialog();
 
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-        void setValue(HEXA_NS::Hexa* v);
-        HEXA_NS::Hexa* getValue();
+      void setValue(HEXA_NS::Hexa* v);
+      HEXA_NS::Hexa* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void deleteQuadItem();
-        void deleteVertexItem();
-        void updateButtonBox();
+    protected slots:
+    void deleteQuadItem();
+    void deleteVertexItem();
+    void updateButtonBox();
 
-      private:
-        void _setValueQuads( HEXA_NS::Hexa* h );
-        void _setValueVertices( HEXA_NS::Hexa* h );
+    private:
+    void _setValueQuads( HEXA_NS::Hexa* h );
+    void _setValueVertices( HEXA_NS::Hexa* h );
 
-        HEXA_NS::Hexa   *_value;
-        QModelIndex     _ivalue;
+    HEXA_NS::Hexa   *_value;
+    QModelIndex     _ivalue;
     };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VectorDialog : public HexaBaseDialog,
-                                                         public Ui::VectorDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VectorDialog : public HexaBaseDialog,
+    public Ui::VectorDialog
+    {
       Q_OBJECT
 
-      public:
-        VectorDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~VectorDialog();
+    public:
+      VectorDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~VectorDialog();
 
-        void clear();
+      void clear();
 
-        void setValue(HEXA_NS::Vector* v);
-        HEXA_NS::Vector* getValue();
+      void setValue(HEXA_NS::Vector* v);
+      HEXA_NS::Vector* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Vector *_value;
-        QModelIndex     _ivalue;
-  };
-
-
-
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CylinderDialog : public HexaBaseDialog,
-                                                           public Ui::CylinderDialog
-  {
-      Q_OBJECT
-
-      public:
-        CylinderDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~CylinderDialog();
-
-        void clear();
-
-        void setValue( HEXA_NS::Cylinder* v );
-        HEXA_NS::Cylinder* getValue();
-
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
-
-      protected:
-        void _initInputWidget( Mode editmode );
-
-      private:
-        HEXA_NS::Cylinder   *_value;
-        QModelIndex         _ivalue;
+    private:
+    HEXA_NS::Vector *_value;
+    QModelIndex     _ivalue;
     };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PipeDialog : public HexaBaseDialog,
-                                                       public Ui::PipeDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CylinderDialog : public HexaBaseDialog,
+    public Ui::CylinderDialog
+    {
       Q_OBJECT
 
-      public:
-        PipeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~PipeDialog();
+    public:
+      CylinderDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~CylinderDialog();
 
-        void clear();
+      void clear();
 
-        void setValue( HEXA_NS::Pipe* p );
-        HEXA_NS::Pipe* getValue();
+      void setValue( HEXA_NS::Cylinder* v );
+      HEXA_NS::Cylinder* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         void updateName();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Pipe   *_value;
-        QModelIndex     _ivalue;
+    private:
+    HEXA_NS::Cylinder   *_value;
+    QModelIndex         _ivalue;
+    };
+
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PipeDialog : public HexaBaseDialog,
+    public Ui::PipeDialog
+    {
+      Q_OBJECT
+
+    public:
+      PipeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~PipeDialog();
+
+      void clear();
+
+      void setValue( HEXA_NS::Pipe* p );
+      HEXA_NS::Pipe* getValue();
+
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         void updateName();
+
+    protected:
+    void _initInputWidget( Mode editmode );
+
+    private:
+    HEXA_NS::Pipe   *_value;
+    QModelIndex     _ivalue;
 
     };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeGridDialog : public HexaBaseDialog,
-                                                           public Ui::MakeGridDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeGridDialog : public HexaBaseDialog,
+    public Ui::MakeGridDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeGridDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeGridDialog();
+    public:
+      MakeGridDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeGridDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void addRadiusItem();
-        void delRadiusItem();
-        void addAngleItem();
-        void delAngleItem();
-        void addHeightItem();
-        void delHeightItem();
-        void updateButtonBox();
+    protected slots:
+    void addRadiusItem();
+    void delRadiusItem();
+    void addAngleItem();
+    void delAngleItem();
+    void addHeightItem();
+    void delHeightItem();
+    void updateButtonBox();
+    void updateHelpFileName();
 
-      protected slots:
-        void updateHelpFileName();
-
-  };
+    };
 
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylinderDialog : public HexaBaseDialog,
-                                                           public Ui::MakeCylinderDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylinderDialog : public HexaBaseDialog,
+    public Ui::MakeCylinderDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeCylinderDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeCylinderDialog();
+    public:
+      MakeCylinderDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeCylinderDialog();
 
-        void clear();
+      void clear();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+      void _initInputWidget( Mode editmode );
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-  };
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipeDialog : public HexaBaseDialog,
-                                                           public Ui::MakePipeDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipeDialog : public HexaBaseDialog,
+    public Ui::MakePipeDialog
+    {
       Q_OBJECT
 
-      public:
-        MakePipeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakePipeDialog();
+    public:
+      MakePipeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakePipeDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
-  };
+    protected:
+    void _initInputWidget( Mode editmode );
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindersDialog : public HexaBaseDialog,
-                                                                public Ui::MakeCylindersDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindersDialog : public HexaBaseDialog,
+    public Ui::MakeCylindersDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeCylindersDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeCylindersDialog();
+    public:
+      MakeCylindersDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeCylindersDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
-  };
+    protected:
+    void _initInputWidget( Mode editmode );
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipesDialog : public HexaBaseDialog,
-                                                            public Ui::MakePipesDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipesDialog : public HexaBaseDialog,
+    public Ui::MakePipesDialog
+    {
       Q_OBJECT
 
-      public:
-        MakePipesDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakePipesDialog();
+    public:
+      MakePipesDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakePipesDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
-  };
+    protected:
+    void _initInputWidget( Mode editmode );
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT RemoveHexaDialog : public HexaBaseDialog,
-                                                             public Ui::RemoveHexaDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT RemoveHexaDialog : public HexaBaseDialog,
+    public Ui::RemoveHexaDialog
+    {
       Q_OBJECT
 
-      public:
-        RemoveHexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~RemoveHexaDialog();
+    public:
+      RemoveHexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~RemoveHexaDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
-  };
+    protected:
+    void _initInputWidget( Mode editmode );
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PrismQuadDialog : public HexaBaseDialog,
-                                                            public Ui::PrismQuadDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PrismQuadDialog : public HexaBaseDialog,
+    public Ui::PrismQuadDialog
+    {
       Q_OBJECT
 
-      public:
-        PrismQuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~PrismQuadDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+    public:
+      PrismQuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~PrismQuadDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-		void addHeightItem();
-        void delHeightItem();
+    protected slots:
+    void addHeightItem();
+    void delHeightItem();
 
-      private slots:
-        void addQuad();
-        void removeQuad();
-        void clearQuads();
+    private slots:
+    void addQuad();
+    void removeQuad();
+    void clearQuads();
 
-  };
+    };
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT JoinQuadDialog : public HexaBaseDialog,
-                                                           public Ui::JoinQuadDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT JoinQuadDialog : public HexaBaseDialog,
+    public Ui::JoinQuadDialog
+    {
       Q_OBJECT
 
-      public:
-        JoinQuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~JoinQuadDialog();
+    public:
+      JoinQuadDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~JoinQuadDialog();
 
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private slots:
-        void addQuad();
-        void removeQuad();
-        void clearQuads();
+    private slots:
+    void addQuad();
+    void removeQuad();
+    void clearQuads();
 
-  };
+    };
 
 
     class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeDialog : public HexaBaseDialog,
-                                                          public Ui::MergeDialog
+    public Ui::MergeDialog
     {
       Q_OBJECT
 
-      public:
-        MergeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MergeDialog();
+    public:
+      MergeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MergeDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-
-
-   };
+    protected slots:
+    void updateHelpFileName();
 
 
+    };
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT DisconnectDialog : public HexaBaseDialog,
-                                                             public Ui::DisconnectDialog
-  {
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT DisconnectDialog : public HexaBaseDialog,
+    public Ui::DisconnectDialog
+    {
       Q_OBJECT
 
-      public:
-        DisconnectDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~DisconnectDialog();
+    public:
+      DisconnectDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~DisconnectDialog();
 
-        void clear();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-	void deleteEdgeItem();
-	void deleteHexaItem();
-   };
+    protected slots:
+    void updateHelpFileName();
+    void deleteEdgeItem();
+    void deleteHexaItem();
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CutEdgeDialog : public HexaBaseDialog,
-                                                          public Ui::CutEdgeDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CutEdgeDialog : public HexaBaseDialog,
+    public Ui::CutEdgeDialog
+    {
       Q_OBJECT
 
-      public:
-        CutEdgeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~CutEdgeDialog();
+    public:
+      CutEdgeDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~CutEdgeDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
-   };
+    protected:
+    void _initInputWidget( Mode editmode );
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeTransformationDialog : public HexaBaseDialog,
-                                                          public Ui::TransformationDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeTransformationDialog : public HexaBaseDialog,
+    public Ui::TransformationDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeTransformationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeTransformationDialog ();
+    public:
+      MakeTransformationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeTransformationDialog ();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-   };
+    protected slots:
+    void updateHelpFileName();
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeSymmetryDialog : public HexaBaseDialog,
-                                                               public Ui::SymmetryDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeSymmetryDialog : public HexaBaseDialog,
+    public Ui::SymmetryDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeSymmetryDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeSymmetryDialog();
+    public:
+      MakeSymmetryDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeSymmetryDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-   };
-
-
+    protected slots:
+    void updateHelpFileName();
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformTransformationDialog : public HexaBaseDialog,
-                                                                        public Ui::TransformationDialog
-  {
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformTransformationDialog : public HexaBaseDialog,
+    public Ui::TransformationDialog
+    {
       Q_OBJECT
 
-      public:
-        PerformTransformationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~PerformTransformationDialog ();
+    public:
+      PerformTransformationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~PerformTransformationDialog ();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-   };
+    protected slots:
+    void updateHelpFileName();
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
-                                                                  public Ui::SymmetryDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
+    public Ui::SymmetryDialog
+    {
       Q_OBJECT
 
-      public:
-        PerformSymmetryDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~PerformSymmetryDialog();
+    public:
+      PerformSymmetryDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~PerformSymmetryDialog();
 
-        void clear();
+      void clear();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-   };
-
-
-//   typedef class MyBasicGUI_PointDlg VertexAssocDialog;
+    protected slots:
+    void updateHelpFileName();
+    };
 
 
+    //   typedef class MyBasicGUI_PointDlg VertexAssocDialog;
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
-                                                            public Ui::EdgeAssocDialog
-  {
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
+    public Ui::EdgeAssocDialog
+    {
       Q_OBJECT
 
-      public:
-        EdgeAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~EdgeAssocDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
-        virtual QMultiMap<QString, int> getAssocsGEOM();
-
-        void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
-
-      public slots:
-        virtual bool apply(QModelIndex& result);
-
-      protected:
-        virtual void _initInputWidget( Mode editmode );
-//         virtual void hideEvent ( QHideEvent * event );
-//         virtual void showEvent ( QShowEvent * event );
-        virtual GEOM::GEOM_IOperations_ptr createOperation();
-        virtual bool execute( ObjectList& );
-
-      protected slots:
-        virtual void onCurrentSelectionChanged();
-//         void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
-        virtual void onWindowActivated(SUIT_ViewManager*);
-        virtual void selectElementOfGeom();
-
-        void deleteEdgeItem();
-        void deleteLineItem();
-
-        void addLine();
-        void pstartChanged( double val );
-        void pendChanged( double val );
-
-      private:
-//        QModelIndexList currentAssocList;
-        // Preview in GEOM
-//         GEOM::GeomObjPtr    _firstLine;
-//         GEOM::GeomObjPtr    _lastLine;
-        GEOM::GeomObjPtr    _currentLine;
-	GEOM::GeomObjPtr    myLine;
-        double              _currentParameter;
-        GEOM::GEOM_Gen_var  _geomEngine ;
-
-  };
+    public:
+      EdgeAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~EdgeAssocDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
+      virtual QMultiMap<QString, int> getAssocsGEOM();
+      virtual void setCurrentGeomObj(DocumentModel::GeomObj* geomObj) { myLine = geomObj; }
+      void setGeomEngine( GEOM::GEOM_Gen_var geomEngine );
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadAssocDialog : public HexaBaseDialog,
-                                                            public Ui::QuadAssocDialog
-  {
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    virtual void close();
+    virtual void onWindowActivated(SUIT_ViewManager*);
+
+    protected:
+    virtual void _initInputWidget( Mode editmode );
+    //         virtual void hideEvent ( QHideEvent * event );
+    //         virtual void showEvent ( QShowEvent * event );
+    virtual GEOM::GEOM_IOperations_ptr createOperation();
+    virtual bool execute( ObjectList& );
+
+    protected slots:
+    virtual void onCurrentSelectionChanged();
+    //         void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
+    virtual void selectElementOfGeom();
+    void updateHelpFileName();
+
+    void deleteEdgeItem();
+    void deleteLineItem();
+
+    void addLine();
+    void pstartChanged( double val );
+    void pendChanged( double val );
+
+    private:
+    //        QModelIndexList currentAssocList;
+    // Preview in GEOM
+    //         GEOM::GeomObjPtr    _firstLine;
+    //         GEOM::GeomObjPtr    _lastLine;
+    GEOM::GeomObjPtr    _currentLine;
+//    GEOM::GeomObjPtr    myLine;
+    DocumentModel::GeomObj* myLine;
+    double              _currentParameter;
+    GEOM::GEOM_Gen_var  _geomEngine ;
+
+    };
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadAssocDialog : public HexaBaseDialog,
+    public Ui::QuadAssocDialog
+    {
       Q_OBJECT
 
-      public:
-        QuadAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~QuadAssocDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
-        virtual QMultiMap<QString, int> getAssocsGEOM();
+    public:
+      QuadAssocDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~QuadAssocDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
+      virtual QMultiMap<QString, int> getAssocsGEOM();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    virtual void close();
+    virtual void onWindowActivated(SUIT_ViewManager*);
 
-      protected:
-        virtual void _initInputWidget( Mode editmode );
-//         virtual void hideEvent ( QHideEvent * event );
-//         virtual void showEvent ( QShowEvent * event );
+    protected:
+    virtual void _initInputWidget( Mode editmode );
+    //         virtual void hideEvent ( QHideEvent * event );
+    //         virtual void showEvent ( QShowEvent * event );
 
-      protected slots:
-        virtual void onCurrentSelectionChanged();
-        virtual void onWindowActivated(SUIT_ViewManager*);
-        void deleteFaceItem();
-        virtual void selectElementOfGeom();
+    protected slots:
+    virtual void onCurrentSelectionChanged();
+    void deleteFaceItem();
+    virtual void selectElementOfGeom();
 
-      private:
-        QList<DocumentModel::GeomObj> _assocs;
-        QShortcut*                    _delFaceShortcut;
-  };
-
+    private:
+    QList<DocumentModel::GeomObj> _assocs;
+    QShortcut*                    _delFaceShortcut;
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT GroupDialog : public HexaBaseDialog,
-                                                        public Ui::GroupDialog
-  {
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT GroupDialog : public HexaBaseDialog,
+    public Ui::GroupDialog
+    {
       Q_OBJECT
 
       QMap<DocumentModel::Group, QString> strKind;
 
-      public:
-        GroupDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~GroupDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+    public:
+      GroupDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~GroupDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-        void setValue(HEXA_NS::Group* v);
-        HEXA_NS::Group* getValue();
+      void setValue(HEXA_NS::Group* v);
+      HEXA_NS::Group* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private slots:
-//         void addEltBase();
-        void removeEltBase();
-//         void clearEltBase();
-        void onKindChanged( int index );
+    private slots:
+    //         void addEltBase();
+    void removeEltBase();
+    //         void clearEltBase();
+    void onKindChanged( int index );
 
-      private:
-        HEXA_NS::Group   *_value;
-  };
+    private:
+    HEXA_NS::Group   *_value;
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT LawDialog : public HexaBaseDialog,
-                                                      public Ui::LawDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT LawDialog : public HexaBaseDialog,
+    public Ui::LawDialog
+    {
       Q_OBJECT
 
       QMap<DocumentModel::KindLaw, QString> strKind;
 
-      public:
-        LawDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~LawDialog();
-        void clear();
+    public:
+      LawDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~LawDialog();
+      void clear();
 
-        void setValue(HEXA_NS::Law* v);
-        HEXA_NS::Law* getValue();
+      void setValue(HEXA_NS::Law* v);
+      HEXA_NS::Law* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Law   *_value;
-  };
-
-
+    private:
+    HEXA_NS::Law   *_value;
+    };
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PropagationDialog : public HexaBaseDialog,
-                                                      public Ui::PropagationDialog
-  {
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PropagationDialog : public HexaBaseDialog,
+    public Ui::PropagationDialog
+    {
       Q_OBJECT
 
-      public:
-        PropagationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~PropagationDialog();
-        void clear();
+    public:
+      PropagationDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~PropagationDialog();
+      void clear();
 
-        void setValue(HEXA_NS::Propagation* v);
-        HEXA_NS::Propagation* getValue();
+      void setValue(HEXA_NS::Propagation* v);
+      HEXA_NS::Propagation* getValue();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void updateHelpFileName();
-        void deletePropagationItem();
-        virtual void selectElementOfModel();
+    protected slots:
+    void updateHelpFileName();
+    void deletePropagationItem();
+    virtual void selectElementOfModel();
 
-      private:
-        HEXA_NS::Propagation *_value;
-  };
+    private:
+    HEXA_NS::Propagation *_value;
+    };
 
 
 
     // Define the compute mesh dialog box
     // ----------------------------------
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ComputeMeshDialog : public HexaBaseDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ComputeMeshDialog : public HexaBaseDialog
+    {
       Q_OBJECT
 
-      public:
-        ComputeMeshDialog( QWidget* parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = Qt::SubWindow );
-        virtual ~ComputeMeshDialog();
-        void clear();
+    public:
+      ComputeMeshDialog( QWidget* parent = 0, Mode editmode = NEW_MODE, Qt::WindowFlags f = Qt::SubWindow );
+      virtual ~ComputeMeshDialog();
+      void clear();
 
-        void setDocumentModel(DocumentModel* m);
+      void setDocumentModel(DocumentModel* m);
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
-//         virtual void accept();
-//         virtual void reject();
+    public slots:
+    virtual bool apply(QModelIndex& result);
+    //         virtual void accept();
+    //         virtual void reject();
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      private:
-	QLineEdit* _name;
-	QSpinBox*  _dim;
-	QLineEdit* _fact;
-  };
+    private:
+    QLineEdit* _name;
+    QSpinBox*  _dim;
+    QLineEdit* _fact;
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ReplaceHexaDialog : public HexaBaseDialog,
-                                                              public Ui::ReplaceHexaDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ReplaceHexaDialog : public HexaBaseDialog,
+    public Ui::ReplaceHexaDialog
+    {
       Q_OBJECT
 
-      public:
-        ReplaceHexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~ReplaceHexaDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+    public:
+      ReplaceHexaDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~ReplaceHexaDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void deleteQuadItem();
-        void updateButtonBox();
+    protected slots:
+    void deleteQuadItem();
+    void updateButtonBox();
 
-      private:
-        HEXA_NS::Elements *_value;
-  };
-
-
+    private:
+    HEXA_NS::Elements *_value;
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadRevolutionDialog : public HexaBaseDialog,
-                                                                 public Ui::QuadRevolutionDialog
-  {
+
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadRevolutionDialog : public HexaBaseDialog,
+    public Ui::QuadRevolutionDialog
+    {
       Q_OBJECT
 
-      public:
-        QuadRevolutionDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~QuadRevolutionDialog();
-        void clear();
-        virtual QModelIndexList getAssocsVTK();
+    public:
+      QuadRevolutionDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~QuadRevolutionDialog();
+      void clear();
+      virtual QModelIndexList getAssocsVTK();
 
-      public slots:
-        virtual bool apply(QModelIndex& result);
+    public slots:
+    virtual bool apply(QModelIndex& result);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+    void _initInputWidget( Mode editmode );
 
-      protected slots:
-        void addAngleItem();
-        void delAngleItem();
-        void delQuadItem();
-        void updateButtonBox();
+    protected slots:
+    void addAngleItem();
+    void delAngleItem();
+    void delQuadItem();
+    void updateButtonBox();
 
-      private:
-        HEXA_NS::Elements *_value;
-  };
+    private:
+    HEXA_NS::Elements *_value;
+    };
 
 
 
-  class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeHemiSphereDialog : public HexaBaseDialog,
-                                                             public Ui::MakeHemiSphereDialog
-  {
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeHemiSphereDialog : public HexaBaseDialog,
+    public Ui::MakeHemiSphereDialog
+    {
       Q_OBJECT
 
-      public:
-        MakeHemiSphereDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-        virtual ~MakeHemiSphereDialog();
+    public:
+      MakeHemiSphereDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+      virtual ~MakeHemiSphereDialog();
+      void clear();
+
+      //         void setValue(HEXA_NS::Propagation* v);
+      //         HEXA_NS::Propagation* getValue();
+
+    public slots:
+    virtual bool apply(QModelIndex& result);
+
+    protected:
+    void _initInputWidget( Mode editmode );
+
+    private:
+    HEXA_NS::Elements *_value;
+    };
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ModelInfoDialog : public HexaBaseDialog,
+    public Ui::ModelInfoDialog
+    {
+        Q_OBJECT
+
+    public:
+        ModelInfoDialog( QWidget* parent = NULL, Qt::WindowFlags wf = Qt::SubWindow );
+        virtual ~ModelInfoDialog(){}
+
+    public slots:
+        void updateInfo();
+
+    protected:
+        virtual void hideEvent ( QHideEvent * event );
+        virtual void showEvent ( QShowEvent * event );
+        virtual bool apply(QModelIndex& result){ return true;}
+        virtual void _initInputWidget( Mode editmode ){}
+    };
+
+    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT AddShapeDialog : public HexaBaseDialog,
+    public Ui::AddShapeDialog
+    {
+        Q_OBJECT
+
+    public:
+        AddShapeDialog( QWidget* parent = NULL, Mode editmode = NEW_MODE, Qt::WindowFlags wf = Qt::SubWindow );
+        virtual ~AddShapeDialog();
         void clear();
 
-//         void setValue(HEXA_NS::Propagation* v);
-//         HEXA_NS::Propagation* getValue();
-
-      public slots:
+    public slots:
         virtual bool apply(QModelIndex& result);
+        virtual void close();
+        virtual void onWindowActivated(SUIT_ViewManager*);
 
-      protected:
-        void _initInputWidget( Mode editmode );
+    protected:
+        virtual void _initInputWidget( Mode editmode );
 
-      private:
-        HEXA_NS::Elements *_value;
-  };
+    protected slots:
+        virtual void onCurrentSelectionChanged();
 
-//   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeRindDialog : public HexaBaseDialog,
-//                                                     public Ui::MakeRindDialog
-//   {
-//       Q_OBJECT
-//
-//       public:
-//         MakeRindDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
-//         virtual ~MakeRindDialog();
-//
-//       public slots:
-//         virtual bool apply(QModelIndex& result);
-//
-//       private:
-// //         HEXA_NS::Propagation *_value;:q
-//
-//   };
+    private:
+        GEOM::GeomObjPtr    currentGeomObj;
+    };
+
+
+    //   class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeRindDialog : public HexaBaseDialog,
+    //                                                     public Ui::MakeRindDialog
+    //   {
+    //       Q_OBJECT
+    //
+    //       public:
+    //         MakeRindDialog( QWidget* = 0, Mode = NEW_MODE, Qt::WindowFlags = Qt::SubWindow );//= 0 );
+    //         virtual ~MakeRindDialog();
+    //
+    //       public slots:
+    //         virtual bool apply(QModelIndex& result);
+    //
+    //       private:
+    // //         HEXA_NS::Propagation *_value;:q
+    //
+    //   };
 
 
   }

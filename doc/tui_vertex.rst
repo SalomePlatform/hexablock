@@ -20,6 +20,10 @@ Get the number of all vertices of the document::
 Get the number of vertices used only by the model of blocks::
 
     sum_u = doc.countUsedVertex()
+    
+Get the vertices used by the model of blocks
+
+.. literalinclude:: test_doc/vertex/vertex.py
 
 Get a vertex of the document::
 
@@ -41,5 +45,6 @@ Find a vertex in the document (with a tolerance)::
 
     vertex_f = doc.findVertex(x, y, z)
 
+More operations: *Vertex* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guivertex`

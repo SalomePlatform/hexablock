@@ -8,7 +8,7 @@ Modify elements by transforming elements
 ========================================
 
 To modify elements by transforming elements in the **Main Menu** select 
-**Model -> Perform transformation**.
+**Model -> Operation -> Perform transformation**.
 
 .. _guimodifytranslation:
 
@@ -56,8 +56,8 @@ Modify elements by rotation
 **Arguments:**
 
 - elements,
-- vector direction,
 - vertex,
+- vector direction,
 - angle.
 
 

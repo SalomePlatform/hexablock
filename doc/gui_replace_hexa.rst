@@ -6,7 +6,7 @@
 Replace hexahedron
 ==================
 
-To **Replace an hexahedron** in the **Main Menu** select **Model -> Replace Hexahedron**.
+To **Replace an hexahedron** in the **Main Menu** select **Model -> Operation -> Replace Hexahedron**.
 
 .. image:: _static/gui_replacehexa.png
    :align: center
@@ -16,9 +16,6 @@ To **Replace an hexahedron** in the **Main Menu** select **Model -> Replace Hexa
 
 
 The following data are required:
-
-- Result Name
-    - name  : name of the elements created (**optional**).
 
 - Quad(s) source
     - Quad's source: the set of quads to be extruded (select quads).

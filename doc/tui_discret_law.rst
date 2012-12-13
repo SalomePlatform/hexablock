@@ -9,6 +9,10 @@ Define a law of discretization
 Add a new law of discretization in the document::
 
     law_1 = doc.addLaw(name, nb_nodes)
+    
+Add laws on propagations based on min or max segment length::
+
+	hexablock.addLaws(doc, lg, lgmax)
 
 Get the number of the law in the document::
 

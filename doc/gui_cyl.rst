@@ -7,7 +7,10 @@
 Cylinder
 ========
 
-To create a **Cylinder** in the **Main Menu** select **Model -> Add Cylinder**.
+To create a **Cylinder** in the **Main Menu** select **Model -> Construction -> Add Cylinder**.
+
+There is no construction of blocks.
+Cylinder is an intermediate object built in order to make the dialog boxes of blocks construction more concise.
 
 **Arguments:** a vertex, a vector, a radius and a height.
 

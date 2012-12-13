@@ -30,14 +30,14 @@
 
 #include "HexGlobale.hxx"
 #include "HexCylinder.hxx"
-#include "HexShape.hxx"
+#include "HexOldShape.hxx"
 
 #include <map>
 
 BEGIN_NAMESPACE_HEXA
 
 void geom_dump_asso     (Edge* edge);
-void geom_create_circle (double* milieu, double rayon, double* normale, 
+void geom_create_circle (double* milieu, double rayon, double* normale,
                          double* base, string& brep);
 
 // ====================================================== getHexaIJK
@@ -50,9 +50,11 @@ Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
    else if (grid_nocart)
       return NULL;
 
-   int nro = nx + size_hx*ny + size_hx*size_hy*nz; 
+   int nro = nx + size_hx*ny + size_hx*size_hy*nz;
 
-   return tab_hexa [nro]; 
+   DumpStart  ("getHexaIJK", nx << ny << nz);
+   DumpReturn (tab_hexa [nro]);
+   return      tab_hexa [nro];
 }
 // ====================================================== getQuadIJ
 Quad* Elements::getQuadIJ (int nx, int ny, int nz)
@@ -64,9 +66,12 @@ Quad* Elements::getQuadIJ (int nx, int ny, int nz)
    else if (grid_nocart)
       return NULL;
 
-   int nro = nx + size_qx*ny + size_qx*size_qy*nz 
+   int nro = nx + size_qx*ny + size_qx*size_qy*nz
                 + size_qx*size_qy*size_qz*dir_z;
-   return tab_quad [nro]; 
+
+   DumpStart  ("getQuadIJ", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
+   return tab_quad [nro];
 }
 // ====================================================== getQuadJK
 Quad* Elements::getQuadJK (int nx, int ny, int nz)
@@ -80,7 +85,9 @@ Quad* Elements::getQuadJK (int nx, int ny, int nz)
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz; // + dir_x*...
 
-   return tab_quad [nro]; 
+   DumpStart  ("getQuadJK", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
+   return tab_quad [nro];
 }
 // ====================================================== getQuadIK
 Quad* Elements::getQuadIK (int nx, int ny, int nz)
@@ -94,7 +101,9 @@ Quad* Elements::getQuadIK (int nx, int ny, int nz)
 
    int nro = nx + size_qx*ny + size_qx*size_qy*nz + size_qx*size_qy*size_qz;
 
-   return tab_quad [nro]; 
+   DumpStart  ("getQuadIK", nx << ny << nz);
+   DumpReturn (tab_quad [nro]);
+   return tab_quad [nro];
 }
 // ====================================================== getEdgeI
 Edge* Elements::getEdgeI (int nx, int ny, int nz)
@@ -108,7 +117,9 @@ Edge* Elements::getEdgeI (int nx, int ny, int nz)
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz;
 
-   return tab_edge [nro]; 
+   DumpStart  ("getEdgeI", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
+   return tab_edge [nro];
 }
 // ====================================================== getEdgeJ
 Edge* Elements::getEdgeJ (int nx, int ny, int nz)
@@ -122,7 +133,9 @@ Edge* Elements::getEdgeJ (int nx, int ny, int nz)
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz + size_ex*size_ey*size_ez;
 
-   return tab_edge [nro]; 
+   DumpStart  ("getEdgeJ", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
+   return tab_edge [nro];
 }
 // ====================================================== getEdgeK
 Edge* Elements::getEdgeK (int nx, int ny, int nz)
@@ -134,9 +147,12 @@ Edge* Elements::getEdgeK (int nx, int ny, int nz)
    else if (grid_nocart)
       return NULL;
 
-   int nro = nx + size_ex*ny + size_ex*size_ey*nz 
+   int nro = nx + size_ex*ny + size_ex*size_ey*nz
                 + size_ex*size_ey*size_ez*dir_z;
-   return tab_edge [nro]; 
+
+   DumpStart  ("getEdgeK", nx << ny << nz);
+   DumpReturn (tab_edge [nro]);
+   return tab_edge [nro];
 }
 // ====================================================== getVertexIJK
 Vertex* Elements::getVertexIJK (int nx, int ny, int nz)
@@ -148,25 +164,27 @@ Vertex* Elements::getVertexIJK (int nx, int ny, int nz)
    else if (grid_nocart)
       return NULL;
 
-   int nro = nx + size_vx*ny + size_vx*size_vy*nz; 
+   int nro = nx + size_vx*ny + size_vx*size_vy*nz;
 
-   return tab_vertex [nro]; 
+   DumpStart  ("getVertexIJK", nx << ny << nz);
+   DumpReturn (tab_vertex [nro]);
+   return tab_vertex [nro];
 }
 // ====================================================== setVertex
 void Elements::setVertex (Vertex* elt, int nx, int ny, int nz)
 {
-   if (   nx < 0 || nx >= size_vx || ny < 0 || ny >= size_vy 
-       || nz < 0 || nz >= size_vz) return; 
+   if (   nx < 0 || nx >= size_vx || ny < 0 || ny >= size_vy
+       || nz < 0 || nz >= size_vz) return;
 
    int nro = nx + size_vx*ny + size_vx*size_vy*nz;
    tab_vertex [nro] = elt;
 }
 // ====================================================== setVertex (2)
-void Elements::setVertex (int nx, int ny, int nz, double px, double py, 
+void Elements::setVertex (int nx, int ny, int nz, double px, double py,
                                                   double pz)
 {
-   if (   nx < 0 || nx >= size_vx || ny < 0 || ny >= size_vy 
-       || nz < 0 || nz >= size_vz) return; 
+   if (   nx < 0 || nx >= size_vx || ny < 0 || ny >= size_vy
+       || nz < 0 || nz >= size_vz) return;
 
    Vertex*    node = el_root->addVertex (px, py, pz);
    setVertex (node, nx, ny, nz);
@@ -179,7 +197,7 @@ void Elements::setEdge (Edge* elt, EnumCoord dir, int nx, int ny, int nz)
       return;
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz + size_ex*size_ey*size_ez*dir;
-   tab_edge [nro] = elt; 
+   tab_edge [nro] = elt;
 }
 // ====================================================== setQuad
 void Elements::setQuad (Quad* elt, EnumCoord dir, int nx, int ny, int nz)
@@ -189,13 +207,13 @@ void Elements::setQuad (Quad* elt, EnumCoord dir, int nx, int ny, int nz)
       return;
 
    int nro = nx + size_ex*ny + size_ex*size_ey*nz + size_ex*size_ey*size_ez*dir;
-   tab_quad [nro] = elt; 
+   tab_quad [nro] = elt;
 }
 // ====================================================== setHexa
 void Elements::setHexa (Hexa* elt, int nx, int ny, int nz)
 {
-   if (   nx < 0 || nx >= size_hx || ny < 0 || ny >= size_hy 
-       || nz < 0 || nz >= size_hz) return; 
+   if (   nx < 0 || nx >= size_hx || ny < 0 || ny >= size_hy
+       || nz < 0 || nz >= size_hz) return;
 
    int nro = nx + size_hx*ny + size_hx*size_hy*nz;
    tab_hexa [nro] = elt;
@@ -223,10 +241,10 @@ int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    Vector* dir  = cyl->getDirection ();
    double  ray  = cyl->getRadius ();
    double  haut = cyl->getHeight ();
-   
+
    resize (GR_CYLINDRIC, nr, na, nl);
    cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl, 
+   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl,
                          nr, na, nl, true);
    fillGrid ();
    assoCylinder (orig, dir, 360);
@@ -246,7 +264,7 @@ int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    Vector* dir  = cyl->getDirection ();
    double  ray  = cyl->getRadius ();
    double  haut = cyl->getHeight ();
-   
+
    resize (GR_CYLINDRIC, nr, na, nl);
    cyl_closed = true;
    makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, false);
@@ -254,7 +272,7 @@ int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
    assoCylinder (orig, dir, 360);
    return HOK;
 }
-// 
+//
 // ---------------------------------------- prism Quads
 //
 // ====================================================== prismQuads
@@ -293,7 +311,7 @@ int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
    return HOK;
 }
 // ====================================================== prismQuadsVec
-int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen, 
+int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
                              int mode)
 {
    int nbiter = tlen.size();
@@ -403,7 +421,7 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
              Real3  ph, hm;
              for (int dd=dir_x; dd<=dir_z ; dd++)
                  {
-                 ph [dd] = centre [dd] + oh*vk[dd]; 
+                 ph [dd] = centre [dd] + oh*vk[dd];
                  hm [dd] = point  [dd] - ph[dd];
                  rayon  += hm[dd] * hm[dd];
                  }
@@ -431,7 +449,7 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
               if (revo_lution)
                  {
                  double alpha = beta;
-                 beta = alpha + gen_values[nh]; 
+                 beta = alpha + gen_values[nh];
                  Shape* shape = new Shape (c_rep);
                  shape->setBounds (alpha/360, beta/360);
                  pilier->addAssociation (shape);
@@ -460,7 +478,7 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
           for (int nh=0 ; nh<hauteur ; nh++)
               {
               ed2 = ed0;
-              ed0 = newEdge (tab_vertex [nd1*hauteur + nh], 
+              ed0 = newEdge (tab_vertex [nd1*hauteur + nh],
                              tab_vertex [nd2*hauteur + nh]);
               ed1 = tab_pilier [nd1*hauteur + nh];
               ed3 = tab_pilier [nd2*hauteur + nh];
@@ -483,14 +501,14 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
    int nv3 = hauteur*ind_poutre [3];
    for (int nh=0 ; nh<hauteur ; nh++)
        {
-       qb = newQuad (tab_edge [nh+nv0], tab_edge [nh+nv1], 
+       qb = newQuad (tab_edge [nh+nv0], tab_edge [nh+nv1],
                      tab_edge [nh+nv2], tab_edge [nh+nv3]);
        qc = tab_quad [nh + nv0];
        qd = tab_quad [nh + nv2];
        qe = tab_quad [nh + nv1];
        qf = tab_quad [nh + nv3];
 
-// *** tab_hexa [nh*hauteur + nro] = newHexa (qa, qb, qc, qd, qe, qf); Abu 
+// *** tab_hexa [nh*hauteur + nro] = newHexa (qa, qb, qc, qd, qe, qf); Abu
        tab_hexa [nro*hauteur + nh] = newHexa (qa, qb, qc, qd, qe, qf);
        ker_hquad.push_back (qb);
        qa = qb;
@@ -510,7 +528,7 @@ void Elements::updateMatrix (int hauteur)
       double dh = gen_values[hauteur] - h0;
       Real3 decal;
       for (int nc=dir_x ; nc<=dir_z ; nc++)
-          decal [nc] = prism_dir [nc]*dh; 
+          decal [nc] = prism_dir [nc]*dh;
       gen_matrix.defTranslation (decal);
       }
 }

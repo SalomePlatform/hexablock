@@ -56,7 +56,10 @@ public:
   ::CORBA::Long countVertex() throw (SALOME::SALOME_Exception);
   Vertex_ptr getVertex(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Vertex_ptr findVertex(::CORBA::Double x, ::CORBA::Double y, ::CORBA::Double z) throw (SALOME::SALOME_Exception);
-  Edge_ptr addEdge(Vertex_ptr v0, Vertex_ptr v1) throw (SALOME::SALOME_Exception);
+  Edge_ptr addEdge(Vertex_ptr v0, Vertex_ptr v1)
+                   throw (SALOME::SALOME_Exception);
+  Edge_ptr addEdgeVector (Vertex_ptr v0, Vector_ptr w1)
+                   throw (SALOME::SALOME_Exception);
   ::CORBA::Long countEdge() throw (SALOME::SALOME_Exception);
   Edge_ptr getEdge(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Edge_ptr findEdge(Vertex_ptr p1, Vertex_ptr p2) throw (SALOME::SALOME_Exception);
@@ -93,25 +96,26 @@ Pipe_ptr getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception);
         throw (SALOME::SALOME_Exception);
 
   Elements_ptr makeSpherical( Vertex_ptr ptIn,
-    ::CORBA::Double rayon, 
+    ::CORBA::Double rayon,
     ::CORBA::Long n,
     ::CORBA::Double k ) throw (SALOME::SALOME_Exception);
 
   Elements_ptr makeCylinder(Cylinder_ptr cyl, Vector_ptr vr, ::CORBA::Long nr, ::CORBA::Long na, ::CORBA::Long nl) throw (SALOME::SALOME_Exception);
-  Elements_ptr makePipe(Pipe_ptr p, Vector_ptr vr, ::CORBA::Long nr, 
-                                 ::CORBA::Long na, ::CORBA::Long nl) 
+  Elements_ptr makePipe(Pipe_ptr p, Vector_ptr vr, ::CORBA::Long nr,
+                                 ::CORBA::Long na, ::CORBA::Long nl)
                 throw (SALOME::SALOME_Exception);
 
 //   Elements_ptr makeCylinders(Cylinder_ptr c1, Cylinder_ptr c2) throw (SALOME::SALOME_Exception);
-    CrossElements_ptr makeCylinders(Cylinder_ptr cyl1, Cylinder_ptr cyl2) throw (SALOME::SALOME_Exception);
-
-   Elements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2) throw (SALOME::SALOME_Exception);
+  CrossElements_ptr makeCylinders(Cylinder_ptr cyl1, Cylinder_ptr cyl2)
+                    throw (SALOME::SALOME_Exception);
+  CrossElements_ptr makePipes(Pipe_ptr p1, Pipe_ptr p2)
+                    throw (SALOME::SALOME_Exception);
 
   Elements_ptr prismQuad(Quad_ptr qd, Vector_ptr v, ::CORBA::Long nb)
                throw (SALOME::SALOME_Exception);
   Elements_ptr prismQuads(const Quads& qds, Vector_ptr v, ::CORBA::Long nb)
                throw (SALOME::SALOME_Exception);
-  Elements_ptr prismQuadsVec(const Quads& qds, Vector_ptr v, 
+  Elements_ptr prismQuadsVec(const Quads& qds, Vector_ptr v,
                              const RealVector &thaut, ::CORBA::Long opt)
                throw (SALOME::SALOME_Exception);
 
@@ -122,29 +126,29 @@ Pipe_ptr getPipe(::CORBA::Long i) throw (SALOME::SALOME_Exception);
   ::CORBA::Long mergeEdges(Edge_ptr e1, Edge_ptr e2, Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
   ::CORBA::Long mergeVertices(Vertex_ptr v1, Vertex_ptr v2) throw (SALOME::SALOME_Exception);
 
-  Elements_ptr disconnectQuad(Hexa_ptr h, Quad_ptr q) 
+  Elements_ptr disconnectQuad(Hexa_ptr h, Quad_ptr q)
                throw (SALOME::SALOME_Exception);
-  Elements_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e) 
+  Elements_ptr disconnectEdge(Hexa_ptr h, Edge_ptr e)
                throw (SALOME::SALOME_Exception);
-  Elements_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v) 
+  Elements_ptr disconnectVertex(Hexa_ptr h, Vertex_ptr v)
                throw (SALOME::SALOME_Exception);
 
-  Elements_ptr disconnectEdges(const Hexas& th, const Edges& e) 
+  Elements_ptr disconnectEdges(const Hexas& th, const Edges& e)
                throw (SALOME::SALOME_Exception);
 
   Elements_ptr cut(Edge_ptr e, ::CORBA::Long nb_of_cuts) throw (SALOME::SALOME_Exception);
 
   Elements_ptr makeTranslation(Elements_ptr e, Vector_ptr vec) throw (SALOME::SALOME_Exception);
 
-Elements_ptr makeRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, 
-                          ::CORBA::Double angle) 
+Elements_ptr makeRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec,
+                          ::CORBA::Double angle)
              throw (SALOME::SALOME_Exception);
 
-Elements_ptr makeScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k) 
+Elements_ptr makeScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k)
              throw (SALOME::SALOME_Exception);
-Elements_ptr makeSymmetryPoint (Elements_ptr e, Vertex_ptr ver) 
+Elements_ptr makeSymmetryPoint (Elements_ptr e, Vertex_ptr ver)
              throw (SALOME::SALOME_Exception);
-Elements_ptr makeSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+Elements_ptr makeSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
              throw (SALOME::SALOME_Exception);
 Elements_ptr makeSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
              throw (SALOME::SALOME_Exception);
@@ -154,13 +158,13 @@ Elements_ptr makeSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
 
 void performRotation(Elements_ptr l, Vertex_ptr ver, Vector_ptr vec, ::CORBA::Double angle) throw (SALOME::SALOME_Exception);
 
-void performScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k) 
+void performScale (Elements_ptr e, Vertex_ptr ver, ::CORBA::Double k)
      throw (SALOME::SALOME_Exception);
-void performSymmetryPoint (Elements_ptr e, Vertex_ptr ver) 
+void performSymmetryPoint (Elements_ptr e, Vertex_ptr ver)
      throw (SALOME::SALOME_Exception);
-void performSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+void performSymmetryLine  (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
      throw (SALOME::SALOME_Exception);
-void performSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec) 
+void performSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
      throw (SALOME::SALOME_Exception);
 
   Group_ptr addHexaGroup(const char* name) throw (SALOME::SALOME_Exception);
@@ -186,28 +190,6 @@ void performSymmetryPlane (Elements_ptr e, Vertex_ptr ver, Vector_ptr vec)
 
           // Evols 13/12/2010
 
- ::CORBA::Long associateOpenedLine (Edge_ptr        mstart, 
-                            const Edges&            mline, 
-                            GEOM::GEOM_Object_ptr   gstart, 
-                            ::CORBA::Double         pstart, 
-                            const Shapes&           gline, 
-                            ::CORBA::Double pend) 
-                      throw (SALOME::SALOME_Exception);
- ::CORBA::Long associateClosedLine (Vertex_ptr      mfirst, 
-                            Edge_ptr                mstart, 
-                            const Edges&            mline, 
-                            GEOM::GEOM_Object_ptr   gstart, 
-                            ::CORBA::Double         pstart, 
-                            ::CORBA::Boolean        inv, 
-                            const Shapes&           gline)
-                      throw (SALOME::SALOME_Exception);
-
-void setShape (GEOM::GEOM_Object_ptr geom_object)
-                      throw (SALOME::SALOME_Exception);
-GEOM::GEOM_Object_ptr getShape ()
-                      throw (SALOME::SALOME_Exception);
-char*  getBrep ()     throw (SALOME::SALOME_Exception);
-
           // Evols 05/09/2011
 	  //
   ::CORBA::Long countUsedVertex () throw (SALOME::SALOME_Exception);
@@ -220,7 +202,7 @@ char*  getBrep ()     throw (SALOME::SALOME_Exception);
   Quad_ptr    getUsedQuad   (::CORBA::Long i) throw (SALOME::SALOME_Exception);
   Hexa_ptr    getUsedHexa   (::CORBA::Long i) throw (SALOME::SALOME_Exception);
 
-  Hexa_ptr addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, Quad_ptr q4, 
+  Hexa_ptr addHexa5Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, Quad_ptr q4,
                           Quad_ptr q5)
            throw (SALOME::SALOME_Exception);
   Hexa_ptr addHexa4Quads (Quad_ptr q1, Quad_ptr q2, Quad_ptr q3, Quad_ptr q4)
@@ -230,47 +212,75 @@ char*  getBrep ()     throw (SALOME::SALOME_Exception);
   Hexa_ptr addHexa2Quads (Quad_ptr q1, Quad_ptr q2)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr revolutionQuads (const Quads& start, Vertex_ptr center, 
+  Elements_ptr revolutionQuads (const Quads& start, Vertex_ptr center,
                                 Vector_ptr axis, const RealVector &angles)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr replace (const Quads& pattern, Vertex_ptr p1, Vertex_ptr c1, 
+  Elements_ptr replace (const Quads& pattern, Vertex_ptr p1, Vertex_ptr c1,
                 Vertex_ptr p2, Vertex_ptr c2, Vertex_ptr p3, Vertex_ptr c3)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr makeSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+  Elements_ptr makeSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz,
                          ::CORBA::Double radius, ::CORBA::Double radhole,
-                         Vertex_ptr plorig, 
+                         Vertex_ptr plorig,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr makePartSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
+  Elements_ptr makePartSphere (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz,
                              ::CORBA::Double  radius, ::CORBA::Double radhole,
                              Vertex_ptr plorig, ::CORBA::Double angle,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr makeRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
-                       ::CORBA::Double  radext, ::CORBA::Double radint, 
-                       ::CORBA::Double radhole, Vertex_ptr plorig, 
+  Elements_ptr makeRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz,
+                       ::CORBA::Double  radext, ::CORBA::Double radint,
+                       ::CORBA::Double radhole, Vertex_ptr plorig,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception);
 
-  Elements_ptr makePartRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz, 
-                       ::CORBA::Double radext, ::CORBA::Double radint, 
+  Elements_ptr makePartRind (Vertex_ptr center, Vector_ptr vx, Vector_ptr vz,
+                       ::CORBA::Double radext, ::CORBA::Double radint,
                        ::CORBA::Double radhole,
                        Vertex_ptr plorig, ::CORBA::Double angle,
                  ::CORBA::Long nrad, ::CORBA::Long nang, ::CORBA::Long nhaut)
            throw (SALOME::SALOME_Exception);
 public:
 
-  ::CORBA::Boolean removeQuad (Quad_ptr quad) 
+  ::CORBA::Boolean removeQuad (Quad_ptr quad)
            throw (SALOME::SALOME_Exception);
-  ::CORBA::Boolean removeElements (Elements_ptr bloc) 
+  ::CORBA::Boolean removeElements (Elements_ptr bloc)
            throw (SALOME::SALOME_Exception);
 
   void setLevel(::CORBA::Long level)       throw (SALOME::SALOME_Exception);
   void clearAssociation ()                 throw (SALOME::SALOME_Exception);
+
+                          // Hexa5
+
+  NewShape_ptr  addShape (GEOM::GEOM_Object_ptr geom_object, const char* name)
+                                              throw (SALOME::SALOME_Exception);
+  ::CORBA::Long countShape ()                 throw (SALOME::SALOME_Exception);
+  NewShape_ptr  getShape (::CORBA::Long nro)
+                                              throw (SALOME::SALOME_Exception);
+
+ ::CORBA::Long associateOpenedLine (const Edges&     mline,
+                                    const Shapes& gline,
+                                    const IntVector& subid,
+                                    ::CORBA::Double  pstart,
+                                    ::CORBA::Double  pend)
+          throw (SALOME::SALOME_Exception);
+
+ ::CORBA::Long associateClosedLine (Vertex_ptr       mfirst,
+                                    const Edges&     mline,
+                                    const Shapes& gline,
+                                    const IntVector& subid,
+                                    ::CORBA::Double  pstart,
+                                    ::CORBA::Boolean inv)
+          throw (SALOME::SALOME_Exception);
+                                                       // Hexa5
+  Elements_ptr makeBiCylinder (Cylinder_ptr cyl1, Cylinder_ptr cyl2)
+                 throw (SALOME::SALOME_Exception);
+  Elements_ptr makeBiPipe (Pipe_ptr p1, Pipe_ptr p2)
+                 throw (SALOME::SALOME_Exception);
 
 private:
   HEXA_NS::Document *_document_cpp;

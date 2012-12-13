@@ -54,7 +54,7 @@ for nro in range(doc.countPropagation()):
 
 
 file_name = os.path.join(os.environ['TMP'], 'propagation.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 print "...test propagation OK"
 

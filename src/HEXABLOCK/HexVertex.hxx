@@ -1,5 +1,5 @@
 
-// Class : Gestion des sommets 
+// Class : Gestion des sommets
 
 // Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
@@ -27,7 +27,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Vertex : public EltBase 
+class Vertex : public EltBase
 {
 public :
    double getX()   { return v_x; }
@@ -42,12 +42,27 @@ public :
    void setX (double v)   { v_x = v ; }
    void setY (double v)   { v_y = v ; }
    void setZ (double v)   { v_z = v ; }
- 
-   void assoCoord (double x, double y, double z);
-   void assoCoord (double* pnt); 
+
+   virtual void setAssociation (Shape* forme)  {}     // PERIME
+                                                   // Hexa5
+   int  setAssociation (NewShape* geom, int subid);
+   int  setAssociation (VertexShape* forme);
+   int  setAssociation (double* point);
+   int  setAssociation (double px, double py, double pz);
+   void clearAssociation ();
+
+   VertexShape* getAssoVertex ()              { return v_shape ;}
+   VertexShape* getAssociation ()             { return v_shape ;}
+
+   void   getAssoCoord (double &x, double &y, double &z);
+   void   getAssoCoord (double* point);
+
+   double getAssoX ()   { return is_associated ? gc_x : v_x ; }
+   double getAssoY ()   { return is_associated ? gc_y : v_y ; }
+   double getAssoZ ()   { return is_associated ? gc_z : v_z ; }
 
 public :
-   Vertex (Document* prev, double x=0.0, double y=0.0, double z=0.0); 
+   Vertex (Document* prev, double x=0.0, double y=0.0, double z=0.0);
    Vertex (Document* cible, Vertex* other);
    Vertex (Vertex* other);
    virtual ~Vertex () {}
@@ -60,9 +75,11 @@ public :
    double* getPoint (double point[]);
 
    void setCoord  (double x, double y, double z);
-   bool isin      (double xmin, double xmax, double ymin, double ymax, 
+   void setCoord  (double point[]) { setCoord (point[0], point[1], point[2]); }
+
+   bool isin      (double xmin, double xmax, double ymin, double ymax,
                                             double zmin, double zmax);
-   Edge* getParent (int nro); 
+   Edge* getParent (int nro);
    Vertex* makeSymetric (Vertex* other);
    void    translate (Vector* vecteur, double fact=1.0);
    void    replace   (Vertex* old);
@@ -81,9 +98,9 @@ private :
     double  v_scalar;
     Vertex* v_clone;
     double  gc_x, gc_y, gc_z;
-    bool    gc_ass;
+    VertexShape*  v_shape;
 };
-// ========================================================= Constructeur bis 
+// ========================================================= Constructeur bis
 inline Vertex::Vertex (Vertex* other)
       : EltBase (other->dad(), EL_VERTEX)
 {
@@ -93,35 +110,33 @@ inline Vertex::Vertex (Vertex* other)
       v_y = other->v_y;
       v_z = other->v_z;
       v_scalar = other->v_scalar;
-      gc_ass = other->gc_ass;
       gc_x   = other->gc_x;
       gc_y   = other->gc_y;
       gc_z   = other->gc_z;
       }
-   else 
+   else
       {
       v_x  = v_y  = v_z  = 0;
       gc_x = gc_y = gc_z = 0;
       v_scalar = 0;
-      gc_ass = false;
       }
 }
 // ===================================================== getCoord
-inline double Vertex::getCoord (int dir) 
+inline double Vertex::getCoord (int dir)
 {
    double val = 0;
    switch (dir)
           {
-          case dir_x : val = v_x; 
+          case dir_x : val = v_x;
                break;
-          case dir_y : val = v_y; 
+          case dir_y : val = v_y;
                break;
-          case dir_z : val = v_z; 
+          case dir_z : val = v_z;
                break;
           }
    return val;
 }
-// ========================================================= dump 
+// ========================================================= dump
 inline void Vertex::dump ()
 {
    printName (" = ");
@@ -134,28 +149,15 @@ inline void Vertex::dump ()
    printf ("(%g, %g, %g)", v_x,v_y,v_z);
    dumpRef ();
 }
-// ========================================================= setCoord 
+// ========================================================= setCoord
 inline void Vertex::setCoord (double x, double y, double z)
 {
    v_x = x;
    v_y = y;
    v_z = z;
 }
-// ========================================================= assoCoord 
-inline void Vertex::assoCoord (double* coord)
-{
-   assoCoord (coord[dir_x], coord[dir_y], coord[dir_z]);
-}
-// ========================================================= assoCoord 
-inline void Vertex::assoCoord (double x, double y, double z)
-{
-   gc_ass = true;
-   gc_x = x;
-   gc_y = y;
-   gc_z = z;
-}
-// ========================================================= isin 
-inline bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax, 
+// ========================================================= isin
+inline bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax,
                                              double zmin, double zmax)
 {
    bool   rep =   v_x >= xmin && v_x <= xmax
@@ -171,13 +173,13 @@ inline double* Vertex::getPoint (double point[])
    point [dir_z] = v_z;
    return point;
 }
-// ========================================================= duplicate 
+// ========================================================= duplicate
 inline void Vertex::duplicate (Document* cible)
 {
    v_clone = new Vertex (cible, v_x, v_y, v_z);
    v_clone->v_scalar = v_scalar;
 }
-// ========================================================= duplicate 
+// ========================================================= duplicate
 inline bool Vertex::definedBy (double px, double py, double pz, double eps2)
 {
    double dist2 = carre (v_x-px) + carre (v_y-py) + carre (v_z-pz);

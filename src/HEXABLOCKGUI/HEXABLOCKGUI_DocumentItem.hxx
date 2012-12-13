@@ -34,6 +34,10 @@
 #include <HexPipe.hxx>
 #include <HexElements.hxx>
 #include <HexCrossElements.hxx>
+#include <HexNewShape.hxx>
+#include <HexVertexShape.hxx>
+#include <HexEdgeShape.hxx>
+#include <HexFaceShape.hxx>
 
 
 
@@ -55,6 +59,10 @@ Q_DECLARE_METATYPE( HEXA_NS::Cylinder* );
 Q_DECLARE_METATYPE( HEXA_NS::Pipe* );
 Q_DECLARE_METATYPE( HEXA_NS::Elements* );
 Q_DECLARE_METATYPE( HEXA_NS::CrossElements* );
+Q_DECLARE_METATYPE( HEXA_NS::NewShape* );
+Q_DECLARE_METATYPE( HEXA_NS::VertexShape* );
+Q_DECLARE_METATYPE( HEXA_NS::EdgeShape* );
+Q_DECLARE_METATYPE( HEXA_NS::FaceShape* );
 
 Q_DECLARE_METATYPE( HEXA_NS::Group* );
 Q_DECLARE_METATYPE( HEXA_NS::Law* );
@@ -80,6 +88,14 @@ namespace HEXABLOCK
       ELEMENTSITEM,
       CROSSELEMENTSITEM,
 
+      EXPSHAPEITEM,
+      IMPSHAPEITEM,
+      CLOUDOFPOINTSITEM,
+      GEOMSHAPEITEM,
+      GEOMPOINTITEM,
+      GEOMEDGEITEM,
+      GEOMFACEITEM,
+
       GROUPITEM,
       LAWITEM,
       PROPAGATIONITEM,
@@ -97,6 +113,15 @@ namespace HEXABLOCK
       ELEMENTS_TREE,
       CROSSELEMENTS_TREE,
 
+      EXPLICIT_SHAPES_TREE,
+      IMPLICIT_SHAPES_TREE,
+      CLOUD_OF_POINTS_TREE,
+      GEOMSHAPE_TREE,
+      GEOMPOINT_TREE,
+      GEOMEDGE_TREE,
+      GEOMFACE_TREE,
+
+
       GROUP_TREE,
       LAW_TREE,
       PROPAGATION_TREE,
@@ -111,6 +136,14 @@ namespace HEXABLOCK
       PIPE_DIR_TREE,
       ELEMENTS_DIR_TREE,
       CROSSELEMENTS_DIR_TREE,
+
+      EXPLICIT_SHAPES_DIR_TREE,
+      IMPLICIT_SHAPES_DIR_TREE,
+      CLOUD_OF_POINTS_DIR_TREE,
+      GEOMSHAPE_DIR_TREE,
+      GEOMPOINT_DIR_TREE,
+      GEOMEDGE_DIR_TREE,
+      GEOMFACE_DIR_TREE,
 
       GROUP_DIR_TREE,
       LAW_DIR_TREE,
@@ -172,63 +205,101 @@ namespace HEXABLOCK
     class VertexItem : public GraphicElementItem
     {
       public:
-        VertexItem( HEXA_NS::Vertex* hexaVertex, QString entry="" );
+        VertexItem( HEXA_NS::Vertex* hexaVertex, QString entry = "");
     };
 
     class EdgeItem : public GraphicElementItem
     {
       public:
-        EdgeItem( HEXA_NS::Edge* hexaEdge, QString entry="" );
+        EdgeItem( HEXA_NS::Edge* hexaEdge, QString entry = "");
     };
     //-----------------------------------------
     class QuadItem : public GraphicElementItem
     {
       public:
-        QuadItem( HEXA_NS::Quad* hexaQuad, QString entry="" );
+        QuadItem( HEXA_NS::Quad* hexaQuad, QString entry = "");
     };
     //-----------------------------------------
 
     class HexaItem : public GraphicElementItem
     {
       public:
-        HexaItem( HEXA_NS::Hexa* hexaHexa, QString entry="" );
+        HexaItem( HEXA_NS::Hexa* hexaHexa, QString entry = "");
     };
     //-----------------------------------------
 
     class VectorItem : public StandardElementItem
     {
       public:
-        VectorItem( HEXA_NS::Vector* hexaVector, QString entry="" );
+        VectorItem( HEXA_NS::Vector* hexaVector, QString entry = "");
     };
     //-----------------------------------------
 
     class CylinderItem : public StandardElementItem
     {
       public:
-        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry="" );
+        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry = "");
     };
     //-----------------------------------------
 
     class PipeItem : public StandardElementItem
     {
       public:
-        PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry="" );
+        PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry = "");
     };
     //-----------------------------------------
 
     class ElementsItem : public StandardElementItem
     {
       public:
-        ElementsItem( HEXA_NS::Elements* hexaElements, QString entry="" );
+        ElementsItem( HEXA_NS::Elements* hexaElements, QString entry = "" );
     };
     //-----------------------------------------
     class CrossElementsItem : public StandardElementItem
     {
       public:
-        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry="" );
+        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry = "");
     };
 
+    //------------------------------------------------
+    class GeomItem: public StandardElementItem
+    {
+    public:
+        GeomItem( HEXA_NS::EltBase* geomShape, QString entry, HexaType ttype, HexaTreeRole treeRole, HEXA_NS::EltBase* assoc = NULL );
+        HEXA_NS::EltBase* getAssociation() const { return association; }
+        void setAssociation(HEXA_NS::EltBase* assoc) { association = assoc; }
 
+    private:
+        HEXA_NS::EltBase* association;
+    };
+
+    //------------------------------------------------
+    class GeomShapeItem: public GeomItem
+    {
+    public:
+        GeomShapeItem( HEXA_NS::NewShape* shape, HEXA_NS::EltBase* assoc = NULL);
+    };
+
+    //------------------------------------------------
+    class GeomPointItem: public GeomItem
+    {
+    public:
+        GeomPointItem( HEXA_NS::VertexShape* geomPoint, HEXA_NS::Vertex* associatedVertex = NULL);
+    };
+
+    //------------------------------------------------
+    class GeomEdgeItem: public GeomItem
+    {
+    public:
+        GeomEdgeItem( HEXA_NS::EdgeShape* geomEdge, HEXA_NS::Edge* associatedEdge = NULL);
+    };
+
+    //------------------------------------------------
+    class GeomFaceItem: public GeomItem
+    {
+    public:
+        GeomFaceItem( HEXA_NS::FaceShape* geomFace, HEXA_NS::Quad* associatedQuad = NULL);
+    };
 
     //-----------------------------------------
     class GroupItem : public QStandardItem

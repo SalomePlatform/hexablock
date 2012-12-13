@@ -51,6 +51,6 @@ vec = doc.addVector(1, 1, 1)
 elts = doc.prismQuads(liste, vec, 5) 
 
 file_name = os.path.join(os.environ['TMP'], 'prisme.vtk')
-elts.saveVtk(file_name)
+####  elts.saveVtk(file_name)
 
 print "...test prism OK"

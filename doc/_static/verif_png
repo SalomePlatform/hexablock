@@ -1,0 +1,8 @@
+
+for fic in *.PNG
+    do 
+    radical=`echo "$fic" | cut -d. -f1`
+    if ( [ -f "$radical".png ] ) then
+       echo " *** ARRRG : $radical.png et $radical.PNG"
+       fi
+    done

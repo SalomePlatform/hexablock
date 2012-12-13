@@ -6,7 +6,7 @@
 Hexahedron
 ==========
 
-To create an **Hexahedron** in the **Main Menu** select **Model -> Add Hexahedron**.
+To create an **Hexahedron** in the **Main Menu** select **Model -> Construction -> Add Hexahedron**.
 
 There are two methods to create an **Hexahedron**.
 

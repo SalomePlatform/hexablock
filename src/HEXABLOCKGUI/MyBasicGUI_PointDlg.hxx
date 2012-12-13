@@ -123,6 +123,10 @@ private:
   QMap<QAction*, int>                myActions;
 
   TopAbs_ShapeEnum                   myNeedType;
+
+
+public slots:
+  virtual void onHelpRequested();
   
 private slots:
   void                               ClickOnOk();
@@ -139,14 +143,12 @@ private slots:
   void                               onBtnPopup( QAction* );
   void                               updateSize();
 
-
 // HEXABLOCK
 public:
   void setDocumentModel( HEXABLOCK::GUI::DocumentModel* m );
   void setPatternDataSelectionModel( HEXABLOCK::GUI::PatternDataSelectionModel* s );
-
   bool onAccept( const bool publish = true, const bool useTransaction = true );
-
+  void clear();
 
 protected:
   virtual bool eventFilter( QObject *obj, QEvent *event );
@@ -160,14 +162,12 @@ protected:
 protected slots:
   void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
   void onWindowActivated( SUIT_ViewManager* vm );
+  void updateHelpFileName();
 
 
 private:
   HEXABLOCK::GUI::DocumentModel*              _documentModel;
   HEXABLOCK::GUI::PatternDataSelectionModel*  _patternDataSelectionModel;
-  LightApp_SelectionMgr*                      _mgr;
-  SUIT_ViewManager*                           _vtkVm;
-  SUIT_ViewManager*                           _occVm;
 //   QLineEdit*                                  _vertex_le;
 
   QObject*                                    _currentObj;

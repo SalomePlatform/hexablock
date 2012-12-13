@@ -29,17 +29,17 @@
 BEGIN_NAMESPACE_HEXA
 
    enum EnumItem { M_NONE,  M_BEGIN, M_END, M_BEGIN_CLOSE, M_CLOSE,
-                   M_IDENT, M_EQUALS, M_STRING, 
+                   M_IDENT, M_EQUALS, M_STRING,
                    M_COMMENT, M_END_COMMENT, M_PROLOG, M_END_PROLOG,
                    M_ERROR};
-class XmlTree 
+class XmlTree
 {
 public :
    XmlTree (const string& name, XmlTree* dad=NULL);
   ~XmlTree ();
 
-   int  parseFile (const string& name);
-   int  parseFlow (cpchar flow);
+   int  parseFile   (const string& name);
+   int  parseStream (cpchar flux, int& posit);
 
    cpchar getName  ()   { return item_name.c_str() ; }
    int    getNbrAttributs  ()   { return nbr_attributs ; }
@@ -47,6 +47,7 @@ public :
 
    int           findAttribute (const string& nom);
    const string& findValue     (const string& nom);
+   int           findInteger   (const string& nom);
 
    cpchar   getAttribute  (int nro)    { return tab_attributs [nro].c_str(); }
    cpchar   getValue      (int nro)    { return tab_values    [nro].c_str(); }
@@ -92,7 +93,7 @@ private :
    int      pos_flow;
    pfile    xml_file;
    cpchar   xml_flow;
-   bool     xml_ended; 
+   bool     xml_ended;
 };
 END_NAMESPACE_HEXA
 #endif

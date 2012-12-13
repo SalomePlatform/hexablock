@@ -24,24 +24,43 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <ctime>
 #include <sys/stat.h>
 
 BEGIN_NAMESPACE_HEXA
 
-static int debug_level = NOTHING;
 
-// ========================================================= prod_scalaire
-bool on_debug ()
+// ========================================================= niv_debug
+int niv_debug ()
 {
+   static int debug_level = NOTHING;
    if (debug_level == NOTHING)
       {
       cpchar rep = getenv ("HEXA_DB");
       if (rep!=NULL)
           debug_level = atoi (rep);
-      debug_level = std::max (debug_level, 0); 
+      debug_level = std::max (debug_level, 0);
       }
-   return debug_level > 0;
-    
+   return debug_level;
+}
+// ========================================================= on_debug
+bool on_debug ()
+{
+   return niv_debug () > 0;
+}
+// ========================================================= in_test
+bool in_test ()
+{
+   static int test_level = NOTHING;
+   if (test_level == NOTHING)
+      {
+      cpchar rep = getenv ("HEXA_TEST");
+      if (rep!=NULL)
+          test_level = atoi (rep);
+      test_level = std::max (test_level, 0);
+      }
+   return test_level > 0;
+
 }
 // ======================================================== set_minus
 void set_minus (string& chaine)
@@ -58,24 +77,24 @@ pchar get_temp_name (cpchar format, pchar nomfic)
          {
          nro ++;
          sprintf (nomfic, format, nro);
-         
+
          struct stat buffer;
          int rep = stat (nomfic, &buffer);
-         if (rep<0) 
+         if (rep<0)
             return nomfic;
          }
 }
 // ========================================================= prod_scalaire
 double prod_scalaire (double v1[], double v2[])
 {
-   double prod = v1[dir_x]*v2[dir_x] + v1[dir_y]*v2[dir_y] 
+   double prod = v1[dir_x]*v2[dir_x] + v1[dir_y]*v2[dir_y]
                                      + v1[dir_z]*v2[dir_z];
    return prod;
 }
 // ========================================================= calc_norme
 double calc_norme (double vect[])
 {
-    double norme = vect[dir_x]*vect[dir_x] + vect[dir_y]*vect[dir_y] 
+    double norme = vect[dir_x]*vect[dir_x] + vect[dir_y]*vect[dir_y]
 	                                   + vect[dir_z]*vect[dir_z];
     return sqrt (norme);
 }
@@ -103,7 +122,7 @@ void calc_milieu  (double pta[], double ptb[], double milieu[])
 int normer_vecteur (double vect[])
 {
    double dn = calc_norme (vect);
-   if (dn < 1e-30) 
+   if (dn < 1e-30)
       return HERR;
 
    vect [dir_x] /= dn;
@@ -126,19 +145,19 @@ double carre (double val)
    return val*val;
 }
 // ====================================================== same_coords
-bool same_coords (double* pa, double* pb, double epsilon)
+bool same_coords (double* pa, double* pb, double epsilon2)
 {
 
-   double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y]) 
-             + carre (pb[dir_z]-pa[dir_z]); 
-   return d2 < epsilon;
+   double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y])
+             + carre (pb[dir_z]-pa[dir_z]);
+   return d2 < epsilon2;
 }
 // ========================================================= prod_mixte
 double prod_mixte (double vi[], double vj[], double vk[])
 {
    double pmixte = 0;
 
-   for (int nc=0 ; nc<DIM3 ; nc++) 
+   for (int nc=0 ; nc<DIM3 ; nc++)
        {
        int nc1 = (nc + 1) MODULO DIM3;
        int nc2 = (nc + 2) MODULO DIM3;
@@ -170,7 +189,7 @@ bool special_option ()
       cpchar rep = getenv ("HEXA_OPTION");
       if (rep!=NULL)
           current_option = atoi (rep);
-      current_option = std::max (current_option, 0); 
+      current_option = std::max (current_option, 0);
       }
    return current_option > 0;
 }
@@ -178,5 +197,58 @@ bool special_option ()
 void set_special_option (bool opt)
 {
    current_option = opt ? 1 : 0;
+}
+// ====================================================== sizeof_file
+int sizeof_file (cpchar filename)
+{
+   struct stat status;
+
+   int ier = stat  (filename, &status);
+   if (ier == HOK)
+      return status.st_size;
+   else
+      return NOTHING;
+}
+// ====================================================== read_file
+char* read_file (cpchar filename, int& size)
+{
+   size = 0;
+
+   struct stat status;
+   int ier = stat  (filename, &status);
+   if (ier != HOK)
+      return  NULL;
+
+   FILE* fic = fopen (filename, "r");
+   if (fic == NULL)
+      return  NULL;
+
+   int   lgalloc = status.st_size;
+   char* buffer  = (char*) malloc (lgalloc+1);
+   if (buffer == NULL)
+      return  NULL;
+
+   for (int car = fgetc (fic) ; car!=EOF && size<lgalloc ; car = fgetc(fic))
+       buffer [size++] = car;
+   fclose (fic);
+
+   printf ("read_file : lgalloc=%d, size=%d\n", lgalloc, size);
+   buffer [size++] = EOS;
+   return buffer;
+}
+// ====================================================== get_time
+cpchar get_time (string& buffer)
+{
+   char   quand[24];
+   time_t tps;
+   time (&tps);
+   struct tm *temps = localtime (&tps);
+
+   sprintf (quand, "%d/%02d/%02d %02d:%02d:%02d",
+            1900 + temps->tm_year, temps->tm_mon+1, temps->tm_mday,
+            temps->tm_hour, temps->tm_min, temps->tm_sec);
+
+    buffer = quand;
+    return buffer.c_str();
 }
 END_NAMESPACE_HEXA

@@ -26,6 +26,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 BASEIDL_FILES = \
 	Element.idl\
+	NewShape.idl\
 	Vertex.idl\
 	Edge.idl\
 	Quad.idl\
@@ -62,6 +63,8 @@ nodist_libSalomeIDLHEXABLOCK_la_SOURCES = \
 	EdgeDynSK.cc\
 	QuadSK.cc\
 	QuadDynSK.cc\
+	NewShapeSK.cc\
+	NewShapeDynSK.cc\
 	HexaSK.cc\
 	HexaDynSK.cc\
 	VectorSK.cc\
@@ -93,6 +96,7 @@ LawDynSK.cc: LawSK.cc
 ElementsDynSK.cc: ElementsSK.cc
 CrossElementsDynSK.cc: CrossElementsSK.cc
 QuadDynSK.cc: QuadSK.cc
+NewShapeDynSK.cc: NewShapeSK.cc
 VectorDynSK.cc: VectorSK.cc
 CylinderDynSK.cc: CylinderSK.cc
 GroupDynSK.cc: GroupSK.cc
@@ -146,7 +150,7 @@ IDLPYFLAGS  = \
 	@IDLPYFLAGS@ \
 	-I$(KERNEL_ROOT_DIR)/idl/salome \
 	-I$(GEOM_ROOT_DIR)/idl/salome
-	
+
 
 
 # potential problem on parallel make on the following - multiple outputs

@@ -22,6 +22,7 @@
 
 #include "HexElements.hxx"
 #include "HexEdge.hxx"
+#include "HexDocument.hxx"
 
 #ifndef NO_CASCADE
 #include "HexKasBiCylinder.hxx"
@@ -49,9 +50,9 @@
 
 // HEXABLOCK includes
 #include "HexVertex.hxx"
-#include "HexShape.hxx"
+#include "HexOldShape.hxx"
 #include "HexDiagnostics.hxx"
-                                    // Cercles 
+                                    // Cercles
 #include <GEOMImpl_CircleDriver.hxx>
 #include <GEOMImpl_ICircle.hxx>
 
@@ -88,11 +89,11 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
    char foo[18];
    int nbedges  = tedges.size();
    int nbshapes = tshapes.size ();
-   if (nbshapes==0) 
+   if (nbshapes==0)
       return;
 
    std::vector <KasLine>  tab_gline  (nbshapes);
-   
+
    Vertex* prems = tedges [0]         -> getVertex (V_AMONT);
    Vertex* derns = tedges [nbedges-1] -> getVertex (V_AVAL);
 
@@ -107,13 +108,13 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
          el_root->putError (W_ASSO_CUT1, prems->getName (foo));
          return;
          }
-      else if (pnt_last.isBad ())  
+      else if (pnt_last.isBad ())
          {
          el_root->putError (W_ASSO_CUT2, derns->getName (foo));
          return;
          }
       }
-                            // ----------- Define + longueur totale 
+                            // ----------- Define + longueur totale
    double  longueur = 0;
    for (int ns = 0 ; ns<nbshapes ; ns++)
        {
@@ -149,7 +150,7 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
                     }
                  }
               }
-                          // Pas trouve 
+                          // Pas trouve
           if (more)
              {
              el_root->putError (W_ASSO_CUT3, derns->getName (foo));
@@ -172,11 +173,11 @@ void Elements::cutAssociation (Shapes& tshapes, Edges& tedges, bool exist)
    double delta = longueur / nbedges;
    for (int ned = 0 ; ned<nbedges ; ned++)
        {
-       if (db) cout << " ++ Association Edge nro " 
+       if (db) cout << " ++ Association Edge nro "
                     << ned << "/" <<nbedges << endl;
        Edge*  edge = tedges[ned];
-       double  sm1 = ned*delta; 
-       double  sm2 = sm1 + delta; 
+       double  sm1 = ned*delta;
+       double  sm2 = sm1 + delta;
        for (int ns = 0 ; ns<nbshapes ; ns++)
            {
            tab_gline[ns].associate (edge, sm1, sm2);
@@ -203,21 +204,21 @@ void geom_asso_point (Vertex* node)
 {
    if (node==NULL || node->getAssociation() != NULL)
       return;
-   
+
    Real3 koord = { node->getX(), node->getY(), node->getZ() };
    KasPoint  asso_point ;
    asso_point.definePoint (koord);
    asso_point.associate   (node);
 }
-// ====================================================== geom_create_circle 
-void geom_create_circle (double* milieu, double rayon, double* normale, 
+// ====================================================== geom_create_circle
+void geom_create_circle (double* milieu, double rayon, double* normale,
                          double* base, string& brep)
 {
    db = on_debug ();
-   if (db) printf ("geom_create_circle c=(%g,%g,%g), r=%g\n", 
+   if (db) printf ("geom_create_circle c=(%g,%g,%g), r=%g\n",
                     milieu[0], milieu[1], milieu[2], rayon);
    if (db) printf ("    -------- base=(%g,%g,%g)\n", base[0], base[1], base[2]);
-   if (db) printf ("    -------- norm=(%g,%g,%g)\n", normale[0], normale[1], 
+   if (db) printf ("    -------- norm=(%g,%g,%g)\n", normale[0], normale[1],
                                                   normale[2]);
 
    gp_Pnt gp_center (milieu [dir_x], milieu [dir_y], milieu [dir_z]);
@@ -250,12 +251,12 @@ void geom_create_circle (double* milieu, double rayon, double* normale,
                                 geom_curve.FirstParameter());
        double u1    = s1.Parameter ();
        gp_Pnt point = geom_curve.Value (u1);
-       if (db) 
+       if (db)
           printf ( " ..... pnt%d = (%g, %g, %g)\n", pk, point.X(),
                                             point.Y(),  point.Z());
        }
 }
-// ====================================================== geom_create_sphere 
+// ====================================================== geom_create_sphere
 void geom_create_sphere (double* milieu, double radius, string& brep)
 {
    gp_Pnt gp_center (milieu [dir_x], milieu [dir_y], milieu [dir_z]);
@@ -266,7 +267,7 @@ void geom_create_sphere (double* milieu, double radius, string& brep)
    make_sphere.Build();
 
    ostringstream     stream_shape;
-   TopoDS_Shape      geom_sphere = make_sphere.Face(); 
+   TopoDS_Shape      geom_sphere = make_sphere.Face();
    BRepTools::Write (geom_sphere, stream_shape);
    brep = stream_shape.str();
 }
@@ -286,20 +287,20 @@ void geom_dump_asso (Edge* edge)
    edge->printName(" = (");
    edge->getVertex (V_AMONT)-> printName (", ");
    edge->getVertex (V_AVAL) -> printName (")\n");
-   
+
    KasPoint asso_point;
    for (int nro=0 ; nro<V_TWO ; nro++)
        {
        Vertex* vertex = edge->getVertex (nro);
        vertex->printName ("");
-       printf (" = (%g, %g, %g)", vertex->getX(),  vertex->getY(),  
+       printf (" = (%g, %g, %g)", vertex->getX(),  vertex->getY(),
                                   vertex->getZ());
 
        int ier = asso_point.definePoint (vertex);
        if (ier==HOK)
           {
           double* coord = asso_point.getCoord();
-          printf (",  pnt_asso  = (%g, %g, %g)", coord[dir_x],  coord[dir_y],  
+          printf (",  pnt_asso  = (%g, %g, %g)", coord[dir_x],  coord[dir_y],
                                      coord[dir_z]);
           }
        printf ("\n");
@@ -322,9 +323,9 @@ void geom_dump_asso (Edge* edge)
           double* fin = asso_line.getEnd    ();
           double  lg  = asso_line.getLength ();
           printf (" Longueur = %g\n", lg);
-          printf (" Debut = %g = (%g, %g, %g)\n", shape->debut, 
+          printf (" Debut = %g = (%g, %g, %g)\n", shape->getStart(),
                                                   deb[0], deb[1], deb[2]);
-          printf (" Fin   = %g = (%g, %g, %g)\n", shape->fin, 
+          printf (" Fin   = %g = (%g, %g, %g)\n", shape->getEnd(),
                                                   fin[0], fin[1], fin[2]);
           }
        }
@@ -341,7 +342,7 @@ void translate_brep (string& brep, double dir[], string& trep)
    transfo.SetTranslation    (vecteur);
    istringstream stream_brep (brep);
    BRepTools::Read           (orig, stream_brep, builder);
-   
+
    TopLoc_Location  loc_orig   = orig.Location();
    gp_Trsf          trans_orig = loc_orig.Transformation();
    TopLoc_Location  loc_result (transfo * trans_orig);
@@ -360,12 +361,12 @@ void transfo_brep (string& brep, Matrix* matrice, string& trep)
 
    double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
    matrice->getCoeff (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
-   transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34, 
+   transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34,
                       Epsil2, Epsil2);
 
    istringstream stream_brep (brep);
    BRepTools::Read           (shape_orig, stream_brep, builder);
-   
+
    BRepBuilderAPI_Transform brep_transfo (shape_orig, transfo, Standard_True);
    TopoDS_Shape result = brep_transfo.Shape();
 
@@ -381,11 +382,11 @@ void clear_associations (Edge* edge)
    edge->getVertex(V_AVAL )->clearAssociation();
 }
 // ====================================================== associateShapes
-int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline, 
+int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
                     double pstart, double pend, bool closed, bool inv)
 {
    db = on_debug ();
-   if (db) 
+   if (db)
       {
       cout << "____________________________________________"
            << " associateShapes" << endl;
@@ -397,9 +398,9 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
       }
 
    int nbshapes = gline.size ();
-   int nblines  = nbshapes + 1; 
+   int nblines  = nbshapes + 1;
 
-   vector <KasLine*> buff_line (nblines); // car nblines != 0 
+   vector <KasLine*> buff_line (nblines); // car nblines != 0
    vector <KasLine*> geom_line (nblines);
 
                                     // -------- Bufferisation des shapes
@@ -414,12 +415,12 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    if (closed)
       {
       if (pstart > UnEpsil)
-         { 
+         {
          inv    = true;
          pstart = 0;
          }
       else if (pstart < Epsil)
-         { 
+         {
          inv    = false;
          }
       }
@@ -461,7 +462,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
       sdepart = V_AMONT;
       pfin0   = pend;
       }
-   else 
+   else
       {
       sdepart = V_AVAL;
       pfin0   = pend;
@@ -507,7 +508,7 @@ int associateShapes (Edges& mline, int msens[], Shape* gstart, Shapes& gline,
    int ntlines = geom_line.size();
    int nbedges = mline.size ();
 
-   if (db) 
+   if (db)
       cout << "=============================================================="
            << endl;
                                     // -------- Menage
@@ -535,24 +536,38 @@ void set_debug_asso (bool boule)
    if (db)
        printf (" ... Traces actives dans  HexAssoElements_asso.cxx\n");
 }
+// ====================================================== clean_brep
+void clean_brep (string& brep)
+{
+   TopoDS_Shape  shape;
+   BRep_Builder  builder;
+   istringstream stream_brep (brep);
+
+   BRepTools::Read  (shape, stream_brep, builder);
+   BRepTools::Clean (shape);
+
+   ostringstream    stream_shape;
+   BRepTools::Write (shape, stream_shape);
+   brep = stream_shape.str();
+}
 END_NAMESPACE_HEXA
-      
+
 // ------------------------------------------------------------------------
 #else    // #ifndef NO_CASCADE
 // ------------------------------------------------------------------------
 
 BEGIN_NAMESPACE_HEXA
 
-// ====================================================== geom_create_circle 
-void geom_create_circle (double* milieu, double rayon, double* normale, 
+// ====================================================== geom_create_circle
+void geom_create_circle (double* milieu, double rayon, double* normale,
                          double* base, string& brep)
 {
    char buffer [80];
-   sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g", 
+   sprintf (buffer, "(Cercle c=(%g,%g,%g), r=%g",
                     milieu[0], milieu[1], milieu[2], rayon);
    brep = buffer;
 }
-// ====================================================== geom_create_sphere 
+// ====================================================== geom_create_sphere
 void geom_create_sphere (double* milieu, double radius, string& brep)
 {
 }
@@ -613,6 +628,10 @@ int geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
 int geom_asso_cylcyl (Edge* edge)
 {
    return HOK;
+}
+// ====================================================== clean_brep
+void clean_brep (string& brep)
+{
 }
 END_NAMESPACE_HEXA
 #endif

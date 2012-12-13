@@ -22,7 +22,7 @@
 
 #include "HexKasPoint.hxx"
 #include "HexVertex.hxx"
-#include "HexShape.hxx"
+#include "HexOldShape.hxx"
 
 #ifndef NO_CASCADE
 
@@ -58,6 +58,8 @@ void KasPoint::razPoint ()
 // ======================================================= definePoint (vertex)
 int KasPoint::definePoint (Vertex* node)
 {
+   return HERR;
+#if 0
    razPoint ();
 
    if (node==NULL)
@@ -66,7 +68,7 @@ int KasPoint::definePoint (Vertex* node)
    Shape* asso = node->getAssociation();
    if (asso==NULL)
       return HERR;
- 
+
    b_rep = asso->getBrep ();
 
    TopoDS_Shape topo;
@@ -81,10 +83,11 @@ int KasPoint::definePoint (Vertex* node)
    g_vertex = TopoDS::Vertex (topo);
    g_point  = BRep_Tool::Pnt( g_vertex );
 
-   g_coord [dir_x] = g_point.X(); 
-   g_coord [dir_y] = g_point.Y(); 
-   g_coord [dir_z] = g_point.Z(); 
+   g_coord [dir_x] = g_point.X();
+   g_coord [dir_y] = g_point.Y();
+   g_coord [dir_z] = g_point.Z();
    return HOK;
+#endif
 }
 // ======================================================= definePoint (xyz)
 void KasPoint::definePoint (Real3 coord)
@@ -120,6 +123,7 @@ void KasPoint::definePoint (gp_Pnt& gpoint)
 // ======================================================= associate
 void KasPoint::associate (Vertex* node)
 {
+/****************
    if (db) cout << " ++ KasPoint::associate " << endl;
    if (db) PutName (node);
    if (node==NULL)
@@ -127,6 +131,8 @@ void KasPoint::associate (Vertex* node)
 
    Shape* vshape = new Shape (b_rep);
    node->setAssociation (vshape);
+
+*********************/
 }
 END_NAMESPACE_HEXA
 #endif

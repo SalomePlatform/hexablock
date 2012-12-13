@@ -57,7 +57,7 @@ for i in range(2):
     c2.getHexa(base2 + i).setScalar(5)
 
 file_name = os.path.join(os.environ['TMP'], 'grilles_cylindriques.vtk')
-doc.saveVtk(file_name)
+####  doc.saveVtk(file_name)
 
 print "...test grille cylindrique OK"
 

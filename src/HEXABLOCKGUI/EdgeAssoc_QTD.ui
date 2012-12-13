@@ -49,7 +49,7 @@
         <x>0</x>
         <y>0</y>
         <width>223</width>
-        <height>620</height>
+        <height>618</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -120,30 +120,16 @@
             <property name="title">
              <string>Vertex</string>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <layout class="QFormLayout" name="formLayout_2">
-               <item row="0" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>First : </string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="first_vex_le">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>First:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="first_vex_le"/>
              </item>
             </layout>
            </widget>
@@ -308,6 +294,13 @@
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_3">
+                  <property name="text">
+                   <string>End : </string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="1">
                  <widget class="QDoubleSpinBox" name="pstart_spb">
                   <property name="decimals">
@@ -321,13 +314,6 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>End : </string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="1">
                  <widget class="QDoubleSpinBox" name="pend_spb">
                   <property name="decimals">
@@ -338,9 +324,6 @@
                   </property>
                   <property name="singleStep">
                    <double>0.010000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>1.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -372,6 +355,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>single_rb</tabstop>
+  <tabstop>multiple_rb</tabstop>
+  <tabstop>single_edge_le</tabstop>
+  <tabstop>single_line_le</tabstop>
+  <tabstop>pstart_spb</tabstop>
+  <tabstop>pend_spb</tabstop>
+  <tabstop>first_vex_le</tabstop>
+  <tabstop>edges_lw</tabstop>
+  <tabstop>lines_lw</tabstop>
+  <tabstop>close_cb</tabstop>
+  <tabstop>inverse_cb</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -387,22 +384,6 @@
     <hint type="destinationlabel">
      <x>213</x>
      <y>63</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>close_cb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pend_spb</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>196</x>
-     <y>495</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>120</x>
-     <y>581</y>
     </hint>
    </hints>
   </connection>
@@ -691,6 +672,22 @@
     <hint type="destinationlabel">
      <x>57</x>
      <y>452</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>close_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pend_spb</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>569</y>
     </hint>
    </hints>
   </connection>

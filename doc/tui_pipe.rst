@@ -14,6 +14,7 @@ To add a pipe, the following data have to be mentioned:
 - the inner radius
 - the outer radius
 
+
 Add a pipe in the document::
 
     p = doc.addPipe(base, direction, int_radius, ext_radius, height)
@@ -31,6 +32,7 @@ Access to the pipes of the document::
     np = doc.countPipe()
     pik = doc.getPipe(index)
 
+More operations: *Pipe* inherits :ref:`Element <tuielement>`.
 
 GUI command: :ref:`guipipe`
 

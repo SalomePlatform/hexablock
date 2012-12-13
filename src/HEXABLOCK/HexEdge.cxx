@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 #include "HexEdge.hxx"
 #include "HexVertex.hxx"
@@ -25,11 +26,14 @@
 
 #include "HexPropagation.hxx"
 #include "HexXmlWriter.hxx"
-#include "HexShape.hxx"
+#include "HexNewShape.hxx"
+#include "HexAssoEdge.hxx"
 
 static int niveau = 0;
 
 BEGIN_NAMESPACE_HEXA
+
+static bool db = on_debug();
 
 void geom_dump_asso (Edge* edge);
 
@@ -37,7 +41,7 @@ void geom_dump_asso (Edge* edge);
 Edge::Edge (Vertex* va, Vertex* vb)
     : EltBase (va->dad(), EL_EDGE)
 {
-   e_vertex [V_AMONT] = va; 
+   e_vertex [V_AMONT] = va;
    e_vertex [V_AVAL ] = vb;
 
    e_propag = NOTHING;
@@ -88,12 +92,12 @@ int Edge::anaMerge (Vertex* orig, Vertex* tv1[])
       tv1 [1] = e_vertex[V_AVAL];
    else if (orig == e_vertex [V_AVAL])
       tv1 [1] = e_vertex[V_AMONT];
-   else 
+   else
       return HERR;
 
    return HOK;
 }
-// ========================================================= propager 
+// ========================================================= propager
 void Edge::propager (Propagation* prop, int groupe, int sens)
 {
    setPropag (groupe, sens>0);
@@ -123,12 +127,12 @@ void Edge::propager (Propagation* prop, int groupe, int sens)
        }
    niveau --;
 }
-// ========================================================= getParent 
+// ========================================================= getParent
 Quad* Edge::getParent  (int nro)
 {
    return static_cast <Quad*> (getFather (nro));
 }
-// ========================================================= saveXml 
+// ========================================================= saveXml
 void Edge::saveXml (XmlWriter* xml)
 {
    char buffer[12];
@@ -139,21 +143,21 @@ void Edge::saveXml (XmlWriter* xml)
    xml->openMark     ("Edge");
    xml->addAttribute ("id",       getName (buffer));
    xml->addAttribute ("vertices", vertices);
-   if (el_name!=buffer) 
+   if (el_name!=buffer)
        xml->addAttribute ("name", el_name);
    xml->closeMark ();
 
    int nbass = tab_assoc.size();
    for (int nro=0 ; nro<nbass ; nro++)
        if (tab_assoc[nro] != NULL)
-           tab_assoc[nro]->saveXml (xml); 
+           tab_assoc[nro]->saveXml (xml);
 }
 // ======================================================== replaceVertex
 void Edge::replaceVertex (Vertex* old, Vertex* par)
 {
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
-       if (e_vertex[nro]==old) 
+       if (e_vertex[nro]==old)
            {
            e_vertex[nro] = par;
 	   if (debug())
@@ -217,10 +221,47 @@ void Edge::dumpPlus ()
           }
        }
 }
-// ========================================================== addAssociation
-int Edge::addAssociation (Shape* forme)
+// ======================================================== makeDefinition
+string Edge::makeDefinition ()
 {
-   if (forme == NULL)
+   string definition = el_name;
+
+   definition += " = (";
+   definition += e_vertex [V_AMONT]->getName();
+   definition += ",";
+   definition += e_vertex [V_AVAL]->getName();
+   definition += ")";
+
+   return definition;
+}
+// ========================================================== addAssociation
+int Edge::addAssociation (EdgeShape* gline, double deb, double fin)
+{
+   if (gline == NULL)
+      return HERR;
+
+   gline->addAssociation (this);
+   AssoEdge*  asso  = new AssoEdge (gline, deb, fin);
+   tab_assoc.push_back (asso);
+
+   if (db)
+      {
+      cout << " Edge " << el_name
+           << " = (" << e_vertex[V_AMONT]->getName()
+           << " , "  << e_vertex[V_AVAL ]->getName()
+           << ") addAssociation " << gline->getName ()
+           << " (" << deb << ", " << fin << ")"
+           << endl;
+      PutCoord (asso->getOrigin ());
+      PutCoord (asso->getExtrem ());
+      }
+   is_associated = true;
+   return HOK;
+}
+// ========================================================== addAssociation
+int Edge::addAssociation (NewShape* geom, int subid, double deb, double fin)
+{
+   if (geom == NULL)
       {
       if (el_root->debug ())
           cout << "  Edge " << el_name << " addAssociation of NULL ignored"
@@ -228,17 +269,107 @@ int Edge::addAssociation (Shape* forme)
       return HERR;
       }
 
-   tab_assoc.push_back (forme);
-   if (el_root->debug (2))
-      cout << "  Edge " << el_name << " addAssociation" << endl;
-
-   return HOK;
+   EdgeShape* gline = geom->findEdge (subid);
+   int ier = addAssociation (gline, deb, fin);
+   return ier;
 }
-// ========================================================== setAssociation
-void Edge::setAssociation (Shape* forme)
+// ========================================================== clearAssociation
+void Edge::clearAssociation ()
 {
-   clearAssociation ();
-   addAssociation (forme);
+   int nombre = tab_assoc.size ();
+   for (int nro=0 ; nro<nombre ; nro++)
+       {
+       delete tab_assoc [nro];
+       }
+
+   tab_assoc .clear ();
+   is_associated = false;
+}
+// ========================================================== getAssociation
+AssoEdge* Edge::getAssociation (int nro)
+{
+   if (nro<0 || nro >= tab_assoc.size())
+      return NULL;
+
+   return tab_assoc [nro];
+}
+// ========================================================== checkAssociation
+int Edge::checkAssociation ()
+{
+   int nombre = tab_assoc.size();
+   if (nombre==0)
+      return HOK;
+
+   Real3 ver_assoc [V_TWO];
+   int arc [V_TWO], sens [V_TWO];
+   for (int nro=0 ; nro<V_TWO ; ++nro)
+       {
+       arc [nro] = sens [nro] = NOTHING;
+       e_vertex[nro]->getAssoCoord (ver_assoc[nro]);
+       }
+
+   int ier    = HOK;
+   for (int nass=0 ; nass<nombre ; ++nass)
+       {
+       AssoEdge*  asso = tab_assoc[nass];
+       for (int nro = V_AMONT ; nro<=V_AVAL ; ++nro)
+           {
+           int rep = asso->onExtremity (ver_assoc[nro]);
+           if (rep != NOTHING)
+              {
+              if (arc[nro] != NOTHING)
+                 {
+                 if (ier==HOK) cout << endl;
+                 cout << " Association Edge "  << el_name
+                      << " : Le vertex "       << e_vertex[nro]->getName()
+                      << " : Le vertex "       << e_vertex[nro]->getName()
+                      << " Touche les lignes " << arc [nro]
+                      << " et " << nass << endl;
+                 ier   = 112;
+                 }
+              arc  [nro] = nass;
+              sens [nro] = rep;
+              }
+          }
+       }
+
+   for (int nro=0 ; nro<V_TWO ; ++nro)
+       {
+       if (arc [nro] == NOTHING)
+          {
+          if (ier==HOK) cout << endl;
+          cout << " Association Edge " << el_name
+               << " : Le vertex nro " << nro
+               << " = " << e_vertex[nro]->getName()
+               << " est isole" << endl;
+          PutCoord (ver_assoc[nro]);
+          ier = 111;
+          }
+       }
+   if (ier==HOK)
+       return ier;
+
+   cout << " ** Controle associations (" << nombre << ") edge " << el_name
+        << " = (" << e_vertex[V_AMONT]->getName()
+        << " , "  << e_vertex[V_AVAL ]->getName()
+        << ")" << endl;
+
+   for (int nv=0 ; nv<2 ; ++nv)
+       {
+       Vertex* node = e_vertex[nv];
+       cout << node->getName()         << " = (" << node->getX()
+             << ", "   << node->getY() << ", "   << node->getZ()
+             << ") -> "<< ver_assoc [nv][0] << ", " << ver_assoc [nv][1]
+             << ", "   << ver_assoc [nv][2] << ")"  << endl;
+       }
+
+   for (int nass=0 ; nass<nombre ; ++nass)
+       {
+       AssoEdge*  asso = tab_assoc[nass];
+       cout << " " << nass << " :";
+       asso->dump ();
+       }
+
+   return ier;
 }
 END_NAMESPACE_HEXA
-

@@ -17,7 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ 
+//  See http://www.salome-platform.org/
 //  or email : webmaster.salome@opencascade.com
 
 #include "HexDocument.hxx"
@@ -30,6 +30,7 @@
 
 #include "HexElements.hxx"
 #include "HexCrossElements.hxx"
+#include "HexBiCylinder.hxx"
 
 #include "HexVector.hxx"
 #include "HexCylinder.hxx"
@@ -43,35 +44,50 @@
 #include "HexXmlTree.hxx"
 #include "HexGlobale.hxx"
 #include "HexGroup.hxx"
+#include "Hex.hxx"
+#include "HexNewShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
+int Document::doc_number = 0;
+
 // ======================================================== Constructeur
-Document::Document (cpchar name)
+Document::Document (cpchar name, Hex* dad)
 {
-   glob = Globale::getInstance ();
+   el_name    = name;
+   hex_parent = dad;
+   glob       = Globale::getInstance ();
+   el_root    = this;
 
    doc_db        = 0;
    nbr_errors    = 0;
    doc_modified  = true;
    doc_saved     = false;
-   doc_name      = name;
    doc_tolerance = 1e-6;
    nbr_laws      = 0;
    nbr_propagations = 0;
    maj_propagation  = true;
    doc_xml          = NULL;
-   doc_shape        = NULL;
 
-   defaultLaw = addLaw ("DefaultLaw", 0);
-   
    nbr_used_hexas = nbr_used_quads = nbr_used_edges = nbr_used_vertex = 0;
 
    for (EnumElt type = EL_NONE ; type < EL_MAXI ; type=(EnumElt) (type+1))
        {
-       doc_first_elt [type] = doc_last_elt [type] = new EltBase (); 
+       doc_first_elt [type] = doc_last_elt [type] = new EltBase ();
        doc_nbr_elt   [type] = 0;
        }
+
+   if (doc_number == 0)
+      strcpy (doc_ident, "doc");
+   else
+      sprintf (doc_ident, "doc%02d", doc_number);
+   doc_number++;
+
+   DumpLock;
+   defaultLaw = addLaw ("DefaultLaw", 0);
+   DumpRestore;
+
+   addCloud ();
 }
 // ======================================================== Destructeur
 Document::~Document ()
@@ -82,7 +98,7 @@ Document::~Document ()
        {
        //  printf ("____________________________ Type=%d\n", type);
        EltBase* next = NULL;
-       for (EltBase* elt=doc_first_elt [type] ; elt != NULL ; elt=next) 
+       for (EltBase* elt=doc_first_elt [type] ; elt != NULL ; elt=next)
            {
            next = elt->next();
            delete elt;
@@ -92,159 +108,249 @@ Document::~Document ()
 // ======================================================== addVector
 Vector* Document::addVector (double dx, double dy, double dz)
 {
-   Vector* pv = new Vector (this, dx, dy, dz); 
+   DumpStart ("addVector", dx  << dy  << dz);
+   Vector* pv = new Vector (this, dx, dy, dz);
    doc_vector.push_back (pv);
+
+   DumpReturn (pv);
    return  pv;
 }
 // ======================================================== addVectorVertices
 Vector* Document::addVectorVertices (Vertex* va, Vertex* vb)
 {
+   DumpStart ("addVectorVertices", va  << vb);
+
    Vector* pv = addVector (vb->getX () - va->getX (),
                            vb->getY () - va->getY (),
                            vb->getZ () - va->getZ ());
+
+   DumpReturn (pv);
    return  pv;
 }
 // ======================================================== addVertex
 Vertex* Document::addVertex (double x, double y, double z)
 {
+   DumpStart ("addVertex", x  << y  << z);
+
    Vertex* pv   = new Vertex (this, x, y, z);
+   DumpReturn (pv);
    return pv;
 }
 // ======================================================== addEdge
 Edge* Document::addEdge (Vertex* va, Vertex* vb)
 {
-   if (va==NULL || vb==NULL) 
+   DumpStart ("addEdge", va  << vb );
+
+   if (va==NULL || vb==NULL)
       return NULL;
 
    Edge* arete  = new Edge (va, vb);
+   DumpReturn (arete);
    return arete;
 }
-// ======================================================== addEdge (bis)
-Edge* Document::addEdge (Vertex* va, Vector* vec)
+// ======================================================== addEdgeVector
+Edge* Document::addEdgeVector (Vertex* va, Vector* vec)
 {
-   Vertex* vb   = addVertex (va->getX () + vec->getDx(), 
-                             va->getY () + vec->getDy(), 
+   DumpStart ("addEdgeVector", va  << vec );
+
+   Vertex* vb   = addVertex (va->getX () + vec->getDx(),
+                             va->getY () + vec->getDy(),
                              va->getZ () + vec->getDz());
 
    Edge*  arete = addEdge (va, vb);
+   DumpReturn (arete);
    return arete;
 }
 // ======================================================== addQuadVertices
 Quad* Document::addQuadVertices (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
 {
+   DumpStart ("addQuadVertices", va << vb << vc << vd );
+
    Quad*  face   = new Quad (va, vb, vc, vd);
+   DumpReturn (face);
    return face;
 }
 // ======================================================== addQuad
 Quad* Document::addQuad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
 {
+   DumpStart ("addQuad", ea << eb << ec << ed );
+
    Quad*  face   = new Quad (ea, eb, ec, ed);
+   DumpReturn (face);
    return face;
 }
 // ======================================================== addHexaVertices
 Hexa* Document::addHexaVertices (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
                                  Vertex* ve, Vertex* vf, Vertex* vg, Vertex* vh)
 {
+   DumpStart ("addHexaVertices", va << vb << vc << vd << ve << vf << vg << vh);
+
    Hexa*  pave   = new Hexa (va, vb, vc, vd, ve, vf, vg, vh);
+   DumpReturn (pave);
    return pave;
 }
 // ======================================================== addHexa
-Hexa* Document::addHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, 
+Hexa* Document::addHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe,
                          Quad* qf)
 {
+   DumpStart ("addHexa", qa << qb << qc << qd << qe << qf );
+
    Hexa*  pave   = new Hexa (qa, qb, qc, qd, qe, qf);
+   DumpReturn (pave);
    return pave;
 }
 // ======================================================== addCylinder
 Cylinder* Document::addCylinder (Vertex* b, Vector* d, double r,  double h)
 {
+   DumpStart ("addCylinder", b << d << r << h);
+
    Cylinder* cyl = new  Cylinder (b, d, r, h);
    doc_cylinder.push_back (cyl);
+
+   DumpReturn (cyl);
    return    cyl;
 }
 // ======================================================== addPipe
 Pipe* Document::addPipe (Vertex* b, Vector* d, double ri, double re, double h)
 {
+   DumpStart ("addPipe", b << d << ri << re << h);
+
    Pipe*  tuyau = new  Pipe (b, d, ri, re, h);
    doc_pipe.push_back (tuyau);
+
+   DumpReturn (tuyau);
    return tuyau;
 }
 // ======================================================== makeCartesian
-Elements* Document::makeCartesian (Vertex* v, Vector* dir, 
+Elements* Document::makeCartesian (Vertex* v, Vector* dir,
                             int px, int py, int pz, int mx, int my, int mz)
 {
-   Vector* v1 = new Vector (this, dir->getDx(), 0, 0); 
-   Vector* v2 = new Vector (this, 0, dir->getDy(), 0); 
-   Vector* v3 = new Vector (this, 0,0,  dir->getDz()); 
+   DumpStart ("makeCartesianDiag", v << dir << px << py << pz << mx << my << mz);
+
+   Vector* v1 = new Vector (this, dir->getDx(), 0, 0);
+   Vector* v2 = new Vector (this, 0, dir->getDy(), 0);
+   Vector* v3 = new Vector (this, 0,0,  dir->getDz());
    Elements*  grille = new Elements (this);
    grille->makeCartesianGrid (v, v1, v2, v3, px, py, pz, mx, my, mz);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makeCartesian
-Elements* Document::makeCartesian (Vertex* v, Vector* v1, Vector* v2, 
+Elements* Document::makeCartesian (Vertex* v, Vector* v1, Vector* v2,
+                                   Vector* v3, int px, int py, int pz)
+{
+   DumpStart ("makeCartesian", v << v1 << v2 << v3 << px << py << pz);
+
+   Elements* grille = new Elements (this);
+   grille->makeCartesianGrid (v, v1, v2, v3, px, py, pz);
+
+   DumpReturn (grille);
+   return grille;
+}
+// ======================================================== makeCartesian1
+Elements* Document::makeCartesian1 (Vertex* v, Vector* v1, Vector* v2,
                     Vector* v3, int px, int py, int pz, int mx, int my, int mz)
 {
+   DumpStart ("makeCartesian1", v << v1 << v2 << v3 << px << py << pz
+                              << mx << my << mz);
+
    Elements* grille = new Elements (this);
    grille->makeCartesianGrid (v, v1, v2, v3, px, py, pz, mx, my, mz);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makeSpherical
 Elements* Document::makeSpherical (Vertex* c, double rayon, int nb, double k)
 {
+   DumpStart ("makeSpherical", c << rayon << nb << k );
+
    Elements* grille = new Elements (this);
    grille->makeSphericalGrid (c, rayon, nb, k);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makeCylindrical
-Elements* Document::makeCylindrical (Vertex* c, Vector* b, Vector* h, 
+Elements* Document::makeCylindrical (Vertex* c, Vector* b, Vector* h,
         double dr, double da, double dl, int nr, int na, int nl, bool fill)
 {
+   DumpStart ("makeCylindrical", c << b << h << dr << da << dl << nr << na
+                                   << nl << fill);
+
    Elements* grille = new Elements (this);
    grille->makeCylindricalGrid (c, b, h, dr, da, dl, nr, na, nl, fill);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makeSphere
-Elements* Document::makeSphere (Vertex* center, Vector* vx, Vector* vz, 
-                                double radius, double radhole, Vertex* plorig, 
+Elements* Document::makeSphere (Vertex* center, Vector* vx, Vector* vz,
+                                double radius, double radhole, Vertex* plorig,
                                 int nrad, int nang, int nhaut)
 {
+   DumpStart ("makeSphere", center << vx << vz << radius << radhole << plorig
+                  << nrad << nang << nhaut);
+
    Elements* grille = new Elements (this);
    double radint = (radhole + radius)*DEMI;
-   grille->makeRind (GR_HEMISPHERIC, center, vx, vz, radius, radint, radhole, 
+   grille->makeRind (GR_HEMISPHERIC, center, vx, vz, radius, radint, radhole,
                      plorig, 360.0, nrad, nang, nhaut);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makePartSphere
-Elements* Document::makePartSphere (Vertex* center, Vector* vx, Vector* vz, 
+Elements* Document::makePartSphere (Vertex* center, Vector* vx, Vector* vz,
                                  double  radius, double radhole,
                                  Vertex* plorig, double angle,
                                  int nrad, int nang, int nhaut)
 {
+   DumpStart ("makePartSphere", center << vx << vz
+                  << radius << radhole
+                  << plorig << angle
+                  << nrad   << nang << nhaut);
+
    Elements* grille = new Elements (this);
    double radint = (radhole + radius)*DEMI;
-   grille->makeRind (GR_PART_SPHERIC, center, vx, vz, radius, radint, radhole, 
+   grille->makeRind (GR_PART_SPHERIC, center, vx, vz, radius, radint, radhole,
                      plorig, angle, nrad, nang, nhaut);
+
+   DumpReturn (grille);
    return grille;
 }
-// ======================================================== makeRind 
-Elements* Document::makeRind (Vertex* center, Vector* vx, Vector* vz, 
+// ======================================================== makeRind
+Elements* Document::makeRind (Vertex* center, Vector* vx, Vector* vz,
                               double  radext, double radint, double radhole,
                               Vertex* plorig, int nrad, int nang, int nhaut)
 {
+   DumpStart ("makeRind", center << vx << vz
+                  << radext << radint << radhole
+                  << plorig << nrad   << nang << nhaut);
+
    Elements* grille = new Elements (this);
-   grille->makeRind (GR_RIND, center, vx, vz, radext, radint, radhole, 
+   grille->makeRind (GR_RIND, center, vx, vz, radext, radint, radhole,
                      plorig, 360.0, nrad, nang, nhaut);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makePartRind
-Elements* Document::makePartRind (Vertex* center, Vector* vx, Vector* vz, 
+Elements* Document::makePartRind (Vertex* center, Vector* vx, Vector* vz,
                            double  radext, double radint, double radhole,
                            Vertex* plorig, double angle,
                                int nrad, int nang, int nhaut)
 {
+   DumpStart ("makePartRind", center << vx << vz
+                  << radext << radint << radhole
+                  << plorig << angle  << nrad  << nang << nhaut);
+
    Elements* grille = new Elements (this);
-   grille->makeRind (GR_PART_RIND, center, vx, vz, radext, radint, radhole, 
+   grille->makeRind (GR_PART_RIND, center, vx, vz, radext, radint, radhole,
                      plorig, angle, nrad, nang, nhaut);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== findVertex
@@ -261,8 +367,8 @@ Vertex* Document::findVertex (double vx, double vy, double vz)
                  elt = elt->next())
        {
        if (elt->isHere())
-          { 
-          Vertex* node = static_cast <Vertex*> (elt); 
+          {
+          Vertex* node = static_cast <Vertex*> (elt);
           if (node->isin (xmin, xmax, ymin, ymax, zmin, zmax))
              return node;
           }
@@ -275,7 +381,7 @@ Edge* Document::findEdge (Vertex* v1, Vertex* v2)
    for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
                  elt = elt->next())
        {
-       Edge* candidat  = static_cast <Edge*> (elt); 
+       Edge* candidat  = static_cast <Edge*> (elt);
        if (candidat->definedBy (v1, v2))
           return candidat;
        }
@@ -287,7 +393,7 @@ Quad* Document::findQuad (Vertex* v1, Vertex* v2)
    for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
                  elt = elt->next())
        {
-       Quad* candidat  = static_cast <Quad*> (elt); 
+       Quad* candidat  = static_cast <Quad*> (elt);
        if (candidat->definedBy (v1, v2))
           return candidat;
        }
@@ -299,13 +405,12 @@ Hexa* Document::findHexa (Vertex* v1, Vertex* v2)
    for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
                  elt = elt->next())
        {
-       Hexa* candidat  = static_cast <Hexa*> (elt); 
+       Hexa* candidat  = static_cast <Hexa*> (elt);
        if (candidat->definedBy (v1, v2))
           return candidat;
        }
    return NULL;
 }
-
 // ======================================================== findElement
 EltBase* Document::findElement (EnumElt type, int ident)
 {
@@ -320,7 +425,7 @@ EltBase* Document::findElement (EnumElt type, int ident)
 // ======================================================== findVertex
 Vertex* Document::findVertex (int ident)
 {
-   Vertex* node = static_cast <Vertex*> (findElement (EL_VERTEX, ident)); 
+   Vertex* node = static_cast <Vertex*> (findElement (EL_VERTEX, ident));
    return  node;
 
 }
@@ -334,29 +439,34 @@ int index_tv (Vertex* table[], Vertex* elt)
    return NOTHING;
 }
 // ======================================================== mergeQuads
-int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2, 
+int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
                                                 Vertex* v3, Vertex* v4)
 {
+   DumpStart ("mergeQuads", dest << orig << v1 << v2  << v3 << v4);
+
    update ();
 
    if (dest==orig)
       {
       printf (" *** Quads identiques dans mergeQuads\n");
+      DumpEnd;
       return HERR;
       }
    else if (dest==NULL || dest->isDeleted())
       {
       printf (" *** Quad nro 1 incorrect dans mergeQuads \n");
+      DumpEnd;
       return HERR;
       }
    else if (orig==NULL || orig->isDeleted() )
       {
       printf (" *** Quad nro 2 incorrect dans mergeQuads \n");
+      DumpEnd;
       return HERR;
       }
 
    int nbcomm = 0;
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        {
        int norig = orig->indexVertex (dest->getVertex(nro));
        if (norig != NOTHING)
@@ -370,7 +480,7 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
              printf (" (%s,",  dest->getName (nom));
              printf (" %s)\n", orig->getName (nom));
              }
-          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig, 
+          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig,
                                                         uv->getName (nom));
           }
        }
@@ -379,20 +489,23 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
       {
       printf ("  +++ Les vertex passes en arguments sont ignores\n");
       int ier = closeQuads (dest, orig);
+      DumpEnd;
       return ier;
       }
    else if (nbcomm != 0)
       {
       printf ("  *** _____________________ mergeQuads refuse: \n");
       printf (" il y a %d sommet(s) sont commun(s)\n", nbcomm);
+      DumpEnd;
       return HERR;
       }
 
-   if (   v1 ==NULL || v1 ->isDeleted() || v2 ==NULL || v2 ->isDeleted() 
-       || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted()) 
+   if (   v1 ==NULL || v1 ->isDeleted() || v2 ==NULL || v2 ->isDeleted()
+       || v3 ==NULL || v3 ->isDeleted() || v4 ==NULL || v4 ->isDeleted())
       {
       printf ("  *** _____________________ mergeQuads refuse: \n");
       printf (" un sommet est incorrect\n");
+      DumpEnd;
       return HERR;
       }
 
@@ -413,8 +526,16 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
 
    int ier1 = dest->ordoVertex (v1, v3, tv1);
    int ier2 = orig->ordoVertex (v2, v4, tv2);
-   if (ier1 != HOK)      return ier1;
-   else if (ier2 != HOK) return ier2;
+   if (ier1 != HOK)
+      {
+      DumpEnd;
+      return ier1;
+      }
+   else if (ier2 != HOK)
+      {
+      DumpEnd;
+      return ier2;
+      }
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
@@ -424,11 +545,17 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
        int na = index_tv  (tv1, va1);
        int nb = index_tv  (tv1, vb1);
        if (na==NOTHING || nb==NOTHING)
+          {
+          DumpEnd;
           return HERR;
+          }
 
        te2 [nro] = orig->findEdge (tv2[na], tv2[nb]);
        if (te2[nro]==NULL)
+          {
+          DumpEnd;
           return HERR;
+          }
        }
 
    if (debug())
@@ -453,53 +580,61 @@ int Document::mergeQuads (Quad* dest, Quad* orig, Vertex* v1, Vertex* v2,
       }
 
    replaceQuad (orig, dest);
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        replaceEdge   (te2[nro], te1[nro]);
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        replaceVertex (tv2[nro], tv1[nro]);
 
    maj_connection = false;
    purge_elements = false;
+
+   DumpEnd;
    return HOK;
 }
 // ======================================================== closeQuads
 int Document::closeQuads (Quad* dest, Quad* orig)
 {
+   DumpStart ("closeQuads", dest << orig);
+
    update ();
    char nom[12];
 
    if (dest==orig)
       {
-      printf (" *** Quads identiques dans closeQuads : %s\n", 
+      printf (" *** Quads identiques dans closeQuads : %s\n",
                  dest->getName(nom));
+      DumpEnd;
       return HERR;
       }
    else if (dest==NULL || dest->isDeleted())
       {
       printf (" *** Quad nro 1 incorrect dans closeQuads \n");
+      DumpEnd;
       return HERR;
       }
    else if (orig==NULL || orig->isDeleted() )
       {
       printf (" *** Quad nro 2 incorrect dans closeQuads \n");
+      DumpEnd;
       return HERR;
       }
 
    Edge* edc = NULL;
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        {
        int norig = orig->indexEdge (dest->getEdge(nro));
        if (norig != NOTHING)
           {
-          if (edc != NULL) 
+          if (edc != NULL)
              {
              printf ("  *** Plus d'une arete commune dans closeQuads");
              printf (" (%s,",  dest->getName (nom));
              printf (" %s)\n", orig->getName (nom));
+             DumpEnd;
              return HERR;
              }
           edc = dest->getEdge (nro);
-          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig, 
+          printf ("  +++ quad1[%d] = quad2[%d] = %s\n", nro,  norig,
                                                         edc->getName (nom));
           }
        }
@@ -512,8 +647,16 @@ int Document::closeQuads (Quad* dest, Quad* orig)
    int ier1 = dest->ordoVertex (va, vb, tv1);
    int ier2 = orig->ordoVertex (va, vb, tv2);
 
-   if (ier1 != HOK)      return ier1;
-   else if (ier2 != HOK) return ier2;
+   if (ier1 != HOK)
+      {
+      DumpEnd;
+      return ier1;
+      }
+   else if (ier2 != HOK)
+      {
+      DumpEnd;
+      return ier2;
+      }
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
@@ -523,11 +666,17 @@ int Document::closeQuads (Quad* dest, Quad* orig)
        int na = index_tv  (tv1, va1);
        int nb = index_tv  (tv1, vb1);
        if (na==NOTHING || nb==NOTHING)
+          {
+          DumpEnd;
           return HERR;
+          }
 
        te2 [nro] = orig->findEdge (tv2[na], tv2[nb]);
        if (te2[nro]==NULL)
+          {
+          DumpEnd;
           return HERR;
+          }
        }
 
    if (debug())
@@ -552,59 +701,88 @@ int Document::closeQuads (Quad* dest, Quad* orig)
       }
 
    replaceQuad (orig, dest);
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        replaceEdge   (te2[nro], te1[nro]);
-   for (int nro=0 ; nro<QUAD4 ; nro++) 
+   for (int nro=0 ; nro<QUAD4 ; nro++)
        replaceVertex (tv2[nro], tv1[nro]);
 
    maj_connection = false;
    purge_elements = false;
+
+   DumpEnd;
    return HOK;
 }
 // ======================================================== mergeEdges
 int Document::mergeEdges (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2)
 {
-   if (e1==NULL || e1->isDeleted() || e2==NULL || e2->isDeleted()) 
-      return HERR;
+   DumpStart ("mergeEdges", e1 << e2 << v1 << v2);
 
-   for (int nro=0 ; nro<V_TWO ; nro++) 
+   if (e1==NULL || e1->isDeleted() || e2==NULL || e2->isDeleted())
+      {
+      DumpEnd;
+      return HERR;
+      }
+
+   for (int nro=0 ; nro<V_TWO ; nro++)
        if (e1->index (e2->getVertex(nro))!= NOTHING)
+          {
+          DumpEnd;
           return HERR+nro+1;
+          }
 
    Vertex *tv1 [V_TWO], *tv2 [V_TWO];
 
    int ier1 = e1->anaMerge (v1, tv1);
    int ier2 = e2->anaMerge (v2, tv2);
 
-   if (ier1 != HOK)      return ier1;
-   else if (ier2 != HOK) return ier2;
+   if (ier1 != HOK)
+      {
+      DumpEnd;
+      return ier1;
+      }
+   else if (ier2 != HOK)
+      {
+      DumpEnd;
+      return ier2;
+      }
 
    replaceEdge (e2, e1);
-   for (int nro=0 ; nro<V_TWO ; nro++) 
+   for (int nro=0 ; nro<V_TWO ; nro++)
        replaceVertex (tv2[nro], tv1[nro]);
 
    maj_connection = false;
+   DumpEnd;
    return HOK;
 }
 // ======================================================== mergeVertices
 int Document::mergeVertices (Vertex* v1, Vertex* v2)
 {
-   if (v1==v2 || v1==NULL || v1->isDeleted() 
+   DumpStart ("mergeVertices", v1 << v2);
+
+   if (v1==v2 || v1==NULL || v1->isDeleted()
               || v2==NULL || v2->isDeleted())
+      {
+      DumpEnd;
       return HERR;
+      }
 
    replaceVertex (v2, v1);
 
    maj_connection = false;
+   DumpEnd;
    return HOK;
 }
 // ======================================================== replaceVertex
 void Document::replaceVertex (Vertex* old, Vertex* par)
 {
-   if (old==par)
+   DumpStart ("replaceVertex", old << par);
+   if (BadElement(old) || BadElement(par) ||  old==par)
+      {
+      DumpEnd;
       return;
+      }
 
-   par->replaceAssociation (old);
+   // par->replaceAssociation (old);   TODO
 
    for (int type=EL_EDGE ; type <= EL_HEXA ; type++)
        {
@@ -614,14 +792,19 @@ void Document::replaceVertex (Vertex* old, Vertex* par)
                elt->replaceVertex (old, par);
        }
    old->suppress ();
+   DumpEnd;
 }
 // ======================================================== replaceEdge
 void Document::replaceEdge (Edge* old, Edge* par)
 {
-   if (old==par)
+   DumpStart ("replaceEdge", old << par);
+   if (BadElement(old) || BadElement(par) ||  old==par)
+      {
+      DumpEnd;
       return;
+      }
 
-   par->replaceAssociation (old);
+   // par->replaceAssociation (old);   TODO
 
    for (int type=EL_QUAD ; type <= EL_HEXA ; type++)
        {
@@ -630,15 +813,21 @@ void Document::replaceEdge (Edge* old, Edge* par)
            if (elt->isHere ())
                elt->replaceEdge (old, par);
        }
+
    old->suppress ();
+   DumpEnd;
 }
 // ======================================================== replaceQuad
 void Document::replaceQuad (Quad* old, Quad* par)
 {
-   if (old==par)
+   DumpStart ("replaceQuad", old << par);
+   if (BadElement(old) || BadElement(par) ||  old==par)
+      {
+      DumpEnd;
       return;
+      }
 
-   par->replaceAssociation (old);
+   // par->replaceAssociation (old);   TODO
 
    for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
                  elt = elt->next())
@@ -650,80 +839,97 @@ void Document::replaceQuad (Quad* old, Quad* par)
    old->suppress ();
 }
 // ======================================================== prismQuad
-Elements* Document::prismQuad  (Quad* start, Vector* dir, int nb)
+Elements* Document::prismQuad  (Quad* qstart, Vector* dir, int nb)
 {
+   DumpStart ("prismQuad", qstart << dir << nb);
+
    Quads  tstart;
-   tstart.push_back (start);
+   tstart.push_back (qstart);
 
    update ();
    Elements* prisme = prismQuads (tstart, dir, nb);
-   return    prisme;
+
+   DumpReturn (prisme);
+   return      prisme;
 }
 // ======================================================== prismQuads
 Elements* Document::prismQuads (Quads& tstart, Vector* dir, int nb)
 {
+   DumpStart ("prismQuads", tstart << dir << nb);
+
    Elements*  prisme = new Elements (this);
-   if (nb<=0) return prisme;
 
    prisme->prismQuads (tstart, dir, nb);
+
+   DumpReturn (prisme);
    return prisme;
 }
 // ======================================================== prismQuadsVec
 Elements* Document::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
                                    int crit)
 {
+   DumpStart ("prismQuadVec", tstart << dir << tlen << crit);
    Elements*  prisme = new Elements (this);
    if (tlen.size()<=0) return prisme;
 
    prisme->prismQuadsVec (tstart, dir, tlen, crit);
+
+   DumpReturn (prisme);
    return prisme;
 }
 // ======================================================== joinQuads
-Elements* Document::joinQuads (Quads& start, Quad* dest, Vertex* v1, 
-		               Vertex* v2, Vertex* v3, Vertex* v4, int nb)
+Elements* Document::joinQuads (Quads& tstart, Quad* dest, Vertex* v1,
+                               Vertex* v2, Vertex* v3, Vertex* v4, int nb)
 {
+   DumpStart ("joinQuads", tstart << dest << v1 << v2 << v3 << v4 << nb);
    update ();
    Elements*  joint = new Elements (this);
    if (nb<=0)      return joint;
 
-   int ier = joint->joinQuads (start, nb, v1, v2, v3, v4, dest);
+   int ier = joint->joinQuads (tstart, nb, v1, v2, v3, v4, dest);
    if (ier !=HOK)
       printf ("\n ****\n **** Error in joinQuad(s)\n ****\n");
+
+   DumpReturn (joint);
    return joint;
 }
 // ======================================================== joinQuad
-Elements* Document::joinQuad (Quad* start, Quad* dest, Vertex* v1, 
+Elements* Document::joinQuad (Quad* qstart, Quad* dest, Vertex* v1,
                               Vertex* v2,  Vertex* v3, Vertex* v4, int nb)
 {
+   DumpStart ("joinQuad", qstart << dest << v1 << v2 << v3 << v4 << nb);
+
    Quads  tstart;
-   tstart.push_back (start);
+   tstart.push_back (qstart);
 
    Elements* joint = joinQuads (tstart, dest, v1, v2, v3, v4, nb);
+
+   DumpReturn (joint);
    return    joint;
 }
 // ========================================================== getHexa
-Hexa* Document::getHexa (int nro) 
+Hexa* Document::getHexa (int nro)
 {
    return static_cast <Hexa*> (getElement (EL_HEXA, nro));
 }
 // ========================================================== getQuad
-Quad* Document::getQuad (int nro) 
+Quad* Document::getQuad (int nro)
 {
    return static_cast <Quad*> (getElement (EL_QUAD, nro));
 }
 // ========================================================== getEdge
-Edge* Document::getEdge (int nro) 
-{ 
+Edge* Document::getEdge (int nro)
+{
    return static_cast <Edge*> (getElement (EL_EDGE, nro));
 }
 // ========================================================== getVertex
-Vertex* Document::getVertex (int nro) 
-{ 
-   return static_cast <Vertex*> (getElement (EL_VERTEX, nro)); 
+Vertex* Document::getVertex (int nro)
+{
+   return static_cast <Vertex*> (getElement (EL_VERTEX, nro));
 }
 // ========================================================== countElement
 int Document::countElement (EnumElt type)
-{ 
+{
    int compteur = 0;
    for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
                  elt = elt->next())
@@ -733,8 +939,8 @@ int Document::countElement (EnumElt type)
    return compteur;
 }
 // ========================================================== getElement
-EltBase* Document::getElement (EnumElt type, int nro) 
-{ 
+EltBase* Document::getElement (EnumElt type, int nro)
+{
    int compteur = 0;
    for (EltBase* elt = doc_first_elt[type]->next (); elt!=NULL;
                  elt = elt->next())
@@ -750,20 +956,23 @@ EltBase* Document::getElement (EnumElt type, int nro)
 }
 // ========================================================= addLaw
 Law* Document::addLaw (const char* name, int nbnodes)
-{ 
-   Law* loi = new Law (name, nbnodes);
-   return addLaw (loi);
+{
+   DumpStart ("addLaw", name << nbnodes);
+   Law* loi = new Law (this, name, nbnodes);
+   addLaw (loi);
+   DumpReturn (loi);
+   return loi;
 }
 // ========================================================= addLaw
 Law* Document::addLaw (Law* loi)
-{ 
+{
    doc_laws.push_back (loi);
    nbr_laws ++;
    return loi;
 }
 // ========================================================= GetLaw
 Law* Document::getLaw (int nro)
-{ 
+{
    if (nro <0 || nro>= nbr_laws)
       return NULL;
 
@@ -771,8 +980,8 @@ Law* Document::getLaw (int nro)
 }
 // ========================================================= FindLaw
 Law* Document::findLaw (const char* name)
-{ 
-   std::string nom = name;
+{
+   string nom = name;
    for (int nro=0 ; nro<nbr_laws; nro++)
        if (doc_laws [nro]->getName() == nom)
           return doc_laws [nro];
@@ -781,29 +990,29 @@ Law* Document::findLaw (const char* name)
 }
 // ========================================================= removeLaw
 int Document::removeLaw (Law* loi)
-{ 
+{
    for (int nro=1 ; nro<nbr_laws; nro++)
        if (doc_laws [nro] == loi)
           {
           //All propagations having this law should now have the default law.
-
           for (int nl=0 ; nl<nbr_propagations ; nl++)
               {
-	      if ( doc_propagation [nl]->getLaw() == loi )
-		   doc_propagation [nl]->setLaw(defaultLaw);
-	      }
+              if ( doc_propagation [nl]->getLaw() == loi )
+                   doc_propagation [nl]->setLaw(defaultLaw);
+              }
 
-	   delete doc_laws [nro];
-	   doc_laws.erase (doc_laws.begin()+nro);
-	   nbr_laws= doc_laws.size();
-	   return HOK;
-	   }
+          delete doc_laws [nro];
+          doc_laws.erase (doc_laws.begin()+nro);
+          nbr_laws = doc_laws.size();
+          return HOK;
+          }
 
    return HERR;
 }
 // ========================================================= majPropagation
 void Document::majPropagation ()
-{ 
+{
+   DumpLock;
    majReferences ();
    update ();
    // if (purge_elements)
@@ -839,15 +1048,16 @@ void Document::majPropagation ()
               Edge* arete = cell->getEdge(ne);
               if (arete->getPropag()<0)
                  {
-                 Propagation* prop = new Propagation (); 
+                 Propagation* prop = new Propagation ();
                  doc_propagation.push_back (prop);
                  arete->propager (prop, nbr_propagations);
                  nbr_propagations ++;
-		 prop->majLaw();
+                 prop->majLaw();
                  }
               }
           }
        }
+   DumpRestore;
 }
 // ======================================================== countPropagation
 int Document::countPropagation ()
@@ -871,7 +1081,7 @@ Propagation* Document::getPropagation (int nro)
 // ======================================================== findPropagation
 Propagation* Document::findPropagation (Edge* arete)
 {
-   if (arete==NULL) 
+   if (arete==NULL)
        return NULL;
 
    if (maj_propagation)
@@ -882,13 +1092,13 @@ Propagation* Document::findPropagation (Edge* arete)
 // ======================================================== disconnectQuad
 Elements* Document::disconnectQuad (Hexa* cell, Quad* element)
 {
-   if (cell==NULL || element==NULL) 
+   if (cell==NULL || element==NULL)
       return NULL;
 
    update ();
    Elements* crees = cell->disconnectQuad (element);
 
-   if (crees!=NULL) 
+   if (crees!=NULL)
        majReferences ();
 
    return crees;
@@ -896,7 +1106,7 @@ Elements* Document::disconnectQuad (Hexa* cell, Quad* element)
 // ======================================================== disconnectEdge
 Elements* Document::disconnectEdge (Hexa* cell, Edge* element)
 {
-   if (cell==NULL || element==NULL) 
+   if (cell==NULL || element==NULL)
       return NULL;
 
    update ();
@@ -909,13 +1119,13 @@ Elements* Document::disconnectEdge (Hexa* cell, Edge* element)
 // ======================================================== disconnectVertex
 Elements* Document::disconnectVertex (Hexa* cell, Vertex* element)
 {
-   if (cell==NULL || element==NULL) 
+   if (cell==NULL || element==NULL)
       return NULL;
 
    update ();
    Elements* crees = cell->disconnectVertex (element);
 
-   if (crees!=NULL) 
+   if (crees!=NULL)
        majReferences ();
    return crees;
 }
@@ -936,18 +1146,18 @@ Elements* Document::cut (Edge* edge, int nbcuts)
    return t_hexas;
 }
 // ======================================================== addGroup
-Group* Document::addGroup    (cpchar name, EnumGroup kind)
+Group* Document::addGroup (cpchar name, EnumGroup kind)
 {
    Group* grp = new Group (name, kind);
    doc_group.push_back (grp);
    return grp;
 }
 // ======================================================== findGroup
-Group* Document::findGroup   (cpchar name)
+Group* Document::findGroup (cpchar name)
 {
    int nbre = doc_group.size();
 
-   for (int ng=0 ; ng<nbre ; ng++) 
+   for (int ng=0 ; ng<nbre ; ng++)
        if (Cestegal (doc_group [ng]->getName(), name))
           return doc_group [ng];
 
@@ -957,7 +1167,7 @@ Group* Document::findGroup   (cpchar name)
 int Document::removeGroup (Group* grp)
 {
    int nbre = doc_group.size();
-   for (int ng=0 ; ng<nbre ; ng++) 
+   for (int ng=0 ; ng<nbre ; ng++)
        {
        if (grp == doc_group [ng])
           {
@@ -969,43 +1179,68 @@ int Document::removeGroup (Group* grp)
                       // Pas trouve dans la liste. On detruit quand meme
    delete grp;
    return HERR;
-}// ======================================================== makeCylinder
-Elements* Document::makeCylinder (Cylinder* cyl, Vector* base, int nr, int na, 
+}
+// ======================================================== makeCylinder
+Elements* Document::makeCylinder (Cylinder* cyl, Vector* base, int nr, int na,
                                                                        int nl)
 {
+   DumpStart ("makeCylinder", cyl << base << nr << na << nl);
+
    Elements* grille = new Elements (this);
    grille->makeCylinder (cyl, base, nr, na, nl);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makeCylinders
 CrossElements* Document::makeCylinders (Cylinder* cyl1, Cylinder* cyl2)
 {
+   DumpStart ("makeCylinders", cyl1 << cyl2 );
+
    CrossElements* grille = new CrossElements (this, GR_BICYL);
    grille->crossCylinders (cyl1, cyl2, true);
+
+   DumpReturn (grille);
    return grille;
 }
 
 // ======================================================== makePipe
 Elements* Document::makePipe (Pipe* pipe, Vector* bx, int nr, int na, int nl)
 {
+   DumpStart ("makePipe",
+        pipe << bx << nr << na << nl);
+
    Elements* grille = new Elements (this);
    grille->makePipe (pipe, bx, nr, na, nr);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== makePipes
 CrossElements* Document::makePipes (Pipe* pipe1, Pipe* pipe2)
 {
+   DumpStart ("makePipes",
+        pipe1 << pipe2);
+
    CrossElements* grille = new CrossElements (this, GR_BIPIPE);
    grille->crossCylinders (pipe1, pipe2, false);
+
+   DumpReturn (grille);
    return grille;
 }
 // ======================================================== setName
-int Document::setName (const char* name)
+int Document::setName (cpchar prefix)
 {
-   doc_name = name ;
+   if (Cestvide (prefix) || el_name==prefix)
+       return HERR;
+
+   string name = prefix;
+   if (hex_parent != NULL)
+       hex_parent->makeName (prefix, name);
+
+   el_name = name;
    return HOK ;
 }
-
 // ======================================================== setLevel
 
 #ifdef  NO_CASCADE
@@ -1020,7 +1255,15 @@ void        set_debug_asso  (bool boule);
 void Document::setLevel (int niv)
 {
    if (niv == 747)
-      clearAssociation ();
+      checkAssociations ();
+   else if (niv == 748)
+      {
+      int nbshapes = countShape ();
+      for (int nsh=0 ; nsh < nbshapes ; nsh++)
+          {
+          doc_tab_shape[nsh]->saveBrep();
+          }
+      }
    else if (niv == 777)
       set_special_option (true);
    else if (niv == 778)
@@ -1035,6 +1278,7 @@ void Document::setLevel (int niv)
       set_debug_asso (niv>0);
       }
 }
+#if 0
 // ======================================================== getAssoVertices
 void Document::getAssoVertices (Vertices& tabelt)
 {
@@ -1042,7 +1286,7 @@ void Document::getAssoVertices (Vertices& tabelt)
    for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
                  elt = elt->next())
        if (elt->isHere() && elt->getAssociation()!=NULL)
-          tabelt.push_back (static_cast <Vertex*> (elt)); 
+          tabelt.push_back (static_cast <Vertex*> (elt));
 }
 // ======================================================== getAssoEdges
 void Document::getAssoEdges (Edges& tabelt)
@@ -1051,11 +1295,113 @@ void Document::getAssoEdges (Edges& tabelt)
    for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
                  elt = elt->next())
        if (elt->isHere())
-          { 
-          Edge* edge = static_cast <Edge*> (elt); 
+          {
+          Edge* edge = static_cast <Edge*> (elt);
           int nbass  = edge->getAssociations().size();
           if (nbass>0)
               tabelt.push_back (edge);
           }
+}
+#endif
+// ======================================================== makeVarName
+char* Document::makeVarName (char* name)
+{
+   strcpy (name, doc_ident);
+   return doc_ident ;
+}
+// ======================================================== isEmpty
+bool Document::isEmpty ()
+{
+   int nombre = countVertex () + countVector ()
+                               + countCylinder() + countPipe();
+   return nombre <= 0 && countLaw  () <= 1;
+}
+// ======================================================== getNextName
+cpchar Document::getNextName (EnumElt type, string& buff)
+{
+   char name [8];
+   EltBase::makeName (type, doc_nbr_elt [type], name);
+
+   buff = name;
+   return buff.c_str();
+}
+
+// ======================================================== getNextName
+string Document::getNextName (EnumElt type)
+{
+   char name [8];
+   EltBase::makeName (type, doc_nbr_elt [type], name);
+
+   return string(name);
+}
+
+// ======================================================== lockDump
+void Document::lockDump ()
+{
+   glob->dump.lock ();
+}
+// ======================================================== restoreDump
+void Document::restoreDump ()
+{
+   glob->dump.restore (DumpActif);
+}
+// ======================================================== getGroup
+Group* Document::getGroup (int nro)
+{
+   int size = doc_group.size();
+   if (nro>=0 && nro<size)
+      return doc_group [nro];
+   else
+      return NULL;
+}
+// ======================================================== getVector
+Vector* Document::getVector (int nro)
+{
+   int size = doc_vector.size();
+   if (nro>=0 && nro<size)
+      return doc_vector [nro];
+   else
+      return NULL;
+}
+// ======================================================== getCylinder
+Cylinder* Document::getCylinder (int nro)
+{
+   int size = doc_cylinder.size();
+   if (nro>=0 && nro<size)
+      return doc_cylinder [nro];
+   else
+      return NULL;
+}
+// ======================================================== getPipe
+Pipe* Document::getPipe (int nro)
+{
+   int size = doc_pipe.size();
+   if (nro>=0 && nro<size)
+      return doc_pipe [nro];
+   else
+      return NULL;
+}
+
+// ======================================================== makeBiCylinder
+BiCylinder* Document::makeBiCylinder (Cylinder* cyl1, Cylinder* cyl2)
+{
+   DumpStart ("makeBiCylinder", cyl1 << cyl2 );
+
+   BiCylinder* grille = new BiCylinder (this);
+   grille->crossCylinders (cyl1, cyl2);
+
+   DumpReturn (grille);
+   return grille;
+}
+// ======================================================== makeBiPipe
+BiCylinder* Document::makeBiPipe (Pipe* pipe1, Pipe* pipe2)
+{
+   DumpStart ("makeBiPipe", pipe1 << pipe2);
+
+   BiCylinder* grille = new BiCylinder (this);
+   grille->crossCylinders (pipe1, pipe2);
+
+   DumpReturn (grille);
+   return grille;
 }
 END_NAMESPACE_HEXA

@@ -1,5 +1,5 @@
 
-// C++ : Element de base 
+// C++ : Element de base
 
 // Copyright (C) 2009-2012  CEA/DEN, EDF R&D
 //
@@ -32,9 +32,9 @@ EltBase::EltBase (Document* doc, EnumElt type)
    el_id     = 0;
 
    el_next   = NULL;
-   el_assoc  = NULL;
    el_status = HOK;
    el_mark   = 0;
+   is_associated = false;
 
    // EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
 
@@ -86,8 +86,8 @@ void EltBase::remove ()
        {
        EltBase* elt = el_parent[nro];
        if (elt != NULL && elt->isHere())
-	   elt->remove ();
-       }    	   
+           elt->remove ();
+       }
 }
 // =================================================== suppress
 void EltBase::suppress ()
@@ -98,62 +98,32 @@ void EltBase::suppress ()
    el_root->setDeprecated (2);
    el_type = EL_REMOVED;
 }
-// ========================================================= replaceAssociation 
-void EltBase::replaceAssociation (EltBase* orig)
-{
-   if (   orig == NULL || orig->el_assoc == NULL
-       || orig == this || orig->el_assoc == el_assoc)
-      return;
-
-   if (el_assoc==NULL)
-      el_assoc = orig->el_assoc;
-   else 
-      el_root->hputError (W_REPL_ASSOC, this, orig);
-}
-// ========================================================= copyAssociation 
-void EltBase::copyAssociation (EltBase* orig)
-{
-   if (   orig == NULL || orig->el_assoc == NULL
-       || orig == this || orig->el_assoc == el_assoc)
-      return;
-
-   el_assoc = orig->el_assoc;
-   el_root->hputError (W_DISCO_ASSOC, orig);
-}
-// ========================================================= getName 
+// ========================================================= getName
 cpchar EltBase::getName  ()
 {
    return el_name.c_str() ;
 }
-// ========================================================= getName 
+// ========================================================= getName
 char* EltBase::getName  (pchar buffer)
 {
-// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
-   sprintf (buffer, "%c%04d", ABR_TYPES[el_type], el_id);
-   return   buffer;
+   return makeName (el_type, el_id, buffer);
 }
-// ========================================================= printName 
+// ========================================================= makeName
+char* EltBase::makeName  (int type, int id, char* name)
+{
+// EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_REMOVED
+   sprintf (name, "%c%04d", ABR_TYPES[type], id);
+   return   name;
+}
+
+// ========================================================= printName
 void EltBase::printName  (cpchar sep)
 {
    char nom[12];
 
    printf ("%s%s", getName(nom), sep);
 }
-// ========================================================= setAssociation
-void EltBase::setAssociation (Shape* forme)
-{
-   el_assoc = forme;
-
-   if (el_root->debug (2))
-       cout << "  Vertex " << el_name << " : setAssociation" << endl;
-}
-// ========================================================= addAssociation
-int EltBase::addAssociation (Shape* forme)
-{
-   setAssociation (forme);
-   return HOK;
-}
-// ========================================================= dumpRef 
+// ========================================================= dumpRef
 void EltBase::dumpRef ()
 {
    int nbp = el_parent.size();
@@ -164,11 +134,11 @@ void EltBase::dumpRef ()
       printf ("\n");
       }
 
-   for (int nro=0 ; nro<nbp ; nro++)	      
+   for (int nro=0 ; nro<nbp ; nro++)
        {
        if (el_parent[nro]->isHere ())
           {
-          if (prems) 
+          if (prems)
               printf ("\t isin ");
           prems = false;
           el_parent[nro]->printName(", ");
@@ -177,14 +147,7 @@ void EltBase::dumpRef ()
 
    printf ("\n");
 }
-// ========================================================= addAssociation
-bool EltBase::canBeAssociated ()
-{
-   bool rep =   isValid() && isHere() 
-            && (el_type==EL_VERTEX || el_type==EL_EDGE || el_type==EL_QUAD);
-   return rep;
-}
-// ========================================================= addAssociation
+// ========================================================= setId
 void EltBase::setId (int ln)
 {
    char buffer [16];
@@ -194,9 +157,22 @@ void EltBase::setId (int ln)
    int maxid = std::max (el_root->doc_nbr_elt[el_type], ln+1);
 
    el_root->doc_nbr_elt[el_type] = maxid;
-   if (defname) 
+   if (defname)
       el_name = getName (buffer);
 }
-
+// ========================================================= makeVarName
+char* EltBase::makeVarName (char* nom)
+{
+   static cpchar PREFIX[]  = {"Undef", "Node",  "Edge",  "Quad",  "Hexa",
+                              "Vect",  "Grid",  "Cyl",  "Pipe", "Group", "Law",
+                              "Xxxx",  "Xxxx",  "Xxxx" };
+   sprintf (nom, "%s%d", PREFIX[el_type], el_id);
+   return   nom;
+}
+// ========================================================= debug
+bool EltBase::debug (int niv)
+{
+   return el_root != NULL && el_root->getLevel() > niv ;
+}
 END_NAMESPACE_HEXA
 

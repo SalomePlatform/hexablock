@@ -23,6 +23,7 @@
 #include "HexVertex.hxx"
 #include "HexVector.hxx"
 #include "HexXmlWriter.hxx"
+#include "HexDocument.hxx"
 
 #include <cmath>
 
@@ -58,7 +59,6 @@ Cylinder::Cylinder(Vertex* b, Vector* v, double r, double h)
        if (c_radius <= tol || c_height <= tol || norme <= tol)
            setError ();
        }
-       
 }
 // ======================================================== rdiffers
 bool rdiffers (double v1, double v2)

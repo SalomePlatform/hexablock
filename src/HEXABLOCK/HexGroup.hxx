@@ -35,6 +35,7 @@ public :
 
    void      setName (cpchar nom)          { grp_name = nom ; }
    cpchar    getName ()                    { return grp_name.c_str () ; }
+   char* getNextName  (pchar buffer);
    EnumGroup getKind ()                    { return grp_kind ; }
    int       addElement    (EltBase* elt);
    int       removeElement (EltBase* elt);
