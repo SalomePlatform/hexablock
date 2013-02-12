@@ -277,6 +277,16 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
       cross_cyl2 = lun;
       }
 
+   double pr = cross_cyl1->getRadius ();
+   double gr = cross_cyl2->getRadius ();
+   if (pr>=gr*0.95)
+      {
+      cout << " **** crossCylinders : les deux rayons sont trop proches"
+           << endl;
+      setError (HERR);
+      return HERR;
+      }
+
    cross_center = cross_cyl2->interCylinder (cross_cyl1, at_left, at_right);
    if (cross_center==NULL)
       {
@@ -319,7 +329,6 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
    createLittleCyl ();
    createBigCyl    ();
 
-   Vertex* node = NULL;
    double h1=0, h3=0, dx=1 , dy=1;
    if (cyl_left!=NO_PIPE)
       {

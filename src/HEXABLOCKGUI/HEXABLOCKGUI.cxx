@@ -151,7 +151,6 @@ GEOMGUI_OCCSelector*    HEXABLOCKGUI::currentOccSelector = NULL;
 
 HEXABLOCKGUI::HEXABLOCKGUI() :
           SalomeApp_Module( "HEXABLOCK" ), // default name
-          LightApp_Module( "HEXABLOCK" ),
           _menuId(190),
           _dwPattern(0),
           _dwAssociation(0),
@@ -1851,7 +1850,7 @@ void HEXABLOCKGUI::showActor()
     if (aStudy == NULL || vman == NULL) return;
 
     Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 1 );
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), GEOM::propertyName(GEOM::Visibility), 1 );
     displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
 }
 
@@ -1883,7 +1882,7 @@ void HEXABLOCKGUI::showOnlyActor()
             anIO = actor->getIO();
             if( anIO->hasEntry())
             {
-                aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 0 );
+                aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), GEOM::propertyName(GEOM::Visibility), 0 );
                 displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
             }//if
         }//if
@@ -1895,7 +1894,7 @@ void HEXABLOCKGUI::showOnlyActor()
     currentVtkGView->update();
     currentVtkGView->getViewWindow()->onFitAll();
     anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 1 );
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), GEOM::propertyName(GEOM::Visibility), 1 );
     displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
 
 
@@ -1966,7 +1965,7 @@ void HEXABLOCKGUI::hideActor()
     if (aStudy == NULL || vman == NULL) return;
 
     Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), VISIBILITY_PROP, 0 );
+    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(), GEOM::propertyName(GEOM::Visibility), 0 );
     displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
 }
 

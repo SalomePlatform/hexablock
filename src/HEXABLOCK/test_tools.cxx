@@ -27,11 +27,15 @@
 #include <cstdlib>
 #include <unistd.h>
 
+#include <sys/types.h>   // pour getpid()
+#include <unistd.h>      // pour getpid()
+
 static int nbr_vtk = 0;
 static cpchar case_name = "hexa";
 static Hex::Document*   docu = NULL;
 
 static string workspace = "/tmp/test_hexablock";
+static bool   w_default = true;
 
 // ======================================================== call_system 
 void call_system (const string&  command)
@@ -43,6 +47,15 @@ void goto_workspace ()
 {
    string rmdir = "rm -rf ";
    string mkdir = "mkdir -p ";
+
+   if (w_default)
+      {
+      pid_t pid = getpid ();
+      char     bufpid [8];
+      sprintf (bufpid, "_p%d", pid);
+      workspace += bufpid;
+      w_default = false;
+      }
 
    call_system (rmdir + workspace);
    call_system (mkdir + workspace);

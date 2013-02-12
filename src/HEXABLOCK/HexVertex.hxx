@@ -63,7 +63,6 @@ public :
 
 public :
    Vertex (Document* prev, double x=0.0, double y=0.0, double z=0.0);
-   Vertex (Document* cible, Vertex* other);
    Vertex (Vertex* other);
    virtual ~Vertex () {}
    virtual void dump () ;
@@ -113,12 +112,16 @@ inline Vertex::Vertex (Vertex* other)
       gc_x   = other->gc_x;
       gc_y   = other->gc_y;
       gc_z   = other->gc_z;
+      v_clone  = NULL;
+      v_shape  = other->v_shape;
       }
    else
       {
       v_x  = v_y  = v_z  = 0;
       gc_x = gc_y = gc_z = 0;
       v_scalar = 0;
+      v_shape  = NULL;
+      v_clone  = NULL;
       }
 }
 // ===================================================== getCoord

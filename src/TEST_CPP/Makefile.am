@@ -29,7 +29,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Scripts to be installed
 
-
 #
 # ===============================================================
 # Local definitions
@@ -45,16 +44,12 @@ RPATH=..
 COMMON_CPPFLAGS = \
 	@CPPUNIT_INCLUDES@ \
 	-I$(srcdir)/$(RPATH)/HEXABLOCK/ \
-	-I$(top_builddir)/idl \
-	@CORBA_CXXFLAGS@ @CORBA_INCLUDES@
-
+	-I$(top_builddir)/idl
 
 # This local variable defines the list of dependant libraries common to all target in this package.
 COMMON_LIBS =\
 	@CPPUNIT_LIBS@ \
-	$(RPATH)/HEXABLOCK/libHEXABLOCKimpl.la \
-	$(KERNEL_LDFLAGS) \
-	-lSalomeGenericObj
+	$(RPATH)/HEXABLOCK/libHEXABLOCKimpl.la
 
 # ===============================================================
 # Libraries targets

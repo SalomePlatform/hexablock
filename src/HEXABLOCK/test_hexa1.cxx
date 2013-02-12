@@ -627,9 +627,9 @@ int test_gen_xml (int nbargs, cpchar tabargs[])
    Hex::Elements*  grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    Hex::Hexa*   cell    = grid->getHexa (0);
-   Hex::Quad*   face    = cell->getQuad (0);
-   Hex::Edge*   arete   = cell->getEdge (0);
-   Hex::Vertex* noeud   = cell->getVertex (0);
+   // Hex::Quad*   face    = cell->getQuad (0);
+   // Hex::Edge*   arete   = cell->getEdge (0);
+   // Hex::Vertex* noeud   = cell->getVertex (0);
 
    // Hex::Shape* shape1 = new Hex::Shape("riri");
    // Hex::Shape* shape2 = new Hex::Shape("fifi");
@@ -679,9 +679,9 @@ int test_string_xml (int nbargs, cpchar tabargs[])
    Hex::Elements*  grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
 
    Hex::Hexa*   cell    = grid->getHexa (0);
-   Hex::Quad*   face    = cell->getQuad (0);
-   Hex::Edge*   arete   = cell->getEdge (0);
-   Hex::Vertex* noeud   = cell->getVertex (0);
+   // Hex::Quad*   face    = cell->getQuad (0);
+   // Hex::Edge*   arete   = cell->getEdge (0);
+   // Hex::Vertex* noeud   = cell->getVertex (0);
 
    // Hex::Shape* shape1 = new Hex::Shape("riri");
    // Hex::Shape* shape2 = new Hex::Shape("fifi");
@@ -858,57 +858,6 @@ int test_grille_cyl (int nbargs, cpchar tabargs[])
    c2->getHexa(base2 + 2)->setScalar (5);
 
    doc->saveVtk ("cylindres.vtk");
-   // doc->dump ();
-
-   return HOK;
-}
-// ================================================== test_asso_line
-int test_asso_line (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
-
-   Hex::Vector* vz = doc->addVector (0,0,1);
-   Hex::Vector* vx = doc->addVector (1,0,0);
-
-   double dr = 1;
-   double dl = 1;
-   int    nr = 2;
-   int    nl = 3;
-   int    ntheta = 8;
-
-   Hex::Elements *c1 = NULL;
-
-   c1 = doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, ntheta, nl, true);
-
-   Hex::Edges m_line;
-   Hex::Edge* m_start = c1->getEdgeJ (nr, 1, 0);
-
-   for (int na=2 ; na<ntheta ; na++)
-       {
-       Hex::Edge*  arete = c1->getEdgeJ (nr, na, 0);
-       arete->setScalar (5);
-       m_line.push_back (arete);
-       }
-
-   // m_line.push_back (c1->getEdgeJ (nr, 0, 2));
-   // m_line.push_back (NULL);
-   Hex::Shape* gstart = NULL;
-   Hex::Shapes gline;
-   double pstart = 0 , pend = 0;
-
-   int ier = doc-> associateOpenedLine (m_start, m_line,
-                                        gstart,  pstart, gline, pend);
-   HexDisplay (ier);
-   doc->saveVtk ("asso_line.vtk");
-
-  m_line.push_back (c1->getEdgeJ (nr, 0, 0));
-   Hex::Vertex* m_first = m_start->getVertex (Hex::V_AMONT);
-   ier = doc-> associateClosedLine (m_first, m_start, m_line,
-                                        gstart, pstart, false, gline);
-   HexDisplay (ier);
    // doc->dump ();
 
    return HOK;

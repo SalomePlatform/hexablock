@@ -84,7 +84,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexQuad.cxx \
 	HexHexa.cxx \
 	HexVector.cxx \
- 	HexElements.cxx \
+	HexElements.cxx \
 	HexElements_bis.cxx \
 	HexElements_ter.cxx \
 	HexElements_piq.cxx \
@@ -139,7 +139,7 @@ libHEXABLOCKimpl_la_CPPFLAGS = \
 
 libHEXABLOCKimpl_la_LDFLAGS = \
 	$(CAS_KERNEL) -lTKBRep -lTKPrim -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo  -lTKBool -lTKBO \
-	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics
 
 ####  libHexaBlockimpl_la_CPPFLAGS =  \
 	####  $(KERNEL_CXXFLAGS)    \
