@@ -111,7 +111,7 @@ Document_Actor::Document_Actor( Document* doc, const QString& entry ):
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
     //   std::cout << "Document_Actor aGrid->GetNumberOfCells() =>"<< aGrid->GetNumberOfCells();
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInput(aGrid);
+    aMapper->SetInputData(aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
@@ -306,7 +306,7 @@ Associate_Actor::Associate_Actor( Document* doc, const QString& entry)
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
 
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInput(aGrid);
+    aMapper->SetInputData(aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
