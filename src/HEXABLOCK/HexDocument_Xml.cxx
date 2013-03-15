@@ -864,7 +864,7 @@ void Document::parseAssociation (XmlTree* node, Quad* quad)
 void Document::parseShapes (XmlTree& root)
 {
    XmlTree* rubrique = root.findChild ("ListShapes");
-   int nbrelts       = rubrique->getNbrChildren ();
+   int nbrelts = rubrique==NULL ? 0 : rubrique->getNbrChildren ();
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {

@@ -52,15 +52,14 @@ void CrossElements::createBigCyl ()
    const int kv_mil = cyl_left != NO_PIPE ? 2 : 3 ;
 
    enum { k0, k1, k2, k3, k4 };
-   double z0, z1, z2, z3, z4;
+   double z0,     z2,     z4;
 
    z0 = big_hauteur[0] = - calcul_centre (cross_cyl2->getBase(), cross_center);
    z4 = big_hauteur[4] = z0 + cross_cyl2->getHeight ();
 
-   z1 = big_hauteur[1] = getVertexIJK (CylSmall, NxExt, S_SE, kv_mil)->getZ();
+        big_hauteur[1] = getVertexIJK (CylSmall, NxExt, S_SE, kv_mil)->getZ();
    z2 = big_hauteur[2] = getVertexIJK (CylSmall, NxExt, S_E,  kv_mil)->getZ();
-   z3 = big_hauteur[3] = getVertexIJK (CylSmall, NxExt, S_NE, kv_mil)->getZ();
-
+        big_hauteur[3] = getVertexIJK (CylSmall, NxExt, S_NE, kv_mil)->getZ();
 
    setVertex (CylBig, iv0, 0, k0,    0, 0, z0);
    addSlice  (CylBig, NxInt, k0, z0);
@@ -445,7 +444,7 @@ void CrossElements::assoCylinder (int cyl, double* normal)
 {
    Real3   base, vec1, center, east, west, nordest;
    int nk = 0;
-   if (cyl==CylSmall && cyl_left == NO_PIPE)
+   if (cyl==CylSmall && cyl_left != IS_HERE)
       nk  = size_hz[cyl];
 
    Vertex* v_e  = getVertexIJK (cyl, NxExt, S_E , nk);
@@ -504,19 +503,19 @@ void CrossElements::assoBigMiddle (double* base, double* normal, int nzs)
    v_n->getPoint (pnt2);
 
    double rayon = calc_distance (pnt1, pnt2)/2;
-   double alpha = angle_inter [CylBig];
-   if (nzs != 2)
-      {
-      double h1  = cross_rayon[CylSmall][NxExt] * cos (angle_inter[CylSmall]);
-      alpha = asin (h1/cross_rayon[CylBig][NxExt]);
-      }
+   // double alpha = angle_inter [CylBig];
+   // if (nzs != 2)
+      // {
+      // double h1  = cross_rayon[CylSmall][NxExt] * cos (angle_inter[CylSmall]);
+      // alpha = asin (h1/cross_rayon[CylBig][NxExt]);
+      // }
 
    for (int nro=0 ; nro<DIM3 ; nro++)
        center[nro] = (pnt1[nro] + pnt2[nro])/2;
 
    int subid = grid_geom->addCircle (center, rayon, normal, base);
 
-   if (cyl_right == NO_PIPE)
+   if (cyl_right != IS_HERE)
       {
       assoArc (CylBig, NxExt, S_SE, nzs, subid);
       assoArc (CylBig, NxExt, S_E,  nzs, subid);
@@ -525,7 +524,7 @@ void CrossElements::assoBigMiddle (double* base, double* normal, int nzs)
    assoArc (CylBig, NxExt, S_NE, nzs, subid);
    assoArc (CylBig, NxExt, S_N , nzs, subid);
 
-   if (cyl_left == NO_PIPE)
+   if (cyl_left != IS_HERE)
       {
       assoArc (CylBig, NxExt, S_NW, nzs, subid);
       assoArc (CylBig, NxExt, S_W , nzs, subid);
