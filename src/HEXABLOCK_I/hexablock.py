@@ -1,6 +1,6 @@
 # -*- coding: latin-1 -*-
 
-# Copyright (C) 2009-2012  CEA/DEN, EDF R&D
+# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-# Francis KLOSS - 2011-2012 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
+# Francis KLOSS - 2011-2013 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
 # =============================================================================================
 
 import salome
