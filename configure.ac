@@ -17,7 +17,7 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-AC_INIT([Salome6 Project HEXABLOCK module],[6.6.0], [webmaster.salome@opencascade.com], [SalomeHEXABLOCK])
+AC_INIT([Salome6 Project HEXABLOCK module],[6.7.0], [webmaster.salome@opencascade.com], [SalomeHEXABLOCK])
 AC_CONFIG_AUX_DIR(adm_local/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
