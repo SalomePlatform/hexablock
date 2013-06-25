@@ -20,4 +20,5 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 dist_admlocalm4_DATA =	\
 	check_sphinx.m4 \
+	ac_python_devel.m4 \
 	check_HEXABLOCK.m4

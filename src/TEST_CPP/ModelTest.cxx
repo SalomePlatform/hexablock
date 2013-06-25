@@ -218,7 +218,7 @@ void ModelTest::Test_joint ()
    Hex::Vector*   vectj = doc->addVector (0,1,0);
    Hex::Vector*   vecti = doc->addVector (1,0,0);
    Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj,
-                   1, 180, 1,        dimz,dimy,dimx);
+                   1, 180, 1,        dimz,dimy,dimx, true);
 
    int mx = dimx/2;
    int my = dimy/2;
@@ -965,10 +965,10 @@ void ModelTest::Test_deux_cyl ()
    int    nl = 10;
 
    /* Hex::Elements* cyl1 = */ doc->makeCylindrical(orig1, vy,vz, dr, da,
-                                       dl,nr,na,nl);
+                                       dl,nr,na,nl, false);
 
    /* Hex::Elements* cyl2 = */ doc->makeCylindrical(orig2, vz,vx, dr/2, da,
-                                       dl,nr,na,nl);
+                                       dl,nr,na,nl, false);
    doc->saveVtk ("deux_cylindres.vtk");
    CPPUNIT_ASSERT( true );
 }

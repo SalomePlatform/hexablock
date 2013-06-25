@@ -173,7 +173,7 @@ RSTFILES= \
 
 
 
-EXTRA_DIST+= $(RSTFILES) _static cas_test_python pyplots test_doc
+EXTRA_DIST+= $(RSTFILES) _static cas_test_python
 
 install-data-local:
 	$(INSTALL) -d $(DESTDIR)$(hexablockdocdir)

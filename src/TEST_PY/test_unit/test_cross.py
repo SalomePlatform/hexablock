@@ -65,7 +65,7 @@ def test_croix () :
 
     nr1 = 2
     nl1 = 10
-    nr2 = 1
+    nr2 = 1.8
     nl2 = 10
 
     cyl1 = doc.addCylinder (ori1, vz, nr1, nl1)
@@ -78,8 +78,9 @@ def test_croix () :
 
 # ================================================================= Begin
 
-doc = test_pipes  ()
-doc.setLevel (747)
+## doc = test_pipes  ()
+doc = test_croix  ()
+## doc.setLevel (747)
 
 law = doc.addLaw("Uniform", 4)
 

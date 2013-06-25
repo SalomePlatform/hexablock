@@ -49,7 +49,7 @@ COMMON_CPPFLAGS = \
 # This local variable defines the list of dependant libraries common to all target in this package.
 COMMON_LIBS =\
 	@CPPUNIT_LIBS@ \
-	$(RPATH)/HEXABLOCK/libHEXABLOCKimpl.la
+	$(RPATH)/HEXABLOCK/libHEXABLOCKEngine.la
 
 # ===============================================================
 # Libraries targets
@@ -77,7 +77,7 @@ Test_HEXABLOCK_SOURCES  = Test_HEXABLOCK.cxx
 Test_HEXABLOCK_CPPFLAGS = $(COMMON_CPPFLAGS)
 Test_HEXABLOCK_LDADD    = \
 	libHEXABLOCKTest.la \
-	../HEXABLOCK/libHEXABLOCKimpl.la \
+	../HEXABLOCK/libHEXABLOCKEngine.la \
 	$(COMMON_LIBS)
 
 UNIT_TEST_PROG = ./Test_HEXABLOCK
@@ -107,63 +107,63 @@ clean-local:
 # test_cartesi1_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_cartesi1_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_clone_SOURCES  = test_clone.cpp
 # test_clone_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_clone_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_cyl_SOURCES  = test_cyl.cpp
 # test_cyl_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_cyl_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_decoupage_SOURCES  = test_decoupage.cpp
 # test_decoupage_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_decoupage_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_find_SOURCES  = test_find.cpp
 # test_find_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_find_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_gen_xml_SOURCES  = test_gen_xml.cpp
 # test_gen_xml_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_gen_xml_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # test_joint_SOURCES  = test_joint.cpp
 # test_joint_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_joint_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 
 # test_lecture_SOURCES  = test_lecture.cpp
 # test_lecture_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_lecture_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 
 # test_propagation_SOURCES  = test_propagation.cpp
 # test_propagation_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_propagation_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # 
@@ -171,7 +171,7 @@ clean-local:
 # test_separ_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_separ_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 
 
@@ -180,7 +180,7 @@ clean-local:
 # test_hexa1_CPPFLAGS = $(COMMON_CPPFLAGS)
 # test_hexa1_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 # 
 # UNIT_TEST_PROG = ./test_hexa1
@@ -190,12 +190,12 @@ clean-local:
 # bielle_SOURCES  = bielle.cpp
 # bielle_CPPFLAGS = $(COMMON_CPPFLAGS)
 # bielle_LDADD    = \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
 
 # tuyau_SOURCES  = tuyau.cpp
 # tuyau_CPPFLAGS = $(COMMON_CPPFLAGS)
 # tuyau_LDADD    = \
 # 	libHEXATest.la \
-# 	../HEXA/libHEXAimpl.la \
+# 	../HEXA/libHEXAEngine.la \
 # 	$(COMMON_LIBS)
