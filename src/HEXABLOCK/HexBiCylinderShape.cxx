@@ -32,8 +32,6 @@
 #include "HexEdge.hxx"
 
                                     // Cylindre
-#include <GEOMImpl_CylinderDriver.hxx>
-#include <GEOMImpl_ICylinder.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 

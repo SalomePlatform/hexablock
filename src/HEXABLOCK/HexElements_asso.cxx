@@ -47,8 +47,6 @@
 #include <gp_Dir.hxx>
 #include <gp_Lin.hxx>
                                     // Cercles
-#include <GEOMImpl_CircleDriver.hxx>
-#include <GEOMImpl_ICircle.hxx>
 #include <GC_MakeCircle.hxx>
 #include <Geom_Circle.hxx>
 #include <gp_Circ.hxx>

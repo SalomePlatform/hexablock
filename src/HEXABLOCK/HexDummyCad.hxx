@@ -35,10 +35,6 @@ class BRep_Builder;
 class BRep_Tool;
 class GC_MakeCircle;
 class GeomAdaptor_Curve;
-class GEOMImpl_CircleDriver;
-class GEOMImpl_CylinderDriver;
-class GEOMImpl_ICircle;
-class GEOMImpl_ICylinder;
 class GeomAPI_ProjectPointOnCurve;
 class Geom_Circle;
 class TopExp_Explorer;
@@ -314,10 +310,6 @@ private :
 };
 // -----------------------------------------------------------
 class GC_MakeCircle {};
-class GEOMImpl_CircleDriver {};
-class GEOMImpl_CylinderDriver {};
-class GEOMImpl_ICircle {};
-class GEOMImpl_ICylinder {};
 class Geom_Circle {};
 class TopoDS_Compound : public TopoDS_Shape {};
 class gp_Lin {};
