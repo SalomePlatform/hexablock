@@ -61,10 +61,8 @@ salomeinclude_HEADERS = \
 	HexBiCylinder.hxx \
 	HexDumpStudy.hxx \
 	HexAnaQuads.hxx \
-	HexKasPoint.hxx \
-	HexKasLine.hxx \
-	HexKasBiCylinder.hxx \
 	HexKas_functions.hxx \
+	HexWitness.hxx \
 	HexCramer.hxx
 
 
@@ -72,9 +70,9 @@ salomeinclude_HEADERS = \
 # SD/Propagation/HexPropagation.cxx \
 # SD/Law/HexLaw.cxx \
 #
-lib_LTLIBRARIES = libHEXABLOCKimpl.la
+lib_LTLIBRARIES = libHEXABLOCKEngine.la
 
-dist_libHEXABLOCKimpl_la_SOURCES = \
+dist_libHEXABLOCKEngine_la_SOURCES = \
 	hexa_utils.cxx \
 	HexEltBase.cxx \
 	HexGlobale.cxx \
@@ -83,8 +81,9 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexEdge.cxx \
 	HexQuad.cxx \
 	HexHexa.cxx \
+	HexHexa_disco.cxx \
 	HexVector.cxx \
-	HexElements.cxx \
+ 	HexElements.cxx \
 	HexElements_bis.cxx \
 	HexElements_ter.cxx \
 	HexElements_piq.cxx \
@@ -98,6 +97,7 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	HexNewShape.cxx \
 	HexSubShape.cxx \
 	HexDocument_trans.cxx \
+	HexDocument_tools.cxx \
 	HexVertexShape.cxx \
 	HexEdgeShape.cxx \
 	HexFaceShape.cxx \
@@ -114,19 +114,26 @@ dist_libHEXABLOCKimpl_la_SOURCES = \
 	Hex.cxx              \
 	HexDocument_asso.cxx \
 	HexDocument_quads.cxx \
-	HexKasPoint.cxx \
-	HexKasLine.cxx \
-	HexKasBiCylinder.cxx \
-	HexKas_functions.cxx
+	HexDocument_del.cxx \
+	HexDocument_skin.cxx \
+	HexDocument_v6.cxx \
+	HexElements_v6.cxx \
+	HexElements_check.cxx \
+	HexElements_del.cxx \
+	HexWitness.cxx \
+	Hex_salome.cxx \
+	test_hexa6.cxx \
+	HexKas_functions.cxx 
 
-# libHEXABLOCKimpl_la_CPPFLAGS = \
+# libHEXABLOCKEngine_la_CPPFLAGS = \
 # 	-I$(top_builddir)/salome_adm/unix
 #
-# libHEXABLOCKimpl_la_LDFLAGS = \
+# libHEXABLOCKEngine_la_LDFLAGS = \
 # 	-lOpUtil
 
-libHEXABLOCKimpl_la_CPPFLAGS = \
+libHEXABLOCKEngine_la_CPPFLAGS = \
 	$(KERNEL_CXXFLAGS)    \
+	$(PYTHON_CPPFLAGS)    \
 	$(CAS_CPPFLAGS)       \
         $(VTK_INCLUDES)       \
 	$(GEOM_CXXFLAGS)      \
@@ -137,27 +144,9 @@ libHEXABLOCKimpl_la_CPPFLAGS = \
 	$(CORBA_INCLUDES)     \
 	-I$(top_builddir)/idl
 
-libHEXABLOCKimpl_la_LDFLAGS = \
+libHEXABLOCKEngine_la_LDFLAGS = \
+	$(PYTHON_LDFLAGS)     \
 	$(CAS_KERNEL) -lTKBRep -lTKPrim -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo  -lTKBool -lTKBO \
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics
 
-####  libHexaBlockimpl_la_CPPFLAGS =  \
-	####  $(KERNEL_CXXFLAGS)    \
-	####  $(CAS_CPPFLAGS)       \
-        ####  $(VTK_INCLUDES)       \
-	####  $(GEOM_CXXFLAGS)      \
-	####  $(HEXABLOCK_CXXFLAGS) \
-	####  $(MED_CXXFLAGS)       \
-	####  $(SMESH_CXXFLAGS)     \
-	####  $(BOOST_CPPFLAGS)     \
-	####  $(CORBA_CXXFLAGS)     \
-	####  $(CORBA_INCLUDES)     \
-	####  -I$(top_builddir)/idl
 
-####  libHexaBlockimpl_la_LDFLAGS  = \
-	####  ../../idl/libSalomeIDLHEXABLOCKPLUGIN.la \
-	####  $(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKTopAlgo -lTKGeomBase -lTKGeomAlgo \
-	####  $(HEXABLOCK_LDFLAGS) -lHEXABLOCKEngine \
-	####  $(MED_LDFLAGS) -lSalomeIDLMED \
-	####  $(SMESH_LDFLAGS) -lSMESHimpl -lSMESHEngine -lSMESHDS -lSMDS \
-	####  $(KERNEL_LDFLAGS) -lSalomeGenericObj -lSALOMELocalTrace -lSALOMEBasics

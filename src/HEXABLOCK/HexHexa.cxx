@@ -45,7 +45,7 @@ Hexa::Hexa (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
    h_vertex [V_ADE] = vc;   // = vb ; Modif Abu 30/08/2011
    h_vertex [V_ADF] = vd;
 
-   h_vertex [V_BCE] = ve;  
+   h_vertex [V_BCE] = ve;
    h_vertex [V_BCF] = vf;   // = vg ; Modif Abu 30/08/2011
    h_vertex [V_BDE] = vg;   // = vf ; Modif Abu 30/08/2011
    h_vertex [V_BDF] = vh;
@@ -58,7 +58,7 @@ Hexa::Hexa (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
 
    for (int nro=0 ; nro<HE_MAXI ; nro++)
        {
-       h_edge[nro] = new Edge (h_vertex[glob->EdgeVertex (nro, V_AMONT)], 
+       h_edge[nro] = new Edge (h_vertex[glob->EdgeVertex (nro, V_AMONT)],
                                h_vertex[glob->EdgeVertex (nro, V_AVAL)]);
        }
 
@@ -72,6 +72,8 @@ Hexa::Hexa (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd,
        h_quad[nro] -> addParent (this);
        }
    majReferences ();
+   if (el_root != NULL && el_status==HOK)
+       el_root->addHexa (this);
 }
 // ======================================================== Constructeur 2
 Hexa::Hexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf)
@@ -95,7 +97,7 @@ Hexa::Hexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf)
    majReferences   ();
 
    if (el_status != HOK)
-      {      
+      {
       printf (" +++++++++++++++++++++++++++++++++++++++++++ \n");
       printf (" +++ Heaedre impossible \n");
       printf (" +++++++++++++++++++++++++++++++++++++++++++ \n");
@@ -108,6 +110,8 @@ Hexa::Hexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf)
       printf (" +++++++++++++++++++++++++++++++++++++++++++ \n");
       // exit (1);
       }
+   else
+       el_root->addHexa (this);
 }
 // =========================================================  Constructeur 3
 // === a utiliser uniquement pour le clonage
@@ -117,6 +121,10 @@ Hexa::Hexa (Hexa* other)
    for (int nro=0 ; nro<HQ_MAXI ; nro++) h_quad   [nro] = NULL;
    for (int nro=0 ; nro<HE_MAXI ; nro++) h_edge   [nro] = NULL;
    for (int nro=0 ; nro<HV_MAXI ; nro++) h_vertex [nro] = NULL;
+   h_clone = NULL;
+
+   if (el_root != NULL && el_status==HOK)
+       el_root->addHexa (this);
 }
 // ======================================================== majReferences
 void Hexa::majReferences  ()
@@ -130,7 +138,7 @@ void Hexa::controlerArete  (int arete, int face1, int face2)
    h_edge [arete] = h_quad[face1]->commonEdge (h_quad[face2]);
    if (h_edge [arete]==NULL)
        {
-       el_root->putError (W_H_BAD_EDGE, 
+       el_root->putError (W_H_BAD_EDGE,
                           el_root->glob->namofHexaEdge (arete));
        el_status = 888;
        }
@@ -145,43 +153,43 @@ void Hexa::controlerSommet  (int node, int ne1, int ne2, int ne3)
     h_vertex [node] = hv;
     if (hv == NULL)
        {
-       el_root->putError (W_H_BAD_VERTEX, 
+       el_root->putError (W_H_BAD_VERTEX,
                           el_root->glob->namofHexaVertex(node));
        el_status = 888;
        }
     else if (hv == NULL || h_edge[ne3]->index (hv)<0)
        {
        char b[10];
-       el_root->putError (W_H_BAD_VERTEX, 
+       el_root->putError (W_H_BAD_VERTEX,
                           el_root->glob->namofHexaVertex(node));
        el_status = 888;
-       printf ("%s = %s\n", el_root->glob->namofHexaVertex(node), 
+       printf ("%s = %s\n", el_root->glob->namofHexaVertex(node),
                             hv->getName(b));
-       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne1), 
+       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne1),
                             h_edge[ne1]->getName(b));
-       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne2), 
+       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne2),
                             h_edge[ne2]->getName(b));
-       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne3), 
+       printf ("%s = %s\n", el_root->glob->namofHexaEdge(ne3),
                             h_edge[ne3]->getName(b));
        }
 }
 // ======================================================== controlerFaces
 void Hexa::controlerFaces  ()
 {
-   for (int n1=0 ; n1<HQ_MAXI ; n1++) 
+   for (int n1=0 ; n1<HQ_MAXI ; n1++)
        {
        if (BadElement (h_quad [n1]))
           {
-          el_root->putError (W_H_NULL_QUAD, 
+          el_root->putError (W_H_NULL_QUAD,
                              el_root->glob->namofHexaQuad (n1));
           setError (886);
           return;
           }
-       for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
+       for (int n2=n1+1 ; n2<HQ_MAXI ; n2++)
            if (h_quad [n1] == h_quad[n2])
               {
-              el_root->putError (W_H_EQ_QUAD, 
-                         el_root->glob->namofHexaQuad (n1), 
+              el_root->putError (W_H_EQ_QUAD,
+                         el_root->glob->namofHexaQuad (n1),
                          el_root->glob->namofHexaQuad (n2));
               setError (888);
               }
@@ -190,20 +198,20 @@ void Hexa::controlerFaces  ()
 // ======================================================== controlerSommets
 void Hexa::controlerSommets  ()
 {
-   for (int n1=0 ; n1<HV_MAXI ; n1++) 
+   for (int n1=0 ; n1<HV_MAXI ; n1++)
        {
        if (BadElement (h_vertex [n1]))
           {
-          el_root->putError (W_H_NULL_QUAD, 
+          el_root->putError (W_H_NULL_QUAD,
                              el_root->glob->namofHexaVertex (n1));
           setError (886);
           return;
           }
-       for (int n2=n1+1 ; n2<HQ_MAXI ; n2++) 
+       for (int n2=n1+1 ; n2<HQ_MAXI ; n2++)
            if (h_vertex [n1] == h_vertex[n2])
               {
-              el_root->putError (W_H_EQ_QUAD, 
-                         el_root->glob->namofHexaVertex (n1), 
+              el_root->putError (W_H_EQ_QUAD,
+                         el_root->glob->namofHexaVertex (n1),
                          el_root->glob->namofHexaVertex (n2));
               setError (888);
               }
@@ -242,7 +250,7 @@ void Hexa::verifierSommets  ()
    controlerSommet (V_BCE, E_BC, E_BE, E_CE);
    controlerSommet (V_BCF, E_BC, E_BF, E_CF);
    controlerSommet (V_BDF, E_BD, E_BF, E_DF);
-   controlerSommet (V_BDE, E_BD, E_BE, E_DE); 
+   controlerSommet (V_BDE, E_BD, E_BE, E_DE);
 }
 // ======================================================== Inter
 Quad* Hexa::Inter (Hexa* other)
@@ -260,15 +268,15 @@ Quad* Hexa::Inter (Hexa* other)
 // ======================================================= razNodes
 void Hexa::razNodes ()
 {
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
        h_vertex[nb]->setMark (NO_COUNTED);
 }
 // ======================================================= countNodes
 int Hexa::countNodes ()
 {
    int nombre = 0;
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
-       if (h_vertex[nb]->getMark () == NO_COUNTED) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
+       if (h_vertex[nb]->getMark () == NO_COUNTED)
           {
           h_vertex[nb]->setMark (NO_USED);
           nombre ++;
@@ -282,7 +290,7 @@ void Hexa::printNodes (pfile vtk, int& compteur)
    const double minvtk = 1e-30;
    Real3 koord;
 
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
        if (h_vertex[nb]->getMark()==NO_USED)
           {
           h_vertex[nb]->getPoint (koord);
@@ -298,7 +306,7 @@ void Hexa::printNodes (pfile vtk, int& compteur)
 // ======================================================= colorNodes
 void Hexa::colorNodes (pfile vtk)
 {
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
        if (h_vertex[nb]->getMark()>=0)
           {
           double color = 100*(h_vertex[nb]->getScalar()+1);
@@ -309,7 +317,7 @@ void Hexa::colorNodes (pfile vtk)
 // ======================================================= moveNodes
 void Hexa::moveNodes (Matrix* matrice)
 {
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
        if (h_vertex[nb]->getMark()!=IS_USED)
           {
           matrice->perform (h_vertex[nb]);
@@ -319,7 +327,7 @@ void Hexa::moveNodes (Matrix* matrice)
 // ======================================================= transform
 void Hexa::transform (Matrix* matrice)
 {
-   for (int nb=0 ; nb<HV_MAXI ; nb++) 
+   for (int nb=0 ; nb<HV_MAXI ; nb++)
        matrice->perform (h_vertex[nb]);
 }
 // ======================================================= printHexa
@@ -378,7 +386,7 @@ void Hexa::propager (Propagation* prop, int nro)
        if (h_edge[nro]->getMark()<0)
            h_edge[nro]->propager (prop, nro);
 }
-// ========================================================= saveXml 
+// ========================================================= saveXml
 void Hexa::saveXml (XmlWriter* xml)
 {
    char ident[12];
@@ -394,11 +402,11 @@ void Hexa::saveXml (XmlWriter* xml)
    xml->openMark     ("Hexa");
    xml->addAttribute ("id",    ident);
    xml->addAttribute ("quads", quads);
-   if (el_name!=ident) 
+   if (el_name!=ident)
        xml->addAttribute ("name", el_name);
    xml->closeMark ();
 }
-// ========================================================= findQuad 
+// ========================================================= findQuad
 int Hexa::findQuad (Quad* element)
 {
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
@@ -407,7 +415,7 @@ int Hexa::findQuad (Quad* element)
 
    return NOTHING;
 }
-// ========================================================= findEdge 
+// ========================================================= findEdge
 int Hexa::findEdge (Edge* element)
 {
    for (int nro=0 ; nro<HE_MAXI ; nro++)
@@ -416,7 +424,7 @@ int Hexa::findEdge (Edge* element)
 
    return NOTHING;
 }
-// ========================================================= findVertex 
+// ========================================================= findVertex
 int Hexa::findVertex (Vertex* element)
 {
    for (int nro=0 ; nro<HV_MAXI ; nro++)
@@ -425,7 +433,7 @@ int Hexa::findVertex (Vertex* element)
 
    return NOTHING;
 }
-// ========================================================= disconnectQuad 
+// ========================================================= disconnectQuad
 Elements* Hexa::disconnectQuad (Quad* quad)
 {
    if (quad==NULL)
@@ -479,7 +487,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
              printf (" a dissocier\n");
           else
              printf ("\n");
-             
+
           }
        }
 
@@ -505,13 +513,13 @@ Elements* Hexa::disconnectQuad (Quad* quad)
           Quad*   pface  = h_quad [ind_opp_quad [nro]];
           int     bid;
           int     ncut = pface->inter (quad, bid);
-          Edge*   ecut = pface->getEdge ((ncut+1) MODULO QUAD4);  
+          Edge*   ecut = pface->getEdge ((ncut+1) MODULO QUAD4);
           Vertex* vopp = ecut->getVertex(V_AMONT);
           if (vopp==o_v0)
               vopp = ecut->getVertex (V_AVAL);
           else if (o_v0 != ecut->getVertex (V_AVAL));
               {
-              ecut = pface->getEdge ((ncut+3) MODULO QUAD4);  
+              ecut = pface->getEdge ((ncut+3) MODULO QUAD4);
               vopp = ecut->getVertex(V_AMONT);
               if (vopp==o_v0)
                   vopp = ecut->getVertex (V_AVAL);
@@ -530,7 +538,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
           }
        }
 
-   Quad* new_quad = new Quad (new_node[0], new_node[1], new_node[2], 
+   Quad* new_quad = new Quad (new_node[0], new_node[1], new_node[2],
                                                         new_node[3]);
 
    Quad* new_opp_quad [QUAD4];
@@ -541,7 +549,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
        new_opp_quad [nro] = NULL;
        if (make_quad[nro])
           {
-          int nro1 = (nro+1) MODULO QUAD4; 
+          int nro1 = (nro+1) MODULO QUAD4;
 
           Edge* n_edge0 = new_quad->getEdge (nro);
           Edge* n_edge1 = new_opp_edge [nro];
@@ -551,9 +559,9 @@ Elements* Hexa::disconnectQuad (Quad* quad)
           int iv3 = n_edge3->inter (n_edge0);
           if (iv1 <0 || iv3 <0)
              return NULL;
-          
+
           Quad* o_face = h_quad [ind_opp_quad [nro]];
-          Edge* edge2  = o_face->findEdge (n_edge1->getVertex (1-iv1), 
+          Edge* edge2  = o_face->findEdge (n_edge1->getVertex (1-iv1),
                                            n_edge3->getVertex (1-iv3));
           if (edge2==NULL)
              return NULL;
@@ -608,7 +616,7 @@ Elements* Hexa::disconnectQuad (Quad* quad)
    nouveaux->moveDisco (this);
    return nouveaux;
 }
-// ========================================================= disconnectEdge 
+// ========================================================= disconnectEdge
 Elements* Hexa::disconnectEdge (Edge* arete)
 {
    int nedge  = findEdge   (arete);
@@ -648,8 +656,8 @@ Elements* Hexa::disconnectEdge (Edge* arete)
        if (   n_edge[nro]==NULL && h_edge[nro] != NULL
            && h_edge[nro]->getNbrParents()>2)
           {
-          Vertex* va =  h_edge[nro]->getVertex (V_AMONT); 
-          Vertex* vb =  h_edge[nro]->getVertex (V_AVAL); 
+          Vertex* va =  h_edge[nro]->getVertex (V_AMONT);
+          Vertex* vb =  h_edge[nro]->getVertex (V_AVAL);
 
           if (va==old_amont)
              n_edge [nro] = new Edge (new_amont, vb);
@@ -662,7 +670,7 @@ Elements* Hexa::disconnectEdge (Edge* arete)
           }
        }
 
-   // Un quad non remplace, qui contient un edge remplace 
+   // Un quad non remplace, qui contient un edge remplace
    //         commun a plus de 2 Hexas
    //         doit etre duplique
 
@@ -684,8 +692,8 @@ Elements* Hexa::disconnectEdge (Edge* arete)
                  duplic = true;
                  }
               }
-          if (duplic) 
-             n_quad[nro] = new Quad (qedge[Q_A], qedge[Q_B], 
+          if (duplic)
+             n_quad[nro] = new Quad (qedge[Q_A], qedge[Q_B],
                                      qedge[Q_C], qedge[Q_D]);
           }
 
@@ -720,7 +728,7 @@ Elements* Hexa::disconnectEdge (Edge* arete)
    nouveaux->moveDisco (this);
    return nouveaux;
 }
-// ========================================================= disconnectVertex 
+// ========================================================= disconnectVertex
 Elements* Hexa::disconnectVertex (Vertex* noeud)
 {
    if (debug())
@@ -743,7 +751,7 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
        {
        new_quad [nro] = NULL;
             // Cete face contient le sommet et est commune a 2 hexas
-       if (   h_quad[nro]->indexVertex(noeud) >= 0 
+       if (   h_quad[nro]->indexVertex(noeud) >= 0
            && h_quad[nro]->getNbrParents  ()  >= 2)
            {
            int nbmod = 0;
@@ -754,32 +762,32 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
                int   indv  = arete->index (noeud);
                if (indv>=0)
                   {
-                  nbmod++;  
+                  nbmod++;
                   int hed = findEdge (arete);
                   if (hed<0)
                      return NULL;
                   if (new_edge [hed]==NULL)
-                      new_edge [hed] = new Edge (new_node, 
+                      new_edge [hed] = new Edge (new_node,
                                                  arete->getVertex(1-indv));
                   tedge [qed] = new_edge [hed];
                   }
                }
            if (nbmod!=2)
-              return NULL; 
+              return NULL;
            new_quad [nro] = new Quad (tedge[0], tedge[1], tedge[2], tedge[3]);
            }
        }
 
    Elements* nouveaux  = new Elements (el_root);
 
-   for (int nro=0 ; nro<HQ_MAXI ; nro++) 
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
        if (new_quad [nro] != NULL)
           {
           replaceQuad (h_quad [nro], new_quad [nro]);
           nouveaux->addQuad (new_quad[nro]);
           }
 
-   for (int nro=0 ; nro<HE_MAXI ; nro++) 
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
        if (new_edge [nro] != NULL)
           {
           replaceEdge (h_edge [nro], new_edge [nro]);
@@ -799,12 +807,12 @@ Elements* Hexa::disconnectVertex (Vertex* noeud)
    nouveaux->moveDisco (this);
    return nouveaux;
 }
-// ========================================================= getBase 
+// ========================================================= getBase
 int Hexa::getBase (Vertex* orig, Edge* normale)
 {
    for (int nq=0 ; nq<HQ_MAXI ; nq++)
        {
-       if (   h_quad[nq]->indexVertex(orig)    >= 0 
+       if (   h_quad[nq]->indexVertex(orig)    >= 0
            && h_quad[nq]->indexEdge  (normale) < 0)
            return nq;
        }
@@ -815,7 +823,7 @@ void Hexa::replaceQuad (Quad* old, Quad* par)
 {
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
        {
-       if (h_quad[nro]==old) 
+       if (h_quad[nro]==old)
            {
            h_quad[nro] = par;
            if (debug())
@@ -828,14 +836,14 @@ void Hexa::replaceQuad (Quad* old, Quad* par)
               }
            }
        }
-                                            
+
 }
 // ======================================================== replaceEdge
 void Hexa::replaceEdge (Edge* old, Edge* par)
 {
    for (int nro=0 ; nro<HE_MAXI ; nro++)
        {
-       if (h_edge[nro]==old) 
+       if (h_edge[nro]==old)
            {
            h_edge[nro] = par;
            if (debug())
@@ -859,7 +867,7 @@ void Hexa::replaceVertex (Vertex* old, Vertex* par)
 {
    for (int nro=0 ; nro<HV_MAXI ; nro++)
        {
-       if (h_vertex [nro]==old) 
+       if (h_vertex [nro]==old)
            {
            h_vertex [nro] = par;
            if (debug())
@@ -886,7 +894,7 @@ void Hexa::replaceVertex (Vertex* old, Vertex* par)
 // ======================================================== removeConnected
 void Hexa::removeConnected ()
 {
-                                            
+
    if (el_type == EL_REMOVED)
       return;
 
@@ -896,7 +904,7 @@ void Hexa::removeConnected ()
        {
        Quad*  face = h_quad [nro];
        int nbhexas = face->getNbrParents ();
-                                            
+
        for (int nc=0 ; nc<nbhexas ; nc++)
            {
            Hexa* cell = face->getParent(nc);
@@ -939,11 +947,11 @@ void Hexa::dump ()
    printf (")\n");
 
    printf ("      = (");
-                                            
+
    for (int nro=0; nro<HE_MAXI ; nro++)
         {
         PrintName (h_edge[nro]);
-        if (nro==3 || nro ==7) 
+        if (nro==3 || nro ==7)
            printf ("\n         ");
         }
    printf (")\n");
@@ -952,7 +960,7 @@ void Hexa::dump ()
    for (int nro=0; nro<HV_MAXI ; nro++)
         PrintName (h_vertex[nro]);
    printf (")\n");
-   Real3 cg; 
+   Real3 cg;
    getCenter (cg);
    printf ("cg    = (%g, %g, %g)\n", cg[0], cg[1], cg[2]);
 
@@ -1042,25 +1050,25 @@ Quad* Hexa::getOpposedQuad (Quad* face)
    else if (face == h_quad [Q_F]) return h_quad [Q_F];
    else                           return NULL;
 }
-// ========================================================= findQuad 
+// ========================================================= findQuad
 Quad* Hexa::findQuad (Edge* ed1, Edge* ed2)
 {
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
        {
        if (   h_quad[nro]->indexEdge (ed1) >= 0
-           && h_quad[nro]->indexEdge (ed2) >= 0) 
+           && h_quad[nro]->indexEdge (ed2) >= 0)
           return h_quad [nro];
        }
 
    return NULL;
 }
-// ========================================================= findEdge 
+// ========================================================= findEdge
 Edge* Hexa::findEdge (Vertex* v1, Vertex* v2)
 {
    for (int nro=0 ; nro<HE_MAXI ; nro++)
        {
        if (   h_edge[nro]->index (v1) >= 0
-           && h_edge[nro]->index (v2) >= 0) 
+           && h_edge[nro]->index (v2) >= 0)
           return h_edge [nro];
        }
 
@@ -1079,10 +1087,99 @@ Edge* Hexa::getPerpendicularEdge (Quad* quad, Vertex* vertex)
 
    for (int nro=0 ; nro<HE_MAXI ; nro++)
        {
-       if (quad->indexEdge (h_edge[nro])<0 && h_edge[nro]->index(vertex)>=0) 
+       if (quad->indexEdge (h_edge[nro])<0 && h_edge[nro]->index(vertex)>=0)
           return h_edge [nro];
        }
 
    return NULL;
+}
+// ============================================================  getQuad
+Quad* Hexa::getQuad (int nro)
+{
+   Quad* elt = NULL;
+   if (nro >=0 && nro < HQ_MAXI && el_status == HOK && h_quad [nro]->isValid())
+      elt = h_quad [nro];
+
+   return elt;
+}
+// ============================================================  getEdge
+Edge* Hexa::getEdge (int nro)
+{
+   Edge* elt = NULL;
+   if (nro >=0 && nro < HE_MAXI && el_status == HOK && h_edge [nro]->isValid())
+      elt = h_edge [nro];
+
+   return elt;
+}
+// ============================================================  getVertex
+Vertex* Hexa::getVertex (int nro)
+{
+   Vertex* elt = NULL;
+   if (nro >=0 && nro <  HV_MAXI && el_status == HOK && h_vertex [nro]->isValid())
+      elt = h_vertex [nro];
+
+   return elt;
+}
+// ============================================================  getCenter
+double* Hexa::getCenter (double centre[])
+{
+   centre [dir_x] = centre [dir_y] = centre [dir_z] = 0;
+
+   for (int nv=0 ; nv<HV_MAXI ; nv++)
+       {
+       centre [dir_x] += h_vertex[nv]->getX ();
+       centre [dir_y] += h_vertex[nv]->getY ();
+       centre [dir_z] += h_vertex[nv]->getZ ();
+       }
+
+   centre [dir_x] /= HV_MAXI;
+   centre [dir_y] /= HV_MAXI;
+   centre [dir_z] /= HV_MAXI;
+   return centre;
+}
+// =============================================================== definedBy
+bool Hexa::definedBy  (Vertex* v1, Vertex* v2)
+{
+   for (int n1=0 ; n1< HV_MAXI ; n1++)
+       {
+//              (   Diagonale        )  Dessus
+       int n2 = (n1 + 2) MODULO HV_MAXI + HV_MAXI;
+       if (   (v1 == h_vertex[n1] && v2 == h_vertex[n2])
+           || (v1 == h_vertex[n2] && v2 == h_vertex[n1])) return true;
+       }
+   return false;
+}
+// =============================================================== definedBy
+bool Hexa::definedBy  (Quad* qa, Quad* qb)
+{
+   for (int nc=0 ; nc< 3 ; nc++)
+       {
+       if (   (qa == h_quad[2*nc]   && qb == h_quad[2*nc+1])
+           || (qa == h_quad[2*nc+1] && qb == h_quad[2*nc])) return true;
+       }
+   return false;
+}
+// =============================================================== setColor
+void Hexa::setColor  (double val)
+{
+   for (int nc=0 ; nc< HV_MAXI ; nc++)
+       h_vertex[nc] -> setColor (val);
+}
+// ============================================================== markElements
+void Hexa::markElements  (int marque)
+{
+   for (int nc=0 ; nc< HQ_MAXI ; nc++) h_quad  [nc] -> setMark (marque);
+   for (int nc=0 ; nc< HE_MAXI ; nc++) h_edge  [nc] -> setMark (marque);
+   for (int nc=0 ; nc< HV_MAXI ; nc++) h_vertex[nc] -> setMark (marque);
+}
+// =============================================================== duplicate
+void Hexa::duplicate  ()
+{
+   h_clone = new Hexa (GetClone (h_quad [Q_A]),
+                       GetClone (h_quad [Q_B]),
+                       GetClone (h_quad [Q_C]),
+                       GetClone (h_quad [Q_D]),
+                       GetClone (h_quad [Q_E]),
+                       GetClone (h_quad [Q_F]));
 }
 END_NAMESPACE_HEXA

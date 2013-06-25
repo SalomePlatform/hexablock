@@ -32,81 +32,6 @@
 #include <cmath>
 
 BEGIN_NAMESPACE_HEXA
-// ====================================================== makeBasicCylinder
-int Elements::makeBasicCylinder (double dr, double da, double dl, int nr, 
-                                 int na, int nl, bool fill)
-{
-   cyl_dispo = CYL_NOFILL;
-   if (fill && na > 3)
-      {
-      if (cyl_closed)
-         {
-         if (na==4)
-            cyl_dispo = CYL_CL4;
-	 else if (na==6)
-            cyl_dispo = CYL_CL6;
-	 else if (na MODULO 2 == 0)
-            cyl_dispo = CYL_CLOSED;
-         }
-      else if ((na MODULO 2)==0)
-         cyl_dispo = CYL_PEER;
-      else 
-         cyl_dispo = CYL_ODD;
-      }
-
-   cyl_fill = cyl_dispo != CYL_NOFILL;
-
-   double alpha  = M_PI*da/180;
-   double beta   = alpha / na;
-   double theta  = 0;
-   int    nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
-
-   for (int ny=0 ; ny<nb_secteurs ; ny++)
-       {
-       double cos_theta = cos (theta);
-       double sin_theta = sin (theta);
-       theta += beta;
-
-       for (int nx=0 ; nx<size_vx ; nx++)
-           {
-           double rayon = dr*(nx+1);
-           double px = rayon*cos_theta;
-           double py = rayon*sin_theta;
-
-           for (int nz=0 ; nz<size_vz ; nz++)
-               {
-               double pz = dl*nz;
-               //   getCylPoint (nx, ny, nz, px, py, pz);
-               Vertex* node = el_root->addVertex (px, py, pz);
-               setVertex (node, nx, ny, nz);
-               }
-           }
-       }
-
-   if (cyl_closed) 
-      {
-      for (int nx=0 ; nx<size_vx ; nx++)
-          for (int nz=0 ; nz<size_vz ; nz++)
-              {
-              Vertex* node = getVertexIJK (nx, 0, nz);
-              setVertex (node, nx, size_vy-1, nz);
-              }
-      }
-
-                      // Les vertex centraux
-   if (cyl_fill) 
-      {
-      ker_vertex = nbr_vertex;
-      for (int nz=0 ; nz<size_vz ; nz++)
-          {
-          Vertex* node = el_root->addVertex (0, 0, nz*dl);
-          tab_vertex.push_back (node);
-          nbr_vertex ++;
-          }
-      }
-
-   return HOK;
-}
 // ====================================================== fillGrid
 int Elements::fillGrid ()
 {
@@ -229,11 +154,11 @@ void Elements::fillCenter ()
    size_ehplus = nbrayons   * size_vz;
    size_evplus = size_hz;
 
-   ker_hexa .resize (size_hplus);
-   ker_hquad.resize (size_qhplus);
-   ker_vquad.resize (size_qvplus);
-   ker_hedge.resize (size_ehplus);
-   ker_vedge.resize (size_evplus);
+   ker_hexa .resize (size_hplus,  NULL);
+   ker_hquad.resize (size_qhplus, NULL);
+   ker_vquad.resize (size_qvplus, NULL);
+   ker_hedge.resize (size_ehplus, NULL);
+   ker_vedge.resize (size_evplus, NULL);
 
    Vertex* pcenter = NULL;
 
@@ -490,47 +415,14 @@ void Elements::fillCenterOdd ()
 // --------------------------------------------------------------------------
 // ----------------------------------------- Evols Hexa 3
 // --------------------------------------------------------------------------
-// ====================================================== makeCylindricalGrid
-// ==== Version avec vecteurs
-int Elements::makeCylindricalGrid (Vertex* orig, Vector* base, Vector* haut, 
-                            RealVector& tdr, RealVector& tda, RealVector& tdh, 
-                            bool fill)
-{
-   if (BadElement (orig) || BadElement(base) || BadElement(haut) 
-       || base->getNorm () <= Epsil || haut->getNorm () <= Epsil
-       || tdr.size () <= 0 || tda.size () <= 0 || tdh.size () <= 0)
-      {
-      setError ();
-      return HERR;
-      }
 
-   int nr = tdr.size() - 1;
-   int na = tda.size();
-   int nl = tdh.size();
-   double angle = 0;
-
-   for (int nro=0 ; nro<na ; nro++)
-       angle += tda[nro];
-
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = angle >= 359.9;
-
-   int ier = makeBasicCylinder (tdr, tda, tdh, fill);
-   if (ier!=HOK) 
-       return ier;
-
-   transfoVertices  (orig,  base, haut);
-
-   fillGrid ();
-   assoCylinders (orig, haut, angle, tda);
-   return HOK;
-}
 // ====================================================== makeBasicCylinder
 // ==== Version avec vecteurs
 int Elements::makeBasicCylinder (RealVector& tdr, RealVector& tda, 
                                  RealVector& tdh, bool fill)
 {
-   int na = tda.size();
+   int na = tda.size()-1;
+   PutData (na);
 
    cyl_dispo = CYL_NOFILL;
    if (fill && na > 3)
@@ -557,26 +449,20 @@ int Elements::makeBasicCylinder (RealVector& tdr, RealVector& tda,
 
    for (int ny=0 ; ny<nb_secteurs ; ny++)
        {
-       if (ny>0)
-          alpha  += tda[ny-1];
-
+       alpha  = tda[ny];
        double theta     = M_PI*alpha/180;
        double cos_theta = cos (theta);
        double sin_theta = sin (theta);
-       double rayon = 0;
 
        for (int nx=0 ; nx<size_vx ; nx++)
            {
-           //  double rayon = dr*(nx+1);
-           rayon += tdr [nx];
+           double rayon = tdr [nx];
            double px = rayon*cos_theta;
            double py = rayon*sin_theta;
-           double pz = 0;
 
            for (int nz=0 ; nz<size_vz ; nz++)
                {
-               if (nz > 0)
-                   pz += tdh [nz-1];
+               double pz = tdh [nz];
                Vertex* node = el_root->addVertex (px, py, pz);
                setVertex (node, nx, ny, nz);
                }
@@ -595,12 +481,10 @@ int Elements::makeBasicCylinder (RealVector& tdr, RealVector& tda,
                       // Les vertex centraux
    if (cyl_fill) 
       {
-      double pz = 0;
       ker_vertex = nbr_vertex;
       for (int nz=0 ; nz<size_vz ; nz++)
           {
-          if (nz > 0)
-              pz += tdh [nz-1];
+          double pz = tdh [nz];
           Vertex* node = el_root->addVertex (0, 0, pz);
           tab_vertex.push_back (node);
           nbr_vertex ++;

@@ -25,8 +25,6 @@
 
 #include "HexGlobale.hxx"
 
-#ifndef NO_CASCADE
-
 BEGIN_NAMESPACE_HEXA
 
 class BiCylinderShape
@@ -54,5 +52,4 @@ private :
    bool       no_inter;
 };
 END_NAMESPACE_HEXA
-#endif
 #endif

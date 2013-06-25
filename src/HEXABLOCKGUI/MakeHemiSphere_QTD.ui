@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>704</height>
+    <width>404</width>
+    <height>891</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,49 +19,181 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>0</height>
+    <height>324</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>HemiSphere Construction</string>
+   <string>Hemisphere Construction</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAsNeeded</enum>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="sphere_rb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Sphere</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rind_rb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Rind</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="spherical_rb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Concentric</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>269</width>
-        <height>682</height>
+        <width>366</width>
+        <height>1076</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Arguments</string>
+          <string/>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Sphere</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_4">
+           <widget class="QWidget" name="widget_7" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QRadioButton" name="sphereTop_rb">
+               <property name="text">
+                <string>Simple</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="sphereUni_rb">
+               <property name="text">
+                <string>Uniform</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="sphere2_rb">
+               <property name="text">
+                <string>Custom</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_8" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QRadioButton" name="sphericalTop_rb">
+               <property name="text">
+                <string>Simple</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="sphericalUni_rb">
+               <property name="text">
+                <string>Uniform</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="spherical2_rb">
+               <property name="text">
+                <string>Custom</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_9" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QRadioButton" name="rindTop_rb">
+               <property name="text">
+                <string>Simple</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rindUni_rb">
+               <property name="text">
+                <string>Uniform</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rind2_rb">
+               <property name="text">
+                <string>Custom</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_2" native="true">
+            <layout class="QFormLayout" name="formLayout_2">
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -70,7 +202,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="sphere_center_le">
+              <widget class="QLineEdit" name="center_le">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -86,96 +218,13 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_11">
+              <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>external radius</string>
+                <string>axis</string>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QDoubleSpinBox" name="sphere_radext_spb">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="decimals">
-                <number>6</number>
-               </property>
-               <property name="maximum">
-                <double>1000000000.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>2.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="int_rad_label">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>internal radius</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QDoubleSpinBox" name="sphere_radint_spb">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="decimals">
-                <number>6</number>
-               </property>
-               <property name="maximum">
-                <double>1000000000.000000000000000</double>
-               </property>
-               <property name="value">
-                <double>1.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QCheckBox" name="sphere_rind_cb">
-               <property name="text">
-                <string>rind</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Hole</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_2">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>axis(z)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
               <widget class="QLineEdit" name="hole_axis_le">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -191,10 +240,29 @@
                </property>
               </widget>
              </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>base</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="base_le"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_3" native="true">
+            <layout class="QFormLayout" name="formLayout">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
              <item row="1" column="0">
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>radius</string>
+                <string>hole radius</string>
                </property>
               </widget>
              </item>
@@ -221,108 +289,80 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_7">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Cross section</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_3">
+           <widget class="QWidget" name="widget_4" native="true">
+            <layout class="QFormLayout" name="formLayout_4">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="label_11">
                <property name="text">
-                <string>point</string>
+                <string>external radius</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="cross_pt_le">
+              <widget class="QDoubleSpinBox" name="sphere_radext_spb">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="toolTip">
-                <string extracomment="select vertex"/>
+               <property name="decimals">
+                <number>6</number>
                </property>
-               <property name="statusTip">
-                <string/>
+               <property name="maximum">
+                <double>1000000000.000000000000000</double>
                </property>
-               <property name="readOnly">
-                <bool>false</bool>
+               <property name="value">
+                <double>2.000000000000000</double>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="int_rad_label">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="text">
-                <string>vector</string>
+                <string>internal radius</string>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="cross_vec_le"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_5">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Radial section</string>
-            </property>
-            <layout class="QFormLayout" name="formLayout_5">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>start vector</string>
+              <widget class="QDoubleSpinBox" name="sphere_radint_spb">
+               <property name="enabled">
+                <bool>true</bool>
                </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="radial_vec_le">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <property name="toolTip">
-                <string extracomment="select a vector"/>
+               <property name="decimals">
+                <number>6</number>
                </property>
-               <property name="statusTip">
-                <string/>
+               <property name="maximum">
+                <double>1000000000.000000000000000</double>
                </property>
-               <property name="readOnly">
-                <bool>false</bool>
+               <property name="value">
+                <double>1.000000000000000</double>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="angle_label">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="text">
-                <string>angle</string>
+                <string>slice angle</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="1">
               <widget class="QDoubleSpinBox" name="radial_angle_spb">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -341,13 +381,45 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="radial_partial_cb">
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_10" native="true">
+            <layout class="QFormLayout" name="formLayout_6">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_12">
                <property name="text">
-                <string>partial</string>
+                <string>vplan</string>
                </property>
-               <property name="checked">
-                <bool>false</bool>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="vplan_le"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_20" native="true">
+            <layout class="QFormLayout" name="formLayout_12">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Criteria</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="crit_spb">
+               <property name="maximum">
+                <number>1000000</number>
+               </property>
+               <property name="value">
+                <number>0</number>
                </property>
               </widget>
              </item>
@@ -355,21 +427,316 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_6">
+           <widget class="QWidget" name="widget_5" native="true">
+            <layout class="QFormLayout" name="formLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Nb layers</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="nbre_spb">
+               <property name="maximum">
+                <number>1000000</number>
+               </property>
+               <property name="value">
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Criteria</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="crit_spb_2">
+               <property name="maximum">
+                <number>1000000</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTabWidget" name="random_param_w_3">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="title">
-             <string>Grid</string>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>150</height>
+             </size>
             </property>
-            <layout class="QFormLayout" name="formLayout_6">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="ext_radius_tab_4">
+             <attribute name="title">
+              <string>radius</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_11">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="add_radius_pb_1">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" rowspan="4">
+               <widget class="QListWidget" name="radius_lw_1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="del_radius_pb_1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <spacer name="verticalSpacer_13">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>139</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTabWidget" name="random_param_w">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>150</height>
+             </size>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="ext_radius_tab_3">
+             <attribute name="title">
+              <string>radius</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_8">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="add_radius_pb_2">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" rowspan="4">
+               <widget class="QListWidget" name="radius_lw_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="del_radius_pb_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <spacer name="verticalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>139</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="ext_angle_tab_3">
+             <attribute name="title">
+              <string>angle</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_9">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="add_angle_pb">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" rowspan="3">
+               <widget class="QListWidget" name="angle_lw"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="del_angle_pb">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <spacer name="verticalSpacer_11">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>139</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="ext_height_tab_3">
+             <attribute name="title">
+              <string>height</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_10">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="add_height_pb">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" rowspan="3">
+               <widget class="QListWidget" name="height_lw">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="del_height_pb">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <spacer name="verticalSpacer_12">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>139</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget_6" native="true">
+            <layout class="QFormLayout" name="formLayout_5">
              <item row="0" column="0">
               <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>n (radial)</string>
+                <string>nb Radial</string>
                </property>
               </widget>
              </item>
@@ -395,7 +762,7 @@
              <item row="1" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>n (angular)</string>
+                <string>nb Angular</string>
                </property>
               </widget>
              </item>
@@ -421,7 +788,7 @@
              <item row="2" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
-                <string>n (height)</string>
+                <string>nb Height</string>
                </property>
               </widget>
              </item>
@@ -447,6 +814,19 @@
             </layout>
            </widget>
           </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
@@ -457,85 +837,1183 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>sphere_rb</tabstop>
+  <tabstop>rind_rb</tabstop>
+  <tabstop>spherical_rb</tabstop>
   <tabstop>scrollArea</tabstop>
-  <tabstop>sphere_center_le</tabstop>
+  <tabstop>sphereTop_rb</tabstop>
+  <tabstop>sphereUni_rb</tabstop>
+  <tabstop>sphere2_rb</tabstop>
+  <tabstop>sphericalTop_rb</tabstop>
+  <tabstop>sphericalUni_rb</tabstop>
+  <tabstop>spherical2_rb</tabstop>
+  <tabstop>rindTop_rb</tabstop>
+  <tabstop>rindUni_rb</tabstop>
+  <tabstop>rind2_rb</tabstop>
+  <tabstop>center_le</tabstop>
+  <tabstop>hole_axis_le</tabstop>
+  <tabstop>base_le</tabstop>
+  <tabstop>hole_rad_spb</tabstop>
   <tabstop>sphere_radext_spb</tabstop>
   <tabstop>sphere_radint_spb</tabstop>
-  <tabstop>sphere_rind_cb</tabstop>
-  <tabstop>hole_axis_le</tabstop>
-  <tabstop>hole_rad_spb</tabstop>
-  <tabstop>cross_pt_le</tabstop>
-  <tabstop>cross_vec_le</tabstop>
-  <tabstop>radial_vec_le</tabstop>
   <tabstop>radial_angle_spb</tabstop>
-  <tabstop>radial_partial_cb</tabstop>
+  <tabstop>vplan_le</tabstop>
+  <tabstop>crit_spb</tabstop>
+  <tabstop>nbre_spb</tabstop>
+  <tabstop>crit_spb_2</tabstop>
+  <tabstop>random_param_w_3</tabstop>
+  <tabstop>add_radius_pb_1</tabstop>
+  <tabstop>del_radius_pb_1</tabstop>
+  <tabstop>radius_lw_1</tabstop>
+  <tabstop>random_param_w</tabstop>
+  <tabstop>add_angle_pb</tabstop>
+  <tabstop>add_radius_pb_2</tabstop>
+  <tabstop>del_radius_pb_2</tabstop>
+  <tabstop>radius_lw_2</tabstop>
   <tabstop>ngrid_rad_spb</tabstop>
   <tabstop>ngrid_ang_spb</tabstop>
   <tabstop>ngrid_height_spb</tabstop>
+  <tabstop>height_lw</tabstop>
+  <tabstop>del_height_pb</tabstop>
+  <tabstop>angle_lw</tabstop>
+  <tabstop>del_angle_pb</tabstop>
+  <tabstop>add_height_pb</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>radial_partial_cb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>radial_angle_spb</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_20</receiver>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>416</y>
+     <x>72</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
-     <x>140</x>
+     <x>192</x>
+     <y>588</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_5</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>639</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>735</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
      <y>417</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>sphere_rind_cb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>sphere_radint_spb</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_8</receiver>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>195</y>
+     <x>72</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
-     <x>161</x>
-     <y>196</y>
+     <x>192</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>sphere_rind_cb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>int_rad_label</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_9</receiver>
+   <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>195</y>
+     <x>72</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
-     <x>78</x>
-     <y>196</y>
+     <x>192</x>
+     <y>191</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>radial_partial_cb</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>angle_label</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>sphereTop_rb</receiver>
+   <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>217</x>
-     <y>416</y>
+     <x>72</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel">
-     <x>65</x>
+     <x>85</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1007</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>877</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1007</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphereUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>877</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>877</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1007</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_7</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_9</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>877</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1007</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>sphericalTop_rb</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_5</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
      <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>768</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_20</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>588</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_5</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>768</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphericalUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_20</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>202</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>588</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_8</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sphere_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_7</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w_3</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>768</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_20</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>588</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spherical2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_5</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_9</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_7</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_8</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_20</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>588</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_5</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>768</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>rindTop_rb</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>303</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1040</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindTop_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>910</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1040</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rindUni_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>910</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>random_param_w</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>910</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_10</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_3</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_4</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rind2_rb</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_6</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>1040</y>
     </hint>
    </hints>
   </connection>

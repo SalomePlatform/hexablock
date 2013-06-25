@@ -1,0 +1,4 @@
+
+export PYTHONPATH=..
+PS1="hexa) "
+

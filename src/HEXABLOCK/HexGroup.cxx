@@ -21,34 +21,25 @@
 //
 
 #include "HexGroup.hxx"
-#include "HexEltBase.hxx"
 #include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-int Group::last_grp_id = 0;
 static const cpchar kind_name[] = { "HexaCell", "QuadCell", "EdgeCell", 
-                  "HexaNode", "QuadNode", "EdgeNode", "VertexNode" };
+                      "HexaNode", "QuadNode", "EdgeNode", "VertexNode" };
 
 // ======================================================== Constructeur
-Group::Group (cpchar nom, EnumGroup grp)  
+Group::Group   (Document* dad, cpchar nom, EnumGroup grp)
+     : EltBase (dad, EL_GROUP) 
 {
-   grp_id = last_grp_id++;
+   string name = std::string(nom);
+   name.erase (name.find_last_not_of (" \n\r\t" ) + 1);
+   name.erase (0, name.find_first_not_of (" \n\r\t" ));
 
-   //Initialisation du nom du groupe: un nom par défaut est donné s'il n'est pas fourni
-   std::string _nom = std::string(nom);
-   _nom.erase (_nom.find_last_not_of (" \n\r\t" ) + 1);
-   _nom.erase (0, _nom.find_first_not_of (" \n\r\t" ));
-   if (!_nom.empty())
-	grp_name = _nom;
-   else {
-   	char buffer [16];
-   	sprintf (buffer, "g%04d", grp_id);
-   	grp_name = std::string(buffer);
-   }
+   if (NOT name.empty())
+       setName (name);
    
    grp_kind = grp;
-
    switch (grp_kind)
       {
       case HexaCell : case HexaNode :
@@ -113,7 +104,7 @@ void Group::saveXml (XmlWriter* xml)
    xml->addMark  ("Group");
 
    xml->openMark ("Identification");
-   xml->addAttribute ("name",  grp_name);
+   xml->addAttribute ("name",  el_name);
    xml->addAttribute ("kind",  kind_name [grp_kind]);
    xml->closeMark ();
 
@@ -128,14 +119,6 @@ void Group::saveXml (XmlWriter* xml)
        }
    xml->closeMark ();
 }
-
-// ========================================================= getNextName
-char* Group::getNextName  (pchar buffer)
-{
-   sprintf (buffer, "g%04d", last_grp_id);
-   return   buffer;
-}
-
 // ======================================================== getKind
 EnumGroup Group::getKind (cpchar kind)
 {

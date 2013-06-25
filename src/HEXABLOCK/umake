@@ -1,39 +1,60 @@
 #!/bin/sh
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-#
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-
 # Comm : Makefile associe aux tests unitaires
 
 commande=$0
 liste_args="$*"
 
+# =============================================== al_aide
+al_aide()
+{
+comm=`basename $appel`
+
+cat << ENDOF_BLABLA
+ 
+             ----  Recompilation locale de HexaBlock
+ Syntaxe : 
+ $ $comm <Options de $comm> 
+ 
+ Options de $comm : 
+    -h     : Rappel des options
+    -make  : Regenerer le Makefile
+    -lib   : Regenerer la librairie partagee au moyen de swig
+    -clean : Detruire codes objets, executables et fichiers generes
+    -trace : Detail des sous-commandes
+    -setx  : Observer le deroulement de la procedure
+    -jN    : Compiler sur N process
+    test_* : Linker le test unitaire test_X.exe
+
+ Par defaut 1) le programme test_hexa.exe est genere
+            2) la librairie _hexablock_swig.so (ou *.dll) est generee
+
+ENDOF_BLABLA
+exit 
+}
 # =============================================== Begin
 
 test_u=
 opt=
+make_lib=
 for arg in $*
    do
    case $arg in
       -setx ) set -x 
            ;;
+      -h ) al_aide
+           ;;
+      -lib ) make_lib=OK
+           ;;
+      -make  ) 
+           chmod +x *make*
+           ./make.make
+           exit
+           ;;
       -clean  ) 
          rm -rf *.exe *.a *.o *.bak *.brep *~ *.vtk *.cpp *.xml *.exe.stackdump
+         rm -rf work/*.exe work/*.brep work/*~ work/*.vtk work/*.cpp work/*.xml
+         rm -rf work/*.exe.stackdump
+         rm -rf *.so *.dll 
            exit
            ;;
       -j  ) opt="$opt -j4"
@@ -58,10 +79,38 @@ for arg in $*
 
 if ( [ -z "$test_u" ] ) then
    test_u=test_hexa
+   make_lib=OK
    fi
 
 if ( [ ! -f makefile.ozz ] ) then
    ./make.make
    fi
 
+uf=`pwd`
+uf=`basename "$uf"`
+os=`uname`
+
+if ( [ $os = Linux ] ) then
+   opt_cpp=-fPIC
+   lib_ext=so
+else             ## CYGWIN 
+   opt_cpp=
+   lib_ext=dll
+   fi
+
+echo "  -- Maj $uf.a et $test_u.exe"
 make -f makefile.ozz $opt main=$test_u
+ier=$?
+
+                 ###### Verrue Saclay
+vpy=
+mach=`hostname`
+mach=`echo $mach | cut -c1-2`
+if ( [ $mach = is ] ) then
+   vpy='pyvers=2.5'
+   fi
+
+
+if ( [ $ier = 0 -a -n "$make_lib" ] ) then
+   make -f makefile.swig $vpy lib_ext=$lib_ext opt_cpp=$opt_cpp uf=$uf
+   fi

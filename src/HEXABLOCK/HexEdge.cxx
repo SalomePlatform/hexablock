@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 #include "HexEdge.hxx"
 #include "HexVertex.hxx"
@@ -61,6 +62,8 @@ Edge::Edge (Vertex* va, Vertex* vb)
       return;
       }
 
+   if (el_root != NULL)
+       el_root->addEdge (this);
    majReferences ();
 }
 // ======================================================== Constructeur 2
@@ -75,6 +78,9 @@ Edge::Edge (Edge* other)
    e_way    = true;
    e_law    = NULL;
    e_clone  = NULL;
+
+   if (el_root != NULL)
+       el_root->addEdge (this);
 }
 // ======================================================== majReferences
 void Edge::majReferences ()
@@ -125,6 +131,26 @@ void Edge::propager (Propagation* prop, int groupe, int sens)
           }
        }
    niveau --;
+}
+// ========================================================= setPropag
+void Edge::setPropag  (int nro, bool sens)
+{
+   e_propag = nro;
+   e_way    = sens; 
+   if (NOT db || nro<0) 
+      return;
+
+   int prems  = sens ? 0 : 1;
+   Vertex* v1 = getVertex (  prems);
+   Vertex* v2 = getVertex (1-prems);
+
+   cout << " setPropag " << el_name
+           << " = "   << nro 
+           <<  " = (" << v1->getName() << ", "    << v2->getName()
+           << ") = (" << v2->getX() - v1->getX() 
+           << ", "    << v2->getY() - v1->getY() 
+           << ", "    << v2->getZ() - v1->getZ() 
+           << ")"     << endl;
 }
 // ========================================================= getParent
 Quad* Edge::getParent  (int nro)
@@ -233,7 +259,7 @@ string Edge::makeDefinition ()
 
    return definition;
 }
-// ========================================================== addAssociation
+// ===================================================== addAssociation
 int Edge::addAssociation (EdgeShape* gline, double deb, double fin)
 {
    if (gline == NULL)
@@ -272,7 +298,7 @@ int Edge::addAssociation (NewShape* geom, int subid, double deb, double fin)
    int ier = addAssociation (gline, deb, fin);
    return ier;
 }
-// ========================================================== clearAssociation
+// ================================================== clearAssociation
 void Edge::clearAssociation ()
 {
    int nombre = tab_assoc.size ();
@@ -284,13 +310,113 @@ void Edge::clearAssociation ()
    tab_assoc .clear ();
    is_associated = false;
 }
-// ========================================================== getAssociation
+// ================================================== getAssociation
 AssoEdge* Edge::getAssociation (int nro)
 {
-   if (nro<0 || nro >= tab_assoc.size())
+   if (nro<0 || nro >= (int)tab_assoc.size())
       return NULL;
 
    return tab_assoc [nro];
+}
+// =============================================================== getVertex
+Vertex* Edge::getVertex(int nro)
+{
+   Vertex* elt = NULL;
+   if (nro >=0 && nro < V_TWO  && el_status == HOK
+               && e_vertex [nro]->isValid())
+      elt = e_vertex [nro];
+
+   return elt;
+}
+// =============================================================== index
+int Edge::index (Vertex* node)
+{
+   return  node == NULL ? NOTHING
+         : node == e_vertex[V_AMONT] ? V_AMONT
+         : node == e_vertex[V_AVAL ] ? V_AVAL : NOTHING;
+}
+// ============================================================= opposedVertex
+Vertex* Edge::opposedVertex (Vertex* sommet)
+{
+   int nro = index (sommet);
+   return nro<0 ? NULL : e_vertex[1-nro];
+}
+// ============================================================= commonVertex
+Vertex* Edge::commonVertex (Edge* other)
+{
+   int nro = inter (other);
+   return nro<0 ? NULL : e_vertex[nro];
+}
+// ============================================================= commonPoint
+double* Edge::commonPoint (Edge* other, double point[])
+{
+   Vertex* commun = commonVertex (other);
+   if (commun==NULL)
+      {
+      point[dir_x] = point[dir_y] = point[dir_z] =  0;
+      return NULL;
+      }
+
+   commun->getPoint (point);
+   return point;
+}
+// =============================================================== inter
+int Edge::inter (Edge* other)
+{
+   int nro;
+   return inter (other, nro);
+}
+// =============================================================== inter
+int Edge::inter (Edge* other, int& nother)
+{
+   for (int ni=0 ; ni<V_TWO ; ni++)
+        for (int nj=0 ; nj<V_TWO ; nj++)
+            if (e_vertex[ni] == other->e_vertex[nj])
+               {
+               nother =  nj;
+               return ni;
+               }
+
+   nother = NOTHING;
+   return   NOTHING;
+}
+// =============================================================== definedBy
+bool Edge::definedBy  (Vertex* v1, Vertex* v2)
+{
+   bool   rep =    (v1 == e_vertex[V_AMONT] && v2 == e_vertex[V_AVAL ])
+                || (v1 == e_vertex[V_AVAL ] && v2 == e_vertex[V_AMONT]);
+   return rep;
+}
+// =============================================================== setColor
+void Edge::setColor  (double val)
+{
+   e_vertex [V_AMONT]->setColor (val);
+   e_vertex [V_AVAL ]->setColor (val);
+}
+// =============================================================== duplicate
+void Edge::duplicate  ()
+{
+   e_clone = new Edge (GetClone (e_vertex [V_AMONT]),
+                       GetClone (e_vertex [V_AVAL ]));
+
+   // e_clone->tab_shapes = tab_shapes;
+   e_clone->tab_assoc  = tab_assoc;
+}
+// =============================================================== getVector
+double* Edge::getVector (double vecteur[])
+{
+
+   if (e_vertex[V_AMONT]==NULL ||  e_vertex[V_AVAL]==NULL)
+      {
+      vecteur [dir_x] = vecteur [dir_y] = vecteur [dir_z] = 0;
+      return NULL;
+      }
+
+   vecteur[dir_x] = e_vertex[V_AVAL]->getX() - e_vertex[V_AMONT]->getX();
+   vecteur[dir_y] = e_vertex[V_AVAL]->getY() - e_vertex[V_AMONT]->getY();
+   vecteur[dir_z] = e_vertex[V_AVAL]->getZ() - e_vertex[V_AMONT]->getZ();
+
+   return vecteur;
 }
 // ========================================================== checkAssociation
 int Edge::checkAssociation ()
@@ -320,8 +446,8 @@ int Edge::checkAssociation ()
                  {
                  if (ier==HOK) cout << endl;
                  cout << " Association Edge "  << el_name
-                      << " : Le vertex "       << e_vertex[nro]->getName()
-                      << " : Le vertex "       << e_vertex[nro]->getName()
+                      << " : Le vertex " << e_vertex[nro]->getName()
+                      << " : Le vertex " << e_vertex[nro]->getName()
                       << " Touche les lignes " << arc [nro]
                       << " et " << nass << endl;
                  ier   = 112;
@@ -370,5 +496,25 @@ int Edge::checkAssociation ()
        }
 
    return ier;
+}
+// ========================================================== getAssoLen
+double Edge::getAssoLen ()
+{
+   int    nombre = tab_assoc.size();
+   double longueur = 0;
+   if (nombre==0)
+      {
+      Real3 p1, p2;
+      e_vertex [V_AMONT]-> getAssoCoord (p1);
+      e_vertex [V_AVAL ]-> getAssoCoord (p2);
+      longueur = calc_distance (p1, p2);
+      }
+   else
+      {
+      for (int nass=0 ; nass<nombre ; ++nass)
+          longueur += tab_assoc[nass]->length ();
+      }
+
+   return longueur;
 }
 END_NAMESPACE_HEXA

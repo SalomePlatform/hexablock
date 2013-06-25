@@ -20,15 +20,15 @@
 #ifndef MYGEOMBASE_SKELETON_H
 #define MYGEOMBASE_SKELETON_H
 
-#include "GEOM_GEOMBase.hxx"
-#include "MyGEOMBase_Helper.hxx"
+#include <GEOM_GEOMBase.hxx>
+
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"
+#include "HEXABLOCKGUI_DocumentPanel.hxx"
 
 #include <QDialog>
 
 class SalomeApp_DoubleSpinBox;
-class GeometryGUI;
 class MyDlgRef_Skeleton;
 class QSpinBox;
 class QDoubleSpinBox;
@@ -37,81 +37,63 @@ class QButtonGroup;
 class QPushButton;
 
 #ifndef COORD_MIN
-#  define COORD_MIN -1e+15
-#  define COORD_MAX +1e+15
+#  define COORD_MIN -1e+12
+#  define COORD_MAX +1e+12
 #  define MAX_NUMBER 100000
-#  define DBL_DIGITS_DISPLAY 16
+#  define DBL_DIGITS_DISPLAY 13
 #endif // COORD_MIN
 
-class GEOMBASE_EXPORT MyGEOMBase_Skeleton : public QDialog, public MyGEOMBase_Helper
+namespace HEXABLOCK
 {
-  Q_OBJECT
+namespace GUI
+{
+
+class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MyGEOMBase_Skeleton : public HexaBaseDialog
+{
+	Q_OBJECT
 
 public:
-    MyGEOMBase_Skeleton( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
-    ~MyGEOMBase_Skeleton();
+	MyGEOMBase_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
+	~MyGEOMBase_Skeleton();
 
 private:
-    void Init();
+	void Init();
 
 protected:
-    void                initSpinBox( QSpinBox*, int, int, int = 1 );
-    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, const char* = "length_precision" );
+	virtual bool        apply(QModelIndex& result) = 0;
+	virtual void       _initInputWidget( Mode editmode ) = 0;
+	void                initSpinBox( QSpinBox*, int, int, int = 1 );
+	void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.01,
+                                    const char* = "length_precision", unsigned int decimals = 6 );
 
-    void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
+	void                closeEvent( QCloseEvent* );
 
-    void                closeEvent( QCloseEvent* );
-    void                keyPressEvent( QKeyEvent* );
+	/*! returns id of a selected "constructor" radio button or '-1' in case of error
+	 */
+	int                 getConstructorId() const;
+	/*! set selected "constructor" radio button id
+	 */
+	void                setConstructorId( const int );
+	/*! unset selection on all "constructor" radio buttons
+	 */
+	void                unsetConstructorId();
 
-    /*! initialize "Name" field with a string "thePrefix_X" (Vertex_3)
-     */
-    void                initName( const QString& = QString() );
+	void                showOnlyPreviewControl();
 
-    /*! returns contents of "Name" field
-     */
-    virtual QString getNewObjectName() const;
-
-    /*! returns id of a selected "constructor" radio button or '-1' in case of error
-     */
-    int                 getConstructorId() const;
-    /*! set selected "constructor" radio button id
-     */
-    void                setConstructorId( const int );
-    /*! unset selection on all "constructor" radio buttons
-     */
-    void                unsetConstructorId();
-
-    void                showOnlyPreviewControl();
-
-    void                setHelpFileName( const QString& );
-
-    MyDlgRef_Skeleton*    mainFrame();
-    QWidget*            centralWidget();
-    QPushButton*        buttonCancel() const;
-    //QPushButton*        buttonOk() const;
-    QPushButton*        buttonApply() const;
-    QPushButton*        buttonHelp() const;
+	MyDlgRef_Skeleton*  mainFrame();
+	QWidget*            centralWidget();
 
 protected:
-    QLineEdit*          myEditCurrentArgument; //!< Current LineEdit
-    GeometryGUI*        myGeomGUI;             //!< reference GEOM GUI
-    QString             myHelpFileName;        //!< Associated HTML help file name
+	QLineEdit*          myEditCurrentArgument; //!< Current LineEdit
 
-    QButtonGroup*       myRBGroup;             //!< radio button group
-    MyDlgRef_Skeleton*    myMainFrame;           //!< dialog box's mainframe widgetx
-
-public slots:
-  virtual void close();
-
-protected slots:
-    virtual void        processPreview();
-    void                LineEditReturnPressed();
-    void                DeactivateActiveDialog();
-    void                ActivateThisDialog();
-    void                ClickOnHelp();
+	QButtonGroup*       myRBGroup;             //!< radio button group
+	MyDlgRef_Skeleton*  myMainFrame;           //!< dialog box's mainframe widgetx
 
 signals:
-    void                constructorsClicked( int );
+void                constructorsClicked( int );
 };
+
+}
+}
 
 #endif // MYGEOMBASE_SKELETON_H

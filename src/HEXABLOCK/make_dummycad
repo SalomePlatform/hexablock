@@ -1,0 +1,43 @@
+#!/bin/sh
+# Comm : Generation d'une partie CasCade fictive
+
+rm   -rf nokas
+mkdir -p nokas
+cp  HexDummyCad.hxx nokas/
+
+while read fic
+      do
+      echo '#include "HexDummyCad.hxx"' > nokas/$fic
+      done << END_OF_FILE
+BRepAdaptor_Curve.hxx
+BRepAlgoAPI_Section.hxx
+BRepBuilderAPI_MakeEdge.hxx
+BRepBuilderAPI_MakeVertex.hxx
+BRepBuilderAPI_Transform.hxx
+BRepPrimAPI_MakeCylinder.hxx
+BRepPrimAPI_MakeSphere.hxx
+BRepTools.hxx
+BRep_Builder.hxx
+BRep_Tool.hxx
+GCPnts_AbscissaPoint.hxx
+GC_MakeCircle.hxx
+GEOMImpl_CircleDriver.hxx
+GEOMImpl_CylinderDriver.hxx
+GEOMImpl_ICircle.hxx
+GEOMImpl_ICylinder.hxx
+GeomAPI_ProjectPointOnCurve.hxx
+Geom_Circle.hxx
+TopExp_Explorer.hxx
+TopTools_IndexedMapOfShape.hxx
+TopoDS.hxx
+TopoDS_Compound.hxx
+TopoDS_Edge.hxx
+TopoDS_Iterator.hxx
+TopoDS_Shape.hxx
+TopoDS_Vertex.hxx
+gp_Circ.hxx
+gp_Dir.hxx
+gp_Lin.hxx
+gp_Pln.hxx
+gp_Pnt.hxx
+END_OF_FILE

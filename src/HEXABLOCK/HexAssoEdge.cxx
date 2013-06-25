@@ -17,8 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 
 #include "HexAssoEdge.hxx"
 #include "HexXmlWriter.hxx"
@@ -31,9 +31,8 @@
 BEGIN_NAMESPACE_HEXA
 
 // static bool db = on_debug ();
-// static const double TolAsso = 1e-2;    // Tolerance pour les associations
 
-// ========================================================= Constructeur
+// ======================================================= Constructeur
 AssoEdge::AssoEdge (EdgeShape* shape, double deb, double fin)
 {
    arc_line  = shape;
@@ -87,12 +86,13 @@ double AssoEdge::length ()
 // ========================================================= getUstart
 double AssoEdge::getUstart ()
 {
+   double ustart = 0;
    BRepAdaptor_Curve* curve = arc_line->getCurve () ;
    double             len   = arc_line->getLength ();
 
    GCPnts_AbscissaPoint discret_start (*curve, len*arc_para1,
                                         curve->FirstParameter() );
-   double ustart = discret_start.Parameter();
+   ustart = discret_start.Parameter();
    return ustart;
 }
 // ========================================================= saveXml

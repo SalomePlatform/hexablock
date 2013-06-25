@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>241</width>
-    <height>322</height>
+    <width>244</width>
+    <height>323</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Edge</string>
+      <string>By</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <property name="sizeConstraint">
@@ -88,7 +88,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Arguments</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>

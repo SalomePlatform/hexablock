@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>234</width>
-    <height>396</height>
+    <height>422</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,7 +50,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Make</string>
+      <string>By</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
@@ -101,7 +101,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Arguments</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>

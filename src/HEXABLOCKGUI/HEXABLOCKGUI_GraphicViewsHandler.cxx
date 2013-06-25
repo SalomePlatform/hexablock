@@ -135,42 +135,4 @@ void GraphicViewsHandler::closeDocumentGraphicView(SVTK_ViewWindow* window)
     delete dgview;
 }
 
-//void GraphicViewsHandler::onPatternDatachanged()
-//{
-//    INIT_REAC(V_patternDatachaged);
-//    OCCview->reacPatternDatachanged();
-//    OUT_REAC();
-//}
-
-//VTKGraphicView* m_VTKview;
-//
-//void DocumentHandler::switchOnVTKGraphicView()
-//{
-//    verifieVTKView();
-//
-//    //connect signals
-//    connect( m_VTKview->getPatternDataSelectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &) ),
-//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-//    connect( m_VTKview->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-//    connect( m_VTKview->getGroupsSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-//    connect( m_VTKview->getMeshSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-//
-//        _showDialogBox(getDlgBox(view));
-// }
-//
-//DocumentHandler::onSelectionChanged(const QItemSelection &, const QItemSelection &)
-//{
-//  addMapConnect(++cptConnect;"onSelectionChanged");
-//  if(onAction) {return;}
-//  onAction = true;
-//
-//  ptHexaGUI->onSelectionChanged(const QItemSelection &, const QItemSelection &);
-//  m_VTKview->onSelectionChanged(const QItemSelection &, const QItemSelection &);
-//
-//  onAction = false;
-//}
-
 

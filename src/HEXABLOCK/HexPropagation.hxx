@@ -22,14 +22,17 @@
 #ifndef __PROPAGATION_H
 #define __PROPAGATION_H
 
+#include "HexEltBase.hxx"
+
 #include "HexDocument.hxx"
 #include "HexEdge.hxx"
 #include "HexXmlWriter.hxx"
 #include "HexLaw.hxx"
+#include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Propagation 
+class Propagation : public EltBase 
 {
 public:
    const Edges& getEdges ()        { return prop_edges; }
@@ -40,7 +43,7 @@ public:
    int   setLaw (Law* loi);
 
 public:
-    Propagation  ();
+    Propagation  (Document*  doc);
     void saveXml (XmlWriter* xml);
     void addEdge (Edge* arete);
     void majLaw  ();
@@ -51,7 +54,8 @@ private:
     bool  prop_way;
 };
 // =========================================================== Constructeur
-inline Propagation::Propagation ()
+inline Propagation::Propagation (Document* doc)
+                  : EltBase (doc, EL_PROPAGATION)
 {
     prop_law = NULL;
     prop_way = true;
@@ -76,6 +80,9 @@ inline int Propagation::setLaw (Law* loi)
 {
    prop_law = loi; 
    majLaw ();
+
+   DumpStart  ("setLaw", loi);
+   DumpEnd;
    return HOK;
 }
 // =========================================================== majLaw

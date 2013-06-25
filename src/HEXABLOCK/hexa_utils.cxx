@@ -111,6 +111,13 @@ void calc_vecteur  (double pta[], double ptb[], double vab[])
    vab [dir_y] = ptb [dir_y] - pta [dir_y];
    vab [dir_z] = ptb [dir_z] - pta [dir_z];
 }
+// ========================================================= copy_vecteur
+void copy_vecteur  (double va[], double vb[])
+{
+   vb [dir_x] = va [dir_x];
+   vb [dir_y] = va [dir_y];
+   vb [dir_z] = va [dir_z];
+}
 // ========================================================= calc_milieu
 void calc_milieu  (double pta[], double ptb[], double milieu[])
 {
@@ -147,7 +154,6 @@ double carre (double val)
 // ====================================================== same_coords
 bool same_coords (double* pa, double* pb, double epsilon2)
 {
-
    double d2 = carre (pb[dir_x]-pa[dir_x]) + carre (pb[dir_y]-pa[dir_y])
              + carre (pb[dir_z]-pa[dir_z]);
    return d2 < epsilon2;
@@ -250,5 +256,17 @@ cpchar get_time (string& buffer)
 
     buffer = quand;
     return buffer.c_str();
+}
+// ======================================================== requals
+bool requals (const double v1, const double v2)
+{
+   static const double Epsilon = 1e-6;
+   return v1 >= v2 - Epsilon && v1 <= v2 + Epsilon;
+}
+// ======================================================== requals
+bool requals (const double* lun, const double* lautre)
+{
+   return    lun!=NULL && lautre!=NULL     && requals (lun [0], lautre [0])
+          && requals (lun [1], lautre [1]) && requals (lun [2], lautre [2]) ;
 }
 END_NAMESPACE_HEXA

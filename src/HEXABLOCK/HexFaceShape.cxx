@@ -17,12 +17,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 
 #include "HexFaceShape.hxx"
-
-#ifndef NO_CASCADE
 
 
 BEGIN_NAMESPACE_HEXA
@@ -43,11 +42,10 @@ void FaceShape::addAssociation (Quad* quad)
 // ====================================================== getAssociation
 Quad* FaceShape::getAssociation (int nro)
 {
-   if (nro>0 && nro<tab_assoc.size())
+   if (nro>0 && nro < (int)tab_assoc.size())
       return tab_assoc[nro];
    else
       return NULL;
 }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 END_NAMESPACE_HEXA
-#endif

@@ -20,6 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HexDumpStudy.hxx"
+#include "HexWitness.hxx"
 #include "HexEltBase.hxx"
 #include "HexDocument.hxx"
 
@@ -38,6 +39,7 @@ DumpStudy::DumpStudy ()
    is_open   = NOT DumpActif;
    nbr_nulls = 0;
    fic_dump  = stdout;
+   witness   = NULL;
 
    for (int nc=0 ; nc<EL_MAXI ; nc++) tab_count [nc] = 0;
    if (is_open)
@@ -67,7 +69,7 @@ bool DumpStudy::start (EltBase* obj, cpchar method)
    return start (name, method);
 }
 // =================================================== start (name)
-bool DumpStudy::start (cpchar obj, cpchar method)
+bool DumpStudy::start (cpchar obj, cpchar method, bool raz)
 {
    if (is_open || obj==NULL)
       return false;
@@ -81,6 +83,8 @@ bool DumpStudy::start (cpchar obj, cpchar method)
 
    nbr_args = 0;
    is_open  = true;
+   if (raz) 
+      witness->raz();
    return is_open;
 }
 // =================================================== operator << (int)
@@ -140,6 +144,26 @@ DumpStudy& DumpStudy::operator << (Quads& tab)
    addArgVector (EL_QUAD, tabelt) ;
    return *this; 
 }
+// =================================================== operator << (Edges)
+DumpStudy& DumpStudy::operator << (Edges& tab)
+{
+   if (not is_open)
+      return *this; 
+
+   TabElts&  tabelt = (TabElts&) tab;
+   addArgVector (EL_EDGE, tabelt) ;
+   return *this; 
+}
+// =================================================== operator << (Hexas)
+DumpStudy& DumpStudy::operator << (Hexas& tab)
+{
+   if (not is_open)
+      return *this; 
+
+   TabElts&  tabelt = (TabElts&) tab;
+   addArgVector (EL_HEXA, tabelt) ;
+   return *this; 
+}
 // =================================================== operator << (Reals)
 DumpStudy& DumpStudy::operator << (RealVector& tab)
 {
@@ -184,6 +208,40 @@ void DumpStudy::close (bool reactive, EltBase* result)
    right_part += ")";
    fprintf (fic_dump, "%s = %s\n", name, right_part.c_str());
 }
+// =================================================== close + return int
+void DumpStudy::close (bool reactive, int result)
+{
+   static int nbr_values = 0;
+   if (reactive)
+      is_open = false;
+   else
+      return;
+
+   char name [32];
+   nbr_values ++;
+   sprintf (name, "rep%03d", nbr_values); 
+
+   declareVectors ();
+   right_part += ")";
+   fprintf (fic_dump, "%s = %s\n", name, right_part.c_str());
+}
+// =================================================== close + return double
+void DumpStudy::close (bool reactive, double result)
+{
+   static int nbr_values = 0;
+   if (reactive)
+      is_open = false;
+   else
+      return;
+
+   char name [32];
+   nbr_values ++;
+   sprintf (name, "val%03d", nbr_values); 
+
+   declareVectors ();
+   right_part += ")";
+   fprintf (fic_dump, "%s = %s\n", name, right_part.c_str());
+}
 // =================================================== close 
 void DumpStudy::close (bool reactive)
 {
@@ -210,6 +268,12 @@ void DumpStudy::restore (bool reactive)
 {
    if (reactive)
       is_open = false;
+}
+// =================================================== getBegin 
+void DumpStudy::getBegin (string& begin)
+{
+   begin  = right_part;
+   begin += ")";
 }
 // -------------------------------------------------------------
 // ------------ Private

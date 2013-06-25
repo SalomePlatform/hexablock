@@ -34,19 +34,8 @@
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
-// #include <SALOME_Actor.h>
-// #include <SALOME_ListIO.hxx>
-// #include <SALOME_ListIteratorOfListIO.hxx>
-
-
 
 #include <OCCViewer_ViewWindow.h>
-
-
-// #include <SALOMEconfig.h>
-// #include "SALOME_Component_i.hxx"
-// #include <omniORB4/CORBA.h>
-
 
 #include <SVTK_ViewManager.h>
 #include <SVTK_ViewModel.h>
@@ -55,10 +44,26 @@
 #include <SALOME_Actor.h>
 #include <VTKViewer_Algorithm.h>
 
+#include <SelectMgr_Selection.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <SelectBasics_SensitiveEntity.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include <StdSelect_BRepOwner.hxx>
 
-#include "GeometryGUI.h"
-#include CORBA_CLIENT_HEADER(GEOM_Gen)
-
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <Geom_Surface.hxx>
+#include <ShapeAnalysis.hxx>
+#include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <Geom_Curve.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepAdaptor_Curve.hxx>
+#include <GCPnts_AbscissaPoint.hxx>
+#include <TopoDS_Compound.hxx>
 
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
@@ -68,406 +73,435 @@
 
 //#define _DEVDEBUG_
 using namespace std;
-// using namespace HEXABLOCK::GUI;
 
-
-
-namespace HEXABLOCK{
-
-  namespace GUI{
-
-SUIT_Study* GetActiveStudy()
+namespace HEXABLOCK
 {
-  SUIT_Application* app = SUIT_Session::session()->activeApplication();
-  if (app)
-    return app->activeStudy();
-  else
-    return NULL;
+namespace GUI
+{
+
+	SUIT_Study* GetActiveStudy()
+	{
+		SUIT_Application* app = SUIT_Session::session()->activeApplication();
+		if (app)
+			return app->activeStudy();
+		else
+			return NULL;
+	}
+
+
+	_PTR(Study) GetActiveStudyDocument()
+	{
+		SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(GetActiveStudy());
+		if (aStudy)
+			return aStudy->studyDS();
+		else
+			return _PTR(Study)();
+	}
+
+
+	CORBA::Object_var corbaObj( _PTR(SObject) theSO )
+	{
+		CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
+		if ( theSO ) {
+			std::string aValue = theSO->GetIOR();
+			if (strcmp(aValue.c_str(), "") != 0) {
+				CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
+				aCorbaObj = anORB->string_to_object(aValue.c_str());
+			}
+		}
+		return aCorbaObj._retn();
+	}
+
+
+	CORBA::Object_var corbaObj( const Handle(SALOME_InteractiveObject)& theIO )
+	{
+		CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
+
+		if ( !theIO.IsNull() && theIO->hasEntry() ){
+			_PTR(Study)   aStudy = GetActiveStudyDocument();
+			_PTR(SObject) aSObj  = aStudy->FindObjectID(theIO->getEntry());
+			aCorbaObj = corbaObj(aSObj);
+		}
+		return aCorbaObj._retn();
+	}
+
+
+
+
+	SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry)
+	{
+		SALOME_Actor *foundActor = NULL;
+		vtkActor     *aVTKActor  = NULL;
+		Handle(SALOME_InteractiveObject) anIO;
+
+		vtkRenderer *aRenderer = theVtkViewWindow->getRenderer();
+		VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
+		vtkActorCollection *aCollection = aCopy.GetActors();
+		aCollection->InitTraversal();
+		while( aVTKActor = aCollection->GetNextActor() ){
+			foundActor = dynamic_cast<SALOME_Actor*>( aVTKActor );
+			if ( foundActor && foundActor->hasIO() ){
+				anIO = foundActor->getIO();
+				if( anIO->hasEntry() && strcmp(anIO->getEntry(), theEntry) == 0 )
+					return foundActor;
+			}
+		}
+
+		return NULL; // no actor found
+	}
+
+
+	int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,
+			const Handle(SALOME_InteractiveObject)& theIO,
+			QString& theName )
+	{
+		SVTK_Selector* theSelector = theWindow->GetSelector();
+
+		theName = "";
+
+		TColStd_IndexedMapOfInteger aMapIndex;
+		theSelector->GetIndex(theIO,aMapIndex);
+
+		typedef std::set<int> TIdContainer;
+
+		std::set<int> anIdContainer;
+
+		for( int i = 1; i <= aMapIndex.Extent(); i++)
+			anIdContainer.insert(aMapIndex(i));
+
+		std::set<int>::const_iterator anIter = anIdContainer.begin();
+
+		for( ; anIter != anIdContainer.end(); anIter++)
+			theName += QString(" %1").arg(*anIter);
+
+		return aMapIndex.Extent();
+	}
+
+	string shape2string( const TopoDS_Shape& aShape )
+	{
+		ostringstream streamShape;
+		BRepTools::Write(aShape, streamShape);
+
+		return streamShape.str();
+	}
+
+	void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
+			const Handle(AIS_InteractiveContext)& theIC,
+			SelectMgr_IndexedMapOfOwner& theMap )
+	{
+		if ( theObj.IsNull() || theIC.IsNull() )
+			return;
+
+		TColStd_ListOfInteger modes;
+		theIC->ActivatedModes( theObj, modes );
+
+		TColStd_ListIteratorOfListOfInteger itr( modes );
+		for (; itr.More(); itr.Next() ) {
+			int m = itr.Value();
+			if ( !theObj->HasSelection( m ) )
+				continue;
+
+			Handle(SelectMgr_Selection) sel = theObj->Selection( m );
+
+			for ( sel->Init(); sel->More(); sel->Next() ) {
+				Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
+				if ( entity.IsNull() )
+					continue;
+
+				Handle(SelectMgr_EntityOwner) owner =
+						Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+				if ( !owner.IsNull() )
+					theMap.Add( owner );
+			}
+		}
+	}
+
+	void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
+			const TopoDS_Shape& aMainShape,
+			const SelectMgr_IndexedMapOfOwner& anAllMap,
+			SelectMgr_IndexedMapOfOwner& aToHiliteMap )
+	{
+		TopTools_IndexedMapOfShape aMapOfShapes;
+		TopExp::MapShapes(aMainShape, aMapOfShapes);
+
+		for  ( Standard_Integer i = 1, n = anAllMap.Extent(); i <= n; i++ )
+		{
+			Handle(StdSelect_BRepOwner) anOwner = Handle(StdSelect_BRepOwner)::DownCast(anAllMap( i ));
+			if ( anOwner.IsNull() || !anOwner->HasShape() )
+				continue;
+
+			const TopoDS_Shape& aSubShape = anOwner->Shape();
+			Standard_Integer aSubShapeId = aMapOfShapes.FindIndex( aSubShape );
+			if ( !aSubShapeId || !aIndexMap.Contains( aSubShapeId ) )
+				continue;
+
+			if ( !aToHiliteMap.Contains( anOwner ) )
+				aToHiliteMap.Add( anOwner );
+		}
+	}
+
+	TopoDS_Shape getSubShape(const TopoDS_Shape& theShape, const int theIndex)
+	{
+		TopoDS_Shape theSubShape;
+
+		if (theShape.IsNull() || theIndex < 1)
+			return theSubShape;
+
+		TopTools_IndexedMapOfShape anIndices;
+		TopExp::MapShapes(theShape, anIndices);
+		if (theIndex > anIndices.Extent())
+			return theSubShape;
+		theSubShape = anIndices.FindKey(theIndex);
+
+		return theSubShape;
+	}
+
+	int getSubId(const TopoDS_Shape& theShape, const TopoDS_Shape& theSubShape)
+	{
+	    if (theShape.IsNull() || theSubShape.IsNull())
+	        return -1;
+
+	    TopTools_IndexedMapOfShape anIndices;
+	    TopExp::MapShapes(theShape, anIndices);
+
+	    return anIndices.FindIndex(theSubShape);
+	}
+
+	Standard_Boolean getExtremaSolution(const gp_Pnt&       theInitPnt,
+										const TopoDS_Shape& theRefShape,
+										gp_Pnt& thePnt)
+	{
+	  BRepBuilderAPI_MakeVertex mkVertex (theInitPnt);
+	  TopoDS_Vertex anInitV = TopoDS::Vertex(mkVertex.Shape());
+
+	  BRepExtrema_DistShapeShape anExt (anInitV, theRefShape);
+	  if ( !anExt.IsDone() || anExt.NbSolution() < 1 )
+		return Standard_False;
+	  thePnt = anExt.PointOnShape2(1);
+	  Standard_Real aMinDist2 = theInitPnt.SquareDistance( thePnt );
+	  for ( Standard_Integer j = 2, jn = anExt.NbSolution(); j <= jn; j++ )
+	  {
+		gp_Pnt aPnt = anExt.PointOnShape2(j);
+		Standard_Real aDist2 = theInitPnt.SquareDistance( aPnt );
+		if ( aDist2 > aMinDist2)
+		  continue;
+		aMinDist2 = aDist2;
+		thePnt = aPnt;
+	  }
+	  return Standard_True;
+	}
+
+	TopoDS_Vertex makePoint(const double x, const double y, const double z)
+	{
+		gp_Pnt thePoint(x, y, z);
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointWithReference(const TopoDS_Shape& point, const double dx,
+															 const double dy,
+															 const double dz)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if (point.ShapeType() != TopAbs_VERTEX) {
+			Standard_TypeMismatch::Raise("Aborted: referenced shape is not a vertex");
+			return res;
+		}
+		gp_Pnt refPoint = BRep_Tool::Pnt(TopoDS::Vertex(point));
+		thePoint = gp_Pnt(refPoint.X() + dx, refPoint.Y() + dy, refPoint.Z() + dz);
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnCurve(const TopoDS_Shape& edge, const double param)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if (edge.ShapeType() != TopAbs_EDGE) {
+			Standard_TypeMismatch::Raise("Aborted: curve shape is not an edge");
+			return res;
+		}
+		Standard_Real aFP, aLP, aP;
+		Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(edge), aFP, aLP);
+		aP = aFP + (aLP - aFP) * param;
+		thePoint = aCurve->Value(aP);
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnCurveByLength(const TopoDS_Shape& edge, const TopoDS_Shape& point, const double length)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		// RefCurve
+		if (edge.ShapeType() != TopAbs_EDGE)
+		{
+			Standard_TypeMismatch::Raise("Aborted: curve shape is not an edge");
+			return res;
+		}
+		TopoDS_Edge aRefEdge = TopoDS::Edge(edge);
+		TopoDS_Vertex V1, V2;
+		TopExp::Vertices(aRefEdge, V1, V2, Standard_True);
+
+		// RefPoint
+		TopoDS_Vertex aRefVertex;
+		if (point.IsNull())
+			aRefVertex = V1;
+		else
+		{
+			if (point.ShapeType() != TopAbs_VERTEX)
+			{
+				Standard_TypeMismatch::Raise("Aborted: shape is not a vertex");
+				return res;
+			}
+			aRefVertex = TopoDS::Vertex(point);
+		}
+		gp_Pnt aRefPnt = BRep_Tool::Pnt(aRefVertex);
+
+		// Check orientation
+		Standard_Real UFirst, ULast;
+		Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
+		Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
+
+		Standard_Real dU = ULast - UFirst;
+		Standard_Real par1 = UFirst + 0.1 * dU;
+		Standard_Real par2 = ULast  - 0.1 * dU;
+
+		gp_Pnt P1 = EdgeCurve->Value(par1);
+		gp_Pnt P2 = EdgeCurve->Value(par2);
+
+		if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
+			ReOrientedCurve = EdgeCurve->Reversed();
+			UFirst = EdgeCurve->ReversedParameter(ULast);
+		}
+
+		// Get the point by length
+		GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
+		GCPnts_AbscissaPoint anAbsPnt (AdapCurve, length, UFirst);
+		Standard_Real aParam = anAbsPnt.Parameter();
+		thePoint = AdapCurve.Value(aParam);
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnCurveByCoord(const TopoDS_Shape& edge, const double x, const double y, const double z)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if (edge.ShapeType() != TopAbs_EDGE) {
+			Standard_TypeMismatch::Raise("Aborted: curve shape is not an edge");
+			return res;
+		}
+		gp_Pnt anInitPnt (x, y, z);
+		if (!getExtremaSolution(anInitPnt, edge, thePoint)) {
+			Standard_ConstructionError::Raise
+			("Point On Surface creation aborted : cannot project point");
+			return res;
+		}
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnLinesIntersection(const TopoDS_Shape& line1, const TopoDS_Shape& line2)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if ( (line1.ShapeType() != TopAbs_EDGE && line1.ShapeType() != TopAbs_WIRE)
+				|| (line2.ShapeType() != TopAbs_EDGE && line2.ShapeType() != TopAbs_WIRE) ) {
+			Standard_TypeMismatch::Raise("Aborted: Line shape is not an edge or wire");
+			return res;
+		}
+
+		if (line1.IsSame(line2))
+		{
+			Standard_ConstructionError::Raise("The lines to make intersection must be different");
+			return res;
+		}
+
+		TopoDS_Compound aCompound;
+		bool retCompound = false;
+
+		//Calculate Lines Intersection Point
+		BRepExtrema_DistShapeShape dst (line1, line2);
+		if (dst.IsDone()) {
+			gp_Pnt P1, P2;
+			BRep_Builder B;
+			B.MakeCompound( aCompound );
+			for (int i = 1, nbSols = dst.NbSolution(); i <= nbSols; i++) {
+				P1 = dst.PointOnShape1(i);
+				P2 = dst.PointOnShape2(i);
+				Standard_Real Dist = P1.Distance(P2);
+				if ( Dist <= Precision::Confusion() && dst.NbSolution() > 1) {
+					BRepBuilderAPI_MakeVertex mkVertex (P1);
+					B.Add(aCompound, mkVertex.Shape());
+					retCompound = true;
+				} else if ( Dist <= Precision::Confusion() ) {
+					thePoint = P1;
+				} else {
+					Standard_TypeMismatch::Raise ("Shapes have not an Intersection Point");
+				}
+			}
+		}
+		//    TopoDS_Shape aShape;
+		if ( retCompound ) {
+			Standard_TypeMismatch::Raise
+			("Aborted: Intersection is a compound of vertices (Not supported)");
+			//aShape = aCompound;
+			return res;
+		}/* else {
+			BRepBuilderAPI_MakeVertex mkVertex (thePoint);
+			aShape = mkVertex.Shape();
+		}
+		return aShape;*/
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnSurface(const TopoDS_Shape& face, const double param_u, const double param_v)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if (face.ShapeType() != TopAbs_FACE) {
+			Standard_TypeMismatch::Raise("Aborted: surface shape is not a face");
+			return res;
+		}
+
+		TopoDS_Face F = TopoDS::Face(face);
+		Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+		Standard_Real U1,U2,V1,V2;
+		ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+		Standard_Real U = U1 + (U2-U1) * param_u;
+		Standard_Real V = V1 + (V2-V1) * param_v;
+		thePoint = aSurf->Value(U,V);
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
+	TopoDS_Vertex makePointOnSurfaceByCoord(const TopoDS_Shape& face, const double x, const double y, const double z)
+	{
+	    TopoDS_Vertex res;
+		gp_Pnt thePoint;
+
+		if (face.ShapeType() != TopAbs_FACE) {
+			Standard_TypeMismatch::Raise
+			("Point On Surface creation aborted : surface shape is not a face");
+			return res;
+		}
+		gp_Pnt anInitPnt (x, y, z);
+		if (!getExtremaSolution(anInitPnt, face, thePoint)) {
+			Standard_ConstructionError::Raise
+			("Point On Surface creation aborted : cannot project point");
+		}
+
+		return BRepBuilderAPI_MakeVertex(thePoint);
+	}
+
 }
 
-
-_PTR(Study) GetActiveStudyDocument()
-{
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(GetActiveStudy());
-  if (aStudy)
-    return aStudy->studyDS();
-  else
-    return _PTR(Study)();
 }
-
-
-CORBA::Object_var corbaObj( _PTR(SObject) theSO )
-{
-  //std::cout<< "corbaObj( _PTR(SObject) theSO )" << std::endl;
-  CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-  if ( theSO ) {
-    //std::cout<< "theSO" << std::endl;
-    std::string aValue = theSO->GetIOR();
-    //std::cout<< "aValue" << std::endl;
-    if (strcmp(aValue.c_str(), "") != 0) {
-      CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
-      //std::cout<< "anORB" << anORB << std::endl;
-      aCorbaObj = anORB->string_to_object(aValue.c_str());
-      //std::cout<< "aCorbaObj" << aCorbaObj << std::endl;
-//         anDoc = Document::_narrow(aCorbaObj);
-    }
-  }
-  return aCorbaObj._retn();
-}
-
-
-CORBA::Object_var corbaObj( const Handle(SALOME_InteractiveObject)& theIO )
-{
-  CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-
-  if ( !theIO.IsNull() && theIO->hasEntry() ){
-    _PTR(Study)   aStudy = GetActiveStudyDocument();
-    _PTR(SObject) aSObj  = aStudy->FindObjectID(theIO->getEntry());
-    aCorbaObj = corbaObj(aSObj);
-  }
-  return aCorbaObj._retn();
-}
-
-/*
-std::string name( _PTR(SObject) theSO ) 
-{
-  std::cout << "name( _PTR(SObject) theSO )"<< theSO;
-  std::string aResName;
-  if ( theSO )
-  {
-    _PTR(GenericAttribute) anAttr;
-    _PTR(AttributeName)    aNameAttr;
-    if ( theSO->FindAttribute( anAttr, "AttributeName" ) )
-    {
-      std::cout << "FindAttribute";
-      aNameAttr = anAttr;
-      std::cout << "aNameAttr = anAttr";
-      aResName = aNameAttr->Value().c_str();
-    }
-  }
-  return aResName;
-}
-
-
-std::string name( const std::string& entry )
-{
-  std::cout << "name( const std::string& entry )"<< entry;
-  std::string aResName;
-
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  if ( appStudy ){
-    std::cout << "appStudy => "<< appStudy ;
-    _PTR(Study) aStudy = appStudy->studyDS();
-    std::cout << "aStudy=> "<< appStudy ;
-    _PTR(SObject) obj( aStudy->FindObjectID( entry ) );
-    std::cout << "obj=> "<< obj;
-    aResName = name( obj );
-  }
-
-  return aResName;
-}
-*/
-
-
-
-SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry)
-{
-//     SVTK_ViewWindow* aViewWindow = dynamic_cast<SVTK_ViewWindow*>(theWindow);
-  SALOME_Actor *foundActor = NULL;
-  vtkActor     *aVTKActor  = NULL; 
-  Handle(SALOME_InteractiveObject) anIO;
- 
-  vtkRenderer *aRenderer = theVtkViewWindow->getRenderer();
-  VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
-  vtkActorCollection *aCollection = aCopy.GetActors();
-  aCollection->InitTraversal();
-  while( aVTKActor = aCollection->GetNextActor() ){
-//         if ( anAct->IsA("GEOM_Actor") ) std::cout<<"is an actor"<< std::endl;
-    foundActor = dynamic_cast<SALOME_Actor*>( aVTKActor );
-    if ( foundActor && foundActor->hasIO() ){
-        anIO = foundActor->getIO();
-        if( anIO->hasEntry() && strcmp(anIO->getEntry(), theEntry) == 0 )
-          return foundActor;
-    }
-  }
-
-  return NULL; // no actor found
-}
-
-
-
-
-/*
-SVTK_ViewWindow* GetActiveVTKViewWindow()
-{
-    SVTK_ViewWindow* aVtkView = NULL;
-    SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>
-        ( SUIT_Session::session()->activeApplication() );
-    if (anApp)
-      aVtkView = dynamic_cast<SVTK_ViewWindow*>(anApp->desktop()->activeWindow());
-    return aVtkView;
-}
-
-//       SUIT_ViewManager* aViewManager =
-//         anApp->getViewManager(SVTK_Viewer::Type(), createIfNotFound);
-//       if (aViewManager) {
-//         if (SUIT_ViewWindow* aViewWindow = aViewManager->getActiveView()) {
-//           if (SVTK_ViewWindow* aView = dynamic_cast<SVTK_ViewWindow*>(aViewWindow)) {
-//             aViewWindow->raise();
-//             aViewWindow->setFocus();
-//             return aView;
-//           }
-//         }
-//       }
-
-
-SOCC_ViewWindow* GetActiveOCCViewWindow()
-{
-  SOCC_ViewWindow* anOccView = NULL;
-    SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>
-        (SUIT_Session::session()->activeApplication());
-    if (anApp)
-      anOccView = dynamic_cast<SOCC_ViewWindow*>(anApp->desktop()->activeWindow());
-
-
-  OCCViewer_ViewWindow* aOCCFrame = dynamic_cast<OCCViewer_ViewWindow*>( anApp->desktop()->activeWindow() );
-  std::cout << "aOCCFrame => "<< aOCCFrame;
-
-    return anOccView ;
-}
-
-
-OCCViewer_ViewWindow* GetActiveOCCViewerWindow()
-{
-  OCCViewer_ViewWindow* aOCCFrame = NULL;
-  SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>
-    (SUIT_Session::session()->activeApplication());
-  if (anApp) aOCCFrame = dynamic_cast<OCCViewer_ViewWindow*>( anApp->desktop()->activeWindow() );
-  std::cout << "aOCCFrame => "<< aOCCFrame;
-  return aOCCFrame;
-}
-
-
-
-int GetNameOfSelectedNodes( SVTK_ViewWindow *theWindow,
-                            const Handle(SALOME_InteractiveObject)& theIO,
-                            QString& theName )
-{
-    SVTK_Selector* theSelector = theWindow->GetSelector();
-    theName = "";
-    TColStd_IndexedMapOfInteger aMapIndex;
-    theSelector->GetIndex(theIO,aMapIndex);
-
-    for( int i = 1; i <= aMapIndex.Extent(); i++ )
-      theName += QString(" %1").arg(aMapIndex(i));
-
-    return aMapIndex.Extent();
-}
-*/
-
-
-int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,
-                               const Handle(SALOME_InteractiveObject)& theIO,
-                               QString& theName )
-{
-    SVTK_Selector* theSelector = theWindow->GetSelector();
-
-    theName = "";
-
-    TColStd_IndexedMapOfInteger aMapIndex;
-    theSelector->GetIndex(theIO,aMapIndex);
-
-    typedef std::set<int> TIdContainer;
-
-    std::set<int> anIdContainer;
-
-    for( int i = 1; i <= aMapIndex.Extent(); i++)
-      anIdContainer.insert(aMapIndex(i));
-
-    std::set<int>::const_iterator anIter = anIdContainer.begin();
-
-    for( ; anIter != anIdContainer.end(); anIter++)
-      theName += QString(" %1").arg(*anIter);
-
-    //std::cout << "GetNameOfSelectedElements name =>" << theName.toStdString() << std::endl;
-    return aMapIndex.Extent();
-}
-
-string shape2string( const TopoDS_Shape& aShape )
-{
-  ostringstream streamShape;
-//   string  strShape;
-  BRepTools::Write(aShape, streamShape);
-//   BRepTools::Write(aShape, strShape);
-
-  return streamShape.str();
-}
-
-
-
-
-
-// SALOME_View* LightApp_Displayer::GetActiveView()
-// {
-//   SUIT_Session* session = SUIT_Session::session();
-//   if (  SUIT_Application* app = session->activeApplication() ) {
-//     if ( LightApp_Application* sApp = dynamic_cast<LightApp_Application*>( app ) ) {
-//       if( SUIT_ViewManager* vman = sApp->activeViewManager() ) {
-//         if ( SUIT_ViewModel* vmod = vman->getViewModel() )
-//           return dynamic_cast<SALOME_View*>( vmod );
-//       }
-//     }
-//   }
-//   return 0;
-// }
-
-
-
-MyGEOM_Displayer::MyGEOM_Displayer( SalomeApp_Study* app ):
-GEOM_Displayer( app )
-{
-}
-
-MyGEOM_Displayer::~MyGEOM_Displayer()
-{
-}
-
-SALOME_Prs* MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
-{
-  //std::cout << "MyGEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )" << std::endl;
-  if ( theObj->_is_nil() )
-    return 0;
-
-  SALOME_View*      view = NULL;
-
-  SUIT_ViewManager* vman = NULL;
-  if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
-      vman = HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager();
-
-  SUIT_ViewModel* vmodel = NULL;
-  if ( vman )
-    vmodel = vman->getViewModel();
-  if ( vmodel )
-    view = dynamic_cast<SALOME_View*>(vmodel);
-
-  myViewFrame = view ;//GetActiveView();
-  if ( myViewFrame == 0 )
-    return 0;
-
-  SALOME_Prs* aPrs = myViewFrame->CreatePrs();
-  if ( aPrs == 0 )
-    return 0;
-
-  internalReset();
-  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
-  myType = theObj->GetType();
-
-  // Update presentation
-  UpdatePrs( aPrs );
-
-  return aPrs;
-}
-
-} //namespace GUI{
-
-}//namespace HEXABLOCK{
-
-//////////////////////////////////////////////////////////////////////////
-
-
-//   SUIT_Study* GetActiveStudy();
-//   std::string name( _PTR(SObject) theSO );
-//   std::string name( const std::string& entry );
-//   SVTK_ViewWindow* GetActiveVTKViewWindow();
-//   SOCC_ViewWindow* GetActiveOCCViewWindow();
-//   OCCViewer_ViewWindow* GetActiveOCCViewerWindow();
-//   int GetNameOfSelectedNodes( SVTK_ViewWindow *theWindow,
-//                               const Handle(SALOME_InteractiveObject)& theIO,
-//                               QString& theName );
-
-//   QString addInStudy   ( GEOM::GEOM_Object_ptr o, const char* theName )
-//   {
-//     QString res;
-// 
-//     std::cout << "getStudyId()  => " << getStudyId() << std::endl;
-//     std::cout << "getStudy()  => "   << getStudy() << std::endl;
-// 
-//     openCommand();
-//     res = GEOMBase_Helper::addInStudy(o, theName);
-//     std::cout << "addInStudy => " << res.toStdString() << std::endl;
-//     commitCommand();
-//     return res; 
-//   }
-// 
-// 
-// // displayPreview( obj, true, activate, false, lineWidth, displayMode, color );
-//   void displayPreview( GEOM::GEOM_Object_ptr obj, 
-//                                  const bool   append = false, 
-//                                  const bool   activate = false, 
-//                                  const bool   update = true,
-//                                  const double lineWidth = -1, 
-//                                  const int    displayMode = -1,
-//                                  const int    color  = -1 )
-//   {
-//     std::cout << "AAAAAAAAAA => "     <<  std::endl;
-// //     GEOM::GEOM_ITransformOperations_var anOp =
-// //         getGeomEngine()->GetITransformOperations(getStudyId());
-// //     GEOM::GEOM_Object_ptr obj2 = anOp->TranslateDXDYDZ (obj, 100, 100, 100);
-// 
-//     GEOM::GEOM_IBasicOperations_var anOp =
-//         getGeomEngine()->GetIBasicOperations(getStudyId());
-//       std::cout << "BBBBBBBBBB => "     <<  std::endl;
-//     GEOM::GEOM_Object_ptr obj2 = anOp->MakePointXYZ (100, 125, 150);
-// 
-//     std::cout << "obj2->GetEntry() => "     << obj2->GetEntry()<< std::endl;
-//     std::cout << "obj2->GetStudyID() => "   << obj2->GetStudyID()<< std::endl;
-//     std::cout << "obj2->GetType() => "      << obj2->GetType()<< std::endl;
-//     std::cout << "obj2->GetShapeType() => " << obj2->GetShapeType()<< std::endl;
-// 
-//     QString res = addInStudy   ( obj2, "trans");
-//     std::cout << "trans  => "   << res.toStdString() << std::endl;
-// 
-//     globalSelection(); // close local contexts, if any
-//     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-//     GEOMBase_Helper::activate( 39);//GEOM_MARKER );
-// 
-// //     getDisplayer()->SetColor( Quantity_NOC_RED );
-// //     getDisplayer()->SetColor( Quantity_NOC_CYAN1 );
-// 
-//     // set width of displayed shape
-// //     getDisplayer()->SetWidth( (lineWidth == -1)?8:lineWidth );
-// 
-//     GEOMBase_Helper::displayPreview( obj2,
-//                                      true, //append,
-//                                      true, //activate,
-//                                      update,
-//                                      8,//lineWidth,
-//                                      displayMode,
-//                                      Quantity_NOC_CYAN1);//Quantity_NOC_RED);//color );
-//     
-// 
-//   }
-// 
-//   void erase( GEOM::GEOM_Object_ptr obj, const bool d = true)
-//   {
-//     GEOMBase_Helper::erase( obj, d);
-//   }
-
-
-
-// TopoDS_Shape GEOMBase::GetShapeFromIOR(QString IOR)
-// {
-//   TopoDS_Shape result;
-//   if(IOR.trimmed().isEmpty())
-//     return result;
-// 
-//   CORBA::Object_var obj = SalomeApp_Application::orb()->string_to_object(IOR.toLatin1().data());
-//   if(CORBA::is_nil(obj))
-//     return result;
-//   GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( obj );
-//   if (GeomObject->_is_nil())
-//     return result;
-// 
-//   result = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), GeomObject);
-//   return result;
-// }

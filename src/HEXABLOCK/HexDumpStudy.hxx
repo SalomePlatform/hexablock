@@ -17,8 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 
 #ifndef __DUMP_STUDY_H_
 #define __DUMP_STUDY_H_
@@ -29,6 +29,7 @@
 BEGIN_NAMESPACE_HEXA
 
 
+#define DumpStart0(p) bool actif=el_root->glob->dump.start(this, p)
 #define DumpStart(p,args) bool actif=el_root->glob->dump.start(this, p); if (actif)  el_root->glob->dump << args
 #define DumpEnd       el_root->glob->dump.close (actif)
 #define DumpReturn(v) el_root->glob->dump.close (actif,v)
@@ -36,10 +37,12 @@ BEGIN_NAMESPACE_HEXA
 #define DumpLock    bool actif=el_root->glob->dump.lock ()
 #define DumpRestore            el_root->glob->dump.restore (actif)
 
+class Witness;
 class DumpStudy
 {
 public :
     DumpStudy ();
+    void setWitness (Witness* temoin)       { witness = temoin ; }
 
     DumpStudy& operator << (int      val);
     DumpStudy& operator << (double   val);
@@ -51,12 +54,15 @@ public :
     DumpStudy& operator << (RealVector& elt);
 
     bool start (EltBase* obj, cpchar method);
-    bool start (cpchar   obj, cpchar method);
+    bool start (cpchar   obj, cpchar method, bool razmess=true);
     void close (bool reactive);
     void close (bool reactive, EltBase* retour);
+    void close (bool reactive, int      retour);
+    void close (bool reactive, double   retour);
 
     bool lock ();
-    void restore (bool reactive);
+    void restore  (bool reactive);
+    void getBegin (string& begin);
 
 private :
    cpchar findName   (EltBase* elt);
@@ -76,12 +82,13 @@ private :
    string curr_vector;
    int    nbr_values;
 
-   FILE*  fic_dump;
-   string this_name;
-   string right_part;
-   bool   is_open;
-   int    nbr_nulls;
-   int    nbr_args;
+   FILE*    fic_dump;
+   string   this_name;
+   string   right_part;
+   bool     is_open;
+   int      nbr_nulls;
+   int      nbr_args;
+   Witness* witness;
 };
 END_NAMESPACE_HEXA
 #endif

@@ -23,19 +23,16 @@
 #ifndef __GROUP_H
 #define __GROUP_H
 
-#include "hexa_base.hxx"
+#include "HexEltBase.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Group 
+class Group : public EltBase 
 {
 public :
-   Group (cpchar nom, EnumGroup grp);
+   Group (Document* dad, cpchar nom, EnumGroup grp);
   ~Group ()                   {}
 
-   void      setName (cpchar nom)          { grp_name = nom ; }
-   cpchar    getName ()                    { return grp_name.c_str () ; }
-   char* getNextName  (pchar buffer);
    EnumGroup getKind ()                    { return grp_kind ; }
    int       addElement    (EltBase* elt);
    int       removeElement (EltBase* elt);
@@ -53,10 +50,8 @@ public :
 
 private :
    int grp_id;
-   static int last_grp_id;
    EnumGroup   grp_kind;
    EnumElt     grp_typelt;
-   std::string grp_name;
    std::vector <EltBase*> grp_table;
 };
 

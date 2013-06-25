@@ -93,6 +93,9 @@ Globale::Globale  ()
    setOpposedQuad  ( Q_C, Q_D );
    setOpposedQuad  ( Q_E, Q_F );
 
+   dump.setWitness (&mess);
+   mess.setDump    (&dump);
+
    dump_study = DumpActif; 
 }
 // ====================================================== getInstance

@@ -17,14 +17,13 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 
 #include "HexSubShape.hxx"
 #include "HexNewShape.hxx"
 #include "HexXmlWriter.hxx"
-
-#ifndef NO_CASCADE
 
 #include <TopoDS.hxx>
 #include <BRepTools.hxx>
@@ -43,7 +42,7 @@ SubShape::SubShape (NewShape* dad, int id, int dim)
    sub_dim    = dim;
    maj_brep   = maj_shape = true;
 }
-// ====================================================== updateShape
+// ====================================================== getShape
 const TopoDS_Shape& SubShape::getShape ()
 {
    if (maj_shape)
@@ -79,4 +78,3 @@ void SubShape::updateShape ()
    geo_shape = ss_parent->getGeoShape (sub_ident);
 }
 END_NAMESPACE_HEXA
-#endif

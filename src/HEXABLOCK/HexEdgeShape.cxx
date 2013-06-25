@@ -17,14 +17,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
-
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 
 #include "HexEdgeShape.hxx"
-
-#ifndef NO_CASCADE
 
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
@@ -179,18 +177,18 @@ double EdgeShape::getParam (double* coord)
 // ====================================================== getAssociation
 Edge* EdgeShape::getAssociation (int nro)
 {
-   if (nro>0 && nro<tab_assoc.size())
+   if (nro>0 && nro<(int)tab_assoc.size())
       return tab_assoc[nro];
    else
       return NULL;
 }
-// ========================================================== addAssociation
+// ==================================================== addAssociation
 void EdgeShape::addAssociation (Edge* edge)
 {
    tab_assoc.push_back (edge);
    is_associated = true;
 }
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // ====================================================== updateCurve
 void EdgeShape::updateCurve ()
 {
@@ -220,4 +218,3 @@ void EdgeShape::updateCurve ()
    getPoint (1, lin_end);
 }
 END_NAMESPACE_HEXA
-#endif

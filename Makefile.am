@@ -24,9 +24,9 @@ ACLOCAL_AMFLAGS = -I adm_local/unix/config_files \
                   -I ${GUI_ROOT_DIR}/adm_local/unix/config_files \
                   -I ${GEOM_ROOT_DIR}/adm_local/unix/config_files 
 
-SUBDIRS = idl adm_local src bin doc
+SUBDIRS = adm_local src bin doc
 
-DIST_SUBDIRS= idl adm_local src bin doc
+DIST_SUBDIRS= adm_local src bin doc
 
 DISTCLEANFILES = a.out aclocal.m4 configure
 

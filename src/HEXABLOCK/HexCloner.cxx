@@ -35,7 +35,6 @@
 BEGIN_NAMESPACE_HEXA
 
 void transfo_brep (string& brep, Matrix* matrice, string& trep);
-void geom_dump_asso (Edge* edge);
 static bool db = false;
 
 // ============================================================= Constructeur
@@ -109,8 +108,8 @@ Edge* Cloner::clonerEdge (Edge* orig)
           {
           printf ( " --- Cloner::Asso (%s) -> asso (%s)\n", orig ->getName (),
                                                             copie->getName ());
-          geom_dump_asso (orig );
-          geom_dump_asso (copie);
+          // geom_dump_asso (orig );
+          // geom_dump_asso (copie);
           }
        }
 ***************************************************/

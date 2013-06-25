@@ -17,10 +17,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 
-#define DumpActif false
+#define DumpActif true
 
 #ifndef _HEXA_BASE_H_
 #define _HEXA_BASE_H_
@@ -39,12 +40,15 @@ typedef FILE*       pfile;
 #define Cestnonvide(c1)  c1[0]
 
                      // Pour rendre les operateurs plus visibles
+                     // ... mais ne passe pas avec ce @#! de swig
+#ifndef SWIG
 #define NOT    !
 #define XOR    ^
 #define MODULO %
 #define INOT   `
 // #define IOR    |
 #define IAND   &
+#endif    // Swig
                     // Chaines de bits
 #define DeuxPuissance(n) (1 << (n))
 
@@ -66,9 +70,11 @@ typedef FILE*       pfile;
 // typedef double Real;
 // typedef double Real3 [DIM3];
 
-#ifndef PI
-#define PI    3.1415926535898
+#ifndef M_PI
+#define M_PI  3.14159265358979323846
 #endif
+#define Degre2Radian M_PI/180
+
                        // Conventions C++
 #include <string>
 #include <vector>
@@ -78,9 +84,9 @@ typedef const std::string& rcstring;
 #include <iostream>
 using namespace std;
 
-#define HexDisplay(x)      cout << " ... " #x " = " << x << endl
+#define HexDisplay(x)   cout << " ... " #x " = " << x << endl
 #define PutData(x)      cout << " ... " #x " = " << x << endl
-#define PutCoord(x)      cout << " ... " #x " = (" << x[0] << ", " \
+#define PutCoord(x)     cout << " ... " #x " = (" << x[0] << ", " \
                               << x[1] << ", " << x[2] << ")"  << endl
 #define Echo(m)         cout << " _______________ " << m << endl
 
@@ -115,13 +121,7 @@ using namespace std;
 
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 
-#ifndef NO_CASCADE
 class  TopoDS_Shape;
-#else
-typedef int  TopoDS_Shape;
-typedef int  TopTools_IndexedMapOfShape;
-#endif
-
 class  BRepAdaptor_Curve;
 
 BEGIN_NAMESPACE_HEXA
@@ -129,17 +129,17 @@ BEGIN_NAMESPACE_HEXA
 enum EnumCoord  { dir_x, dir_y, dir_z, DIM3 };
 enum EnumElt    { EL_NONE, EL_VERTEX, EL_EDGE, EL_QUAD, EL_HEXA, EL_VECTOR,
                   EL_GRID, EL_CYLINDER, EL_PIPE, EL_GROUP, EL_LAW,
-                  EL_SHAPE, EL_SUBSHAPE,
-                  EL_REMOVED, EL_MAXI };
+                  EL_SHAPE, EL_SUBSHAPE, EL_PROPAGATION,
+                  EL_DOCU,  EL_REMOVED, EL_MAXI };
 
-const cpchar ABR_TYPES = "xveqhwtcpglsu???";
+const cpchar ABR_TYPES = "xveqhwtcpglsupdz???";
 
 enum EnumGroup  { HexaCell, QuadCell, EdgeCell,
                   HexaNode, QuadNode, EdgeNode, VertexNode};
 
                   // Origine des shapes
-enum EnumShape { SH_NONE, SH_IMPORT, SH_CYLINDER, SH_INTER, SH_SPHERE,
-                 SH_CLOUD };
+enum EnumShape { SH_NONE,  SH_IMPORT, SH_CYLINDER, SH_INTER, SH_SPHERE,
+                 SH_CLOUD, SH_EXTRUD };
 
                 //  Modes de remplissage des grilles cylindriques
 enum EnumCyl   { CYL_NOFILL, CYL_CL4, CYL_CL6, CYL_CLOSED, CYL_PEER, CYL_ODD};
@@ -210,6 +210,7 @@ class   Pattern;
 class   Shape;
 class   SubShape;
 class   VertexShape;
+class   BiCylinderShape;
 class   EdgeShape;
 class   FaceShape;
 class   AssoEdge;
@@ -220,6 +221,8 @@ typedef std::vector <Hexa*>  Hexas;
 typedef std::vector <Quad*>  Quads;
 typedef std::vector <Edge*>  Edges;
 typedef std::vector <Shape*> Shapes;
+typedef std::vector <Vertex*> Vertices;
+
 typedef std::vector <NewShape*>  NewShapes;
 typedef std::vector <SubShape*>  SubShapes;
 typedef std::vector <AssoEdge*>  AssoEdges;
@@ -243,14 +246,21 @@ double  prod_scalaire  (double v1[], double v2[]);
 double* prod_vectoriel (double v1[], double v2[], double v3[]);
 double  prod_mixte     (double vi[], double vj[], double vk[]);
 
+inline double  deg2radians (double angle) {  return (angle*M_PI/180.0); }
+inline double  rad2degres  (double angle) {  return (angle*180.0/M_PI); }
+
 double  calc_norme     (double v1[]);
 double  calc_distance  (double v1[], double v2[]);
 void    calc_vecteur   (double pta[], double ptb[], double vab[]);
+void    copy_vecteur   (double va [], double vb []);
 void    calc_milieu    (double pta[], double ptb[], double milieu[]);
 int     normer_vecteur (double v1[]);
 
 double carre       (double val);
 bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
+
+bool requals (const double  v1, const double  v2);
+bool requals (const double* v1, const double* v2);
 
 bool   on_debug();     // == getenv ("HEXA_DB") > 0
 bool   in_test ();     // == getenv ("HEXA_TEST") > 0

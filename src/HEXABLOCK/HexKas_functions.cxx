@@ -17,12 +17,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 
 #include "HexKas_functions.hxx"
-
-#ifndef NO_CASCADE
+//  #include "HexEdge.hxx"
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -32,6 +32,8 @@
 #include <BRepTools.hxx>
 
 #include <gp_Pnt.hxx>
+
+#include <sstream>
 
 BEGIN_NAMESPACE_HEXA
 
@@ -97,13 +99,25 @@ int geom_brep2point (rcstring brep, double& px, double& py, double& pz)
    pz = g_point.Z();
    return HOK;
 }
-END_NAMESPACE_HEXA
+// ====================================================== clear_associations
+//  void clear_associations (Edge* edge)
+//  {
+   //  edge->clearAssociation();
+   //  edge->getVertex(V_AMONT)->clearAssociation();
+   //  edge->getVertex(V_AVAL )->clearAssociation();
+//  }
+// ====================================================== clean_brep
+void clean_brep (string& brep)
+{
+   TopoDS_Shape  shape;
+   BRep_Builder  builder;
+   istringstream stream_brep (brep);
 
-#else // *************************************************** NO_CASCADE
+   BRepTools::Read  (shape, stream_brep, builder);
+   BRepTools::Clean (shape);
 
-BEGIN_NAMESPACE_HEXA
-int geom_brep2point (rcstring b, double& x, double& y, double& z) {return HOK;}
-int geom_brep2shape (rcstring brep, TopoDS_Shape& shape) {return HOK ; }
-TopoDS_Shape geom_brep2shape (rcstring brep)             {return O ; }
+   ostringstream    stream_shape;
+   BRepTools::Write (shape, stream_shape);
+   brep = stream_shape.str();
+}
 END_NAMESPACE_HEXA
-#endif

@@ -25,6 +25,7 @@
 
 #include "HexEltBase.hxx"
 
+
 BEGIN_NAMESPACE_HEXA
 
 class NewShape;
@@ -33,97 +34,51 @@ class Document : public EltBase
 {
                                    // Fonctions utilisateur
 public :
-                                   // Fonctions globales
-   bool        isSaved ()              { return doc_saved ; }
-   int setName (const char* name);
-
-   int save      (const char* ficxml); // Genere le xml dans un seul fichier
-   int appendXml (pfile fstudy);       // Genere le xml dans un fichier ouvert
-   cpchar getXml ();                   // Genere le xml et rend un flux
-
-   int  getLevel ()                    { return doc_db ; }
+   Document (cpchar name, Hex* dad=NULL);
+   void dump ();
+   int  setName  (const char* name);
    void setLevel (int niv);
+   int  save         (const char* ficxml); // Genere le xml dans un seul fichier
+   int  saveVtk      (cpchar nomfic);
 
-   Hexa*   getHexa   (int nro);
-   Quad*   getQuad   (int nro);
-   Edge*   getEdge   (int nro);
-   Vertex* getVertex (int nro);
+   void purge ();
 
-   int countHexa   ()   { return countElement (EL_HEXA); }
-   int countQuad   ()   { return countElement (EL_QUAD); }
-   int countEdge   ()   { return countElement (EL_EDGE); }
-   int countVertex ()   { return countElement (EL_VERTEX); }
+   void   setTolerance (double tol) { doc_tolerance = std::max (tol, 0.0); }
+   double getTolerance ()           { return doc_tolerance; }
 
                                    // Creation d'elements
    Vertex* addVertex (double x=0.0, double y=0.0, double z=0.0);
-   Edge*   addEdge       (Vertex* va, Vertex* vb);
-   Edge*   addEdgeVector (Vertex* va, Vector* vec);
 
-   Edge*   addEdge   (Vertex* va, Vector* vec)             // A supprimer
-                     { return addEdgeVector (va, vec) ; }  // (comptibilite)
+   Edge* addEdge       (Vertex* va, Vertex* vb);
+   Edge* addEdgeVector (Vertex* va, Vector* vec);
 
-   Quad*   addQuadVertices   (Vertex* v1, Vertex* v2, Vertex* v3, Vertex* v4);
-   Quad*   addQuad   (Edge* v1, Edge* v2, Edge* v3, Edge* v4);
+   Quad* addQuad   (Edge* v1, Edge* v2, Edge* v3, Edge* v4);
+   Quad* addQuadVertices   (Vertex* v1, Vertex* v2, Vertex* v3, Vertex* v4);
 
-   Hexa*   addHexaVertices   (Vertex* v1, Vertex* v2, Vertex* v3, Vertex* v4,
+   Hexa* addHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf);
+   Hexa* addHexaVertices   (Vertex* v1, Vertex* v2, Vertex* v3, Vertex* v4,
                              Vertex* v5, Vertex* v6, Vertex* v7, Vertex* v8);
-   Hexa*   addHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd, Quad* qe, Quad* qf);
 
-   Vector* addVector (double dx=0.0, double dy=0.0, double dz=0.0);
-   Vector* addVectorVertices (Vertex* va, Vertex* vb);
+   Hexa* addHexa2Quads (Quad* q1, Quad* q2);
+   Hexa* addHexa3Quads (Quad* q1, Quad* q2, Quad* q3);
+   Hexa* addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4);
+   Hexa* addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5);
 
-   Elements* makeCartesian   (Vertex* v, Vector* v1,
-                       int px, int py, int pz, int mx=0, int my=0, int mz=0);
-   Elements* makeCartesian   (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
-                       int px, int py, int pz);
-   Elements* makeCartesian1  (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
-                       int px, int py, int pz, int mx, int my, int mz);
+   Vector*   addVector (double dx=0.0, double dy=0.0, double dz=0.0);
+   Vector*   addVectorVertices (Vertex* va, Vertex* vb);
+   Law*      addLaw    (const char* name, int nbnodes);
+   int       addLaws   (double lgmoy, bool usemax=true);
 
-   Elements* makeCylindrical (Vertex* c, Vector* b, Vector* h, double dr,
-             double da, double dl, int nr, int na, int nl, bool fill=false);
+   Group*    addHexaGroup       (cpchar name);
+   Group*    addQuadGroup       (cpchar name);
+   Group*    addQuadNodeGroup   (cpchar name);
+   Group*    addHexaNodeGroup   (cpchar name);
+   Group*    addEdgeGroup       (cpchar name);
+   Group*    addEdgeNodeGroup   (cpchar name);
+   Group*    addVertexNodeGroup (cpchar name);
 
-                                                      // Obsolete
-   Elements* makeSpherical (Vertex* v, Vector* dv, int nb, double k=1) {return NULL;}
-   Elements* makeSpherical (Vertex* center, double rayon, int nb, double k=1);
 
-   Elements* prismQuad  (Quad*  start, Vector* dv, int nb);
-   Elements* prismQuads (Quads& start, Vector* dv, int nb);
-   Elements* prismQuadsVec (Quads& start, Vector* dv, RealVector& th, int k=0);
-
-   Elements* joinQuad  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,
-                                      Vertex* v3, Vertex* v4, int nb);
-   Elements* joinQuads (Quads& start, Quad* dest, Vertex* v1, Vertex* v2,
-                                      Vertex* v3, Vertex* v4, int nb);
-
-   Cylinder* addCylinder   (Vertex* b, Vector* d, double r,  double h);
-   Elements* makeCylinder  (Cylinder* cyl, Vector* vx, int nr, int na, int nl);
-   CrossElements* makeCylinders (Cylinder* cyl1, Cylinder* cyl2);
-
-   Pipe*     addPipe   (Vertex* b, Vector* d, double ri, double re, double h);
-   Elements* makePipe  (Pipe* pip, Vector* vx, int nr, int na, int nl);
-   CrossElements* makePipes (Pipe* pipe1, Pipe* pipe2);
-
-   BiCylinder* makeBiCylinder (Cylinder* cyl1, Cylinder* cyl2);
-   BiCylinder* makeBiPipe     (Pipe* pipe1, Pipe* pipe2);
-
-   int     removeHexa (Hexa* maille);
-   int     removeQuad (Quad* maille);
-   int     removeConnectedHexa (Hexa* maille);
-   int     removeElements  (Elements* bloc);
-
-   Vertex* findVertex (double  vx, double  vy, double vz);
-   Edge*   findEdge   (Vertex* va, Vertex* vb);
-   Quad*   findQuad   (Vertex* va, Vertex* vb);
-   Hexa*   findHexa   (Vertex* va, Vertex* vb);
-
-   Vertex* findVertex (int id);
-
-   int     mergeVertices (Vertex* v1, Vertex* v2);
-   int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
-   int     mergeQuads    (Quad* q1, Quad* q2, Vertex* v1, Vertex* v2,
-                                              Vertex* v3, Vertex* v4);
-   int     closeQuads    (Quad* q1, Quad* q2);
-
+                                 // ----------------- Transformations
    Elements* makeTranslation   (Elements* elts, Vector* trans);
    Elements* makeScale         (Elements* elts, Vertex* ver, double k);
    Elements* makeRotation      (Elements* elts, Vertex* ver, Vector* vec,
@@ -139,68 +94,220 @@ public :
    int performSymmetryLine  (Elements* elts, Vertex* ver, Vector* vec);
    int performSymmetryPlane (Elements* elts, Vertex* ver, Vector* vec);
 
-   void   setTolerance (double tol) { doc_tolerance = std::max (tol, 0.0); }
-   double getTolerance ()           { return doc_tolerance; }
-
-   Elements* disconnectQuad   (Hexa*  maille, Quad*   face);
-   Elements* disconnectEdge   (Hexa*  maille, Edge*   arete);
-   Elements* disconnectVertex (Hexa*  maille, Vertex* noeud);
-   Elements* disconnectEdges  (Hexas& thexas, Edges&  edges);
-
+                                 // ----------------- Modifications
    Elements* cut (Edge* edge, int nbcuts);
+   Elements* disconnectQuad   (Hexa* maille, Quad*   face);
+   Elements* disconnectEdge   (Hexa* maille, Edge*   arete);
+   Elements* disconnectVertex (Hexa* maille, Vertex* noeud);
+   Elements* disconnectEdges  (Hexas thexas, Edges   edges);
 
-   Group* addGroup    (cpchar name, EnumGroup kind);
-   Group* getGroup    (int nro);
-   Group* findGroup   (cpchar name);
-   int    removeGroup (Group* grp);
-   int    countGroup  ()               { return (int) doc_group.size(); }
+   Elements* replace (Quads pattern, Vertex* p1, Vertex* c1,
+                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
-   // ---------------------------------------------------
+   int     mergeVertices (Vertex* v1, Vertex* v2);
+   int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
+   int     mergeQuads    (Quad* q1, Quad* q2, Vertex* v1, Vertex* v2,
+                                              Vertex* v3, Vertex* v4);
 
-   Law* addLaw    (const char* name, int nbnodes);
-   Law* addLaw    (Law* law); // lo-add-lololo
-   int  countLaw  ()                            { return nbr_laws ; }
-   Law* getLaw    (int nro);
-   Law* findLaw   (const char* name);
-   int  removeLaw (Law* loi);
+                                 // ----------------- Associations
+   void clearAssociation ();
+   int  associateOpenedLine (Edges&  mline, NewShapes& gline, IntVector& tabid,
+                             double pstart, double pend);
 
-   // ---------------------------------------------------
-   int          countPropagation ();
-   Propagation* getPropagation   (int nro);
-   Propagation* findPropagation  (Edge* arete);
-   void         dumpPropagation  ();
+   int  associateClosedLine (Vertex* mfirst,   Edges&  mline,
+                             NewShapes& gline, IntVector& tabid,
+                             double pstart, bool inv);
+                                 // ----------------- count
+   int countHexa   ();
+   int countQuad   ();
+   int countEdge   ();
+   int countVertex ();
+   int countVector ()               { return doc_vector.size(); }
 
-   int countVector ()              { return doc_vector.size(); }
-   int countCylinder ()            { return doc_cylinder.size(); }
-   int countPipe ()                { return doc_pipe.size(); }
-
-   Vector*   getVector   (int nro);
-   Cylinder* getCylinder (int nro);
-   Pipe*     getPipe     (int nro);
-
-   void purge ();
-
-   // --------------------------------------------------- Evols Hexa3
-
-   Document* copyDocument ();
+   int countGroup  ()               { return (int) doc_group.size(); }
+   int countLaw  ()                 { return nbr_laws ; }
+   int countPropagation ();
+   int countShape ()                { return doc_tab_shape.size() ; }
 
    int countUsedHexa   ();
    int countUsedQuad   ();
    int countUsedEdge   ();
    int countUsedVertex ();
 
+   int countCylinder ()             { return doc_cylinder.size(); }
+   int countPipe ()                 { return doc_pipe.size(); }
+
+                                 // ----------------- get par indice
+   Hexa*   getHexa   (int nro);
+   Quad*   getQuad   (int nro);
+   Edge*   getEdge   (int nro);
+   Vertex* getVertex (int nro);
+
    Hexa*   getUsedHexa   (int nro);
    Quad*   getUsedQuad   (int nro);
    Edge*   getUsedEdge   (int nro);
    Vertex* getUsedVertex (int nro);
 
-   Hexa* addHexa2Quads (Quad* q1, Quad* q2);
-   Hexa* addHexa3Quads (Quad* q1, Quad* q2, Quad* q3);
-   Hexa* addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4);
-   Hexa* addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5);
+   Vector*      getVector   (int nro);
+   Cylinder*    getCylinder (int nro);
+   Pipe*        getPipe     (int nro);
+   NewShape*    getShape    (int nro);
+   Group*       getGroup    (int nro);
+   Law*         getLaw      (int nro);
+   Propagation* getPropagation   (int nro);
 
-   Elements* revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                              RealVector &angles);
+                                 // ----------------- find
+   Vertex* findVertex (double  vx, double  vy, double vz);
+   Edge*   findEdge   (Vertex* va, Vertex* vb);
+   Quad*   findQuad   (Vertex* va, Vertex* vb);
+   Hexa*   findHexa   (Vertex* va, Vertex* vb);
+
+   Group*       findGroup   (cpchar name);
+   Law*         findLaw     (cpchar name);
+   Propagation* findPropagation  (Edge* arete);
+
+                                 // ----------------- Suppressions
+   int  removeHexa          (Hexa* maille);
+   int  removeQuad          (Quad* maille);
+   int  removeConnectedHexa (Hexa* maille);
+   int  removeElements      (Elements* bloc);
+   int  removeGroup         (Group* grp);
+   int  removeLaw           (Law*   lau);
+
+public :
+                                 // ----------------- Creations Hexav6
+   Elements* makeCartesianTop (int nx, int ny, int nz);
+   Elements* makeCartesianUni (Vertex* ori, Vector* vx, Vector* vy, Vector* vz,
+                               double lx, double ly, double lz, 
+                               int    nx, int    ny, int    nz);
+   Elements* makeCartesian    (Vertex* ori, Vector* vx, Vector* vy, Vector* vz,
+                               RealVector tlx, RealVector tly, RealVector tlz);
+
+   Elements* makeCylinderTop (int nr, int na, int nh);
+   Elements* makeCylinderUni (Vertex* orig, Vector* vx, Vector* vz, 
+                              double rint, double rext, double ang, double haut,
+                              int nr, int na, int nh);
+   Elements* makeCylinder (Vertex* orig, Vector* vx, Vector* vz, 
+                           RealVector tray, RealVector tang, RealVector thaut);
+
+   Elements* makePipeTop (int nr, int na, int nh);
+   Elements* makePipeUni (Vertex* orig, Vector* vx, Vector* vz, 
+                          double rint, double rext, double angle, double haut,
+                          int nr, int na, int nh);
+   Elements* makePipe    (Vertex* orig, Vector* vx, Vector* vz, 
+                          RealVector tray, RealVector tang, RealVector thaut);
+
+   Elements* makeSphericalTop (int nbre, int crit=0);
+   Elements* makeSphericalUni (Vertex* centre, Vector* vx, Vector* vz, 
+                               double rayon, int nbre, int crit=0);
+   Elements* makeSpherical    (Vertex* centre, Vector* vx, Vector* vz, 
+                               RealVector rayon, int crit=0);
+   Elements* makeSphereTop (int nr, int na, int nh);
+   Elements* makeSphereUni (Vertex* centre, Vector* vx, Vector* vz, 
+                            double rtrou, double rext, double ang, 
+                            Vertex* vplan, int nr, int na, int nh);
+   Elements* makeSphere    (Vertex* centre, Vector* vx, Vector* vz, 
+                            RealVector tray, RealVector tang, RealVector thaut);
+
+   Elements* makeRindTop (int nr, int na, int nh);
+   Elements* makeRindUni (Vertex* centre, Vector* vx, Vector* vz, 
+                          double raytrou, double rint, double rext,
+                          double ang, Vertex* vplan, int nr, int na, int nh);
+   Elements* makeRind    (Vertex* centre, Vector* vx, Vector* vz, 
+                          RealVector tray, RealVector tang, RealVector thaut);
+
+   BiCylinder* makeCylinders (Vertex* ori1, Vector* z1, double r1, double h1,
+                              Vertex* ori2, Vector* z2, double r2, double h2);
+   BiCylinder* makePipes (Vertex* ori1, Vector* z1, double rint1, double rex1, 
+                          double h1, Vertex* ori2, Vector* z2, double rint2, 
+                          double rex2, double h2);
+
+   Elements* extrudeQuadTop (Quad* start, int nbre);
+   Elements* extrudeQuadUni (Quad* start, Vector* dv, double len, int nbre);
+   Elements* extrudeQuad    (Quad* start, Vector* dv, RealVector tlen);
+
+   Elements* extrudeQuadsTop (Quads start, int nbre);
+   Elements* extrudeQuadsUni (Quads start, Vector* axis, double len, int nbre);
+   Elements* extrudeQuads    (Quads start, Vector* axis, RealVector tlen);
+
+   Elements* revolutionQuadUni  (Quad* start, Vertex* center, Vector* axis,
+                                 double angle, int nbre);
+   Elements* revolutionQuad     (Quad* start, Vertex* center, Vector* axis,
+                                 RealVector angles);
+   Elements* revolutionQuadsUni (Quads start, Vertex* center, Vector* axis,
+                                 double angle, int nbre);
+   Elements* revolutionQuads    (Quads start, Vertex* center, Vector* axis,
+                                 RealVector angles);
+
+   Elements* joinQuadUni  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,
+                           Vertex* v3, Vertex* v4, int nb);
+
+   Elements* joinQuadsUni (Quads start, Quad* dest, Vertex* v1, Vertex* v2,
+                           Vertex* v3, Vertex* v4, int nb);
+
+   Elements* joinQuad     (Quad*  start, Quad* dest, Vertex* va1, Vertex* vb1,
+                           Vertex* va2, Vertex* vb2, RealVector& tlen);
+
+   Elements* joinQuads    (Quads start, Quad* dest, Vertex* va1, Vertex* vb1,
+                           Vertex* va2, Vertex* vb2, RealVector& tlen);
+
+   Elements* cutUni     (Edge* eddge, int nbre);
+   Elements* cut        (Edge* eddge, RealVector& tlen);
+
+   Group*    addGroup  (cpchar name, EnumGroup kind);
+                                   // Fonctions globales
+   bool        isSaved ()              { return doc_saved ; }
+
+   int appendXml (pfile fstudy);       // Genere le xml dans un fichier ouvert
+   cpchar getXml ();                   // Genere le xml et rend un flux
+
+   int  getLevel ()                    { return doc_db ; }
+
+   Elements* makeCartesian   (Vertex* v, Vector* v1,  // Obsolete
+                       int px, int py, int pz, int mx=0, int my=0, int mz=0);
+
+   Vertex* findVertex (int id);
+
+   int     closeQuads    (Quad* q1, Quad* q2);
+
+   // ---------------------------------------------------
+
+   Law* addLaw    (Law* law); // lo-add-lololo
+
+   // ---------------------------------------------------
+
+   int  checkAssociations ();
+                                                        // addShape version Python
+   NewShape* addShape (long forme, const char* name);
+
+#ifndef SWIG
+                                                        // addShape HorsPython
+   NewShape* addShape (TopoDS_Shape& forme, const char* name);
+                                 // ----------------- Perimes Hexav6
+   Cylinder* addCylinder   (Vertex* b, Vector* d, double r,  double h);
+   Pipe*     addPipe  (Vertex* b, Vector* d, double ri, double re, double h);
+   Elements* makeCartesian   (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
+                              int px, int py, int pz);
+
+   Elements* makeCartesian1  (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
+                              int px, int py, int pz, int mx, int my, int mz);
+
+   Elements* makeCylindrical (Vertex* c, Vector* b, Vector* h, double dr,
+                              double da, double dl, int nr, int na, int nl,
+                              bool fill);
+   Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h,
+                            RealVector tdr, RealVector tda, RealVector tdh,
+                            bool fill=false);
+
+   Elements* makeCylinder  (Cylinder* cyl, Vector* vx, int nr, int na, int nl);
+   Elements* makePipe      (Pipe*     pip, Vector* vx, int nr, int na, int nl);
+
+   Elements* makeSpherical   (Vertex* center, double rayon, int nb, double k);
+
+   CrossElements* makeCylinders  (Cylinder* cyl1, Cylinder* cyl2);
+   CrossElements* makePipes      (Pipe*    pipe1, Pipe* pipe2);
+   BiCylinder*    makeBiCylinder (Cylinder* cyl1, Cylinder* cyl2);
+   BiCylinder*    makeBiPipe     (Pipe*    pipe1, Pipe*    pipe2);
 
    Elements* makeSphere (Vertex* center, Vector* vx, Vector* vz,
                          double radius, double radhole,
@@ -222,36 +329,28 @@ public :
                            Vertex* plorig, double angle,
                            int nrad, int nang, int nhaut);
 
-   Elements* replace (Quads& pattern, Vertex* p1, Vertex* c1,
-                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+   Elements* prismQuad     (Quad* start, Vector* dv, int nb);
+   Elements* prismQuads    (Quads start, Vector* dv, int nb);
+   Elements* prismQuadsVec (Quads start, Vector* dv, RealVector th, int k);
 
-   Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h,
-             RealVector& tdr, RealVector& tda, RealVector& tdh,
-             bool fill=false);
+   Elements* revolutionQuadsVec (Quads start, Vertex* center, Vector* axis,
+                              RealVector angles);
 
-   // --------------------------------------------------- Evols Hexa4'
+   Elements* joinQuad  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,
+                                      Vertex* v3, Vertex* v4, int nb);
 
-   void clearAssociation ();
+   Elements* joinQuads (Quads start, Quad* dest, Vertex* v1, Vertex* v2,
+                                     Vertex* v3, Vertex* v4, int nb);
 
-   typedef std::vector <Vertex*> Vertices;
-   void getAssoEdges    (Edges&    tabelt);
-   void getAssoVertices (Vertices& tabelt);
+                                 // ----------------- Perimes (fin)
+public :
+   void         dumpPropagation  ();
 
-   // --------------------------------------------------- Evols Hexa5
+   Document* copyDocument ();
 
    NewShape*  getCloud ()          { return doc_cloud ; }
-   NewShape*  addShape (TopoDS_Shape& forme, const char* name);
    NewShape*  addShape (const char* name, EnumShape type);
-   NewShape*  getShape   (int nro);
    NewShape*  findShape  (rcstring name);
-   int        countShape ()            { return doc_tab_shape.size() ; }
-
-   int associateOpenedLine (Edges&  mline, NewShapes& gline, IntVector& tabid,
-                            double pstart, double pend);
-
-   int associateClosedLine (Vertex* mfirst,   Edges&  mline,
-                            NewShapes& gline, IntVector& tabid,
-                            double pstart, bool inv);
 
    int associateLine (Vertex* mfirst, Edges& mline,
                       NewShapes& gline, IntVector& tabid,
@@ -262,10 +361,9 @@ public :
    void clearAssoEdges   ();
    void clearAssoQuads   ();
 
-   int  checkAssociations ();
+   Quad*   findQuad   (Edge* ea, Edge* eb);
 
 public:
-    Document (cpchar name, Hex* dad=NULL);
    ~Document ();
 
     int    loadXml (cpchar name);
@@ -277,14 +375,11 @@ public:
     int      getNbrElt  (EnumElt type)      { return doc_nbr_elt   [type]; }
     void     setDeprecated (int level=1);
 
-    void dump ();
     void markAll (int marque, int type=-1);
     int  saveVtk0 (cpchar nomfic);
-    int  saveVtk  (cpchar nomfic);
     int  saveVtk  (cpchar radical, int &nro);
 
     void  putError  (cpchar mess, cpchar info1=NULL, cpchar info2=NULL);
-    void  nputError (cpchar mess, int info1,  cpchar info2=NULL);
     void  hputError (cpchar mess, EltBase* e1, EltBase* e2=NULL);
 
     void  majReferences  ();                  // M.A.J relation "utilise par"
@@ -303,6 +398,13 @@ public:
    void    restoreDump();
    bool    isEmpty ();
 
+   // --------------------------------------------------- Evols Hexa6
+
+   void addHexa   (Hexa* elt)      { doc_hexas .push_back (elt) ; }
+   void addQuad   (Quad* elt)      { doc_quads .push_back (elt) ; }
+   void addEdge   (Edge* elt)      { doc_edges .push_back (elt) ; }
+   void addVertex (Vertex* elt)    { doc_vertex.push_back (elt) ; }
+
 public:
    Globale* glob;
 
@@ -312,12 +414,13 @@ private :
 
    void  replaceVertex (Vertex* v1, Vertex* v2);
    void  replaceEdge   (Edge*   e1, Edge* e2);
-   void  replaceQuad   (Quad*   q1, Quad* q2);
+   int   replaceQuad   (Quad*   q1, Quad* q2);
 
    int   countElement  (EnumElt type);
    EltBase* getElement (EnumElt type, int nro);
 
    void  majPropagation ();
+   void  recountUsed ();
    void  renumeroter ();
 
    Elements* clonerElements (Elements* table, Matrix* matrice);
@@ -352,6 +455,7 @@ private :
    bool doc_saved;
    bool maj_connection;
    bool purge_elements;
+   bool holes_elements;
    int  doc_db;
    int  nbr_errors;
 
@@ -375,7 +479,7 @@ private :
    std::vector <Pipe*>        doc_pipe;
    XmlWriter*                 doc_xml;
 
-   // --------------------------------------------------- HexaBlock v3
+   // --------------------------------------------------- Evols Hexa3
 
    std::vector <Hexa*>   doc_used_hexas;
    std::vector <Quad*>   doc_used_quads;
@@ -387,7 +491,7 @@ private :
    int nbr_used_edges;
    int nbr_used_vertex;
 
-   // --------------------------------------------------- HexaBlock v5
+   // --------------------------------------------------- Evols Hexa5
 
    static int doc_number;
    char      doc_ident [8];
@@ -395,35 +499,13 @@ private :
 
    NewShape*   doc_cloud;                     // Nuage de points du doc;
    std::vector <NewShape*> doc_tab_shape;
+
+   // --------------------------------------------------- Evols internes Hexa6
+   std::vector <Hexa*>   doc_hexas;
+   std::vector <Quad*>   doc_quads;
+   std::vector <Edge*>   doc_edges;
+   std::vector <Vertex*> doc_vertex;
+#endif
 };
-// ========================================================= saveVtk (avec nro)
-inline int Document::saveVtk  (cpchar radical, int &nro)
-{
-   char num[8];
-   sprintf (num, "%d", nro);
-   nro ++;
-
-   string filename = radical;
-   filename += num;
-   filename += ".vtk";
-   int ier = saveVtk (filename.c_str());
-   return ier;
-}
-// ========================================================= setDeprecated
-inline void Document::setDeprecated (int level)
-{
-   switch (level)
-          {
-                         // En cas de destruction  : parents invalides
-          case 2 : maj_connection  = true;
-                   purge_elements  = true;
-                         // creation + destruction : propagations a revoir
-          case 1 : maj_propagation = true;
-                         // Par defaut :
-          default: doc_modified    = true;
-                   count_modified  = true;
-          }
-}
-
 END_NAMESPACE_HEXA
 #endif

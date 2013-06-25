@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
-    <height>195</height>
+    <width>285</width>
+    <height>201</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Translate</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>

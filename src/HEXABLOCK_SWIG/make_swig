@@ -1,0 +1,31 @@
+#!/bin/sh
+# Comm : I'm swigging in the rain
+
+module=hexablock_swig
+bibli=`pwd`
+bibli=`basename $bibli`
+
+wrapped=${module}_wrap
+wrap_src=$wrapped.cc
+
+os=`uname`
+shared=_$module.so
+opt_pic=-fPIC
+if ( [ $os != Linux ] ) then
+   shared=_$module.dll
+   opt_pic=
+   fi
+
+
+for a in a a a a a a a a a a a a a a a a a a a a a a a
+    do echo ; done
+
+echo "  -- Je swigge ..."
+swig -python -c++ -o $wrap_src -I../HEXABLOCK -module ${module} ${module}.i
+
+## echo "  -- Je compile ..."
+## g++ $opt_pic -I../HEXABLOCK -I/usr/include/python2.5 -c $wrap_src
+##echo "  -- Je linke ..."
+##g++ -fPIC -shared $wrapped.o -L. -l$bibli -lpython2.6 -o ${shared}
+echo "  -- J'ai fini."
+

@@ -17,9 +17,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
-
 //--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 
 #include "HexBiCylinderShape.hxx"
@@ -31,7 +31,6 @@
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 
-#ifndef NO_CASCADE
                                     // Cylindre
 #include <GEOMImpl_CylinderDriver.hxx>
 #include <GEOMImpl_ICylinder.hxx>
@@ -214,8 +213,8 @@ int BiCylinderShape::associate (Edge* edge)
 }
 // ====================================================== associate
 // ==== On suppose une orientation correcte
-int BiCylinderShape::associate (Edge* edge, EdgeShape* line, double para1,
-                                double para2, int extrem)
+int BiCylinderShape::associate (Edge* edge, EdgeShape* line, 
+                                double para1, double para2, int extrem)
 {
    edge->addAssociation (line, para1, para2);
 
@@ -238,4 +237,3 @@ int BiCylinderShape::associate (Edge* edge, EdgeShape* line, double para1,
       }
 }
 END_NAMESPACE_HEXA
-#endif

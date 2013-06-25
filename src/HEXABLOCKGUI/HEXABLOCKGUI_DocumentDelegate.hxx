@@ -75,10 +75,6 @@ namespace HEXABLOCK
         		  const QStyleOptionViewItem & option, const QModelIndex & index );
           virtual bool 	eventFilter ( QObject * editor, QEvent * event );
 
-      public slots:
-//           void onCloseEditor( QWidget *, QAbstractItemDelegate::EndEditHint);
-//           void onCommitData ( QWidget * editor );
-
       private:
           QDockWidget* _dw; // creator's container
 

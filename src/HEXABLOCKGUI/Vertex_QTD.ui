@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>210</width>
-    <height>202</height>
+    <width>246</width>
+    <height>216</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Arguments</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -86,22 +86,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="x_spb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="decimals">
-            <number>6</number>
-           </property>
-           <property name="maximum">
-            <double>1000000000.000000000000000</double>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
            <property name="sizePolicy">
@@ -112,22 +96,6 @@
            </property>
            <property name="text">
             <string>y : </string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="y_spb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="decimals">
-            <number>6</number>
-           </property>
-           <property name="maximum">
-            <double>1000000000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -144,37 +112,31 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="x_spb">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="y_spb">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="z_spb">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="decimals">
-            <number>6</number>
-           </property>
-           <property name="maximum">
-            <double>1000000000.000000000000000</double>
+          <widget class="QLineEdit" name="z_spb">
+           <property name="text">
+            <string>0</string>
            </property>
           </widget>
          </item>
         </layout>
-        <zorder>x_spb</zorder>
-        <zorder>label</zorder>
-        <zorder>x_spb</zorder>
-        <zorder>y_spb</zorder>
-        <zorder>label_2</zorder>
-        <zorder>z_spb</zorder>
-        <zorder>label_3</zorder>
        </widget>
       </item>
      </layout>
-     <zorder>widget</zorder>
-     <zorder>widget_2</zorder>
-     <zorder>x_spb</zorder>
-     <zorder>label</zorder>
     </widget>
    </item>
   </layout>

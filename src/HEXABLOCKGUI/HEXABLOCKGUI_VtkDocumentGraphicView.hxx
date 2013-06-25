@@ -22,16 +22,11 @@
 
 // SALOME GUI includes
 #include <LightApp_Displayer.h>
-// #include <SVTK_ViewWindow.h>
 #include <SUIT_ViewWindow.h>
 #include <SALOME_Actor.h>
 #include <SVTK_InteractorStyle.h>
 #include <QAbstractItemView>
 #include <QMap>
-
-// #include <QContextMenuEvent>
-// #include <QAction>
-// #include <QGraphicsRectItem>
 
 #include <HexVertex.hxx>
 #include <HexQuad.hxx>
@@ -46,18 +41,8 @@
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 
-// class LightApp_Displayer;
-// class SalomeApp_Application;
 class LightApp_Application;
 class SALOME_Actor;
-
-// class vtkLookupTable ;
-// class vtkPoints ;
-// class vtkCellArray ;
-// class vtkFloatArray ;
-// class vtkActor ;
-// class vtkPolyData;
-
 
 class vtkUnstructuredGrid;
 
@@ -68,27 +53,14 @@ namespace HEXABLOCK
 
     namespace GUI
     {
-//		class hexablockInteractorStyle : public SVTK_InteractorStyle
-//		{
-//		public:
-//			hexablockInteractorStyle() {};
-//			virtual ~hexablockInteractorStyle() {};
-//
-//		public:
-//			static hexablockInteractorStyle* New()
-//			{
-//				return new hexablockInteractorStyle;
-//			};
-//			virtual void HighlightActor2D(vtkActor2D* actor2D) {MESSAGE("% HIGHLIGHT PROP 2D %");}
-//			virtual void HighlightProp(vtkProp* prop) {MESSAGE("% HIGHLIGHT PROP %");}
-//			virtual void HighlightProp3D(vtkProp3D* prop3D) {MESSAGE("% HIGHLIGHT PROP 3D %");}
-//		};
-
         class Document_Actor : public SALOME_Actor
         {
           public:
             Document_Actor(HEXA_NS::Document* doc, const QString& entry);
             virtual ~Document_Actor();
+
+            // Highlight
+            virtual void highlight(bool theHighlight) {}
 
             std::map<int,vtkIdType>   vtkElemsId;
             std::map<vtkIdType, int>  hexaElemsId;
@@ -96,14 +68,17 @@ namespace HEXABLOCK
             vtkUnstructuredGrid* getUnstructuredGrid();
           private:
             HEXA_NS::Document* _doc;
-        };
 
-                                                     // Abu
+        };
+                   // Abu
         class Associate_Actor : public SALOME_Actor
         {
           public:
             Associate_Actor(HEXA_NS::Document* doc, const QString& entry);
             virtual ~Associate_Actor() {}
+
+            // Highlight
+            virtual void highlight(bool theHighlight) {}
 
             std::map<int,vtkIdType>   vtkElemsId;
             std::map<vtkIdType, int>  hexaElemsId;
@@ -134,7 +109,8 @@ namespace HEXABLOCK
 
             void setSelectionMode( const Selection_Mode theMode );
             void setSelectionMode( const QModelIndex& eltIndex );
-            int getSelectionMode() const { return selectionMode;}
+            int getSelectionMode() const { return selectionMode; }
+            void getSelected(SALOME_ListIO& selectedObjects);
             void clearSelection();
 
 	        void loadDocument(const QString& file); //Loads a selected document
@@ -203,9 +179,6 @@ namespace HEXABLOCK
             void setSelection(const QRect&, QItemSelectionModel::SelectionFlags command);
             int verticalOffset() const;
             QRegion visualRegionForSelection(const QItemSelection &selection) const;
-
-//         protected:
-//           virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
 
         private:
             SVTK_ViewWindow*  viewWindow;

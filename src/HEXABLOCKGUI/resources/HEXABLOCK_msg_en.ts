@@ -1158,7 +1158,7 @@ Please select a %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Make quadrangle association</source>
+        <source>Make quad association</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1166,7 +1166,7 @@ Please select a %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Make Quadrangle Association</source>
+        <source>Make Quad Association</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

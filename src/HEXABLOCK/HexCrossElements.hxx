@@ -36,15 +36,7 @@ enum { NO_CYL=-1, NO_PIPE=0, IS_HERE=1 };
 class CrossElements : public Elements
 {
 public:
-   virtual int countHexa   () { return nbr_hexas ; }
-   virtual int countQuad   () { return nbr_quads ; }
-   virtual int countEdge   () { return nbr_edges ; }
-   virtual int countVertex () { return nbr_vertex ; }
-
-public:
-   CrossElements (Document* doc, EnumGrid type=GR_BICYL);
-
-   virtual ~CrossElements () {}
+   CrossElements (Document* doc, EnumGrid type);
 
    Hexa*   getHexaIJK   (int part, int nx, int ny, int nz);
    Quad*   getQuadIJ    (int part, int nx, int ny, int nz);
@@ -55,11 +47,19 @@ public:
    Edge*   getEdgeK     (int part, int nx, int ny, int nz);
    Vertex* getVertexIJK (int part, int nx, int ny, int nz);
 
+#ifndef SWIG
+public :
+   virtual ~CrossElements () {}
                      // Tutaux en T (like castles in scotland)
    int  crossCylinders (Cylinder* cyl1, Cylinder* cyl2, bool fill=true);
    void dump ();
    void dumpVertex ();
    void dumpHexas  ();
+
+   virtual int countHexa   () { return nbr_hexas ; }
+   virtual int countQuad   () { return nbr_quads ; }
+   virtual int countEdge   () { return nbr_edges ; }
+   virtual int countVertex () { return nbr_vertex ; }
 
 private :
 
@@ -134,6 +134,7 @@ private :
     bool  at_right,  at_left;
     int   cyl_right, cyl_left;
     NewShape* grid_geom;
+#endif   // SWIG
 };
 END_NAMESPACE_HEXA
 #endif

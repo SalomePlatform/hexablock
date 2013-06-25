@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>156</width>
-    <height>101</height>
+    <width>219</width>
+    <height>124</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,19 +103,6 @@
       <item row="0" column="2">
        <widget class="QLineEdit" name="LineEdit1"/>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="PushButton1">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
@@ -131,7 +118,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>PushButton1</tabstop>
   <tabstop>LineEdit1</tabstop>
   <tabstop>SpinBox_DX</tabstop>
   <tabstop>SpinBox_DY</tabstop>

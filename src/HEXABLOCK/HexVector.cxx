@@ -105,5 +105,78 @@ double Vector::getAngleX ()
    double deg = acos(kos) * 180.0 / M_PI;
    return deg;
 }
+// ===================================================== getCoord
+double Vector::getCoord (int dir) 
+{
+   double val = 0;
+   switch (dir)
+          {
+          case dir_x : val = v_dx; 
+               break;
+          case dir_y : val = v_dy; 
+               break;
+          case dir_z : val = v_dz; 
+               break;
+          }
+   return val;
+}
+// ===================================================== renormer
+int Vector::renormer() 
+{
+   double dn = getNorm ();
+   if (dn < 1e-30) 
+      return HERR;
+
+   v_dx /= dn;
+   v_dy /= dn;
+   v_dz /= dn;
+
+   return HOK;
+}
+// ===================================================== vectoriel
+void Vector::vectoriel (Vector* a, Vector*b)
+{
+   v_dx =   a->v_dy * b->v_dz - b->v_dy * a->v_dz; 
+   v_dy =   a->v_dz * b->v_dx - b->v_dz * a->v_dx; 
+   v_dz =   a->v_dx * b->v_dy - b->v_dx * a->v_dy; 
+}
+
+// ===================================================== getCoord
+double* Vector::getCoord (double coord[])
+{
+   coord [dir_x] = v_dx;
+   coord [dir_y] = v_dy;
+   coord [dir_z] = v_dz;
+   return coord;
+}
+// ===================================================== getUnitVector
+int Vector::getUnitVector (double coord[])
+{
+   coord [dir_x] = v_dx;
+   coord [dir_y] = v_dy;
+   coord [dir_z] = v_dz;
+   int ier  = normer_vecteur (coord);
+   return ier;
+}
+// ===================================================== multiplier
+void Vector::multiplier (double scalaire)
+{
+   v_dx *= scalaire;
+   v_dy *= scalaire;
+   v_dz *= scalaire;
+}
+// ===================================================== dump
+void Vector::dump ()
+{
+   printf ("Vector ");
+   printName (" = ");
+   if (NOT isHere ())
+      {
+      printf ("(*** deleted ***)\n");
+      return;
+      }
+
+   printf ("(%g, %g, %g)\n", v_dx,v_dy,v_dz);
+}
 
 END_NAMESPACE_HEXA

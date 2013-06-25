@@ -1023,11 +1023,11 @@ Choisissez un(e) %2.</translation>
         <translation>Associer arêtes</translation>
     </message>
     <message>
-        <source>Make quadrangle association</source>
+        <source>Make quad association</source>
         <translation>Associer des quadrangles</translation>
     </message>
     <message>
-        <source>Make Quadrangle Association</source>
+        <source>Make Quad Association</source>
         <translation>Associer quadrangles</translation>
     </message>
     <message>

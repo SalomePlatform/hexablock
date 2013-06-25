@@ -60,6 +60,7 @@ Q_DECLARE_METATYPE( HEXA_NS::Pipe* );
 Q_DECLARE_METATYPE( HEXA_NS::Elements* );
 Q_DECLARE_METATYPE( HEXA_NS::CrossElements* );
 Q_DECLARE_METATYPE( HEXA_NS::NewShape* );
+Q_DECLARE_METATYPE( HEXA_NS::SubShape* );
 Q_DECLARE_METATYPE( HEXA_NS::VertexShape* );
 Q_DECLARE_METATYPE( HEXA_NS::EdgeShape* );
 Q_DECLARE_METATYPE( HEXA_NS::FaceShape* );
@@ -69,8 +70,6 @@ Q_DECLARE_METATYPE( HEXA_NS::Law* );
 Q_DECLARE_METATYPE( HEXA_NS::Propagation* );
 
 
-
-// Q_DECLARE_METATYPE( QList<HEXA_NS::Shape*> ); // association
 
 namespace HEXABLOCK
 {
@@ -173,10 +172,11 @@ namespace HEXABLOCK
     	int      type () const;
     	virtual bool     isAssoc() const;
     	virtual QString  IDptr() const;
+    	HEXA_NS::EltBase* getEltBase() const { return m_DocElt;}
 
       private:
         int                m_type;
-        HEXA_NS::EltBase*  m_DocElt; // Vertex and so.
+        HEXA_NS::EltBase*  m_DocElt;
     };
     //===================================================================================
 

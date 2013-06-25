@@ -80,7 +80,8 @@ void EltBase::remove ()
       return;
 
    el_root->setDeprecated (2);
-   el_type = EL_REMOVED;
+   el_type   = EL_REMOVED;
+   el_status = HERR;
    int nbp = el_parent.size();
    for (int nro=0 ; nro<nbp ; nro++)
        {
@@ -96,7 +97,8 @@ void EltBase::suppress ()
       return;
 
    el_root->setDeprecated (2);
-   el_type = EL_REMOVED;
+   el_type   = EL_REMOVED;
+   el_status = HERR;
 }
 // ========================================================= getName
 cpchar EltBase::getName  ()
@@ -163,9 +165,10 @@ void EltBase::setId (int ln)
 // ========================================================= makeVarName
 char* EltBase::makeVarName (char* nom)
 {
-   static cpchar PREFIX[]  = {"Undef", "Node",  "Edge",  "Quad",  "Hexa",
-                              "Vect",  "Grid",  "Cyl",  "Pipe", "Group", "Law",
-                              "Xxxx",  "Xxxx",  "Xxxx" };
+   static cpchar PREFIX [EL_MAXI] = {"undef", "ver",   "edge",  "quad",  "hexa",
+                                     "vect",  "grid",  "cyl",  "pipe", "group",
+                                     "law", "shape", "subsh", "prop",
+                                     "doc",  "Xxxx" };
    sprintf (nom, "%s%d", PREFIX[el_type], el_id);
    return   nom;
 }
@@ -173,6 +176,16 @@ char* EltBase::makeVarName (char* nom)
 bool EltBase::debug (int niv)
 {
    return el_root != NULL && el_root->getLevel() > niv ;
+}
+// ========================================================= getNextName
+string EltBase::getNextName ()
+{
+   if (el_root != NULL)
+      return el_root->getNextName (el_type);
+
+   char name [16];
+   makeName  (el_type, 0, name);
+   return string (name);
 }
 END_NAMESPACE_HEXA
 

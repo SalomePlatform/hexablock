@@ -151,6 +151,10 @@ echo
 CHECK_PYTHON
 
 AM_PATH_PYTHON(2.3)
+CHECK_SWIG
+
+
+AC_PYTHON_DEVEL
 
 echo
 echo ---------------------------------------------
@@ -242,7 +246,14 @@ echo
 
 CHECK_SALOME_GUI
 
+gui_ok=no
+if test "${SalomeGUI_need}" != "no" -a "${FullGUI_ok}" = "yes" ; then 
+  gui_ok=yes
+fi
 
+AM_CONDITIONAL(HEXABLOCK_ENABLE_GUI, [test "${gui_ok}" = "yes"])
+
+echo WITH GUI: ${gui_ok}
 
 echo
 echo ---------------------------------------------
@@ -251,21 +262,6 @@ echo ---------------------------------------------
 echo
 
 CHECK_GEOM
-
-
-echo
-echo ---------------------------------------------
-echo Testing full GUI
-echo ---------------------------------------------
-echo
-
-CHECK_CORBA_IN_GUI
-if test "x${CORBA_IN_GUI}" != "xyes"; then
-  echo "failed : For configure HEXABLOCK module necessary full GUI !"
-  exit
-fi
-
-
 
 
 echo
@@ -356,9 +352,8 @@ AC_OUTPUT([ \
   src/HEXABLOCKGUI/resources/HEXABLOCKCatalog.xml \
   src/HEXABLOCKGUI/resources/SalomeApp.xml \
   src/HEXABLOCK/Makefile \
-  src/HEXABLOCK_I/Makefile \
+  src/HEXABLOCK_SWIG/Makefile \
   src/TEST_CPP/Makefile \
   src/TEST_PY/Makefile \
-  idl/Makefile \
   Makefile \
 ])

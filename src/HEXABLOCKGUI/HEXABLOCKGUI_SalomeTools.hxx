@@ -25,19 +25,15 @@
 #include <SALOME_Actor.h>
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
-
-
-#include "GEOM_Client.hxx"
-// #include "GEOMBase_Helper.h"
-#include "GEOM_Displayer.h"
-
-
-
-#include <TopoDS_Shape.hxx>
+#include <Handle_AIS_InteractiveObject.hxx>
+#include <Handle_AIS_InteractiveContext.hxx>
+#include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SALOME_Actor.h>
 #include <SVTK_ViewWindow.h>
 
-
+#include <gp_Pnt.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
 
 namespace HEXABLOCK
 {
@@ -57,31 +53,39 @@ namespace HEXABLOCK
 
   std::string shape2string( const TopoDS_Shape& aShape );
 
+  void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
+                               const Handle(AIS_InteractiveContext)& theIC,
+                               SelectMgr_IndexedMapOfOwner& theMap );
 
-  
-  class MyGEOM_Displayer : public GEOM_Displayer
-  {
-    public:
-      MyGEOM_Displayer( SalomeApp_Study* app );
-      virtual ~MyGEOM_Displayer();
+  void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
+                               const TopoDS_Shape& aMainShape,
+                               const SelectMgr_IndexedMapOfOwner& anAllMap,
+                               SelectMgr_IndexedMapOfOwner& aToHiliteMap );
 
+  TopoDS_Shape getSubShape(const TopoDS_Shape& theShape, const int theIndex);
+  int getSubId(const TopoDS_Shape& theShape, const TopoDS_Shape& theSubShape);
 
-    SALOME_Prs* BuildPrs( GEOM::GEOM_Object_ptr theObj );
+  Standard_Boolean getExtremaSolution(const gp_Pnt& theInitPnt,
+  									  const TopoDS_Shape& theRefShape,
+  									  gp_Pnt& thePnt);
 
-//   int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
-//   getDisplayer()->SetToActivate( activate );
-//   getDisplayer()->SetName( objStr.in() );
-//   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( object );
+  TopoDS_Vertex makePoint(const double x, const double y, const double z);
 
+  TopoDS_Vertex makePointWithReference(const TopoDS_Shape& point, const double dx,
+                                                           const double dy,
+                                                           const double dz);
 
+  TopoDS_Vertex makePointOnCurve(const TopoDS_Shape& edge, const double param);
 
+  TopoDS_Vertex makePointOnCurveByLength(const TopoDS_Shape& edge, const TopoDS_Shape& point, const double length);
 
-  };
+  TopoDS_Vertex makePointOnCurveByCoord(const TopoDS_Shape& edge, const double x, const double y, const double z);
 
+  TopoDS_Vertex makePointOnLinesIntersection(const TopoDS_Shape& line1, const TopoDS_Shape& line2);
 
+  TopoDS_Vertex makePointOnSurface(const TopoDS_Shape& face, const double param_u, const double param_v);
 
-
-
+  TopoDS_Vertex makePointOnSurfaceByCoord(const TopoDS_Shape& face, const double x, const double y, const double z);
 
   }
 }

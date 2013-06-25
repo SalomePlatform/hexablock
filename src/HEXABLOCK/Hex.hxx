@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 //
 
 #ifndef __HEX_H
@@ -26,6 +27,9 @@
 #include "hexa_base.hxx"
 
 BEGIN_NAMESPACE_HEXA
+
+class Hex;
+Hex*  hex_instance ();
 
 class Hex
 {
@@ -41,7 +45,11 @@ public:
    Document* findDocument (cpchar name);
    Document* findDocument (const string& name) 
              { return findDocument (name.c_str()) ; }
+   void what ();
+   int    sizeofMessage  ();
+   cpchar getMessageLine (int nlig);
 
+#ifndef SWIG
    int loadAllDocs (cpchar flow);
    int saveAllDocs (cpchar filename);
    void makeName   (cpchar radical, string& name);
@@ -58,7 +66,10 @@ private:
    static Hex* first_instance;
    vector <Document*> liste_documents;
    Globale*    glob;
+#endif    // not SWIG
 };
+
+void what ();
 
 END_NAMESPACE_HEXA
 #endif

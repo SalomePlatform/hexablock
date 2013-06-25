@@ -1,0 +1,33 @@
+
+# ================================================== create_test
+create_test()
+{
+cat << END_PGM
+// C++ : appel de $test_u
+
+int $test_u (int nbargs, const char* tabargs []);
+
+// ================================ main
+int main (int nbargs, const char* tabargs [])
+{
+   int ier = $test_u (nbargs, tabargs);
+   return ier;
+}
+
+END_PGM
+}
+# ================================================== Begin
+
+test_u=test_hexa
+if ( [ -n "$1" ] ) then
+   test_u=$1
+   fi
+
+echo 
+echo  " ... Generation du fichier $test_u.cpp"
+echo 
+
+rm -rf work/$test_u.cpp
+create_test > work/$test_u.cpp
+
+

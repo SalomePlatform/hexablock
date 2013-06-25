@@ -26,7 +26,6 @@
 
 #include "HexXmlWriter.hxx"
 #include "HexDocument.hxx"
-#include "HexOldShape.hxx"
 #include "HexNewShape.hxx"
 #include "HexVertexShape.hxx"
 #include "HexKas_functions.hxx"
@@ -46,6 +45,34 @@ Vertex::Vertex  (Document* doc, double x, double y, double z)
    v_shape  = NULL;
    v_scalar = 0;
    v_clone  = NULL;
+
+   if (el_root != NULL)
+       el_root->addVertex (this);
+}
+// ========================================================= Constructeur bis
+Vertex::Vertex (Vertex* other)
+      : EltBase (other->dad(), EL_VERTEX)
+{
+   if (other!= NULL)
+      {
+      v_x = other->v_x;
+      v_y = other->v_y;
+      v_z = other->v_z;
+      v_scalar = other->v_scalar;
+      gc_x   = other->gc_x;
+      gc_y   = other->gc_y;
+      gc_z   = other->gc_z;
+      v_clone  = NULL;
+      v_shape  = other->v_shape;
+      }
+   else
+      {
+      v_x  = v_y  = v_z  = 0;
+      gc_x = gc_y = gc_z = 0;
+      v_scalar = 0;
+      v_shape  = NULL;
+      v_clone  = NULL;
+      }
 }
 // ========================================================= getParent
 Edge* Vertex::getParent  (int nro)
@@ -166,5 +193,79 @@ void Vertex::getAssoCoord (double &px, double &py, double &pz)
 void Vertex::getAssoCoord (double* point)
 {
    getAssoCoord (point[dir_x], point[dir_y], point[dir_z]);
+}
+// ===================================================== getCoord
+double Vertex::getCoord (int dir)
+{
+   double val = 0;
+   switch (dir)
+          {
+          case dir_x : val = v_x;
+               break;
+          case dir_y : val = v_y;
+               break;
+          case dir_z : val = v_z;
+               break;
+          }
+   return val;
+}
+// ========================================================= dump
+void Vertex::dump ()
+{
+   printName (" = ");
+   if (NOT isHere ())
+      {
+      printf ("(*** deleted ***)\n");
+      return;
+      }
+
+   printf ("(%g, %g, %g)", v_x,v_y,v_z);
+   dumpRef ();
+}
+// ========================================================= setCoord
+void Vertex::setCoord (double x, double y, double z)
+{
+   v_x = x;
+   v_y = y;
+   v_z = z;
+}
+// ========================================================= isin
+bool Vertex::isin  (double xmin, double xmax, double ymin, double ymax,
+                                             double zmin, double zmax)
+{
+   bool   rep =   v_x >= xmin && v_x <= xmax
+               && v_y >= ymin && v_y <= ymax
+               && v_z >= zmin && v_z <= zmax;
+   return rep;
+}
+// ========================================================= getPoint
+double* Vertex::getPoint (double point[])
+{
+   point [dir_x] = v_x;
+   point [dir_y] = v_y;
+   point [dir_z] = v_z;
+   return point;
+}
+// ========================================================= duplicate
+void Vertex::duplicate (Document* cible)
+{
+   v_clone = new Vertex (cible, v_x, v_y, v_z);
+   v_clone->v_scalar = v_scalar;
+}
+// ========================================================= definedBy
+bool Vertex::definedBy (double px, double py, double pz, double eps2)
+{
+   double dist2 = carre (v_x-px) + carre (v_y-py) + carre (v_z-pz);
+   return dist2 < eps2;
+}
+// ========================================================= dist2
+double Vertex::dist2 (Vertex* other)
+{
+   if (BadElement (other))
+      return 1e+77;
+
+   double dist = carre (v_x-other->v_x) + carre (v_y-other->v_y) 
+                                        + carre (v_z-other->v_z);
+   return dist;
 }
 END_NAMESPACE_HEXA

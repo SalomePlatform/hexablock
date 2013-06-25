@@ -35,6 +35,7 @@
 #include "HexAnaQuads.hxx"
 #include "HexElements.hxx"
 #include "HexCramer.hxx"
+#include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -80,153 +81,11 @@ Document* Document::copyDocument ()
 
    return clone;
 }
-// ----------------------------------------------------------------------------
-// ======================================================== countUsedHexa
-int Document::countUsedHexa ()
-{
-   if (count_modified)
-       renumeroter ();
-
-   return nbr_used_hexas;
-}
-// ======================================================== countUsedQuad
-int Document::countUsedQuad ()
-{
-   if (count_modified)
-       renumeroter ();
-
-   return nbr_used_quads;
-}
-// ======================================================== countUsedEdge
-int Document::countUsedEdge ()
-{
-   if (count_modified)
-       renumeroter ();
-
-   return nbr_used_edges;
-}
-// ======================================================== countUsedVertex
-int Document::countUsedVertex ()
-{
-   if (count_modified)
-       renumeroter ();
-
-   return nbr_used_vertex;
-}
-
-// ======================================================== getUsedHexa
-Hexa* Document::getUsedHexa (int nro)
-{
-   if (count_modified)
-       renumeroter ();
-
-   if (nro<0 || nro >= nbr_used_hexas)
-      return NULL;
-
-   return doc_used_hexas [nro];
-}
-// ======================================================== getUsedQuad
-Quad* Document::getUsedQuad (int nro)
-{
-   if (count_modified)
-       renumeroter ();
-
-   if (nro<0 || nro >= nbr_used_quads)
-      return NULL;
-
-   return doc_used_quads [nro];
-}
-// ======================================================== getUsedEdge
-Edge* Document::getUsedEdge (int nro)
-{
-   if (count_modified)
-       renumeroter ();
-
-   if (nro<0 || nro >= nbr_used_edges)
-      return NULL;
-
-   return doc_used_edges [nro];
-}
-// ======================================================== getUsedVertex
-Vertex* Document::getUsedVertex (int nro)
-{
-   if (count_modified)
-       renumeroter ();
-
-   if (nro<0 || nro >= nbr_used_vertex)
-      return NULL;
-
-   return doc_used_vertex [nro];
-}
-// ======================================================== renumeroter
-void Document::renumeroter ()
-{
-   count_modified = false;
-                                       // -- 1) Raz numerotation precedente
-   markAll (NO_COUNTED);
-
-   doc_used_hexas .clear ();
-   doc_used_quads .clear ();
-   doc_used_edges .clear ();
-   doc_used_vertex.clear ();
-
-   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
-                 elt = elt->next())
-       {
-       if (elt!=NULL && elt->isHere())
-          {
-          Hexa* cell = static_cast <Hexa*> (elt);
-          doc_used_hexas.push_back (cell);
-          for (int nb=0 ; nb<HQ_MAXI ; nb++)
-              cell->getQuad (nb)->setMark (IS_USED);
-
-          for (int nb=0 ; nb<HE_MAXI ; nb++)
-              cell->getEdge (nb)->setMark (IS_USED);
-
-          for (int nb=0 ; nb<HV_MAXI ; nb++)
-              cell->getVertex (nb)->setMark (IS_USED);
-          }
-       }
-
-   for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
-                 elt = elt->next())
-       {
-       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
-          {
-          Quad* cell = static_cast <Quad*> (elt);
-          doc_used_quads.push_back (cell);
-          }
-       }
-
-   for (EltBase* elt = doc_first_elt[EL_EDGE]->next (); elt!=NULL;
-                 elt = elt->next())
-       {
-       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
-          {
-          Edge* cell = static_cast <Edge*> (elt);
-          doc_used_edges.push_back (cell);
-          }
-       }
-
-   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
-                 elt = elt->next())
-       {
-       if (elt!=NULL && elt->isHere() && elt->getMark()==IS_USED)
-          {
-          Vertex* cell = static_cast <Vertex*> (elt);
-          doc_used_vertex.push_back (cell);
-          }
-       }
-
-   nbr_used_hexas  = doc_used_hexas .size ();
-   nbr_used_quads  = doc_used_quads .size ();
-   nbr_used_edges  = doc_used_edges .size ();
-   nbr_used_vertex = doc_used_vertex .size ();
-}
 // ---------------------------------------------------------------
 // ============================================================== addHexa2quads
 Hexa* Document::addHexa2Quads (Quad* q1, Quad* q2)
 {
+   DumpStart ("addHexa2Quads", q1 << q2);
    AnaQuads ana_quads (q1, q2);
 
    Hexa* hexa = NULL;
@@ -239,11 +98,13 @@ Hexa* Document::addHexa2Quads (Quad* q1, Quad* q2)
    else if (ana_quads.nbr_aretes == 1)
       hexa = addHexaQuadsAC (ana_quads);
 
+   DumpReturn (hexa);
    return hexa;
 }
 // ============================================================= addHexa3quads
 Hexa* Document::addHexa3Quads (Quad* q1, Quad* q2, Quad* q3)
 {
+   DumpStart ("addHexa3Quads", q1 << q2 << q3);
    AnaQuads ana_quads (q1, q2, q3);
 
    Hexa* hexa = NULL;
@@ -256,11 +117,13 @@ Hexa* Document::addHexa3Quads (Quad* q1, Quad* q2, Quad* q3)
    else if (ana_quads.nbr_aretes == 3)
       hexa = addHexaQuadsACE (ana_quads);
 
+   DumpReturn (hexa);
    return hexa;
 }
 // ============================================================= addHexa4quads
 Hexa* Document::addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4)
 {
+   DumpStart ("addHexa4Quads", q1 << q2 << q3 << q4);
    AnaQuads ana_quads (q1, q2, q3, q4);
 
    Hexa* hexa = NULL;
@@ -273,11 +136,13 @@ Hexa* Document::addHexa4Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4)
    else if (ana_quads.nbr_aretes == 5)
       hexa = addHexaQuadsACDE (ana_quads);
 
+   DumpReturn (hexa);
    return hexa;
 }
 // ============================================================== addHexa5quads
 Hexa* Document::addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5)
 {
+   DumpStart ("addHexa5Quads", q1 << q2 << q3 << q4 << q5);
    AnaQuads ana_quads (q1, q2, q3, q4, q5);
    if (ana_quads.status != HOK)
       return NULL;
@@ -307,6 +172,8 @@ Hexa* Document::addHexa5Quads (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5)
    Quad*  q_a  = ana_quads.tab_quads[qbase];
    Quad*  q_b  = new Quad (tedge[0], tedge[1], tedge[2], tedge[3]);
    Hexa*  hexa = new Hexa (q_a, q_b, tquad[0], tquad[2], tquad[1], tquad[3]);
+
+   DumpReturn (hexa);
    return hexa;
 }
 // ---------------------------------------------------------------
@@ -724,39 +591,22 @@ Hexa* Document::addHexaQuadsACDE (AnaQuads& strquads)
    Hexa*  hexa = new Hexa (q_a, q_b, q_c, q_d, q_e, q_f);
    return hexa;
 }
-// ======================================================== revolutionQuads
-Elements* Document::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                                     RealVector &angles)
-{
-   if (center==NULL)     return NULL;
-   if (axis  ==NULL)     return NULL;
-   if (angles.size()==0) return NULL;
-   if (start .size()==0) return NULL;
-
-   Elements*  prisme = new Elements (this);
-   prisme->revolutionQuads (start, center, axis, angles);
-   return prisme;
-}
-// ======================================================== makeCylindricals
-Elements* Document::makeCylindricals (Vertex* c, Vector* b, Vector* h, 
-                 RealVector& tdr, RealVector& tda, RealVector& tdl, bool fill)
-{
-   Elements* grille = new Elements (this);
-   grille->makeCylindricalGrid (c, b, h, tdr, tda, tdl, fill);
-   return grille;
-}
 // ========================================================= replace
-Elements* Document::replace (Quads& pattern, Vertex* p1, Vertex* c1, 
+Elements* Document::replace (Quads pattern, Vertex* p1, Vertex* c1, 
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
 {
+   DumpStart ("replace", pattern << p1 << c1 << p2 << c2 << p3 << c3);
+
    Elements* t_hexas = new Elements (this);
    int ier = t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
    if (ier!=HOK)
       {
-      cout << " **** Error in Document::replace\n" << endl;
+      Mess << " **** Error in Document::replace" ;
       t_hexas->setError (ier);
       }
-   return    t_hexas;
+
+   DumpReturn (t_hexas);
+   return      t_hexas;
 }
 // ========================================================= print_replace
 void print_replace (Edge* zig, Edge*  zag)
@@ -808,13 +658,19 @@ void replace_vertex (Hexas& thexas, Vertex* node,  Vertex* par)
        thexas[nh]->replaceVertex (node, par);
 }
 // ========================================================= disconnectEdges
-Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
+Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
 {
-   int nbedges = tedges.size();
-   int nbhexas = thexas.size();
-
+   DumpStart ("disconnectEdges",  thexas << tedges);
+   
    if (db)
       cout << " +++ Disconnect Edges" << endl;
+
+   Elements* grid  = new Elements (this);
+
+   grid->checkDisco (thexas, tedges);
+
+   int nbedges = tedges.size();
+   int nbhexas = thexas.size();
 
    if (nbhexas != nbedges) 
       {
@@ -825,8 +681,9 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
       }
    else if (nbhexas==1)
       {
-      Elements* grille = disconnectEdge (thexas[0], tedges[0]);
-      return    grille;
+      update ();
+      thexas[0]->disconnectEdge (tedges[0], grid);
+      return    grid;
       }
 
    for (int nro=0 ; nro<nbedges ; nro++)
@@ -906,14 +763,13 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
 
 #define VertexIsNew(v) (it_vertex=new_vertex.find(v))!=new_vertex.end()
 
-   Elements* nouveaux  = new Elements (this);
    Vertex*   node1     = NULL;
 
    for (int nro=0 ; nro<=nbedges ; nro++)
        {
        Vertex* node0 = node1;
        node1 = new Vertex (tvertex[nro]);
-       nouveaux->addVertex  (node1);
+       grid->addVertex  (node1);
        new_vertex [tvertex[nro]] = node1;
        if (db)
           {
@@ -924,7 +780,7 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
        if (nro>0)
           {
           Edge* edge = new Edge (node0, node1);
-          nouveaux->addEdge  (edge);
+          grid->addEdge  (edge);
           new_edge   [tedges[nro-1]] = edge;
           state_edge [tedges[nro-1]] = REPLACED;
           if (db)
@@ -977,7 +833,7 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
                  {
                  Edge* arete = new Edge (v1, v2);
                  new_edge   [edge] = arete;
-                 nouveaux->addEdge  (arete);
+                 grid->addEdge  (arete);
                  if (db)
                     print_replace (edge, arete);
                  }
@@ -1015,7 +871,7 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
                  {
                  Quad* face = new Quad (ted[0], ted[1], ted[2], ted[3]);
                  new_quad   [quad] = face;
-                 nouveaux->addQuad  (face);
+                 grid->addQuad  (face);
                  }
               state_quad [quad] = etat;
               }
@@ -1073,12 +929,13 @@ Elements* Document::disconnectEdges (Hexas& thexas, Edges&  tedges)
               center1[nc] = (center0[nc] + center1[nc])/2;
           }
 
-       Vertex* node  = nouveaux->getVertex (nro);
+       Vertex* node  = grid->getVertex (nro);
        matrix.defScale (center1, 0.55);
        matrix.perform  (node);
        }
 
-   return nouveaux;
+   DumpReturn (grid);
+   return      grid;
 }
 // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

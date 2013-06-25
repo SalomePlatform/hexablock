@@ -30,7 +30,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Matrix 
+class Matrix
 {
 public:
     Matrix ();
@@ -38,12 +38,17 @@ public:
     int defTranslation   (double* depl);
     int defScale         (Vertex* center, double scale);
     int defScale         (double* center, double scale);
-    int defRotation      (Vertex* center, Vector* depl, double degres);
+    int defRotation      (Vertex* center, Vector* axe, double degres);
+    int defRotation      (Vertex* center, double* axe, double degres);
     int defSymmetryPoint (Vertex* center);
     int defSymmetryLine  (Vertex* center, Vector* dir);
     int defSymmetryPlane (Vertex* center, Vector* normale);
 
-    int perform (Vertex* noeud);
+    void define (double* orig, double* iprim, double* jprim, double* kprim);
+
+    void perform (Vertex* noeud);
+    void perform (double* point);
+    void perform (double* point, double* result);
 
     void getCoeff (double& a11, double& a12, double& a13, double& a14,
                    double& a21, double& a22, double& a23, double& a24,
@@ -70,7 +75,7 @@ inline void Matrix::erase ()
    mat11 = mat22 = mat33 = 1.0;
 }
 // ========================================================= perform
-inline int Matrix::perform (Vertex* noeud)
+inline void Matrix::perform (Vertex* noeud)
 {
    double px, py, pz;
    px = mat11*noeud->getX()+mat12*noeud->getY()+mat13*noeud->getZ()+mat14;
@@ -78,7 +83,6 @@ inline int Matrix::perform (Vertex* noeud)
    pz = mat31*noeud->getX()+mat32*noeud->getY()+mat33*noeud->getZ()+mat34;
 
    noeud->setCoord (px, py, pz);
-   return HOK;
 }
 // ========================================================= defTranslation
 inline int Matrix::defTranslation (Vector* boulevard)
@@ -129,17 +133,19 @@ inline int Matrix::defScale (Vertex* center, double scale)
    return ier;
 }
 // ========================================================= defRotation
-inline int Matrix::defRotation (Vertex* center, Vector* dir, double degres)
+inline int Matrix::defRotation (Vertex* center, double* axe, double degres)
 {
    erase();
-
-   double normed = dir->getNorm ();
-   if (normed< 1e-30)
+   if (BadElement (center))
       return HERR;
 
-   double ux = dir->getDx () / normed;
-   double uy = dir->getDy () / normed;
-   double uz = dir->getDz () / normed;
+   double norme = calc_norme (axe);
+   if (norme< 1e-30)
+      return HERR;
+
+   double ux = axe [dir_x] / norme;
+   double uy = axe [dir_y] / norme;
+   double uz = axe [dir_z] / norme;
 
    double cx = center->getX ();
    double cy = center->getY ();
@@ -166,6 +172,17 @@ inline int Matrix::defRotation (Vertex* center, Vector* dir, double degres)
 
    return HOK;
 }
+// ========================================================= defRotation
+inline int Matrix::defRotation (Vertex* center, Vector* dir, double degres)
+{
+   if (BadElement (dir))
+      return HERR;
+
+   Real3 axe;
+   dir->getCoord (axe);
+   int ier = defRotation (center, axe, degres);
+   return ier;
+}
 // ========================================================= defSymmetryPoint
 inline int Matrix::defSymmetryPoint (Vertex* center)
 {
@@ -183,11 +200,11 @@ inline int Matrix::defSymmetryPoint (Vertex* center)
 //     MH.d = 0        (1)
 //     CH  = lambda*d  (2)
 //     MM' = 2MH       (3)
-// 
+//
 // (1) et (2) => lambda = ((x-xc)*xd + (y-yc)*yd + (z-zc)*zd) / norme(d)
 //
 //     MM' = 2MH (3)
-// <=> MO + OM' =  2 (MO + OC + CH) 
+// <=> MO + OM' =  2 (MO + OC + CH)
 // <=>      OM' =  MO + 2.OC + 2.CH
 // <=>      OM' = -OM + 2.OC + 2.lambda.d   (2) et (3)
 //
@@ -232,7 +249,7 @@ inline int Matrix::defSymmetryLine (Vertex* center, Vector* dir)
 //     CH.n = 0         (1)
 //     MH   = lambda*n  (2)
 //     MM'  = 2MH       (3)
-// 
+//
 // (1) et (2) => lambda = ((x-xc)*xn + (y-yc)*yn + (z-zc)*zn) / norme(n)
 //
 //     MM' = 2MH (3)
@@ -280,6 +297,26 @@ inline int Matrix::defSymmetryPlane (Vertex* center, Vector* normale)
 
    return HOK;
 }
+// ========================================================= define
+inline void Matrix::define (double* omega, double* iprim, double* jprim, 
+                                                          double* kprim)
+{
+   mat11 = iprim [dir_x];
+   mat21 = iprim [dir_y];
+   mat31 = iprim [dir_z];
+
+   mat12 = jprim [dir_x];
+   mat22 = jprim [dir_y];
+   mat32 = jprim [dir_z];
+
+   mat13 = kprim [dir_x];
+   mat23 = kprim [dir_y];
+   mat33 = kprim [dir_z];
+
+   mat14 = omega [dir_x];
+   mat24 = omega [dir_y];
+   mat34 = omega [dir_z];
+}
 // ========================================================= getCoeff
 inline void Matrix::getCoeff(double& a11, double& a12, double& a13, double& a14,
                              double& a21, double& a22, double& a23, double& a24,
@@ -299,6 +336,28 @@ inline void Matrix::getCoeff(double& a11, double& a12, double& a13, double& a14,
    a32 = mat32;
    a33 = mat33;
    a34 = mat34;
+}
+// ========================================================= perform
+inline void Matrix::perform (double* point)
+{
+   double px = point [dir_x];
+   double py = point [dir_y];
+   double pz = point [dir_z];
+
+   point [dir_x] = mat11*px + mat12*py + mat13*pz + mat14;
+   point [dir_y] = mat21*px + mat22*py + mat23*pz + mat24;
+   point [dir_z] = mat31*px + mat32*py + mat33*pz + mat34;
+}
+// ========================================================= perform
+inline void Matrix::perform (double* point, double* result)
+{
+   double px = point [dir_x];
+   double py = point [dir_y];
+   double pz = point [dir_z];
+
+   result [dir_x] = mat11*px + mat12*py + mat13*pz + mat14;
+   result [dir_y] = mat21*px + mat22*py + mat23*pz + mat24;
+   result [dir_z] = mat31*px + mat32*py + mat33*pz + mat34;
 }
 END_NAMESPACE_HEXA
 #endif

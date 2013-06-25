@@ -29,16 +29,11 @@
 #include "HexEdge.hxx"
 
 #include "HexGlobale.hxx"
-#include "HexCylinder.hxx"
-#include "HexOldShape.hxx"
+#include "HexNewShape.hxx"
 
 #include <map>
 
 BEGIN_NAMESPACE_HEXA
-
-void geom_dump_asso     (Edge* edge);
-void geom_create_circle (double* milieu, double rayon, double* normale,
-                         double* base, string& brep);
 
 // ====================================================== getHexaIJK
 Hexa* Elements::getHexaIJK (int nx, int ny, int nz)
@@ -227,181 +222,23 @@ void Elements::remove ()
        if (tab_hexa[nh] != NULL)
            tab_hexa[nh]->remove();
 }
-// ====================================================== makeCylinder
-int Elements::makeCylinder (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
-{
-   if (BadElement (cyl) || BadElement (vx) ||  nr<=0 || na <=3 || nl <=0
-                        || vx->getNorm () <= Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-
-   Vertex* orig = cyl->getBase ();
-   Vector* dir  = cyl->getDirection ();
-   double  ray  = cyl->getRadius ();
-   double  haut = cyl->getHeight ();
-
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray/(nr+1), 360, haut/nl,
-                         nr, na, nl, true);
-   fillGrid ();
-   assoCylinder (orig, dir, 360);
-   return HOK;
-}
-// ====================================================== makePipe
-int Elements::makePipe (Cylinder* cyl, Vector* vx, int nr, int na, int nl)
-{
-   if (BadElement (cyl) || BadElement (vx) ||  nr<=0 || na <=3 || nl <=0
-                        || vx->getNorm () <= Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-
-   Vertex* orig = cyl->getBase ();
-   Vector* dir  = cyl->getDirection ();
-   double  ray  = cyl->getRadius ();
-   double  haut = cyl->getHeight ();
-
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = true;
-   makeCylindricalNodes (orig, vx, dir, ray, 360, haut, nr, na, nl, false);
-   fillGrid ();
-   assoCylinder (orig, dir, 360);
-   return HOK;
-}
-//
-// ---------------------------------------- prism Quads
-//
-// ====================================================== prismQuads
-int Elements::prismQuads (Quads& tstart, Vector* dir, int nbiter)
-{
-   if (BadElement (dir) || dir->getNorm () <= Epsil || nbiter <= 0)
-      {
-      setError ();
-      return HERR;
-      }
-
-   el_root->markAll (NO_USED);
-   int nbcells   = tstart.size ();
-   nbr_vertex    = 0;
-   nbr_edges     = 0;
-
-   nbr_hexas = nbcells*nbiter;
-
-   tab_hexa.resize (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   ker_hquad.clear ();         // Horizontaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   revo_lution = false;
-   prism_vec   = false;
-   gen_matrix.defTranslation (dir);
-
-   for (int nro=0 ; nro<nbcells ; nro++)
-       {
-       prismHexas (nro, tstart[nro], nbiter);
-       }
-
-   endPrism ();
-   return HOK;
-}
-// ====================================================== prismQuadsVec
-int Elements::prismQuadsVec (Quads& tstart, Vector* dir, RealVector& tlen,
-                             int mode)
-{
-   int nbiter = tlen.size();
-   if (BadElement (dir) || dir->getNorm () <= Epsil || nbiter <= 0)
-      {
-      setError ();
-      return HERR;
-      }
-
-   el_root->markAll (NO_USED);
-   int nbcells   = tstart.size ();
-   nbr_vertex    = 0;
-   nbr_edges     = 0;
-
-   nbr_hexas = nbcells*nbiter;
-
-   tab_hexa.resize (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   ker_hquad.clear ();         // Horizontaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   revo_lution = false;
-   prism_vec   = true;
-   dir->getCoord  (prism_dir);
-   normer_vecteur (prism_dir);
-   gen_values = tlen;
-
-   for (int nro=0 ; nro<nbcells ; nro++)
-       {
-       prismHexas (nro, tstart[nro], nbiter);
-       }
-
-   endPrism ();
-   return HOK;
-}
-// ======================================================== revolutionQuads
-int Elements::revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                               RealVector &angles)
-{
-   int nbiter  = angles.size();
-   int nbcells = start.size ();
-   if (BadElement (center)  || BadElement(axis) || nbiter==0 || nbcells==0
-                            || axis->getNorm () <= Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-
-   el_root->markAll (NO_USED);
-   nbr_vertex    = 0;
-   nbr_edges     = 0;
-
-   nbr_hexas   = nbcells*nbiter;
-
-   tab_hexa.resize (nbr_hexas);
-   tab_quad.clear ();          // verticaux
-   ker_hquad.clear ();         // Horizontaux
-   tab_edge.clear ();
-   tab_pilier.clear ();
-   tab_vertex.clear ();
-
-   revo_lution  = true;
-   prism_vec    = false;
-   revo_axis    = axis;
-   revo_center  = center;
-   gen_values = angles;
-
-   for (int nro=0 ; nro<nbcells ; nro++)
-       {
-       prismHexas (nro, start[nro], nbiter);
-       }
-
-   endPrism ();
-   return HOK;
-}
 // ====================================================== prismHexas
 int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
 {
-   int ind_node [QUAD4];
-   string c_rep;
+   int   ind_node [QUAD4];
+   int   subid = 0;
+   Real3 koord, transfo;
 
            // ----------------------------- Vertex + aretes verticales
    for (int ns=0 ; ns<QUAD4 ; ns++)
        {
-       Vertex* vbase = qbase ->getVertex (ns);
+       Vertex* vbase = qbase->getVertex (ns);
        int     indx  = vbase->getMark ();
        if (indx<0)
           {
+          bool asso = vbase->isAssociated();
+          vbase->getAssoCoord (koord);
+
           indx = nbr_vertex++;
           vbase->setMark (indx);
           Vertex* nd0 = vbase;
@@ -409,33 +246,21 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
           double beta = 0;
           if (revo_lution)
              {
-             Real3 centre, vk, point, om;
+             Real3 centre, point, om;
              revo_center->getPoint (centre);
              vbase      ->getPoint (point);
-             revo_axis  ->getCoord (vk);
-             normer_vecteur (vk);
 
-             calc_vecteur   (centre, point, om);
-             double oh     = prod_scalaire (om, vk);
-             double rayon  = 0;
+             calc_vecteur  (centre, point, om);
+             double oh    = prod_scalaire (om, revo_axe);
+             double rayon = 0;
              Real3  ph, hm;
              for (int dd=dir_x; dd<=dir_z ; dd++)
                  {
-                 ph [dd] = centre [dd] + oh*vk[dd];
+                 ph [dd] = centre [dd] + oh*revo_axe[dd];
                  hm [dd] = point  [dd] - ph[dd];
                  rayon  += hm[dd] * hm[dd];
                  }
-             rayon = sqrt (rayon);
-/********************************
-             PutCoord (centre);
-             PutCoord (point);
-             PutData  (oh);
-             PutCoord (ph);
-             PutData  (rayon);
-             PutCoord (vk);
-             PutCoord (hm);
-********************************/
-             geom_create_circle (ph, rayon, vk, hm, c_rep);
+             subid = grid_geom->addCircle (ph, sqrt(rayon), revo_axe, hm);
              }
 
           for (int nh=0 ; nh<hauteur ; nh++)
@@ -450,10 +275,12 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
                  {
                  double alpha = beta;
                  beta = alpha + gen_values[nh];
-                 Shape* shape = new Shape (c_rep);
-                 shape->setBounds (alpha/360, beta/360);
-                 pilier->addAssociation (shape);
-                 //      geom_dump_asso (pilier);
+                 grid_geom->addAssociation (pilier, subid, alpha/360, beta/360);
+                 }
+              if (asso)
+                 {
+                 cum_matrix.perform  (koord, transfo);
+                 nd1->setAssociation (transfo);
                  }
               nd0 = nd1;
               }
@@ -486,7 +313,8 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
               Quad* mur = newQuad (ed0, ed1, ed2, ed3);
               tab_edge.push_back (ed0);
               tab_quad.push_back (mur);
-              prismAssociation (ed2, ed0, nh, ed1);
+              if (ebase->isAssociated ())
+                  prismAssociation (ebase, ed0, nh);
               }
           }
        ind_poutre [ns] = indx;
@@ -516,25 +344,46 @@ int  Elements::prismHexas (int nro, Quad* qbase, int hauteur)
    return HOK;
 }
 // ====================================================== updateMatrix
-void Elements::updateMatrix (int hauteur)
+void Elements::updateMatrix (int nh)
 {
    if (revo_lution)
       {
-      gen_matrix.defRotation (revo_center, revo_axis, gen_values[hauteur]);
+      gen_matrix.defRotation (revo_center, revo_axe, gen_values[nh]);
+      cum_matrix.defRotation (revo_center, revo_axe, cum_values[nh]);
       }
-   else if (prism_vec)
+   else
       {
-      double h0 = hauteur>0 ?  gen_values[hauteur-1] : 0;
-      double dh = gen_values[hauteur] - h0;
-      Real3 decal;
+      double hauteur = (nh+1)*prism_len;
+      double dh      = prism_len;
+      if (prism_vec)
+         {
+         if (under_v6)
+            {
+            hauteur = gen_values[nh];
+            dh      = nh>0 ? hauteur-gen_values[nh-1] : hauteur;
+            }
+         else
+            {
+            hauteur = cum_values[nh];
+            dh      = gen_values[nh];
+            }
+         }
+      Real3 trans, decal;
       for (int nc=dir_x ; nc<=dir_z ; nc++)
+          {
           decal [nc] = prism_dir [nc]*dh;
+          trans [nc] = prism_dir [nc]*hauteur;
+          }
+
       gen_matrix.defTranslation (decal);
+      cum_matrix.defTranslation (trans);
       }
 }
 // ====================================================== endPrism
 void Elements::endPrism ()
 {
+   closeShape();
+
    int nbelts = ker_hquad.size();
    for (int nro=0 ; nro<nbelts ; nro++)
        tab_quad.push_back (ker_hquad[nro]);
@@ -548,5 +397,26 @@ void Elements::endPrism ()
    nbr_edges  = tab_edge.size ();
    nbr_quads  = tab_quad.size ();
    nbr_vertex = tab_vertex.size ();
+}
+// ====================================================== getShape
+NewShape* Elements::getShape()
+{
+   if (grid_geom==NULL)
+      {
+      string name = "extrud_" + el_name;
+      grid_geom   = el_root->addShape (name.c_str(), SH_EXTRUD);
+      grid_geom -> openShape();
+      }
+
+   return grid_geom;
+}
+// ====================================================== closeShape
+void Elements::closeShape()
+{
+   if (grid_geom==NULL)
+       return;
+
+   grid_geom -> closeShape();
+   grid_geom = NULL;
 }
 END_NAMESPACE_HEXA

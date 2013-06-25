@@ -1,24 +1,24 @@
 
 // C++ : Gestion des cylindres croises
 
-// Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2013  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://www.salome-platform.org/
+//  or email : webmaster.salome@opencascade.com
 
 #include "HexBiCylinder.hxx"
 
@@ -29,35 +29,23 @@
 #include "HexEdge.hxx"
 
 #include "HexGlobale.hxx"
-#include "HexCylinder.hxx"
+#include "HexNewShape.hxx"
+#include "HexBiCylinderShape.hxx"
 
-static bool   db  = false;
+///  static const double UnSur2pi = DEMI/M_PI;
 
 BEGIN_NAMESPACE_HEXA
 
+static bool db = on_debug ();
 static const double cos45 = cos (M_PI/4);
-
-
-void geom_define_line (string& brep);
-void geom_asso_point  (double angle, Vertex* node);
-
-void geom_create_circle (double* milieu, double rayon, double* normale,
-                         double* base, string& brep);
-int  geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
-                         double  bray,  double  bhaut,
-                         double* sorig, double* snorm, double* sbase,
-                         double  sray,  double  shaut);
-int  geom_asso_cylcyl   (Edge* edge);
+#define NameOf(x) ((x)?x->getName():"Null")
 
 // ====================================================== Constructeur
 BiCylinder::BiCylinder (Document* doc)
           : Elements (doc)
 {
    cyl_fill     = false;
-   cross_cyl1   = NULL;
-   cross_cyl1   = NULL;
-   cross_cyl2   = NULL;
-   grid_type    = GR_BICYL;
+   grid_type    = GR_BIPIPE;
    at_right  = at_left = true;
 
    tab_hexa.push_back   (NULL);
@@ -65,6 +53,8 @@ BiCylinder::BiCylinder (Document* doc)
    tab_edge.push_back   (NULL);
    tab_vertex.push_back (NULL);
    nbr_vertex = nbr_edges = nbr_quads = nbr_hexas = 1;
+
+   grid_geom = NULL;
 }
 // ====================================================== getHexaIJK
 Hexa* BiCylinder::getHexaIJK (int cyl, int nx, int ny, int nz)
@@ -126,7 +116,7 @@ Vertex* BiCylinder::getVertexIJK (int cyl, int nx, int ny, int nz)
       if (tab_vertex[nro] == NULL)
          printf ("NULL\n");
       else
-         printf ("%s = (%g, %g, %g)\n", tab_vertex[nro]->getName(),
+         printf ("%s = (%g, %g, %g)\n", NameOf (tab_vertex[nro]),
                  tab_vertex[nro]->getX(), tab_vertex[nro]->getY(),
                  tab_vertex[nro]->getZ());
       }
@@ -149,7 +139,7 @@ Vertex* BiCylinder::addVertex (double px, double py, double pz, int cyl,
       if (node == NULL)
          printf ("NULL\n");
       else
-         printf ("%s = (%g, %g, %g)\n", node->getName(), node->getX(),
+         printf ("%s = (%g, %g, %g)\n", NameOf (node), node->getX(),
                                         node->getY(),    node->getZ());
       }
    nbr_vertex ++;
@@ -169,9 +159,9 @@ Edge* BiCylinder::addEdge (Vertex* v1, Vertex* v2, int cyl, int dir, int nx,
 
          printf ("pres_edge [%d,%d, %d,%d,%d] = E%d = ", cyl, dir, nx, ny, nz,
                                                         nbr_edges);
-         printf ("%s  ((%s, %s)) = (%s,%s)\n", edge->getName(),
-                 edge->getVertex(0)->getName(), edge->getVertex(1)->getName(),
-                 v1->getName(), v2->getName());
+         printf ("%s  ((%s, %s)) = (%s,%s)\n", NameOf(edge),
+                 NameOf(edge->getVertex(0)), NameOf(edge->getVertex(1)),
+                 NameOf(v1), NameOf(v2));
          if (NOT edge->definedBy (v1,v2))
             printf (" **** Incoherence !!\n");
          }
@@ -195,9 +185,9 @@ Edge* BiCylinder::addEdge (Vertex* v1, Vertex* v2, int cyl, int dir, int nx,
       if (edge == NULL)
          printf ("NULL\n");
       else
-         printf ("%s = (%s, %s)\n", edge->getName(),
-                                    edge->getVertex(0)->getName(),
-                                    edge->getVertex(1)->getName());
+         printf ("%s = (%s, %s)\n", NameOf(edge),
+                                    NameOf(edge->getVertex(0)),
+                                    NameOf(edge->getVertex(1)));
       }
    nbr_edges ++;
    return edge;
@@ -209,7 +199,28 @@ Quad* BiCylinder::addQuad (Edge* e1, Edge* e2, Edge* e3, Edge* e4, int cyl,
    int key = getKey (cyl, dir, nx, ny, nz);
    int nro = map_quad [key];
    if (nro>0)
+      {
+      if (db)
+         {
+         Quad* quad = tab_quad [nro];
+
+         printf ("pres_quad [%d,%d, %d,%d,%d] = Q%d = ", cyl, dir, nx, ny, nz,
+                                                        nbr_quads);
+         printf ("%s  (%s, %s, %s, %s)\n", NameOf(quad),
+                 NameOf(e1), NameOf(e2), NameOf(e3), NameOf(e4));
+         if (NOT quad->definedBy (e1,e3))
+            {
+            printf (" **** Incoherence !!\n");
+            printf ("%s =  (%s, %s, %s, %s)\n", NameOf(quad),
+                 NameOf(quad->getEdge(0)), NameOf(quad->getEdge(1)),
+                 NameOf(quad->getEdge(1)), NameOf(quad->getEdge(2)));
+            printf ("%s =  (%s, %s, %s, %s)\n", NameOf(quad),
+                 NameOf(quad->getVertex(0)), NameOf(quad->getVertex(1)),
+                 NameOf(quad->getVertex(1)), NameOf(quad->getVertex(2)));
+            }
+         }
       return tab_quad [nro];
+      }
 
    Quad* quad = newQuad (e1, e2, e3, e4);
    map_quad [key] = nbr_quads;
@@ -222,9 +233,9 @@ Quad* BiCylinder::addQuad (Edge* e1, Edge* e2, Edge* e3, Edge* e4, int cyl,
       if (quad == NULL)
          printf ("NULL\n");
       else
-         printf ("%s = (%s, %s, %s, %s)\n",  quad->getName(),
-                 quad->getEdge(0)->getName(), quad->getEdge(1)->getName(),
-                 quad->getEdge(2)->getName(), quad->getEdge(3)->getName());
+         printf ("%s = (%s, %s, %s, %s)\n",  NameOf(quad),
+                 NameOf(quad->getEdge(0)), NameOf(quad->getEdge(1)),
+                 NameOf(quad->getEdge(2)), NameOf(quad->getEdge(3)));
       }
    nbr_quads ++;
    return quad;
@@ -252,10 +263,10 @@ Hexa* BiCylinder::addHexa (Quad* q1, Quad* q2, Quad* q3, Quad* q4, Quad* q5,
       if (hexa == NULL)
          printf ("NULL\n");
       else
-         printf ("%s = (%s, %s, %s, %s, %s, %s)\n",  hexa->getName(),
-                 hexa->getQuad(0)->getName(), hexa->getQuad(1)->getName(),
-                 hexa->getQuad(2)->getName(), hexa->getQuad(3)->getName(),
-                 hexa->getQuad(4)->getName(), hexa->getQuad(5)->getName());
+         printf ("%s = (%s, %s, %s, %s, %s, %s)\n",  NameOf(hexa),
+                 NameOf(hexa->getQuad(0)), NameOf(hexa->getQuad(1)),
+                 NameOf(hexa->getQuad(2)), NameOf(hexa->getQuad(3)),
+                 NameOf(hexa->getQuad(4)), NameOf(hexa->getQuad(5)));
       }
    nbr_hexas ++;
    return   hexa;
@@ -276,7 +287,7 @@ Vertex* BiCylinder::findVertex (double px, double py, double pz,
           if (db)
              printf ("findVertex [Big,%d,%d,%d] = V%d = '%d' = %s\n",
                        nx, ny, nz, nro, it_map->first,
-                       tab_vertex[nro]->getName());
+                       NameOf(tab_vertex[nro]));
           return elt;
           }
        }
@@ -311,7 +322,7 @@ Edge* BiCylinder::findEdge (Vertex* v1, Vertex* v2, int dir, int nx,
           if (db)
              printf ("findEdge [%d, %d,%d,%d] = E%d = '%d' = %s\n",
                        dir, nx, ny, nz, nro, it_map->first,
-                       elt->getName());
+                       NameOf(elt));
           return elt;
           }
        }
@@ -333,7 +344,7 @@ Quad* BiCylinder::findQuad (Vertex* v1, Vertex* v2,
           if (db)
              printf ("findQuad [%d, %d,%d,%d] = E%d = '%d' = %s\n",
                        dir, nx, ny, nz, nro, it_map->first,
-                       elt->getName());
+                       NameOf(elt));
           return elt;
           }
        }
@@ -353,7 +364,7 @@ Quad* BiCylinder::findQuad (Edge* e1, Edge* e2, int dir, int nx, int ny, int nz)
           map_quad [key] = nro;
           if (db)
              printf ("findQuad [%d, %d,%d,%d] = E%d = '%d' = %s\n",
-                       dir, nx, ny, nz, nro, it_map->first, elt->getName());
+                       dir, nx, ny, nz, nro, it_map->first, NameOf(elt));
           return elt;
           }
        }
@@ -380,131 +391,116 @@ Hexa* BiCylinder::findHexa (Quad* q1, Quad* q2, int nx, int ny, int nz)
    fatal_error ("HexBiCylinder : Hexa non trouve");
    return NULL;
 }
-// ====================================================== crossCylinders
-int BiCylinder::crossCylinders (Cylinder* lun, Cylinder* lautre)
+// ====================================================== createLittlePipe
+void BiCylinder::createLittlePipe ()
 {
-   if (lun->getRadius() < lautre->getRadius())
+   Real lg  =  cross_hauteur[CylSmall];
+   Real h1  =  calc_distance (cross_center, cross_orismall);
+   Real h2  =  cross_rayext[CylBig]*cos45;
+   Real h3  = (cross_rayext[CylBig] - cross_rayint[CylBig])*cos45;
+   Real h5  =  lg-h1;
+
+// double t_haut [NbrVslices] = { -h1, -h2, -h2+h3, h2-h3, h2, lg-h1 };
+
+   if (at_left) 
       {
-      cross_cyl1 = lun;
-      cross_cyl2 = lautre;
+      addSlice (CylSmall, 0, 0, -h1, cross_rayint [CylSmall]);
+      addSlice (CylSmall, 1, 0, -h1, cross_rayext [CylSmall]);
+      addSlice (CylSmall, 1, 1, -h2, cross_rayext [CylSmall]);
+      addSlice (CylSmall, 0, 2, h3-h2, cross_rayint [CylSmall]);
       }
-   else
+
+   addSlice (CylSmall, 2, 1, -h2, cross_rayext [CylBig]);
+   addSlice (CylSmall, 1, 2, h3-h2, cross_rayint [CylBig]);
+   addSlice (CylSmall, 1, 3, h2-h3, cross_rayint [CylBig]);
+   addSlice (CylSmall, 2, 4,  h2, cross_rayext [CylBig]);
+
+   if (at_right) 
       {
-      cross_cyl1 = lautre;
-      cross_cyl2 = lun;
+      addSlice (CylSmall, 0, 3, h2-h3, cross_rayint [CylSmall]);
+      addSlice (CylSmall, 1, 4,  h2, cross_rayext [CylSmall]);
+      addSlice (CylSmall, 0, 5,  h5, cross_rayint [CylSmall]);
+      addSlice (CylSmall, 1, 5,  h5, cross_rayext [CylSmall]);
       }
 
-   int ier = cross_cyl2->interCylinder (cross_cyl1, at_left, at_right,
-                                        cross_center);
-   if (ier != HOK)
-      return ier;
-
-   cyl_fill = false;
-   cross_rayext  [CylSmall] = cross_cyl1->getRadius ();
-   cross_rayext  [CylBig]   = cross_cyl2->getRadius ();
-   cross_rayint  [CylSmall] = cross_rayext  [CylSmall] / 2;
-   cross_rayint  [CylBig  ] = cross_rayext  [CylBig  ] / 2;
-   cross_hauteur [CylSmall] = cross_cyl1->getHeight ();
-   cross_hauteur [CylBig]   = cross_cyl2->getHeight ();
-
-   createLittleCyl ();
-   createBigCyl    ();
-   adjustLittleSlice (1, 1);
-   adjustLittleSlice (0, 2);
-   adjustLittleSlice (0, 3);
-   adjustLittleSlice (1, 4);
-
-   Vector* iprim = new Vector (cross_cyl1->getDirection());
-   Vector* kprim = new Vector (cross_cyl2->getDirection());
-   Vector* jprim = new Vector (kprim);
-
-   iprim->renormer ();
-   kprim->renormer ();
-   jprim->vectoriel (kprim, iprim);
-
-   // transfoVertices (cross_center, iprim, jprim, kprim);
-
-   // Real3 snorm, bnorm;
-   // iprim->getCoord (snorm);
-   // kprim->getCoord (bnorm);
-
-   Real3 bnorm  = {0, 0, 1};
-   Real3 snorm  = {1, 0, 0};
-   assoCylinders (snorm, bnorm);
-
-/*********************************************
+                    //    ka kb kc kd
    if (at_left)
       {
-      assoIntersection (NxExt, 1, snorm, bnorm);
-      if (grid_type == GR_BIPIPE)
-         {
-         assoIntersection (NxInt, 2, snorm, bnorm);
-         }
+      fillSlice (CylSmall, 0,0, 0,2, 1,1, 1,0);
+      fillSlice (CylSmall, 0,2, 1,2, 2,1, 1,1); 
+      if (cyl_fill)
+          addCube (CylSmall, 0,0,2);
       }
+    else
+      addCube ( CylSmall, 1, 2);
+
+   fillSlice (CylSmall, 1,2, 1,3, 2,4, 2,1, true);
 
    if (at_right)
       {
-      assoIntersection (NxExt, NbrSlices1-1, snorm, bnorm);
-      if (grid_type == GR_BIPIPE)
-         {
-         assoIntersection (NxInt, NbrSlices1-2, snorm, bnorm);
-         }
+      fillSlice (CylSmall, 1,3, 0,3, 1,4, 2,4);
+      fillSlice (CylSmall, 0,3, 0,5, 1,5, 1,4);
+      if (cyl_fill)
+          addCube (CylSmall, 3, 0, 5);
       }
-
-  ******************************************* */
-   assoResiduelle ();
-   return HOK;
+    else
+      addCube ( CylSmall, 3, 1);
 }
 // ====================================================== createLittleCyl
 void BiCylinder::createLittleCyl ()
 {
-   Real3   base;
-   Vertex* vbase = cross_cyl1->getBase();
+   Real lg    = cross_hauteur[CylSmall];
+   Real rayon = cross_rayext[CylSmall];
 
-   Real lg   =  cross_hauteur[CylSmall];
-   Real h1   =  calc_distance (cross_center, vbase->getPoint (base));
-   Real h2   =  cross_rayext[CylBig]*cos45;
-   Real h3   = (cross_rayext[CylBig] - cross_rayint[CylBig])*cos45;
+   Real h1 = calc_distance (cross_center, cross_orismall);
+   Real h2 = cross_rayext[CylBig]*cos45;
 
-   double t_haut [NbrVslices] = { -h1, -h2, -h2+h3, h2-h3, h2, lg-h1 };
+   if (at_left)
+       addCarre (CylSmall, 0, -h1, rayon);
+   addCarre (CylSmall, 1, -h2, rayon);
+   addCarre (CylSmall, 2,  h2, rayon);
+   if (at_right)
+       addCarre (CylSmall, 3,  lg-h1, rayon);
 
-   for (int nk=0; nk<NbrVslices ; nk++)
-       {
-       switch (nk)
-          {
-          case 0 : case 5 :
-              addSlice (CylSmall, 0, nk, t_haut[nk], cross_rayint [CylSmall]);
-              addSlice (CylSmall, 1, nk, t_haut[nk], cross_rayext [CylSmall]);
-              break;
-          case 1 : case 4 :
-              addSlice (CylSmall, 1, nk, t_haut[nk], cross_rayext [CylSmall]);
-              addSlice (CylSmall, 2, nk, t_haut[nk], cross_rayext [CylBig]);
-              break;
-          case 2 : case 3 :
-              addSlice (CylSmall, 0, nk, t_haut[nk], cross_rayint [CylSmall]);
-              addSlice (CylSmall, 1, nk, t_haut[nk], cross_rayint [CylBig]);
-              break;
-          }
-       }
-                    //    ka kb kc kd
-   fillSlice (CylSmall, 0,0, 0,2, 1,1, 1,0);
-   fillSlice (CylSmall, 0,2, 1,2, 2,1, 1,1);  // OK
-   // fillSlice (CylSmall, 1,1, 0,2, 1,2, 2,1);     // Test
-   fillSlice (CylSmall, 1,2, 1,3, 2,4, 2,1, true);
-   fillSlice (CylSmall, 1,3, 0,3, 1,4, 2,4);
-   fillSlice (CylSmall, 0,3, 0,5, 1,5, 1,4);
-   // fillSmallCyl ();
+   addSlice (CylSmall, 1, 1, -h2, cross_rayext [CylBig]);
+   addSlice (CylSmall, 1, 2,  h2, cross_rayext [CylBig]);
+
+   if (at_left)
+       addCube (CylSmall, 0);
+
+   addCube (CylSmall, 1);
+
+   if (at_right)
+       addCube (CylSmall, 2);
+
+   fillSlice (CylSmall, 0,1, 0,2, 1,2, 1,1);  // OK
 }
 // ====================================================== createBigCyl
 void BiCylinder::createBigCyl ()
 {
+   Real lg   = cross_hauteur[CylBig];
+   Real rext = cross_rayext [CylBig];
+
+   Real h1   = calc_distance (cross_center, cross_oribig);
+   Real h2   = rext * cos45;
+
+   addCarre (CylBig, 0, -h1,   rext);
+   addCarre (CylBig, 1, -h2,   rext, true);
+   addCarre (CylBig, 2,  h2,   rext, true);
+   addCarre (CylBig, 3, lg-h1, rext);
+
+   addCube (CylBig, 0);
+   addCube (CylBig, 2);
+}
+// ====================================================== createBigPipe
+void BiCylinder::createBigPipe ()
+{
    const int cyl = CylBig;
-   Real3   base;
-   Vertex* vbase = cross_cyl2->getBase();
    Real lg   = cross_hauteur[cyl];
    Real rext = cross_rayext [cyl];
    Real rint = cross_rayint [cyl];
-   Real h1   = calc_distance (cross_center, vbase->getPoint (base));
+
+   Real h1   = calc_distance (cross_center, cross_oribig);
    Real h2   = rext * cos45;
    Real h3   = lg - h1;
    Real dh   = (rext - rint)*cos45;
@@ -519,8 +515,12 @@ void BiCylinder::createBigCyl ()
    addSlice (CylBig, 1, 3,  h3,    rext);
 
                   //   A    B    C    D
+   if (cyl_fill) 
+      addCube (CylBig, 0);
    fillSlice (CylBig, 0,0, 0,1, 1,1, 1,0);
-   fillSlice (CylBig, 0,2, 0,3, 1,3, 1,2);
+   if (cyl_fill) 
+      addCube (CylBig, 2);
+   fillSlice (CylBig, 0,2, 0,3, 1,3, 1,2); 
 }
 // ====================================================== adjustLittleSlice
 void BiCylinder::adjustLittleSlice (int ni, int nk)
@@ -570,9 +570,105 @@ void BiCylinder::addSlice (int cyl, int ni, int nk, double hauteur,
           addVertex (hauteur, px, py, CylSmall, ni, nj, nk);
        }
 }
+// ====================================================== addCarre
+void BiCylinder::addCarre (int cyl, int nk, double hauteur, double rayon,
+                           bool find)
+{
+   for (int nj=0 ; nj<NbrCotes ; nj++)
+       {
+       double theta = getAngle (nj);
+       double px = rayon*cos(theta);
+       double py = rayon*sin(theta);
+       if (find)
+          findVertex (px, py, hauteur, 0, nj, nk);
+       else if (cyl==CylBig)
+          addVertex  (px, py, hauteur, CylBig, 0, nj, nk);
+       else    // CylSmall
+          addVertex (hauteur, px, py, cyl, 0, nj, nk);
+       }
+}
+// ====================================================== adjustLittleSquare
+void BiCylinder::adjustLittleSquare (int nk)
+{
+   double grayon2 = cross_rayext[CylBig] * cross_rayext[CylBig];
+
+   for (int nj=0 ; nj<NbrCotes ; nj++)
+       {
+       Vertex* node = getVertexIJK (CylSmall, 0, nj, nk);
+       double  py   = node->getY();
+       double  px   = sqrt (grayon2 - py*py);
+
+       if (node->getX() > 0) node->setX ( px); 
+       else                  node->setX (-px); 
+       }
+}
+// ====================================================== addCube
+void BiCylinder::addCube (int cyl, int nk0, int nvi0, int k1)
+{
+/* *****************************************************************
+       H=bed  +----bd-----+ bdf=G......0
+             /|          /|
+           be |   B    bf |
+           /  |        /  |
+    E=bce +----bc-----+...|...bcf=F
+          |  de     D |   df
+          | E |       | F |             J
+         ce   | C     cf  |             ^
+  D=ade...|...+----ad-|---+ adf=C.....3 |   I
+          |  /        |  /              |  /
+          | ae    A   | af              | /
+          |/          |/                |/
+    A=ace +----ac-----+ acf=B.....2     +----->  K
+
+   *****************************************************************  */
+   enum { nj0, nj1, nj2, nj3, ni0=0 };
+   const int nk1  = k1>0 ? k1 : nk0+1;
+   const int nvi1 = nvi0==1  ? 2 
+                  : nvi0==2  ? 1 : 0;
+
+                           // La face F
+   Vertex* vacf = getVertexIJK (cyl, nvi1, nj2, nk1);
+   Vertex* vadf = getVertexIJK (cyl, nvi1, nj3, nk1);
+   Vertex* vbdf = getVertexIJK (cyl, nvi1, nj0, nk1);
+   Vertex* vbcf = getVertexIJK (cyl, nvi1, nj1, nk1);
+
+   Edge* eaf = addEdge (vacf, vadf, cyl, dir_y, ni0, nj2, nk1);
+   Edge* edf = addEdge (vadf, vbdf, cyl, dir_y, ni0, nj3, nk1);
+   Edge* ebf = addEdge (vbcf, vbdf, cyl, dir_y, ni0, nj0, nk1);
+   Edge* ecf = addEdge (vacf, vbcf, cyl, dir_y, ni0, nj1, nk1);
+
+   Quad* qf  = addQuad (eaf, edf, ebf, ecf, cyl, dir_z, ni0 , nj0, nk1);
+
+   Vertex* vace = getVertexIJK (cyl, nvi0, nj2, nk0);
+   Vertex* vade = getVertexIJK (cyl, nvi0, nj3, nk0);
+   Vertex* vbde = getVertexIJK (cyl, nvi0, nj0, nk0);
+   Vertex* vbce = getVertexIJK (cyl, nvi0, nj1, nk0);
+
+   Edge* eac = addEdge (vace, vacf, cyl, dir_z, ni0, nj2, nk0);
+   Edge* ead = addEdge (vade, vadf, cyl, dir_z, ni0, nj3, nk0);
+   Edge* ebd = addEdge (vbde, vbdf, cyl, dir_z, ni0, nj0, nk0);
+   Edge* ebc = addEdge (vbce, vbcf, cyl, dir_z, ni0, nj1, nk0);
+
+   Edge* eae = addEdge (vace, vade, cyl, dir_y, ni0, nj2, nk0);
+   Edge* ede = addEdge (vade, vbde, cyl, dir_y, ni0, nj3, nk0);
+   Edge* ebe = addEdge (vbce, vbde, cyl, dir_y, ni0, nj0, nk0);
+   Edge* ece = addEdge (vace, vbce, cyl, dir_y, ni0, nj1, nk0);
+
+// Quad* qe  = addQuad (eae, ede, ebe, ece, cyl, dir_z, ni0 , nj0, nk0);
+   Quad* qe  = addQuad (eae, ece, ebe, ede, cyl, dir_z, ni0 , nj0, nk0);
+
+// Quad* qa  = addQuad (eac, eaf, ead, eae, cyl, dir_y, ni0 , nj2, nk0);
+   Quad* qa  = addQuad (eac, eae, ead, eaf, cyl, dir_y, ni0 , nj2, nk0);
+// Quad* qd  = addQuad (ead, edf, ebd, ede, cyl, dir_x, ni0 , nj3, nk0);
+   Quad* qd  = addQuad (ead, ede, ebd, edf, cyl, dir_x, ni0 , nj3, nk0);
+   Quad* qb  = addQuad (ebc, ebf, ebd, ebe, cyl, dir_y, ni0 , nj0, nk0);
+   Quad* qc  = addQuad (eac, ecf, ebc, ece, cyl, dir_x, ni0 , nj1, nk0);
+
+   addHexa (qa, qb, qc, qd, qe, qf, cyl, ni0, nj0, nk0);
+}
 // ====================================================== fillSlice
 /* *****************************************************************
-       H=bed  +----bd-----+ bdf=G
+       H=bde  +----bd-----+ bdf=G
              /|          /|
            be |   B    bf |
            /  |        /  |
@@ -606,25 +702,14 @@ void BiCylinder::fillSlice (int cyl, int nia, int nka, int nib, int nkb,
        Vertex* vbdf = getVertexIJK (cyl, nic, nj1, nkc);
        Vertex* vbde = getVertexIJK (cyl, nid, nj1, nkd);
 
-/* *******************
-       PutName (vace);
-       PutName (vacf);
-       PutName (vadf);
-       PutName (vade);
-       PutName (vbce);
-       PutName (vbcf);
-       PutName (vbdf);
-       PutName (vbde);
-   ******************* */
-
        Edge* eac = addEdge (vace, vacf, cyl, dir_z, nia, nj0, nka);
-       Edge* ead = addEdge (vade, vadf, cyl, dir_z, nid, nj0, nkd);
-       Edge* eae = addEdge (vace, vade, cyl, dir_x, nia, nj0, nka);
+       Edge* ead = addEdge (vadf, vade, cyl, dir_z, nid, nj0, nkd);
+       Edge* eae = addEdge (vade, vace, cyl, dir_x, nia, nj0, nka);
        Edge* eaf = addEdge (vacf, vadf, cyl, dir_x, nib, nj0, nkb);
 
        Edge* ebc = addEdge (vbce, vbcf, cyl, dir_z, nia, nj1, nka);
-       Edge* ebd = addEdge (vbde, vbdf, cyl, dir_z, nid, nj1, nkd);
-       Edge* ebe = addEdge (vbce, vbde, cyl, dir_x, nia, nj1, nka);
+       Edge* ebd = addEdge (vbdf, vbde, cyl, dir_z, nid, nj1, nkd);
+       Edge* ebe = addEdge (vbde, vbce, cyl, dir_x, nia, nj1, nka);
        Edge* ebf = addEdge (vbcf, vbdf, cyl, dir_x, nib, nj1, nkb);
 
        Edge* ece = addEdge (vace, vbce, cyl, dir_y, nia, nj0, nka);
@@ -632,104 +717,112 @@ void BiCylinder::fillSlice (int cyl, int nia, int nka, int nib, int nkb,
        Edge* edf = addEdge (vadf, vbdf, cyl, dir_y, nic, nj0, nkc);
        Edge* ede = addEdge (vade, vbde, cyl, dir_y, nid, nj0, nkd);
 
-       Quad* qa  = addQuad (eac, eaf, ead, eae, cyl, dir_y, nia , nj0, nka);
-       Quad* qb  = addQuad (ebc, ebf, ebd, ebe, cyl, dir_y, nia , nj1, nka);
-       Quad* qc  = addQuad (eac, ecf, ebc, ece, cyl, dir_x, nia , nj0, nka);
-       Quad* qd  = addQuad (ead, edf, ebd, ede, cyl, dir_x, nid , nj0, nkd);
-       Quad* qe  = addQuad (eae, ede, ebe, ece, cyl, dir_z, nia , nj0, nka);
-       Quad* qf  = addQuad (eaf, edf, ebf, ecf, cyl, dir_z, nib , nj0, nkb);
+  //   Quad* qa  = addQuad (eac, eaf, ead, eae, cyl, dir_y, nia+1, nj0, nka);
+       Quad* qa  = addQuad (eac, eae, ead, eaf, cyl, dir_y, nia+1, nj0, nka);
+       Quad* qb  = addQuad (ebc, ebf, ebd, ebe, cyl, dir_y, nia+1, nj1, nka);
 
-       addHexa (qa, qb, qc, qd, qe, qf, cyl, nia, nj0, nka);
+       Quad* qc  = addQuad (eac, ecf, ebc, ece, cyl, dir_x, nia+1, nj0, nka);
+ //    Quad* qd  = addQuad (ead, edf, ebd, ede, cyl, dir_x, nid+1, nj0, nkd);
+       Quad* qd  = addQuad (ead, ede, ebd, edf, cyl, dir_x, nid+1, nj0, nkd);
+
+  //   Quad* qe  = addQuad (eae, ede, ebe, ece, cyl, dir_z, nia+1, nj0, nka);
+       Quad* qe  = addQuad (eae, ece, ebe, ede, cyl, dir_z, nia+1, nj0, nka);
+       Quad* qf  = addQuad (eaf, edf, ebf, ecf, cyl, dir_z, nib+1, nj0, nkb);
+
+       addHexa (qa, qb, qc, qd, qe, qf, cyl, nia+1, nj0, nka);
        }
 }
 // ====================================================== assoCylinders
 void BiCylinder::assoCylinders (double* snormal, double* gnormal)
 {
-   assoSlice (CylSmall, 0, 0, snormal);
-   assoSlice (CylSmall, 1, 0, snormal);
-   assoSlice (CylSmall, 0, 5, snormal);
-   assoSlice (CylSmall, 1, 5, snormal);
+   char     name [12];
+   sprintf (name, "grid_%02d", el_id);
+   grid_geom = el_root->addShape (name, SH_INTER);
+   grid_geom -> openShape();
 
-   for (int nk=0 ; nk<4 ; nk++)
-       for (int ni=0 ; ni<2 ; ni++)
-            assoSlice (CylBig, ni, nk, gnormal);
+   int s_kmax = 5;
+   int isize   = cyl_fill ? 1 : 2;
+   int g_ksize = 4;
 
-   assoIntersection (1, 1, snormal, gnormal);
-   assoIntersection (0, 2, snormal, gnormal);
-   assoIntersection (0, 3, snormal, gnormal);
-   assoIntersection (1, 4, snormal, gnormal);
+   for (int ni=0 ; ni<isize ; ni++)
+       {
+       assoSlice (CylSmall, ni, 0, cross_dirsmall);
+       assoSlice (CylSmall, ni, s_kmax, cross_dirsmall);
 
+       for (int nk=0 ; nk<g_ksize ; nk++)
+            assoSlice (CylBig, ni, nk, cross_dirbig);
+
+       if (at_left)
+          assoIntersection (1, 1, cross_dirsmall, cross_dirbig);
+       assoIntersection (0, 2, cross_dirsmall, cross_dirbig);
+       //   assoIntersection (0, 3, cross_dirsmall, cross_dirbig);
+       //   assoIntersection (1, 4, cross_dirsmall, cross_dirbig);
+      }
+   grid_geom -> closeShape();
 }
 // ====================================================== assoSlice
 void BiCylinder::assoSlice (int cyl, int nx, int nzs, double* normal)
 {
-   Real3  center, pnt1, pnt2, vbase;
-   string brep;
+   Real3  center, pnt0, pnt1, pnt2, vbase;
    int ny0 = 0;
-   int nyd = NbrCotes/2;
+   int ny1 = 1;
+   int ny2 = NbrCotes/2;
 
    Vertex* v0 = getVertexIJK (cyl, nx, ny0 , nzs);
-   Vertex* vd = getVertexIJK (cyl, nx, nyd , nzs);
+   Vertex* v1 = getVertexIJK (cyl, nx, ny1 , nzs);
+   Vertex* v2 = getVertexIJK (cyl, nx, ny2 , nzs);
 
-   if (vd==NULL || v0==NULL)
+   if (v0==NULL || v1==NULL || v2==NULL)
       return;
 
-   v0->getPoint (pnt1);
-   vd->getPoint (pnt2);
+   v0->getPoint (pnt0);
+   v1->getPoint (pnt1);
+   v2->getPoint (pnt2);
 
    double rayon = 0;
    for (int nro=0 ; nro<DIM3 ; nro++)
        {
-       center[nro] = (pnt1[nro] + pnt2[nro])/2;
-       vbase [nro] = (pnt1[nro] - center[nro]);
-       rayon += vbase [nro]*vbase[nro];
+       center[nro] = (pnt0[nro] + pnt2[nro])/2;
+       vbase [nro] = (pnt0[nro] - pnt1[nro]);
+       rayon += carre (center [nro] - pnt0 [nro]);
        }
-   rayon = sqrt (rayon);
 
-   PutCoord (pnt1);
-   PutCoord (pnt2);
-   PutCoord (vbase);
-   PutCoord (center);
-   PutData  (rayon);
-
-   geom_create_circle (center, rayon, normal, vbase, brep);
-   geom_define_line   (brep);   // pour geom_asso_point
-
+   int subid = grid_geom->addCircle (center, sqrt(rayon), normal, vbase);
    for (int ny=0 ; ny<NbrCotes ; ny++)
-       {
-       assoArc (cyl, nx, ny, nzs, brep, rayon);
-       }
+       assoArc (cyl, nx, ny, nzs, subid);
 }
 // ===================================================== assoArc
-void BiCylinder::assoArc (int cyl, int nx, int ny, int nz, string& brep,
-                             double rayon)
+void BiCylinder::assoArc (int cyl, int nx, int ny, int nz, int subid)
 {
-    static const double Alpha = 1.0 / NbrCotes;
-    static const double Theta = 2*M_PI/ NbrCotes;
-    int ny1 = (ny+1) MODULO NbrCotes;
+    const double Decal = 1.0 / NbrCotes;
+    const double Start = Decal / 2;
 
-    Edge*   edge  = getEdgeJ  (cyl, nx, ny, nz);
-    Vertex* node0 = getVertexIJK (cyl, nx, ny, nz);
-    Vertex* node1 = getVertexIJK (cyl, nx, ny1, nz);
+    int    ny2    = ny+1;
+    double posit  = Start + ny*Decal;
+    Edge*  edge   = getEdgeJ (cyl, nx, ny, nz);
+    if (edge==NULL)
+       return;
 
-    if (db)
-       printf ("AssoArc : Edge = %s  = (%s,%s) -> (%s,%s)\n", edge->getName(),
-               edge->getVertex(0)->getName(), edge->getVertex(1)->getName(),
-               node0->getName(), node1->getName());
+                                        // Vertex
+    Vertex* node = getVertexIJK (cyl, nx, ny,  nz);
+    grid_geom->addAssociation (node, subid, posit);
 
-    // Shape*  shape = new Shape (brep);
-
-    // shape->setBounds (ny*Alpha, (ny+1)*Alpha);
-    // edge ->addAssociation (shape);
-
-    geom_asso_point ( ny   *Theta*rayon, node0);
-    geom_asso_point ((ny+1)*Theta*rayon, node1);
+    if (ny2 < NbrCotes)
+       {
+       grid_geom->addAssociation (edge, subid, posit, posit+Decal);
+       // node = getVertexIJK (cyl, nx, ny2, nz);
+       // grid_geom->addAssociation (node, subid, angle2*UnSur2pi);
+       }
+    else
+       {
+       grid_geom->addAssociation (edge, subid, posit, 1.0);
+       grid_geom->addAssociation (edge, subid, 0,   Start);
+       }
 }
 // ===================================================== assoIntersection
 int BiCylinder::assoIntersection (int nxs, int nzs, double* snorm,
                                                     double* bnorm)
 {
-   Real3  X_center = {0, 0, 0};  // provisoire, a la place de cross_center
    Real3  pse, psw, sorig, sbase;
    Real3  pbe, pbw, borig, bbase;
    string brep;
@@ -739,10 +832,18 @@ int BiCylinder::assoIntersection (int nxs, int nzs, double* snorm,
 
    int nz = nzs < MiddleSlice1 ? 0 : 5;
 
-   getVertexIJK (CylSmall, nxs, ny0 , nz)->getPoint (pse);
-   getVertexIJK (CylSmall, nxs, nyd , nz)->getPoint (psw);
-   getVertexIJK (CylBig,   nxs, ny0 , 0) ->getPoint (pbe);
-   getVertexIJK (CylBig,   nxs, nyd , 0) ->getPoint (pbw);
+   Vertex* vse = getVertexIJK (CylSmall, nxs, ny0 , nz);
+   Vertex* vsw = getVertexIJK (CylSmall, nxs, nyd , nz);
+   Vertex* vbe = getVertexIJK (CylBig,   nxs, ny0 , 0);
+   Vertex* vbw = getVertexIJK (CylBig,   nxs, nyd , 0);
+
+   if (vse==NULL || vsw==NULL || vbe==NULL || vbw==NULL)
+      return HERR;
+
+   vse->getPoint (pse);
+   vsw->getPoint (psw);
+   vbe->getPoint (pbe);
+   vbw->getPoint (pbw);
 
    double srayon = calc_distance (pse, psw)/2;
    double brayon = calc_distance (pbe, pbw)/2;
@@ -752,22 +853,13 @@ int BiCylinder::assoIntersection (int nxs, int nzs, double* snorm,
    calc_vecteur (psw, pse, sbase);
    calc_vecteur (pbw, pbe, bbase);
 
-   double shaut = calc_distance (X_center, sorig);
-   double bhaut = calc_distance (X_center, borig)*2;
-   double* orig = nzs < MiddleSlice1 ? sorig : X_center; // Pb orientation
+   double shaut = calc_distance (cross_center, sorig);
+   double bhaut = calc_distance (cross_center, borig)*2;
+   double* orig = nzs < MiddleSlice1 ? sorig : cross_center; // Pb orientation
 
-   if (db)
-      {
-      PutCoord  (borig);
-      PutCoord  (sorig);
-      PutCoord  (orig);
-      PutData (nz);
-      PutData  (srayon);
-      PutData  (brayon);
-      }
-
-   int ier = geom_create_cylcyl (borig, bnorm, bbase, brayon, bhaut,
-                                  orig, snorm, sbase, srayon, shaut);
+   BiCylinderShape bicyl_shape (el_root);
+   int ier = bicyl_shape.defineCyls (borig, bnorm, bbase, brayon, bhaut,
+                                      orig, snorm, sbase, srayon, shaut);
    if (ier != HOK)
       return ier;
 
@@ -781,29 +873,93 @@ int BiCylinder::assoIntersection (int nxs, int nzs, double* snorm,
    for (int ny=0 ; ny<NbrCotes ; ny++)
        {
        Edge* edge = getEdgeJ (CylSmall, nxs, ny, nzs);
-       geom_asso_cylcyl (edge);
+       bicyl_shape.associate (edge);
        }
 
    return HOK;
 }
-// ======================================================== test_bicylinder
-BiCylinder* test_bicylinder (Document* docu, int option)
+// ====================================================== makeCylinders
+int BiCylinder::makeCylinders (Vertex* ori1, double* vz1, double r1, double h1,
+                               Vertex* ori2, double* vz2, double r2, double h2)
 {
-   Vertex* ori1 = docu->addVertex ( 0,0,0);
-   Vertex* ori2 = docu->addVertex (-5,0,5);
-   Vector* vz   = docu->addVector ( 0,0,1);
-   Vector* vx   = docu->addVector ( 1,0,0);
+   grid_type = GR_BICYL;
+   int ier = makePipes (ori1,vz1, r1/2, r1,h1, ori2,vz2, r2/2, r2,h2, true);
+   return ier;
+}
+// ====================================================== makePipes
+int BiCylinder::makePipes (Vertex* ori1, double* vz1, double rint1,
+                           double rext1, double h1, Vertex* ori2, double* vz2,
+                           double rint2, double rext2, double h2, bool fill)
+{
+   cyl_fill = fill;
+   cross_hauteur [CylBig]   = h2;
+   cross_rayext  [CylBig  ] = rext2;
+   cross_rayint  [CylBig  ] = rint2;
 
-   double r1 = 2*sqrt (2.0);
-   double r2 = 3*sqrt (2.0);
-   double l2 = 10;
-   double l1 = 10;
+   cross_hauteur [CylSmall] = h1;
+   cross_rayext  [CylSmall] = rext1;
+   cross_rayint  [CylSmall] = rint1;
 
-   Cylinder* cyl1 = docu->addCylinder (ori1, vz, r1, l1);
-   Cylinder* cyl2 = docu->addCylinder (ori2, vx, r2, l2);
+   ori1->getPoint (cross_orismall);
+   ori2->getPoint (cross_oribig  );
+   copy_vecteur (vz2, cross_dirbig);
+   copy_vecteur (vz1, cross_dirsmall);
 
-   BiCylinder* grid = new BiCylinder (docu);
-   grid->crossCylinders (cyl1, cyl2);
-   return grid;
+//   Intersection des 2 cylindres :
+   int ier = checkInter (cross_oribig,   vz2, rext2, h2,
+                         cross_orismall, vz1, rext1, h1, 
+                         cross_center, at_left, at_right);
+   if (ier != HOK)
+      return ier;
+
+   createLittlePipe ();
+   createBigPipe    ();
+
+   if (at_left) 
+      {
+      adjustLittleSlice (1, 1);
+      adjustLittleSlice (0, 2);
+      }
+   if (at_right) 
+      {
+      adjustLittleSlice (0, 3);
+      adjustLittleSlice (1, 4);
+      }
+
+   transfoVertices (cross_center, cross_dirsmall, cross_dirbig);
+   // assoCylinders   (cross_dirsmall, cross_dirbig);
+
+#if 0
+   // iprim->getCoord (snorm);
+   // kprim->getCoord (bnorm);
+
+   Real3 bnorm  = {0, 0, 1};
+   Real3 snorm  = {1, 0, 0};
+   assoCylinders (snorm, bnorm);
+
+/*********************************************
+   if (at_left)
+      {
+      assoIntersection (NxExt, 1, snorm, bnorm);
+      if (grid_type == GR_BIPIPE)
+         {
+         assoIntersection (NxInt, 2, snorm, bnorm);
+         }
+      }
+
+   if (at_right)
+      {
+      assoIntersection (NxExt, NbrSlices1-1, snorm, bnorm);
+      if (grid_type == GR_BIPIPE)
+         {
+         assoIntersection (NxInt, NbrSlices1-2, snorm, bnorm);
+         }
+      }
+
+  ******************************************* */
+   //  assoResiduelle ();
+#endif
+   // el_root->reorderQuads ();
+   return HOK;
 }
 END_NAMESPACE_HEXA

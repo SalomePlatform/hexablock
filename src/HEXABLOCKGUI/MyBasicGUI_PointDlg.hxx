@@ -25,7 +25,6 @@
 
 
 #include "MyGEOMBase_Skeleton.hxx"
-#include "GEOM_GenericObjPtr.h"
 #include <QMap>
 
 class DlgRef_2Sel1Spin;
@@ -47,9 +46,6 @@ class gp_Pnt;
 #include <SUIT_Session.h>
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
-// #include <VTKViewer_ViewModel.h>
-
-
 
 #include "SVTK_Selection.h"
 #include <SVTK_ViewModel.h>
@@ -68,39 +64,23 @@ namespace HEXABLOCK
 // purpose  :
 //=================================================================================
 typedef class MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
-{ 
+{
   Q_OBJECT
 
 public:
-  MyBasicGUI_PointDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  MyBasicGUI_PointDlg( QWidget* = 0, Qt::WindowFlags = 0 );
   ~MyBasicGUI_PointDlg();
 
   bool                               acceptMouseEvent() const { return ( getConstructorId() == 0 );  }
-  void                               OnPointSelected( const gp_Pnt& ); // called by BasicGUI::OnMousePress()
-
-protected:
-  // redefined from GEOMBase_Helper
-
-  virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
-  virtual void                       addSubshapesToStudy();
+  void                               OnPointSelected( const gp_Pnt& );
 
 private:
-  void                               Init();
-  void                               enterEvent( QEvent* );
   double                             getParameter() const;
   double                             getUParameter() const;
   double                             getVParameter() const;
   void                               updateParamCoord(bool theIsUpdate);
 
 private:
-  GEOM::GeomObjPtr                   myEdge;
-  GEOM::GeomObjPtr                   myFace;
-  GEOM::GeomObjPtr                   myRefPoint; 
-  GEOM::GeomObjPtr                   myLine1; 
-  GEOM::GeomObjPtr                   myLine2;
-
   bool                               myBusy;
 
   DlgRef_3Spin*                      GroupXYZ;
@@ -108,71 +88,63 @@ private:
   DlgRef_2Sel1Spin*                  GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
   DlgRef_1Sel2Spin*                  GroupOnSurface;
-  
+
   QGroupBox*                         myCoordGrp;
   QLineEdit*                         myX;
   QLineEdit*                         myY;
   QLineEdit*                         myZ;
 
-  
+
 
   QGroupBox*                         myParamGroup;
   QButtonGroup*                      myParamCoord;
 
   QMenu*                             myBtnPopup;
-  QMap<QAction*, int>                myActions;
+  QMenu*                             myBtnPopup2;
+  QAction*                           action_line1_edge;
+  QAction*                           action_line1_wire;
+  QAction*                           action_line2_edge;
+  QAction*                           action_line2_wire;
 
-  TopAbs_ShapeEnum                   myNeedType;
-
-
-public slots:
-  virtual void onHelpRequested();
-  
 private slots:
-  void                               ClickOnOk();
-  bool                               ClickOnApply();
-  void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();
-  void                               SelectionIntoArgument();
-  void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
-  void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord( int );
-  void                               CheckBoxClicked( int );
   void                               onBtnPopup( QAction* );
   void                               updateSize();
+  void                               onRefPointChanged(const QString& pointName);
+  void                               onStartPointSelected(const QString& pointName);
+  void                               onParamValueChanged(double newValue);
+  void                               onXCoordChanged(double newValue);
+  void                               onYCoordChanged(double newValue);
+  void                               onZCoordChanged(double newValue);
+  void                               onUpdateResults(const QString& data);
 
 // HEXABLOCK
 public:
-  void setDocumentModel( HEXABLOCK::GUI::DocumentModel* m );
-  void setPatternDataSelectionModel( HEXABLOCK::GUI::PatternDataSelectionModel* s );
-  bool onAccept( const bool publish = true, const bool useTransaction = true );
   void clear();
+  TopoDS_Vertex computeGeomVertex(bool preview=false);
+  TopoDS_Vertex computeGeomPointXYZ();
+  TopoDS_Vertex computeGeomPointRef();
+  TopoDS_Vertex computeGeomPointEdge();
+  TopoDS_Vertex computeGeomPointInt();
+  TopoDS_Vertex computeGeomPointSurf();
 
 protected:
-  virtual bool eventFilter( QObject *obj, QEvent *event );
-  virtual void hideEvent ( QHideEvent * event );
   virtual void showEvent ( QShowEvent * event );
-  void _initInputWidget();
-  void _initViewManager();
-  void _highlightWidget(QObject* obj, Qt::GlobalColor clr);
-  bool _isLineOrListWidget(QObject*);
+
+  virtual bool apply(QModelIndex& result);
+  virtual void _initInputWidget( Mode editmode );
+  void updateInputs(const int constructorId);
+
+  TopoDS_Vertex currentVertex;
+  QMap<int, double> paramInputValue;
+  QMap<int, QVector3D*> coordsInputValue;
 
 protected slots:
-  void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
   void onWindowActivated( SUIT_ViewManager* vm );
   void updateHelpFileName();
-
-
-private:
-  HEXABLOCK::GUI::DocumentModel*              _documentModel;
-  HEXABLOCK::GUI::PatternDataSelectionModel*  _patternDataSelectionModel;
-//   QLineEdit*                                  _vertex_le;
-
-  QObject*                                    _currentObj;
-  bool                                        _selectionMutex;
-
+  virtual void onSelectionChanged(  const QItemSelection& sel, const QItemSelection& unsel );
 
 } VertexAssocDialog;
 

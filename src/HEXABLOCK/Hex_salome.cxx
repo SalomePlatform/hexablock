@@ -1,6 +1,6 @@
-//
-// CC++ : Representation Cascade d'un bi-cylindre
-//
+
+// C++ : La clase principale de Hexa
+
 // Copyright (C) 2009-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
@@ -20,37 +20,17 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef __KAS_BI_CYLINDER_HXX_
-#define __KAS_BI_CYLINDER_HXX_
-
-#include "HexGlobale.hxx"
-
-#ifndef NO_CASCADE
+#include "HexDocument.hxx"
+#include <TopoDS_Shape.hxx>
 
 BEGIN_NAMESPACE_HEXA
-
-class KasLine;
-
-class KasBiCylinder
+//--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
+// ======================================================== addShape
+NewShape* Document::addShape (long object, const char* name)
 {
-public :
-   KasBiCylinder () { purge () ; }
-  ~KasBiCylinder () { purge () ; }
- 
-   int defineCyls (double* borig,  double* bnorm, double* bbase,
-                   double  brayon, double  bhaut,
-                   double* sorig,  double* snorm, double* sbase,
-                   double  srayon, double  shaut);
-   int associate  (Edge* edge);
+   TopoDS_Shape* topo  = (TopoDS_Shape*) object;
+   NewShape*     shape = addShape (*topo, name);
 
-private :
-   int  anaVertex (Vertex* node, int* tline, double* tpara);
-   void purge ();
-
-private :
-   std::vector <KasLine*> inter_line;
-   bool no_inter;
-};
+   return shape;
+}
 END_NAMESPACE_HEXA
-#endif
-#endif

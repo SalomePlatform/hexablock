@@ -41,10 +41,6 @@ DocumentDelegate::DocumentDelegate(QDockWidget *dw, QObject *parent)
       _dw(dw),
       _currentEditor(NULL)
 {
-//   connect( this, SIGNAL( closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint) ),
-//            this, SLOT( onCloseEditor(QWidget *, QAbstractItemDelegate::EndEditHint) ) );
-//   connect( this, SIGNAL( commitData ( QWidget * ) ),
-//            this, SLOT( onCommitData ( QWidget * ) ) );
 }
 
 
@@ -52,7 +48,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
                                          const QStyleOptionViewItem &option,
                                          const QModelIndex          &index ) const
 {
-
   //close current editor if there's one before creating a new one
   if (_currentEditor != NULL)
   {
@@ -66,7 +61,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   if ( !_dw->isVisible() ) _dw->setVisible(true);
 
   switch ( index.data(HEXA_TREE_ROLE).toInt() ){
-//  case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::UPDATE_MODE);   break; //Modification
     case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
     case EDGE_TREE :     editor = new EdgeDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case QUAD_TREE :     editor = new QuadDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
@@ -74,8 +68,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     case VECTOR_TREE :   editor = new VectorDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
     case CYLINDER_TREE : editor = new CylinderDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
     case PIPE_TREE :     editor = new PipeDialog(_dw, HexaBaseDialog::INFO_MODE);       break;
-  //   case ELEMENTS_TREE :  break;
-  //   case CROSSELEMENTS_TREE : break;
     case GROUP_TREE       : editor = new GroupDialog(_dw, HexaBaseDialog::INFO_MODE/*UPDATE_MODE*/); break;
     case LAW_TREE         : editor = new LawDialog(_dw, HexaBaseDialog::INFO_MODE); break;
     case PROPAGATION_TREE : editor = new PropagationDialog(_dw, HexaBaseDialog::INFO_MODE); break;
@@ -88,7 +80,6 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   }
   else
 	  _dw->close();
-
 
   _currentEditor = editor;
   return editor;
@@ -116,7 +107,6 @@ void DocumentDelegate::setEditorData( QWidget *editor,
 
   switch ( index.data(HEXA_TREE_ROLE).toInt() ){
     case VERTEX_TREE : {
-//      HEXA_NS::Vertex *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Vertex* >();
       HEXA_NS::Vertex *value = documentModel->getHexaPtr<HEXA_NS::Vertex *>(index);
       VertexDialog *vertexEditor = static_cast<VertexDialog*>(editor);
       vertexEditor->setValue(value);
@@ -158,8 +148,6 @@ void DocumentDelegate::setEditorData( QWidget *editor,
       pipeEditor->setValue(value);
     }
     break;
-//         case ELEMENTSITEM : editor = new ElementsDialog(parent);   break;
-//         case CROSSELEMENTSITEM : editor = new CrossElementsDialog(parent);   break;
     case GROUP_TREE :{
       HEXA_NS::Group *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
       GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
@@ -188,21 +176,7 @@ bool DocumentDelegate::editorEvent ( QEvent                     *event,
                                      const QStyleOptionViewItem &option,
                                      const QModelIndex          &index )
 {
-/************************************************************
-	MESSAGE("DocumentDelegate::editorEvent(){");
-	MESSAGE("*  item   is: " << index.data().toString().toStdString());
-	MESSAGE("*  event  is: " << event->type() );
-
-	Qt::ItemFlags flags = model->flags(index);
-	if ( flags == Qt::ItemFlags( ~Qt::ItemIsEditable ) ){
-		MESSAGE("*  you can select it ");
-	} else {
-		MESSAGE("*  you cannot select it ");
-	}
-
-	//return QItemDelegate::editorEvent ( event, model, option, index );
- *************************************************************/
-	return false;
+	return QItemDelegate::editorEvent ( event, model, option, index );
 }
 
 bool DocumentDelegate::eventFilter ( QObject * editor, QEvent * event )

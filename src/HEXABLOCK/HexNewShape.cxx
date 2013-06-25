@@ -17,8 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 
 #include "HexNewShape.hxx"
 #include "HexSubShape.hxx"
@@ -28,13 +28,13 @@
 
 #include "HexQuad.hxx"
 #include "HexEdge.hxx"
+#include "HexMatrix.hxx"
 
 #include "HexKas_functions.hxx"
 
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
 
-#ifndef NO_CASCADE
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Edge.hxx>
@@ -44,6 +44,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
 
 #include <BRep_Tool.hxx>
 
@@ -171,6 +172,42 @@ int NewShape::addSphere (double* milieu, double radius)
    curr_subid += 7;
    return subid;
 }
+// ====================================================== transfoShape
+int NewShape::transfoShape (Matrix& matrice, SubShape* shape)
+{
+   gp_Trsf transfo;
+   double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
+   matrice.getCoeff  (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
+   transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34,
+                      Epsil2, Epsil2);
+
+   TopoDS_Shape shape_orig = shape->getShape ();
+   BRepBuilderAPI_Transform builder (shape_orig, transfo, Standard_True);
+   TopoDS_Shape result = builder.Shape();
+
+   geo_builder.Add (geo_compound, result);
+
+   int  subid  = curr_subid;
+   curr_subid += 2;                       // PROVISOIRE
+   return subid;
+}
+// ====================================================== translateShape
+int NewShape::translateShape (double dir[], SubShape* shape)
+{
+   gp_Trsf transfo;
+   gp_Vec  vecteur        (dir [dir_x], dir [dir_y], dir [dir_z]);
+   transfo.SetTranslation (vecteur);
+
+   TopoDS_Shape shape_orig = shape->getShape ();
+   BRepBuilderAPI_Transform builder (shape_orig, transfo, Standard_True);
+   TopoDS_Shape result = builder.Shape();
+
+   geo_builder.Add (geo_compound, result);
+
+   int  subid  = curr_subid;
+   curr_subid += 2;                       // PROVISOIRE
+   return subid;
+}
 // ====================================================== addAssociation
 void NewShape::addAssociation (Vertex* vertex, int subid, double param)
 {
@@ -283,7 +320,7 @@ SubShape* NewShape::findSubShape (int shid)
 // ====================================================== getVertex
 int NewShape::getVertex (int nro)
 {
-   if (nro <0 || nro >= tab_vertex.size())
+   if (nro <0 || nro >= (int) tab_vertex.size())
       return 0;
 
    SubShape* shape = tab_vertex [nro];
@@ -292,7 +329,7 @@ int NewShape::getVertex (int nro)
 // ====================================================== getEdge
 int NewShape::getEdge   (int nro)
 {
-   if (nro <0 || nro >= tab_edge.size())
+   if (nro <0 || nro >= (int) tab_edge.size())
       return 0;
 
    SubShape* shape = tab_edge [nro];
@@ -301,7 +338,7 @@ int NewShape::getEdge   (int nro)
 // ====================================================== getFace
 int NewShape::getFace   (int nro)
 {
-   if (nro <0 || nro >= tab_face.size())
+   if (nro <0 || nro >= (int) tab_face.size())
       return 0;
 
    SubShape* shape = tab_face [nro];
@@ -311,7 +348,7 @@ int NewShape::getFace   (int nro)
 // ====================================================== getNameVertex
 cpchar NewShape::getNameVertex  (int nro)
 {
-   if (nro <0 || nro >= tab_vertex.size())
+   if (nro <0 || nro >= (int) tab_vertex.size())
       return "?";
 
    SubShape* shape = tab_vertex [nro];
@@ -320,7 +357,7 @@ cpchar NewShape::getNameVertex  (int nro)
 // ====================================================== getNameEdge
 cpchar NewShape::getNameEdge    (int nro)
 {
-   if (nro <0 || nro >= tab_edge.size())
+   if (nro <0 || nro >= (int) tab_edge.size())
       return "?";
 
    SubShape* shape = tab_edge [nro];
@@ -329,7 +366,7 @@ cpchar NewShape::getNameEdge    (int nro)
 // ====================================================== getNameFace
 cpchar NewShape::getNameFace    (int nro)
 {
-   if (nro <0 || nro >= tab_face.size())
+   if (nro <0 || nro >= (int) tab_face.size())
       return "?";
 
    SubShape* shape = tab_face [nro];
@@ -338,7 +375,7 @@ cpchar NewShape::getNameFace    (int nro)
 // ====================================================== getFaceShape
 FaceShape* NewShape::getFaceShape (int nro)
 {
-   if (nro <0 || nro >= tab_face.size())
+   if (nro <0 || nro >= (int) tab_face.size())
       return 0;
 
    FaceShape* shape = tab_face [nro];
@@ -347,7 +384,7 @@ FaceShape* NewShape::getFaceShape (int nro)
 // ====================================================== getEdgeShape
 EdgeShape* NewShape::getEdgeShape (int nro)
 {
-   if (nro <0 || nro >= tab_edge.size())
+   if (nro <0 || nro >= (int) tab_edge.size())
       return 0;
 
    EdgeShape* shape = tab_edge [nro];
@@ -356,7 +393,7 @@ EdgeShape* NewShape::getEdgeShape (int nro)
 // ====================================================== getVertexShape
 VertexShape* NewShape::getVertexShape (int nro)
 {
-   if (nro <0 || nro >= tab_vertex.size())
+   if (nro <0 || nro >= (int) tab_vertex.size())
       return 0;
 
    VertexShape* shape = tab_vertex [nro];
@@ -366,9 +403,9 @@ VertexShape* NewShape::getVertexShape (int nro)
 int NewShape::addPoint (double* point)
 {
    char suffix [32];
-   int  subid = tab_vertex.size() + 1;
+   int  subid = tab_vertex.size() + 2;
 
-   sprintf (suffix, ":vertex%02d", subid);
+   sprintf (suffix, ":vertex_%02d", subid);
    string name = el_name + suffix;
 
    VertexShape* sub_shape = new VertexShape (this, subid, point);
@@ -385,12 +422,13 @@ int NewShape::saveBrep ()
    if (ier != HOK)
       return ier;
 
-    pfile fic = fopen (filename.c_str(), "w");
-    if (fic==NULL)
-       return HERR;
+   pfile fic = fopen (filename.c_str(), "w");
+   if (fic==NULL)
+      return HERR;
 
-    fprintf (fic, "%s\n", geo_brep.c_str());
-    fclose  (fic);
+   fprintf (fic, "%s\n", geo_brep.c_str());
+   fclose  (fic);
+   return HOK;
 }
 // ====================================================== saveXml
 void NewShape::saveXml (XmlWriter* xml)
@@ -535,26 +573,3 @@ int NewShape::updateBrep ()
    return HOK;
 }
 END_NAMESPACE_HEXA
-
-#else
-
-// ====================================================== ===================
-BEGIN_NAMESPACE_HEXA
-NewShape::NewShape (Document* dad) : EltBase  (dad, EL_SHAPE) {}
-void      NewShape::setShape (const TopoDS_Shape& shape)      {}
-void      NewShape::saveXml  (XmlWriter* xml)                 {}
-SubShape* NewShape::findSubShape (int shid)             { return NULL; }
-SubShape* NewShape::findVertex   (int shid)             { return NULL; }
-SubShape* NewShape::findEdge     (int shid)             { return NULL; }
-SubShape* NewShape::findFace     (int shid)             { return NULL; }
-
-int NewShape::getVertex (int nro)     { return 0 ; }
-int NewShape::getEdge   (int nro)     { return 0 ; }
-int NewShape::getFace   (int nro)     { return 0 ; }
-
-cpchar NewShape::getNameVertex  (int nro)     { return "Nothing" ; }
-cpchar NewShape::getNameEdge    (int nro)     { return "Nothing" ; }
-cpchar NewShape::getNameFace    (int nro)     { return "Nothing" ; }
-
-END_NAMESPACE_HEXA
-#endif

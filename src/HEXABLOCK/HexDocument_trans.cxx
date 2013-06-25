@@ -46,56 +46,80 @@ BEGIN_NAMESPACE_HEXA
 // ========================================================= performTranslation
 int Document::performTranslation (Elements* elts, Vector* trans)
 { 
+   DumpStart ("performTranslation", elts << trans);
+
    Matrix matrice;
    matrice.defTranslation (trans);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 // ==================================================== performScale
 int Document::performScale (Elements* elts, Vertex* ver, double k)
 { 
+   DumpStart ("performScale", elts << ver << k);
+
    Matrix matrice;
    matrice.defScale (ver, k);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 // ==================================================== performRotation
 int Document::performRotation (Elements* elts, Vertex* ver, Vector* vec, double angle)
 { 
+   DumpStart ("performRotation", elts << ver << vec << angle);
+
    Matrix matrice;
    matrice.defRotation (ver, vec, angle);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 // ==================================================== performSymmetryPoint
 int Document::performSymmetryPoint (Elements* elts, Vertex* ver)
 { 
+   DumpStart ("performSymmetryPoint", elts << ver);
+
    Matrix matrice;
    matrice.defSymmetryPoint (ver);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 // ==================================================== performSymmetryPlane
 int Document::performSymmetryPlane (Elements* elts, Vertex* ver, Vector* vec)    
 { 
+   DumpStart ("performSymmetryPlane", elts << ver << vec);
+
    Matrix matrice;
    matrice.defSymmetryPlane (ver, vec);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 
 // ==================================================== performSymmetryLine
 int Document::performSymmetryLine (Elements* elts, Vertex* ver, Vector* vec)
 { 
+   DumpStart ("performSymmetryLine", elts << ver << vec);
+
    Matrix matrice;
    matrice.defSymmetryLine (ver, vec);
 
    int    ier = elts->transform (&matrice);
+
+   DumpReturn (ier);
    return ier;
 }
 // -------------------------------------------------------- 
@@ -114,56 +138,80 @@ Elements* Document::clonerElements (Elements* table, Matrix* matrice)
 // ========================================================= makeTranslation
 Elements* Document::makeTranslation (Elements* table, Vector* trans)
 {
+   DumpStart ("makeTranslation", table  << trans);
+
    Matrix  matrice;
    matrice.defTranslation (trans);
 
    Elements* grille = clonerElements (table, &matrice);
-   return    grille;
+
+   DumpReturn (grille);
+   return  grille;
 }
 // ========================================================= makeScale
 Elements* Document::makeScale (Elements* table, Vertex* ver, double k)
 {
+   DumpStart ("makeScale", table  << ver << k);
+
    Matrix  matrice;
    matrice.defScale (ver, k);
 
    Elements* grille = clonerElements (table, &matrice);
+
+   DumpReturn (grille);
    return    grille;
 }
 // ========================================================= makeRotation
 Elements* Document::makeRotation (Elements* table, Vertex* ver, Vector* vec, 
-                                double angle)
+                                  double angle)
 {
+   DumpStart ("makeRotation", table  << ver << vec << angle);
+
    Matrix  matrice;
    matrice.defRotation (ver, vec, angle);
 
    Elements* grille = clonerElements (table, &matrice);
+
+   DumpReturn (grille);
    return    grille;
 }
 // ========================================================= makeSymmetryPoint
 Elements* Document::makeSymmetryPoint (Elements* table, Vertex* ver)
 {
+   DumpStart ("makeSymmetryPoint", table  << ver);
+
    Matrix  matrice;
    matrice.defSymmetryPoint (ver);
 
    Elements* grille = clonerElements (table, &matrice);
+
+   DumpReturn (grille);
    return    grille;
 }
 // ========================================================= makeSymmetryLine
 Elements* Document::makeSymmetryLine (Elements* table, Vertex* ver, Vector* vec)
 {
+   DumpStart ("makeSymmetryLine", table  << ver << vec);
+
    Matrix  matrice;
    matrice.defSymmetryLine (ver, vec);
 
    Elements* grille = clonerElements (table, &matrice);
+
+   DumpReturn (grille);
    return    grille;
 }
 // ========================================================= makeSymmetryPlane
 Elements* Document::makeSymmetryPlane (Elements* table, Vertex* ver, Vector* vec)
 {
+   DumpStart ("makeSymmetryPlane", table  << ver << vec);
+
    Matrix  matrice;
    matrice.defSymmetryPlane (ver, vec);
 
    Elements* grille = clonerElements (table, &matrice);
+
+   DumpReturn (grille);
    return    grille;
 }
 // ----------------------------------------------------------------------
@@ -172,39 +220,63 @@ Elements* Document::makeSymmetryPlane (Elements* table, Vertex* ver, Vector* vec
 // ========================================================= removeHexa
 int Document::removeHexa (Hexa* cell)
 {
-   if (cell==NULL)
-      return HERR;
+   DumpStart ("removeHexa", cell);
 
-   cell->remove ();
-   return  HOK;
+   int ier = HOK;
+   if (cell==NULL)
+      ier = HERR;
+   else
+      cell->remove ();
+
+   DumpReturn (ier);
+   return ier;
 }
 // ========================================================= removeQuad
 int Document::removeQuad (Quad* cell)
 {
-   if (cell==NULL)
-      return HERR;
+   DumpStart ("removeQuad", cell);
 
-   cell->remove ();
-   return  HOK;
+   int ier = HOK;
+   if (cell==NULL)
+      ier = HERR;
+   else
+      cell->remove ();
+
+   DumpReturn (ier);
+   return ier;
 }
 // ========================================================= removeElements
 int Document::removeElements (Elements* bloc)
 {
-   if (bloc==NULL)
-      return HERR;
+   DumpStart ("removeElements", bloc);
 
-   bloc->remove ();
-   return  HOK;
+   int ier = HOK;
+
+   if (bloc==NULL)
+      ier = HERR;
+   else
+      bloc->remove ();
+
+   DumpReturn (ier);
+   return ier;
 }
 // ====================================================== removeConnectedHexa
 int Document::removeConnectedHexa (Hexa* cell)
 {
-   if (cell==NULL)
-      return HERR;
+   DumpStart ("removeConnectedHexa", cell);
 
-   update ();
-   cell->removeConnected ();
-   return  HOK;
+   int ier = HOK;
+
+   if (cell==NULL)
+      ier = HERR;
+   else
+      {
+      update ();
+      cell->removeConnected ();
+      }
+
+   DumpReturn (ier);
+   return ier;
 }
 // ========================================================= dumpPropagation
 void Document::dumpPropagation ()

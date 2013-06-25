@@ -22,9 +22,8 @@
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
-//#include "HEXABLOCKGUI.hxx"
 
-
+#include "Hex.hxx"
 #include <iostream>
 #include <QtGui>
 #include <QFlags>
@@ -38,8 +37,6 @@
 #include <TDF_Label.hxx>
 
 #include <OCCViewer_ViewManager.h>
-// #include <OCCViewer_ViewModel.h>
-
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -47,7 +44,6 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
-
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -61,17 +57,7 @@
 
 #include <SUIT_ResourceMgr.h>
 
-
-// #include <GeometryGUI.h>
-
 #include <GEOMBase.h>
-#include <GEOMImpl_Types.hxx>
-
-
-
-#include "MyGEOMBase_Helper.hxx"
-#include "GEOMBase.h"
-#include "GEOM_Operation.h"
 
 #define BUTTON_BOX_MIN_WIDTH 5
 #define VERTEX_COORD_MIN -1000000
@@ -87,139 +73,152 @@ using namespace HEXABLOCK::GUI;
 
 
 Q_DECLARE_METATYPE(HEXABLOCK::GUI::HexaTreeRole);
+Q_DECLARE_METATYPE(DocumentModel::GeomObj);
 Q_DECLARE_METATYPE(TopAbs_ShapeEnum);
+Q_DECLARE_METATYPE(TopoDS_Shape);
 
 //General SpinBox Delegate
 class HexaDoubleSpinBoxDelegate : public QStyledItemDelegate  {
 public:
-   HexaDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
+    HexaDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
 
-   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-         const QModelIndex &index) const{
-      QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
-      sb->setDecimals(NB_DECIMALS);
-      return sb;
-   }
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+            const QModelIndex &index) const{
+        QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
+        sb->setDecimals(NB_DECIMALS);
+        return sb;
+    }
 };
 
 //Angle SpinBox Delegate
 class HexaAngleDoubleSpinBoxDelegate : public QStyledItemDelegate  {
 public:
-   HexaAngleDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
+    HexaAngleDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
 
-   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-         const QModelIndex &index) const{
-      QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
-      sb->setMinimum(SPINBOX_POSITIVE_DOUBLE_MIN);
-      sb->setMaximum(SPINBOX_ANGLE_MAX);
-      sb->setDecimals(NB_DECIMALS);
-      return sb;
-   }
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+            const QModelIndex &index) const{
+        QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
+        sb->setMinimum(SPINBOX_POSITIVE_DOUBLE_MIN);
+        sb->setMaximum(SPINBOX_ANGLE_MAX);
+        sb->setDecimals(NB_DECIMALS);
+        return sb;
+    }
 };
 
 
 //Positive DoubleSpinBox Delegate (for heigth, radius, ...)
 class HexaPositiveDoubleSpinBoxDelegate : public QStyledItemDelegate  {
 public:
-   HexaPositiveDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
+    HexaPositiveDoubleSpinBoxDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
 
-   QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-         const QModelIndex &index) const{
-      QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
-      sb->setMinimum(SPINBOX_POSITIVE_DOUBLE_MIN);
-      /////// sb->setMaximum(1000000000000000); //10e15   Abu : Pb en 32 bits
-      sb->setMaximum(SPINBOX_DOUBLE_MAX);       //10e9
-      sb->setDecimals(NB_DECIMALS);
-      return sb;
-   }
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+            const QModelIndex &index) const{
+        QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
+        sb->setMinimum(SPINBOX_POSITIVE_DOUBLE_MIN);
+        /////// sb->setMaximum(1000000000000000); //10e15   Abu : Pb en 32 bits
+        sb->setMaximum(SPINBOX_DOUBLE_MAX);       //10e9
+        sb->setDecimals(NB_DECIMALS);
+        return sb;
+    }
 };
 
 // ======================================================== Constructeur
 HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags f ):
-                  QDialog(parent, f),
-                  MyGEOMBase_Helper( dynamic_cast<SUIT_Desktop*>(parent->parent()) ),
-                  _editMode( editmode ),
-                  _currentObj(NULL),
-                  _expectedSelection(-1),
-                  _selectionMutex( false ),
-                  // _applyCloseButton(0),
-                  _applyButton(NULL),
-                  debugEdgeAssoc(false),
-                  autoFocusSwitch(true)
+                          QDialog(parent, f),
+                          _editMode( editmode ),
+                          _currentObj(NULL),
+                          _applyButton(NULL),
+                          debugEdgeAssoc(false),
+                          autoFocusSwitch(true)
 {
-   _strHexaWidgetType[VERTEX_TREE] = tr( "VERTEX" );
-   _strHexaWidgetType[EDGE_TREE]   = tr( "EDGE" );
-   _strHexaWidgetType[QUAD_TREE]   = tr( "QUAD" );
-   _strHexaWidgetType[HEXA_TREE]   = tr( "HEXA" );
+    _strHexaWidgetType[VERTEX_TREE] = tr( "VERTEX" );
+    _strHexaWidgetType[EDGE_TREE]   = tr( "EDGE" );
+    _strHexaWidgetType[QUAD_TREE]   = tr( "QUAD" );
+    _strHexaWidgetType[HEXA_TREE]   = tr( "HEXA" );
 
-   _strHexaWidgetType[VECTOR_TREE]   = tr( "VECTOR" );
-   _strHexaWidgetType[CYLINDER_TREE] = tr( "CYLINDER" );
-   _strHexaWidgetType[PIPE_TREE]     = tr( "PIPE" );
-   _strHexaWidgetType[ELEMENTS_TREE] = tr( "ELEMENTS" );
-   _strHexaWidgetType[CROSSELEMENTS_TREE]= tr( "CROSSELEMENTS" );
+    _strHexaWidgetType[VECTOR_TREE]   = tr( "VECTOR" );
+    _strHexaWidgetType[CYLINDER_TREE] = tr( "CYLINDER" );
+    _strHexaWidgetType[PIPE_TREE]     = tr( "PIPE" );
+    _strHexaWidgetType[ELEMENTS_TREE] = tr( "ELEMENTS" );
+    _strHexaWidgetType[CROSSELEMENTS_TREE]= tr( "CROSSELEMENTS" );
 
-   //geom
-   _strHexaWidgetType[GEOMSHAPE_TREE] = tr( "GEOMSHAPE" );
-   _strHexaWidgetType[GEOMPOINT_TREE]   = tr( "GEOMPOINT" );
-   _strHexaWidgetType[GEOMEDGE_TREE]   = tr( "GEOMEDGE" );
-   _strHexaWidgetType[GEOMFACE_TREE]   = tr( "GEOMFACE" );
+    //geom
+    _strHexaWidgetType[GEOMSHAPE_TREE] = tr( "GEOMSHAPE" );
+    _strHexaWidgetType[GEOMPOINT_TREE]   = tr( "GEOMPOINT" );
+    _strHexaWidgetType[GEOMEDGE_TREE]   = tr( "GEOMEDGE" );
+    _strHexaWidgetType[GEOMFACE_TREE]   = tr( "GEOMFACE" );
 
 
-   _strHexaWidgetType[GROUP_TREE]      = tr( "GROUP" );
-   _strHexaWidgetType[LAW_TREE]        = tr( "LAW" );
-   _strHexaWidgetType[PROPAGATION_TREE]= tr( "PROPAGATION" );
+    _strHexaWidgetType[GROUP_TREE]      = tr( "GROUP" );
+    _strHexaWidgetType[LAW_TREE]        = tr( "LAW" );
+    _strHexaWidgetType[PROPAGATION_TREE]= tr( "PROPAGATION" );
 }
 
 // ============================================================= getIndexList
-QModelIndexList HexaBaseDialog::getIndexList(QListWidget* itemsList)
+QModelIndexList HexaBaseDialog::getIndexList(QListWidget* itemsList, bool mapToSource)
 {
-   QModelIndexList iItems;
-   QModelIndex     iItem;
-   QListWidgetItem* item = NULL;
+    QModelIndexList iItems;
+    QModelIndex     iItem;
+    QListWidgetItem* item = NULL;
 
-   const PatternDataModel*    patternDataModel = getPatternDataModel();
-   if (patternDataModel == NULL || itemsList == NULL) return iItems;
+    const PatternDataModel*    patternDataModel = getPatternDataModel();
+    if (patternDataModel == NULL || itemsList == NULL) return iItems;
 
-   unsigned int nbItems = itemsList->count();
-   for ( int r = 0; r < nbItems; ++r){
-         item = itemsList->item(r);
-         iItem = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         iItems << iItem;
-   }
-   return iItems;
+    unsigned int nbItems = itemsList->count();
+    for ( int r = 0; r < nbItems; ++r){
+        item = itemsList->item(r);
+        if (mapToSource)
+            iItem = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        else
+            iItem = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
+        iItems << iItem;
+    }
+    return iItems;
 }
 
 // ============================================================= lockSizeToSizeHint
 void HexaBaseDialog::lockSizeToSizeHint()
 {
-   setMaximumHeight(sizeHint().height());
-//   setMaximumWidth(sizeHint().width());
-   //	setMinimumHeight(sizeHint().height());
-   //	setMinimumWidth(sizeHint().width());
+    setMaximumHeight(sizeHint().height());
+    //   setMaximumWidth(sizeHint().width());
+    //	setMinimumHeight(sizeHint().height());
+    //	setMinimumWidth(sizeHint().width());
 }
 
 // ============================================================= unlockSizeModification
 void HexaBaseDialog::unlockSizeModification()
 {
-   setMaximumHeight(MAX_HEIGHT);
-//   setMaximumWidth(MAX_WIDTH);
-   //	setMinimumHeight(MIN_HEIGHT);
-   //	setMinimumWidth(MIN_WIDTH);
+    setMaximumHeight(MAX_HEIGHT);
+    //   setMaximumWidth(MAX_WIDTH);
+    //	setMinimumHeight(MIN_HEIGHT);
+    //	setMinimumWidth(MIN_WIDTH);
 }
 
 // ============================================================= resetSizeAndShow
 void HexaBaseDialog::resetSizeAndShow(QDockWidget* parent)
 {
-   //force the dialog to fit its contain
-   lockSizeToSizeHint();
+    //force the dialog to fit its contain
+    lockSizeToSizeHint();
 
-   //set the dialog in the dockwidget
-   parent->setWidget(this);
-   parent->setWindowTitle(windowTitle());
-   parent->setVisible(true);
-   show();
+    //set the dialog in the dockwidget
+    parent->setWidget(this);
+    parent->setWindowTitle(windowTitle());
+    parent->setVisible(true);
+    show();
 
-   unlockSizeModification();
+    unlockSizeModification();
+}
+
+QString HexaBaseDialog::getErrorMsg()
+{
+    DocumentModel* docModel = getDocumentModel();
+    Hex::Hex* hex = docModel->getHexaRoot();
+    int nbErrorMsg = hex->sizeofMessage();
+    QString msg, newLine = "\n";
+    for (int i = 1; i < nbErrorMsg; ++i)
+        msg +=  newLine + hex->getMessageLine(i);
+
+    return msg;
 }
 
 //unlink the widget from the model
@@ -227,9 +226,19 @@ void HexaBaseDialog::modelUnregister(QWidget* widget)
 {
     if (widget == NULL) return;
 
-    //Update the line edit
+    if (widget->property("GeomWidgetType").isValid())
+    {
+        widget->setProperty("GeomObj", QVariant());
+        widget->setProperty("TopoDS_Shape", QVariant());
+    }
+
+    widget->setProperty("HexaData", QVariant());
     widget->setProperty("QModelIndex",  QVariant());
     _index[widget] = QModelIndex();
+
+    HexaBaseDialog* diag = dynamic_cast<HexaBaseDialog*>(widget);
+    if (diag != NULL)
+        diag->clearWidgetsIndexes();
 }
 
 // ============================================================= connectDocumentGraphicView
@@ -246,7 +255,7 @@ void HexaBaseDialog::connectDocumentGraphicView(VtkDocumentGraphicView* docGView
     connect( docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
     connect( docGView->getPatternGeomSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-                this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
     connect( docGView->getGroupsSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
     connect( docGView->getMeshSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
@@ -256,32 +265,31 @@ void HexaBaseDialog::connectDocumentGraphicView(VtkDocumentGraphicView* docGView
 // ============================================================= disconnectDocumentGraphicView
 void HexaBaseDialog::disconnectDocumentGraphicView(VtkDocumentGraphicView* docGView)
 {
-   if (docGView == NULL) docGView = HEXABLOCKGUI::currentDocGView;
-   if (docGView == NULL) return;
+    if (docGView == NULL) docGView = HEXABLOCKGUI::currentDocGView;
+    if (docGView == NULL) return;
 
 
-   //Disconnect graphic view signals form the dialog box
-   disconnect(docGView->getPatternDataSelectionModel(), SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-
-   disconnect(docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-
-   disconnect(docGView->getPatternGeomSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+    //Disconnect graphic view signals form the dialog box
+    disconnect(docGView->getPatternDataSelectionModel(), SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
 
-   disconnect( docGView->getGroupsSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+    disconnect(docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
 
-   disconnect( docGView->getMeshSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+    disconnect(docGView->getPatternGeomSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
+    disconnect( docGView->getGroupsSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+
+    disconnect( docGView->getMeshSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
 }
-
 
 // ============================================================= onCurrentSelectionChanged
 void HexaBaseDialog::onCurrentSelectionChanged()
 {
-   highlightSelectedAssocs();
+    highlightSelectedAssocs();
 }
 
 void HexaBaseDialog::clearCurrentObjectFocus()
@@ -298,305 +306,249 @@ void HexaBaseDialog::clearCurrentObjectFocus()
 //Sets focus to the next field of the current object
 void HexaBaseDialog::setFocusToNextField()
 {
-   activateWindow ();
+    activateWindow ();
 
-   if (!HEXABLOCKGUI::assocInProgress && autoFocusSwitch)
-   {
-       _highlightWidget(_currentObj, Qt::white);
-       focusNextChild ();
-   }
-
-   if (!_isLineOrListWidget(focusWidget())) clearVTKSelection();
-
+    if (!HEXABLOCKGUI::assocInProgress && autoFocusSwitch)
+    {
+        _highlightWidget(_currentObj, Qt::white);
+        focusNextChild ();
+    }
 }
 
 // ============================================================== _initButtonBox
 QGroupBox* HexaBaseDialog::_initButtonBox( Mode editmode )
 {
-   if ( editmode == INFO_MODE )
-      return NULL;
+    if ( editmode == INFO_MODE )
+        return NULL;
 
-   //QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
-   QGroupBox* buttonBox = new QGroupBox();
-   buttonBox->setMinimumWidth(BUTTON_BOX_MIN_WIDTH);
-   buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-   //buttonBox->setOrientation(Qt::Horizontal);
-   QHBoxLayout* buttonsHLayout = new QHBoxLayout();
-   _applyButton      = new QPushButton(tr("Apply"));
-   QPushButton* closeButton = new QPushButton(tr("Close"));
-   QPushButton* helpButton  = new QPushButton(tr("Help"));
-   //_applyCloseButton = new QPushButton(tr("Apply And Close"));
+    QGroupBox* buttonBox = new QGroupBox();
+    buttonBox->setMinimumWidth(BUTTON_BOX_MIN_WIDTH);
+    buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+    QHBoxLayout* buttonsHLayout = new QHBoxLayout();
+    _applyButton      = new QPushButton(tr("Apply"));
+    QPushButton* closeButton = new QPushButton(tr("Close"));
+    QPushButton* helpButton  = new QPushButton(tr("Help"));
 
-   //connect( buttonBox, SIGNAL(clicked()), this, SLOT(applyAndClose()) );
-   connect( _applyButton, SIGNAL(clicked()), this, SLOT(apply()), Qt::UniqueConnection );
-   connect( closeButton, SIGNAL(clicked()), this, SLOT(close()), Qt::UniqueConnection );
-   connect( helpButton, SIGNAL(clicked()), this, SLOT(onHelpRequested()), Qt::UniqueConnection );
+    connect( _applyButton, SIGNAL(clicked()), this, SLOT(apply()), Qt::UniqueConnection );
+    connect( closeButton, SIGNAL(clicked()), this, SLOT(close()), Qt::UniqueConnection );
+    connect( helpButton, SIGNAL(clicked()), this, SLOT(onHelpRequested()), Qt::UniqueConnection );
 
-   buttonsHLayout->addWidget( _applyButton );
-   buttonsHLayout->addWidget( closeButton );
-   buttonsHLayout->addStretch(1);
-   buttonsHLayout->addWidget( helpButton );
-   //buttonsHLayout->addButton( _applyCloseButton );
-   buttonBox->setLayout(buttonsHLayout);
-   layout()->addWidget(buttonBox);
-   buttonBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-   return buttonBox;
+    buttonsHLayout->addWidget( _applyButton );
+    buttonsHLayout->addWidget( closeButton );
+    buttonsHLayout->addStretch(1);
+    buttonsHLayout->addWidget( helpButton );
+    buttonBox->setLayout(buttonsHLayout);
+    layout()->addWidget(buttonBox);
+    buttonBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    return buttonBox;
 }
 
 // ============================================================== _initWidget
 void HexaBaseDialog::_initWidget( Mode editmode )
 {
-   _initInputWidget( editmode );
-   _initButtonBox( editmode );
-}
-
-// ============================================================== _initViewManager
-void HexaBaseDialog::_initViewManager()
-{
-//   SalomeApp_Application* anApp = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-//   if (anApp == NULL) return;
-//   _mgr   = dynamic_cast<LightApp_SelectionMgr*>( anApp->selectionMgr() );
-//   _occVm = anApp->getViewManager( OCCViewer_Viewer::Type(), true );
-//   _vtkVm = anApp->getViewManager( SVTK_Viewer::Type(),      true );
-//   SUIT_ViewManager* activeVm = anApp->activeViewManager();
-//   onWindowActivated ( activeVm );
+    _initInputWidget( editmode );
+    _initButtonBox( editmode );
 }
 
 // ============================================================== apply
 bool HexaBaseDialog::apply()
 {
-   QModelIndex iNew;
-   bool applied = apply(iNew);
-   if ( applied ){
-         // clear all selection
-         if (getPatternDataSelectionModel() != NULL)    getPatternDataSelectionModel()->clearSelection();
-         if (getPatternBuilderSelectionModel() != NULL) getPatternBuilderSelectionModel()->clearSelection();
-         if (getPatternGeomSelectionModel() != NULL)    getPatternGeomSelectionModel()->clearSelection();
-         if (getGroupsSelectionModel() != NULL)         getGroupsSelectionModel()->clearSelection();
-         if (getMeshSelectionModel() != NULL)           getMeshSelectionModel()->clearSelection();
-         // select and highlight in vtk view the result
-         _selectAndHighlight( iNew );
-         // reinitialization
-         //		_currentObj = NULL;
-   }
-   return applied;
+    QModelIndex iNew;
+    bool applied = apply(iNew);
+    if ( applied )
+    {
+        _selectAndHighlight( iNew );
+        if (!HEXABLOCKGUI::assocInProgress)
+            getDocumentModel()->updateGeomTree();
+    }
+    return applied;
 }
-
-// ============================================================== accept
-//void HexaBaseDialog::accept()
-//{
-//  bool applied = apply();
-//  if ( applied ){
-//    QDialog::accept();
-//    _disallowSelection();
-//  }
-//}
 
 void HexaBaseDialog::clearVTKSelection()
 {
     HEXABLOCKGUI::currentDocGView->clearSelection();
-//    setFocus();
     _highlightWidget(_currentObj, Qt::white);
-//   _disallowSelection();
 }
 
 void HexaBaseDialog::clearOCCSelection()
 {
-    if (HEXABLOCKGUI::currentOccGView != NULL)
-        HEXABLOCKGUI::currentOccGView->clearSelection();
+	HEXABLOCKGUI::currentOccGView->clearSelection();
 }
 
 // ============================================================== close
 void HexaBaseDialog::close()
 {
-
-   //Clear vtk selection
-//    clearVTKSelection();
-
     //reset the data selection pattern (forget all selections of the current context)
-//    if (getPatternDataSelectionModel() != NULL)
-//        getPatternDataSelectionModel()->reset();
-//
-//    if (getPatternGeomSelectionModel() != NULL)
-//            getPatternGeomSelectionModel()->reset();
+    getPatternDataSelectionModel()->reset();
+    getPatternBuilderSelectionModel()->reset();
+    getPatternGeomSelectionModel()->reset();
+
+    //Clear vtk selection
+	clearVTKSelection();
 
     //Clear occ selection
-//    clearOCCSelection();
+	clearOCCSelection();
 
-   //Close the dialog box
-   if (parentWidget()) parentWidget()->close();
+    //Close the dialog box
+    if (parentWidget())
+    	parentWidget()->close();
 }
 
 // ============================================================== onHelpRequested
 void HexaBaseDialog::onHelpRequested()
 {
-   LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
-   if ( app )
-      //     app->onHelpContextModule( myGeometryGUI ? app->moduleName( myGeometryGUI->moduleName() ) : QString( "" ), _helpFileName );
-      app->onHelpContextModule( "HEXABLOCK", _helpFileName );
-
-   else {
-         QString platform;
+    LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+    if ( app )
+        app->onHelpContextModule( "HEXABLOCK", _helpFileName );
+    else {
+        QString platform;
 #ifdef WIN32
-         platform = "winapplication";
+        platform = "winapplication";
 #else
-         platform = "application";
+        platform = "application";
 #endif
 
-         SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
-               QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-               arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( _helpFileName ),
-               QObject::tr( "BUT_OK" ) );
-   }
+        SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
+                QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( _helpFileName ),
+                QObject::tr( "BUT_OK" ) );
+    }
 }
 
 // ============================================================== highlightSelectedAssocs
 void HexaBaseDialog::highlightSelectedAssocs()
 {
-   if (getPatternDataSelectionModel() == NULL ||
-         HEXABLOCKGUI::selectionMgr() == NULL ||
-         HEXABLOCKGUI::currentDocGView->getViewWindow() == NULL) return;
+    QMultiMap<QString, int> geomAssocs = getAssocsGEOM();
+    QModelIndexList vtkAssocs = getAssocsVTK();
 
-   QMultiMap<QString, int> geomAssocs = getAssocsGEOM();
-   QModelIndexList vtkAssocs = getAssocsVTK();
+//    HEXABLOCKGUI::selectionMgr()->clearSelected();
+    //highlight geom selected elts
+    if (geomAssocs.size() > 0)
+        HEXABLOCKGUI::currentOccGView->highlight(geomAssocs, false);
 
-   //highlight geom selected elts
-   if (geomAssocs.size() > 0)
-      {
-         HEXABLOCKGUI::selectionMgr()->clearSelected();
-         HEXABLOCKGUI::currentOccGView->highlight(geomAssocs);
-      }
-
-   //highlight vtk selected elts
-   if (!vtkAssocs.isEmpty())
-      HEXABLOCKGUI::currentDocGView->highlight(vtkAssocs);
+    //highlight vtk selected elts
+    if (!vtkAssocs.isEmpty())
+        HEXABLOCKGUI::currentDocGView->highlight(vtkAssocs);
 }
 
 // ============================================================== refreshHighlight
 void HexaBaseDialog::refreshHighlight()
 {
-   if (HEXABLOCKGUI::selectionMgr() != NULL)
-      HEXABLOCKGUI::selectionMgr()->clearSelected();
-   highlightSelectedAssocs();
+    HEXABLOCKGUI::selectionMgr()->clearSelected();
+    highlightSelectedAssocs();
 }
 
 // ============================================================== getObjectViewType
 HEXABLOCKGUI::ViewType HexaBaseDialog::getObjectViewType(QObject* obj)
 {
-   if (obj == NULL) return HEXABLOCKGUI::UNKNOWN;
-   QVariant v  = obj->property("HexaWidgetType");
-   if ( v.isValid() ) return HEXABLOCKGUI::VTK;
-   v = obj->property("GeomWidgetType");
-   if ( v.isValid() ) return HEXABLOCKGUI::OCC;
-   return HEXABLOCKGUI::UNKNOWN;
+    if (obj == NULL)
+        return HEXABLOCKGUI::UNKNOWN;
+
+    QVariant v = obj->property("GeomWidgetType");
+    if ( v.isValid() )
+        return HEXABLOCKGUI::OCC;
+
+    v  = obj->property("HexaWidgetType");
+    if ( v.isValid() )
+        return HEXABLOCKGUI::VTK;
+
+    return HEXABLOCKGUI::UNKNOWN;
 }
 
 // ============================================================== _selectAndHighlight
 void HexaBaseDialog::_selectAndHighlight( const QModelIndex& i )
 {
-   if ( !i.isValid() ) return;
-   setProperty("QModelIndex",  QVariant::fromValue(i));
-   setFocus();
+    if ( !i.isValid() ) return;
+    setProperty("QModelIndex",  QVariant::fromValue(i));
+    setFocus();
 }
 
 // ============================================================== _allowSelection
 void HexaBaseDialog::_allowSelection()
 {
-   if ( getDocumentModel() ){
-         getDocumentModel()->disallowEdition();
-   }
+    if ( getDocumentModel() )
+        getDocumentModel()->disallowEdition();
 }
 
 // ============================================================== _disallowSelection
 void HexaBaseDialog::_disallowSelection()
 {
-   if ( getDocumentModel() ){
-         getDocumentModel()->allowEdition();
-   }
-   HEXABLOCKGUI::currentDocGView->setAllSelection();
+    if ( getDocumentModel() ){
+        getDocumentModel()->allowEdition();
+    }
+    HEXABLOCKGUI::currentDocGView->setAllSelection();
 }
-
 
 // ============================================================== _allowVTKSelection
 bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
 {
 
-   bool isOk = false;
+    bool isOk = false;
 
-   QVariant v  = obj->property("HexaWidgetType");
-   HexaWidgetType wType = v.value<HexaWidgetType>();
+    QVariant v  = obj->property("HexaWidgetType");
+    HexaWidgetType wType = v.value<HexaWidgetType>();
 
-   switch (wType){
-   case VERTEX_TREE:
-      HEXABLOCKGUI::currentDocGView->setVertexSelection(); isOk = true;
-      break;
-   case EDGE_TREE:
-      HEXABLOCKGUI::currentDocGView->setEdgeSelection(); isOk = true;
-      break;
-   case QUAD_TREE:
-      HEXABLOCKGUI::currentDocGView->setQuadSelection(); isOk = true;
-      break;
-   case HEXA_TREE:
-      HEXABLOCKGUI::currentDocGView->setHexaSelection(); isOk = true;
-      break;
-      //    case VECTOR_TREE:
-      //    case CYLINDER_TREE:
-      //    case PIPE_TREE:
-      //    case ELEMENTS_TREE:
-      //    case CROSSELEMENTS_TREE: //selector = getPatternDataSelectionModel();
-      //    case GROUP_TREE:      //selector = getGroupsSelectionModel();
-      //    case LAW_TREE:
-      //    case PROPAGATION_TREE: // selector = getMeshSelectionModel();
-   default: HEXABLOCKGUI::currentDocGView->setAllSelection();
-   }
-   return isOk;
+    switch (wType){
+    case VERTEX_TREE:
+        HEXABLOCKGUI::currentDocGView->setVertexSelection(); isOk = true;
+        break;
+    case EDGE_TREE:
+        HEXABLOCKGUI::currentDocGView->setEdgeSelection(); isOk = true;
+        break;
+    case QUAD_TREE:
+        HEXABLOCKGUI::currentDocGView->setQuadSelection(); isOk = true;
+        break;
+    case HEXA_TREE:
+        HEXABLOCKGUI::currentDocGView->setHexaSelection(); isOk = true;
+        break;
+    default: HEXABLOCKGUI::currentDocGView->setAllSelection();
+    }
+    return isOk;
 }
 
 // ============================================================== _allowOCCSelection
 bool HexaBaseDialog::_allowOCCSelection( QObject* obj )
 {
-   QVariant v  = obj->property("GeomWidgetType");
-   GeomWidgetType wType = v.value<GeomWidgetType>();
-   HEXABLOCKGUI::currentOccGView->setSelectionMode(wType);
+    QVariant v  = obj->property("GeomWidgetType");
+    GeomWidgetType wType = v.value<GeomWidgetType>();
+    HEXABLOCKGUI::currentOccGView->setSelectionMode(wType);
 
-   return true;
+    return true;
 }
 
 // ============================================================== _getSelector
 QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
 {
-   QItemSelectionModel* selector = NULL;
+    QItemSelectionModel* selector = NULL;
 
-   QString objectName = obj->objectName();
-   QString className = obj->metaObject()->className();
+    HexaWidgetType wtype;
+    QVariant v  = obj->property("HexaWidgetType");
+    if ( !v.isValid() ) {
+        return NULL;
+    }
 
-   HexaWidgetType wtype;
-   QVariant v  = obj->property("HexaWidgetType");
-   if ( !v.isValid() ) {
-         return NULL;
-   }
+    wtype = v.value<HexaWidgetType>();
 
-   wtype = v.value<HexaWidgetType>();
+    switch (wtype){
+    case VERTEX_TREE:
+    case EDGE_TREE:
+    case QUAD_TREE:
+    case HEXA_TREE: selector = getPatternDataSelectionModel(); break;
+    case VECTOR_TREE:
+    case CYLINDER_TREE:
+    case PIPE_TREE:
+    case ELEMENTS_TREE:
+    case CROSSELEMENTS_TREE: selector = getPatternBuilderSelectionModel(); break;
+    case GEOMPOINT_TREE:
+    case GEOMEDGE_TREE:
+    case GEOMFACE_TREE: selector = getPatternGeomSelectionModel(); break;
+    case GROUP_TREE: selector = getGroupsSelectionModel(); break;
+    case LAW_TREE:
+    case PROPAGATION_TREE: selector = getMeshSelectionModel(); break;
+    default : ;
+    }
 
-   switch (wtype){
-   case VERTEX_TREE:
-   case EDGE_TREE:
-   case QUAD_TREE:
-   case HEXA_TREE: selector = getPatternDataSelectionModel(); break;
-   case VECTOR_TREE:
-   case CYLINDER_TREE:
-   case PIPE_TREE:
-   case ELEMENTS_TREE:
-   case CROSSELEMENTS_TREE: selector = getPatternBuilderSelectionModel(); break;
-   case GEOMPOINT_TREE:
-   case GEOMEDGE_TREE:
-   case GEOMFACE_TREE: selector = getPatternGeomSelectionModel(); break;
-   case GROUP_TREE: selector = getGroupsSelectionModel(); break;
-   case LAW_TREE:
-   case PROPAGATION_TREE: selector = getMeshSelectionModel(); break;
-   default : ;
-   }
-   return selector;
+    return selector;
 }
 
 DocumentModel::GeomObj* HexaBaseDialog::getGeomObj(const QModelIndex& index)
@@ -607,7 +559,7 @@ DocumentModel::GeomObj* HexaBaseDialog::getGeomObj(const QModelIndex& index)
     {
         geomObj = new DocumentModel::GeomObj;
         geomObj->shapeName = aSh->getName();
-        geomObj->subid = QString::number(-1);
+        geomObj->subId = QString::number(-1);
     }
     else
     {
@@ -620,7 +572,7 @@ DocumentModel::GeomObj* HexaBaseDialog::getGeomObj(const QModelIndex& index)
             if (aSSh->getParentShape() != NULL)
                 shapeName = aSSh->getParentShape()->getName();
             geomObj->shapeName = shapeName;
-            geomObj->subid = QString::number(aSSh->getIdent());
+            geomObj->subId = QString::number(aSSh->getIdent());
         }
     }
     return geomObj;
@@ -633,45 +585,62 @@ DocumentModel::GeomObj* HexaBaseDialog::getGeomObj(const QModelIndex& index)
  */
 bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit*  le )
 {
-   QModelIndexList l = sel.indexes();
-   if ( l.count() == 0 ) return false;
+    QModelIndexList l = sel.indexes();
+    if ( l.count() == 0 ) return false;
 
-   //type from selection (first)
-   QModelIndex selected = l[0];
-   int selType = selected.data(HEXA_TREE_ROLE).toInt();
+    // mono selection mode: we just get the first selected element
+    QModelIndex selected = l[0];
 
-   //type of widget
-   QVariant v = le->property("HexaWidgetType");
-   if ( !v.isValid() ) return false;
-   HexaWidgetType wType = v.value<HexaWidgetType>();
+    // we just return if the selection is not valid or the selection and the
+    // line content are the same
+    if ( !selected.isValid() || le->property("HexaData") == selected.data(HEXA_DATA_ROLE) )
+        return false;
 
-   // check selection compatibility between selection and widget
-   if ( selType != wType ){
-         SUIT_MessageBox::information( 0,
-               tr("HEXA_INFO"),
-               tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg(_strHexaWidgetType[wType]));
-         return false;
-   }
-   if (le->property("GeomWidgetType").isValid())
-   {
-       DocumentModel::GeomObj* geomObj = getGeomObj(selected);
-       if (geomObj != NULL)
-       {
-           le->setProperty("GeomObj", QVariant::fromValue<DocumentModel::GeomObj>(*geomObj));
-           setCurrentGeomObj(geomObj);
-       }
-   }
+    // type of selection
+    int selType = selected.data(HEXA_TREE_ROLE).toInt();
 
-   //fill the lineEdit if selection is OK
-   le->setText( selected.data().toString() );// namee
-   le->setProperty("QModelIndex",  QVariant::fromValue(selected) );
-   _index[le] = selected;
+    // type of widget
+    QVariant v = le->property("HexaWidgetType");
+    if ( !v.isValid() ) return false;
+    HexaWidgetType wType = v.value<HexaWidgetType>();
 
-   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(_currentObj);
-   if (selected.isValid() && lineEdit != NULL)
-      setFocusToNextField();
+    // check selection compatibility between selection and widget
+    if ( selType != wType ){
+        SUIT_MessageBox::information( 0, tr("HEXA_INFO"),
+                tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg(_strHexaWidgetType[wType]));
+        return false;
+    }
+    if (le->property("GeomWidgetType").isValid())
+    {
+        DocumentModel::GeomObj* geomObj = getGeomObj(selected);
+        if (geomObj != NULL)
+        {
+            le->setProperty("GeomObj", QVariant::fromValue<DocumentModel::GeomObj>(*geomObj));
 
-   return true;
+            DocumentModel* docModel = getDocumentModel();
+            QString objId =  geomObj->shapeName + "," + geomObj->subId;
+            HEXA_NS::SubShape* ssh = docModel->getGeomPtr(objId);
+            if (ssh != NULL)
+            {
+                TopoDS_Shape shape = ssh->getShape();
+                if (!shape.IsNull())
+                    le->setProperty("TopoDS_Shape", QVariant::fromValue<TopoDS_Shape>(shape));
+            }
+            setCurrentGeomObj(geomObj);
+        }
+    }
+
+    //fill the lineEdit if selection is OK
+    le->setText( selected.data().toString() );// name
+    le->setProperty("QModelIndex",  QVariant::fromValue(selected));
+    le->setProperty("HexaData", selected.data(HEXA_DATA_ROLE));
+    _index[le] = selected;
+
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+    if (selected.isValid() && lineEdit != NULL)
+        setFocusToNextField();
+
+    return true;
 }
 
 // ============================================================== _onSelectionChanged
@@ -681,33 +650,33 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QLineEdit* 
  */
 bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget* lw )
 {
-   QModelIndexList l = sel.indexes();
+    QModelIndexList l = sel.indexes();
 
-   if ( l.count() == 0 ) return false;
+    if ( l.count() == 0 ) return false;
 
-   //type of widget
-   QVariant v = lw->property("HexaWidgetType");
-   if ( !v.isValid() ) return false;
-   HexaWidgetType wType = v.value<HexaWidgetType>();
+    //type of widget
+    QVariant v = lw->property("HexaWidgetType");
+    if ( !v.isValid() ) return false;
+    HexaWidgetType wType = v.value<HexaWidgetType>();
 
-   //fill the listWidget
-   QListWidgetItem* item = NULL;
-   int selType;
-   QString selName;
-   //   int maxSize = 8;
-   foreach( const QModelIndex& isel, l ){
-      //     if ( lw->count() == maxSize) break;
-      selType = isel.data(HEXA_TREE_ROLE).toInt();
-      if ( selType != wType ){ // check selection compatibility between selection and widget
+    //fill the listWidget
+    QListWidgetItem* item = NULL;
+    int selType;
+    QString selName;
+    //   int maxSize = 8;
+    foreach( const QModelIndex& isel, l ){
+        //     if ( lw->count() == maxSize) break;
+        selType = isel.data(HEXA_TREE_ROLE).toInt();
+        if ( selType != wType ){ // check selection compatibility between selection and widget
             SUIT_MessageBox::information( 0,
-                  tr("HEXA_INFO"),
-                  tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
+                    tr("HEXA_INFO"),
+                    tr("%1: Bad type selected\nPlease select a %2.").arg(windowTitle()).arg( _strHexaWidgetType[wType]) );
             return false;
-      }
-      // add selection to listWidget if selection is OK
-      selName = isel.data().toString();
-      QList<QListWidgetItem *> twice = lw->findItems( selName, Qt::MatchExactly);
-      if ( twice.count() == 0 ){
+        }
+        // add selection to listWidget if selection is OK
+        selName = isel.data().toString();
+        QList<QListWidgetItem *> twice = lw->findItems( selName, Qt::MatchExactly);
+        if ( twice.count() == 0 ){
             item = new QListWidgetItem( selName );
             item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(isel) );
             item->setData(LW_DATA_ROLE, isel.data(HEXA_DATA_ROLE));
@@ -719,9 +688,9 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
             }
             lw->addItem(item);
             updateButtonBox();
-      }
-   }
-   return true;
+        }
+    }
+    return true;
 }
 
 // ============================================================== onSelectionChanged
@@ -731,105 +700,77 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
  */
 void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
-   QString className = metaObject()->className();
+    // * no edition for Info Dialogs
+    if ( _editMode == INFO_MODE )
+        return;
 
-   //	highlightSelectedAssocs();
-   QItemSelectionModel* selector = dynamic_cast<QItemSelectionModel*>(sender());
+    QLineEdit*   aLineEdit   = NULL;
+    QListWidget* aListWidget = NULL;
 
-   if ( _selectionMutex ) return;
-   bool selOk = false;
-   QLineEdit*   aLineEdit   = NULL;
-   QListWidget* aListWidget = NULL;
-   aLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+    // * fill the lineedit with selection
+    aLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
+    if ( aLineEdit)
+    {
+        _onSelectionChanged( sel, aLineEdit );
+        return;
+    }
 
-   if ( aLineEdit){ //fill the lineedit with selection
-         selOk = _onSelectionChanged( sel, aLineEdit );
-   }
-   aListWidget = dynamic_cast<QListWidget*>(_currentObj);
-   if ( aListWidget){ //fill the listWidget with selection
-         selOk = _onSelectionChanged( sel, aListWidget );
-   }
-
-   if ( !selOk && selector && ( aLineEdit || aListWidget ) ){
-         selector->clearSelection();
-   }
+    // * fill the listWidget with selection
+    aListWidget = dynamic_cast<QListWidget*>(_currentObj);
+    if ( aListWidget)
+        _onSelectionChanged( sel, aListWidget );
 }
 
 // ============================================================== showEvent
 void HexaBaseDialog::showEvent( QShowEvent * event )
 {
-   QString className = metaObject()->className();
+    if ( _editMode == INFO_MODE )
+        getDocumentModel()->allowEdition();
+    else
+        getDocumentModel()->disallowEdition();
 
-   if (getDocumentModel() == NULL)
-   {
-       QDialog::showEvent ( event );
-       return;
-   }
+    //Connect to salome selection signals
+    if (HEXABLOCKGUI::selectionMgr() != NULL)
+    {
+        connect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
+                this, SLOT(onCurrentSelectionChanged()), Qt::UniqueConnection );
+    }
 
-   if ( _editMode == INFO_MODE ){
-         getDocumentModel()->allowEdition();
-   } else {
-         getDocumentModel()->disallowEdition();
-   }
+    //connect model selection signals
+    connectDocumentGraphicView();
 
-   //Connect to salome selection signals
-   if (HEXABLOCKGUI::selectionMgr() != NULL)
-   {
-       connect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
-               this, SLOT(onCurrentSelectionChanged()), Qt::UniqueConnection );
-   }
-
-   //Connect to vtk window activation signals
-   if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
-   {
-       connect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(), SIGNAL( activated(SUIT_ViewManager*) ),
-                  this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
-   }
-
-   //connect to occ window activation signals
-   if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
-   {
-       connect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
-               SIGNAL( activated(SUIT_ViewManager*) ),
-               this, SLOT( onWindowActivated(SUIT_ViewManager*) ), Qt::UniqueConnection );
-   }
-
-   //connect model selection signals
-   connectDocumentGraphicView();
-
-   QDialog::showEvent ( event );
+    QDialog::showEvent ( event );
 }
 
 
 // ============================================================== hideEvent
 void HexaBaseDialog::hideEvent ( QHideEvent * event )
 {
-   QString className = metaObject()->className();
-   if (getDocumentModel() == NULL) return;
+    //Disconnection salome selection signals
+    if (HEXABLOCKGUI::selectionMgr() != NULL)
+    {
+        disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()),
+                this, SLOT(onCurrentSelectionChanged()) );
+    }
 
-   //Disconnection salome selection signals
-   if (HEXABLOCKGUI::selectionMgr() != NULL)
-       disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()),
-               this, SLOT(onCurrentSelectionChanged()) );
+    //Disconnect vtk window activation signals
+//    if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
+//        disconnect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(),
+//                SIGNAL( activated(SUIT_ViewManager*) ),
+//                this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
 
-   //Disconnect vtk window activation signals
-   if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
-       disconnect( HEXABLOCKGUI::currentDocGView->getViewWindow()->getViewManager(),
-               SIGNAL( activated(SUIT_ViewManager*) ),
-               this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+    //Disconnect occ window activation signals
+//    if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
+//        disconnect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
+//                SIGNAL( activated(SUIT_ViewManager*) ),
+//                this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
 
-   //Disconnect occ window activation signals
-   if (HEXABLOCKGUI::currentOccGView->getViewWindow() != NULL)
-       disconnect( HEXABLOCKGUI::currentOccGView->getViewWindow()->getViewManager(),
-               SIGNAL( activated(SUIT_ViewManager*) ),
-               this, SLOT( onWindowActivated(SUIT_ViewManager*) ) );
+    //Disconnect model selection signals
+    disconnectDocumentGraphicView();
 
-   //Disconnect model selection signals
-   disconnectDocumentGraphicView();
+    getDocumentModel()->allowEdition();
 
-   getDocumentModel()->allowEdition();
-
-   QDialog::hideEvent( event );
+    QDialog::hideEvent( event );
 }
 
 // ============================================================== updateButtonBox
@@ -840,61 +781,51 @@ void HexaBaseDialog::updateButtonBox()
 // ============================================================== updateName
 void HexaBaseDialog::updateName()
 {
-   if (!getDocumentModel()) return;
-   if ( getPatternDataSelectionModel() == NULL )  return;
-   const PatternDataModel*   patternDataModel = getPatternDataModel();
-   if (patternDataModel == NULL) return;
+    const PatternDataModel*   patternDataModel = getPatternDataModel();
 
-   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(sender());
-   if (!lineEdit) return;
-   QString newName = lineEdit->text();
-   if ( newName.isEmpty() ) return;
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(sender());
+    if (!lineEdit) return;
+    QString newName = lineEdit->text();
+    if ( newName.isEmpty() ) return;
 
-   QVariant v = lineEdit->property("QModelIndex");
-   if ( !v.isValid() ) return;
+    QVariant v = lineEdit->property("QModelIndex");
+    if ( !v.isValid() ) return;
 
-   QModelIndex index = v.value<QModelIndex>();
-   if ( index.isValid() )
-      getDocumentModel()->setName( patternDataModel->mapToSource(index), newName );
+    QModelIndex index = v.value<QModelIndex>();
+    if ( index.isValid() )
+        getDocumentModel()->setName( patternDataModel->mapToSource(index), newName );
 }
 
 // ============================================================== updateDefaultName
 void HexaBaseDialog::updateDefaultName(QLineEdit* name_field, HEXA_NS::EnumElt type)
 {
-   if (getDocumentModel() == NULL || name_field == NULL) return;
+    if (name_field == NULL) return;
 
-   HEXA_NS::Document* doc = getDocumentModel()->getHexaDocument();
-   if (doc == NULL) return;
+    HEXA_NS::Document* doc = getDocumentModel()->getHexaDocument();
+    if (doc == NULL) return;
 
-   name_field->setText(doc->getNextName(type).c_str());
+    name_field->setText(doc->getNextName(type).c_str());
 }
 
 // ============================================================== selectElementOfModel
 /*Selects in the model (treeview) elements selected in a listwidget,
  *  or an element in a line edit.*/
-
 void HexaBaseDialog::selectElementOfModel()
 {
-   if (getPatternDataSelectionModel() == NULL) return;
+    if (getPatternDataSelectionModel() == NULL) return;
 
-   QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
-   if ( !currentListWidget ) return;
+    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
+    if ( !currentListWidget ) return;
 
-   _selectionMutex = true;
-
-   QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
-   QModelIndex index;
-   getPatternDataSelectionModel()->clearSelection();
-   foreach ( QListWidgetItem *item, sel ){
-//      index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>(); //unsafe: index can change in the tree
-      index = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-      if ( index.isValid() )
-      {
-          getPatternDataSelectionModel()->select( index, QItemSelectionModel::Select );
-      }
-   }
-   _selectionMutex = false;
-
+    QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
+    QModelIndex index;
+    getPatternDataSelectionModel()->clearSelection();
+    foreach ( QListWidgetItem *item, sel ){
+        //index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>(); //unsafe: index can change in the tree
+        index = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        if ( index.isValid() )
+            getPatternDataSelectionModel()->select( index, QItemSelectionModel::SelectCurrent );
+    }
 }
 
 // ============================================================== _isLineOrListWidget
@@ -904,11 +835,11 @@ void HexaBaseDialog::selectElementOfModel()
  */
 bool HexaBaseDialog::_isLineOrListWidget(QObject *widget)
 {
-   if (widget == NULL) return false;
+    if (widget == NULL) return false;
 
-   QLineEdit   	*lineEdit = dynamic_cast<QLineEdit*>(widget);
-   QListWidget *listWidget = dynamic_cast<QListWidget*>(widget);
-   return (lineEdit != NULL) || (listWidget != NULL);
+    QLineEdit   	*lineEdit = dynamic_cast<QLineEdit*>(widget);
+    QListWidget *listWidget = dynamic_cast<QListWidget*>(widget);
+    return (lineEdit != NULL) || (listWidget != NULL);
 
 }//_isLineOrListWidget
 
@@ -919,12 +850,12 @@ bool HexaBaseDialog::_isLineOrListWidget(QObject *widget)
  */
 void HexaBaseDialog::_highlightWidget(QObject *obj, Qt::GlobalColor clr)
 {
-   if (!_isLineOrListWidget(obj)) return;
+    if (!_isLineOrListWidget(obj)) return;
 
-   QWidget *widget = dynamic_cast<QWidget*>(obj); //sure it's not NULL (_isLineOrListWidget(obj))
-   QPalette palette1 = widget->palette();
-   palette1.setColor(widget->backgroundRole(), clr);
-   widget->setPalette(palette1);
+    QWidget *widget = dynamic_cast<QWidget*>(obj); //sure it's not NULL (_isLineOrListWidget(obj))
+    QPalette palette1 = widget->palette();
+    palette1.setColor(widget->backgroundRole(), clr);
+    widget->setPalette(palette1);
 
 }//_highlightWidget
 
@@ -932,9 +863,9 @@ void HexaBaseDialog::_highlightWidget(QObject *obj, Qt::GlobalColor clr)
 // ============================================================== _updateCurrentObject
 void HexaBaseDialog::_updateCurrentObject(QObject* obj)
 {
-   _highlightWidget(_currentObj, Qt::white);
-   _currentObj = obj;
-   _highlightWidget(obj, Qt::yellow);
+    _highlightWidget(_currentObj, Qt::white);
+    _currentObj = obj;
+    _highlightWidget(obj, Qt::yellow);
 }
 
 // ============================================================== eventFilter
@@ -943,142 +874,84 @@ void HexaBaseDialog::_updateCurrentObject(QObject* obj)
  */
 bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
 {
-   //	highlightSelectedAssocs();
-   QLineEdit   	*lineEdit = dynamic_cast<QLineEdit*>(obj);
-   QListWidget *listWidget = dynamic_cast<QListWidget*>(obj);
-   HexaBaseDialog  *dialog = dynamic_cast<HexaBaseDialog*>(obj);
+    QLineEdit   	*lineEdit = dynamic_cast<QLineEdit*>(obj);
+    QListWidget     *listWidget = dynamic_cast<QListWidget*>(obj);
 
-   if ( event->type() == QEvent::KeyPress )
-      {
-         if ( ((QKeyEvent*)event)->key() == Qt::Key_Return)
-            {
-               setFocusToNextField();
-               return true;
-            }
-      }
+    // * Enter key press ------
+    if ( event->type() == QEvent::KeyPress &&
+            ((QKeyEvent*)event)->key() == Qt::Key_Return)
+    {
+        setFocusToNextField();
+        return true;
+    }
 
-   if ( event->type() == QEvent::FocusOut ){
-         QString className = obj->metaObject()->className();
-         QString objectName = obj->objectName();
-   }
+    // * Focus out from a list widget ------
+    if ( event->type() == QEvent::FocusOut && listWidget != NULL)
+    {
+        QItemSelectionModel * selectionModel = listWidget->selectionModel();
+        selectionModel->clearSelection();
+    }
 
-   if ( event->type() == QEvent::FocusIn ){
-         QString className  = obj->metaObject()->className();
-         QString objectName = obj->objectName();
+    if ( event->type() != QEvent::FocusIn )
+        return false;
 
-   }
-   else return false;
+    // * Focus In ------
 
+    // allow vtk selection
+    if (getObjectViewType(obj) == HEXABLOCKGUI::VTK)
+        _allowVTKSelection( obj );
 
+    //allow occ selection
+    if (getObjectViewType(obj) == HEXABLOCKGUI::OCC)
+        _allowOCCSelection( obj );
 
-   /* ON FOCUS ON A WIDGET*/
+    //Depending on the focused widget type, get the right selector for it
+    QVariant v;
+    QModelIndex index;
+    QItemSelectionModel* selector = _getSelector( obj );
+    if ( selector == NULL )
+    {
+        _updateCurrentObject(obj);
+        return false;
+    }
 
-   QVariant v;
-   QModelIndex index;
+    if ( _currentObj != obj && (lineEdit == NULL || listWidget == NULL) )
+        selector->clearSelection();
 
-   QItemSelectionModel *selector = 0;
+    _updateCurrentObject(obj);
 
-   //vtk selection
-   if (getObjectViewType(obj) == HEXABLOCKGUI::VTK)
-      _allowVTKSelection( obj );
+    //If the widget contains an element, select it in model/view
+    if ( lineEdit != NULL ){ //element can be from lineEdit
+        v = lineEdit->property("HexaData");
+        if ( !v.isValid() )
+            return QObject::eventFilter(obj, event);
+        index = ((SelectionModel*)selector)->indexBy( HEXA_DATA_ROLE, v);
+        if (index.isValid())
+            selector->select( index, QItemSelectionModel::SelectCurrent );
+    }
 
-   //geom selection
-   if (getObjectViewType(obj) == HEXABLOCKGUI::OCC)
-      _allowOCCSelection( obj );
-
-   //If the widget is a geom line edit highlight its content in the occ view
-   if (lineEdit != NULL && getPatternDataSelectionModel() != NULL &&
-         getObjectViewType(obj) == HEXABLOCKGUI::OCC && !lineEdit->text().isEmpty())
-      {
-         //highlight element in the OCC View
-         QMultiMap<QString, int> geomElts;
-         DocumentModel::GeomObj geomObj;
-         QVariant v = lineEdit->property("GeomObj");
-         if ( v.isValid() )
-            {
-               geomObj = v.value<DocumentModel::GeomObj>();
-               geomElts.insert( geomObj.shapeName, geomObj.subid.toInt() );
-            }
-         HEXABLOCKGUI::currentOccGView->highlight(geomElts);
-      }
-
-   //Depending of focused widget type, get the right selector for it
-   selector = _getSelector( obj );
-   if ( selector == NULL )
-      {
-         _updateCurrentObject(obj);
-         return false;
-      }
-
-   if ( _currentObj != obj && (lineEdit || listWidget) )
-      selector->clearSelection();
-
-   _updateCurrentObject(obj);
-
-   //If there is a current selection fill the widget with it
-   if ( selector->hasSelection() ){
-         //		QItemSelection currentSelection  = selector->selection();
-         //		bool selOk = false;
-         //		if ( lineEdit ){ //element can be from lineEdit
-         //			selOk = _onSelectionChanged( currentSelection, lineEdit );
-         //		} else if ( listWidget ){
-         //			selOk = _onSelectionChanged( currentSelection, listWidget );
-         //		}
-         //		if ( !selOk &&  ( lineEdit || listWidget ) ){
-         //			selector->clearSelection();
-         //		}
-
-   } else { //If the widget contains an hexa element, select it in model/view
-         if ( lineEdit ){ //element can be from lineEdit
-               v = lineEdit->property("QModelIndex");
-               if ( !v.isValid() ) {
-                     //return QObject::eventFilter(obj, event);
-                     return false;
-               }
-               index = v.value<QModelIndex>();
-
-               _selectionMutex = true;
-               selector->select( index, QItemSelectionModel::Clear );
-               selector->select( index, QItemSelectionModel::Select );
-               _selectionMutex = false;
-         }
-
-         if ( dialog ){ //element can be from a dialog box
-               v = dialog->property("QModelIndex");
-               if ( !v.isValid() ) {
-                     //return QObject::eventFilter(obj, event);
-                     return false;
-               }
-               index = v.value<QModelIndex>();
-               _selectionMutex = true;
-               selector->select( index, QItemSelectionModel::Clear );
-               selector->select( index, QItemSelectionModel::Select );
-               _selectionMutex = false;
-         }
-
-   }
-   return false;
+    return QObject::eventFilter(obj, event);
 }
 
 // ------------------------- VERTEX ----------------------------------
 // ============================================================== Constructeur
 VertexDialog::VertexDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                    HexaBaseDialog(parent, editmode, f),
-								                                                                                                                    _value(0)
+           HexaBaseDialog(parent, editmode, f),
+           _value(0)
 {
-   _helpFileName = "gui_vertex.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( name_le );
+    _helpFileName = "gui_vertex.html";
+    setupUi( this );
+    _initWidget(editmode);
+    //   setFocusProxy( name_le );
 
-   if ( editmode  == NEW_MODE ){
-         setWindowTitle( tr("Vertex Construction") );
-   } else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Vertex Modification") );
-   }
-   else if ( editmode == INFO_MODE){
-       setWindowTitle( tr("Vertex Information") );
-   }
+    if ( editmode  == NEW_MODE ){
+        setWindowTitle( tr("Vertex Construction") );
+    } else if ( editmode == UPDATE_MODE ){
+        setWindowTitle( tr("Vertex Modification") );
+    }
+    else if ( editmode == INFO_MODE){
+        setWindowTitle( tr("Vertex Information") );
+    }
 }
 
 // ============================================================== Destructeur
@@ -1086,147 +959,155 @@ VertexDialog::~VertexDialog()
 {
 }
 
-
 // ============================================================== _initInputWidget
 void VertexDialog::_initInputWidget( Mode editmode )
 {
-   x_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
-   y_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
-   z_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+//    x_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+//    y_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+//    z_spb->setRange(VERTEX_COORD_MIN, VERTEX_COORD_MAX);
+    QDoubleValidator *doubleValidator = new QDoubleValidator(widget_2);
+    x_spb->setValidator(doubleValidator);
+    y_spb->setValidator(doubleValidator);
+    z_spb->setValidator(doubleValidator);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   installEventFilter(this);
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   name_le->installEventFilter(this);
+    //   setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    installEventFilter(this);
+    //   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    name_le->installEventFilter(this);
 
-   if (editmode == INFO_MODE)
-   {
-       name_le->setReadOnly(true);
-       x_spb->setReadOnly(true);
-       y_spb->setReadOnly(true);
-       z_spb->setReadOnly(true);
-   }
+    if (editmode == INFO_MODE)
+    {
+        name_le->setReadOnly(true);
+        x_spb->setReadOnly(true);
+        y_spb->setReadOnly(true);
+        z_spb->setReadOnly(true);
+    }
 
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
+    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
 }
 
 // ============================================================== clear
 void VertexDialog::clear()
 {
-      name_le->clear();
+    name_le->clear();
 
-      modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== setValue
 void VertexDialog::setValue(HEXA_NS::Vertex* v)
 {
-   //0) Name
-   name_le->setText( v->getName() );
+    //0) Name
+    name_le->setText( v->getName() );
 
-   //1) Value (x,y,z)
-   x_spb->setValue( v->getX() );
-   y_spb->setValue( v->getY() );
-   z_spb->setValue( v->getZ() );
+    //1) Value (x,y,z)
+//    x_spb->setValue( v->getX() );
+//    y_spb->setValue( v->getY() );
+//    z_spb->setValue( v->getZ() );
+    x_spb->setText( QString::number(v->getX()) );
+    y_spb->setText( QString::number(v->getY()) );
+    z_spb->setText( QString::number(v->getZ()) );
 
-   if ( getPatternDataSelectionModel() != NULL ){
-         QModelIndex iv = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
+    if ( getPatternDataSelectionModel() != NULL ){
+        QModelIndex iv = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
 
-         setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
-   }
-   _value = v;
+        setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(iv) );
+    }
+    _value = v;
 }
-
 
 // ============================================================== getValue
 HEXA_NS::Vertex* VertexDialog::getValue()
 {
-   return _value;
+    return _value;
 }
 
 
 // ============================================================== apply
 bool VertexDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   if ( !getPatternDataSelectionModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return false;
+    if ( !getDocumentModel() ) return false;
+    if ( !getPatternDataSelectionModel() ) return false;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return false;
 
-   bool isOk = false;
+    QModelIndex iVertex;
 
-   QModelIndex iVertex;
-   double newX = x_spb->value();
-   double newY = y_spb->value();
-   double newZ = z_spb->value();
+    QString xStr = x_spb->text();
+    QString yStr = y_spb->text();
+    QString zStr = z_spb->text();
+    bool isOk = false, validArgs = !xStr.isEmpty() && !yStr.isEmpty() && !zStr.isEmpty();
 
-   if ( _editMode == UPDATE_MODE){
-         QVariant v = property("QModelIndex");
-         if ( v.isValid() ){
-               iVertex = patternDataModel->mapToSource( v.value<QModelIndex>() );
-               if ( iVertex.isValid() )
-                  isOk = getDocumentModel()->updateVertex( iVertex, newX, newY, newZ );
-         }
-   } else if ( _editMode == NEW_MODE){
-         iVertex = getDocumentModel()->addVertex( newX, newY, newZ );
-         if ( iVertex.isValid() )
-            {
-               isOk = true;
-            }
-   }
-   if (!isOk) {
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "VERTEX UPDATE/CONSTRUCTION" ) );
-         return false;
-   }
+    double newX, newY, newZ;
+    if (validArgs)
+    {
+        newX = xStr.toDouble();
+        newY = yStr.toDouble();
+        newZ = zStr.toDouble();
+    }
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iVertex, newName );
+    if ( _editMode == UPDATE_MODE && validArgs){
+        QVariant v = property("QModelIndex");
+        if ( v.isValid() ){
+            iVertex = patternDataModel->mapToSource( v.value<QModelIndex>() );
+            if ( iVertex.isValid() )
+                isOk = getDocumentModel()->updateVertex( iVertex, newX, newY, newZ );
+        }
+    } else if ( _editMode == NEW_MODE && validArgs){
+        iVertex = getDocumentModel()->addVertex( newX, newY, newZ );
+        if ( iVertex.isValid() )
+            isOk = true;
+    }
+    if (!isOk) {
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "VERTEX UPDATE/CONSTRUCTION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   //the default name in the dialog box
-   HEXA_NS::Vertex* v = getDocumentModel()->getHexaPtr<HEXA_NS::Vertex*>(iVertex);
-   if (v != NULL)
-       updateDefaultName(name_le, v->getType());
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iVertex, newName );
 
-   // to select/highlight result
-   result = patternDataModel->mapFromSource(iVertex);
+    //the default name in the dialog box
+    HEXA_NS::Vertex* v = getDocumentModel()->getHexaPtr<HEXA_NS::Vertex*>(iVertex);
+    if (v != NULL)
+        updateDefaultName(name_le, v->getType());
 
-   //	updateDialogBoxName(name_le, result);
-   //	const char *defaultName = getDocumentModel()->getHexaPtr(last)->getName();
-   return isOk;
+    // to select/highlight result
+    result = patternDataModel->mapFromSource(iVertex);
+
+    //	updateDialogBoxName(name_le, result);
+    //	const char *defaultName = getDocumentModel()->getHexaPtr(last)->getName();
+    return isOk;
 }
-
 
 // ------------------------- EDGE ----------------------------------
 
 // ============================================================== Constructeur
 EdgeDialog::EdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
- HexaBaseDialog(parent, editmode, f),
- _value(0)
+         HexaBaseDialog(parent, editmode, f),
+         _value(0)
 {
-   _helpFileName = "gui_edge.html";
-   setupUi( this );
-   _initWidget(editmode);
+    _helpFileName = "gui_edge.html";
+    setupUi( this );
+    _initWidget(editmode);
 
-   //	rb0->setFocusProxy( v0_le_rb0 );
-   //	rb1->setFocusProxy( vex_le_rb1 );
+    //	rb0->setFocusProxy( v0_le_rb0 );
+    //	rb1->setFocusProxy( vex_le_rb1 );
 
-   if  ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Edge Information") );
-         rb1->hide();
-   }
-   else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Edge Modification") );
-   }
+    if  ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Edge Information") );
+        rb1->hide();
+    }
+    else if ( editmode == UPDATE_MODE ){
+        setWindowTitle( tr("Edge Modification") );
+    }
 
-   rb0->click();
+    rb0->click();
 }
-
 
 // ============================================================== Destructeur
 EdgeDialog::~EdgeDialog()
@@ -1237,161 +1118,150 @@ EdgeDialog::~EdgeDialog()
 // ============================================================== _initInputWidget
 void EdgeDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   installEventFilter(this);
+    //   setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   name_le->installEventFilter(this);
+    //   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    name_le->installEventFilter(this);
 
-   v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v0_le_rb0->setValidator( validator );
-   v1_le_rb0->setValidator( validator );
-   v0_le_rb0->installEventFilter(this);
-   v1_le_rb0->installEventFilter(this);
+    v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v0_le_rb0->setValidator( validator );
+    v1_le_rb0->setValidator( validator );
+    v0_le_rb0->installEventFilter(this);
+    v1_le_rb0->installEventFilter(this);
 
-   vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   vex_le_rb1->setValidator( validator );
-   vec_le_rb1->setValidator( validator );
-   vex_le_rb1->installEventFilter(this);
-   vec_le_rb1->installEventFilter(this);
+    vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    vex_le_rb1->setValidator( validator );
+    vec_le_rb1->setValidator( validator );
+    vex_le_rb1->installEventFilter(this);
+    vec_le_rb1->installEventFilter(this);
 
-   v0_le_rb0->setReadOnly(true);
-   v1_le_rb0->setReadOnly(true);
-   vex_le_rb1->setReadOnly(true);
-   vec_le_rb1->setReadOnly(true);
+    v0_le_rb0->setReadOnly(true);
+    v1_le_rb0->setReadOnly(true);
+    vex_le_rb1->setReadOnly(true);
+    vec_le_rb1->setReadOnly(true);
 
-   if (editmode == INFO_MODE)
-       name_le->setReadOnly(true);
+    if (editmode == INFO_MODE)
+        name_le->setReadOnly(true);
 
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
+    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
 
 }
-
 
 // ============================================================== Clear
 void EdgeDialog::clear()
 {
-   name_le->clear();
+    name_le->clear();
 
-   v0_le_rb0->clear();
-   modelUnregister(v0_le_rb0);
+    v0_le_rb0->clear();
+    modelUnregister(v0_le_rb0);
 
-   v1_le_rb0->clear();
-   modelUnregister(v1_le_rb0);
+    v1_le_rb0->clear();
+    modelUnregister(v1_le_rb0);
 
-   vex_le_rb1->clear();
-   modelUnregister(vex_le_rb1);
+    vex_le_rb1->clear();
+    modelUnregister(vex_le_rb1);
 
-   vec_le_rb1->clear();
-   modelUnregister(vec_le_rb1);
+    vec_le_rb1->clear();
+    modelUnregister(vec_le_rb1);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
-
-
 
 // ============================================================== setValue
 void EdgeDialog::setValue(HEXA_NS::Edge* e)
 {
-   HEXA_NS::Vertex* v0 = e->getVertex(0);
-   HEXA_NS::Vertex* v1 = e->getVertex(1);
-   //	HEXA_NS::EltBase* e0 = e;
-   //	HEXA_NS::EltBase* v0 = e->getVertex(0);
-   //	HEXA_NS::EltBase* v1 = e->getVertex(1);
+    HEXA_NS::Vertex* v0 = e->getVertex(0);
+    HEXA_NS::Vertex* v1 = e->getVertex(1);
 
-   name_le->setText( e->getName() );
-   v0_le_rb0->setText( v0->getName() );
-   v1_le_rb0->setText( v1->getName() );
+    name_le->setText( e->getName() );
+    v0_le_rb0->setText( v0->getName() );
+    v1_le_rb0->setText( v1->getName() );
 
-   if ( getPatternDataSelectionModel() ){
-         QModelIndex ie  = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e) );
-         QModelIndex iv0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v0) );
-         QModelIndex iv1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v1) );
+    if ( getPatternDataSelectionModel() ){
+        QModelIndex ie  = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e) );
+        QModelIndex iv0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v0) );
+        QModelIndex iv1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v1) );
 
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(ie) );
-         v0_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv0) );
-         v1_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv1) );
-   }
-   _value = e;
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(ie) );
+        v0_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv0) );
+        v1_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv1) );
+    }
+    _value = e;
 }
-
 
 // ============================================================== getValue
 HEXA_NS::Edge* EdgeDialog::getValue()
 {
-   return _value;
+    return _value;
 }
 
 // ============================================================== apply
 bool EdgeDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel ) return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel*    patternDataModel = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel ) return false;
 
-   QModelIndex iEdge;
+    QModelIndex iEdge;
 
-   if ( rb0->isChecked() ){
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
-         if ( iv0.isValid()&& iv1.isValid() ){
-               iEdge = getDocumentModel()->addEdgeVertices( iv0, iv1 );
-         }
-   } else if ( rb1->isChecked() ){
-         QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-         QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
-         if ( ivex.isValid() && ivec.isValid() ){
-               iEdge = getDocumentModel()->addEdgeVector( ivex, ivec );
-         }
-   }
+    if ( rb0->isChecked() ){
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
+        if ( iv0.isValid()&& iv1.isValid() ){
+            iEdge = getDocumentModel()->addEdgeVertices( iv0, iv1 );
+        }
+    } else if ( rb1->isChecked() ){
+        QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
+        QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+        if ( ivex.isValid() && ivec.isValid() ){
+            iEdge = getDocumentModel()->addEdgeVector( ivex, ivec );
+        }
+    }
 
-   if ( !iEdge.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD EDGE" ) );
-         return false;
-   }
-   _value  = iEdge.model()->data(iEdge, HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
+    if ( !iEdge.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD EDGE" )  + "\n" + getErrorMsg() );
+        return false;
+    }
+    _value  = iEdge.model()->data(iEdge, HEXA_DATA_ROLE).value<HEXA_NS::Edge*>();
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iEdge, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iEdge, newName );
 
-   //update the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
+    //update the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
 
-   result = patternDataModel->mapFromSource(iEdge);
+    result = patternDataModel->mapFromSource(iEdge);
 
-   return true;
+    return true;
 }
-
 
 // ------------------------- QUAD ----------------------------------
 
 // ============================================================== Constructeur
 QuadDialog::QuadDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                    HexaBaseDialog(parent, editmode, f),
-								                                                                                                                    _value(0)
+HexaBaseDialog(parent, editmode, f),
+_value(0)
 {
-   _helpFileName = "gui_quadrangle.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( v0_le_rb0 );
-   //	rb1->setFocusProxy( e0_le_rb1 );
-   rb0->click();
+    _helpFileName = "gui_quadrangle.html";
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   if  ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Quad Information") );
-   }
+    if  ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Quad Information") );
+    }
 }
 
 // ============================================================== Destructeur
@@ -1402,225 +1272,216 @@ QuadDialog::~QuadDialog()
 // ============================================================== _initInputWidget
 void QuadDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    name_le->installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   name_le->installEventFilter(this);
+    v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v2_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v3_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
-   v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v2_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v3_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v0_le_rb0->setValidator( validator );
+    v1_le_rb0->setValidator( validator );
+    v2_le_rb0->setValidator( validator );
+    v3_le_rb0->setValidator( validator );
+    v0_le_rb0->installEventFilter(this);
+    v1_le_rb0->installEventFilter(this);
+    v2_le_rb0->installEventFilter(this);
+    v3_le_rb0->installEventFilter(this);
 
-   v0_le_rb0->setValidator( validator );
-   v1_le_rb0->setValidator( validator );
-   v2_le_rb0->setValidator( validator );
-   v3_le_rb0->setValidator( validator );
-   v0_le_rb0->installEventFilter(this);
-   v1_le_rb0->installEventFilter(this);
-   v2_le_rb0->installEventFilter(this);
-   v3_le_rb0->installEventFilter(this);
+    e0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e2_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e3_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
 
-   e0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   e1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   e2_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   e3_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e0_le_rb1->setValidator( validator );
+    e1_le_rb1->setValidator( validator );
+    e2_le_rb1->setValidator( validator );
+    e3_le_rb1->setValidator( validator );
 
-   e0_le_rb1->setValidator( validator );
-   e1_le_rb1->setValidator( validator );
-   e2_le_rb1->setValidator( validator );
-   e3_le_rb1->setValidator( validator );
+    e0_le_rb1->installEventFilter(this);
+    e1_le_rb1->installEventFilter(this);
+    e2_le_rb1->installEventFilter(this);
+    e3_le_rb1->installEventFilter(this);
 
-   e0_le_rb1->installEventFilter(this);
-   e1_le_rb1->installEventFilter(this);
-   e2_le_rb1->installEventFilter(this);
-   e3_le_rb1->installEventFilter(this);
+    v0_le_rb0->setReadOnly(true);
+    v1_le_rb0->setReadOnly(true);
+    v2_le_rb0->setReadOnly(true);
+    v3_le_rb0->setReadOnly(true);
 
-   v0_le_rb0->setReadOnly(true);
-   v1_le_rb0->setReadOnly(true);
-   v2_le_rb0->setReadOnly(true);
-   v3_le_rb0->setReadOnly(true);
+    e0_le_rb1->setReadOnly(true);
+    e1_le_rb1->setReadOnly(true);
+    e2_le_rb1->setReadOnly(true);
+    e3_le_rb1->setReadOnly(true);
 
-   e0_le_rb1->setReadOnly(true);
-   e1_le_rb1->setReadOnly(true);
-   e2_le_rb1->setReadOnly(true);
-   e3_le_rb1->setReadOnly(true);
-
-   if (editmode == INFO_MODE)
-       name_le->setReadOnly(true);
-
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
+    if (editmode == INFO_MODE)
+        name_le->setReadOnly(true);
 }
-
 
 // ============================================================== clear
 void QuadDialog::clear()
 {
     //Clear the dialog and unregister it from the model
-   QModelIndex invalidIndex;
+    QModelIndex invalidIndex;
 
-   name_le->clear();
+    name_le->clear();
 
-   v0_le_rb0->clear();
-   modelUnregister(v0_le_rb0);
+    v0_le_rb0->clear();
+    modelUnregister(v0_le_rb0);
 
-   v1_le_rb0->clear();
-   modelUnregister(v1_le_rb0);
+    v1_le_rb0->clear();
+    modelUnregister(v1_le_rb0);
 
-   v2_le_rb0->clear();
-   modelUnregister(v2_le_rb0);
+    v2_le_rb0->clear();
+    modelUnregister(v2_le_rb0);
 
-   v3_le_rb0->clear();
-   modelUnregister(v3_le_rb0);
+    v3_le_rb0->clear();
+    modelUnregister(v3_le_rb0);
 
-   e0_le_rb1->clear();
-   modelUnregister(e0_le_rb1);
+    e0_le_rb1->clear();
+    modelUnregister(e0_le_rb1);
 
-   e1_le_rb1->clear();
-   modelUnregister(e1_le_rb1);
+    e1_le_rb1->clear();
+    modelUnregister(e1_le_rb1);
 
-   e2_le_rb1->clear();
-   modelUnregister(e2_le_rb1);
+    e2_le_rb1->clear();
+    modelUnregister(e2_le_rb1);
 
-   e3_le_rb1->clear();
-   modelUnregister(e3_le_rb1);
+    e3_le_rb1->clear();
+    modelUnregister(e3_le_rb1);
 
-   modelUnregister(this);
+    modelUnregister(this);
 
 }
-
 
 // ============================================================== setValue
 void QuadDialog::setValue(HEXA_NS::Quad* q)
 {
-   Q_ASSERT( q->countEdge() == 4 );
-   Q_ASSERT( q->countVertex() == 4 );
+    Q_ASSERT( q->countEdge() == 4 );
+    Q_ASSERT( q->countVertex() == 4 );
 
-   //0) Name
-   name_le->setText( q->getName() );
+    //0) Name
+    name_le->setText( q->getName() );
 
-   //1) Vertices
-   HEXA_NS::Vertex* v0 = q->getVertex(0);
-   HEXA_NS::Vertex* v1 = q->getVertex(1);
-   HEXA_NS::Vertex* v2 = q->getVertex(2);
-   HEXA_NS::Vertex* v3 = q->getVertex(3);
+    //1) Vertices
+    HEXA_NS::Vertex* v0 = q->getVertex(0);
+    HEXA_NS::Vertex* v1 = q->getVertex(1);
+    HEXA_NS::Vertex* v2 = q->getVertex(2);
+    HEXA_NS::Vertex* v3 = q->getVertex(3);
 
-   v0_le_rb0->setText( v0->getName() );
-   v1_le_rb0->setText( v1->getName() );
-   v2_le_rb0->setText( v2->getName() );
-   v3_le_rb0->setText( v3->getName() );
+    v0_le_rb0->setText( v0->getName() );
+    v1_le_rb0->setText( v1->getName() );
+    v2_le_rb0->setText( v2->getName() );
+    v3_le_rb0->setText( v3->getName() );
 
 
-   //2) Edges
-   HEXA_NS::Edge* e0 = q->getEdge(0);
-   HEXA_NS::Edge* e1 = q->getEdge(1);
-   HEXA_NS::Edge* e2 = q->getEdge(2);
-   HEXA_NS::Edge* e3 = q->getEdge(3);
+    //2) Edges
+    HEXA_NS::Edge* e0 = q->getEdge(0);
+    HEXA_NS::Edge* e1 = q->getEdge(1);
+    HEXA_NS::Edge* e2 = q->getEdge(2);
+    HEXA_NS::Edge* e3 = q->getEdge(3);
 
-   e0_le_rb1->setText( e0->getName() );
-   e1_le_rb1->setText( e1->getName() );
-   e2_le_rb1->setText( e2->getName() );
-   e3_le_rb1->setText( e3->getName() );
+    e0_le_rb1->setText( e0->getName() );
+    e1_le_rb1->setText( e1->getName() );
+    e2_le_rb1->setText( e2->getName() );
+    e3_le_rb1->setText( e3->getName() );
 
-   if ( getPatternDataSelectionModel() ){
-         QModelIndex iq = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(q) );
+    if ( getPatternDataSelectionModel() ){
+        QModelIndex iq = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(q) );
 
-         QModelIndex iv0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v0) );
-         QModelIndex iv1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v1) );
-         QModelIndex iv2 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v2) );
-         QModelIndex iv3 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v3) );
+        QModelIndex iv0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v0) );
+        QModelIndex iv1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v1) );
+        QModelIndex iv2 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v2) );
+        QModelIndex iv3 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v3) );
 
-         QModelIndex ie0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e0) );
-         QModelIndex ie1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e1) );
-         QModelIndex ie2 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e2) );
-         QModelIndex ie3 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e3) );
+        QModelIndex ie0 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e0) );
+        QModelIndex ie1 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e1) );
+        QModelIndex ie2 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e2) );
+        QModelIndex ie3 = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(e3) );
 
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(iq) );
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(iq) );
 
-         v0_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv0) );
-         v1_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv1) );
-         v2_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv2) );
-         v3_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv3) );
+        v0_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv0) );
+        v1_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv1) );
+        v2_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv2) );
+        v3_le_rb0->setProperty( "QModelIndex",  QVariant::fromValue(iv3) );
 
-         e0_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie0) );
-         e1_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie1) );
-         e2_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie2) );
-         e3_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie3) );
-   }
-   _value = q;
+        e0_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie0) );
+        e1_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie1) );
+        e2_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie2) );
+        e3_le_rb1->setProperty( "QModelIndex",  QVariant::fromValue(ie3) );
+    }
+    _value = q;
 
 }
 
 // ============================================================== getValue
 HEXA_NS::Quad* QuadDialog::getValue()
 {
-   return _value;
+    return _value;
 }
 
 
 // ============================================================== apply
 bool QuadDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return false;
 
-   QModelIndex iQuad;
+    QModelIndex iQuad;
 
-   if ( rb0->isChecked() ){ //vertices
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
-         QModelIndex iv2 = patternDataModel->mapToSource( _index[v2_le_rb0] );
-         QModelIndex iv3 = patternDataModel->mapToSource( _index[v3_le_rb0] );
+    if ( rb0->isChecked() ){ //vertices
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
+        QModelIndex iv2 = patternDataModel->mapToSource( _index[v2_le_rb0] );
+        QModelIndex iv3 = patternDataModel->mapToSource( _index[v3_le_rb0] );
 
-         if ( iv0.isValid()
-               && iv1.isValid()
-               && iv2.isValid()
-               && iv3.isValid() ){
-               iQuad = getDocumentModel()->addQuadVertices( iv0, iv1, iv2, iv3 );
-         }
-   } else if ( rb1->isChecked() ){ //edges
-         QModelIndex ie0 = patternDataModel->mapToSource( _index[e0_le_rb1] );
-         QModelIndex ie1 = patternDataModel->mapToSource( _index[e1_le_rb1] );
-         QModelIndex ie2 = patternDataModel->mapToSource( _index[e2_le_rb1] );
-         QModelIndex ie3 = patternDataModel->mapToSource( _index[e3_le_rb1] );
+        if ( iv0.isValid()
+                && iv1.isValid()
+                && iv2.isValid()
+                && iv3.isValid() ){
+            iQuad = getDocumentModel()->addQuadVertices( iv0, iv1, iv2, iv3 );
+        }
+    } else if ( rb1->isChecked() ){ //edges
+        QModelIndex ie0 = patternDataModel->mapToSource( _index[e0_le_rb1] );
+        QModelIndex ie1 = patternDataModel->mapToSource( _index[e1_le_rb1] );
+        QModelIndex ie2 = patternDataModel->mapToSource( _index[e2_le_rb1] );
+        QModelIndex ie3 = patternDataModel->mapToSource( _index[e3_le_rb1] );
 
-         if ( ie0.isValid()
-               && ie1.isValid()
-               && ie2.isValid()
-               && ie3.isValid() ){
-               iQuad = getDocumentModel()->addQuadEdges( ie0, ie1, ie2, ie3 );
-         }
-   }
+        if ( ie0.isValid()
+                && ie1.isValid()
+                && ie2.isValid()
+                && ie3.isValid() ){
+            iQuad = getDocumentModel()->addQuadEdges( ie0, ie1, ie2, ie3 );
+        }
+    }
 
-   if ( !iQuad.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD QUAD" ) );
-         return false;
-   }
-   _value  = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
+    if ( !iQuad.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD QUAD" )  + "\n" + getErrorMsg());
+        return false;
+    }
+    _value  = iQuad.model()->data(iQuad, HEXA_DATA_ROLE).value<HEXA_NS::Quad *>();
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iQuad, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iQuad, newName );
 
-   //the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
+    //the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
 
-   // to select/highlight result
-   result = patternDataModel->mapFromSource(iQuad);
+    // to select/highlight result
+    result = patternDataModel->mapFromSource(iQuad);
 
-   return true;
+    return true;
 }
-
 
 
 // ------------------------- HEXA ----------------------------------
@@ -1628,20 +1489,17 @@ bool QuadDialog::apply(QModelIndex& result)
 // ============================================================== HexaDialog
 
 HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-HexaBaseDialog(parent, editmode, f),
-_value(0)
+        HexaBaseDialog(parent, editmode, f),
+        _value(0)
 {
-   _helpFileName = "gui_hexahedron.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //	quads_rb->setFocusProxy( quads_lw );
-   //	vertices_rb->setFocusProxy( vertices_lw );
-   quads_rb->click();
-   //   quads_rb->setFocus();
+    _helpFileName = "gui_hexahedron.html";
+    setupUi( this );
+    _initWidget(editmode);
+    quads_rb->click();
 
-   if  ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Hexahedron Information") );
-   }
+    if  ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Hexahedron Information") );
+    }
 }
 
 // ============================================================== Destructeur
@@ -1649,66 +1507,60 @@ HexaDialog::~HexaDialog()
 {
 }
 
-
 // ============================================================== _initInputWidget
 void HexaDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
+    QRegExp rx("");
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    name_le->installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   name_le->installEventFilter(this);
+    quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    quads_lw->installEventFilter(this);
 
-   quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   quads_lw->installEventFilter(this);
-
-   vertices_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vertices_lw->installEventFilter(this);
+    vertices_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vertices_lw->installEventFilter(this);
 
 
-   if ( editmode != INFO_MODE ) {
-         // delete item from listwidget
-         QShortcut* delQuadShortcut   = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
-         QShortcut* delVertexShortcut = new QShortcut( QKeySequence(Qt::Key_X), vertices_lw );
-         delQuadShortcut->setContext( Qt::WidgetShortcut );
-         delVertexShortcut->setContext( Qt::WidgetShortcut );
-         connect(delQuadShortcut,   SIGNAL(activated()), this, SLOT(deleteQuadItem()));
-         connect(delVertexShortcut, SIGNAL(activated()), this, SLOT(deleteVertexItem()));
-   }
-   // edit name
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
-   // highlight item on model view (VTK) from listwidget
-   connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
-   connect( vertices_lw, SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    if ( editmode != INFO_MODE ) {
+        // delete item from listwidget
+        QShortcut* delQuadShortcut   = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+        QShortcut* delVertexShortcut = new QShortcut( QKeySequence(Qt::Key_X), vertices_lw );
+        delQuadShortcut->setContext( Qt::WidgetShortcut );
+        delVertexShortcut->setContext( Qt::WidgetShortcut );
+        connect(delQuadShortcut,   SIGNAL(activated()), this, SLOT(deleteQuadItem()));
+        connect(delVertexShortcut, SIGNAL(activated()), this, SLOT(deleteVertexItem()));
+    }
+    // highlight item on model view (VTK) from listwidget
+    connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( vertices_lw, SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
 
-   if ( editmode != INFO_MODE)
-   {
-       connect( vertices_rb, SIGNAL(clicked()), vertices_lw, SLOT(setFocus()));
-       connect( quads_rb, SIGNAL(clicked()), quads_lw, SLOT(setFocus()));
-   }
+    if ( editmode != INFO_MODE)
+    {
+        connect( vertices_rb, SIGNAL(clicked()), vertices_lw, SLOT(setFocus()));
+        connect( quads_rb, SIGNAL(clicked()), quads_lw, SLOT(setFocus()));
+    }
 
-   connect( vertices_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
-   connect( quads_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
+    connect( vertices_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
+    connect( quads_rb, SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection);
 
-   if (editmode == INFO_MODE)
-       name_le->setReadOnly(true);
+    if (editmode == INFO_MODE)
+        name_le->setReadOnly(true);
 
 }
 
 // ============================================================== clear
 void HexaDialog::clear()
 {
-   name_le->clear();
+    name_le->clear();
 
-   quads_lw->clear();
-   modelUnregister(quads_lw);
+    quads_lw->clear();
+    modelUnregister(quads_lw);
 
-   vertices_lw->clear();
-   modelUnregister(vertices_lw);
+    vertices_lw->clear();
+    modelUnregister(vertices_lw);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== getAssocsVTK
@@ -1717,198 +1569,190 @@ void HexaDialog::clear()
  */
 QModelIndexList HexaDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad, iVertex;
-   QListWidgetItem* item = NULL;
+    QModelIndexList assocs;
+    QModelIndex iQuad, iVertex;
+    QListWidgetItem* item = NULL;
 
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if (patternDataModel == NULL) return assocs;
-   if (quads_rb->isChecked())
-      {
-         //ListWidget content
-         for ( int r = 0; r < quads_lw->count(); ++r ){
-               item = quads_lw->item(r);
-               iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( iQuad.isValid() )
-                  assocs << iQuad;
-         }
-         return assocs;
-      }
-   else if (vertices_rb->isChecked())
-      {
-         //ListWidget content
-         for ( int r = 0; r < vertices_lw->count(); ++r ){
-               item = vertices_lw->item(r);
-               iVertex = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( iVertex.isValid() )
-                  assocs << iVertex;
-         }
-         return assocs;
-      }
-   else return assocs;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if (patternDataModel == NULL) return assocs;
+    if (quads_rb->isChecked())
+    {
+        //ListWidget content
+        int nbQuads = quads_lw->count();
+        for ( int r = 0; r < nbQuads; ++r ){
+            item = quads_lw->item(r);
+            iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+            if ( iQuad.isValid() )
+                assocs << iQuad;
+        }
+        return assocs;
+    }
+    else if (vertices_rb->isChecked())
+    {
+        //ListWidget content
+        int nbVertices = vertices_lw->count();
+        for ( int r = 0; r < nbVertices; ++r ){
+            item = vertices_lw->item(r);
+            iVertex = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+            if ( iVertex.isValid() )
+                assocs << iVertex;
+        }
+        return assocs;
+    }
+    else return assocs;
 }
 
 
 // ============================================================== updateButtonBox
 void HexaDialog::updateButtonBox()
 {
-   if ( quads_rb->isChecked() ){  // build from quads count() must be between [2,6]
-         int nbQuads = quads_lw->count();
-         //std::cout << "nbQuads => " <<  nbQuads << std::endl;
-         if ( nbQuads >= 2 && nbQuads <= 6 ){
-               //_applyCloseButton->setEnabled(true);
-               _applyButton->setEnabled(true);
-               //       _applyCloseButton->setFlat( false );
-               //       _applyButton->setFlat( false );
-         } else {
-               //_applyCloseButton->setEnabled(false);
-               _applyButton->setEnabled(false);
-               //       _applyCloseButton->setFlat( true );
-               //       _applyButton->setFlat( true );
-         }
-   } else if ( vertices_rb->isChecked() ){ // build from vertices count() must be equals to 8
-         int nbVertices = vertices_lw->count();
-         //std::cout << "nbVertices => " <<  nbVertices << std::endl;
-         if ( nbVertices == 8 ){
-               //_applyCloseButton->setEnabled(true);
-               _applyButton->setEnabled(true);
-               //       _applyCloseButton->setFlat( false );
-               //       _applyButton->setFlat( false );
-         } else {
-               //_applyCloseButton->setEnabled(false);
-               _applyButton->setEnabled(false);
-               //       _applyCloseButton->setFlat( true );
-               //       _applyButton->setFlat( true );
-         }
-   }
+    if ( _editMode == INFO_MODE )
+        return;
+
+    if ( quads_rb->isChecked() ){  // build from quads count() must be between [2,6]
+        int nbQuads = quads_lw->count();
+        if ( nbQuads >= 2 && nbQuads <= 6 ){
+            _applyButton->setEnabled(true);
+        } else {
+            _applyButton->setEnabled(false);
+        }
+    } else if ( vertices_rb->isChecked() ){ // build from vertices count() must be equals to 8
+        int nbVertices = vertices_lw->count();
+        if ( nbVertices == 8 ){
+            _applyButton->setEnabled(true);
+        } else {
+            _applyButton->setEnabled(false);
+        }
+    }
 }
 
 // ============================================================== deleteQuadItem
 void HexaDialog::deleteQuadItem()
 {
-   delete quads_lw->currentItem();
-   updateButtonBox();
+    delete quads_lw->currentItem();
+    updateButtonBox();
 }
 
 // ============================================================== deleteVertexItem
 void HexaDialog::deleteVertexItem()
 {
-   delete vertices_lw->currentItem();
-   updateButtonBox();
+    delete vertices_lw->currentItem();
+    updateButtonBox();
 }
 
 // ============================================================== _setValueQuads
 void HexaDialog::_setValueQuads( HEXA_NS::Hexa* h )
 {
-   QListWidgetItem *qItem = NULL;
-   HEXA_NS::Quad   *q     = NULL;
-   QModelIndex      qIndex;
-   if (getPatternDataSelectionModel() == NULL) return;
-   quads_lw->clear();
-   for( int i = 0; i <= 5; ++i ){
-         q      = h->getQuad(i);
-         qIndex = getPatternDataSelectionModel()->indexBy( HEXA_ENTRY_ROLE, QString::number(reinterpret_cast<intptr_t>(q)) );
-         qItem  = new QListWidgetItem( q->getName() );
-         qItem->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(qIndex) );
-         qItem->setData(LW_DATA_ROLE, qIndex.data(HEXA_DATA_ROLE));
-         quads_lw->addItem( qItem );
-   }
+    QListWidgetItem *qItem = NULL;
+    HEXA_NS::Quad   *q     = NULL;
+    QModelIndex      qIndex;
+    if (getPatternDataSelectionModel() == NULL) return;
+    quads_lw->clear();
+    for( int i = 0; i <= 5; ++i ){
+        q      = h->getQuad(i);
+        qIndex = getPatternDataSelectionModel()->indexBy( HEXA_ENTRY_ROLE, QString::number(reinterpret_cast<intptr_t>(q)) );
+        qItem  = new QListWidgetItem( q->getName() );
+        qItem->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(qIndex) );
+        qItem->setData(LW_DATA_ROLE, qIndex.data(HEXA_DATA_ROLE));
+        quads_lw->addItem( qItem );
+    }
 }
 
 // ============================================================== _setValueVertices
 void HexaDialog::_setValueVertices( HEXA_NS::Hexa* h )
 {
-   QListWidgetItem *vItem = NULL;
-   HEXA_NS::Vertex* v     = NULL;
-   QModelIndex      vIndex;
-   if (getPatternDataSelectionModel() == NULL) return;
-   vertices_lw->clear();
-   for( int i = 0; i <= 7; ++i ){
-         v = h->getVertex(i);
-         vIndex = getPatternDataSelectionModel()->indexBy( HEXA_ENTRY_ROLE, QString::number(reinterpret_cast<intptr_t>(v)) );
-         vItem  = new QListWidgetItem( v->getName() );
-         vItem->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(vIndex) );
-         vItem->setData(LW_DATA_ROLE, vIndex.data(HEXA_DATA_ROLE));
-         vertices_lw->addItem( vItem );
-   }
+    QListWidgetItem *vItem = NULL;
+    HEXA_NS::Vertex* v     = NULL;
+    QModelIndex      vIndex;
+    if (getPatternDataSelectionModel() == NULL) return;
+    vertices_lw->clear();
+    for( int i = 0; i <= 7; ++i ){
+        v = h->getVertex(i);
+        vIndex = getPatternDataSelectionModel()->indexBy( HEXA_ENTRY_ROLE, QString::number(reinterpret_cast<intptr_t>(v)) );
+        vItem  = new QListWidgetItem( v->getName() );
+        vItem->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(vIndex) );
+        vItem->setData(LW_DATA_ROLE, vIndex.data(HEXA_DATA_ROLE));
+        vertices_lw->addItem( vItem );
+    }
 }
 
 // ============================================================== setValue
 void HexaDialog::setValue(HEXA_NS::Hexa* h)
 {
-   // 0) name
-   name_le->setText( h->getName() );
+    // 0) name
+    name_le->setText( h->getName() );
 
-   if ( getPatternDataSelectionModel()){
-         QModelIndex hIndex = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(h) );
-         _setValueVertices(h);
-         _setValueQuads(h);
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(hIndex) );
-   }
-   _value = h;
+    if ( getPatternDataSelectionModel()){
+        QModelIndex hIndex = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(h) );
+        _setValueVertices(h);
+        _setValueQuads(h);
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(hIndex) );
+    }
+    _value = h;
 }
 
 // ============================================================== getValue
 HEXA_NS::Hexa* HexaDialog::getValue()
 {
-   return _value;
+    return _value;
 }
 
 // ============================================================== apply
 bool HexaDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return false;
 
-   QModelIndex  iHexa;
+    QModelIndex  iHexa;
 
-   QListWidget* currentLw = NULL;
-   QListWidgetItem*  item = NULL;
+    QListWidget* currentLw = NULL;
+    QListWidgetItem*  item = NULL;
 
-   if ( quads_rb->isChecked() )
-      currentLw = dynamic_cast<QListWidget*>( quads_lw );
-   else if ( vertices_rb->isChecked() )
-      currentLw = dynamic_cast<QListWidget*>( vertices_lw );
+    if ( quads_rb->isChecked() )
+        currentLw = dynamic_cast<QListWidget*>( quads_lw );
+    else if ( vertices_rb->isChecked() )
+        currentLw = dynamic_cast<QListWidget*>( vertices_lw );
 
-   QModelIndex     iElt;
-   QModelIndexList iElts;
-   for ( int r = 0; r < currentLw->count(); ++r){
-         item = currentLw->item(r);
-         iElt = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iElt.isValid() )
+    QModelIndex     iElt;
+    QModelIndexList iElts;
+    int nbItems = currentLw->count();
+    for ( int r = 0; r < nbItems; ++r){
+        item = currentLw->item(r);
+        iElt = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iElt.isValid() )
             iElts << iElt;
-   }
+    }
 
-   if ( quads_rb->isChecked() and (iElts.count()>=2 and iElts.count()<=6) ){ // build from quads iElts.count() should be between [2,6]
-         iHexa = getDocumentModel()->addHexaQuads( iElts );
-   } else if ( vertices_rb->isChecked() and iElts.count()== 8 ){ // build from vertices
-         iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
-               iElts[4], iElts[5], iElts[6], iElts[7] );
-   }
+    nbItems = iElts.count();
+    if ( quads_rb->isChecked() and (nbItems>=2 and nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
+        iHexa = getDocumentModel()->addHexaQuads( iElts );
+    } else if ( vertices_rb->isChecked() and nbItems== 8 ){ // build from vertices
+        iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
+                iElts[4], iElts[5], iElts[6], iElts[7] );
+    }
 
-   if ( !iHexa.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD HEXA" ) );
-         return false;
-   }
-   _value  = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
+    if ( !iHexa.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD HEXA" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    _value  = iHexa.model()->data(iHexa, HEXA_DATA_ROLE).value<HEXA_NS::Hexa*>();
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iHexa, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iHexa, newName );
 
-   //update the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
+    //update the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
 
-   // to select/highlight result
-   result = patternDataModel->mapFromSource(iHexa);
+    // to select/highlight result
+    result = patternDataModel->mapFromSource(iHexa);
 
-   return true;
+    return true;
 }
 
 
@@ -1917,22 +1761,19 @@ bool HexaDialog::apply(QModelIndex& result)
 // ============================================================== Constructeur
 
 VectorDialog::VectorDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                    HexaBaseDialog(parent, editmode, f),
-								                                                                                                                    _value(0)
+HexaBaseDialog(parent, editmode, f),
+_value(0)
 {
-   _helpFileName = "gui_vector.html";
-   setupUi( this );
-   _initWidget(editmode);
+    _helpFileName = "gui_vector.html";
+    setupUi( this );
+    _initWidget(editmode);
 
-   //	rb0->setFocusProxy( dx_spb_rb0 );
-   //	rb1->setFocusProxy( v0_le_rb1 );
-   rb0->click();
-   //   setFocusProxy( rb0 );
+    rb0->click();
 
-   if ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Vector Information") );
-         rb1->hide();
-   }
+    if ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Vector Information") );
+        rb1->hide();
+    }
 }
 
 // ============================================================== Destructeur
@@ -1943,468 +1784,138 @@ VectorDialog::~VectorDialog()
 // ============================================================== _initInputWidget
 void VectorDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    name_le->installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   name_le->installEventFilter(this);
+    v0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v0_le_rb1->setValidator( validator );
+    v0_le_rb1->installEventFilter(this);
 
-   v0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v0_le_rb1->setValidator( validator );
-   v0_le_rb1->installEventFilter(this);
+    v1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb1->setValidator( validator );
+    v1_le_rb1->installEventFilter(this);
 
-   v1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb1->setValidator( validator );
-   v1_le_rb1->installEventFilter(this);
+    if ( editmode == INFO_MODE ){
+        name_le->setReadOnly(true);
+        dx_spb_rb0->setReadOnly(true);
+        dy_spb_rb0->setReadOnly(true);
+        dz_spb_rb0->setReadOnly(true);
+    }
 
-   if ( editmode == INFO_MODE ){
-       name_le->setReadOnly(true);
-       dx_spb_rb0->setReadOnly(true);
-       dy_spb_rb0->setReadOnly(true);
-       dz_spb_rb0->setReadOnly(true);
-   }
-
-   v0_le_rb1->setReadOnly(true);
-   v1_le_rb1->setReadOnly(true);
-
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
+    v0_le_rb1->setReadOnly(true);
+    v1_le_rb1->setReadOnly(true);
 }
 
 // ============================================================== clear
 void VectorDialog::clear()
 {
-   name_le->clear();
-//   dx_spb_rb0->clear();
-//   dy_spb_rb0->clear();
-//   dz_spb_rb0->clear();
-   v0_le_rb1->clear();
-   modelUnregister(v0_le_rb1);
+    name_le->clear();
+    v0_le_rb1->clear();
+    modelUnregister(v0_le_rb1);
 
-   v1_le_rb1->clear();
-   modelUnregister(v1_le_rb1);
+    v1_le_rb1->clear();
+    modelUnregister(v1_le_rb1);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== setValue
 void VectorDialog::setValue(HEXA_NS::Vector* v)
 {
-   name_le->setText( v->getName() );
-   dx_spb_rb0->setValue( v->getDx() );
-   dy_spb_rb0->setValue( v->getDy() );
-   dz_spb_rb0->setValue( v->getDz() );
+    name_le->setText( v->getName() );
+    dx_spb_rb0->setValue( v->getDx() );
+    dy_spb_rb0->setValue( v->getDy() );
+    dz_spb_rb0->setValue( v->getDz() );
 
-   if ( getPatternDataSelectionModel() ){
-         QModelIndex ivec = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(ivec) );
-   }
-   _value = v;
+    if ( getPatternDataSelectionModel() ){
+        QModelIndex ivec = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(v) );
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(ivec) );
+    }
+    _value = v;
 }
 
 // ============================================================== getValue
 HEXA_NS::Vector* VectorDialog::getValue()
 {
-   return _value;
+    return _value;
 }
 
 // ============================================================== apply
 bool VectorDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel) return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel) return false;
 
-   QModelIndex iVector;
+    QModelIndex iVector;
 
-   if ( rb0->isChecked() ){ //scalar
-         double dx = dx_spb_rb0->value();
-         double dy = dy_spb_rb0->value();
-         double dz = dz_spb_rb0->value();
+    if ( rb0->isChecked() ){ //scalar
+        double dx = dx_spb_rb0->value();
+        double dy = dy_spb_rb0->value();
+        double dz = dz_spb_rb0->value();
 
-         iVector = getDocumentModel()->addVector( dx, dy, dz );
-   } else if ( rb1->isChecked() ){ //vertices
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb1] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb1] );
+        iVector = getDocumentModel()->addVector( dx, dy, dz );
+    } else if ( rb1->isChecked() ){ //vertices
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb1] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb1] );
 
-         if ( iv0.isValid()
-               && iv1.isValid() ){
-               iVector = getDocumentModel()->addVectorVertices( iv0, iv1 );
-         }
-   }
+        if ( iv0.isValid()
+                && iv1.isValid() ){
+            iVector = getDocumentModel()->addVectorVertices( iv0, iv1 );
+        }
+    }
 
-   if ( !iVector.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VECTOR" ) );
-         return false;
-   }
+    if ( !iVector.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT BUILD VECTOR" ) + "\n" + getErrorMsg());
+        return false;
+    }
 
-   _value  = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
+    _value  = iVector.model()->data(iVector, HEXA_DATA_ROLE).value<HEXA_NS::Vector *>();
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iVector, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iVector, newName );
 
-   //update the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
+    //update the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
 
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iVector);
+    // to select/highlight result
+    result = patternBuilderModel->mapFromSource(iVector);
 
-   return true;
+    return true;
 }
-
-
-// ============================================================== Constructeur
-CylinderDialog::CylinderDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, editmode, f),
-  _value(0)
-{
-   _helpFileName = "gui_cyl.html";
-   setupUi( this );
-   _initWidget(editmode);
-
-   if ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Cylinder Information") );
-   }
-}
-
-// ============================================================== Destructeur
-CylinderDialog::~CylinderDialog()
-{
-}
-
-// ============================================================== _initInputWidget
-void CylinderDialog::_initInputWidget( Mode editmode )
-{
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
-
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(CYLINDER_TREE) );
-   installEventFilter(this);
-
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(CYLINDER_TREE) );
-   name_le->installEventFilter(this);
-
-   vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-
-   vex_le->setValidator( validator );
-   vec_le->setValidator( validator );
-
-   vex_le->installEventFilter(this);
-   vec_le->installEventFilter(this);
-
-   vex_le->setReadOnly(true);
-   vec_le->setReadOnly(true);
-
-   if (editmode == INFO_MODE)
-   {
-       name_le->setReadOnly(true);
-       r_spb->setReadOnly(true);
-       h_spb->setReadOnly(true);
-   }
-
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
-}
-
-// ============================================================== clear
-void CylinderDialog::clear()
-{
-   name_le->clear();
-
-   vex_le->clear();
-   modelUnregister(vex_le);
-
-   vec_le->clear();
-   modelUnregister(vec_le);
-
-   r_spb->clear();
-   h_spb->clear();
-
-   modelUnregister(this);
-
-}
-
-// ============================================================== setValue
-void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
-{
-   HEXA_NS::Vertex* base      = c->getBase();
-   HEXA_NS::Vector* direction = c->getDirection();
-   double  r = c->getRadius();
-   double  h = c->getHeight();
-
-   name_le->setText( c->getName() );
-   vex_le->setText( base->getName() );
-   vec_le->setText( direction->getName() );
-   r_spb->setValue(r);
-   h_spb->setValue(h);
-
-   if ( getPatternDataSelectionModel() ){
-         QModelIndex iCyl       = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(c) );
-         QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
-         QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
-
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(iCyl) );
-         vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
-         vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
-   }
-   _value = c;
-}
-
-// ============================================================== getValue
-HEXA_NS::Cylinder* CylinderDialog::getValue()
-{
-   return _value;
-}
-
-
-
-// ============================================================== apply
-bool CylinderDialog::apply(QModelIndex& result)
-{
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
-
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel) return false;
-
-   QModelIndex iCyl;
-   QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-   QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-   double r = r_spb->value();
-   double h = h_spb->value();
-
-   if ( ivex.isValid()
-         && ivec.isValid() ){
-         iCyl = getDocumentModel()->addCylinder( ivex, ivec, r,  h );
-   }
-
-   if ( !iCyl.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
-         return false;
-   }
-
-   _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
-
-   QString newName = name_le->text();
-   if (!newName.isEmpty()) /*{*/
-      getDocumentModel()->setName( iCyl, newName );
-
-   //update the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
-
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iCyl);
-
-   return true;
-}
-
-
-//------------------------------- PipeDialog -----------------------------------
-
-// ============================================================== Constructeur
-
-PipeDialog::PipeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, editmode, f),
-  _value(0)
-{
-   _helpFileName = "gui_pipe.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( vex_le );
-
-   if ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Pipe Information") );
-   }
-
-}
-
-// ============================================================== Destructeur
-PipeDialog::~PipeDialog()
-{
-}
-
-// ============================================================== _initInputWidget
-void PipeDialog::_initInputWidget( Mode editmode )
-{
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
-
-
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(PIPE_TREE) );
-   installEventFilter(this);
-
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(PIPE_TREE) );
-   name_le->installEventFilter(this);
-
-   //Vertex Field config
-   vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vex_le->installEventFilter(this);
-   vex_le->setValidator( validator );
-
-   //Vector Field config
-   vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   vec_le->installEventFilter(this);
-   vec_le->setValidator( validator );
-
-
-   if ( editmode == INFO_MODE ){
-       name_le->setReadOnly(true);
-       ir_spb->setReadOnly(true);
-       er_spb->setReadOnly(true);
-       h_spb->setReadOnly(true);
-   }
-
-   vex_le->setReadOnly(true);
-   vec_le->setReadOnly(true);
-
-   //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
-}
-
-
-// ============================================================== clear
-void PipeDialog::clear()
-{
-   name_le->clear();
-
-   vex_le->clear();
-   modelUnregister(vex_le);
-
-   vec_le->clear();
-   modelUnregister(vec_le);
-
-   modelUnregister(this);
-}
-
-// ============================================================== setValue
-void PipeDialog::setValue(HEXA_NS::Pipe* p)
-{
-   HEXA_NS::Vertex* base      = p->getBase();
-   HEXA_NS::Vector* direction = p->getDirection();
-   double  ir = p->getInternalRadius();
-   double  er = p->getRadius();
-   double  h  = p->getHeight();
-
-   name_le->setText( p->getName() );
-   vex_le->setText( base->getName() );
-   vec_le->setText( direction->getName() );
-   ir_spb->setValue(ir);
-   er_spb->setValue(er);
-   h_spb->setValue(h);
-
-   if ( getPatternDataSelectionModel() ){
-         QModelIndex iPipe      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
-         QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
-         QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
-
-         name_le->setProperty( "QModelIndex",  QVariant::fromValue(iPipe) );
-         vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
-         vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
-   }
-   _value = p;
-}
-
-// ============================================================== getValue
-HEXA_NS::Pipe* PipeDialog::getValue()
-{
-   return _value;
-}
-
-
-// ============================================================== apply
-bool PipeDialog::apply(QModelIndex& result)
-{
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
-
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
-
-   QModelIndex iPipe;
-   QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-   QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-   double ir = ir_spb->value();
-   double er = er_spb->value();
-   double h  = h_spb->value();
-
-   if (ir >= er) {
-         SUIT_MessageBox::information( this, tr( "CANNOT ADD PIPE" ), tr( "External radius must be greather than Internal radius!" ) );
-         return false;
-   }
-
-
-   if ( ivex.isValid()
-         && ivec.isValid() ){
-         iPipe = getDocumentModel()->addPipe( ivex, ivec, ir, er, h );
-   }
-
-   if ( !iPipe.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
-         return false;
-   }
-   _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
-
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iPipe, newName );
-
-   //update the default name in the dialog box
-   if (_value != NULL)
-       updateDefaultName(name_le, _value->getType());
-
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iPipe);
-
-   return true;
-}
-
 
 // ------------------------- MakeGridDialog ----------------------------------
-//                  ( Cartesian, Cylindrical, Spherical )
-
 // ============================================================== Constructeur
 
 MakeGridDialog::MakeGridDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   rb0->click();// Default : cartesian grid
-   uniform_rb->click();
-   //	rb0->setFocusProxy( vex_le_rb0 );
-   //	rb1->setFocusProxy( center_le_rb1 );
-   //	rb2->setFocusProxy( vex_le_rb2 );
-   //   setFocusProxy( rb0 );
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "creategrids.html#guicartgrid";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    _helpFileName = "creategrids.html#guicartgrid";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
-
 
 // ============================================================== Destructeur
 MakeGridDialog::~MakeGridDialog()
@@ -2414,318 +1925,242 @@ MakeGridDialog::~MakeGridDialog()
 // ============================================================== _initInputWidget
 void MakeGridDialog::_initInputWidget( Mode editmode )
 {
+    center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    base_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
+    vec_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
 
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    center_le->setReadOnly(true);
+    axis_le->setReadOnly(true);
+    base_le->setReadOnly(true);
+    vec_le->setReadOnly(true);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    center_le->installEventFilter(this);
+    axis_le->installEventFilter(this);
+    base_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
 
-   vex_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   vex_le_rb0->setValidator( validator );
-   vec_le_rb0->setValidator( validator );
-   vex_le_rb0->installEventFilter(this);
-   vec_le_rb0->installEventFilter(this);
+    radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
+    radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   center_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   base_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   height_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   center_le_rb1->setValidator( validator );
-   base_le_rb1->setValidator( validator );
-   height_le_rb1->setValidator( validator );
-   center_le_rb1->installEventFilter(this);
-   base_le_rb1->installEventFilter(this);
-   height_le_rb1->installEventFilter(this);
+    angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vex_le_rb2->setValidator( validator );
-   vex_le_rb2->installEventFilter(this);
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   if ( editmode != INFO_MODE ){
-         //Cylindrical
-         radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
-         radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+    connect( add_radius_pb, SIGNAL(clicked()), this, SLOT(addRadiusItem()) );
+    connect( del_radius_pb, SIGNAL(clicked()), this, SLOT(delRadiusItem()) );
 
-         angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
-         angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+    connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
+    connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
 
-         height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
-         height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
-
-         connect( add_radius_pb, SIGNAL(clicked()), this, SLOT(addRadiusItem()) );
-         connect( del_radius_pb, SIGNAL(clicked()), this, SLOT(delRadiusItem()) );
-         connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
-         connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
-         connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
-         connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
-   }
-
-   vex_le_rb0->setReadOnly(true);
-   vec_le_rb0->setReadOnly(true);
-   vex_le_rb2->setReadOnly(true);
-   center_le_rb1->setReadOnly(true);
-   base_le_rb1->setReadOnly(true);
-   height_le_rb1->setReadOnly(true);
-
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
 }
-
 
 // ============================================================== clear
 void MakeGridDialog::clear()
 {
-   vex_le_rb0->clear();
-   modelUnregister(vex_le_rb0);
+    center_le->clear();
+    modelUnregister(center_le);
 
-   vec_le_rb0->clear();
-   modelUnregister(vec_le_rb0);
+    axis_le->clear();
+    modelUnregister(axis_le);
 
-   base_le_rb1->clear();
-   modelUnregister(base_le_rb1);
+    base_le->clear();
+    modelUnregister(base_le);
 
-   center_le_rb1->clear();
-   modelUnregister(center_le_rb1);
+    vec_le->clear();
+    modelUnregister(vec_le);
 
-   height_le_rb1->clear();
-   modelUnregister(height_le_rb1);
-
-   vex_le_rb2->clear();
-   modelUnregister(vex_le_rb2);
-
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== updateHelpFileName
 void MakeGridDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "creategrids.html#guicartgrid";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "creategrids.html#guicylgrid";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "creategrids.html#guisphergrid";
-   }
-}
-
-
-// ============================================================== updateButtonBox
-void MakeGridDialog::updateButtonBox() //CS_TODO?
-{
-   //   int nbQuads  = quads_lw->count();
-   //   int nbAngles = angles_lw->count();
-   //
-   //   if ( nbQuads>0 && nbAngles> 0 ){
-   //     _applyCloseButton->setEnabled(true);
-   //     _applyButton->setEnabled(true);
-   //   } else {
-   //     _applyCloseButton->setEnabled(false);
-   //     _applyButton->setEnabled(false);
-   //   }
-
-   //   if ( rb0->isChecked() ){ //cartesian
-   //   } else if ( rb1->isChecked() ){ //cylindrical
-   //     nb_radius = radius_lw->item(r);
-   //     nb_angle  = angle_lw->item(r);
-   //     nb_height = height_lw->item(r);
-   //   } else if ( rb2->isChecked() ){ //spherical
-   //   }
+    if ( sender() == rb0 ){
+        _helpFileName = "creategrids.html#guicartgrid";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "creategrids.html#guicylgrid";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "creategrids.html#guisphergrid";
+    }
 }
 
 // ============================================================== addRadiusItem
 void MakeGridDialog::addRadiusItem()
 {
-   QListWidgetItem* previousItem = radius_lw->currentItem();
-   QListWidgetItem* newItem      = new QListWidgetItem();
+    QListWidgetItem* previousItem = radius_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
 
-   double defaultValue = 1.;
-   if ( previousItem )
-      defaultValue = previousItem->data(Qt::EditRole).toDouble();
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
 
-   newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
-   newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
-   radius_lw->addItem(newItem);
-
-   updateButtonBox();
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    radius_lw->addItem(newItem);
 }
 
 // ============================================================== delRadiusItem
 void MakeGridDialog::delRadiusItem()
 {
-   delete radius_lw->currentItem();
-   updateButtonBox();
+    delete radius_lw->currentItem();
 }
 
 // ============================================================== addAngleItem
 void MakeGridDialog::addAngleItem()
 {
-   QListWidgetItem* previousItem = angle_lw->currentItem();
-   QListWidgetItem* newItem      = new QListWidgetItem();
+    QListWidgetItem* previousItem = angle_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
 
-   double defaultValue = 180.;
-   if ( previousItem )
-      defaultValue = previousItem->data(Qt::EditRole).toDouble();
+    double defaultValue = 180.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
 
-   newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
-   newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
-   angle_lw->addItem(newItem);
-
-   updateButtonBox();
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    angle_lw->addItem(newItem);
 }
 
 // ============================================================== delAngleItem
 void MakeGridDialog::delAngleItem()
 {
-   //std::cout << "delAngleItem()" << std::endl;
-   delete angle_lw->currentItem();
-   updateButtonBox();
+    delete angle_lw->currentItem();
 }
 
 // ============================================================== addHeightItem
 void MakeGridDialog::addHeightItem()
 {
-   QListWidgetItem* previousItem = height_lw->currentItem();
-   QListWidgetItem* newItem      = new QListWidgetItem();
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
 
-   double defaultValue = 1.;
-   if ( previousItem )
-      defaultValue = previousItem->data(Qt::EditRole).toDouble();
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
 
-   newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
-   newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
-   height_lw->addItem(newItem);
-
-   updateButtonBox();
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
 }
 
 // ============================================================== delHeightItem
 void MakeGridDialog::delHeightItem()
 {
-   //std::cout << "delHeightItem()" << std::endl;
-   delete height_lw->currentItem();
-   updateButtonBox();
+    delete height_lw->currentItem();
 }
 
 // ============================================================== apply
 bool MakeGridDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel*    patternDataModel    = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iNewElts;
-   if ( rb0->isChecked() ){ //cartesian
-         QModelIndex ivex_rb0 = patternDataModel->mapToSource( _index[vex_le_rb0] );
-         QModelIndex ivec_rb0 = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
-         long nx = nx_spb_rb0->value();
-         long ny = ny_spb_rb0->value();
-         long nz = nz_spb_rb0->value();
+    QModelIndex iNewElts;
+    if ( rb0->isChecked() )
+    {
+        long nx = nx_spb->value();
+        long ny = ny_spb->value();
+        long nz = nz_spb->value();
+        iNewElts = docModel->makeCartesianTop(nx, ny, nz);
+    }
+    else if ( rb1->isChecked() )
+    {
+        QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
+        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
 
-         if ( ivex_rb0.isValid()
-               && ivec_rb0.isValid() ){
-               iNewElts = getDocumentModel()->makeCartesian( ivex_rb0, ivec_rb0, nx, ny, nz );
-         }
+        if ( icenter.isValid() && iaxis.isValid() && ibase.isValid() && ivec.isValid() )
+        {
+                double nx = nx_spb->value();
+                double ny = ny_spb->value();
+                double nz = nz_spb->value();
+                double lx = lx_spb->value();
+                double ly = ly_spb->value();
+                double lz = lz_spb->value();
 
-   } else if ( rb1->isChecked() ){ //cylindrical
-         QModelIndex icenter_rb1 = patternDataModel->mapToSource( _index[center_le_rb1] );
-         QModelIndex ibase_rb1   = patternBuilderModel->mapToSource( _index[base_le_rb1] );
-         QModelIndex iheight_rb1 = patternBuilderModel->mapToSource( _index[height_le_rb1] );
+                iNewElts = docModel->makeCartesianUni( icenter, ibase, ivec, iaxis,
+                                                       nx, ny, nz, lx, ly, lz);
+        }
 
-         if ( icenter_rb1.isValid()
-               && ibase_rb1.isValid()
-               && iheight_rb1.isValid() ){
+    } else if ( rb2->isChecked() )
+    {
+        QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
+        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
 
-               bool fill = fill_cb_rb1->isChecked();
-               if ( uniform_rb->isChecked() ){
-                     double dr = dr_spb_rb1->value();
-                     double da = da_spb_rb1->value();
-                     double dl = dl_spb_rb1->value();
-                     double nr = nr_spb_rb1->value();
-                     double na = na_spb_rb1->value();
-                     double nl = nl_spb_rb1->value();
+        if ( icenter.isValid() && iaxis.isValid() && ibase.isValid() && ivec.isValid() )
+        {
+            QListWidgetItem* item = NULL;
 
-                     iNewElts = getDocumentModel()->makeCylindrical( icenter_rb1,
-                           ibase_rb1, iheight_rb1,
-                           dr, da, dl, nr, na, nl, fill );
-               }
-               if ( random_rb->isChecked() ){
-                     QListWidgetItem* item = NULL;
-                     //				QDoubleSpinBox*   spb = NULL;
+            vector<double> radius;
+            vector<double> angles;
+            vector<double> heights;
 
-                     QList<double> radius;
-                     QList<double> angles;
-                     QList<double> heights;
+            double somme = 0.;
+            int nbAngles = angle_lw->count();
+            for ( int r = 0; r < nbAngles; ++r){
+                item = angle_lw->item(r);
+                double itemValue = item->data(Qt::EditRole).toDouble();
+                angles.push_back(itemValue);
+                somme += itemValue;
+            }
+            if (somme > 360.01)
+            {
+                SUIT_MessageBox::information( 0,
+                        tr("HEXA_INFO"),
+                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+                return false;
+            }
 
-                     double somme = 0.;
-                     for ( int r = 0; r < angle_lw->count(); ++r){
-                           item = angle_lw->item(r);
-                           angles << item->data(Qt::EditRole).toDouble();
-                           somme += item->data(Qt::EditRole).toDouble();
-                     }
-                     if (somme > 360.01)
-                        {
-                           SUIT_MessageBox::information( 0,
-                                 tr("HEXA_INFO"),
-                                 tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-                           return false;
-                        }
+            int nbRadius = radius_lw->count();
+            for ( int r = 0; r < nbRadius; ++r){
+                item = radius_lw->item(r);
+                radius.push_back(item->data(Qt::EditRole).toDouble());
+            }
 
-                     for ( int r = 0; r < radius_lw->count(); ++r){
-                           item = radius_lw->item(r);
-                           //std::cout << "radius : " << item->data(Qt::EditRole).toDouble()<< std::endl;
-                           radius << item->data(Qt::EditRole).toDouble();
-                     }
+            int nbHeight = height_lw->count();
+            for ( int r = 0; r < nbHeight; ++r){
+                item = height_lw->item(r);
+                heights.push_back(item->data(Qt::EditRole).toDouble());
+            }
 
-                     for ( int r = 0; r < height_lw->count(); ++r){
-                           item = height_lw->item(r);
-                           heights << item->data(Qt::EditRole).toDouble();
-                     }
+            iNewElts =  docModel->makeCartesian( icenter, ibase, ivec, iaxis,
+                                                 radius, angles, heights);
+        }
 
-                     iNewElts =  getDocumentModel()->makeCylindricals(
-                           icenter_rb1, ibase_rb1, iheight_rb1,
-                           radius, angles, heights,
-                           fill ); //NEW HEXA3
-               }
-         }
+    }
 
-   } else if ( rb2->isChecked() ){ //spherical
-         QModelIndex ivex_rb2  = patternDataModel->mapToSource( _index[vex_le_rb2] );
-         //     QModelIndex ivecx_rb2 = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
-         double radius = radius_spb_rb2->value();
-         int    nb     = nb_spb_rb2->value();
-         int    k      = k_spb_rb2->value();
+    if ( !iNewElts.isValid() )
+    {
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE GRID" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-         if ( ivex_rb2.isValid() ){
-               iNewElts = getDocumentModel()->makeSpherical( ivex_rb2, radius, nb, k );
-         }
-   }
+    result = patternBuilderModel->mapFromSource( iNewElts );
 
-   if ( !iNewElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE GRID" ) );
-         return false;
-   }
-
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource( iNewElts );
-
-   return true;
+    return true;
 }
-
-
 
 // ============================================================== Constructeur
 
 MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinder";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( cyl_le );
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinder";
+    setupUi( this );
+    _initWidget(editmode);
+
+    rb0->click();
 }
 
 // ============================================================== Destructeur
@@ -2735,82 +2170,207 @@ MakeCylinderDialog::~MakeCylinderDialog()
 
 void MakeCylinderDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    origin_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE));
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    base_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE));
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    origin_le->installEventFilter(this);
+    axis_le->installEventFilter(this);
+    base_le->installEventFilter(this);
 
-   cyl_le->setProperty( "HexaWidgetType",  QVariant::fromValue(CYLINDER_TREE) );
-   vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   cyl_le->setValidator( validator );
-   vec_le->setValidator( validator );
-   cyl_le->installEventFilter(this);
-   vec_le->installEventFilter(this);
+    origin_le->setReadOnly(true);
+    axis_le->setReadOnly(true);
+    base_le->setReadOnly(true);
 
-   cyl_le->setReadOnly(true);
-   vec_le->setReadOnly(true);
+    radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
+    radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    connect( add_radius_pb, SIGNAL(clicked()), this, SLOT(addRadiusItem()) );
+    connect( del_radius_pb, SIGNAL(clicked()), this, SLOT(delRadiusItem()) );
+
+    connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
+    connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
+
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== addRadiusItem
+void MakeCylinderDialog::addRadiusItem()
+{
+    QListWidgetItem* previousItem = radius_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    radius_lw->addItem(newItem);
+}
+
+// ============================================================== delRadiusItem
+void MakeCylinderDialog::delRadiusItem()
+{
+    delete radius_lw->currentItem();
+}
+
+// ============================================================== addAngleItem
+void MakeCylinderDialog::addAngleItem()
+{
+    QListWidgetItem* previousItem = angle_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 180.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    angle_lw->addItem(newItem);
+}
+
+// ============================================================== delAngleItem
+void MakeCylinderDialog::delAngleItem()
+{
+    delete angle_lw->currentItem();
+}
+
+// ============================================================== addHeightItem
+void MakeCylinderDialog::addHeightItem()
+{
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
+}
+
+// ============================================================== delHeightItem
+void MakeCylinderDialog::delHeightItem()
+{
+    delete height_lw->currentItem();
 }
 
 // ============================================================== clear
 void MakeCylinderDialog::clear()
 {
-   cyl_le->clear();
-   modelUnregister(cyl_le);
+    origin_le->clear();
+    modelUnregister(origin_le);
 
-   vec_le->clear();
-   modelUnregister(vec_le);
+    axis_le->clear();
+    modelUnregister(axis_le);
 
-   modelUnregister(this);
+    base_le->clear();
+    modelUnregister(base_le);
+
+    modelUnregister(this);
 }
-
 
 // ============================================================== apply
 bool MakeCylinderDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternBuilderModel ) return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iElts;
-   QModelIndex icyl = patternBuilderModel->mapToSource( _index[cyl_le] );
-   QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-   double nr = nr_spb->value();
-   double na = na_spb->value();
-   double nl = nl_spb->value();
+    QModelIndex iorigin = patternDataModel->mapToSource( _index[origin_le] );
+    QModelIndex iaxis = patternBuilderModel->mapToSource( _index[axis_le] );
+    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
+    double rext = ext_radius_spb->value();
+    double rint = int_radius_spb->value();
+    double angle = angle_spb->value();
+    double height = height_spb->value();
+    double nr = nr_spb->value();
+    double na = na_spb->value();
+    double nh = nh_spb->value();
 
-   if ( icyl.isValid()
-         && ivec.isValid() ){
-         iElts = getDocumentModel()->makeCylinder( icyl, ivec, nr, na, nl );
-   }
+    QModelIndex iElts;
+    if (rb0->isChecked())
+        iElts = docModel->makeCylinderTop(nr, na, nh);
+    else if (rb1->isChecked())
+    {
+        if ( iorigin.isValid() && iaxis.isValid() && ibase.isValid())
+                iElts = docModel->makeCylinderUni(iorigin, ibase, iaxis, rint,
+                                                  rext, angle, height, nr, na, nh);
+    }
+    else if (rb2->isChecked())
+    {
+        QListWidgetItem* item = NULL;
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDER" ) );
-         return false;
-   }
+        vector<double> radius;
+        vector<double> angles;
+        vector<double> heights;
 
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iElts);
+        double somme = 0.;
+        int nbAngles = angle_lw->count();
+        for ( int r = 0; r < nbAngles; ++r){
+            item = angle_lw->item(r);
+            double itemValue = item->data(Qt::EditRole).toDouble();
+            angles.push_back(itemValue);
+            somme += itemValue;
+        }
+        if (somme > 360.01)
+        {
+            SUIT_MessageBox::information( 0,
+                    tr("HEXA_INFO"),
+                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+            return false;
+        }
 
-   return true;
+        int nbRadius = radius_lw->count();
+        for ( int r = 0; r < nbRadius; ++r){
+            item = radius_lw->item(r);
+            radius.push_back(item->data(Qt::EditRole).toDouble());
+        }
+
+        int nbHeight = height_lw->count();
+        for ( int r = 0; r < nbHeight; ++r){
+            item = height_lw->item(r);
+            heights.push_back(item->data(Qt::EditRole).toDouble());
+        }
+
+        if ( iorigin.isValid() && iaxis.isValid() && ibase.isValid())
+                    iElts = docModel->makeCylinder( iorigin, ibase, iaxis, radius, angles, heights);
+    }
+
+
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDER" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+
+    result = patternBuilderModel->mapFromSource(iElts);
+
+    return true;
 }
 
-
 //---------------------------------- MakePipeDialog -----------------------------
-
 // ============================================================== Constructeur
 
 MakePipeDialog::MakePipeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipe";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( pipe_le );
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipe";
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 }
 
 // ============================================================== Destructeur
@@ -2821,85 +2381,206 @@ MakePipeDialog::~MakePipeDialog()
 // ============================================================== _initInputWidget
 void MakePipeDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    origin_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    base_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    origin_le->installEventFilter(this);
+    axis_le->installEventFilter(this);
+    base_le->installEventFilter(this);
 
-   pipe_le->setProperty( "HexaWidgetType", QVariant::fromValue(PIPE_TREE) );
-   vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    origin_le->setReadOnly(true);
+    axis_le->setReadOnly(true);
+    base_le->setReadOnly(true);
 
-   pipe_le->setValidator( validator );
-   vec_le->setValidator( validator );
+    radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
+    radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   pipe_le->installEventFilter(this);
-   vec_le->installEventFilter(this);
+    angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   pipe_le->setReadOnly(true);
-   vec_le->setReadOnly(true);
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
+    connect( add_radius_pb, SIGNAL(clicked()), this, SLOT(addRadiusItem()) );
+    connect( del_radius_pb, SIGNAL(clicked()), this, SLOT(delRadiusItem()) );
 
+    connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
+    connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
 
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== addRadiusItem
+void MakePipeDialog::addRadiusItem()
+{
+    QListWidgetItem* previousItem = radius_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    radius_lw->addItem(newItem);
+}
+
+// ============================================================== delRadiusItem
+void MakePipeDialog::delRadiusItem()
+{
+    delete radius_lw->currentItem();
+}
+
+// ============================================================== addAngleItem
+void MakePipeDialog::addAngleItem()
+{
+    QListWidgetItem* previousItem = angle_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 180.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    angle_lw->addItem(newItem);
+}
+
+// ============================================================== delAngleItem
+void MakePipeDialog::delAngleItem()
+{
+    delete angle_lw->currentItem();
+}
+
+// ============================================================== addHeightItem
+void MakePipeDialog::addHeightItem()
+{
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
+}
+
+// ============================================================== delHeightItem
+void MakePipeDialog::delHeightItem()
+{
+    delete height_lw->currentItem();
 }
 
 // ============================================================== clear
 void MakePipeDialog::clear()
 {
-   pipe_le->clear();
-   modelUnregister(pipe_le);
+    origin_le->clear();
+    modelUnregister(origin_le);
 
-   vec_le->clear();
-   modelUnregister(vec_le);
+    axis_le->clear();
+    modelUnregister(axis_le);
 
-   modelUnregister(this);
+    base_le->clear();
+    modelUnregister(base_le);
+
+    modelUnregister(this);
 }
-
 
 // ============================================================== apply
 bool MakePipeDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternBuilderModel ) return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iElts;
-   QModelIndex ipipe = patternBuilderModel->mapToSource( _index[pipe_le] );
-   QModelIndex ivec  = patternBuilderModel->mapToSource( _index[vec_le] );
-   double nr = nr_spb->value();
-   double na = na_spb->value();
-   double nl = nl_spb->value();
+    QModelIndex iorigin = patternDataModel->mapToSource( _index[origin_le] );
+    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
+    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
+    double rext = ext_radius_spb->value();
+    double rint = int_radius_spb->value();
+    double angle = angle_spb->value();
+    double height = height_spb->value();
+    int nr = nr_spb->value();
+    int na = na_spb->value();
+    int nh = nh_spb->value();
 
-   if ( ipipe.isValid()
-         && ivec.isValid() ){
-         iElts = getDocumentModel()->makePipe( ipipe, ivec, nr, na, nl );
-   }
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPE" ) );
-         return false;
-   }
+    QModelIndex iElts;
 
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iElts);
+    if (rb0->isChecked())
+        iElts = docModel->makePipeTop(nr, na, nh);
+    else if (rb1->isChecked())
+    {
+        if ( iorigin.isValid() && iaxis.isValid() && ibase.isValid())
+            iElts = docModel->makePipeUni(iorigin, ibase, iaxis, rint, rext, angle, height,
+                                          nr, na, nh);
+    }
+    else if (rb2->isChecked())
+    {
+        QListWidgetItem* item = NULL;
 
-   return true;
+        vector<double> radius;
+        vector<double> angles;
+        vector<double> heights;
+
+        double somme = 0.;
+        int nbAngles = angle_lw->count();
+        for ( int r = 0; r < nbAngles; ++r){
+            item = angle_lw->item(r);
+            double itemValue = item->data(Qt::EditRole).toDouble();
+            angles.push_back(itemValue);
+            somme += itemValue;
+        }
+        if (somme > 360.01)
+        {
+            SUIT_MessageBox::information( 0,
+                    tr("HEXA_INFO"),
+                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+            return false;
+        }
+
+        int nbRadius = radius_lw->count();
+        for ( int r = 0; r < nbRadius; ++r){
+            item = radius_lw->item(r);
+            radius.push_back(item->data(Qt::EditRole).toDouble());
+        }
+
+        int nbHeight = height_lw->count();
+        for ( int r = 0; r < nbHeight; ++r){
+            item = height_lw->item(r);
+            heights.push_back(item->data(Qt::EditRole).toDouble());
+        }
+        if ( iorigin.isValid() && iaxis.isValid() && ibase.isValid())
+            iElts = docModel->makePipe( iorigin, ibase, iaxis, radius, angles, heights );
+    }
+
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPE" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+
+    // to select/highlight result
+    result = patternBuilderModel->mapFromSource(iElts);
+
+    return true;
 }
 
 //---------------------------------- MakeCylindersDialog -----------------------------
-
 // ============================================================== Constructeur
 
 MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinders";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( cyl1_le );
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinders";
+    setupUi( this );
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
@@ -2909,82 +2590,84 @@ MakeCylindersDialog::~MakeCylindersDialog()
 
 void MakeCylindersDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    center2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    direction_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
+    direction2_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(CROSSELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    center_le->installEventFilter(this);
+    center2_le->installEventFilter(this);
+    direction_le->installEventFilter(this);
+    direction2_le->installEventFilter(this);
 
-   cyl1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(CYLINDER_TREE) );
-   cyl2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(CYLINDER_TREE) );
-
-   cyl1_le->setValidator( validator );
-   cyl2_le->setValidator( validator );
-
-   cyl1_le->installEventFilter(this);
-   cyl2_le->installEventFilter(this);
-
-   cyl1_le->setReadOnly(true);
-   cyl2_le->setReadOnly(true);
+    center_le->setReadOnly(true);
+    center2_le->setReadOnly(true);
+    direction_le->setReadOnly(true);
+    direction2_le->setReadOnly(true);
 }
 
 // ============================================================== clear
 void MakeCylindersDialog::clear()
 {
-   cyl1_le->clear();
-   modelUnregister(cyl1_le);
+    center_le->clear();
+    modelUnregister(center_le);
 
-   cyl2_le->clear();
-   modelUnregister(cyl2_le);
+    center2_le->clear();
+    modelUnregister(center2_le);
 
-   modelUnregister(this);
+    direction_le->clear();
+    modelUnregister(direction_le);
+
+    direction2_le->clear();
+    modelUnregister(direction2_le);
+
+    modelUnregister(this);
 }
-
 
 // ============================================================== apply
 bool MakeCylindersDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternBuilderModel ) return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iCrossElts;
-   QModelIndex icyl1 = patternBuilderModel->mapToSource( _index[cyl1_le] );
-   QModelIndex icyl2 = patternBuilderModel->mapToSource( _index[cyl2_le] );
+    QModelIndex iElts;
+    QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+    QModelIndex icenter2 = patternDataModel->mapToSource( _index[center2_le] );
+    QModelIndex idir = patternBuilderModel->mapToSource( _index[direction_le] );
+    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[direction2_le] );
 
-   if ( icyl1.isValid()
-         && icyl2.isValid() ){
-         iCrossElts = getDocumentModel()->makeCylinders( icyl1, icyl2 );
-   }
+    if ( icenter.isValid() && icenter2.isValid() && idir.isValid() && idir2.isValid()){
+        double r1 = radius_spb->value();
+        double h1 = height_spb->value();
+        double r2 = radius2_spb->value();
+        double h2 = height2_spb->value();
+        iElts = docModel->makeCylinders( icenter, idir, r1, h1, icenter2, idir2, r2, h2 );
+    }
 
-   if ( !iCrossElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDERS" ) );
-         return false;
-   }
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE CYLINDERS" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   // to select/highlight result
-   result = patternBuilderModel->mapFromSource(iCrossElts);
+    result = patternBuilderModel->mapFromSource(iElts);
 
-   return true;
+    return true;
 }
 
-
-
 //---------------------------------- MakePipesDialog -----------------------------
-
 // ============================================================== Constructeur
 
 MakePipesDialog::MakePipesDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipes";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( pipe1_le );
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipes";
+    setupUi( this );
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
@@ -2995,76 +2678,87 @@ MakePipesDialog::~MakePipesDialog()
 // ============================================================== _initInputWidget
 void MakePipesDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    origin_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
+    origin2_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
+    dir_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    dir2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
-   pipe1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(PIPE_TREE) );
-   pipe2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(PIPE_TREE) );
+    installEventFilter(this);
+    origin_le->installEventFilter(this);
+    origin2_le->installEventFilter(this);
+    dir_le->installEventFilter(this);
+    dir2_le->installEventFilter(this);
 
-   pipe1_le->setValidator( validator );
-   pipe2_le->setValidator( validator );
-
-   pipe1_le->installEventFilter(this);
-   pipe2_le->installEventFilter(this);
-
-   pipe1_le->setReadOnly(true);
-   pipe2_le->setReadOnly(true);
+    origin_le->setReadOnly(true);
+    origin2_le->setReadOnly(true);
+    dir_le->setReadOnly(true);
+    dir2_le->setReadOnly(true);
 }
-
 
 // ============================================================== clear
 void MakePipesDialog::clear()
 {
-   pipe1_le->clear();
-   modelUnregister(pipe1_le);
+    origin_le->clear();
+    modelUnregister(origin_le);
 
-   pipe2_le->clear();
-   modelUnregister(pipe2_le);
+    origin2_le->clear();
+    modelUnregister(origin2_le);
 
-   modelUnregister(this);
+    dir_le->clear();
+    modelUnregister(dir_le);
+
+    dir2_le->clear();
+    modelUnregister(dir2_le);
+
+    modelUnregister(this);
 }
-
 
 // ============================================================== apply
 bool MakePipesDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternBuilderModel ) return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iCrossElts;
-   QModelIndex ipipe1 = patternBuilderModel->mapToSource( _index[pipe1_le] );
-   QModelIndex ipipe2 = patternBuilderModel->mapToSource( _index[pipe2_le] );
+    QModelIndex iorigin1 = patternDataModel->mapToSource( _index[origin_le] );
+    QModelIndex iorigin2 = patternDataModel->mapToSource( _index[origin2_le] );
+    QModelIndex idir1 = patternBuilderModel->mapToSource( _index[dir_le] );
+    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[dir2_le] );
+    double rint1 = int_radius_spb->value();
+    double rext1 = ext_radius_spb->value();
+    double height1 = height_spb->value();
+    double rint2 = int_radius2_spb->value();
+    double rext2 = ext_radius2_spb->value();
+    double height2 = height_spb->value();
 
-   if ( ipipe1.isValid()
-         && ipipe2.isValid() ){
-         iCrossElts = getDocumentModel()->makePipes( ipipe1, ipipe2 );
-   }
-   if ( !iCrossElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPES" ) );
-         return false;
-   }
-   result = patternBuilderModel->mapFromSource(iCrossElts);
+    QModelIndex iElts;
 
-   return true;
+    if ( iorigin1.isValid() && iorigin2.isValid() && idir1.isValid() && idir2.isValid())
+        iElts = docModel->makePipes( iorigin1, idir1, rint1, rext1, height1,
+                                     iorigin2, idir2, rint2, rext2, height2);
+
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE PIPES" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+
+    result = patternBuilderModel->mapFromSource(iElts);
+
+    return true;
 }
 
-
 //---------------------------------- RemoveHexaDialog -----------------------------
-
 // ============================================================== Constructeur
 
 RemoveHexaDialog::RemoveHexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_remove.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( hexa_le );
+    _helpFileName = "gui_remove.html";
+    setupUi( this );
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
@@ -3075,75 +2769,67 @@ RemoveHexaDialog::~RemoveHexaDialog()
 // ============================================================== _initInputWidget
 void RemoveHexaDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-   hexa_le->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   hexa_le->setValidator( validator );
-   hexa_le->installEventFilter(this);
-   hexa_le->setReadOnly(true);
-   autoFocusSwitch = false;
+    hexa_le->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+    hexa_le->setValidator( validator );
+    hexa_le->installEventFilter(this);
+    hexa_le->setReadOnly(true);
+    autoFocusSwitch = false;
 }
 
 // ============================================================== clear
 void RemoveHexaDialog::clear()
 {
-   hexa_le->clear();
-   modelUnregister(hexa_le);
+    hexa_le->clear();
+    modelUnregister(hexa_le);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
-
 
 // ============================================================== apply
 bool RemoveHexaDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel*    patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return false;
 
-   QModelIndex ihexa = patternDataModel->mapToSource( _index[hexa_le] );
+    QModelIndex ihexa = patternDataModel->mapToSource( _index[hexa_le] );
 
-   bool removed = false;
-   if ( ihexa.isValid() ){
-         if ( connected_cb->isChecked() ){
-               removed = getDocumentModel()->removeConnectedHexa( ihexa );
-         } else {
-               removed = getDocumentModel()->removeHexa( ihexa );
-         }
-   }
+    bool removed = false;
+    if ( ihexa.isValid() ){
+        if ( connected_cb->isChecked() ){
+            removed = getDocumentModel()->removeConnectedHexa( ihexa );
+        } else {
+            removed = getDocumentModel()->removeHexa( ihexa );
+        }
+    }
 
-   if ( removed == false ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE HEXA" ) );
-         return false;
-   }
+    if ( removed == false ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REMOVE HEXA" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   clear();
+    clear();
 
-   return true;
+    return true;
 }
 
-
 //---------------------------------- PrismQuadDialog -----------------------------
-
 // ============================================================== Constructeur
 
 PrismQuadDialog::PrismQuadDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_prism_join_quad.html#prism-quadrangles";
-   setupUi( this );
-   _initWidget(editmode);
-   //	setFocusProxy( quads_lw );
-   //	connect( regular_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   //	connect( irregular_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   regular_rb->click();
+    _helpFileName = "gui_prism_join_quad.html#prism-quadrangles";
+    setupUi( this );
+    _initWidget(editmode);
+    extrudeTop_rb->click();
 }
-
 
 // ============================================================== Destructeur
 PrismQuadDialog::~PrismQuadDialog()
@@ -3156,53 +2842,44 @@ PrismQuadDialog::~PrismQuadDialog()
  */
 QModelIndexList PrismQuadDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad;
-   QListWidgetItem* item = NULL;
+    QModelIndexList assocs;
+    QModelIndex iQuad;
+    QListWidgetItem* item = NULL;
 
-   //ListWidget content
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return assocs;
-   for ( int r = 0; r < quads_lw->count(); ++r ){
-         item = quads_lw->item(r);
-         iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iQuad.isValid() )
+    //ListWidget content
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return assocs;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r ){
+        item = quads_lw->item(r);
+        iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iQuad.isValid() )
             assocs << iQuad;
-   }
-   return assocs;
+    }
+    return assocs;
 }
-
 
 // ============================================================== _initInputWidget
 void PrismQuadDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    quads_lw->installEventFilter(this);
+    axis_le->installEventFilter(this);
 
-   vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    axis_le->setReadOnly(true);
 
-   vec_le->setValidator( validator );
+    QShortcut* delQuadShortcut   = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+    delQuadShortcut->setContext( Qt::WidgetShortcut );
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   vec_le->installEventFilter(this);
-   quads_lw->installEventFilter(this);
-
-   if ( editmode != INFO_MODE ){
-         QShortcut* delQuadShortcut   = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
-         delQuadShortcut->setContext( Qt::WidgetShortcut );
-         connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(removeQuad()) );
-   }
-
-   vec_le->setReadOnly(true);
-
-   connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
-   height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
-   height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
-   connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
-   connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+    connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(removeQuad()) );
+    connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
 }
 
 // ============================================================== clear
@@ -3211,8 +2888,8 @@ void PrismQuadDialog::clear()
     quads_lw->clear();
     modelUnregister(quads_lw);
 
-    vec_le->clear();
-    modelUnregister(vec_le);
+    axis_le->clear();
+    modelUnregister(axis_le);
 
     modelUnregister(this);
 }
@@ -3220,118 +2897,102 @@ void PrismQuadDialog::clear()
 // ============================================================== removeQuad
 void PrismQuadDialog::removeQuad()
 {
-   QListWidgetItem *item = quads_lw->currentItem();
+    QListWidgetItem *item = quads_lw->currentItem();
 
-   if (item) {
-         int r = quads_lw->row(item);
-         quads_lw->takeItem(r);
-         delete item;
-   }
-
+    if (item) {
+        int r = quads_lw->row(item);
+        quads_lw->takeItem(r);
+        delete item;
+    }
 }
-
-// void PrismQuadDialog::clearQuads()
-// {
-//   if (quads_lw->count() != 0)
-//     quads_lw->clear();
-// }
 
 // ============================================================== addHeightItem
 void PrismQuadDialog::addHeightItem()
 {
-   QListWidgetItem* previousItem = height_lw->currentItem();
-   QListWidgetItem* newItem      = new QListWidgetItem();
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
 
-   double defaultValue = 1.;
-   if ( previousItem )
-      defaultValue = previousItem->data(Qt::EditRole).toDouble();
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
 
-   newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
-   newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
-   height_lw->addItem(newItem);
-
-   //	updateButtonBox();
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
 }
 
 // ============================================================== delHeightItem
 void PrismQuadDialog::delHeightItem()
 {
-   delete height_lw->currentItem();
-   //	updateButtonBox();
+    delete height_lw->currentItem();
 }
-
-
 
 // ============================================================== apply
 bool PrismQuadDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   /////
-   QModelIndexList iquads = getIndexList(quads_lw);
-   QModelIndex ivec  = patternBuilderModel->mapToSource( _index[vec_le] );
+    QModelIndexList iquads = getIndexList(quads_lw);
+    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
+    double length = length_spb->value();
+    int nb = nb_spb->value();
 
-   QModelIndex iElts;
-   if ( ivec.isValid() ){
-         if (regular_rb->isChecked())
-            {
-               int nb = nb_spb->value();
-               if ( iquads.count() == 1 ){
-                     iElts = getDocumentModel()->prismQuad( iquads[0], ivec, nb );
-               } else if ( iquads.count() > 1 ){
-                     iElts = getDocumentModel()->prismQuads( iquads, ivec, nb );
-               }
-            }
-         else //irregular_rb is checked
-            {
-               QVector<double> heights;
-               QListWidgetItem* item = NULL;
-               unsigned int nbItems = height_lw->count();
+    vector<double> heights;
+    QListWidgetItem* item = NULL;
+    int nbItems = height_lw->count();
 
-               for ( int r = 0; r < nbItems; ++r){
-                     item = height_lw->item(r);
-                     heights << item->data(Qt::EditRole).toDouble();
-               }
-               if (iquads.count() == 0 || heights.size() == 0)
-                  {
-                     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ),
-                           tr( "Parameters are invalid!" ) );
-                     return false;
-                  }
-               iElts = getDocumentModel()->prismQuads( iquads, ivec, heights.toStdVector()/*, nb*/ );
-            }
-   }
+    for ( int r = 0; r < nbItems; ++r){
+        item = height_lw->item(r);
+        heights.push_back( item->data(Qt::EditRole).toDouble() );
+    }
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PRISM QUAD(S)" ) );
-         return false;
-   }
+    QModelIndex iElts;
+    int nbQuads = iquads.count();
 
-   result = patternBuilderModel->mapFromSource(iElts);
+    if (nbQuads == 1 && iquads[0].isValid())
+    {
+        if (extrudeTop_rb->isChecked())
+            iElts = docModel->extrudeQuadTop(iquads[0], nb);
+        else if (extrudeUni_rb->isChecked() && iaxis.isValid())
+            iElts = docModel->extrudeQuadUni(iquads[0], iaxis, length, nb);
+        else if (extrude_rb->isChecked() && iaxis.isValid())
+            iElts = docModel->extrudeQuad(iquads[0], iaxis, heights);
+    }
+    else if (nbQuads > 1)
+    {
+        if (extrudeTop_rb->isChecked())
+            iElts = docModel->extrudeQuadsTop(iquads, nb);
+        else if (extrudeUni_rb->isChecked() && iaxis.isValid())
+            iElts = docModel->extrudeQuadsUni(iquads, iaxis, length, nb);
+        else if (extrude_rb->isChecked() && iaxis.isValid())
+            iElts = docModel->extrudeQuads(iquads, iaxis, heights);
+    }
 
-   return true;
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PRISM QUAD(S)" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+
+    result = patternBuilderModel->mapFromSource(iElts);
+
+    return true;
 }
 
 //---------------------------------- JoinQuadDialog -----------------------------
-
 // ============================================================== Constructeur
 
 JoinQuadDialog::JoinQuadDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_prism_join_quad.html#join-quadrangles";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( quads_lw );
+    _helpFileName = "gui_prism_join_quad.html#join-quadrangles";
+    setupUi( this );
+    _initWidget(editmode);
+    joinUni_rb->click();
 }
-
 
 // ============================================================== Destructeur
 JoinQuadDialog::~JoinQuadDialog()
@@ -3344,207 +3005,203 @@ JoinQuadDialog::~JoinQuadDialog()
  */
 QModelIndexList JoinQuadDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad;
-   QListWidgetItem* item = NULL;
+    QModelIndexList assocs;
+    QModelIndex iQuad;
+    QListWidgetItem* item = NULL;
 
-   if (getPatternDataSelectionModel() == NULL) return assocs;
+    if (getPatternDataSelectionModel() == NULL) return assocs;
 
-   //ListWidget content
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return assocs;
-   for ( int r = 0; r < quads_lw->count(); ++r ){
-         item = quads_lw->item(r);
-         //		iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
-         iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-         if ( iQuad.isValid() ) assocs << iQuad;
-   }
-   return assocs;
+    //ListWidget content
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return assocs;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r ){
+        item = quads_lw->item(r);
+        //		iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
+        iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        if ( iQuad.isValid() ) assocs << iQuad;
+    }
+    return assocs;
 }
 
 // ============================================================== _initInputWidget
 void JoinQuadDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    quad_dest_le->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    vex0_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vex1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vex2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vex3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    quad_dest_le->installEventFilter(this);
+    quads_lw->installEventFilter(this);
+    vex0_le->installEventFilter(this);
+    vex1_le->installEventFilter(this);
+    vex2_le->installEventFilter(this);
+    vex3_le->installEventFilter(this);
 
-   vex0_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vex1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vex2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vex3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   quad_dest_le->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+    delQuadShortcut->setContext( Qt::WidgetShortcut );
+    connect( delQuadShortcut,   SIGNAL(activated()), this, SLOT(removeQuad()) );
 
-   vex0_le->setValidator( validator );
-   vex1_le->setValidator( validator );
-   vex2_le->setValidator( validator );
-   vex3_le->setValidator( validator );
-   quad_dest_le->setValidator( validator );
+    quad_dest_le->setReadOnly(true);
+    vex0_le->setReadOnly(true);
+    vex1_le->setReadOnly(true);
+    vex2_le->setReadOnly(true);
+    vex3_le->setReadOnly(true);
 
-   vex0_le->installEventFilter(this);
-   vex1_le->installEventFilter(this);
-   vex2_le->installEventFilter(this);
-   vex3_le->installEventFilter(this);
-   quad_dest_le->installEventFilter(this);
-   quads_lw->installEventFilter(this);
+    _currentObj = quads_lw;
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   if ( editmode != INFO_MODE ){
-         QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
-         delQuadShortcut->setContext( Qt::WidgetShortcut );
-         connect( delQuadShortcut,   SIGNAL(activated()), this, SLOT(removeQuad()) );
-   }
+    connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
 
-   vex0_le->setReadOnly(true);
-   vex1_le->setReadOnly(true);
-   vex2_le->setReadOnly(true);
-   vex3_le->setReadOnly(true);
-   quad_dest_le->setReadOnly(true);
-
-   _currentObj = quads_lw;
-
-   connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
 }
 
+// ============================================================== addHeightItem
+void JoinQuadDialog::addHeightItem()
+{
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
+}
+
+// ============================================================== delHeightItem
+void JoinQuadDialog::delHeightItem()
+{
+    delete height_lw->currentItem();
+}
 
 // ============================================================== clear
 void JoinQuadDialog::clear()
 {
-   quads_lw->clear();
-   modelUnregister(quads_lw);
+    quad_dest_le->clear();
+    modelUnregister(quad_dest_le);
 
-   vex0_le->clear();
-   modelUnregister(vex0_le);
+    quads_lw->clear();
+    modelUnregister(quads_lw);
 
-   vex2_le->clear();
-   modelUnregister(vex2_le);
+    vex0_le->clear();
+    modelUnregister(vex0_le);
 
-   quad_dest_le->clear();
-   modelUnregister(quad_dest_le);
+    vex1_le->clear();
+    modelUnregister(vex1_le);
 
-   vex1_le->clear();
-   modelUnregister(vex1_le);
+    vex2_le->clear();
+    modelUnregister(vex2_le);
 
-   vex3_le->clear();
-   modelUnregister(vex3_le);
+    vex3_le->clear();
+    modelUnregister(vex3_le);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
-
 
 // ============================================================== removeQuad
 void JoinQuadDialog::removeQuad()
 {
-   QListWidgetItem *item = quads_lw->currentItem();
+    QListWidgetItem *item = quads_lw->currentItem();
 
-   if (item) {
-         int r = quads_lw->row(item);
-         quads_lw->takeItem(r);
-         delete item;
-   }
-
+    if (item) {
+        int r = quads_lw->row(item);
+        quads_lw->takeItem(r);
+        delete item;
+    }
 }
-
-// void JoinQuadDialog::clearQuads()
-// {
-//   if (quads_lw->count() != 0)
-//     quads_lw->clear();
-// }
-
 
 // ============================================================== apply
 bool JoinQuadDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel*    patternDataModel    = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   /////
-   QModelIndexList iquads;
-   QModelIndex     iquad;
-   QListWidgetItem* item = NULL;
-   for ( int r = 0; r < quads_lw->count(); ++r){
-         item = quads_lw->item(r);
-         iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iquad.isValid() ) iquads << iquad;
-   }
-   QModelIndex iquaddest = patternDataModel->mapToSource( _index[quad_dest_le] );
-   QModelIndex ivex0 = patternDataModel->mapToSource( _index[vex0_le] );
-   QModelIndex ivex1 = patternDataModel->mapToSource( _index[vex1_le] );
-   QModelIndex ivex2 = patternDataModel->mapToSource( _index[vex2_le] );
-   QModelIndex ivex3 = patternDataModel->mapToSource( _index[vex3_le] );
+    QModelIndexList iquads;
+    QModelIndex     iquad;
+    QListWidgetItem* item = NULL;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r){
+        item = quads_lw->item(r);
+        iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iquad.isValid() )
+            iquads << iquad;
+    }
+    QModelIndex iquaddest = patternDataModel->mapToSource( _index[quad_dest_le] );
+    QModelIndex ivex0 = patternDataModel->mapToSource( _index[vex0_le] );
+    QModelIndex ivex1 = patternDataModel->mapToSource( _index[vex1_le] );
+    QModelIndex ivex2 = patternDataModel->mapToSource( _index[vex2_le] );
+    QModelIndex ivex3 = patternDataModel->mapToSource( _index[vex3_le] );
+    double nb = nb_spb->value();
 
-   QModelIndex iElts;
-   if ( iquaddest.isValid()
-         && ivex0.isValid()
-         && ivex1.isValid()
-         && ivex2.isValid()
-         && ivex3.isValid() ){
-         int nb = nb_spb->value();
-         if ( iquads.count() == 1 ){
-               iElts = getDocumentModel()->joinQuad( iquads[0], iquaddest,
-                     ivex0, ivex1, ivex2, ivex3,
-                     nb );
-         } else if ( iquads.count() > 1 ){
-               iElts = getDocumentModel()->joinQuads( iquads, iquaddest,
-                     ivex0, ivex1, ivex2, ivex3,
-                     nb );
-         }
-   }
+    vector<double> heights;
+    int nbHeight = height_lw->count();
+    for ( int r = 0; r < nbHeight; ++r){
+        item = height_lw->item(r);
+        heights.push_back(item->data(Qt::EditRole).toDouble());
+    }
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT JOIN QUAD(S)" ) );
-         return false;
-   }
+    QModelIndex iElts;
+    if (nbQuads == 1 && iquads[0].isValid() && iquaddest.isValid() && ivex0.isValid() &&
+        ivex1.isValid() && ivex2.isValid() && ivex3.isValid())
+    {
+        if (joinUni_rb->isChecked())
+            iElts = docModel->joinQuadUni(iquads[0], iquaddest, ivex0, ivex1, ivex2, ivex3, nb);
+        else if (join_rb->isChecked())
+            iElts = docModel->joinQuad(iquads[0], iquaddest, ivex0, ivex1, ivex2, ivex3, heights);
+    }
+    else if (nbQuads > 1 && iquaddest.isValid() && ivex0.isValid() &&
+            ivex1.isValid() && ivex2.isValid() && ivex3.isValid())
+    {
+        if (joinUni_rb->isChecked())
+            iElts = docModel->joinQuadsUni(iquads, iquaddest, ivex0, ivex1, ivex2, ivex3, nb);
+        else if (join_rb->isChecked())
+            iElts = docModel->joinQuads(iquads, iquaddest, ivex0, ivex1, ivex2, ivex3, heights);
+    }
 
-   result = patternBuilderModel->mapFromSource(iElts);
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT JOIN QUAD(S)" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    result = patternBuilderModel->mapFromSource(iElts);
 
-   return true;
+    return true;
 }
 
-
-// void JoinQuadDialog::reject()
-// {
-//   QDialog::reject();
-//   _disallowSelection();
-// }
-
-
-
 // ------------------------- MergeDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 MergeDialog::MergeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( v0_le_rb0 );
-   //	rb1->setFocusProxy( e0_le_rb1 );
-   //	rb2->setFocusProxy( q0_le_rb2 );
-   //   setFocusProxy( rb0 );
-   rb0->click();
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "gui_merge_elmts.html#merge-two-vertices";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    _helpFileName = "gui_merge_elmts.html#merge-two-vertices";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(cliked()), this, SLOT(clearVTKSelection()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(cliked()), this, SLOT(clearVTKSelection()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
 
 // ============================================================== Destructeur
@@ -3555,222 +3212,209 @@ MergeDialog::~MergeDialog()
 // ============================================================== _initInputWidget
 void MergeDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
+    v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v0_le_rb0->setValidator( validator );
+    v1_le_rb0->setValidator( validator );
+    v0_le_rb0->installEventFilter(this);
+    v1_le_rb0->installEventFilter(this);
 
-   v0_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v0_le_rb0->setValidator( validator );
-   v1_le_rb0->setValidator( validator );
-   v0_le_rb0->installEventFilter(this);
-   v1_le_rb0->installEventFilter(this);
+    v0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    e0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
 
-   v0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   e0_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   e1_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    v0_le_rb1->setValidator( validator );
+    v1_le_rb1->setValidator( validator );
+    e0_le_rb1->setValidator( validator );
+    e1_le_rb1->setValidator( validator );
 
-   v0_le_rb1->setValidator( validator );
-   v1_le_rb1->setValidator( validator );
-   e0_le_rb1->setValidator( validator );
-   e1_le_rb1->setValidator( validator );
+    v0_le_rb1->installEventFilter(this);
+    v1_le_rb1->installEventFilter(this);
+    e0_le_rb1->installEventFilter(this);
+    e1_le_rb1->installEventFilter(this);
 
-   v0_le_rb1->installEventFilter(this);
-   v1_le_rb1->installEventFilter(this);
-   e0_le_rb1->installEventFilter(this);
-   e1_le_rb1->installEventFilter(this);
+    v0_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v1_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v2_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    v3_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    q0_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    q1_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
 
+    v0_le_rb2->setValidator( validator );
+    v1_le_rb2->setValidator( validator );
+    v2_le_rb2->setValidator( validator );
+    v3_le_rb2->setValidator( validator );
+    q0_le_rb2->setValidator( validator );
+    q1_le_rb2->setValidator( validator );
 
-   v0_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v1_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v2_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   v3_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   q0_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   q1_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    v0_le_rb2->installEventFilter(this);
+    v1_le_rb2->installEventFilter(this);
+    v2_le_rb2->installEventFilter(this);
+    v3_le_rb2->installEventFilter(this);
+    q0_le_rb2->installEventFilter(this);
+    q1_le_rb2->installEventFilter(this);
 
+    v0_le_rb0->setReadOnly(true);
+    v1_le_rb0->setReadOnly(true);
 
-   v0_le_rb2->setValidator( validator );
-   v1_le_rb2->setValidator( validator );
-   v2_le_rb2->setValidator( validator );
-   v3_le_rb2->setValidator( validator );
-   q0_le_rb2->setValidator( validator );
-   q1_le_rb2->setValidator( validator );
+    v0_le_rb1->setReadOnly(true);
+    v1_le_rb1->setReadOnly(true);
+    e0_le_rb1->setReadOnly(true);
+    e1_le_rb1->setReadOnly(true);
 
-   v0_le_rb2->installEventFilter(this);
-   v1_le_rb2->installEventFilter(this);
-   v2_le_rb2->installEventFilter(this);
-   v3_le_rb2->installEventFilter(this);
-   q0_le_rb2->installEventFilter(this);
-   q1_le_rb2->installEventFilter(this);
-
-   v0_le_rb0->setReadOnly(true);
-   v1_le_rb0->setReadOnly(true);
-
-   v0_le_rb1->setReadOnly(true);
-   v1_le_rb1->setReadOnly(true);
-   e0_le_rb1->setReadOnly(true);
-   e1_le_rb1->setReadOnly(true);
-
-   v0_le_rb2->setReadOnly(true);
-   v1_le_rb2->setReadOnly(true);
-   v2_le_rb2->setReadOnly(true);
-   v3_le_rb2->setReadOnly(true);
-   q0_le_rb2->setReadOnly(true);
-   q1_le_rb2->setReadOnly(true);
+    v0_le_rb2->setReadOnly(true);
+    v1_le_rb2->setReadOnly(true);
+    v2_le_rb2->setReadOnly(true);
+    v3_le_rb2->setReadOnly(true);
+    q0_le_rb2->setReadOnly(true);
+    q1_le_rb2->setReadOnly(true);
 }
-
 
 // ============================================================== clear
 void MergeDialog::clear()
 {
-   v0_le_rb0->clear();
-   modelUnregister(v0_le_rb0);
+    v0_le_rb0->clear();
+    modelUnregister(v0_le_rb0);
 
-   v1_le_rb0->clear();
-   modelUnregister(v1_le_rb0);
+    v1_le_rb0->clear();
+    modelUnregister(v1_le_rb0);
 
-   e0_le_rb1->clear();
-   modelUnregister(e0_le_rb1);
+    e0_le_rb1->clear();
+    modelUnregister(e0_le_rb1);
 
-   e1_le_rb1->clear();
-   modelUnregister(e1_le_rb1);
+    e1_le_rb1->clear();
+    modelUnregister(e1_le_rb1);
 
-   v0_le_rb1->clear();
-   modelUnregister(v0_le_rb1);
+    v0_le_rb1->clear();
+    modelUnregister(v0_le_rb1);
 
-   v1_le_rb1->clear();
-   modelUnregister(v1_le_rb1);
+    v1_le_rb1->clear();
+    modelUnregister(v1_le_rb1);
 
-   q0_le_rb2->clear();
-   modelUnregister(q0_le_rb2);
+    q0_le_rb2->clear();
+    modelUnregister(q0_le_rb2);
 
-   q1_le_rb2->clear();
-   modelUnregister(q1_le_rb2);
+    q1_le_rb2->clear();
+    modelUnregister(q1_le_rb2);
 
-   v0_le_rb2->clear();
-   modelUnregister(v0_le_rb2);
+    v0_le_rb2->clear();
+    modelUnregister(v0_le_rb2);
 
-   v1_le_rb2->clear();
-   modelUnregister(v1_le_rb2);
+    v1_le_rb2->clear();
+    modelUnregister(v1_le_rb2);
 
-   v2_le_rb2->clear();
-   modelUnregister(v2_le_rb2);
+    v2_le_rb2->clear();
+    modelUnregister(v2_le_rb2);
 
-   v3_le_rb2->clear();
-   modelUnregister(v3_le_rb2);
+    v3_le_rb2->clear();
+    modelUnregister(v3_le_rb2);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== updateHelpFileName
 void MergeDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_merge_elmts.html#merge-two-vertices";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_merge_elmts.html#merge-two-edges";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_merge_elmts.html#merge-two-quadrangles";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_merge_elmts.html#merge-two-vertices";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_merge_elmts.html#merge-two-edges";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_merge_elmts.html#merge-two-quadrangles";
+    }
 }
-
 
 // ============================================================== apply
 bool MergeDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   if (getDocumentModel() == NULL) return false;
-   SUIT_OverrideCursor wc;
-   const PatternDataModel*    patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return false;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return false;
 
-   bool merged = false;
+    bool merged = false;
 
-   if ( rb0->isChecked() ){
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb0] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb0] );
 
-         if ( iv0.isValid()
-               && iv1.isValid() ){
-               merged = getDocumentModel()->mergeVertices( iv0, iv1 );
-         }
-   } else if ( rb1->isChecked() ){
-         QModelIndex ie0 = patternDataModel->mapToSource( _index[e0_le_rb1] );
-         QModelIndex ie1 = patternDataModel->mapToSource( _index[e1_le_rb1] );
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb1] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb1] );
+        if ( iv0.isValid()
+                && iv1.isValid() ){
+            merged = getDocumentModel()->mergeVertices( iv0, iv1 );
+        }
+    } else if ( rb1->isChecked() ){
+        QModelIndex ie0 = patternDataModel->mapToSource( _index[e0_le_rb1] );
+        QModelIndex ie1 = patternDataModel->mapToSource( _index[e1_le_rb1] );
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb1] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb1] );
 
-         if ( ie0.isValid()
-               && ie1.isValid()
-               && iv0.isValid()
-               && iv1.isValid() ){
-               merged =  getDocumentModel()->mergeEdges( ie0, ie1, iv0, iv1);
-         }
-   } else if ( rb2->isChecked() ){
+        if ( ie0.isValid()
+                && ie1.isValid()
+                && iv0.isValid()
+                && iv1.isValid() ){
+            merged =  getDocumentModel()->mergeEdges( ie0, ie1, iv0, iv1);
+        }
+    } else if ( rb2->isChecked() ){
 
-         QModelIndex iq0 = patternDataModel->mapToSource( _index[q0_le_rb2] );
-         QModelIndex iq1 = patternDataModel->mapToSource( _index[q1_le_rb2] );
-         QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb2] );
-         QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb2] );
-         QModelIndex iv2 = patternDataModel->mapToSource( _index[v2_le_rb2] );
-         QModelIndex iv3 = patternDataModel->mapToSource( _index[v3_le_rb2] );
+        QModelIndex iq0 = patternDataModel->mapToSource( _index[q0_le_rb2] );
+        QModelIndex iq1 = patternDataModel->mapToSource( _index[q1_le_rb2] );
+        QModelIndex iv0 = patternDataModel->mapToSource( _index[v0_le_rb2] );
+        QModelIndex iv1 = patternDataModel->mapToSource( _index[v1_le_rb2] );
+        QModelIndex iv2 = patternDataModel->mapToSource( _index[v2_le_rb2] );
+        QModelIndex iv3 = patternDataModel->mapToSource( _index[v3_le_rb2] );
 
-         if ( iq0.isValid()
-               && iq1.isValid()
-               && iv0.isValid()
-               && iv1.isValid()
-               && iv2.isValid()
-               && iv3.isValid() ){
-               merged =  getDocumentModel()->mergeQuads( iq0, iq1,
-                     iv0, iv1, iv2, iv3 );
-         }
-   }
+        if ( iq0.isValid()
+                && iq1.isValid()
+                && iv0.isValid()
+                && iv1.isValid()
+                && iv2.isValid()
+                && iv3.isValid() ){
+            merged =  getDocumentModel()->mergeQuads( iq0, iq1,
+                    iv0, iv1, iv2, iv3 );
+        }
+    }
 
-   if ( merged == false ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MERGE" ) );
-         return false;
-   }
+    if ( merged == false ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MERGE" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   return true;
+    return true;
 }
 
-
 // ------------------------- DisconnectDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 DisconnectDialog::DisconnectDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( v_le_rb0 );
-   //	rb1->setFocusProxy( e_le_rb1 );
-   //	rb2->setFocusProxy( q_le_rb2 );
-   //	rb3->setFocusProxy( d_edges_lw);
-   rb0->click();
-   //   setFocusProxy( rb0 );
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
+    _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
 
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
-   connect( rb3, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb3, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-   connect( rb3, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rb3, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb3, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rb3, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
 }
 
@@ -3782,61 +3426,60 @@ DisconnectDialog::~DisconnectDialog()
 // ============================================================== _initInputWidget
 void DisconnectDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
 
-   //vertex
-   v_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   h_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   v_le_rb0->setValidator( validator );
-   h_le_rb0->setValidator( validator );
-   v_le_rb0->installEventFilter(this);
-   h_le_rb0->installEventFilter(this);
+    //vertex
+    v_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    h_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+    v_le_rb0->setValidator( validator );
+    h_le_rb0->setValidator( validator );
+    v_le_rb0->installEventFilter(this);
+    h_le_rb0->installEventFilter(this);
 
-   //edge
-   e_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   h_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   e_le_rb1->setValidator( validator );
-   h_le_rb1->setValidator( validator );
-   e_le_rb1->installEventFilter(this);
-   h_le_rb1->installEventFilter(this);
+    //edge
+    e_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    h_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+    e_le_rb1->setValidator( validator );
+    h_le_rb1->setValidator( validator );
+    e_le_rb1->installEventFilter(this);
+    h_le_rb1->installEventFilter(this);
 
-   //quad
-   q_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   h_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   q_le_rb2->setValidator( validator );
-   h_le_rb2->setValidator( validator );
-   q_le_rb2->installEventFilter(this);
-   h_le_rb2->installEventFilter(this);
+    //quad
+    q_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    h_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+    q_le_rb2->setValidator( validator );
+    h_le_rb2->setValidator( validator );
+    q_le_rb2->installEventFilter(this);
+    h_le_rb2->installEventFilter(this);
 
-   //edges
-   d_edges_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   hexas_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
-   d_edges_lw->installEventFilter(this);
-   hexas_lw->installEventFilter(this);
+    //edges
+    d_edges_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    hexas_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(HEXA_TREE) );
+    d_edges_lw->installEventFilter(this);
+    hexas_lw->installEventFilter(this);
 
-   QShortcut* delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), d_edges_lw);
-   QShortcut* delHexaShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), hexas_lw);
-   delEdgeShortcut->setContext( Qt::WidgetShortcut );
-   delHexaShortcut->setContext( Qt::WidgetShortcut );
+    QShortcut* delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), d_edges_lw);
+    QShortcut* delHexaShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), hexas_lw);
+    delEdgeShortcut->setContext( Qt::WidgetShortcut );
+    delHexaShortcut->setContext( Qt::WidgetShortcut );
 
-   v_le_rb0->setReadOnly(true);
-   h_le_rb0->setReadOnly(true);
+    v_le_rb0->setReadOnly(true);
+    h_le_rb0->setReadOnly(true);
 
-   e_le_rb1->setReadOnly(true);
-   h_le_rb1->setReadOnly(true);
+    e_le_rb1->setReadOnly(true);
+    h_le_rb1->setReadOnly(true);
 
-   q_le_rb2->setReadOnly(true);
-   h_le_rb2->setReadOnly(true);
+    q_le_rb2->setReadOnly(true);
+    h_le_rb2->setReadOnly(true);
 
-   connect( d_edges_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
-   connect( hexas_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
-   connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
-   connect( delHexaShortcut, SIGNAL(activated()), this, SLOT(deleteHexaItem()) );
-   autoFocusSwitch = false;
+    connect( d_edges_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( hexas_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
+    connect( delHexaShortcut, SIGNAL(activated()), this, SLOT(deleteHexaItem()) );
+    autoFocusSwitch = false;
 
 }
 
@@ -3846,183 +3489,180 @@ void DisconnectDialog::_initInputWidget( Mode editmode )
  */
 QModelIndexList DisconnectDialog::getAssocsVTK()
 {
-   QModelIndexList iElts;
-   QModelIndex index;
-   QListWidgetItem* item = NULL;
+    QModelIndexList iElts;
+    QModelIndex index;
+    QListWidgetItem* item = NULL;
 
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if (patternDataModel == NULL) return iElts;
-   if (rb3->isChecked())
-   {
-       //ListWidget content
-       if (HEXABLOCKGUI::currentDocGView->getSelectionMode() == EDGE_TREE)
-       {
-           for ( int r = 0; r < d_edges_lw->count(); ++r )
-           {
-               item = d_edges_lw->item(r);
-               index = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( index.isValid() )
-                   iElts << index;
-           }
-       }
-       else if (HEXABLOCKGUI::currentDocGView->getSelectionMode() == HEXA_TREE)
-       {
-           for ( int r = 0; r < hexas_lw->count(); ++r )
-           {
-               item = hexas_lw->item(r);
-               index = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( index.isValid() )
-                   iElts << index;
-           }
-       }
-       return iElts;
-   }
-   else
-       return iElts;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if (patternDataModel == NULL || !rb3->isChecked())
+    	return iElts;
+    //ListWidget content
+    if (HEXABLOCKGUI::currentDocGView->getSelectionMode() == EDGE_TREE)
+    {
+        int nbEdges = d_edges_lw->count();
+    	for ( int r = 0; r < nbEdges; ++r )
+    	{
+    		item = d_edges_lw->item(r);
+    		index = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+    		if ( index.isValid() )
+    			iElts << index;
+    	}
+    }
+    else if (HEXABLOCKGUI::currentDocGView->getSelectionMode() == HEXA_TREE)
+    {
+        int nbHexas = hexas_lw->count();
+    	for ( int r = 0; r < nbHexas; ++r )
+    	{
+    		item = hexas_lw->item(r);
+    		index = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+    		if ( index.isValid() )
+    			iElts << index;
+    	}
+    }
+    return iElts;
 }
 
 // ============================================================== clear
 void DisconnectDialog::clear()
 {
-   v_le_rb0->clear();
-   modelUnregister(v_le_rb0);
+    v_le_rb0->clear();
+    modelUnregister(v_le_rb0);
 
-   h_le_rb0->clear();
-   modelUnregister(h_le_rb0);
+    h_le_rb0->clear();
+    modelUnregister(h_le_rb0);
 
-   e_le_rb1->clear();
-   modelUnregister(e_le_rb1);
+    e_le_rb1->clear();
+    modelUnregister(e_le_rb1);
 
-   h_le_rb1->clear();
-   modelUnregister(h_le_rb1);
+    h_le_rb1->clear();
+    modelUnregister(h_le_rb1);
 
-   d_edges_lw->clear();
-   modelUnregister(d_edges_lw);
+    d_edges_lw->clear();
+    modelUnregister(d_edges_lw);
 
-   hexas_lw->clear();
-   modelUnregister(hexas_lw);
+    hexas_lw->clear();
+    modelUnregister(hexas_lw);
 
-   q_le_rb2->clear();
-   modelUnregister(q_le_rb2);
+    q_le_rb2->clear();
+    modelUnregister(q_le_rb2);
 
-   h_le_rb2->clear();
-   modelUnregister(h_le_rb2);
+    h_le_rb2->clear();
+    modelUnregister(h_le_rb2);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== deleteEdgeItem
 void DisconnectDialog::deleteEdgeItem()
 {
-   delete d_edges_lw->currentItem();
+    delete d_edges_lw->currentItem();
 }
 
 // ============================================================== deleteHexaItem
 void DisconnectDialog::deleteHexaItem()
 {
-   delete hexas_lw->currentItem();
+    delete hexas_lw->currentItem();
 }
 
 // ============================================================== updateHelpFileName
 void DisconnectDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_disc_elmts.html#disconnect-an-edge";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_disc_elmts.html#disconnect-a-quadrangle";
-   } else if (sender() == rb3 ){
-         _helpFileName = "gui_disc_elmts.html#disconnect-edges";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_disc_elmts.html#disconnect-a-vertex";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_disc_elmts.html#disconnect-an-edge";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_disc_elmts.html#disconnect-a-quadrangle";
+    } else if (sender() == rb3 ){
+        _helpFileName = "gui_disc_elmts.html#disconnect-edges";
+    }
 }
 
 // ============================================================== apply
 bool DisconnectDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
-   if (getDocumentModel() == NULL) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   SUIT_OverrideCursor wc;
-   QModelIndex iElts;
+    QModelIndex iElts;
 
-   if ( rb0->isChecked() ){
-         QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb0] );
-         QModelIndex ivex  = patternDataModel->mapToSource( _index[v_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb0] );
+        QModelIndex ivex  = patternDataModel->mapToSource( _index[v_le_rb0] );
 
-         if ( ihexa.isValid()
-               && ivex.isValid() ){
-               iElts = getDocumentModel()->disconnectVertex( ihexa, ivex );
-         }
-   } else if ( rb1->isChecked() ){
-         QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb1] );
-         QModelIndex iedge = patternDataModel->mapToSource( _index[e_le_rb1] );
+        if ( ihexa.isValid()
+                && ivex.isValid() ){
+            iElts = getDocumentModel()->disconnectVertex( ihexa, ivex );
+        }
+    } else if ( rb1->isChecked() ){
+        QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb1] );
+        QModelIndex iedge = patternDataModel->mapToSource( _index[e_le_rb1] );
 
-         if ( ihexa.isValid()
-               && iedge.isValid() ){
-               iElts = getDocumentModel()->disconnectEdge( ihexa, iedge );
-         }
-   } else if ( rb2->isChecked() ){
-         QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb2] );
-         QModelIndex iquad = patternDataModel->mapToSource( _index[q_le_rb2] );
+        if ( ihexa.isValid()
+                && iedge.isValid() ){
+            iElts = getDocumentModel()->disconnectEdge( ihexa, iedge );
+        }
+    } else if ( rb2->isChecked() ){
+        QModelIndex ihexa = patternDataModel->mapToSource( _index[h_le_rb2] );
+        QModelIndex iquad = patternDataModel->mapToSource( _index[q_le_rb2] );
 
-         if ( ihexa.isValid()
-               && iquad.isValid() ){
-               iElts = getDocumentModel()->disconnectQuad( ihexa, iquad );
-         }
-   } else if ( rb3->isChecked() ){ //
+        if ( ihexa.isValid()
+                && iquad.isValid() ){
+            iElts = getDocumentModel()->disconnectQuad( ihexa, iquad );
+        }
+    } else if ( rb3->isChecked() ){ //
 
-         QModelIndex iedge, ihexa;
-         QModelIndexList iedges, ihexas;
-         QListWidgetItem* item = NULL;
+        QModelIndex iedge, ihexa;
+        QModelIndexList iedges, ihexas;
+        QListWidgetItem* item = NULL;
 
-         //Liste des edges
-         for (int r = 0; r < d_edges_lw->count(); ++r){
-               item = d_edges_lw->item(r);
-               iedge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( iedge.isValid() )
-                  iedges << iedge;
-         }
+        //Liste des edges
+        int nbEdges = d_edges_lw->count();
+        for (int r = 0; r < nbEdges; ++r){
+            item = d_edges_lw->item(r);
+            iedge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+            if ( iedge.isValid() )
+                iedges << iedge;
+        }
 
-         //Liste des hexas
-         for (int r = 0; r < hexas_lw->count(); ++r){
-               item = hexas_lw->item(r);
-               ihexa = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( ihexa.isValid() )
-                  ihexas << ihexa;
-         }
+        //Liste des hexas
+        int nbHexas = hexas_lw->count();
+        for (int r = 0; r < nbHexas; ++r){
+            item = hexas_lw->item(r);
+            ihexa = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+            if ( ihexa.isValid() )
+                ihexas << ihexa;
+        }
 
-         iElts = getDocumentModel()->disconnectEdges( ihexas, iedges );
-   }
+        iElts = getDocumentModel()->disconnectEdges( ihexas, iedges );
+    }
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT DISCONNECT" ) );
-         return false;
-   }
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT DISCONNECT" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   result = patternBuilderModel->mapFromSource(iElts);
+    result = patternBuilderModel->mapFromSource(iElts);
 
-   return true;
+    return true;
 }
 
 
-
-
 // ------------------------- CutEdgeDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 CutEdgeDialog::CutEdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_cut_hexa.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( e_le );
+    _helpFileName = "gui_cut_hexa.html";
+    setupUi( this );
+    _initWidget(editmode);
+
+    cutUni_rb->click();
 }
 
 // ============================================================== Destructeur
@@ -4033,87 +3673,115 @@ CutEdgeDialog::~CutEdgeDialog()
 // ============================================================== _initInputWidget
 void CutEdgeDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    installEventFilter(this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    e_le->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
+    e_le->installEventFilter(this);
 
-   e_le->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
-   e_le->setValidator( validator );
-   e_le->installEventFilter(this);
+    e_le->setReadOnly(true);
 
-   e_le->setReadOnly(true);
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
 }
 
 // ============================================================== clear
 void CutEdgeDialog::clear()
 {
-   e_le->clear();
-   modelUnregister(e_le);
+    e_le->clear();
+    modelUnregister(e_le);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
+// ============================================================== addHeightItem
+void CutEdgeDialog::addHeightItem()
+{
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
+}
+
+// ============================================================== delHeightItem
+void CutEdgeDialog::delHeightItem()
+{
+    delete height_lw->currentItem();
+}
 
 // ============================================================== apply
 bool CutEdgeDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel*    patternDataModel    = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   int nbCut = nb_cut_spb->value();
-   QModelIndex iedge = patternDataModel->mapToSource( _index[e_le] );
+    QModelIndex iElts;
+    QModelIndex iedge = patternDataModel->mapToSource( _index[e_le] );
 
-   QModelIndex iElts;
-   if ( iedge.isValid() ){
-         iElts = getDocumentModel()->cutEdge( iedge, nbCut );
-   }
+    if (cutUni_rb->isChecked() && iedge.isValid())
+    {
+        int nbCut = nb_cut_spb->value();
+        iElts = docModel->cutUni(iedge, nbCut);
+    }
+    else if (cut_rb->isChecked() && iedge.isValid())
+    {
+        vector<double> heights;
+        QListWidgetItem* item = NULL;
+        int nbItems = height_lw->count();
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT CUT EDGE" ) );
-         return false;
-   }
+        for ( int r = 0; r < nbItems; ++r){
+            item = height_lw->item(r);
+            heights.push_back( item->data(Qt::EditRole).toDouble() );
+        }
 
-   result = patternBuilderModel->mapFromSource(iElts);
+        iElts = docModel->cut(iedge, heights);
+    }
 
-   //Update the line edit
-   QVariant invalid;
-   e_le->setProperty("QModelIndex",  invalid );
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT CUT EDGE" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   QModelIndex invalidIndex;
-   _index[e_le] = invalidIndex;
+    result = patternBuilderModel->mapFromSource(iElts);
 
-   clear();
+    //Update the line edit
+    QVariant invalid;
+    e_le->setProperty("QModelIndex",  invalid );
 
-   return true;
+    QModelIndex invalidIndex;
+    _index[e_le] = invalidIndex;
+
+    clear();
+
+    return true;
 }
 
 // // ------------------------- MakeTransformationDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 MakeTransformationDialog::MakeTransformationDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( elts_le_rb0 );
-   //	rb1->setFocusProxy( elts_le_rb1 );
-   //	rb2->setFocusProxy( elts_le_rb2 );
-   //	setFocusProxy( rb0 );
-   rb0->click();
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 // ============================================================== Destructeur
@@ -4124,46 +3792,45 @@ MakeTransformationDialog::~MakeTransformationDialog()
 // ============================================================== _initInputWidget
 void MakeTransformationDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
 
-   vec_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
+    vec_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
 
-   vec_le_rb0->setValidator( validator );
-   elts_le_rb0->setValidator( validator );
-   vec_le_rb0->installEventFilter(this);
-   elts_le_rb0->installEventFilter(this);
+    vec_le_rb0->setValidator( validator );
+    elts_le_rb0->setValidator( validator );
+    vec_le_rb0->installEventFilter(this);
+    elts_le_rb0->installEventFilter(this);
 
-   vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb1->setValidator( validator );
-   elts_le_rb1->setValidator( validator );
-   vex_le_rb1->installEventFilter(this);
-   elts_le_rb1->installEventFilter(this);
+    vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb1->setValidator( validator );
+    elts_le_rb1->setValidator( validator );
+    vex_le_rb1->installEventFilter(this);
+    elts_le_rb1->installEventFilter(this);
 
-   vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb2->setValidator( validator );
-   vec_le_rb2->setValidator( validator );
-   elts_le_rb2->setValidator( validator );
-   vex_le_rb2->installEventFilter(this);
-   vec_le_rb2->installEventFilter(this);
-   elts_le_rb2->installEventFilter(this);
+    vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb2->setValidator( validator );
+    vec_le_rb2->setValidator( validator );
+    elts_le_rb2->setValidator( validator );
+    vex_le_rb2->installEventFilter(this);
+    vec_le_rb2->installEventFilter(this);
+    elts_le_rb2->installEventFilter(this);
 
-   vec_le_rb0->setReadOnly(true);
-   elts_le_rb0->setReadOnly(true);
+    vec_le_rb0->setReadOnly(true);
+    elts_le_rb0->setReadOnly(true);
 
-   vex_le_rb1->setReadOnly(true);
-   elts_le_rb1->setReadOnly(true);
+    vex_le_rb1->setReadOnly(true);
+    elts_le_rb1->setReadOnly(true);
 
-   vex_le_rb2->setReadOnly(true);
-   vec_le_rb2->setReadOnly(true);
-   elts_le_rb2->setReadOnly(true);
+    vex_le_rb2->setReadOnly(true);
+    vec_le_rb2->setReadOnly(true);
+    elts_le_rb2->setReadOnly(true);
 
 }
 
@@ -4194,91 +3861,84 @@ void MakeTransformationDialog::clear()
     modelUnregister(this);
 }
 
-
 // ============================================================== updateHelpFileName
 void MakeTransformationDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_make_elmts.html#make-elements-by-scaling";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_make_elmts.html#make-elements-by-rotation";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_make_elmts.html#make-elements-by-translation";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_make_elmts.html#make-elements-by-scaling";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_make_elmts.html#make-elements-by-rotation";
+    }
 }
 
 // ============================================================== apply
 bool MakeTransformationDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if (getDocumentModel() == NULL) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   QModelIndex iNewElts;
+    QModelIndex iNewElts;
 
-   if ( rb0->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
 
-         if ( ielts.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivec.isValid() )
             iNewElts = getDocumentModel()->makeTranslation( ielts, ivec );
 
-   } else if ( rb1->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-         double          k = k_spb->value();
+    } else if ( rb1->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
+        double          k = k_spb->value();
 
-         if ( ielts.isValid()
-               && ivex.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid() )
             iNewElts = getDocumentModel()->makeScale( ielts, ivex, k );
 
-   } else if ( rb2->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
-         double      angle = angle_spb->value();
+    } else if ( rb2->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        double      angle = angle_spb->value();
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             iNewElts = getDocumentModel()->makeRotation( ielts, ivex, ivec, angle );
-   }
+    }
 
-   if ( !iNewElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) );
-         return false;
-   }
+    if ( !iNewElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   result = patternBuilderModel->mapFromSource(iNewElts);
+    result = patternBuilderModel->mapFromSource(iNewElts);
 
-   return true;
+    return true;
 }
 
 // // ------------------------- MakeSymmetryDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 MakeSymmetryDialog::MakeSymmetryDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( elts_le_rb0 );
-   //	rb1->setFocusProxy( elts_le_rb1 );
-   //	rb2->setFocusProxy( elts_le_rb2 );
-   rb0->click();
-   //     setFocusProxy( rb0 );
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 // ============================================================== Destructeur
@@ -4289,48 +3949,46 @@ MakeSymmetryDialog::~MakeSymmetryDialog()
 // ============================================================== _initInputWidget
 void MakeSymmetryDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
 
-   vex_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
-   elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb0->setValidator( validator );
-   elts_le_rb0->setValidator( validator );
-   vex_le_rb0->installEventFilter(this);
-   elts_le_rb0->installEventFilter(this);
+    vex_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
+    elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb0->setValidator( validator );
+    elts_le_rb0->setValidator( validator );
+    vex_le_rb0->installEventFilter(this);
+    elts_le_rb0->installEventFilter(this);
 
-   vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb1->setValidator( validator );
-   vec_le_rb1->setValidator( validator );
-   elts_le_rb1->setValidator( validator );
-   vex_le_rb1->installEventFilter(this);
-   vec_le_rb1->installEventFilter(this);
-   elts_le_rb1->installEventFilter(this);
+    vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb1->setValidator( validator );
+    vec_le_rb1->setValidator( validator );
+    elts_le_rb1->setValidator( validator );
+    vex_le_rb1->installEventFilter(this);
+    vec_le_rb1->installEventFilter(this);
+    elts_le_rb1->installEventFilter(this);
 
+    vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb2->setValidator( validator );
+    vec_le_rb2->setValidator( validator );
+    elts_le_rb2->setValidator( validator );
+    vex_le_rb2->installEventFilter(this);
+    vec_le_rb2->installEventFilter(this);
+    elts_le_rb2->installEventFilter(this);
 
-   vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb2->setValidator( validator );
-   vec_le_rb2->setValidator( validator );
-   elts_le_rb2->setValidator( validator );
-   vex_le_rb2->installEventFilter(this);
-   vec_le_rb2->installEventFilter(this);
-   elts_le_rb2->installEventFilter(this);
-
-   vex_le_rb0->setReadOnly(true);
-   elts_le_rb0->setReadOnly(true);
-   vex_le_rb1->setReadOnly(true);
-   vec_le_rb1->setReadOnly(true);
-   elts_le_rb1->setReadOnly(true);
-   vex_le_rb2->setReadOnly(true);
-   vec_le_rb2->setReadOnly(true);
-   elts_le_rb2->setReadOnly(true);
+    vex_le_rb0->setReadOnly(true);
+    elts_le_rb0->setReadOnly(true);
+    vex_le_rb1->setReadOnly(true);
+    vec_le_rb1->setReadOnly(true);
+    elts_le_rb1->setReadOnly(true);
+    vex_le_rb2->setReadOnly(true);
+    vec_le_rb2->setReadOnly(true);
+    elts_le_rb2->setReadOnly(true);
 }
 
 // ============================================================== clear
@@ -4366,86 +4024,80 @@ void MakeSymmetryDialog::clear()
 // ============================================================== updateHelpFileName
 void MakeSymmetryDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_make_symmetry.html#make-elements-by-line-symmetry";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_make_symmetry.html#make-elements-by-plane-symmetry";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_make_symmetry.html#make-elements-by-point-symmetry";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_make_symmetry.html#make-elements-by-line-symmetry";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_make_symmetry.html#make-elements-by-plane-symmetry";
+    }
 }
 
 // ============================================================== apply
 bool MakeSymmetryDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
-   if (getDocumentModel() == NULL) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   SUIT_OverrideCursor wc;
-   QModelIndex iNewElts;
+    QModelIndex iNewElts;
 
-   if ( rb0->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
 
-         if ( ielts.isValid()
-               && ivex.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid() )
             iNewElts = getDocumentModel()->makeSymmetryPoint( ielts, ivex );
 
 
-   } else if ( rb1->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+    } else if ( rb1->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             iNewElts = getDocumentModel()->makeSymmetryLine( ielts, ivex, ivec );
 
-   } else if ( rb2->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+    } else if ( rb2->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             iNewElts = getDocumentModel()->makeSymmetryPlane( ielts, ivex, ivec );
-   }
+    }
 
-   if ( !iNewElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) );
-         return false;
-   }
+    if ( !iNewElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE TRANSFORMATION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   result = patternBuilderModel->mapFromSource(iNewElts);
+    result = patternBuilderModel->mapFromSource(iNewElts);
 
-   return true;
+    return true;
 }
 
 // // ------------------------- PerformTransformationDialog ----------------------------------
 // ============================================================== Constructeur
-
 PerformTransformationDialog::PerformTransformationDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-										                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget(editmode);
-   //	rb0->setFocusProxy( elts_le_rb0 );
-   //	rb1->setFocusProxy( elts_le_rb1 );
-   //	rb2->setFocusProxy( elts_le_rb2 );
-   //   setFocusProxy( rb0 );
-   rb0->click();
+    setupUi( this );
+    _initWidget(editmode);
+    rb0->click();
 
-   _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 // ============================================================== Destructeur
@@ -4456,41 +4108,41 @@ PerformTransformationDialog::~PerformTransformationDialog()
 // ============================================================== _initInputWidget
 void PerformTransformationDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-   vec_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
-   vec_le_rb0->setValidator( validator );
-   elts_le_rb0->setValidator( validator );
-   vec_le_rb0->installEventFilter(this);
-   elts_le_rb0->installEventFilter(this);
+    vec_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
+    vec_le_rb0->setValidator( validator );
+    elts_le_rb0->setValidator( validator );
+    vec_le_rb0->installEventFilter(this);
+    elts_le_rb0->installEventFilter(this);
 
-   vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb1->setValidator( validator );
-   elts_le_rb1->setValidator( validator );
-   vex_le_rb1->installEventFilter(this);
-   elts_le_rb1->installEventFilter(this);
+    vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb1->setValidator( validator );
+    elts_le_rb1->setValidator( validator );
+    vex_le_rb1->installEventFilter(this);
+    elts_le_rb1->installEventFilter(this);
 
 
-   vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb2->setValidator( validator );
-   vec_le_rb2->setValidator( validator );
-   elts_le_rb2->setValidator( validator );
-   vex_le_rb2->installEventFilter(this);
-   vec_le_rb2->installEventFilter(this);
-   elts_le_rb2->installEventFilter(this);
+    vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb2->setValidator( validator );
+    vec_le_rb2->setValidator( validator );
+    elts_le_rb2->setValidator( validator );
+    vex_le_rb2->installEventFilter(this);
+    vec_le_rb2->installEventFilter(this);
+    elts_le_rb2->installEventFilter(this);
 
-   vec_le_rb0->setReadOnly(true);
-   elts_le_rb0->setReadOnly(true);
-   vex_le_rb1->setReadOnly(true);
-   elts_le_rb1->setReadOnly(true);
-   vex_le_rb2->setReadOnly(true);
-   vec_le_rb2->setReadOnly(true);
-   elts_le_rb2->setReadOnly(true);
+    vec_le_rb0->setReadOnly(true);
+    elts_le_rb0->setReadOnly(true);
+    vex_le_rb1->setReadOnly(true);
+    elts_le_rb1->setReadOnly(true);
+    vex_le_rb2->setReadOnly(true);
+    vec_le_rb2->setReadOnly(true);
+    elts_le_rb2->setReadOnly(true);
 
 }
 
@@ -4524,88 +4176,78 @@ void PerformTransformationDialog::clear()
 // ============================================================== updateHelpFileName
 void PerformTransformationDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_modify_elmts.html#modify-elements-by-scaling";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_modify_elmts.html#modify-elements-by-rotation";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_modify_elmts.html#modify-elements-by-translation";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_modify_elmts.html#modify-elements-by-scaling";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_modify_elmts.html#modify-elements-by-rotation";
+    }
 }
-
 
 // ============================================================== apply
 bool PerformTransformationDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if (getDocumentModel() == NULL) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   bool performed = false;
+    bool performed = false;
 
-   if ( rb0->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
 
-         if ( ielts.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivec.isValid() )
             performed = getDocumentModel()->performTranslation( ielts, ivec );
 
-   } else if ( rb1->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-         double          k = k_spb->value();
+    } else if ( rb1->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
+        double          k = k_spb->value();
 
-         if ( ielts.isValid()
-               && ivex.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid() )
             performed = getDocumentModel()->performScale( ielts, ivex, k );
 
-   } else if ( rb2->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
-         double      angle = angle_spb->value();
+    } else if ( rb2->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        double      angle = angle_spb->value();
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             performed = getDocumentModel()->performRotation( ielts, ivex, ivec, angle );
-   }
+    }
 
-   if ( performed == false){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM TRANSFORMATION" ) );
-         return false;
-   }
+    if ( performed == false){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM TRANSFORMATION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-
-   return true;
+    return true;
 }
 
-
 // // ------------------------- PerformSymmetryDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 PerformSymmetryDialog::PerformSymmetryDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-   setupUi( this );
-   _initWidget( editmode );
-   //	rb0->setFocusProxy( elts_le_rb0 );
-   //	rb1->setFocusProxy( elts_le_rb1 );
-   //	rb2->setFocusProxy( elts_le_rb2 );
-   //   setFocusProxy( rb0 );
-   rb0->click();
+    setupUi( this );
+    _initWidget( editmode );
+    rb0->click();
 
-   _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
-   connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-   connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
 }
 
 // ============================================================== Destructeur
@@ -4616,240 +4258,221 @@ PerformSymmetryDialog::~PerformSymmetryDialog()
 // ============================================================== _initInputWidget
 void PerformSymmetryDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-   vex_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb0->setValidator( validator );
-   elts_le_rb0->setValidator( validator );
-   vex_le_rb0->installEventFilter(this);
-   elts_le_rb0->installEventFilter(this);
+    vex_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb0->setValidator( validator );
+    elts_le_rb0->setValidator( validator );
+    vex_le_rb0->installEventFilter(this);
+    elts_le_rb0->installEventFilter(this);
 
-   vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb1->setValidator( validator );
-   vec_le_rb1->setValidator( validator );
-   elts_le_rb1->setValidator( validator );
-   vex_le_rb1->installEventFilter(this);
-   vec_le_rb1->installEventFilter(this);
-   elts_le_rb1->installEventFilter(this);
+    vex_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb1->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb1->setValidator( validator );
+    vec_le_rb1->setValidator( validator );
+    elts_le_rb1->setValidator( validator );
+    vex_le_rb1->installEventFilter(this);
+    vec_le_rb1->installEventFilter(this);
+    elts_le_rb1->installEventFilter(this);
 
+    vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
+    vex_le_rb2->setValidator( validator );
+    vec_le_rb2->setValidator( validator );
+    elts_le_rb2->setValidator( validator );
+    vex_le_rb2->installEventFilter(this);
+    vec_le_rb2->installEventFilter(this);
+    elts_le_rb2->installEventFilter(this);
 
-   vex_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   vec_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   elts_le_rb2->setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   vex_le_rb2->setValidator( validator );
-   vec_le_rb2->setValidator( validator );
-   elts_le_rb2->setValidator( validator );
-   vex_le_rb2->installEventFilter(this);
-   vec_le_rb2->installEventFilter(this);
-   elts_le_rb2->installEventFilter(this);
-
-   vex_le_rb0->setReadOnly(true);
-   elts_le_rb0->setReadOnly(true);
-   vex_le_rb1->setReadOnly(true);
-   vec_le_rb1->setReadOnly(true);
-   elts_le_rb1->setReadOnly(true);
-   vex_le_rb2->setReadOnly(true);
-   vec_le_rb2->setReadOnly(true);
-   elts_le_rb2->setReadOnly(true);
+    vex_le_rb0->setReadOnly(true);
+    elts_le_rb0->setReadOnly(true);
+    vex_le_rb1->setReadOnly(true);
+    vec_le_rb1->setReadOnly(true);
+    elts_le_rb1->setReadOnly(true);
+    vex_le_rb2->setReadOnly(true);
+    vec_le_rb2->setReadOnly(true);
+    elts_le_rb2->setReadOnly(true);
 
 }
 
 // ============================================================== clear
 void PerformSymmetryDialog::clear()
 {
-   vex_le_rb0->clear();
-   modelUnregister(vex_le_rb0);
+    vex_le_rb0->clear();
+    modelUnregister(vex_le_rb0);
 
-   elts_le_rb0->clear();
-   modelUnregister(elts_le_rb0);
+    elts_le_rb0->clear();
+    modelUnregister(elts_le_rb0);
 
-   elts_le_rb1->clear();
-   modelUnregister(elts_le_rb1);
+    elts_le_rb1->clear();
+    modelUnregister(elts_le_rb1);
 
-   vex_le_rb1->clear();
-   modelUnregister(vex_le_rb1);
+    vex_le_rb1->clear();
+    modelUnregister(vex_le_rb1);
 
-   vec_le_rb1->clear();
-   modelUnregister(vec_le_rb1);
+    vec_le_rb1->clear();
+    modelUnregister(vec_le_rb1);
 
-   elts_le_rb2->clear();
-   modelUnregister(elts_le_rb2);
+    elts_le_rb2->clear();
+    modelUnregister(elts_le_rb2);
 
-   vex_le_rb2->clear();
-   modelUnregister(vex_le_rb2);
+    vex_le_rb2->clear();
+    modelUnregister(vex_le_rb2);
 
-   vec_le_rb2->clear();
-   modelUnregister(vec_le_rb2);
+    vec_le_rb2->clear();
+    modelUnregister(vec_le_rb2);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== updateHelpFileName
 void PerformSymmetryDialog::updateHelpFileName()
 {
-   if ( sender() == rb0 ){
-         _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
-   } else if ( sender() == rb1 ){
-         _helpFileName = "gui_modify_symmetry.html#modify-elements-by-line-symmetry";
-   } else if ( sender() == rb2 ){
-         _helpFileName = "gui_modify_symmetry.html#modify-elements-by-plane-symmetry";
-   }
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_modify_symmetry.html#modify-elements-by-point-symmetry";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_modify_symmetry.html#modify-elements-by-line-symmetry";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_modify_symmetry.html#modify-elements-by-plane-symmetry";
+    }
 }
 
 // ============================================================== apply
 bool PerformSymmetryDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if (getDocumentModel() == NULL) return false;
-   const PatternDataModel*    patternDataModel    = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if (getDocumentModel() == NULL) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   bool performed = false;
+    bool performed = false;
 
-   if ( rb0->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
+    if ( rb0->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
 
-         if ( ielts.isValid()
-               && ivex.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid() )
             performed = getDocumentModel()->performSymmetryPoint( ielts, ivex );
 
-   } else if ( rb1->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+    } else if ( rb1->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             performed = getDocumentModel()->performSymmetryLine( ielts, ivex, ivec );
 
-   } else if ( rb2->isChecked() ){
-         QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
-         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-         QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+    } else if ( rb2->isChecked() ){
+        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
+        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
 
-         if ( ielts.isValid()
-               && ivex.isValid()
-               && ivec.isValid() )
+        if ( ielts.isValid()
+                && ivex.isValid()
+                && ivec.isValid() )
             performed = getDocumentModel()->performSymmetryPlane( ielts, ivex, ivec );
-   }
+    }
 
-   if ( performed == false ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM SYMMETRY" ) );
-         return false;
-   }
+    if ( performed == false ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT PERFORM SYMMETRY" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   return true;
+    return true;
 }
 
-
-
 // // ------------------------- EdgeAssocDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 EdgeAssocDialog::EdgeAssocDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-        HexaBaseDialog( parent, editmode, f )
+HexaBaseDialog( parent, editmode, f )
 {
-   _helpFileName ="gui_asso_quad_to_geom.html#one-edge";
-   setupUi( this );
-   _initWidget(editmode);
-   _initViewManager();
-   //	setFocusProxy( edges_lw );
-
-   myLine = NULL;
-
-   _currentParameter = 0.;
-   single_rb->click();
+    _helpFileName ="gui_asso_quad_to_geom.html#one-edge";
+    setupUi( this );
+    _initWidget(editmode);
+    myLine = NULL;
+    single_rb->click();
 }
 
 // ============================================================== Destructeur
 EdgeAssocDialog::~EdgeAssocDialog()
 {
-   //   disconnect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
-   //   disconnect( delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()) );
-   disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(addLine()) );
-   disconnect( pstart_spb, SIGNAL(valueChanged(double)), this, SLOT( pstartChanged(double)) );
-   disconnect( pend_spb,   SIGNAL(valueChanged(double)), this, SLOT( pendChanged(double)) );
 }
 
 // ============================================================== close
 void EdgeAssocDialog::close()
 {
-   HEXABLOCKGUI::assocInProgress = false;
-   HexaBaseDialog::close();
+    HEXABLOCKGUI::assocInProgress = false;
+    HexaBaseDialog::close();
 }
 
 // ============================================================== _initInputWidget
 void EdgeAssocDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-   //model
-   first_vex_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
-   first_vex_le->installEventFilter(this);
-   first_vex_le->setValidator( validator );
+    //model
+    first_vex_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE) );
+    first_vex_le->installEventFilter(this);
+    first_vex_le->setValidator( validator );
 
-   single_edge_le->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
-   single_edge_le->installEventFilter(this);
+    single_edge_le->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    single_edge_le->installEventFilter(this);
 
-   edges_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
-   edges_lw->installEventFilter(this);
-
-
-   //geom
-   lines_lw->setProperty("HexaWidgetType", QVariant::fromValue(GEOMEDGE_TREE) );
-   lines_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
-   lines_lw->installEventFilter(this);
-
-   single_line_le->setProperty( "HexaWidgetType", QVariant::fromValue(GEOMEDGE_TREE) );
-   single_line_le->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
-   single_line_le->installEventFilter(this);
+    edges_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    edges_lw->installEventFilter(this);
 
 
-   QShortcut* delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X), edges_lw);
-   QShortcut* delLineShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X), lines_lw);
-   delLineShortcut->setContext( Qt::WidgetWithChildrenShortcut );
-   delEdgeShortcut->setContext( Qt::WidgetWithChildrenShortcut );
+    //geom
+    lines_lw->setProperty("HexaWidgetType", QVariant::fromValue(GEOMEDGE_TREE) );
+    lines_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    lines_lw->installEventFilter(this);
 
-   pend_spb->setValue(1.);
+    single_line_le->setProperty( "HexaWidgetType", QVariant::fromValue(GEOMEDGE_TREE) );
+    single_line_le->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    single_line_le->installEventFilter(this);
 
-   first_vex_le->setReadOnly(true);
-   single_edge_le->setReadOnly(true);
-   single_line_le->setReadOnly(true);
 
-   connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
-   connect( delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()) );
-   connect( pstart_spb, SIGNAL(valueChanged(double)), this, SLOT( pstartChanged(double)) );
-   connect( pend_spb,   SIGNAL(valueChanged(double)), this, SLOT( pendChanged(double)) );
-   connect( edges_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
-   connect( lines_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfGeom()), Qt::UniqueConnection );
-   connect( single_rb,   SIGNAL(clicked()), this, SLOT( refreshHighlight()), Qt::UniqueConnection );
-   connect( multiple_rb,   SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection );
-   connect( single_rb,   SIGNAL(clicked()), this, SLOT( updateHelpFileName() ) );
-   connect( multiple_rb,   SIGNAL(clicked()), this, SLOT( updateHelpFileName() ) );
+    QShortcut* delEdgeShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X), edges_lw);
+    QShortcut* delLineShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X), lines_lw);
+    delLineShortcut->setContext( Qt::WidgetWithChildrenShortcut );
+    delEdgeShortcut->setContext( Qt::WidgetWithChildrenShortcut );
+
+    pend_spb->setValue(1.);
+
+    first_vex_le->setReadOnly(true);
+    single_edge_le->setReadOnly(true);
+    single_line_le->setReadOnly(true);
+
+    connect( delEdgeShortcut, SIGNAL(activated()), this, SLOT(deleteEdgeItem()) );
+    connect( delLineShortcut, SIGNAL(activated()), this, SLOT(deleteLineItem()) );
+    connect( edges_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( lines_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfGeom()), Qt::UniqueConnection );
+    connect( single_rb,   SIGNAL(clicked()), this, SLOT( refreshHighlight()), Qt::UniqueConnection );
+    connect( multiple_rb,   SIGNAL(clicked()), this, SLOT(refreshHighlight()), Qt::UniqueConnection );
+    connect( single_rb,   SIGNAL(clicked()), this, SLOT( updateHelpFileName() ) );
+    connect( multiple_rb,   SIGNAL(clicked()), this, SLOT( updateHelpFileName() ) );
 }
 
 // ============================================================== updateHelpFileName
 void EdgeAssocDialog::updateHelpFileName()
 {
-   if ( sender() == single_rb ){
-         _helpFileName = "gui_asso_quad_to_geom.html#one-edge";
-   } else if ( sender() == multiple_rb ){
-         _helpFileName = "gui_asso_quad_to_geom.html#line";
-   }
+    if ( sender() == single_rb ){
+        _helpFileName = "gui_asso_quad_to_geom.html#one-edge";
+    } else if ( sender() == multiple_rb ){
+        _helpFileName = "gui_asso_quad_to_geom.html#line";
+    }
 }
-
 
 // ============================================================== getAssocsVTK
 /*
@@ -4857,32 +4480,33 @@ void EdgeAssocDialog::updateHelpFileName()
  */
 QModelIndexList EdgeAssocDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iEdge;
-   QListWidgetItem* item = NULL;
+    QModelIndexList assocs;
+    QModelIndex iEdge;
+    QListWidgetItem* item = NULL;
 
-   if (getPatternDataSelectionModel() == NULL) return assocs;
-   if (single_rb->isChecked())
-      {
-         //LineEdit content
-         QVariant v = single_edge_le->property("QModelIndex");
-         if ( !v.isValid() ) return assocs;
-         assocs << v.value<QModelIndex>();
-         return assocs;
-      }
-   else if (multiple_rb->isChecked())
-      {
-         //ListWidget content
-         const PatternDataModel* patternDataModel = getPatternDataModel();
-         if ( !patternDataModel ) return assocs;
-         for ( int r = 0; r < edges_lw->count(); ++r){
-               item = edges_lw->item(r);
-               iEdge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-               if ( iEdge.isValid() ) assocs << iEdge;
-         }
-         return assocs;
-      }
-   else return assocs;
+    if (getPatternDataSelectionModel() == NULL) return assocs;
+    if (single_rb->isChecked())
+    {
+        //LineEdit content
+        QVariant v = single_edge_le->property("QModelIndex");
+        if ( !v.isValid() ) return assocs;
+        assocs << v.value<QModelIndex>();
+        return assocs;
+    }
+    else if (multiple_rb->isChecked())
+    {
+        //ListWidget content
+        const PatternDataModel* patternDataModel = getPatternDataModel();
+        if ( !patternDataModel ) return assocs;
+        int nbEdges = edges_lw->count();
+        for ( int r = 0; r < nbEdges; ++r){
+            item = edges_lw->item(r);
+            iEdge = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+            if ( iEdge.isValid() ) assocs << iEdge;
+        }
+        return assocs;
+    }
+    else return assocs;
 }
 
 // ============================================================== getAssocsGEOM
@@ -4891,118 +4515,88 @@ QModelIndexList EdgeAssocDialog::getAssocsVTK()
  */
 QMultiMap<QString, int> EdgeAssocDialog::getAssocsGEOM()
 {
-   QMultiMap<QString, int> assocs;
-   QListWidgetItem* item = NULL;
-   DocumentModel::GeomObj geomObj;
+    QMultiMap<QString, int> assocs;
+    QListWidgetItem* item = NULL;
+    DocumentModel::GeomObj geomObj;
 
-   if (single_rb->isChecked())
-      {
-         //LineEdit content
-         QVariant v = single_line_le->property("GeomObj");
-         if ( !v.isValid() ) return assocs;
-         geomObj = v.value<DocumentModel::GeomObj>();
-         assocs.insert( geomObj.shapeName, geomObj.subid.toInt() );
-         return assocs;
-      }
-   else if (multiple_rb->isChecked())
-      {
-         //ListWidget content
-         unsigned int nbEdges = lines_lw->count();
-         for ( int r = 0; r < nbEdges; ++r){
-               item = lines_lw->item(r);
-               geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-               assocs.insert( geomObj.shapeName, geomObj.subid.toInt() );
-         }
-         return assocs;
-      }
-   else return assocs;
+    if (single_rb->isChecked())
+    {
+        //LineEdit content
+        QVariant v = single_line_le->property("GeomObj");
+        if ( !v.isValid() ) return assocs;
+        geomObj = v.value<DocumentModel::GeomObj>();
+        assocs.insert( geomObj.shapeName, geomObj.subId.toInt() );
+        return assocs;
+    }
+    else if (multiple_rb->isChecked())
+    {
+        //ListWidget content
+        unsigned int nbEdges = lines_lw->count();
+        for ( int r = 0; r < nbEdges; ++r){
+            item = lines_lw->item(r);
+            geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+            assocs.insert( geomObj.shapeName, geomObj.subId.toInt() );
+        }
+        return assocs;
+    }
+    else return assocs;
 }
 
 // ============================================================== selectElementOfGeom
-
 /*Highlight in the OCC view selected elements in a listwidget,
  *  or an element in a line edit.*/
-
 void EdgeAssocDialog::selectElementOfGeom()
 {
-   QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
-   if ( !currentListWidget ) return;
+    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
+    if ( !currentListWidget )
+        return;
 
-   _selectionMutex = true;
+    QModelIndex index;
+    QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
+    PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
+    pgsm->clearSelection();
+    if (sel.count() == 0)
+        return;
 
-   QMultiMap<QString, int> geomElts;
-   DocumentModel::GeomObj geomObj;
-   QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
-   foreach ( QListWidgetItem *item, sel ){
-      geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-      geomElts.insert( geomObj.shapeName, geomObj.subid.toInt() );
-   }
-   _selectionMutex = false;
-
-   //highlight geom selected elts
-   if (geomElts.size() > 0 && getPatternDataSelectionModel() != NULL)
-       HEXABLOCKGUI::currentOccGView->highlight(geomElts);
-
+    QListWidgetItem *item = sel[0];
+//    index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>(); //unsafe: index can change in the tree
+    index = pgsm->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+    if ( index.isValid() )
+        pgsm->select( index, QItemSelectionModel::SelectCurrent );
 }
 
 // ============================================================== clear
 void EdgeAssocDialog::clear()
 {
-   first_vex_le->clear();
-   modelUnregister(first_vex_le);
+    first_vex_le->clear();
+    modelUnregister(first_vex_le);
 
-   edges_lw->clear();
-   modelUnregister(edges_lw);
+    edges_lw->clear();
+    modelUnregister(edges_lw);
 
-   lines_lw->clear();
+    lines_lw->clear();
 
-   single_edge_le->clear();
-   modelUnregister(single_edge_le);
+    single_edge_le->clear();
+    modelUnregister(single_edge_le);
 
-   single_line_le->clear();
-   QVariant invalid;
-   single_line_le->setProperty("GeomObj", invalid);
+    single_line_le->clear();
+    modelUnregister(single_line_le);
 
-   modelUnregister(this);
-
-//   single_edge_le->setText("");
-//   single_line_le->setText("");
-}
-
-// ============================================================== deleteEdgeItem
-void EdgeAssocDialog::deleteEdgeItem()
-{
-   delete edges_lw->currentItem();
-}
-
-// ============================================================== deleteLineItem
-void EdgeAssocDialog::deleteLineItem()
-{
-   delete lines_lw->currentItem();
-}
-
-
-// ============================================================== setGeomEngine
-void EdgeAssocDialog::setGeomEngine( GEOM::GEOM_Gen_var geomEngine )
-{
-   _geomEngine = geomEngine;
+    modelUnregister(this);
 }
 
 // ============================================================== onWindowActivated
 void EdgeAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
 {
     QString vmType = vm->getType();
-    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
-
+    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) )
+    {
         if (single_rb->isChecked())
             single_edge_le->setFocus();
         else if (multiple_rb->isChecked() && focusWidget() != first_vex_le )
-                edges_lw->setFocus();
+            edges_lw->setFocus();
     }
     else if ( vmType == OCCViewer_Viewer::Type() ){
-        globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
-        localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_EDGE);
-
         if (single_rb->isChecked())
             single_line_le->setFocus();
         else if (multiple_rb->isChecked() && focusWidget() != first_vex_le)
@@ -5010,258 +4604,159 @@ void EdgeAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
     }
 }
 
-// ============================================================== createOperation
-GEOM::GEOM_IOperations_ptr EdgeAssocDialog::createOperation()
-{
-   return _geomEngine->GetIBasicOperations(getStudyId());
-}
-
-// ============================================================== execute
-bool EdgeAssocDialog::execute(ObjectList& objects)
-{
-   bool res = false;
-
-   GEOM::GEOM_Object_var anObj;
-   QStringList aParameters;
-
-   GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
-   anObj = anOper->MakePointOnCurve( _currentLine.get(), _currentParameter );
-   if ( !anObj->_is_nil() ) {
-         objects.push_back(anObj._retn());
-         res = true;
-   }
-   return res;
-}
-
-// ============================================================== pstartChanged
-void EdgeAssocDialog::pstartChanged( double val )
-{
-   QListWidgetItem* lineItem = lines_lw->item( 0 );
-   if (!lineItem) return;
-   _currentLine = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
-   _currentParameter = pstart_spb->value();
-}
-
-// ============================================================== pendChanged
-void EdgeAssocDialog::pendChanged( double val )
-{
-   //   if ( _lastLine->_is_nil() ) return;
-   QListWidgetItem* lineItem = lines_lw->item( lines_lw->count()-1 );
-   if (!lineItem) return;
-   _currentLine      = lineItem->data(LW_GEOM_OBJ_ROLE).value<GEOM::GeomObjPtr>();
-   _currentParameter = pend_spb->value();
-//   displayPreview(true);
-}
-
-// ============================================================== onCurrentSelectionChanged
-void EdgeAssocDialog::onCurrentSelectionChanged()
-{
-   if ( !isVisible())
-      {
-         highlightSelectedAssocs();
-         return;
-      }
-
-   SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-
-   bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
-   if (!isOCC || !getDocumentModel())
-      {
-         highlightSelectedAssocs();
-         return;
-      }
-
-   GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_EDGE);
-   DocumentModel::GeomObj* selectedLine = getDocumentModel()->convertToGeomObj(aSelectedObject);
-   if ( selectedLine == NULL )
-      {
-         highlightSelectedAssocs();
-         return;
-      }
-   myLine = selectedLine;
-
-   //don't allow selection on a geometry not associated to the document
-   QString mainShapeEntry;
-   if ( aSelectedObject->IsMainShape() ){
-       mainShapeEntry = aSelectedObject->GetStudyEntry();
-   } else {
-       GEOM::GEOM_Object_var mainShape = aSelectedObject->GetMainShape();
-       mainShapeEntry = mainShape->GetStudyEntry();
-   }
-   if (getDocumentModel()->getGeomObjName(mainShapeEntry).isEmpty())
-   {
-       //unknown geometry
-       SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), HexaBaseDialog::tr( "UNKNOWN_GEOMETRY" ) );
-       return;
-   }
-
-   if (single_rb->isChecked()) {
-         single_line_le->setText(myLine->name);
-         single_line_le->setProperty("GeomObj", QVariant::fromValue<DocumentModel::GeomObj>(*myLine));
-         setFocusToNextField();
-   }
-   else if( multiple_rb->isChecked() ) {
-         QList<QListWidgetItem *> twice = lines_lw->findItems( myLine->name, Qt::MatchExactly);
-         if ( twice.count() == 0 ){
-               QListWidgetItem* item  = new QListWidgetItem( myLine->name );
-               item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(*myLine) );
-               item->setData(  LW_GEOM_OBJ_ROLE, QVariant::fromValue<GEOM::GeomObjPtr>(aSelectedObject) );
-               lines_lw->addItem(item);
-         }
-   }
-   highlightSelectedAssocs();
-}
-
 // ============================================================== apply
 bool EdgeAssocDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   bool assocOk = false;
+    bool assocOk = false;
 
-   highlightSelectedAssocs();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternDataSelectionModel* pdsm = getPatternDataSelectionModel();
+    PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
 
-   PatternDataModel* patternDataModel = getPatternDataModel();
-   PatternGeomModel* pgm = getPatternGeomModel();
-   PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
+    QModelIndex     iEdge, iGeomEdge;
+    QModelIndexList iEdges;
+    QListWidgetItem* item = NULL;
+    QList<DocumentModel::GeomObj> assocs;
+    DocumentModel::GeomObj aLine;
+    HEXA_NS::SubShape* ssh;
+    HEXA_NS::EdgeShape* sh;
+    HEXA_NS::NewShapes shapes;
+    HEXA_NS::IntVector subIds;
+    QString id;
+    QModelIndexList edges, lines;
 
-   QModelIndex     iEdge, iGeomEdge;
-   QModelIndexList iEdges;
-   QListWidgetItem* item = NULL;
-   QList<DocumentModel::GeomObj> assocs;
-   DocumentModel::GeomObj aLine;
-   HEXA_NS::SubShape* ssh;
-   HEXA_NS::EdgeShape* sh;
-   HEXA_NS::NewShapes shapes;
-   HEXA_NS::IntVector subIds;
-   QString id;
+    if (single_rb->isChecked()){ //Single edge and/or line association
 
-   if (single_rb->isChecked()){ //Single edge and/or line association
+        iEdge = patternDataModel->mapToSource( _index[single_edge_le] );
+        if  ( !iEdge.isValid() || myLine == NULL)
+        {
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+            return false;
+        }
+        id = myLine->shapeName+","+myLine->subId;
+        ssh = getDocumentModel()->getGeomPtr(id);
+        sh  = dynamic_cast<HEXA_NS::EdgeShape*>(ssh);
+        iGeomEdge = pgsm->indexBy(HEXA_DATA_ROLE, QVariant::fromValue(sh));
+        if (!iGeomEdge.isValid())
+        {
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+            return false;
+        }
+        assocOk = getDocumentModel()->addEdgeAssociation(iEdge, iGeomEdge, pstart_spb->value(), pend_spb->value());
+        edges << _index[single_edge_le];
+        lines << iGeomEdge;
+    }
+    else { //Multiple edge and/or line association
 
-         iEdge = patternDataModel->mapToSource( _index[single_edge_le] );
-         if  ( !iEdge.isValid() || myLine == NULL)
+        // edges
+        iEdges = getIndexList(edges_lw, true);
+        int nbLines = lines_lw->count();
+        if  (iEdges.count() == 0 || nbLines == 0)
+        {
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+            return false;
+        }
+        edges = getIndexList(edges_lw, false);
+        // lines
+        for (int r = 0; r < nbLines; ++r){
+            item = lines_lw->item(r);
+            aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+            id = aLine.shapeName+","+aLine.subId;
+            ssh = getDocumentModel()->getGeomPtr(id);
+            sh  = dynamic_cast<HEXA_NS::EdgeShape*>(ssh);
+            if (sh == NULL)
             {
-               SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-               highlightSelectedAssocs();
-               return false;
+                SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+                return false;
             }
-         id = myLine->shapeName+","+myLine->subid;
-         MESSAGE("=====> Association with geom id: " << id.toStdString());
-         ssh = getDocumentModel()->getGeomPtr(id);
-         sh  = dynamic_cast<HEXA_NS::EdgeShape*>(ssh);
-         iGeomEdge = sh == NULL ? QModelIndex() : pgm->mapToSource(pgsm->indexBy(HEXA_DATA_ROLE, QVariant::fromValue(sh)));
-         if (!iGeomEdge.isValid())
-         {
-             MESSAGE("iGeomEdge IS NOT VALID: ID = " << id.toStdString());
-             SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-             highlightSelectedAssocs();
-             return false;
-         }
-         assocOk = getDocumentModel()->addEdgeAssociation(iEdge, iGeomEdge, pstart_spb->value(), pend_spb->value());
-   }
-   else { //Multiple edge and/or line association
+            shapes.push_back(sh->getParentShape());
+            subIds.push_back(sh->getIdent());
+            iGeomEdge = pgsm->indexBy(HEXA_DATA_ROLE, QVariant::fromValue(sh));
+            if (iGeomEdge.isValid())
+                lines << iGeomEdge;
+        }
 
-         // edges
-         iEdges = getIndexList(edges_lw);
-         if  (iEdges.count() == 0 || lines_lw->count() == 0)
+        if ( close_cb->isChecked() ){ //closed line
+            QModelIndex iFirstVertex = patternDataModel->mapToSource( _index[first_vex_le] );
+            if  ( !iFirstVertex.isValid() )
             {
-               SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-               highlightSelectedAssocs();
-               return false;
+                SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
+                return false;
             }
+            bool inv = inverse_cb->isChecked();
+            assocOk = getDocumentModel()->associateClosedLine( iFirstVertex, iEdges, shapes, subIds, pstart_spb->value(), inv );
 
-         // lines
-         for (int r = 0; r < lines_lw->count(); ++r){
-             item = lines_lw->item(r);
-             aLine = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-             id = aLine.shapeName+","+aLine.subid;
-             ssh = getDocumentModel()->getGeomPtr(id);
-             sh  = dynamic_cast<HEXA_NS::EdgeShape*>(ssh);
-             if (sh == NULL)
-             {
-                 SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-                 highlightSelectedAssocs();
-                 return false;
-             }
-             shapes.push_back(sh->getParentShape());
-             subIds.push_back(sh->getIdent());
-         }
-
-         if ( close_cb->isChecked() ){ //closed line
-               QModelIndex iFirstVertex = patternDataModel->mapToSource( _index[first_vex_le] );
-               if  ( !iFirstVertex.isValid() )
-                  {
-                     SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-                     highlightSelectedAssocs();
-                     return false;
-                  }
-               bool inv = inverse_cb->isChecked();
-               assocOk = getDocumentModel()->associateClosedLine( iFirstVertex, iEdges, shapes, subIds, pstart_spb->value(), inv );
-         } else
+        } else
             //opened line
             assocOk = getDocumentModel()->associateOpenedLine( iEdges, shapes, subIds, pstart_spb->value(), pend_spb->value() );
-   }
+    }
 
-   if ( !assocOk ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) );
-         highlightSelectedAssocs();
-         return false;
-   }
+    if ( !assocOk ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE EDGE ASSOCIATION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   highlightSelectedAssocs();
-   return true;
+    // highlight associated items in the trees
+    pdsm->unhighlightTreeItems();
+    pgsm->unhighlightTreeItems();
+    pdsm->highlightTreeItems(edges);
+    pgsm->highlightTreeItems(lines);
+
+    // highlight associated items in the views
+    highlightSelectedAssocs();
+
+    return true;
 }
 
 // ------------------------- QuadAssocDialog ----------------------------------
 // ============================================================== Constructeur
 QuadAssocDialog::QuadAssocDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_asso_quad_to_geom.html#associate-to-a-face-or-a-shell-of-the-geometry";
-   setupUi( this );
-   _initWidget(editmode);
-   _initViewManager();
-   //	setFocusProxy( quad_le );
+    _helpFileName = "gui_asso_quad_to_geom.html#associate-to-a-face-or-a-shell-of-the-geometry";
+    setupUi( this );
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
 QuadAssocDialog::~QuadAssocDialog()
 {
-   disconnect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
-   disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
-   delete _delFaceShortcut;
+    disconnect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
+    disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()), this, SLOT(addFace()) );
+    delete _delFaceShortcut;
 }
 
 // ============================================================== close
 void QuadAssocDialog::close()
 {
-   HEXABLOCKGUI::assocInProgress = false;
-   HexaBaseDialog::close();
+    HEXABLOCKGUI::assocInProgress = false;
+    HexaBaseDialog::close();
 }
 
 // ============================================================== _initInputWidget
 void QuadAssocDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-   quad_le->setProperty( "HexaWidgetType", QVariant::fromValue(QUAD_TREE) );
-   quad_le->installEventFilter(this);
-   quad_le->setValidator( validator );
+    quad_le->setProperty( "HexaWidgetType", QVariant::fromValue(QUAD_TREE) );
+    quad_le->installEventFilter(this);
+    quad_le->setValidator( validator );
 
 
-   faces_lw->setProperty( "HexaWidgetType", QVariant::fromValue(GEOMFACE_TREE) );
-   faces_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_FACE) );
-   faces_lw->installEventFilter(this);
-   _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_X/*Qt::Key_Delete*/), faces_lw );
-   _delFaceShortcut->setContext( Qt::WidgetShortcut );
+    faces_lw->setProperty( "HexaWidgetType", QVariant::fromValue(GEOMFACE_TREE) );
+    faces_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_FACE) );
+    faces_lw->installEventFilter(this);
+    _delFaceShortcut = new QShortcut( QKeySequence(Qt::Key_X/*Qt::Key_Delete*/), faces_lw );
+    _delFaceShortcut->setContext( Qt::WidgetShortcut );
 
-   quad_le->setReadOnly(true);
+    quad_le->setReadOnly(true);
 
-   connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
-   connect( faces_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfGeom()), Qt::UniqueConnection );
+    connect( _delFaceShortcut, SIGNAL(activated()), this, SLOT(deleteFaceItem()) );
+    connect( faces_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfGeom()), Qt::UniqueConnection );
 }
 
 // ============================================================== getAssocsVTK
@@ -5270,15 +4765,15 @@ void QuadAssocDialog::_initInputWidget( Mode editmode )
  */
 QModelIndexList QuadAssocDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad;
+    QModelIndexList assocs;
+    QModelIndex iQuad;
 
-   //LineEdit content
-   QVariant v = quad_le->property("QModelIndex");
-   if ( !v.isValid() )
-      return assocs;
-   assocs << v.value<QModelIndex>();
-   return assocs;
+    //LineEdit content
+    QVariant v = quad_le->property("QModelIndex");
+    if ( !v.isValid() )
+        return assocs;
+    assocs << v.value<QModelIndex>();
+    return assocs;
 }
 
 // ============================================================== getAssocsGEOM
@@ -5287,18 +4782,18 @@ QModelIndexList QuadAssocDialog::getAssocsVTK()
  */
 QMultiMap<QString, int> QuadAssocDialog::getAssocsGEOM()
 {
-   QMultiMap<QString, int> assocs;
-   QListWidgetItem* item = NULL;
-   DocumentModel::GeomObj geomObj;
+    QMultiMap<QString, int> assocs;
+    QListWidgetItem* item = NULL;
+    DocumentModel::GeomObj geomObj;
 
-   //ListWidget content
-   unsigned int nbFaces = faces_lw->count();
-   for ( int r = 0; r < nbFaces; ++r){
-         item = faces_lw->item(r);
-         geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-         assocs.insert( geomObj.shapeName, geomObj.subid.toInt() );
-   }
-   return assocs;
+    //ListWidget content
+    unsigned int nbFaces = faces_lw->count();
+    for ( int r = 0; r < nbFaces; ++r){
+        item = faces_lw->item(r);
+        geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+        assocs.insert( geomObj.shapeName, geomObj.subId.toInt() );
+    }
+    return assocs;
 }
 
 // ============================================================== selectElementOfGeom
@@ -5307,178 +4802,127 @@ QMultiMap<QString, int> QuadAssocDialog::getAssocsGEOM()
 
 void QuadAssocDialog::selectElementOfGeom()
 {
-   QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
-   if ( !currentListWidget ) return;
+    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
+    if ( !currentListWidget )
+        return;
 
-   _selectionMutex = true;
-
-   QMultiMap<QString, int> geomElts;
-   DocumentModel::GeomObj geomObj;
-   QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
-   foreach ( QListWidgetItem *item, sel ){
-      geomObj = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-      geomElts.insert( geomObj.shapeName, geomObj.subid.toInt() );
-   }
-   _selectionMutex = false;
-
-   //highlight geom selected elts
-   if (geomElts.size() > 0 && getPatternDataSelectionModel() != NULL)
-       HEXABLOCKGUI::currentOccGView->highlight(geomElts);
-
+    QModelIndex index;
+    QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
+    PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
+    pgsm->clearSelection();
+    if (sel.count() == 0)
+        return;
+    QListWidgetItem *item = sel[0];
+//    index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
+    index = pgsm->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+    if ( index.isValid() )
+        pgsm->select( index, QItemSelectionModel::SelectCurrent );
 }
 
 void QuadAssocDialog::clear()
 {
-   quad_le->clear();
-   modelUnregister(quad_le);
+    quad_le->clear();
+    modelUnregister(quad_le);
 
-   faces_lw->clear();
+    faces_lw->clear();
 
-   modelUnregister(this);
-}
-
-// ============================================================== onCurrentSelectionChanged
-void QuadAssocDialog::onCurrentSelectionChanged()
-{
-
-    if ( !isVisible() )
-    {
-        highlightSelectedAssocs();
-        return;
-    }
-
-    SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-
-    bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
-    //   bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
-    if (!isOCC || !getDocumentModel())
-    {
-        highlightSelectedAssocs();
-        return;
-    }
-
-    GEOM::GeomObjPtr aSelectedObject = getSelected(TopAbs_FACE);
-    DocumentModel::GeomObj* aFace = getDocumentModel()->convertToGeomObj(aSelectedObject);
-    if (aFace == NULL)
-    {
-        highlightSelectedAssocs();
-        return;
-    }
-
-    //don't allow selection on a geometry not associated to the document
-    QString mainShapeEntry;
-    if ( aSelectedObject->IsMainShape() ){
-        mainShapeEntry = aSelectedObject->GetStudyEntry();
-    } else {
-        GEOM::GEOM_Object_var mainShape = aSelectedObject->GetMainShape();
-        mainShapeEntry = mainShape->GetStudyEntry();
-    }
-    if (getDocumentModel()->getGeomObjName(mainShapeEntry).isEmpty())
-    {
-        //unknown geometry
-        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), HexaBaseDialog::tr( "UNKNOWN_GEOMETRY" ) );
-        return;
-    }
-
-    QList<QListWidgetItem *> twice = faces_lw->findItems( aFace->name, Qt::MatchExactly);
-    if ( twice.count() == 0 ){
-        QListWidgetItem* item = new QListWidgetItem( aFace->name );
-        item->setData(  LW_ASSOC_ROLE, QVariant::fromValue<DocumentModel::GeomObj>(*aFace) );
-        faces_lw->addItem(item);
-        //     faces_lw->setCurrentRow( faces_lw->count() - 1 );
-    }
-
-    highlightSelectedAssocs();
+    modelUnregister(this);
 }
 
 // ============================================================== onWindowActivated
 void QuadAssocDialog::onWindowActivated(SUIT_ViewManager* vm)
 {
-   QString vmType = vm->getType();
-   if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) )
-      quad_le->setFocus();
-   else if ( vmType == OCCViewer_Viewer::Type() ){
-         globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
-//         localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
-         localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_FACE);
-         faces_lw->setFocus();
-   }
+    QString vmType = vm->getType();
+    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) )
+        quad_le->setFocus();
+    else if ( vmType == OCCViewer_Viewer::Type() ){
+        faces_lw->setFocus();
+    }
 }
 
 // ============================================================== deleteFaceItem
 void QuadAssocDialog::deleteFaceItem()
 {
-   delete faces_lw->currentItem();
+    delete faces_lw->currentItem();
 }
-
 
 // ============================================================== apply
 bool QuadAssocDialog::apply(QModelIndex& result)
 {
-   highlightSelectedAssocs();
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   PatternDataModel* patternDataModel = getPatternDataModel();
-   PatternGeomModel* pgm = getPatternGeomModel();
-   PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternDataSelectionModel* pdsm = getPatternDataSelectionModel();
+    PatternGeomSelectionModel* pgsm = getPatternGeomSelectionModel();
 
 
-   QModelIndex iQuad, iGeomFace;
-   HEXA_NS::SubShape* ssh;
-   HEXA_NS::FaceShape* sh;
-   QString id;
+    QModelIndex iQuad, iGeomFace;
+    HEXA_NS::SubShape* ssh;
+    HEXA_NS::FaceShape* sh;
+    QString id;
 
-   // quad
-   iQuad = patternDataModel->mapToSource( _index[quad_le] );
+    // quad
+    iQuad = patternDataModel->mapToSource( _index[quad_le] );
 
-   // faces
-   QListWidgetItem* item = NULL;
-   DocumentModel::GeomObj aFace;
-   for ( int r = 0; r < faces_lw->count(); ++r ){
-         item = faces_lw->item(r);
-         aFace = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
-         id = aFace.shapeName+","+aFace.subid;
-         ssh = getDocumentModel()->getGeomPtr(id);
-         sh  = dynamic_cast<HEXA_NS::FaceShape*>(ssh);
-         iGeomFace = sh == NULL ? QModelIndex() : pgm->mapToSource(pgsm->indexBy(HEXA_DATA_ROLE, QVariant::fromValue(sh)));
-         if (!getDocumentModel()->addQuadAssociation(iQuad, iGeomFace))
-         {
-             SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE QUAD ASSOCIATION" ) );
-             highlightSelectedAssocs();
-             return false;
-         }
-   }
+    // faces
+    QListWidgetItem* item = NULL;
+    DocumentModel::GeomObj aFace;
+    QModelIndexList quads, faces;
+    int nbFaces = faces_lw->count();
+    for ( int r = 0; r < nbFaces; ++r ){
+        item = faces_lw->item(r);
+        aFace = item->data(LW_ASSOC_ROLE).value<DocumentModel::GeomObj>();
+        id = aFace.shapeName+","+aFace.subId;
+        ssh = getDocumentModel()->getGeomPtr(id);
+        sh  = dynamic_cast<HEXA_NS::FaceShape*>(ssh);
+        if (sh == NULL)
+        {
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE QUAD ASSOCIATION" ) );
+            return false;
+        }
+        iGeomFace = pgsm->indexBy(HEXA_DATA_ROLE, QVariant::fromValue(sh));
+        if (!getDocumentModel()->addQuadAssociation(iQuad, iGeomFace))
+        {
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE QUAD ASSOCIATION" ) + "\n" + getErrorMsg() );
+            return false;
+        }
+        else if (iGeomFace.isValid())
+            faces << iGeomFace;
+    }
+    result = iQuad;
 
-   result = patternDataModel->mapFromSource(iQuad);
+    if (iQuad.isValid())
+        quads << _index[quad_le];
 
-   highlightSelectedAssocs();
-   return true;
+    // highlight associated items in the trees
+    pdsm->highlightTreeItems(quads);
+    pgsm->highlightTreeItems(faces);
+
+    // highlight associated items in the views
+    highlightSelectedAssocs();
+
+    return true;
 }
 
-
-
 // ------------------------- GroupDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 GroupDialog::GroupDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f),
-								                                                                                                                  _value(NULL)
+HexaBaseDialog(parent, editmode, f),
+_value(NULL)
 {
-   _helpFileName = "gui_groups.html#add-group";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( name_le/*eltBase_lw */);
+    _helpFileName = "gui_groups.html#add-group";
+    setupUi( this );
+    _initWidget(editmode);
+    //   setFocusProxy( name_le/*eltBase_lw */);
 
-   if ( editmode  == NEW_MODE ){
-         setWindowTitle( tr("Group Construction") );
-   } else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Group Modification") );
-   } else if ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Group Information") );
-   }
+    if ( editmode  == NEW_MODE ){
+        setWindowTitle( tr("Group Construction") );
+    } else if ( editmode == UPDATE_MODE ){
+        setWindowTitle( tr("Group Modification") );
+    } else if ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Group Information") );
+    }
 }
 
 // ============================================================== Destructeur
@@ -5492,255 +4936,243 @@ GroupDialog::~GroupDialog()
  */
 QModelIndexList GroupDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iItem;
-   QListWidgetItem* item = NULL;
-   if (getPatternDataSelectionModel() == NULL) return assocs;
-   //ListWidget content
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return assocs;
-   for ( int r = 0; r < eltBase_lw->count(); ++r){
-         item = eltBase_lw->item(r);
-         iItem = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iItem.isValid() ) assocs << iItem;
-   }
-   return assocs;
+    QModelIndexList assocs;
+    QModelIndex iItem;
+    QListWidgetItem* item = NULL;
+    if (getPatternDataSelectionModel() == NULL) return assocs;
+    //ListWidget content
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return assocs;
+    int nbElts = eltBase_lw->count();
+    for ( int r = 0; r < nbElts; ++r){
+        item = eltBase_lw->item(r);
+        iItem = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iItem.isValid() ) assocs << iItem;
+    }
+    return assocs;
 }
 
 // ============================================================== _initInputWidget
 void GroupDialog::_initInputWidget( Mode editmode )
 {
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(GROUP_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    name_le->installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(GROUP_TREE) );
-   name_le->installEventFilter(this);
+    // kind checkbox
+    strKind[ HEXA_NS::HexaCell ] = "HexaCell";
+    strKind[ HEXA_NS::QuadCell ] = "QuadCell";
+    strKind[ HEXA_NS::EdgeCell ] = "EdgeCell";
+    strKind[ HEXA_NS::HexaNode ] = "HexaNode";
+    strKind[ HEXA_NS::QuadNode ] = "QuadNode";
+    strKind[ HEXA_NS::EdgeNode ] = "EdgeNode";
+    strKind[ HEXA_NS::VertexNode ] = "VertexNode";
+    kind_cb->clear();
+    QMap<HEXA_NS::EnumGroup, QString>::ConstIterator iKind;
+    for( iKind = strKind.constBegin(); iKind != strKind.constEnd(); ++iKind )
+        kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
 
-   // kind checkbox
-   strKind[ HEXA_NS::HexaCell ] = "HexaCell";
-   strKind[ HEXA_NS::QuadCell ] = "QuadCell";
-   strKind[ HEXA_NS::EdgeCell ] = "EdgeCell";
-   strKind[ HEXA_NS::HexaNode ] = "HexaNode";
-   strKind[ HEXA_NS::QuadNode ] = "QuadNode";
-   strKind[ HEXA_NS::EdgeNode ] = "EdgeNode";
-   strKind[ HEXA_NS::VertexNode ] = "VertexNode";
-   kind_cb->clear();
-   QMap<HEXA_NS::EnumGroup, QString>::ConstIterator iKind;
-   for( iKind = strKind.constBegin(); iKind != strKind.constEnd(); ++iKind )
-      kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
+    onKindChanged( kind_cb->currentIndex() );
+    eltBase_lw->installEventFilter(this);
 
-   onKindChanged( kind_cb->currentIndex() );
-   eltBase_lw->installEventFilter(this);
+    if ( editmode != INFO_MODE ){
+        QShortcut* delEltShortcut = new QShortcut( QKeySequence(Qt::Key_X), eltBase_lw );
+        delEltShortcut->setContext( Qt::WidgetShortcut );
+        connect(delEltShortcut,   SIGNAL(activated()), this, SLOT(removeEltBase()));
+        connect(kind_cb,  SIGNAL(activated(int)), this, SLOT(onKindChanged(int)) );
+    }
 
-   if ( editmode != INFO_MODE ){
-         QShortcut* delEltShortcut = new QShortcut( QKeySequence(Qt::Key_X), eltBase_lw );
-         delEltShortcut->setContext( Qt::WidgetShortcut );
-         connect(delEltShortcut,   SIGNAL(activated()), this, SLOT(removeEltBase()));
-         connect(kind_cb,  SIGNAL(activated(int)), this, SLOT(onKindChanged(int)) );
-   }
+    if ( editmode == INFO_MODE)
+    {
+        name_le->setReadOnly(true);
+        kind_cb->setEnabled(false);
+    }
 
-   if ( editmode == INFO_MODE)
-   {
-       name_le->setReadOnly(true);
-       kind_cb->setEnabled(false);
-   }
-
-   connect(eltBase_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
+    connect(eltBase_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
 }
 
 // ============================================================== clear
 void GroupDialog::clear()
 {
-   name_le->clear();
+    name_le->clear();
 
-   eltBase_lw->clear();
-   modelUnregister(eltBase_lw);
+    eltBase_lw->clear();
+    modelUnregister(eltBase_lw);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== onKindChanged
 void GroupDialog::onKindChanged(int index)
 {
-   //   onKind
-   switch ( kind_cb->itemData(index).toInt() ){
-   case HEXA_NS::HexaCell:
-   case HEXA_NS::HexaNode:
-      eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(HEXA_TREE));
-      break;
+    //   onKind
+    switch ( kind_cb->itemData(index).toInt() ){
+    case HEXA_NS::HexaCell:
+    case HEXA_NS::HexaNode:
+        eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(HEXA_TREE));
+        break;
 
-   case HEXA_NS::QuadCell:
-   case HEXA_NS::QuadNode:
-      eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(QUAD_TREE));
-      break;
+    case HEXA_NS::QuadCell:
+    case HEXA_NS::QuadNode:
+        eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(QUAD_TREE));
+        break;
 
-   case HEXA_NS::EdgeCell:
-   case HEXA_NS::EdgeNode: eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
-   break;
+    case HEXA_NS::EdgeCell:
+    case HEXA_NS::EdgeNode: eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    break;
 
-   case HEXA_NS::VertexNode:
-      eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(VERTEX_TREE));
-      break;
+    case HEXA_NS::VertexNode:
+        eltBase_lw->setProperty("HexaWidgetType", QVariant::fromValue(VERTEX_TREE));
+        break;
 
-   default:Q_ASSERT(false);
-   }
-   eltBase_lw->clear();
-   eltBase_lw->setFocus();
+    default:Q_ASSERT(false);
+    }
+    eltBase_lw->clear();
+    eltBase_lw->setFocus();
 }
 
 // ============================================================== setValue
 void GroupDialog::setValue(HEXA_NS::Group* g)
 {
-   //0) name
-   name_le->setText( g->getName() );
+    //0) name
+    name_le->setText( g->getName() );
 
-   //1) kind
-   kind_cb->clear();
-   kind_cb->addItem ( strKind[g->getKind()], QVariant( g->getKind() ) );
-   //   onKindChanged( kind_cb->currentIndex() );
+    //1) kind
+    kind_cb->clear();
+    kind_cb->addItem ( strKind[g->getKind()], QVariant( g->getKind() ) );
 
-   //2) elts
-   HEXA_NS::EltBase* eltBase = NULL;
-   QListWidgetItem* item = NULL;
-   QModelIndex iEltBase;
-   QList<QStandardItem *> eltBaseItems;
-   QVariant v;
+    //2) elts
+    HEXA_NS::EltBase* eltBase = NULL;
+    QListWidgetItem* item = NULL;
+    QModelIndex iEltBase;
+    QList<QStandardItem *> eltBaseItems;
+    QVariant v;
 
-   if ( !getPatternDataSelectionModel() ) return;
-   if ( !getGroupsSelectionModel() ) return;
+    if ( !getPatternDataSelectionModel() ) return;
+    if ( !getGroupsSelectionModel() ) return;
 
-   QModelIndex iGroup = getGroupsSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(g) );
-   name_le->setProperty( "QModelIndex",  QVariant::fromValue(iGroup) );
+    QModelIndex iGroup = getGroupsSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(g) );
+    name_le->setProperty( "QModelIndex",  QVariant::fromValue(iGroup) );
 
 
-   for ( int nr = 0; nr < g->countElement(); ++nr ){
-         eltBase = g->getElement( nr );
-         switch ( g->getKind() ){
-         case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: v = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
-         case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: v = QVariant::fromValue( (HEXA_NS::Quad *)eltBase ); break;
-         case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: v = QVariant::fromValue( (HEXA_NS::Edge *)eltBase ); break;
-         case HEXA_NS::VertexNode: v = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
-         }
-         iEltBase  = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, v);
-         if ( iEltBase.isValid() ){
-               item = new QListWidgetItem( eltBase->getName() );
-               item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iEltBase) );
-               item->setData(LW_DATA_ROLE, iEltBase.data(HEXA_DATA_ROLE));
-               eltBase_lw->addItem( item );
-         }
-   }
-
-   _value = g;
+    int nbElts = g->countElement();
+    for ( int nr = 0; nr < nbElts; ++nr ){
+        eltBase = g->getElement( nr );
+        switch ( g->getKind() ){
+        case HEXA_NS::HexaCell: case HEXA_NS::HexaNode: v = QVariant::fromValue( (HEXA_NS::Hexa *)eltBase ); break;
+        case HEXA_NS::QuadCell: case HEXA_NS::QuadNode: v = QVariant::fromValue( (HEXA_NS::Quad *)eltBase ); break;
+        case HEXA_NS::EdgeCell: case HEXA_NS::EdgeNode: v = QVariant::fromValue( (HEXA_NS::Edge *)eltBase ); break;
+        case HEXA_NS::VertexNode: v = QVariant::fromValue( (HEXA_NS::Vertex *)eltBase ); break;
+        }
+        iEltBase  = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, v);
+        if ( iEltBase.isValid() ){
+            item = new QListWidgetItem( eltBase->getName() );
+            item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iEltBase) );
+            item->setData(LW_DATA_ROLE, iEltBase.data(HEXA_DATA_ROLE));
+            eltBase_lw->addItem( item );
+        }
+    }
+    _value = g;
 }
 
 // ============================================================== getValue
 HEXA_NS::Group* GroupDialog::getValue()
 {
-   return _value;
+    return _value;
 }
-
 
 // ============================================================== removeEltBase
 void GroupDialog::removeEltBase()
 {
-   QListWidgetItem *item = eltBase_lw->currentItem();
+    QListWidgetItem *item = eltBase_lw->currentItem();
 
-   if (item) {
-         int r = eltBase_lw->row(item);
-         eltBase_lw->takeItem(r);
-         delete item;
-   }
+    if (item) {
+        int r = eltBase_lw->row(item);
+        eltBase_lw->takeItem(r);
+        delete item;
+    }
 
 }
 
 // ============================================================== apply
 bool GroupDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    const GroupsModel*      groupsModel = getGroupsModel();
+    if (patternDataModel == NULL || groupsModel == NULL) return false;
 
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   const GroupsModel*      groupsModel = getGroupsModel();
-   if (patternDataModel == NULL || groupsModel == NULL) return false;
-
-   QString               grpName = name_le->text();
-   DocumentModel::Group  grpKind = static_cast<DocumentModel::Group>( kind_cb->itemData( kind_cb->currentIndex() ).toInt());
-   QModelIndex iGrp;
-   if ( _value == NULL ){ // create group
-         iGrp = getDocumentModel()->addGroup( grpName, grpKind );
-   } else {
-         QModelIndexList iGrps = getDocumentModel()->match(
-               getDocumentModel()->index(0, 0),
-               HEXA_DATA_ROLE,
-               QVariant::fromValue( _value ),
-               1,
-               Qt::MatchRecursive );
-         if ( !iGrps.isEmpty() )
+    QString               grpName = name_le->text();
+    DocumentModel::Group  grpKind = static_cast<DocumentModel::Group>( kind_cb->itemData( kind_cb->currentIndex() ).toInt());
+    QModelIndex iGrp;
+    if ( _value == NULL ){ // create group
+        iGrp = getDocumentModel()->addGroup( grpName, grpKind );
+    } else {
+        QModelIndexList iGrps = getDocumentModel()->match(
+                getDocumentModel()->index(0, 0),
+                HEXA_DATA_ROLE,
+                QVariant::fromValue( _value ),
+                1,
+                Qt::MatchRecursive );
+        if ( !iGrps.isEmpty() )
             iGrp = iGrps[0];
-   }
+    }
 
-   //   kind_cb->
-   if ( !iGrp.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD GROUP" ) );
-         return false;
-   }
+    //   kind_cb->
+    if ( !iGrp.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD GROUP" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   //fill it and select it
-   QModelIndex iEltBase;
-   QListWidgetItem* item = NULL;
-   bool eltAdded = false;
-   getDocumentModel()->clearGroupElement(iGrp);
-   for ( int r = 0; r < eltBase_lw->count(); ++r){
-         item     = eltBase_lw->item(r);
-         iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iEltBase.isValid() )
+    //fill it and select it
+    QModelIndex iEltBase;
+    QListWidgetItem* item = NULL;
+    bool eltAdded = false;
+    getDocumentModel()->clearGroupElement(iGrp);
+    int nbElts = eltBase_lw->count();
+    for ( int r = 0; r < nbElts; ++r){
+        item     = eltBase_lw->item(r);
+        iEltBase = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iEltBase.isValid() )
             eltAdded = getDocumentModel()->addGroupElement( iGrp, iEltBase );
-         //    if ( eltAdded == false ){
-         //      //SUIT_MessageBox::information( this, tr( "HEXA_INFO" ), tr( "ELEMENT NOT ADDED : %1" ).arg( iEltBase.data().toString() ));
-         //    }
-   }
+    }
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iGrp, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )
+        getDocumentModel()->setName( iGrp, newName );
 
-   HEXA_NS::Group* hGroup = getDocumentModel()->data(iGrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
-   if (hGroup != NULL)
-      {
-         char buffer [16];
-         name_le->setText(hGroup->getNextName(buffer));
-//         updateDefaultName(name_le, hGroup->getType()); //to be tested to debug default name
-      }
+    HEXA_NS::Group* hGroup = getDocumentModel()->data(iGrp, HEXA_DATA_ROLE).value<HEXA_NS::Group *>();
+    if (hGroup != NULL)
+    {
+        QString groupName = QString::fromStdString(hGroup->getNextName());
+        name_le->setText(groupName);
+    }
 
-   result = groupsModel->mapFromSource(iGrp);
+    result = groupsModel->mapFromSource(iGrp);
 
-   return true;
+    return true;
 }
 
-
-
 // ------------------------- LawDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 LawDialog::LawDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f),
   _value(NULL)
 {
-   _helpFileName = "gui_discret_law.html#add-law";
-   setupUi( this );
-   _initWidget(editmode);
-   if ( editmode  == NEW_MODE ){
-         setWindowTitle( tr("Law Construction") );
-   } else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Law Modification") );
-   }
-   else if ( editmode == INFO_MODE){
-       setWindowTitle( tr("Law Information") );
-   }
+    _helpFileName = "gui_discret_law.html#add-law";
+    setupUi( this );
+    _initWidget(editmode);
+    if ( editmode  == NEW_MODE ){
+        setWindowTitle( tr("Law Construction") );
+    } else if ( editmode == UPDATE_MODE ){
+        setWindowTitle( tr("Law Modification") );
+    }
+    else if ( editmode == INFO_MODE){
+        setWindowTitle( tr("Law Information") );
+    }
 }
 
 // ============================================================== Destructeur
@@ -5751,232 +5183,216 @@ LawDialog::~LawDialog()
 // ============================================================== _initInputWidget
 void LawDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
+    QRegExp rx("");
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
-   installEventFilter(this);
+    //   setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
+    installEventFilter(this);
 
-//   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
-   name_le->installEventFilter(this);
+    //   name_le->setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
+    name_le->installEventFilter(this);
 
-   // kind checkbox
-   strKind[ HEXA_NS::Uniform ]    = "Uniform";
-   strKind[ HEXA_NS::Arithmetic ] = "Arithmetic";
-   strKind[ HEXA_NS::Geometric ]  = "Geometric";
+    // kind checkbox
+    strKind[ HEXA_NS::Uniform ]    = "Uniform";
+    strKind[ HEXA_NS::Arithmetic ] = "Arithmetic";
+    strKind[ HEXA_NS::Geometric ]  = "Geometric";
 
-   kind_cb->clear();
-   QMap<HEXA_NS::KindLaw, QString>::ConstIterator iKind;
-   for( iKind = strKind.constBegin(); iKind != strKind.constEnd(); ++iKind )
-      kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
+    kind_cb->clear();
+    QMap<HEXA_NS::KindLaw, QString>::ConstIterator iKind, iEnd;
+    for( iKind = strKind.constBegin(), iEnd = strKind.constEnd(); iKind != iEnd; ++iKind )
+        kind_cb->addItem( iKind.value(), QVariant(iKind.key()) );
 
-   if (editmode == INFO_MODE)
-   {
-       name_le->setReadOnly(true);
-       nb_nodes_spb->setReadOnly(true);
-       coeff_spb->setReadOnly(true);
-       kind_cb->setEnabled(false);
-   }
-
+    if (editmode == INFO_MODE)
+    {
+        name_le->setReadOnly(true);
+        nb_nodes_spb->setReadOnly(true);
+        coeff_spb->setReadOnly(true);
+        kind_cb->setEnabled(false);
+    }
 }
 
 // ============================================================== clear
 void LawDialog::clear()
 {
-   name_le->clear();
+    name_le->clear();
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== setValue
 void LawDialog::setValue(HEXA_NS::Law* l)
 {
-   // 0) name
-   name_le->setText( l->getName() );
+    // 0) name
+    name_le->setText( l->getName() );
 
-   nb_nodes_spb->setValue( l->getNodes() );
-   coeff_spb->setValue( l->getCoefficient() );
+    nb_nodes_spb->setValue( l->getNodes() );
+    coeff_spb->setValue( l->getCoefficient() );
 
-   HEXA_NS::KindLaw k = l->getKind();
-   kind_cb->setCurrentIndex( kind_cb->findData(k) );
+    HEXA_NS::KindLaw k = l->getKind();
+    kind_cb->setCurrentIndex( kind_cb->findData(k) );
 
-   _value = l;
+    _value = l;
 }
 
 // ============================================================== getValue
 HEXA_NS::Law* LawDialog::getValue()
 {
-   return _value;
+    return _value;
 }
-
 
 // ============================================================== apply
 bool LawDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
+    if ( !getDocumentModel() ) return false;
 
-   const MeshModel* meshModel = getMeshModel();
-   if (meshModel == NULL) return false;
+    const MeshModel* meshModel = getMeshModel();
+    if (meshModel == NULL) return false;
 
-   QString lawName = name_le->text();
-   int     nbnodes = nb_nodes_spb->value();
-   double  coeff   = coeff_spb->value();
-   DocumentModel::KindLaw  lawKind = static_cast<DocumentModel::KindLaw>( kind_cb->itemData( kind_cb->currentIndex() ).toInt());
+    QString lawName = name_le->text();
+    int     nbnodes = nb_nodes_spb->value();
+    double  coeff   = coeff_spb->value();
+    DocumentModel::KindLaw  lawKind = static_cast<DocumentModel::KindLaw>( kind_cb->itemData( kind_cb->currentIndex() ).toInt());
 
-   QModelIndex iLaw;
-   if ( _value == NULL ){ // create Law
-         iLaw = getDocumentModel()->addLaw( lawName, nbnodes );
-   } else {
-         QModelIndexList iLaws = getDocumentModel()->match(
-               getDocumentModel()->index(0, 0),
-               HEXA_DATA_ROLE,
-               QVariant::fromValue( _value ),
-               1,
-               Qt::MatchRecursive );
-         if ( !iLaws.isEmpty() )
+    QModelIndex iLaw;
+    if ( _value == NULL ){ // create Law
+        iLaw = getDocumentModel()->addLaw( lawName, nbnodes );
+    } else {
+        QModelIndexList iLaws = getDocumentModel()->match(
+                getDocumentModel()->index(0, 0),
+                HEXA_DATA_ROLE,
+                QVariant::fromValue( _value ),
+                1,
+                Qt::MatchRecursive );
+        if ( !iLaws.isEmpty() )
             iLaw = iLaws[0];
-   }
+    }
 
-   if ( !iLaw.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
-         return false;
-   }
-   //fill it and select it
-   bool setOk = getDocumentModel()->setLaw( iLaw, nbnodes, coeff, lawKind );
-   if ( !setOk ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) );
-         return false;
-   }
+    if ( !iLaw.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    //fill it and select it
+    bool setOk = getDocumentModel()->setLaw( iLaw, nbnodes, coeff, lawKind );
+    if ( !setOk ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD LAW" ) + "\n" + getErrorMsg() );
+        return false;
+    }
 
-   QString newName = name_le->text();
-   if ( !newName.isEmpty() )/*{*/
-      getDocumentModel()->setName( iLaw, newName );
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iLaw, newName );
 
-   HEXA_NS::Law* hLaw = getDocumentModel()->data(iLaw, HEXA_DATA_ROLE).value<HEXA_NS::Law *>();
-   if (hLaw != NULL)
-      {
-         char buffer [16];
-         name_le->setText(hLaw->getNextName(buffer));
-//         updateDefaultName(name_le, hLaw->getType()); //to be tested to debug default name
+    HEXA_NS::Law* hLaw = getDocumentModel()->data(iLaw, HEXA_DATA_ROLE).value<HEXA_NS::Law *>();
+    if (hLaw != NULL)
+    {
+        char buffer [16];
+        name_le->setText(hLaw->getNextName(buffer));
 
-      }
+    }
 
-   result = meshModel->mapFromSource(iLaw);
+    result = meshModel->mapFromSource(iLaw);
 
-   return true;
+    return true;
 }
 
-
-
-
 // ------------------------- PropagationDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 PropagationDialog::PropagationDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f),
   _value(NULL)
 {
-   _helpFileName = "gui_propag.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //   setFocusProxy( law_le );
-   //	setFocusProxy( propagations_lw );
+    _helpFileName = "gui_propag.html";
+    setupUi( this );
+    _initWidget(editmode);
 
-   if ( editmode == INFO_MODE ){
-         setWindowTitle( tr("Propagation Information") );
-         if (groupBox_2)
+    if ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Propagation Information") );
+        if (groupBox_2)
             delete groupBox_2;
-   } else if ( editmode == UPDATE_MODE ){
-         setWindowTitle( tr("Propagation Modification") );
-         if (groupBox_2)
+    } else if ( editmode == UPDATE_MODE ){
+        setWindowTitle( tr("Propagation Modification") );
+        if (groupBox_2)
             delete groupBox_2;
-   } else if ( editmode == NEW_MODE ){
-         setWindowTitle( tr("Propagation(s) Setting") );
-   }
+    } else if ( editmode == NEW_MODE ){
+        setWindowTitle( tr("Propagation(s) Setting") );
+    }
 }
-
 
 // ============================================================== Destructeur
 PropagationDialog::~PropagationDialog()
 {
 }
 
-
 // ============================================================== _initInputWidget
 void PropagationDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(PROPAGATION_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
 
 
-   law_le->setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
-   law_le->installEventFilter(this);
-   law_le->setValidator( validator );
+    law_le->setProperty( "HexaWidgetType",  QVariant::fromValue(LAW_TREE) );
+    law_le->installEventFilter(this);
+    law_le->setValidator( validator );
 
-   propagations_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(PROPAGATION_TREE) );
-   propagations_lw->installEventFilter(this);
+    propagations_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(PROPAGATION_TREE) );
+    propagations_lw->installEventFilter(this);
 
-   QShortcut* delPropagationShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), propagations_lw);
-   delPropagationShortcut->setContext( Qt::WidgetShortcut );
+    QShortcut* delPropagationShortcut = new QShortcut(QKeySequence(/*Qt::Key_Delete*/Qt::Key_X/*Qt::Key_Alt*//*Qt::Key_Space*/), propagations_lw);
+    delPropagationShortcut->setContext( Qt::WidgetShortcut );
 
-   law_le->setReadOnly(true);
+    law_le->setReadOnly(true);
 
-   if ( editmode == INFO_MODE)
-       way_cb->setEnabled(false);
+    if ( editmode == INFO_MODE)
+        way_cb->setEnabled(false);
 
-   connect( delPropagationShortcut, SIGNAL(activated()), this, SLOT(deletePropagationItem()) );
-   connect( propagations_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
+    connect( delPropagationShortcut, SIGNAL(activated()), this, SLOT(deletePropagationItem()) );
+    connect( propagations_lw,   SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
 }
-
 
 // ============================================================== clear
 void PropagationDialog::clear()
 {
-   propagations_lw->clear();
-   modelUnregister(propagations_lw);
+    propagations_lw->clear();
+    modelUnregister(propagations_lw);
 
-   law_le->clear();
-   modelUnregister(law_le);
+    law_le->clear();
+    modelUnregister(law_le);
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== deletePropagationItem
 void PropagationDialog::deletePropagationItem()
 {
-   delete propagations_lw->currentItem();
+    delete propagations_lw->currentItem();
 }
-
 
 // ============================================================== setValue
 void PropagationDialog::setValue(HEXA_NS::Propagation* p)
 {
-   if (getMeshSelectionModel() == NULL) return;
-   HEXA_NS::Law* l = p->getLaw();
-   bool way = p->getWay();
+    if (getMeshSelectionModel() == NULL) return;
+    HEXA_NS::Law* l = p->getLaw();
+    bool way = p->getWay();
 
-   // propagation
-   QModelIndex ip = getMeshSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
-   setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(ip) );
+    // propagation
+    QModelIndex ip = getMeshSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
+    setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(ip) );
 
-   // law on propagation
-   if ( l != NULL ){
-         law_le->setText( l->getName() );
-         QModelIndex il = getMeshSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(l) );
-         law_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(il) );
-   }
+    // law on propagation
+    if ( l != NULL ){
+        law_le->setText( l->getName() );
+        QModelIndex il = getMeshSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(l) );
+        law_le->setProperty( "QModelIndex",  QVariant::fromValue<QModelIndex>(il) );
+    }
 
-   // way of propagation
-   way_cb->setChecked(way);
+    // way of propagation
+    way_cb->setChecked(way);
 
-   _value = p;
+    _value = p;
 }
 
 // ============================================================== selectElementOfModel
@@ -5986,127 +5402,115 @@ void PropagationDialog::setValue(HEXA_NS::Propagation* p)
 
 void PropagationDialog::selectElementOfModel()
 {
-   if (!getMeshSelectionModel()) return;
+    if (!getMeshSelectionModel()) return;
 
-   QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
-   if ( !currentListWidget ) return;
+    QListWidget* currentListWidget = dynamic_cast<QListWidget*>( sender() );
+    if ( !currentListWidget ) return;
 
-   _selectionMutex = true;
-
-   QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
-   QModelIndex index;
-   getMeshSelectionModel()->clearSelection();
-   foreach ( QListWidgetItem *item, sel ){
-      index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>();
-      if ( index.isValid() )
-         {
-            getMeshSelectionModel()->select( index, QItemSelectionModel::Select );
-         }
-   }
-   _selectionMutex = false;
-
+    QList<QListWidgetItem *> sel = currentListWidget->selectedItems();
+    QModelIndex index;
+    getMeshSelectionModel()->clearSelection();
+    foreach ( QListWidgetItem *item, sel ){
+        //index = item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>(); //unsafe: index can change in the tree
+        index = getMeshSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        if ( index.isValid() )
+            getMeshSelectionModel()->select( index, QItemSelectionModel::SelectCurrent );
+    }
 }
-
 
 // ============================================================== getValue
 HEXA_NS::Propagation* PropagationDialog::getValue()
 {
-   return _value;
+    return _value;
 }
-
 
 // ============================================================== apply
 bool PropagationDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   bool isOk = false;
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const MeshModel* meshModel = getMeshModel();
-   if (meshModel == NULL) return false;
+    bool isOk = false;
+    if ( !getDocumentModel() ) return false;
+    const MeshModel* meshModel = getMeshModel();
+    if (meshModel == NULL) return false;
 
-   bool way = way_cb->isChecked();
-   QListWidgetItem* item = NULL;
+    bool way = way_cb->isChecked();
+    QListWidgetItem* item = NULL;
 
-   QModelIndex iPropagation;
-   QModelIndex iLaw = meshModel->mapToSource( law_le->property("QModelIndex").value<QModelIndex>() );
-   if (!iLaw.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
-         return false;
-   }
+    QModelIndex iPropagation;
+    QModelIndex iLaw = meshModel->mapToSource( law_le->property("QModelIndex").value<QModelIndex>() );
+    if (!iLaw.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
+        return false;
+    }
 
-   for (int r = 0; r < propagations_lw->count(); ++r){
-         item = propagations_lw->item(r);
-         iPropagation = meshModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( !iPropagation.isValid() ){
-               SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
-               return false;
-         }
+    int nbPropagations = propagations_lw->count();
+    for (int r = 0; r < nbPropagations; ++r){
+        item = propagations_lw->item(r);
+        iPropagation = meshModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( !iPropagation.isValid() ){
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
+            return false;
+        }
 
-         //fill it and select it
-         isOk = getDocumentModel()->setPropagation( iPropagation, iLaw, way );
-         if ( !isOk ){
-               SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) );
-               return false;
-         }
+        //fill it and select it
+        isOk = getDocumentModel()->setPropagation( iPropagation, iLaw, way );
+        if ( !isOk ){
+            SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT SET PROPAGATION" ) + "\n" + getErrorMsg() );
+            return false;
+        }
 
-         result = meshModel->mapFromSource(iPropagation);
-   }
+        result = meshModel->mapFromSource(iPropagation);
+    }
 
-   return true;
+    return true;
 }
 
-
 // ------------------------- ComputeMeshDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 ComputeMeshDialog::ComputeMeshDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_mesh.html";
-   setWindowTitle( tr("Compute mesh") );
-   QVBoxLayout* layout = new QVBoxLayout;
-   setLayout(layout);
+    _helpFileName = "gui_mesh.html";
+    setWindowTitle( tr("Compute mesh") );
+    QVBoxLayout* layout = new QVBoxLayout;
+    setLayout(layout);
 
-   QHBoxLayout* up   = new QHBoxLayout;
-   QHBoxLayout* down = new QHBoxLayout;
+    QHBoxLayout* up   = new QHBoxLayout;
+    QHBoxLayout* down = new QHBoxLayout;
 
-   layout->addLayout(up);
-   layout->addLayout(down);
+    layout->addLayout(up);
+    layout->addLayout(down);
 
-   QVBoxLayout* vlg = new QVBoxLayout;
-   QVBoxLayout* vld = new QVBoxLayout;
+    QVBoxLayout* vlg = new QVBoxLayout;
+    QVBoxLayout* vld = new QVBoxLayout;
 
-   up->addLayout(vlg);
-   up->addLayout(vld);
+    up->addLayout(vlg);
+    up->addLayout(vld);
 
-   vlg->addWidget(new QLabel("Name"));
-   vlg->addWidget(new QLabel("Dimension"));
-   vlg->addWidget(new QLabel("Container"));
+    vlg->addWidget(new QLabel("Name"));
+    vlg->addWidget(new QLabel("Dimension"));
+    vlg->addWidget(new QLabel("Container"));
 
-   _name = new QLineEdit("Mesh");
-   _dim  = new QSpinBox();
-   _fact = new QLineEdit("FactoryServer");
+    _name = new QLineEdit("Mesh");
+    _dim  = new QSpinBox();
+    _fact = new QLineEdit("FactoryServer");
 
-   vld->addWidget(_name);
-   vld->addWidget(_dim);
-   vld->addWidget(_fact);
+    vld->addWidget(_name);
+    vld->addWidget(_dim);
+    vld->addWidget(_fact);
 
-   _dim->setRange(1, 3);
-   _dim->setValue(3);
+    _dim->setRange(1, 3);
+    _dim->setValue(3);
 
-   _initWidget(editmode);
-
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
 ComputeMeshDialog::~ComputeMeshDialog()
 {
 }
-
 
 // ============================================================== _initInputWidget
 void ComputeMeshDialog::_initInputWidget( Mode editmode )
@@ -6116,9 +5520,8 @@ void ComputeMeshDialog::_initInputWidget( Mode editmode )
 // ============================================================== setDocumentModel
 void ComputeMeshDialog::setDocumentModel(DocumentModel* m)
 {
-//   HexaBaseDialog::setDocumentModel(m);
-   if (m == NULL) return;
-   _name->setText(m->getName());
+    if (m == NULL) return;
+    _name->setText(m->getName());
 }
 
 // ============================================================== clear
@@ -6130,65 +5533,35 @@ void ComputeMeshDialog::clear()
 // ============================================================== apply
 bool ComputeMeshDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if (getDocumentModel() == NULL) return false;
-   QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
-    								                                  .arg( _name->text() )
-    								                                  .arg( getDocumentModel()->getName() )
-    								                                  .arg( _dim->value() )
-    								                                  .arg( _fact->text() );
-   //std::cout << "command: " << command.toStdString() << std::endl;
+    if (getDocumentModel() == NULL) return false;
+    QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
+    								                                          .arg( _name->text() )
+    								                                          .arg( getDocumentModel()->getName() )
+    								                                          .arg( _dim->value() )
+    								                                          .arg( _fact->text() );
 
-   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-   PyConsole_Console* pyConsole = app->pythonConsole();
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
+    PyConsole_Console* pyConsole = app->pythonConsole();
 
-   if ( pyConsole )
-      pyConsole->exec( command );
-   else
-      return false;
+    if ( pyConsole )
+        pyConsole->exec( command );
+    else
+        return false;
 
-   //   clear();
-   return true;
+    return true;
 }
 
-// void  ComputeMeshDialog::accept() {
-//     _disallowSelection();
-//     QDialog::accept();
-//
-//     QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%1\", \"%2\", %3, \"%4\")")
-//       .arg( _name->text() )
-//       .arg( getDocumentModel()->documentEntry() )
-//       .arg( _dim->value() )
-//       .arg( _fact->text() );
-//     std::cout << "command: " << command.toStdString() << std::endl;
-//
-//     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-//     PyConsole_Console* pyConsole = app->pythonConsole();
-//
-//     if ( pyConsole ) pyConsole->exec( command );
-// }
-
-// void ComputeMeshDialog::reject() {
-//     _disallowSelection();
-//     QDialog::reject();
-// }
-
-
-
 // ------------------------- ReplaceHexaDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 ReplaceHexaDialog::ReplaceHexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
-								                                                                                                                  HexaBaseDialog(parent, editmode, f)
+HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_replace_hexa.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //	setFocusProxy( quads_lw );
+    _helpFileName = "gui_replace_hexa.html";
+    setupUi( this );
+    _initWidget(editmode);
 }
 
 // ============================================================== Destructeur
@@ -6202,75 +5575,72 @@ ReplaceHexaDialog::~ReplaceHexaDialog()
  */
 QModelIndexList ReplaceHexaDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad;
-   QListWidgetItem* item = NULL;
+    QModelIndexList assocs;
+    QModelIndex iQuad;
+    QListWidgetItem* item = NULL;
 
-   //ListWidget content
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return assocs;
-   for ( int r = 0; r < quads_lw->count(); ++r ){
-         item = quads_lw->item(r);
-         //		iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
-         iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-         if ( iQuad.isValid() ) assocs << iQuad;
-   }
-   return assocs;
+    //ListWidget content
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return assocs;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r ){
+        item = quads_lw->item(r);
+        //		iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
+        iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        if ( iQuad.isValid() ) assocs << iQuad;
+    }
+    return assocs;
 }
 
 // ============================================================== _initInputWidget
 void ReplaceHexaDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
+    QRegExp rx("");
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
 
-   c1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   c2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   c3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    c1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    c2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    c3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
-   p1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   p2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   p3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    p1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    p2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    p3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
-//   name_le->installEventFilter(this);
-   c1_le->installEventFilter(this);
-   c2_le->installEventFilter(this);
-   c3_le->installEventFilter(this);
+    c1_le->installEventFilter(this);
+    c2_le->installEventFilter(this);
+    c3_le->installEventFilter(this);
 
-   p1_le->installEventFilter(this);
-   p2_le->installEventFilter(this);
-   p3_le->installEventFilter(this);
+    p1_le->installEventFilter(this);
+    p2_le->installEventFilter(this);
+    p3_le->installEventFilter(this);
 
-   quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
-   quads_lw->installEventFilter(this);
+    quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    quads_lw->installEventFilter(this);
 
-   if ( editmode == NEW_MODE ){
-         QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
-         delQuadShortcut->setContext( Qt::WidgetShortcut );
+    if ( editmode == NEW_MODE ){
+        QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+        delQuadShortcut->setContext( Qt::WidgetShortcut );
 
-         connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(deleteQuadItem()) );
-         connect( quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
-   }
+        connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(deleteQuadItem()) );
+        connect( quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
+    }
 
-   c1_le->setReadOnly(true);
-   c2_le->setReadOnly(true);
-   c3_le->setReadOnly(true);
+    c1_le->setReadOnly(true);
+    c2_le->setReadOnly(true);
+    c3_le->setReadOnly(true);
 
-   p1_le->setReadOnly(true);
-   p2_le->setReadOnly(true);
-   p3_le->setReadOnly(true);
+    p1_le->setReadOnly(true);
+    p2_le->setReadOnly(true);
+    p3_le->setReadOnly(true);
 
-   connect(quads_lw,    SIGNAL(itemSelectionChanged()),
-           this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
+    connect(quads_lw,    SIGNAL(itemSelectionChanged()),
+            this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
 }
 
 // ============================================================== clear
 void ReplaceHexaDialog::clear()
 {
-//    name_le->clear();
-
     quads_lw->clear();
     modelUnregister(quads_lw);
 
@@ -6298,106 +5668,90 @@ void ReplaceHexaDialog::clear()
 // ============================================================== updateButtonBox
 void ReplaceHexaDialog::updateButtonBox()
 {
-   int nbQuad = quads_lw->count();
+    int nbQuad = quads_lw->count();
 
-   if ( nbQuad > 0 ){
-         //_applyCloseButton->setEnabled(true);
-         _applyButton->setEnabled(true);
-   } else {
-         //_applyCloseButton->setEnabled(false);
-         _applyButton->setEnabled(false);
-   }
+    if ( nbQuad > 0 ){
+        _applyButton->setEnabled(true);
+    } else {
+        _applyButton->setEnabled(false);
+    }
 }
 
 // ============================================================== deleteQuadItem
 void ReplaceHexaDialog::deleteQuadItem()
 {
-   delete quads_lw->currentItem();
-   updateButtonBox();
+    delete quads_lw->currentItem();
+    updateButtonBox();
 }
 
 // ============================================================== apply
 bool ReplaceHexaDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
 
-   QModelIndex ielts; //result
+    QModelIndex ielts; //result
 
-   QListWidgetItem* item = NULL;
-   QModelIndexList iquads;
-   QModelIndex     iquad;
-   for ( int r = 0; r < quads_lw->count(); ++r){
-         item = quads_lw->item(r);
-         iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         //std::cout << "iquad => " << iquad.data().toString().toStdString() << std::endl;
-         if ( iquad.isValid() )
+    QListWidgetItem* item = NULL;
+    QModelIndexList iquads;
+    QModelIndex     iquad;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r){
+        item = quads_lw->item(r);
+        iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iquad.isValid() )
             iquads << iquad;
-   }
+    }
 
-   QModelIndex ic1 = patternDataModel->mapToSource( _index[c1_le] );
-   QModelIndex ic2 = patternDataModel->mapToSource( _index[c2_le] );
-   QModelIndex ic3 = patternDataModel->mapToSource( _index[c3_le] );
+    QModelIndex ic1 = patternDataModel->mapToSource( _index[c1_le] );
+    QModelIndex ic2 = patternDataModel->mapToSource( _index[c2_le] );
+    QModelIndex ic3 = patternDataModel->mapToSource( _index[c3_le] );
 
-   QModelIndex ip1 = patternDataModel->mapToSource( _index[p1_le] );
-   QModelIndex ip2 = patternDataModel->mapToSource( _index[p2_le] );
-   QModelIndex ip3 = patternDataModel->mapToSource( _index[p3_le] );
+    QModelIndex ip1 = patternDataModel->mapToSource( _index[p1_le] );
+    QModelIndex ip2 = patternDataModel->mapToSource( _index[p2_le] );
+    QModelIndex ip3 = patternDataModel->mapToSource( _index[p3_le] );
 
-   //   std::cout << "nbHexa => " << nbHexa << std::endl;
+    if ( ic1.isValid() && ic2.isValid() && ic3.isValid()
+            && ip1.isValid() && ip2.isValid() && ip3.isValid() ){
+        ielts = getDocumentModel()->replace( iquads,
+                ip1, ic1,
+                ip2, ic2,
+                ip3, ic3 );
+    }
 
-   if ( ic1.isValid() && ic2.isValid() && ic3.isValid()
-         && ip1.isValid() && ip2.isValid() && ip3.isValid() ){
-         ielts = getDocumentModel()->replace( iquads,
-               ip1, ic1,
-               ip2, ic2,
-               ip3, ic3 );
-   }
+    if ( !ielts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REPLACE HEXA" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    _value  = ielts.model()->data(ielts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    result = patternBuilderModel->mapFromSource(ielts);
 
-   if ( !ielts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT REPLACE HEXA" ) );
-         return false;
-   }
-   _value  = ielts.model()->data(ielts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    //update the list (indexes)
+    for ( int r = 0; r < nbQuads; ++r ){
+        item = quads_lw->item(r);
+        iquad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iquad) );
+        item->setData(LW_DATA_ROLE, iquad.data(HEXA_DATA_ROLE));
+    }
 
-//   QString newName = name_le->text();
-//   if ( !newName.isEmpty() )/*{*/
-//      getDocumentModel()->setName( ielts, newName );
-//
-//   updateDefaultName(name_le, ielts);
-
-   result = patternBuilderModel->mapFromSource(ielts);
-
-   //update the list (indexes)
-   for ( int r = 0; r < quads_lw->count(); ++r ){
-         item = quads_lw->item(r);
-         iquad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-         item->setData(  LW_QMODELINDEX_ROLE, QVariant::fromValue<QModelIndex>(iquad) );
-         item->setData(LW_DATA_ROLE, iquad.data(HEXA_DATA_ROLE));
-   }
-
-   return true;
+    return true;
 }
 
-
-
-
 // ------------------------- QuadRevolutionDialog ----------------------------------
-
 // ============================================================== Constructeur
 
 QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
- HexaBaseDialog(parent, editmode, f)
+         HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_quad_revolution.html";
-   setupUi( this );
-   _initWidget(editmode);
-   //	setFocusProxy( quads_lw );
+    _helpFileName = "gui_quad_revolution.html";
+    setupUi( this );
+    _initWidget(editmode);
+    revolutionUni_rb->click();
 }
 
 // ============================================================== getAssocsVTK
@@ -6406,21 +5760,22 @@ QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, Mode editmode, Qt::
  */
 QModelIndexList QuadRevolutionDialog::getAssocsVTK()
 {
-   QModelIndexList assocs;
-   QModelIndex iQuad;
-   QListWidgetItem* item = NULL;
-   if (getPatternDataSelectionModel() == NULL) return assocs;
+    QModelIndexList assocs;
+    QModelIndex iQuad;
+    QListWidgetItem* item = NULL;
+    if (getPatternDataSelectionModel() == NULL) return assocs;
 
-   //ListWidget content
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   if ( !patternDataModel ) return assocs;
-   for ( int r = 0; r < quads_lw->count(); ++r ){
-         item = quads_lw->item(r);
-         iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iQuad.isValid() )
+    //ListWidget content
+    const PatternDataModel* patternDataModel = getPatternDataModel();
+    if ( !patternDataModel ) return assocs;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r ){
+        item = quads_lw->item(r);
+        iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iQuad.isValid() )
             assocs << iQuad;
-   }
-   return assocs;
+    }
+    return assocs;
 }
 
 // ============================================================== Destructeur
@@ -6431,177 +5786,163 @@ QuadRevolutionDialog::~QuadRevolutionDialog()
 // ============================================================== _initInputWidget
 void QuadRevolutionDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    quads_lw->installEventFilter(this);
+    center_le->installEventFilter(this);
+    axis_le->installEventFilter(this);
 
-   center_pt_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   axis_vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
+    center_le->setReadOnly(true);
+    axis_le->setReadOnly(true);
 
-   center_pt_le->setValidator( validator );
-   axis_vec_le->setValidator( validator );
-   //   quads_lw->setValidator( validator );
+    angles_lw->setItemDelegate( new HexaAngleDoubleSpinBoxDelegate(angles_lw) );
+    angles_lw->setEditTriggers( QAbstractItemView::DoubleClicked );
 
-//   name_le->installEventFilter(this);
-   center_pt_le->installEventFilter(this);
-   axis_vec_le->installEventFilter(this);
-   quads_lw->installEventFilter(this);
+    QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+    delQuadShortcut->setContext( Qt::WidgetShortcut );
+    connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(delQuadItem()) );
+    connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()));
+    connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()));
 
-   if ( editmode == NEW_MODE ){
-         angles_lw->setItemDelegate( new HexaAngleDoubleSpinBoxDelegate(angles_lw) );
-         angles_lw->setEditTriggers( QAbstractItemView::DoubleClicked );
-
-         QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
-         delQuadShortcut->setContext( Qt::WidgetShortcut );
-         connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(delQuadItem()) );
-         connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()));
-         connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()));
-         //     connect(clear_pb, SIGNAL(clicked()), this, SLOT(clearQuads()));
-   }
-
-   center_pt_le->setReadOnly(true);
-   axis_vec_le->setReadOnly(true);
-
-   connect(quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
+    connect(quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
 }
 
 // ============================================================== clear
 void QuadRevolutionDialog::clear()
 {
-//    name_le->clear();
-
     quads_lw->clear();
     modelUnregister(quads_lw);
 
-    center_pt_le->clear();
-    modelUnregister(center_pt_le);
+    center_le->clear();
+    modelUnregister(center_le);
 
-    axis_vec_le->clear();
-    modelUnregister(axis_vec_le);
-
-    angles_lw->clear();
-    modelUnregister(angles_lw);
+    axis_le->clear();
+    modelUnregister(axis_le);
 
     modelUnregister(this);
 }
 
-
-// ============================================================== updateButtonBox
-void QuadRevolutionDialog::updateButtonBox() //CS_TODO? : check center, axis
-{
-   int nbQuads  = quads_lw->count();
-   int nbAngles = angles_lw->count();
-
-   if ( nbQuads>0 && nbAngles> 0 ){
-         //_applyCloseButton->setEnabled(true);
-         _applyButton->setEnabled(true);
-   } else {
-         //_applyCloseButton->setEnabled(false);
-         _applyButton->setEnabled(false);
-   }
-}
-
-
 // ============================================================== addAngleItem
 void QuadRevolutionDialog::addAngleItem() //CS_TODO
 {
-   QListWidgetItem* previousItem = angles_lw->currentItem();
-   QListWidgetItem* newItem      = new QListWidgetItem();
+    QListWidgetItem* previousItem = angles_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
 
-   double defaultValue = 180.;
-   if ( previousItem )
-      defaultValue =  previousItem->data(Qt::EditRole).toDouble();
+    double defaultValue = 180.;
+    if ( previousItem )
+        defaultValue =  previousItem->data(Qt::EditRole).toDouble();
 
-   newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
-   newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
-   angles_lw->addItem(newItem);
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    angles_lw->addItem(newItem);
 
-   updateButtonBox();
+    updateButtonBox();
 }
 
 // ============================================================== delAngleItem
 void QuadRevolutionDialog::delAngleItem()
 {
-   delete angles_lw->currentItem();
-   updateButtonBox();
+    delete angles_lw->currentItem();
+    updateButtonBox();
 }
 
 // ============================================================== delQuadItem
 void QuadRevolutionDialog::delQuadItem()
 {
-   delete quads_lw->currentItem();
-   updateButtonBox();
+    delete quads_lw->currentItem();
+    updateButtonBox();
 }
 
 // ============================================================== apply
 bool QuadRevolutionDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel)    return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex ielts; //result
-   QListWidgetItem* item = NULL;
+    QListWidgetItem* item = NULL;
 
-   QModelIndexList istartquads;
-   QModelIndex     iquad;
-   for ( int r = 0; r < quads_lw->count(); ++r){
-         item = quads_lw->item(r);
-         iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-         if ( iquad.isValid() )
+    QModelIndexList istartquads;
+    QModelIndex     iquad;
+    int nbQuads = quads_lw->count();
+    for ( int r = 0; r < nbQuads; ++r){
+        item = quads_lw->item(r);
+        iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if ( iquad.isValid() )
             istartquads << iquad;
-   }
+    }
 
-   QModelIndex icenter_pt = patternDataModel->mapToSource( _index[center_pt_le] );
-   QModelIndex iaxis_vec  = patternBuilderModel->mapToSource( _index[axis_vec_le] );
+    QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+    QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+    int angle = angle_spb->value();
+    int nbre = nbre_spb->value();
 
-   QList<double> angles;
-   for ( int r = 0; r < angles_lw->count(); ++r){
-         item = angles_lw->item(r);
-         angles << item->data(Qt::EditRole).toDouble();
-   }
+    vector<double> angles;
+    int nbAngles = angles_lw->count();
+    for ( int r = 0; r < nbAngles; ++r){
+        item = angles_lw->item(r);
+        angles.push_back(item->data(Qt::EditRole).toDouble());
+    }
 
-   if ( icenter_pt.isValid() && iaxis_vec.isValid() ){
-         ielts = getDocumentModel()->revolutionQuads( istartquads, icenter_pt, iaxis_vec, angles );
-   }
+    QModelIndex iElts; //result
+    if (nbQuads == 1 && istartquads[0].isValid() && icenter.isValid() && iaxis.isValid())
+    {
+        if (revolutionUni_rb->isChecked())
+            iElts = docModel->revolutionQuadUni(istartquads[0], icenter, iaxis, angle, nbre);
+        else if (revolution_rb->isChecked())
+            iElts = docModel->revolutionQuad(istartquads[0], icenter, iaxis, angles);
+    }
+    else if (nbQuads > 1 && icenter.isValid() && iaxis.isValid())
+    {
+        if (revolutionUni_rb->isChecked())
+            iElts = docModel->revolutionQuadsUni(istartquads, icenter, iaxis, angle, nbre);
+        else if (revolution_rb->isChecked())
+            iElts = docModel->revolutionQuads(istartquads, icenter, iaxis, angles);
+    }
 
-   if ( !ielts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE QUAD REVOLUTION" ) );
-         return false;
-   }
-   _value  = ielts.model()->data(ielts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE QUAD REVOLUTION" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    _value  = iElts.model()->data(iElts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    result = patternBuilderModel->mapFromSource(iElts);
 
-//   QString newName = name_le->text();
-//   if ( !newName.isEmpty() )/*{*/
-//      getDocumentModel()->setName( ielts, newName );
-//
-//   updateDefaultName(name_le, ielts);
-
-   result = patternBuilderModel->mapFromSource(ielts);
-
-   return true;
+    return true;
 }
 
-
-
 // ------------------------- MakeHemiSphereDialog ----------------------------------
-
 // ============================================================== Constructeur
-
 MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
- HexaBaseDialog(parent, editmode, f)
+         HexaBaseDialog(parent, editmode, f)
 {
-   _helpFileName = "gui_hemisphere.html";
-   setupUi( this );
-   _initWidget(editmode);
+    _helpFileName = "gui_hemisphere.html";
+    setupUi( this );
+    _initWidget(editmode);
+    sphere_rb->click();
+
+    connect( sphereTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( sphereUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( sphere2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( sphere_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( sphere_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
+    connect( sphericalTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( sphericalUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( spherical2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( spherical_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( spherical_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+
+    connect( rindTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rindUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rind2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rind_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rind_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
 
 // ============================================================== Destructeur
@@ -6612,56 +5953,150 @@ MakeHemiSphereDialog::~MakeHemiSphereDialog()
 // ============================================================== _initInputWidget
 void MakeHemiSphereDialog::_initInputWidget( Mode editmode )
 {
-   QRegExp rx("");
-   QValidator *validator = new QRegExpValidator(rx, this);
+    center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    hole_axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    base_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    vplan_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
-//   setProperty( "HexaWidgetType",  QVariant::fromValue(ELEMENTS_TREE) );
-   installEventFilter(this);
+    installEventFilter(this);
+    center_le->installEventFilter(this);
+    hole_axis_le->installEventFilter(this);
+    base_le->installEventFilter(this);
+    vplan_le->installEventFilter(this);
 
-   sphere_center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   cross_pt_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-   hole_axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   cross_vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-   radial_vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    center_le->setReadOnly(true);
+    hole_axis_le->setReadOnly(true);
+    base_le->setReadOnly(true);
+    vplan_le->setReadOnly(true);
 
-   sphere_center_le->setValidator( validator );
-   cross_pt_le->setValidator( validator );
-   hole_axis_le->setValidator( validator );
-   cross_vec_le->setValidator( validator );
-   radial_vec_le->setValidator( validator );
+    radius_lw_1->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw_1));
+    radius_lw_1->setEditTriggers(QAbstractItemView::DoubleClicked);
 
+    radius_lw_2->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw_2));
+    radius_lw_2->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-//   name_le->installEventFilter(this);
-   sphere_center_le->installEventFilter(this);
-   cross_pt_le->installEventFilter(this);
-   hole_axis_le->installEventFilter(this);
-   cross_vec_le->installEventFilter(this);
-   radial_vec_le->installEventFilter(this);
+    angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-   sphere_center_le->setReadOnly(true);
-   cross_pt_le->setReadOnly(true);
-   hole_axis_le->setReadOnly(true);
-   cross_vec_le->setReadOnly(true);
-   radial_vec_le->setReadOnly(true);
+    height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
+    height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    connect( add_radius_pb_1, SIGNAL(clicked()), this, SLOT(addRadiusItem1()) );
+    connect( del_radius_pb_1, SIGNAL(clicked()), this, SLOT(delRadiusItem1()) );
+
+    connect( add_radius_pb_2, SIGNAL(clicked()), this, SLOT(addRadiusItem2()) );
+    connect( del_radius_pb_2, SIGNAL(clicked()), this, SLOT(delRadiusItem2()) );
+
+    connect( add_angle_pb, SIGNAL(clicked()), this, SLOT(addAngleItem()) );
+    connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()) );
+
+    connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
+    connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== addRadiusItem
+void MakeHemiSphereDialog::addRadiusItem1()
+{
+    QListWidgetItem* previousItem = radius_lw_1->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    radius_lw_1->addItem(newItem);
+}
+
+// ============================================================== delRadiusItem
+void MakeHemiSphereDialog::delRadiusItem1()
+{
+    delete radius_lw_1->currentItem();
+}
+
+// ============================================================== addRadiusItem
+void MakeHemiSphereDialog::addRadiusItem2()
+{
+    QListWidgetItem* previousItem = radius_lw_2->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    radius_lw_2->addItem(newItem);
+}
+
+// ============================================================== delRadiusItem
+void MakeHemiSphereDialog::delRadiusItem2()
+{
+    delete radius_lw_2->currentItem();
+}
+
+// ============================================================== addAngleItem
+void MakeHemiSphereDialog::addAngleItem()
+{
+    QListWidgetItem* previousItem = angle_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 180.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    angle_lw->addItem(newItem);
+}
+
+// ============================================================== delAngleItem
+void MakeHemiSphereDialog::delAngleItem()
+{
+    delete angle_lw->currentItem();
+}
+
+// ============================================================== addHeightItem
+void MakeHemiSphereDialog::addHeightItem()
+{
+    QListWidgetItem* previousItem = height_lw->currentItem();
+    QListWidgetItem* newItem      = new QListWidgetItem();
+
+    double defaultValue = 1.;
+    if ( previousItem )
+        defaultValue = previousItem->data(Qt::EditRole).toDouble();
+
+    newItem->setData(  Qt::EditRole, QVariant(defaultValue) );
+    newItem->setFlags( newItem->flags () | Qt::ItemIsEditable);
+    height_lw->addItem(newItem);
+}
+
+// ============================================================== delHeightItem
+void MakeHemiSphereDialog::delHeightItem()
+{
+    delete height_lw->currentItem();
+}
+
+// ============================================================== updateHelpFileName
+void MakeHemiSphereDialog::updateHelpFileName()
+{
 }
 
 // ============================================================== clear
 void MakeHemiSphereDialog::clear()
 {
-    sphere_center_le->clear();
-    modelUnregister(sphere_center_le);
+    center_le->clear();
+    modelUnregister(center_le);
 
     hole_axis_le->clear();
     modelUnregister(hole_axis_le);
 
-    cross_pt_le->clear();
-    modelUnregister(cross_pt_le);
+    base_le->clear();
+    modelUnregister(base_le);
 
-    cross_vec_le->clear();
-    modelUnregister(cross_vec_le);
-
-    radial_vec_le->clear();
-    modelUnregister(radial_vec_le);
+    vplan_le->clear();
+    modelUnregister(vplan_le);
 
     modelUnregister(this);
 }
@@ -6669,84 +6104,145 @@ void MakeHemiSphereDialog::clear()
 // ============================================================== apply
 bool MakeHemiSphereDialog::apply(QModelIndex& result)
 {
-   if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-   _currentObj = NULL;
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
 
-   SUIT_OverrideCursor wc;
-   if ( !getDocumentModel() ) return false;
-   const PatternDataModel* patternDataModel = getPatternDataModel();
-   const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-   if ( !patternDataModel || !patternBuilderModel) return false;
+    DocumentModel* docModel = getDocumentModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
-   QModelIndex iElts;
-   QModelIndex icenter = patternDataModel->mapToSource( _index[sphere_center_le] );
-   QModelIndex iplorig = patternDataModel->mapToSource( _index[cross_pt_le] );
-   QModelIndex ivecx  = patternBuilderModel->mapToSource( _index[radial_vec_le] );
-   QModelIndex ivecz  = patternBuilderModel->mapToSource( _index[hole_axis_le] );
+    QModelIndex iElts;
+    QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
+    QModelIndex ivplan  = patternDataModel->mapToSource( _index[vplan_le] );
+    QModelIndex ivecx   = patternBuilderModel->mapToSource( _index[base_le] );
+    QModelIndex ivecz   = patternBuilderModel->mapToSource( _index[hole_axis_le] );
 
-   double radext  = sphere_radext_spb->value();
-   double radhole = hole_rad_spb->value();
+    double radhole  = hole_rad_spb->value();
+    double radext   = sphere_radext_spb->value();
+    double radint   = sphere_radint_spb->value();
+    double radang = radial_angle_spb->value();
 
-   int nrad  = ngrid_rad_spb->value();
-   int nang  = ngrid_ang_spb->value();
-   int nhaut = ngrid_height_spb->value();
+    int crit  =  crit_spb->value();
+    int nb    = nbre_spb->value();
+    int nrad  = ngrid_rad_spb->value();
+    int nang  = ngrid_ang_spb->value();
+    int nhaut = ngrid_height_spb->value();
 
+    //radius, angles and heights collection
+    QListWidgetItem* item = NULL;
 
-   if ( icenter.isValid() && ivecx.isValid() && ivecz.isValid() && iplorig.isValid() ){
-         if ( sphere_rind_cb->isChecked() ){ // rind
-               double radint  = sphere_radint_spb->value();
-               if ( radial_partial_cb->isChecked() ){
-                     double angle = radial_angle_spb->value();
-                     iElts = getDocumentModel()->makePartRind( icenter, ivecx, ivecz,
-                           radext, radint, radhole,
-                           iplorig,      angle,
-                           nrad, nang, nhaut );
-               } else {
-                     iElts = getDocumentModel()->makeRind( icenter,
-                           ivecx, ivecz,
-                           radext, radint, radhole,
-                           iplorig,
-                           nrad, nang, nhaut );
-               }
-         } else { // sphere
-               if ( radial_partial_cb->isChecked() ){
-                     double angle = radial_angle_spb->value();
-                     iElts = getDocumentModel()->makePartSphere( icenter, ivecx, ivecz,
-                           radext, radhole,
-                           iplorig, angle,
-                           nrad, nang, nhaut );
-               } else {
-                     iElts = getDocumentModel()->makeSphere( icenter,
-                           ivecx, ivecz,
-                           radext, radhole,
-                           iplorig,
-                           nrad, nang, nhaut );
-               }
-         }
-   }
+    vector<double> radius1;
+    vector<double> radius2;
+    vector<double> angles;
+    vector<double> heights;
 
+    //angles collection
+    double somme = 0.;
+    int nbAngles = angle_lw->count();
+    for ( int r = 0; r < nbAngles; ++r){
+        item = angle_lw->item(r);
+        double itemValue = item->data(Qt::EditRole).toDouble();
+        angles.push_back(itemValue);
+        somme += itemValue;
+    }
 
-   if ( !iElts.isValid() ){
-         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE RIND" ) );
-         return false;
-   }
-   _value  = iElts.model()->data(iElts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    //radius1 collection
+    int nbRadius = radius_lw_1->count();
+    for ( int r = 0; r < nbRadius; ++r){
+        item = radius_lw_1->item(r);
+        radius1.push_back(item->data(Qt::EditRole).toDouble());
+    }
 
-//   QString newName = name_le->text();
-//   if ( !newName.isEmpty() )/*{*/
-//      getDocumentModel()->setName( iElts, newName );
-//
-//   updateDefaultName(name_le, iElts);
+    //radius2 collection
+    nbRadius = radius_lw_2->count();
+    for ( int r = 0; r < nbRadius; ++r){
+        item = radius_lw_2->item(r);
+        radius2.push_back(item->data(Qt::EditRole).toDouble());
+    }
 
-   result = patternBuilderModel->mapFromSource(iElts);
+    //heights collection
+    int nbHeight = height_lw->count();
+    for ( int r = 0; r < nbHeight; ++r){
+        item = height_lw->item(r);
+        heights.push_back(item->data(Qt::EditRole).toDouble());
+    }
 
-   return true;
+    if (sphere_rb->isChecked())
+    {
+        if (sphereTop_rb->isChecked())
+            iElts = docModel->makeSphereTop( nrad, nang, nhaut );
+        else if (sphereUni_rb->isChecked())
+        {
+            if (icenter.isValid() && ivplan.isValid() && ivecx.isValid() && ivecz.isValid())
+                iElts = docModel->makeSphereUni(icenter, ivecx, ivecz, radhole, radext, radang,
+                                                ivplan, nrad, nang, nhaut);
+        }
+        else if (sphere2_rb->isChecked())
+        {
+            if (somme > 360.01)
+            {
+                SUIT_MessageBox::information( 0,
+                        tr("HEXA_INFO"),
+                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+                return false;
+            }
+            if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
+                iElts = docModel->makeSphere(icenter, ivecx, ivecz, radius2, angles, heights);
+        }
+    }
+    else if (spherical_rb->isChecked())
+    {
+        if (sphericalTop_rb->isChecked())
+            iElts = docModel->makeSphericalTop(nb, crit);
+        else if (sphericalUni_rb->isChecked())
+        {
+            if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
+                iElts = docModel->makeSphericalUni(icenter, ivecx, ivecz, radhole, nb, crit);
+        }
+        else if (spherical2_rb->isChecked())
+        {
+            if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
+                iElts = docModel->makeSpherical(icenter, ivecx, ivecz, radius1, crit);
+        }
+    }
+    else if (rind_rb->isChecked())
+    {
+        if (rindTop_rb->isChecked())
+            iElts = docModel->makeRindTop(nrad, nang, nhaut);
+        else if (rindUni_rb->isChecked())
+        {
+            if (icenter.isValid() && ivecx.isValid() && ivecz.isValid() && ivplan.isValid())
+                iElts = docModel->makeRindUni(icenter, ivecx, ivecz,
+                                              radhole, radint, radext, radang,
+                                              ivplan, nrad, nang, nhaut);
+        }
+        else if (rind2_rb->isChecked())
+        {
+            if (somme > 360.01)
+            {
+                SUIT_MessageBox::information( 0,
+                        tr("HEXA_INFO"),
+                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+                return false;
+            }
+            if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
+                iElts = docModel->makeRind(icenter, ivecx, ivecz, radius2, angles, heights);
+        }
+    }
+
+    if ( !iElts.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT MAKE RIND" ) + "\n" + getErrorMsg() );
+        return false;
+    }
+    _value  = iElts.model()->data(iElts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
+    result = patternBuilderModel->mapFromSource(iElts);
+
+    return true;
 }
 
 // ------------------------- ModelInfoDialog ----------------------------------
-
 ModelInfoDialog::ModelInfoDialog(QWidget* parent, Qt::WindowFlags wf):
-         HexaBaseDialog(parent, INFO_MODE, wf)
+                 HexaBaseDialog(parent, INFO_MODE, wf)
 {
     setupUi( this );
     setWindowTitle(HEXABLOCKGUI::tr("MODEL_INFO"));
@@ -6785,107 +6281,407 @@ void ModelInfoDialog::showEvent( QShowEvent * event )
     QDialog::showEvent ( event );
 }
 
-
 // ============================================================== hideEvent
 void ModelInfoDialog::hideEvent ( QHideEvent * event )
 {
-   QDialog::hideEvent( event );
+    QDialog::hideEvent( event );
 }
 
-
 // ------------------------- AddShapeDialog ----------------------------------
-
 AddShapeDialog::AddShapeDialog(QWidget* parent, Mode editmode, Qt::WindowFlags wf):
-         HexaBaseDialog(parent, editmode, wf)
+                 HexaBaseDialog(parent, editmode, wf)
 {
     _helpFileName = "";
     setupUi( this );
     _initWidget(editmode);
     setWindowTitle(HEXABLOCKGUI::tr("ADD_SHAPE"));
-
-    currentGeomObj.nullify();
 }
 
 // ============================================================== Destructeur
 AddShapeDialog::~AddShapeDialog()
 {
-  disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
-              this, SLOT(onCurrentSelectionChanged()) );
+    disconnect( HEXABLOCKGUI::selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(onCurrentSelectionChanged()) );
 }
 
 // ============================================================== close
 void AddShapeDialog::close()
 {
-  HEXABLOCKGUI::assocInProgress = false;
-  HexaBaseDialog::close();
+    HEXABLOCKGUI::assocInProgress = false;
+    HexaBaseDialog::close();
 }
 
 // ============================================================== _initInputWidget
 void AddShapeDialog::_initInputWidget( Mode editmode )
 {
-  shape_le->setProperty( "HexaWidgetType",  QVariant::fromValue(GEOMSHAPE_TREE) );
-  shape_le->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_SHAPE) );
-  shape_le->installEventFilter(this);
-  shape_le->setReadOnly(true);
+    shape_le->setProperty( "HexaWidgetType",  QVariant::fromValue(GEOMSHAPE_TREE) );
+    shape_le->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_SHAPE) );
+    shape_le->installEventFilter(this);
+    shape_le->setReadOnly(true);
 }
 
 void AddShapeDialog::clear()
 {
-   shape_le->clear();
-   shape_le->setProperty("GeomObj", QVariant());
-   currentGeomObj.nullify();
+    shape_le->clear();
+    shape_le->setProperty("GeomObj", QVariant());
 
-   modelUnregister(this);
+    modelUnregister(this);
 }
 
 // ============================================================== onCurrentSelectionChanged
 void AddShapeDialog::onCurrentSelectionChanged()
 {
-    if ( !isVisible() ) return;
+       SALOME_ListIO selectedObjects;
+       HEXABLOCKGUI::currentDocGView->getSelected(selectedObjects);
+       if (selectedObjects.IsEmpty())
+           return;
 
-    SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+       // * extract the TopoDS_Shape of the selected object
+       TopoDS_Shape selectedTopoShape = GEOMBase::GetTopoFromSelection( selectedObjects );
+       if (selectedTopoShape.IsNull())
+           return;
+       shape_le->setProperty("TopoDS_Shape", QVariant::fromValue<TopoDS_Shape>(selectedTopoShape));
 
-    bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
-    if (!isOCC || getDocumentModel() == NULL) return;
-
-    currentGeomObj = getSelected(TopAbs_SHAPE);
-    shape_le->setText(GEOMBase::GetName( currentGeomObj.get() ));
-
-    DocumentModel::GeomObj* geomObj = getDocumentModel()->convertToGeomObj(currentGeomObj);
-    if (geomObj != NULL)
-        shape_le->setProperty("GeomObj", QVariant::fromValue<DocumentModel::GeomObj>(*geomObj));
+       // * extract the name of the selected shape
+       QString name;
+       GEOMBase::GetNameOfSelectedIObjects( selectedObjects, name, true );
+       shape_le->setText(name);
 }
 
 // ============================================================== onWindowActivated
 void AddShapeDialog::onWindowActivated(SUIT_ViewManager* vm)
 {
-   QString vmType = vm->getType();
-   if ( vmType == OCCViewer_Viewer::Type() ){
-         globalSelection(HEXABLOCKGUI::currentOccGView->getViewWindow()); // close local contexts, if any
-         localSelection(HEXABLOCKGUI::currentOccGView->getViewWindow(), TopAbs_SHAPE);
-         shape_le->setFocus();
-   }
+    QString vmType = vm->getType();
+    if ( vmType == OCCViewer_Viewer::Type() )
+        shape_le->setFocus();
 }
-
 
 // ============================================================== apply
 bool AddShapeDialog::apply(QModelIndex& result)
 {
-    TopoDS_Shape aShape;
-    bool assocOK = false;
-
-    if ( currentGeomObj && GEOMBase::GetShape(currentGeomObj.get(), aShape) && !aShape.IsNull() )
+    bool assocOk;
+    QString shapeName = shape_le->text();
+    QVariant v = shape_le->property("TopoDS_Shape");
+    if ( !v.isValid() || shapeName.isEmpty())
+        assocOk = false;
+    else
     {
-        QString shapeName = GEOMBase::GetName( currentGeomObj.get() );
-        assocOK = getDocumentModel()->addShape(aShape, shapeName);
+        TopoDS_Shape shape = v.value<TopoDS_Shape>();
+        if (shape.IsNull())
+            assocOk = false;
+        else
+            assocOk = getDocumentModel()->addShape(shape, shapeName);
     }
 
-    if ( !assocOK ){
-        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), HEXABLOCKGUI::tr("ADD_SHAPE_FAILED") );
+    if ( !assocOk ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), HEXABLOCKGUI::tr("ADD_SHAPE_FAILED") + "\n" + getErrorMsg() );
         return false;
     }
 
-    getDocumentModel()->clearGeometry();
-    getDocumentModel()->fillGeometry();
     return true;
 }
+
+
+
+
+
+
+//*****************************  OBSOLETE: A SUPPRIMER !!!!  ************************************//
+
+// ============================================================== Constructeur
+CylinderDialog::CylinderDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
+: HexaBaseDialog(parent, editmode, f),
+  _value(0)
+{
+    _helpFileName = "gui_cyl.html";
+    setupUi( this );
+    _initWidget(editmode);
+
+    if ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Cylinder Information") );
+    }
+}
+
+// ============================================================== Destructeur
+CylinderDialog::~CylinderDialog()
+{
+}
+
+// ============================================================== _initInputWidget
+void CylinderDialog::_initInputWidget( Mode editmode )
+{
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
+
+    installEventFilter(this);
+    name_le->installEventFilter(this);
+
+    vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+
+    vex_le->setValidator( validator );
+    vec_le->setValidator( validator );
+
+    vex_le->installEventFilter(this);
+    vec_le->installEventFilter(this);
+
+    vex_le->setReadOnly(true);
+    vec_le->setReadOnly(true);
+
+    if (editmode == INFO_MODE)
+    {
+        name_le->setReadOnly(true);
+        r_spb->setReadOnly(true);
+        h_spb->setReadOnly(true);
+    }
+
+}
+
+// ============================================================== clear
+void CylinderDialog::clear()
+{
+    name_le->clear();
+
+    vex_le->clear();
+    modelUnregister(vex_le);
+
+    vec_le->clear();
+    modelUnregister(vec_le);
+
+    r_spb->clear();
+    h_spb->clear();
+
+    modelUnregister(this);
+
+}
+
+// ============================================================== setValue
+void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
+{
+    HEXA_NS::Vertex* base      = c->getBase();
+    HEXA_NS::Vector* direction = c->getDirection();
+    double  r = c->getRadius();
+    double  h = c->getHeight();
+
+    name_le->setText( c->getName() );
+    vex_le->setText( base->getName() );
+    vec_le->setText( direction->getName() );
+    r_spb->setValue(r);
+    h_spb->setValue(h);
+
+    if ( getPatternDataSelectionModel() ){
+        QModelIndex iCyl       = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(c) );
+        QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
+        QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
+
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(iCyl) );
+        vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
+        vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
+    }
+    _value = c;
+}
+
+// ============================================================== getValue
+HEXA_NS::Cylinder* CylinderDialog::getValue()
+{
+    return _value;
+}
+
+// ============================================================== apply
+bool CylinderDialog::apply(QModelIndex& result)
+{
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
+
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel) return false;
+
+    QModelIndex iCyl;
+    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
+    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
+    double r = r_spb->value();
+    double h = h_spb->value();
+
+    if ( ivex.isValid()
+            && ivec.isValid() ){
+        iCyl = getDocumentModel()->addCylinder( ivex, ivec, r,  h );
+    }
+
+    if ( !iCyl.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
+        return false;
+    }
+
+    _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
+
+    QString newName = name_le->text();
+    if (!newName.isEmpty()) /*{*/
+        getDocumentModel()->setName( iCyl, newName );
+
+    //update the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
+
+    // to select/highlight result
+    result = patternBuilderModel->mapFromSource(iCyl);
+
+    return true;
+}
+
+//------------------------------- PipeDialog -----------------------------------
+
+// ============================================================== Constructeur
+
+PipeDialog::PipeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
+: HexaBaseDialog(parent, editmode, f),
+  _value(0)
+{
+    _helpFileName = "gui_pipe.html";
+    setupUi( this );
+    _initWidget(editmode);
+    //   setFocusProxy( vex_le );
+
+    if ( editmode == INFO_MODE ){
+        setWindowTitle( tr("Pipe Information") );
+    }
+
+}
+
+// ============================================================== Destructeur
+PipeDialog::~PipeDialog()
+{
+}
+
+// ============================================================== _initInputWidget
+void PipeDialog::_initInputWidget( Mode editmode )
+{
+    QRegExp rx("");
+    QValidator *validator = new QRegExpValidator(rx, this);
+
+    installEventFilter(this);
+    name_le->installEventFilter(this);
+
+    //Vertex Field config
+    vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
+    vex_le->installEventFilter(this);
+    vex_le->setValidator( validator );
+
+    //Vector Field config
+    vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    vec_le->installEventFilter(this);
+    vec_le->setValidator( validator );
+
+
+    if ( editmode == INFO_MODE ){
+        name_le->setReadOnly(true);
+        ir_spb->setReadOnly(true);
+        er_spb->setReadOnly(true);
+        h_spb->setReadOnly(true);
+    }
+
+    vex_le->setReadOnly(true);
+    vec_le->setReadOnly(true);
+
+    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
+}
+
+// ============================================================== clear
+void PipeDialog::clear()
+{
+    name_le->clear();
+
+    vex_le->clear();
+    modelUnregister(vex_le);
+
+    vec_le->clear();
+    modelUnregister(vec_le);
+
+    modelUnregister(this);
+}
+
+// ============================================================== setValue
+void PipeDialog::setValue(HEXA_NS::Pipe* p)
+{
+    HEXA_NS::Vertex* base      = p->getBase();
+    HEXA_NS::Vector* direction = p->getDirection();
+    double  ir = p->getInternalRadius();
+    double  er = p->getRadius();
+    double  h  = p->getHeight();
+
+    name_le->setText( p->getName() );
+    vex_le->setText( base->getName() );
+    vec_le->setText( direction->getName() );
+    ir_spb->setValue(ir);
+    er_spb->setValue(er);
+    h_spb->setValue(h);
+
+    if ( getPatternDataSelectionModel() ){
+        QModelIndex iPipe      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
+        QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
+        QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
+
+        name_le->setProperty( "QModelIndex",  QVariant::fromValue(iPipe) );
+        vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
+        vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
+    }
+    _value = p;
+}
+
+// ============================================================== getValue
+HEXA_NS::Pipe* PipeDialog::getValue()
+{
+    return _value;
+}
+
+// ============================================================== apply
+bool PipeDialog::apply(QModelIndex& result)
+{
+    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+    _currentObj = NULL;
+
+    if ( !getDocumentModel() ) return false;
+    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel || !patternBuilderModel)    return false;
+
+    QModelIndex iPipe;
+    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
+    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
+    double ir = ir_spb->value();
+    double er = er_spb->value();
+    double h  = h_spb->value();
+
+    if (ir >= er) {
+        SUIT_MessageBox::information( this, tr( "CANNOT ADD PIPE" ), tr( "External radius must be greather than Internal radius!" ) );
+        return false;
+    }
+
+
+    if ( ivex.isValid()
+            && ivec.isValid() ){
+        iPipe = getDocumentModel()->addPipe( ivex, ivec, ir, er, h );
+    }
+
+    if ( !iPipe.isValid() ){
+        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
+        return false;
+    }
+    _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
+
+    QString newName = name_le->text();
+    if ( !newName.isEmpty() )/*{*/
+        getDocumentModel()->setName( iPipe, newName );
+
+    //update the default name in the dialog box
+    if (_value != NULL)
+        updateDefaultName(name_le, _value->getType());
+
+    // to select/highlight result
+    result = patternBuilderModel->mapFromSource(iPipe);
+
+    return true;
+}
+// ************************************** FIN A SUPPRIMER ******************************************//
+

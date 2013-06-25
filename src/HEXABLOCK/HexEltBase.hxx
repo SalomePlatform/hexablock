@@ -32,6 +32,7 @@
 
 #define GetClone(elt) ((elt)==NULL ? NULL : elt->getClone())
 #define BadElement(elt) (elt)==NULL || (elt)->isBad()
+#define EltIsValid(elt)    (elt)!=NULL && (elt)->isValid()
 
 BEGIN_NAMESPACE_HEXA
 
@@ -100,8 +101,9 @@ public :
    void   setName (const string& nom) { el_name = nom ; }
    void   setName (cpchar nom)        { el_name = nom ; }
 
-   bool   debug (int niv=0);
-   bool   isAssociated ()             { return is_associated ; }
+   bool    debug (int niv=0);
+   bool    isAssociated ()            { return is_associated ; }
+   string  getNextName ();
 
 protected :
    EnumElt   el_type;

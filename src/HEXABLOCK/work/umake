@@ -1,0 +1,6 @@
+#!/bin/sh
+# Comm : Makefile associe aux tests unitaires
+
+cd ..
+./umake $*
+

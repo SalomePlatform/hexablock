@@ -1,36 +1,15 @@
 
 // class : Gestion des formes associees (Hexa 5)
 
-// Copyright (C) 2009-2013  CEA/DEN, EDF R&D
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
 #ifndef __NEW_SHAPE_H_
 #define __NEW_SHAPE_H_
 
 #include "HexEltBase.hxx"
 
-#ifndef NO_CASCADE
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
-#endif
 
 BEGIN_NAMESPACE_HEXA
 
@@ -81,6 +60,8 @@ public :         // for Others
    void openShape ();
    int  addCircle (double* center, double rad, double* norm, double* base);
    int  addSphere (double* center, double radius);
+   int  transfoShape   (Matrix& matrix, SubShape* shape);
+   int  translateShape (double  dir[],  SubShape* shape);
    void closeShape();
 
 private :

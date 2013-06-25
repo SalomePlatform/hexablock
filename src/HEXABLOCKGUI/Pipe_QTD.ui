@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>226</width>
-    <height>241</height>
+    <height>246</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Arguments</string>
+      <string/>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">

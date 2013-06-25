@@ -27,6 +27,7 @@
 #include "HexEdge.hxx"
 #include "HexDiagnostics.hxx"
 #include "HexDocument.hxx"
+#include "HexHexa.hxx"
 
 #include <cmath>
 #include <map>

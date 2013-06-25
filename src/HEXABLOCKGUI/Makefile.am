@@ -44,6 +44,8 @@ dist_libHEXABLOCK_la_SOURCES = \
     HEXABLOCKGUI_VtkDocumentGraphicView.cxx \
     HEXABLOCKGUI_OccGraphicView.hxx \
     HEXABLOCKGUI_OccGraphicView.cxx \
+    HEXABLOCKGUI_OCCSelector.h \
+    HEXABLOCKGUI_OCCSelector.cxx \
     HEXABLOCKGUI_GraphicViewsHandler.hxx \
     HEXABLOCKGUI_GraphicViewsHandler.cxx \
     HEXABLOCKGUI_DocumentModel.hxx \
@@ -64,8 +66,6 @@ dist_libHEXABLOCK_la_SOURCES = \
     kmodelindexproxymapper.cxx \
     klinkitemselectionmodel.hxx \
     klinkitemselectionmodel.cxx \
-    MyGEOMBase_Helper.hxx \
-    MyGEOMBase_Helper.cxx \
     MyGEOMBase_Skeleton.hxx \
     MyGEOMBase_Skeleton.cxx \
     MyBasicGUI_PointDlg.hxx \
@@ -135,7 +135,6 @@ libHEXABLOCK_la_CXXFLAGS = \
 	$(GUI_CXXFLAGS) \
 	$(GEOM_CXXFLAGS) \
 	-I$(srcdir)/../HEXABLOCK \
-	-I$(srcdir)/../HEXABLOCK_I \
 	-I$(top_builddir) \
 	-I../../idl \
 	$(qt4_cppflags) \
@@ -147,9 +146,7 @@ libHEXABLOCK_la_CXXFLAGS = \
 
 libHEXABLOCK_la_LDFLAGS  = \
 	./MyDlgRef/libMyDlgRef.la \
-	../../idl/libSalomeIDLHEXABLOCK.la \
-	../HEXABLOCK_I/libHEXABLOCKEngine.la \
-	../HEXABLOCK/libHEXABLOCKimpl.la \
+	../HEXABLOCK/libHEXABLOCKEngine.la \
 	 -L$(GUI_ROOT_DIR)/lib/salome -lEvent -L$(KERNEL_ROOT_DIR)/lib/salome \
 	 $(qt4_ldflags) $(qsci4_ldflags) \
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA \
@@ -199,6 +196,8 @@ ICONS =  \
 	resources/assoc_vertex.png \
 	resources/assoc_edge.png \
 	resources/assoc_quad.png \
+	resources/add_geom.png \
+	resources/model_info.png \
 	resources/add_group.png \
 	resources/remove_group.png \
 	resources/add_law.png \

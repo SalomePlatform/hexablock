@@ -26,12 +26,6 @@
 #include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
 
-// #include <SOCC_ViewModel.h>
-// #include <SOCC_ViewWindow.h>
-// #include <OCCViewer_ViewWindow.h>
-
-#include "MyGEOMBase_Helper.hxx"
-
 #include "klinkitemselectionmodel.hxx"
 
 class OCCViewer_ViewWindow;
@@ -51,16 +45,15 @@ namespace HEXABLOCK
             SelectionModel( QAbstractItemModel * model );
             virtual ~SelectionModel();
 
-            QModelIndex  indexBy( int role, const QString&  value );
-            QModelIndex  indexBy( int role, const QVariant& var );
-            QModelIndex indexOf( const QString& anIOEntry, int role );
+            QModelIndex     indexBy( int role, const QString&  value );
+            QModelIndex     indexBy( int role, const QVariant& var );
+            QModelIndex     indexOf( const QString& anIOEntry, int role );
             QModelIndexList indexListOf( const QString& anEntry, int role );
-            void setIgnoreSignal(bool state) { ignoreSignal = state; }
 
             virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
             virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
 
-            bool salomeNothingSelected;
+            void clearHighlightedItems() { currentHighlightedItems.clear(); }
 
        protected slots:
 
@@ -74,12 +67,8 @@ namespace HEXABLOCK
 
        protected:
             QModelIndexList getSelectionFromModel(const Handle(SALOME_InteractiveObject)& anIObject);
-            QModelIndexList getSelectionAssociactions(const Handle(SALOME_InteractiveObject)& anIObject);
 
-            bool ignoreSignal;
-//            bool _theModelSelectionChanged;
-//            bool _theVtkSelectionChanged;
-//            bool _theGeomSelectionChanged;
+            QModelIndexList currentHighlightedItems;
     };
 
     class PatternBuilderSelectionModel: public KLinkItemSelectionModel
@@ -100,7 +89,10 @@ namespace HEXABLOCK
         PatternDataSelectionModel( QAbstractItemModel * model );
         virtual ~PatternDataSelectionModel();
 
-        void highlightEltsWithAssocs(const QModelIndexList& elts);
+        void highlightTreeItems(QModelIndexList& indexes,
+                                Qt::GlobalColor bgColor = Qt::darkGreen,
+                                Qt::GlobalColor fgColor = Qt::white, bool only=true);
+        void unhighlightTreeItems(bool clearSelected=true);
         QModelIndexList getGeomAssociations(const QModelIndex& dataIndex);
 
         //Salome
@@ -122,12 +114,10 @@ namespace HEXABLOCK
         virtual ~PatternGeomSelectionModel();
 
         QModelIndex getModelIndex(const Handle(SALOME_InteractiveObject)& anIObject);
-
-//        void highlightEltsWithAssocs(const QModelIndexList& elts);
-//
-//        //Salome
-//        virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
-//        virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject );
+        void highlightTreeItems(QModelIndexList& indexes,
+                                Qt::GlobalColor bgColor = Qt::darkGreen,
+                                Qt::GlobalColor fgColor = Qt::white, bool only=true);
+        void unhighlightTreeItems(bool clearSelected=true);
 
     protected slots:
         virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
@@ -145,7 +135,6 @@ namespace HEXABLOCK
         virtual ~GroupsSelectionModel();
 
       protected slots:
-//      virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
         virtual void onSelectionChanged( const QItemSelection & selected,
                                             const QItemSelection & deselected );
 
@@ -161,7 +150,6 @@ namespace HEXABLOCK
         virtual ~MeshSelectionModel();
 
       protected slots:
-//      virtual void onCurrentChanged( const QModelIndex & current, const QModelIndex & previous );
         virtual void onSelectionChanged( const QItemSelection & selected,
                 const QItemSelection & deselected );
 

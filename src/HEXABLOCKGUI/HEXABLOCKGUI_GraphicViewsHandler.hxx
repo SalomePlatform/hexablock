@@ -39,7 +39,7 @@ namespace HEXABLOCK
       {
 
       public:
-          GraphicViewsHandler()/*: vtkViewManager(NULL)*/ {}
+          GraphicViewsHandler() {}
           virtual ~GraphicViewsHandler() {}
           VtkDocumentGraphicView* getDocumentGraphicView(SVTK_ViewWindow* view) const;
           VtkDocumentGraphicView* createDocumentGraphicView(DocumentModel* docModel, SVTK_ViewWindow* wnd, QWidget* parent);

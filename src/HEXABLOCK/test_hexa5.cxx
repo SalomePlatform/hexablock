@@ -1,23 +1,24 @@
 
 // C++ : Tests unitaires sur les creations h'hexaedres
 
-// Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+//  Copyright (C) 2009-2011  CEA/DEN, EDF R&D
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ 
+//  or email : webmaster.salome@opencascade.com
 //
 #include "Hex.hxx"
 
@@ -101,8 +102,8 @@ int test_replace5 (int nbargs, cpchar tabargs[])
 
    doc->saveVtk (son_nom, nvtk);
 
-   Hex::Elements* grid2 = doc->makeCylindrical (ori2, vx, vz, 
-                                                dr, da, dl, nr, na, nl, false);
+   // Hex::Elements* grid2 = 
+   doc->makeCylindrical (ori2, vx, vz, dr, da, dl, nr, na, nl, false);
 
    doc->saveVtk (son_nom, nvtk);
    grid0->remove ();
@@ -150,7 +151,7 @@ int test_get (int nbargs, cpchar tabargs[])
    doc->saveVtk (son_nom, nvtk);
    doc->saveVtk (son_nom, nvtk);
    doc->saveVtk (son_nom, nvtk);
-
+   return HOK;
 }
 // ======================================================== test_dump
 int test_dump (int nbargs, cpchar tabargs[])
@@ -161,7 +162,7 @@ int test_dump (int nbargs, cpchar tabargs[])
 
    double lgcell = 3;
    double cray   = lgcell*size_x/2;
-   double decal  = lgcell/sqrt (2.0);
+   // double decal  = lgcell/sqrt (2.0);
 
    int nvtk = 0;
    cpchar son_nom = "test_dump";
@@ -174,8 +175,8 @@ int test_dump (int nbargs, cpchar tabargs[])
    Hex::Vector* vy   = doc->addVector (0,3,0);
    Hex::Vector* vz   = doc->addVector (0,0,1);
 
-   Hex::Elements* grid1 = doc->makeCartesian (ori1, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   //Hex::Elements* grid1 = 
+   doc->makeCartesian (ori1, vx, vy, vz, size_x,size_y,size_z);
    doc->saveVtk (son_nom, nvtk);
    return HOK;
 }

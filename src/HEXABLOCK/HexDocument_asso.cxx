@@ -17,7 +17,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
 #include "HexEdge.hxx"
@@ -25,6 +26,9 @@
 #include "HexDiagnostics.hxx"
 #include "HexNewShape.hxx"
 #include "HexEdgeShape.hxx"
+#include "HexPropagation.hxx"
+
+#include <map>
 
 BEGIN_NAMESPACE_HEXA
 
@@ -103,7 +107,7 @@ void Document::clearAssoEdges ()
 // ====================================================== clearAssoQuads
 void Document::clearAssoQuads ()
 {
-   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
+   for (EltBase* elt = doc_first_elt[EL_QUAD]->next (); elt!=NULL;
                  elt = elt->next())
        {
        Quad* elem = static_cast <Quad*> (elt);
@@ -154,6 +158,8 @@ NewShape* Document::findShape (rcstring nom)
    for (int nro=0 ; nro<nbre ; ++nro)
        if (nom == doc_tab_shape [nro]->getName())
           return  doc_tab_shape [nro];
+
+   return NULL;
 }
 // ====================================================== find_line
 EdgeShape* find_line (EdgeShapes& gline, double* point, int& sens)
@@ -271,7 +277,6 @@ int Document::associateLine (Vertex* vfirst, Edges& mline,
    node->setAssociation (doc_cloud, vsid);
 
    double lgedge = lgtotale/nbedges;
-   double smin   = 0;
    double smax   = gstart->getLength()*(1-abstart);
    double emax   = lgedge;
    double pdeb   = pstart;
@@ -327,18 +332,12 @@ int Document::associateLine (Vertex* vfirst, Edges& mline,
           {
           pdeb = 0;
           if (boucle)
-             {
-             smin = smax;
              smax = shape->getLength ();
-             }
           else
              {
              nsh ++;
              if (nsh<nblines)
-                {
-                 smin = smax;
                  smax += glines[nsh]->getLength();
-                 }
              }
           }
        }
@@ -509,13 +508,64 @@ int Document::sortEdges (Vertex* vfirst, Edges& mline, Edges& tab_edge,
 int Document::checkAssociations ()
 {
    int nombre = countUsedEdge();
+   int nberrors = 0;
    for (int ned=0 ; ned<nombre ; ++ned)
        {
        Edge* edge = getUsedEdge (ned);
        int ier = edge->checkAssociation ();
-       // if (ier != HOK) return ier;
+       if (ier != HOK) nberrors ++;
        }
 
+   cout << " ... Check edges assotiations : " << nberrors
+        << " error(s)." << endl;
+
+   if (nberrors>0) return HERR;
+      else         return HOK;
+}
+// ====================================================== addLaws
+int Document::addLaws (double lgmoy, bool usemax)
+{
+   const double Epsilon   = 1e-6;
+   const double Precision = 1e-2;
+   const double BigNumber = 1e+36;
+
+   std::map <int, Law*>    existing_law;
+   std::map <int, Law*> :: iterator iter;
+
+   if (lgmoy<=Epsilon)
+      return HERR;
+
+   int nbprop = countPropagation();
+   for (int np=0 ; np<nbprop ; ++np)
+       {
+       Propagation* prop      = getPropagation (np);
+       const Edges& tab_edges = prop->getEdges ();
+       double lgref = usemax ? 0 : BigNumber;
+       int  nbedges = tab_edges.size();
+       for (int ned=0 ; ned<nbedges ; ++ned)
+           {
+           Edge*  edge = tab_edges [ned];
+           double lg   = edge->getAssoLen ();
+           if (usemax)
+              lgref = std::max (lgref, lg);
+           else
+              lgref = std::min (lgref, lg);
+           }
+        lgref        = lgref / lgmoy;
+        int    nbcut = (int) lgref; 
+        double delta =  lgref - (double) nbcut; 
+        if (NOT usemax || (delta < Precision))
+            nbcut --;
+
+        iter = existing_law.find (nbcut);
+        if (iter == existing_law.end())
+           {
+           char name [2];
+           sprintf (name, "u_%02d", nbcut);
+           existing_law [nbcut] = addLaw (name, nbcut);
+           }
+       prop->setLaw (existing_law [nbcut]);
+       }
    return HOK;
 }
 END_NAMESPACE_HEXA

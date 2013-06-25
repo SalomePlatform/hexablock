@@ -39,11 +39,9 @@ Hex::Hex ()
 // ======================================================== Destructeur
 Hex::~Hex ()
 {
-#ifndef NO_CASCADE
    int nbre = liste_documents.size();
    for (int nd=0 ; nd<nbre ; nd++) 
        delete liste_documents [nd];
-#endif
 }
 // ======================================================== countDocument
 int Hex::countDocument ()
@@ -197,4 +195,37 @@ Hex* Hex::getInstance  ()
 
    return first_instance;
 }
+// ======================================================== what (?)
+void Hex::what ()
+{
+   bool actif = glob->dump.start ("hexablock", "what", false);
+
+   Globale* glob = Globale::getInstance  ();
+   glob->mess.printMessage();
+
+   glob->dump.close (actif);
+}
+// ======================================================== sizeofMessage
+int Hex::sizeofMessage ()
+{
+   return glob->mess.sizeofMessage (); 
+}
+// ======================================================== getMessageLine
+cpchar Hex::getMessageLine (int nlig)
+{ 
+   return glob->mess.getLine (nlig);
+}
+// ======================================================== hex_instance
+Hex* hex_instance ()
+{
+   Hex*   hexa = Hex::getInstance ();
+   return hexa;
+}
+// ======================================================== what (fonction)
+void what ()
+{
+   Hex* hexa = Hex::getInstance ();
+   hexa->what ();
+}
+
 END_NAMESPACE_HEXA

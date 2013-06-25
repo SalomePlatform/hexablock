@@ -17,13 +17,13 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/
+// or email : webmaster.salome@opencascade.com
 //
 
 #include "HexVertexShape.hxx"
+#include "HexNewShape.hxx"
 #include "HexXmlWriter.hxx"
-
-#ifndef NO_CASCADE
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -83,6 +83,20 @@ void VertexShape::getCoords (double& px, double& py, double& pz)
    py = ss_coord[dir_y];
    pz = ss_coord[dir_z];
 }
+// ====================================================== getShape
+const TopoDS_Shape& VertexShape::getShape()
+{
+    if (geo_shape.IsNull() && ss_parent != NULL &&
+            ss_parent->getOrigin() == SH_CLOUD)
+    {
+        double x, y, z;
+        getCoords(x, y, z);
+        gp_Pnt pnt(x, y, z);
+        geo_shape = BRepBuilderAPI_MakeVertex(pnt);
+    }
+
+    return SubShape::getShape ();
+}
 // ====================================================== addAssociation
 void VertexShape::addAssociation (Vertex* elt)
 {
@@ -92,7 +106,7 @@ void VertexShape::addAssociation (Vertex* elt)
 // ====================================================== getAssociation
 Vertex* VertexShape::getAssociation (int nro)
 {
-   if (nro>0 && nro<tab_assoc.size())
+   if (nro>0 && nro < (int)tab_assoc.size())
       return tab_assoc[nro];
    else
       return NULL;
@@ -111,4 +125,3 @@ void VertexShape::saveXml (XmlWriter* xml)
    xml->closeMark ();
 }
 END_NAMESPACE_HEXA
-#endif

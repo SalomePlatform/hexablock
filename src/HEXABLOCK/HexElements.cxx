@@ -54,6 +54,9 @@ Elements::Elements (Document* doc) : EltBase (doc, EL_GRID)
    cyl_dispo  = CYL_NOFILL;
    revo_lution = false;
    prism_vec   = false;
+   val_absolues = false;       // Version Hexa6
+   cyl_phimax   = M_PI/2;
+   under_v6     = true;
 }
 // ====================================================== Constructeur
 Elements::Elements (Document* doc, int nx, int ny, int nz)
@@ -74,6 +77,8 @@ Elements::Elements (Document* doc, int nx, int ny, int nz)
 
    resize (GR_CYLINDRIC, nx, ny, nz);
    cyl_closed = true;
+   grid_geom  = NULL;
+   cyl_phimax   = M_PI/2;
 }
 // ====================================================== Constructeur (clonage)
 Elements::Elements (Elements* orig) : EltBase (orig->el_root)
@@ -93,6 +98,7 @@ Elements::Elements (Elements* orig) : EltBase (orig->el_root)
 
    resize (orig->grid_type, orig->size_hx, orig->size_hy, orig->size_hz);
    cyl_closed = orig->cyl_closed;
+   cyl_phimax = orig->cyl_phimax;
 }
 // ====================================================== resize
 void Elements::resize (EnumGrid type, int nx, int ny, int nz, int nplus)
@@ -178,180 +184,24 @@ void Elements::resize (EnumGrid type, int nx, int ny, int nz, int nplus)
            break;
       }
 
-   tab_hexa  .resize (nbr_hexas);
-   tab_quad  .resize (nbr_quads);
-   tab_edge  .resize (nbr_edges);
-   tab_vertex.resize (nbr_vertex);
+   tab_hexa  .resize (nbr_hexas,  NULL);
+   tab_quad  .resize (nbr_quads,  NULL);
+   tab_edge  .resize (nbr_edges,  NULL);
+   tab_vertex.resize (nbr_vertex, NULL);
 
    ker_vertex = nbr_vertex;
-
-   for (int nc=0 ; nc< nbr_hexas  ; nc++) tab_hexa   [nc] = NULL;
-   for (int nc=0 ; nc< nbr_quads  ; nc++) tab_quad   [nc] = NULL;
-   for (int nc=0 ; nc< nbr_edges  ; nc++) tab_edge   [nc] = NULL;
-   for (int nc=0 ; nc< nbr_vertex ; nc++) tab_vertex [nc] = NULL;
-}
-
-// ====================================================== makeCartesianGrid
-int Elements::makeCartesianGrid (Vertex* orig, Vector* v1, Vector* v2,
-                   Vector* v3, int px, int py, int pz, int mx, int my, int mz)
-{
-   if (BadElement (orig) || BadElement(v1) || BadElement(v2) || BadElement(v3)
-                         || px<=0 || py<=0 || pz <= 0
-       || v1->getNorm () <= Epsil || v2->getNorm () <= Epsil
-       || v3->getNorm () <= Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-
-   resize (GR_CARTESIAN, px+mx, py+my, pz+mz);
-
-   makeCartesianNodes (orig, v1, v2, v3, px, py, pz, mx, my, mz);
-
-   fillGrid ();
-   return HOK;
-}
-// ====================================================== makeCylindricalGrid
-int Elements::makeCylindricalGrid (Vertex* c, Vector* b, Vector* h,
-         double dr, double da, double dl, int nr, int na, int nl, bool fill)
-{
-   if (BadElement (c) || BadElement(b) || BadElement(h)
-       || nr<=0 || na<=0 || nl <= 0 || dr < Epsil || da < Epsil || dl < Epsil
-       || b->getNorm () <= Epsil || h->getNorm () <= Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-   resize (GR_CYLINDRIC, nr, na, nl);
-   cyl_closed = da >= 360.0;
-   makeCylindricalNodes (c, b, h, dr, da, dl, nr, na, nl, fill);
-   fillGrid ();
-   assoCylinder (c, h, da);
-   return HOK;
-}
-// ====================================================== makeSphericalGrid
-int Elements::makeSphericalGrid (Vertex* c, Vector* dv, int nb, double  k)
-{
-   if (BadElement (c) || BadElement(dv)
-       || nb<=0 || k < Epsil
-       || dv->getDx()<=Epsil || dv->getDy()<=Epsil || dv->getDz()<=Epsil)
-      {
-      setError ();
-      return HERR;
-      }
-
-   resize (GR_SPHERIC, nb);
-
-   Vertex* i_node [HV_MAXI];    // Les noeuds de l'hexa englobant
-   Edge*   i_edge [HE_MAXI];    // Les noeuds de l'hexa englobant
-   Quad*   i_quad [HQ_MAXI];    // Les noeuds de l'hexa englobant
-
-   for (int nro=0 ; nro<HV_MAXI; nro++)
-       {
-       double dx = glob->CoordVertex (nro, dir_x) * dv->getDx();
-       double dy = glob->CoordVertex (nro, dir_y) * dv->getDy();
-       double dz = glob->CoordVertex (nro, dir_z) * dv->getDz();
-
-       i_node [nro] = el_root->addVertex (c->getX ()+dx, c->getY ()+dy,
-                                          c->getZ ()+dz);
-       }
-
-   for (int nro=0 ; nro<HE_MAXI; nro++)
-       {
-       int v1 = glob->EdgeVertex (nro, V_AMONT);
-       int v2 = glob->EdgeVertex (nro, V_AVAL);
-       i_edge[nro] = newEdge (i_node[v1], i_node[v2]);
-
-       if (db)
-          {
-          char nm0[8], nm1 [8], nm2 [8];
-          printf (" %2d : %s = %s = [%s, %s] = [%d,%d] = [%s,%s]\n", nro,
-                 glob->namofHexaEdge(nro), i_edge[nro]->getName(nm0),
-                 glob->namofHexaVertex(v1), glob->namofHexaVertex(v2), v1, v2,
-                 i_node[v1]->getName(nm1), i_node[v2]->getName(nm2));
-          }
-       }
-
-   for (int nro=0 ; nro<HQ_MAXI; nro++)
-       i_quad[nro] = newQuad (i_edge[glob->QuadEdge (nro, E_A)],
-                              i_edge[glob->QuadEdge (nro, E_B)],
-                              i_edge[glob->QuadEdge (nro, E_C)],
-                              i_edge[glob->QuadEdge (nro, E_D)]);
-
-   tab_hexa.push_back (newHexa (i_quad[Q_A], i_quad[Q_B], i_quad[Q_C],
-                                i_quad[Q_D], i_quad[Q_E], i_quad[Q_F]));
-   double lambda  = 1;
-   double dcell   = 1;
-   for (int niv=0; niv<gr_rayon ; niv++)
-       {
-       double lambda0 = lambda;
-       dcell  *= k;
-       lambda += dcell;
-       addStrate (i_quad, i_edge, i_node, c,  lambda/lambda0);
-       }
-
-   return HOK;
-}
-// ====================================================== addStrate
-int Elements::addStrate (Quad* i_quad[], Edge* i_edge[], Vertex* i_node[],
-                        Vertex* center,  double lambda)
-{
-   Vertex* e_node [HV_MAXI];    // Les noeuds de l'hexa englobant
-   Edge*   e_edge [HE_MAXI];    // Les noeuds de l'hexa englobant
-   Quad*   e_quad [HQ_MAXI];    // Les noeuds de l'hexa englobant
-
-   Edge*   d_edge [HV_MAXI];    // Les aretes diagonales (1 par sommet)
-   Quad*   d_quad [HE_MAXI];    // Les faces  diagonales (1 par arete)
-
-                                          // Les sommets
-                                          //  + les aretes diagonales
-   for (int nv=0 ; nv<HV_MAXI ; nv++)
-       {
-       double px0 = center->getX ();
-       double py0 = center->getY ();
-       double pz0 = center->getZ ();
-       e_node[nv] = el_root->addVertex (px0+lambda*(i_node[nv]->getX()-px0),
-                                        py0+lambda*(i_node[nv]->getY()-py0),
-                                        pz0+lambda*(i_node[nv]->getZ()-pz0));
-
-       d_edge[nv] = newEdge (i_node[nv], e_node[nv]);
-       }
-                                          // Les aretes exterieures
-                                          //  + les faces diagonales
-   for (int nro=0 ; nro<HE_MAXI ; nro++)
-       {
-       int nv0  = glob->EdgeVertex (nro, V_AMONT);
-       int nv1  = glob->EdgeVertex (nro, V_AVAL );
-       e_edge[nro] = newEdge (e_node [nv0], e_node [nv1]);
-       d_quad[nro] = newQuad (i_edge [nro], d_edge [nv0],
-                              e_edge [nro], d_edge [nv1]);
-       }
-                                          // Les faces exterieures
-                                          //  + les hexas
-   Hexa* strate = NULL;
-   for (int nro=0 ; nro<HQ_MAXI ; nro++)
-       {
-       int ne0 = glob->QuadEdge (nro, E_A);
-       int ne1 = glob->QuadEdge (nro, E_B);
-       int ne2 = glob->QuadEdge (nro, E_C);
-       int ne3 = glob->QuadEdge (nro, E_D);
-
-       e_quad[nro] = newQuad (e_edge[ne0], e_edge[ne1],
-                              e_edge[ne2], e_edge[ne3]);
-       strate  = newHexa (i_quad[nro], e_quad[nro], d_quad[ne0],
-                          d_quad[ne2], d_quad[ne1], d_quad[ne3]);
-       tab_hexa.push_back (strate);
-       }
-
-   for (int nv=0 ; nv<HV_MAXI ; nv++) i_node  [nv] = e_node [nv];
-   for (int ns=0 ; ns<HE_MAXI ; ns++) i_edge  [ns] = e_edge [ns];
-   for (int nq=0 ; nq<HQ_MAXI ; nq++) i_quad  [nq] = e_quad [nq];
-
-   return HOK;
 }
 // ====================================================== saveVtk
 int Elements::saveVtk (cpchar nomfic)
 {
+   DumpStart ("saveVtk", nomfic);
+
+   pfile    vtk = fopen (nomfic, "w");
+   if (vtk==NULL)
+      {
+      DumpReturn (HERR);
+      return HERR;
+      }
                                            // -- 1) Raz numerotation precedente
    for (int nro=0 ; nro<nbr_hexas ; nro++)
        {
@@ -359,6 +209,13 @@ int Elements::saveVtk (cpchar nomfic)
        if (cell!=NULL && cell->isHere())
            cell->razNodes ();
        }
+   for (int nro=0 ; nro<size_hplus ; nro++)
+       {
+       Hexa* cell = ker_hexa[nro];
+       if (cell!=NULL && cell->isHere())
+           cell->razNodes ();
+       }
+
 
    int nbnodes = 0;
    int nbcells = 0;
@@ -373,7 +230,16 @@ int Elements::saveVtk (cpchar nomfic)
           }
        }
 
-   pfile    vtk = fopen (nomfic, "w");
+   for (int nro=0 ; nro<size_hplus ; nro++)
+       {
+       Hexa* cell = ker_hexa[nro];
+       if (cell!=NULL && cell->isHere())
+          {
+          nbcells ++;
+          nbnodes += cell->countNodes ();
+          }
+       }
+
    fprintf (vtk, "# vtk DataFile Version 3.1\n");
    fprintf (vtk, "%s \n", nomfic);
    fprintf (vtk, "ASCII\n");
@@ -388,6 +254,12 @@ int Elements::saveVtk (cpchar nomfic)
        if (cell!=NULL && cell->isHere())
           cell->printNodes (vtk, nronode);
        }
+   for (int nro=0 ; nro<size_hplus ; nro++)
+       {
+       Hexa* cell = ker_hexa[nro];
+       if (cell!=NULL && cell->isHere())
+          cell->printNodes (vtk, nronode);
+       }
                                            // -- 2) Les hexas
 
    fprintf (vtk, "CELLS %d %d\n", nbcells, nbcells*(HV_MAXI+1));
@@ -398,12 +270,19 @@ int Elements::saveVtk (cpchar nomfic)
        if (cell!=NULL && cell->isHere())
           cell->printHexa (vtk);
        }
+   for (int nro=0 ; nro<size_hplus ; nro++)
+       {
+       Hexa* cell = ker_hexa[nro];
+       if (cell!=NULL && cell->isHere())
+          cell->printHexa (vtk);
+       }
 
    fprintf (vtk, "CELL_TYPES %d\n", nbcells);
    for (int nro=0 ; nro<nbcells ; nro++)
        fprintf (vtk, "%d\n", HE_MAXI);
 
    fclose (vtk);
+   DumpReturn (HOK);
    return HOK;
 }
 // ============ = = = = = = = = = Vertices ..........
@@ -434,87 +313,6 @@ Hexa* Elements::newHexa (Quad* qa, Quad* qb, Quad* qc, Quad* qd,
 
    Hexa*  elt = new Hexa (qa, qb, qc, qd, qe, qf);
    return elt;
-}
-// ====================================================== joinQuads
-int Elements::joinQuads (Quads& orig, int nb, Vertex* v1, Vertex* v2,
-                  Vertex* v3, Vertex* v4, Quad* cible)
-{
-   resize (GR_JOINT, orig.size(), nb);
-
-   el_root->markAll (IS_NONE);
-   db = on_debug();
-   // db = el_root->debug ();
-
-   gr_hauteur  = nb;
-   nbr_orig = orig.size();
-
-   for (int nro=0 ; nro<nbr_orig ; nro++)
-       {
-       Quad* face = orig[nro];
-       if (face==NULL)
-          {
-          printf ("\n");
-          printf (" *** joinQuads : donnees incorrectes\n");
-          printf (" *** le %deme quadrangle de depart est NULL\n", nro);
-          setError ();
-          return HERR;
-          }
-       else if (face->getNbrParents()>1)
-          {
-          printf ("\n");
-          printf (" *** joinQuads : donnees incorrectes\n");
-          printf (" *** le %deme quadrangle de depart n'est pas une "
-                  "face externe\n", nro);
-          face->dump ();
-          setError ();
-          return HERR;
-          }
-       orig [nro]->setMark (nro);
-       tab_orig.push_back (orig[nro]);
-       }
-
-   Edge* e_orig = tab_orig[0] -> findEdge (v1, v3);
-   Edge* e_dest = cible       -> findEdge (v2, v4);
-
-   if (e_orig==NULL)
-      {
-      printf ("\n");
-      printf (" *** joinQuads : donnees incorrectes\n");
-      printf (" *** Les vertex v1 et v3 passes en argument ne definissent\n");
-      printf (" *** pas une arete du 1er quadrangle de depart\n");
-      printf ("\n");
-      HexDump (v1);
-      HexDump (v3);
-      HexDump (orig[0]);
-      }
-
-   if (e_dest==NULL)
-      {
-      printf ("\n");
-      printf (" *** joinQuads : donnees incorrectes\n");
-      printf (" *** Les vertex v2 et v4 passes en argument ne definissent\n");
-      printf (" *** pas une arete du quadrangle cible\n");
-      printf ("\n");
-      HexDump (v2);
-      HexDump (v4);
-      HexDump (cible);
-      }
-
-   if (e_orig==NULL || e_dest==NULL)
-      {
-      setError ();
-      return HERR;
-      }
-
-   StrOrient orient (v1, v3, v2, v4);
-   int ier =  this   ->coupler (0, cible, &orient);
-   if (ier!=HOK)
-      {
-      setError ();
-      return HERR;
-      }
-   ier = orig[0]->coupler (cible, &orient, this);
-   return ier;
 }
 // ======================================================== coupler
 int Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
@@ -564,22 +362,22 @@ int Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
           double py0 = nd1->getY();
           double pz0 = nd1->getZ();
 
-          double dx = (nd2->getX() - nd1->getX()) / gr_hauteur;
-          double dy = (nd2->getY() - nd1->getY()) / gr_hauteur;
-          double dz = (nd2->getZ() - nd1->getZ()) / gr_hauteur;
+          double dxt = nd2->getX() - px0;
+          double dyt = nd2->getY() - py0;
+          double dzt = nd2->getZ() - pz0;
 
           nd1->setMark (indVertex (nquad, ns, 0));
 
           Vertex* nd = nd1;
           for (int nh=0 ; nh<gr_hauteur ; nh++)
               {
-              int nh1 = nh + 1;
+              double coeff = under_v6 ? ((double)(nh+1))/gr_hauteur : cum_values [nh];
               Vertex* ndp = nd;
               if (nh == gr_hauteur-1)
                  nd = nd2 ;
               else
-                 nd = el_root->addVertex (px0 + nh1*dx, py0 + nh1*dy,
-                                          pz0 + nh1*dz);
+                 nd = el_root->addVertex (px0 + coeff*dxt, py0 + coeff*dyt,
+                                          pz0 + coeff*dzt);
               int nv  = indVertex (nquad, ns, nh);
               tab_vertex [nv] = nd;
               tab_edge   [nv] = el_root->addEdge (ndp, nd);
@@ -677,33 +475,6 @@ int Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
        }
    return HOK;
 }
-// ====================================================== makeCartesianNodes
-int Elements::makeCartesianNodes (Vertex* orig, Vector* v1, Vector* v2,
-                   Vector* v3, int px, int py, int pz, int mx, int my, int mz)
-{
-   double dx  = v1->getDx() + v2->getDx() + v3->getDx();
-   double dy  = v1->getDy() + v2->getDy() + v3->getDy();
-   double dz  = v1->getDz() + v2->getDz() + v3->getDz();
-
-   double px0 = orig->getX () - mx * dx;
-   double py0 = orig->getY () - my * dy;
-   double pz0 = orig->getZ () - mz * dz;
-
-   int nbre= 0;
-
-   for (int nz=0 ; nz<size_vz ; nz++)
-       for (int ny=0 ; ny<size_vy ; ny++)
-           for (int nx=0 ; nx<size_vx ; nx++)
-               {
-               Vertex* node = orig;
-               if (nx!=mx || ny!=my || nz!=mz)
-                  node = el_root->addVertex (px0 + nx*dx,  py0 + ny*dy,
-                                                          pz0 + nz*dz);
-               setVertex (node, nx, ny, nz);
-               nbre++;
-               }
-   return HOK;
-}
 // ====================================================== makeCylindricalNodes
 int Elements::makeCylindricalNodes (Vertex* orig, Vector* base, Vector* haut,
             double dr, double da, double dl, int nr, int na, int nl, bool fill)
@@ -714,61 +485,6 @@ int Elements::makeCylindricalNodes (Vertex* orig, Vector* base, Vector* haut,
 
    transfoVertices  (orig,  base, haut);
    return HOK;
-}
-// ====================================================== transfoVertices
-void Elements::transfoVertices (Vertex* orig, Vector* base, Vector* haut)
-{
-   Vector* iprim = new Vector (base);
-   Vector* jprim = new Vector (base);
-   Vector* kprim = new Vector (haut);
-
-   int ier = kprim->renormer ();
-   if (ier!=HOK)
-       return;
-
-   jprim->vectoriel (kprim, base);
-   ier = jprim->renormer ();
-   if (ier!=HOK)
-       return;
-
-   iprim->vectoriel (jprim, kprim);
-   transfoVertices  (orig,  iprim, jprim, kprim);
-}
-// ====================================================== transfoVertices
-void Elements::transfoVertices (Vertex* orig, Vector* iprim, Vector* jprim,
-                                Vector* kprim)
-{
-   double matrice[DIM3][DIM3]={{iprim->getDx(),jprim->getDx(),kprim->getDx()},
-                               {iprim->getDy(),jprim->getDy(),kprim->getDy()},
-                               {iprim->getDz(),jprim->getDz(),kprim->getDz()}};
-
-   double matkx = orig->getX();
-   double matky = orig->getY();
-   double matkz = orig->getZ();
-
-   int nbre = tab_vertex.size ();
-   for (int nro=0 ; nro<nbre ; nro++)
-       {
-       if (tab_vertex[nro] != NULL)
-           tab_vertex[nro]->setMark (NO_USED);
-       }
-
-   for (int nro=0 ; nro<nbre ; nro++)
-       {
-       Vertex* node =  tab_vertex[nro];
-       if (node != NULL  && node->getMark() == NO_USED)
-          {
-          double point [DIM3] = {node->getX(), node->getY(), node->getZ()};
-          double result[DIM3] = {matkx, matky, matkz};
-
-          for (int ni=0 ; ni<DIM3; ni++)
-              for (int nj=0 ; nj<DIM3; nj++)
-                  result [ni] += matrice[ni][nj] * point[nj];
-
-          node->setCoord (result[dir_x], result[dir_y], result[dir_z]);
-          node->setMark (IS_USED);
-          }
-       }
 }
 // ====================================================== transform
 int Elements::transform (Matrix* matrice)
@@ -875,32 +591,32 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
    nbr_hexas     = nbcells*(nbcuts+1);
 
                    // ------------------- Les noeuds et les aretes verticales
-   tab_quad.resize   (nbr_quads);
-   tab_edge.resize   (nbr_edges);
-   tab_hexa.resize   (nbr_hexas);
-   tab_vertex.resize (nbr_vertex);
+   tab_quad.resize   (nbr_quads,  NULL);
+   tab_edge.resize   (nbr_edges,  NULL);
+   tab_hexa.resize   (nbr_hexas,  NULL);
+   tab_vertex.resize (nbr_vertex, NULL);
    vector <Edge*>    tab_pilier (nbpiliers);
 
    int nbinter = nbcuts + 1;
    for (int ned=0; ned<nbnodes ; ned++)
        {
-       Shapes ass_shapes = t_edges[ned] -> getAssociations ();
        Edges  ass_edges;
        t_edges [ned]->remove ();
        Vertex* ndamont = v_amont [ned];
        Vertex* ndaval  = v_aval  [ned];
 
-       double dx = (ndaval->getX() - ndamont->getX()) / nbinter;
-       double dy = (ndaval->getY() - ndamont->getY()) / nbinter;
-       double dz = (ndaval->getZ() - ndamont->getZ()) / nbinter;
+       double lgx = ndaval->getX() - ndamont->getX();
+       double lgy = ndaval->getY() - ndamont->getY();
+       double lgz = ndaval->getZ() - ndamont->getZ();
 
        Vertex* nd0 = tab_vertex [ned] = ndamont;
        for (int nc=0; nc<nbcuts ; nc++)
            {
            int nc1 = nc+1;
-           Vertex* nd1 = el_root->addVertex (ndamont->getX() + nc1*dx,
-                                             ndamont->getY() + nc1*dy,
-                                             ndamont->getZ() + nc1*dz);
+           double coeff = under_v6 ? ((double)(nc+1))/nbinter : cum_values[nc]; 
+           Vertex* nd1 = el_root->addVertex (ndamont->getX() + coeff*lgx,
+                                             ndamont->getY() + coeff*lgy,
+                                             ndamont->getZ() + coeff*lgz);
            tab_vertex [nc1*nbnodes + ned] = nd1;
            tab_pilier [nc *nbnodes + ned] = newEdge (nd0, nd1);
            ass_edges.push_back (tab_pilier [nc *nbnodes + ned]);
@@ -910,7 +626,8 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
        tab_pilier [nbcuts *nbnodes + ned] = newEdge (nd0, ndaval);
        ass_edges.push_back (tab_pilier[nbcuts *nbnodes + ned]);
        ndamont->setMark (ned);
-       cutAssociation (ass_shapes, ass_edges);
+       if (t_edges[ned]->isAssociated())
+           cutAssociation (t_edges[ned], ass_edges);
        }
                    // ------------------- Les aretes horizontales
                    // ------------------- Les faces verticales

@@ -47,6 +47,7 @@
 
 #include "HexXmlWriter.hxx"
 #include "HexXmlTree.hxx"
+#include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
@@ -67,8 +68,8 @@ int get_coords (const string& chaine, double& x, double& y)
    if (nv!=2) return HERR;
    return HOK;
 }
-// ======================================================== parseName
-int parseName (XmlTree* node, const string& nom, EltBase* elt)
+// ======================================================== parse_name
+int parse_name (XmlTree* node, const string& nom, EltBase* elt)
 {
    int lg    = nom.size();
    int nroid = 0;
@@ -110,6 +111,12 @@ void get_names (const string& chaine, int size, vector<string>& table)
 
    if (encours)
       table.push_back (mot);
+}
+// ======================================================== count_children
+int count_children (XmlTree* dad)
+{
+   int    nbre = dad==NULL ? 0 : dad->getNbrChildren ();
+   return nbre;
 }
 // ======================================================== loadXml
 int Document::loadXml (cpchar ficname)
@@ -188,7 +195,7 @@ int Document::parseXml (XmlTree& xml)
    parseShapes (xml);
 
    XmlTree* rubrique = xml.findChild ("ListVertices");
-   int nbrelts       = rubrique->getNbrChildren ();
+   int nbrelts       = count_children (rubrique);
 
    Vertex* vertex = NULL;
    for (int nro=0 ; nro < nbrelts ; nro++)
@@ -203,7 +210,7 @@ int Document::parseXml (XmlTree& xml)
           get_coords (coords, px, py, pz);
 
           vertex = addVertex (px, py, pz);
-          parseName (node, nom, vertex);
+          parse_name (node, nom, vertex);
           t_vertex [nom] = vertex;
           }
        else if (type=="Asso")
@@ -213,7 +220,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListEdges");
-   nbrelts  = rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
    Edge* edge = NULL;
 
    for (int nro=0 ; nro < nbrelts ; nro++)
@@ -227,7 +234,7 @@ int Document::parseXml (XmlTree& xml)
           get_names (vertices, V_TWO, tname);
           edge = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
           t_edge [nom] = edge;
-          parseName (node, nom, edge);
+          parse_name (node, nom, edge);
           }
        else if (type=="Asso")
           {
@@ -236,7 +243,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListQuads");
-   nbrelts  = rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
    Quad* quad = NULL;
 
    for (int nro=0 ; nro < nbrelts ; nro++)
@@ -252,7 +259,7 @@ int Document::parseXml (XmlTree& xml)
           quad = new Quad (t_edge [tname[0]], t_edge [tname[1]],
                            t_edge [tname[2]], t_edge [tname[3]]);
           t_quad [nom] = quad;
-          parseName (node, nom, quad);
+          parse_name (node, nom, quad);
           }
        else if (type=="Asso")
           {
@@ -261,7 +268,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListHexas");
-   nbrelts  = rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -274,11 +281,11 @@ int Document::parseXml (XmlTree& xml)
                                 t_quad [tname[2]], t_quad [tname[3]],
                                 t_quad [tname[4]], t_quad [tname[5]]);
        t_hexa [nom] = hexa;
-       parseName (node, nom, hexa);
+       parse_name (node, nom, hexa);
        }
 
    rubrique = xml.findChild ("ListVectors");
-   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -290,11 +297,11 @@ int Document::parseXml (XmlTree& xml)
 
        Vector* vector = addVector (px, py, pz);
        t_vector [nom] = vector;
-       parseName (node, nom, vector);
+       parse_name (node, nom, vector);
        }
 
    rubrique = xml.findChild ("ListDicretizationLaws");
-   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -315,7 +322,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListPropagations");
-   nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+   nbrelts  = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -337,7 +344,7 @@ int Document::parseXml (XmlTree& xml)
        rubrique = pipe ? xml.findChild ("ListPipes")
                        : xml.findChild ("ListCylinders");
 
-       nbrelts  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+       nbrelts  = count_children (rubrique);
 
        for (int nro=0 ; nro < nbrelts ; nro++)
            {
@@ -366,7 +373,7 @@ int Document::parseXml (XmlTree& xml)
        }
 
    rubrique = xml.findChild ("ListGroups");
-   int nbrgroups  = rubrique == NULL ? 0 : rubrique->getNbrChildren ();
+   int nbrgroups  = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrgroups ; nro++)
        {
@@ -379,7 +386,7 @@ int Document::parseXml (XmlTree& xml)
        Group*    groupe = addGroup (nom.c_str(), kind);
        EnumElt   type   = groupe->getTypeElt ();
 
-       nbrelts = ndgroup->getNbrChildren ();
+       nbrelts = count_children (ndgroup);
        for (int nelt=1 ; nelt < nbrelts ; nelt++)
            {
            node = ndgroup ->getChild (nelt);
@@ -405,14 +412,16 @@ int Document::parseXml (XmlTree& xml)
 // ======================================================== save
 int Document::save (const char* ficxml)
 {
+   DumpStart ("save", ficxml);
+
    if (doc_xml==NULL)
        doc_xml = new XmlWriter ();
 
    int ier  = doc_xml->setFileName (ficxml);
-   if (ier != HOK)
-      return ier;
+   if (ier == HOK)
+       ier =  genXml ();
 
-   ier = genXml ();
+   DumpReturn (ier);
    return ier;
 }
 // ======================================================== appendXml
@@ -604,9 +613,10 @@ int Document::saveVtk0 (cpchar nomfic)
 }
 
 // ====================================================== saveVtk
-// ==== Nouvelle formule
+// ==== Nouvelle formule qui conserve les numeros de vertex
 int Document::saveVtk (cpchar nomfic)
 {
+   DumpStart ("saveVtk", nomfic);
    int nbnodes = doc_nbr_elt [EL_VERTEX];
    int nbcells = countHexa ();
 
@@ -630,26 +640,18 @@ int Document::saveVtk (cpchar nomfic)
    static const double minvtk = 1e-30;
 #define Koord(p) koord[p]<minvtk && koord[p]>-minvtk ? 0 : koord[p]
 
-   int last_nro = 0;
    for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
                  elt = elt->next())
        {
        Vertex* node = static_cast <Vertex*> (elt);
        if (node->isHere())
           {
-          int nro = node->getId ();
-          for (int np = last_nro ; np < nro ; np++)
-               fprintf (vtk, "0 0 0\n");
-
           node->getPoint (koord);
           fprintf (vtk, "%g %g %g\n", Koord(dir_x), Koord(dir_y), Koord(dir_z));
-          last_nro = nro+1;
           }
+       else
+          fprintf (vtk, "0 0 0\n");
        }
-
-   for (int np = last_nro ; np < nbnodes  ; np++)
-        fprintf (vtk, "0 0 0\n");
-
                                            // -- 2) Les hexas
 
    fprintf (vtk, "CELLS %d %d\n", nbcells, nbcells*(HV_MAXI+1));
@@ -666,20 +668,24 @@ int Document::saveVtk (cpchar nomfic)
    for (int nro=0 ; nro<nbcells ; nro++)
        fprintf (vtk, "%d\n", HE_MAXI);
 
-/****************************
    fprintf (vtk, "POINT_DATA %d \n", nbnodes);
    fprintf (vtk, "SCALARS A float\n");
    fprintf (vtk, "LOOKUP_TABLE default\n");
-
-   for (EltBase* elt = doc_first_elt[EL_HEXA]->next (); elt!=NULL;
+   for (EltBase* elt = doc_first_elt[EL_VERTEX]->next (); elt!=NULL;
                  elt = elt->next())
        {
-       Hexa* cell = static_cast <Hexa*> (elt);
-       if (cell!=NULL && cell->isHere())
-          cell->colorNodes (vtk);
+       Vertex* node = static_cast <Vertex*> (elt);
+       if (node->isHere())
+          {
+          double color = 100*(node->getScalar()+1);
+          fprintf (vtk, "%g\n", color);
+          }
+       else 
+          fprintf (vtk, "100\n");
        }
-*********************************/
+
    fclose (vtk);
+   DumpReturn (HOK);
    return HOK;
 }
 // ====================================================== purge
@@ -864,7 +870,7 @@ void Document::parseAssociation (XmlTree* node, Quad* quad)
 void Document::parseShapes (XmlTree& root)
 {
    XmlTree* rubrique = root.findChild ("ListShapes");
-   int nbrelts = rubrique==NULL ? 0 : rubrique->getNbrChildren ();
+   int nbrelts       = count_children (rubrique);
 
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
@@ -877,13 +883,13 @@ void Document::parseShapes (XmlTree& root)
           const string& brep  = node->findValue   ("brep");
           NewShape*     shape = new NewShape (this, (EnumShape)orig);
 
-          parseName (node, nom, shape);
+          parse_name (node, nom, shape);
           shape->setBrep (brep);
           doc_tab_shape.push_back (shape);
           }
        else if (type=="Cloud")
           {
-          int nbvert = node->getNbrChildren ();
+          int nbvert = count_children (node);
           for (int nv=0 ; nv < nbvert ; nv++)
               {
               Real3    point;

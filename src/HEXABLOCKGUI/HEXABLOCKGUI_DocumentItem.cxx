@@ -17,13 +17,15 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include "HEXABLOCKGUI_SalomeTools.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexShape.hxx"
-#include "HEXABLOCKGUI_SalomeTools.hxx"
+
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HexAssoEdge.hxx"
 
 #include <inttypes.h>
+
 
 using namespace std;
 using namespace HEXABLOCK::GUI;
@@ -38,6 +40,8 @@ QStandardItem()
 	if (m_DocElt != NULL)
 	{
 		setText(m_DocElt->getName());
+		if ( m_DocElt->isAssociated() )
+		    setData(Qt::darkGreen, Qt::ForegroundRole);
 	}
 	setData( treeRole,    HEXA_TREE_ROLE );
 	setData( entry,       HEXA_DOC_ENTRY_ROLE);
@@ -50,10 +54,16 @@ QStandardItem()
 		if (m_type == VERTEXITEM) //Vertex
 		{
 		    HEXA_NS::Vertex* vertex = (HEXA_NS::Vertex*) m_DocElt;
-		    double assocX, assocY, assocZ;
-			vertex->getAssoCoord(assocX, assocY, assocZ);
-			entry = QString::number(assocX)+","+QString::number(assocY)+","+QString::number(assocZ);
-			setData( entry, HEXA_ASSOC_ENTRY_ROLE );
+		    HEXA_NS::VertexShape* assoc = vertex->getAssociation();
+		    if (assoc != NULL)
+		    {
+		        HEXA_NS::NewShape* mainSh = assoc->getParentShape();
+		        if (mainSh != NULL)
+		        {
+		            entry = QString(mainSh->getName())+","+QString::number(assoc->getIdent())+";";
+		            setData( entry, HEXA_ASSOC_ENTRY_ROLE );
+		        }
+		    }
 		}
 		else if (m_type == EDGEITEM)
 		{
@@ -70,7 +80,7 @@ QStandardItem()
 			    geomEdge = anEdgeAssoc->getEdgeShape();
 			    if (geomEdge == NULL) continue;
 			    mainShape = geomEdge->getParentShape();
-			    if (mainShape == NULL) continue;    // => les generatrices ne sont pas gerees pour le moment
+			    if (mainShape == NULL) continue;
 			    entries += QString(mainShape->getName())+","+QString::number(geomEdge->getIdent())+";";
 			}
 			if ( !entries.isEmpty() )
@@ -100,33 +110,30 @@ QStandardItem()
 //---------------------------------------------------------------
 QVariant ElementItem::data( int role ) const
 {
-	if ( role == HEXA_DATA_ROLE ){
-		switch(m_type)
-		{
-		case VERTEXITEM: return QVariant::fromValue( (HEXA_NS::Vertex*)m_DocElt );
-		case EDGEITEM: return QVariant::fromValue( (HEXA_NS::Edge*)m_DocElt );
-		case QUADITEM: return QVariant::fromValue( (HEXA_NS::Quad*)m_DocElt );
-		case HEXAITEM: return QVariant::fromValue( (HEXA_NS::Hexa*)m_DocElt );
-		case VECTORITEM: return QVariant::fromValue( (HEXA_NS::Vector*)m_DocElt );
-		case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
-		case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
-		case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
-		case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
-		case GEOMSHAPEITEM: return QVariant::fromValue( (HEXA_NS::NewShape*) m_DocElt );
-		case GEOMPOINTITEM: return QVariant::fromValue( (HEXA_NS::VertexShape*) m_DocElt );
-		case GEOMEDGEITEM:  return QVariant::fromValue( (HEXA_NS::EdgeShape*) m_DocElt );
-		case GEOMFACEITEM:  return QVariant::fromValue( (HEXA_NS::FaceShape*) m_DocElt );
-		default: return QVariant::fromValue( m_DocElt );
-		}
-	}
+    if ( role == HEXA_DATA_ROLE ){
+        switch(m_type)
+        {
+        case VERTEXITEM: return QVariant::fromValue( (HEXA_NS::Vertex*)m_DocElt );
+        case EDGEITEM: return QVariant::fromValue( (HEXA_NS::Edge*)m_DocElt );
+        case QUADITEM: return QVariant::fromValue( (HEXA_NS::Quad*)m_DocElt );
+        case HEXAITEM: return QVariant::fromValue( (HEXA_NS::Hexa*)m_DocElt );
+        case VECTORITEM: return QVariant::fromValue( (HEXA_NS::Vector*)m_DocElt );
+        case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
+        case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
+        case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
+        case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
+        case GEOMSHAPEITEM: return QVariant::fromValue( (HEXA_NS::NewShape*) m_DocElt );
+        case GEOMPOINTITEM: return QVariant::fromValue( (HEXA_NS::VertexShape*) m_DocElt );
+        case GEOMEDGEITEM:  return QVariant::fromValue( (HEXA_NS::EdgeShape*) m_DocElt );
+        case GEOMFACEITEM:  return QVariant::fromValue( (HEXA_NS::FaceShape*) m_DocElt );
+        default: return QVariant::fromValue( m_DocElt );
+        }
+    }
 
-	if (role == Qt::ForegroundRole ) {
-		if ( m_DocElt->isAssociated() )
-			return QColor(Qt::darkGreen);
-		else
-			return QColor(Qt::black);
-	}
-	return QStandardItem::data( role );
+    if (role == Qt::ForegroundRole && m_DocElt != NULL && !m_DocElt->isAssociated())
+        return QColor(Qt::black);
+
+    return QStandardItem::data( role );
 }
 
 //---------------------------------------------------------------
@@ -314,8 +321,6 @@ PropagationItem::PropagationItem( HEXA_NS::Propagation* hexaPropagation ):
   QStandardItem(),
   _hexaPropagation( hexaPropagation )
 {
-//   char pName[12];
-//   QString name = _hexaPropagation->getName(pName);
   QString name = "Propagation";
   setText(name);
   setData( PROPAGATION_TREE, HEXA_TREE_ROLE );

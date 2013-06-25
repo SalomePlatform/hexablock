@@ -34,29 +34,18 @@
 #include <OB_Browser.h>
 #include <SalomeApp_Module.h>
 #include <SalomeApp_DataObject.h>
-// #include <LightApp_Module.h>
 
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataModel.h>
-
+#include <SOCC_Prs.h>
 #include <SALOMEconfig.h>
 
-
-// #include "MyBasicGUI_PointDlg.hxx"
-// #include "Resource.hxx"
 #include "HEXABLOCKGUI_Resource.hxx"
-
-#include "GEOMGUI_OCCSelector.h"
-
+#include "HEXABLOCKGUI_OCCSelector.h"
 #include "hexa_base.hxx"
 
 
-
-
-#include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)
-// #include CORBA_CLIENT_HEADER(GEOM_Gen)
-// #include CORBA_CLIENT_HEADER(SMESH_Gen)
-
+// #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)  // Abu Juin 2013
 
 namespace HEXABLOCK
 {
@@ -122,14 +111,6 @@ class SUIT_ViewWindow;
 class SVTK_ViewWindow;
 class OCCViewer_ViewWindow;
 class LightApp_VTKSelector;
-class MyGEOMBase_Helper;
-
-// // SALOME KERNEL includes
-// #include <SALOMEDS_Study.hxx>
-// #include <SALOMEDSClient_StudyBuilder.hxx>
-// #include <SALOMEDSClient_SComponent.hxx>
-// #include <SALOMEDSClient_ClientFactory.hxx>
-// #include <SALOMEDSClient_IParameters.hxx>
 
 
 class HEXABLOCKGUI : public SalomeApp_Module
@@ -150,32 +131,27 @@ public:
 
   static SalomeApp_Study*         activeStudy();
 
-  static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
-//   static SMESH::SMESH_Gen_ptr             InitSMESHGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
-  static GEOM::GEOM_Gen_ptr InitGEOMGen( SalomeApp_Application* app, const std::string& container = "FactoryServer" );
-
+  // static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
   static LightApp_SelectionMgr*   selectionMgr();
+  static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
+  static ViewType getActiveViewType();
+  static HEXABLOCKGUI*  getInstance();
 
   //add an object in the study
-  static QString addInStudy(QString& fileName);
+  void addInStudy(QMap<QString, TopoDS_Shape>& topo_shapes,
+                         QMap<QString, QString>& docShapesEntry,
+                         QMap<QString, QString>& docShapesName);
 
-
-//  static SVTK_ViewWindow*      currentVtkView;
   static HEXABLOCK::GUI::VtkDocumentGraphicView* currentDocGView;
   static HEXABLOCK::GUI::OccGraphicView* currentOccGView;
-  static MyGEOMBase_Helper*    geomBaseHelper;
   static bool assocInProgress;
   static SalomeApp_Application* myApplication;
-  static GEOMGUI_OCCSelector* currentOccSelector;
-
- //HEXABLOCK::GUI::DocumentModel*
 
   virtual void initialize( CAM_Application* app);
 
   virtual bool renameAllowed( const QString& ) const;
   virtual bool renameObject( const QString& entry, const QString& name);
   virtual void windows( QMap<int, int>& theMap) const;
-//   virtual LightApp_Displayer* displayer();
   virtual QString  engineIOR() const;
 
   virtual void viewManagers(QStringList& list) const;
@@ -197,22 +173,22 @@ public:
   void showAllMenus();
   void updateSelectors();
 
-//   void showBaseMenus(bool show);
-//   void showEditionMenus(bool show);
-//   void showExecMenus(bool show);
-//   void showCommonMenus(bool show);
-
   void switchModel(HEXABLOCK::GUI::VtkDocumentGraphicView* dgview);
   void switchOnGraphicView(HEXABLOCK::GUI::VtkDocumentGraphicView* dgview);
   void switchOffGraphicView(HEXABLOCK::GUI::VtkDocumentGraphicView* dgview,
                               bool saveCurrentDlg = true);
   void showDockWidgets(bool isVisible);
 
-  HEXABLOCK::GUI::VtkDocumentGraphicView* getCurrentVtkGraphicView();
-  HEXABLOCK::GUI::VtkDocumentGraphicView* getDocument(SalomeApp_DataObject* studyObject);
+  HEXABLOCK::GUI::VtkDocumentGraphicView* getCurrentVtkGraphicView() const { return currentDocGView; }
+  HEXABLOCK::GUI::VtkDocumentGraphicView* getOrCreateDocument(SalomeApp_DataObject* studyObject);
+  HEXABLOCK::GUI::VtkDocumentGraphicView* getDocGViewByEntry(const QString& entry) const
+  {
+      return ( (docs.contains(entry) ? docs[entry] : NULL ) );
+  }
   HEXABLOCK::GUI::DocumentModel* getCurrentModel();
   HEXABLOCK::GUI::HexaBaseDialog* getDlgBox(HEXABLOCK::GUI::VtkDocumentGraphicView* view);
-  static ViewType getActiveViewType();
+  QTreeView* getPatternDataTreeView() const { return _patternDataTreeView; }
+  QTreeView* getPatternGeomTreeView() const { return _patternGeomTreeView; }
 
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
@@ -224,15 +200,13 @@ public slots:
   void showAssociationMenus(bool show);
   void showGroupsMenus(bool show);
   void showMeshMenus(bool show);
-  
+
 protected slots:
   void onWindowActivated( SUIT_ViewWindow* svw);
   void onWindowClosed( SUIT_ViewWindow* svw);
-//  void OnMouseMove( SUIT_ViewWindow*, QMouseEvent* );
 
   virtual void                        onViewManagerAdded( SUIT_ViewManager* );
   virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
-//   void onTryClose(bool &isClosed, QxScene_ViewWindow* window);
 
   void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
   void showActor();
@@ -240,21 +214,15 @@ protected slots:
   void showOnlyActor();
 
 protected:
-//   virtual  CAM_DataModel* createDataModel();
   bool createSComponent();
-//   virtual bool isSelectionCompatible();
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
   void _showDialogBox( HEXABLOCK::GUI::HexaBaseDialog* diag );
   HEXABLOCK::GUI::HexaBaseDialog* currentDialog;
 
-//   bool _selectFromTree;
   HEXABLOCKGUI_Resource* _myresource;
-//   SUIT_ResourceMgr* _myresource;
   static int _oldStudyId;
-  static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;
-//   static SMESH::SMESH_Gen_var             _smeshEngine;
-  static GEOM::GEOM_Gen_var               _geomEngine;
+  // static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;  // Hexa6 TODo
 private slots:
 
   void slot_modelChanged(const QModelIndex &topLeft, const QModelIndex  &bottomRight);
@@ -277,26 +245,20 @@ private slots:
   void addVector();
   void addCylinder();
   void addPipe();
-//   void makeCartesian();
-//   void makeCylindrical();
   void makeGrid();
   void makeCylinder();
   void makePipe();
   void makeCylinders();
   void makePipes();
 
-//   void makeRind();    // NEW HEXA3
   void makeHemiSphere();  // NEW HEXA3
 
   void removeHexa();
   void prismQuad();
   void joinQuad();
-//   void mergeVertices();
-//   void mergeEdges();
   void merge();
   void disconnectElts();
   void cutEdge();
-//   void makeTranslation();
   void makeTransformation();
   void makeSymmetry();
   void performTransformation();
@@ -333,15 +295,22 @@ private slots:
 
 private:
 
-  QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
+  QList<HEXABLOCKGUI_OCCSelector*>  myOCCSelectors;
   QList<LightApp_VTKSelector*> myVTKSelectors;
 
 
   QStringList getQuickDirList();
-//  HEXABLOCK::GUI::DocumentGraphicView* newGraphicView();
   void restoreGraphicViews();
   void clearDialogs();
 
+  SOCC_Prs* getOccPrs(HEXABLOCK::GUI::VtkDocumentGraphicView* docGView)
+  {
+      if (docGView == NULL)
+          return NULL;
+      if (!occPrs.contains(docGView))
+          occPrs[docGView] = new SOCC_Prs();
+      return occPrs[docGView];
+  }
 
   // -------------------------------------------------------------------------------------------------
   //          MainWindow presentation
@@ -416,7 +385,6 @@ private:
   QAction *_makeCylinders;
   QAction *_makePipes;
 
-//   QAction *_makeRind;   // NEW HEXA3
   QAction *_makeHemiSphere; // NEW HEXA3
 
 
@@ -458,16 +426,17 @@ private:
 
   QAction* _addShapeAct;
 
-//  QAction *_showAct;
-//  QAction *_showOnlyAct;
-//  QAction *_hideAct;
+
+  QAction* _sep1; // tmonin
+  QAction* _sep2; // tmonin
+  QAction* _sep3; // tmonin
+  QAction* _sep4; // ...... tparti
 
   // -------------------------------------------------------------------------------------------------
-  //          Model/View implementation  
+  //          Model/View implementation
   // -------------------------------------------------------------------------------------------------
 
   HEXABLOCK::GUI::AssociationsModel   *_associationsModel;    // sub-part of DocumentModel
-
 
   //      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW
   QTreeView* _patternDataTreeView;    //  document's pattern : 1 ( only one view )
@@ -478,27 +447,27 @@ private:
   QTreeView* _meshTreeView;   //  document's mesh property: 1 ( only one view )
 
   //      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE
-  HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree 
+  HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree
 
   HEXABLOCK::GUI::GraphicViewsHandler*  graphicViewsHandler; //vtk views hanlder (create, close, ...)
 
-  //  SALOME   SALOME    SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
-  std::map<QString, HEXABLOCK::GUI::VtkDocumentGraphicView*>  docs; //  key = entry
+  //  SALOME   SALOME    SALOME   SALOME     SALOME     SALOME     SALOME     SALOME     SALOME     SALOME
+  QMap<QString, HEXABLOCK::GUI::VtkDocumentGraphicView*>  docs; //  key = entry
   QMap<HEXABLOCK::GUI::VtkDocumentGraphicView*, HEXABLOCK::GUI::HexaBaseDialog*>  gViewDlgBox; //  key = entry
+  QMap<HEXABLOCK::GUI::VtkDocumentGraphicView*, SOCC_Prs*> occPrs;
 
-//   int _documentCnt;
   bool _isSaved;
   bool moduleActivatedOnce;
 
   QDir* loadDocLastPath;
   QDir* saveDocLastPath;
 
-
   void testDocument();
   void test_make_cart_grid();
   void test_make_elmts_transform();
-  
 
+  QString       addDocInStudy (HEXA_NS::Document* doc);  // Hexa6
+  HEXA_NS::Hex* hexa_root;                               // Hexa6
 };
 
 #endif

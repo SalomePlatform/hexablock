@@ -30,31 +30,41 @@
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexDocument.hxx"
 #include "HexNewShape.hxx"
+#include "Hex.hxx"
+
 
 namespace HEXABLOCK
 {
   namespace GUI
   {
-
     class DocumentModel : public QStandardItemModel
     {
       Q_OBJECT
     public:
 
-      // enum EnumGroup  { HexaCell, QuadCell, EdgeCell,
-      //                   HexaNode, QuadNode, EdgeNode, Vertex_Node};
+      struct GeomObj
+      {
+          QString shapeName;  //main shape name
+          QString shapeEntry; //main shape entry
+          QString name;
+          QString subId;      // sub-shape id (if it's a sub shape)
+          QString brep;
+          double  start;
+          double  end;
+      };
+
       typedef HEXA_NS::EnumGroup Group;
       typedef HEXA_NS::KindLaw   KindLaw;
 
-      struct GeomObj
-      {
-        QString shapeName;
-        QString name;
-        QString subid; // sub-shape id
-        QString brep;
-        double  start;
-        double  end;
-      };
+//      struct GeomObj
+//      {
+//        QString shapeName;
+//        QString name;
+//        QString subid; // sub-shape id
+//        QString brep;
+//        double  start;
+//        double  end;
+//      };
 
       typedef QList<GeomObj> GeomObjList;
 
@@ -70,8 +80,8 @@ namespace HEXABLOCK
       void load( const QString& xmlFileName );
       void load(); //Loads the current document
       void save( const QString& xmlFileName );
-      struct GeomObj* convertToGeomObj(GEOM::GeomObjPtr geomObjPtr);
       void updateData();
+      void updateGeomTree();
       void refresh(); //refresh data
       bool isEmpty() const;
 
@@ -96,8 +106,6 @@ namespace HEXABLOCK
       void allowEdition();
       void disallowEdition();
 
-      //         void setDefaultSelection();
-      //         void allowSelection();
       void allowDataSelectionOnly();
       void allowVertexSelectionOnly();
       void allowEdgeSelectionOnly();
@@ -112,6 +120,7 @@ namespace HEXABLOCK
 
       void allowLawSelectionOnly();
 
+      Hex::Hex* getHexaRoot() { return Hex::Hex::getInstance(); }
 
       HEXA_NS::EltBase* getHexaPtr(const QModelIndex& iElt);
       template<typename T>
@@ -127,28 +136,33 @@ namespace HEXABLOCK
       int getNbrUsedElt(HEXA_NS::EnumElt eltType);
       int getNbrUnusedElt(HEXA_NS::EnumElt eltType);
 
+      QModelIndex addToElementsTree(HEXA_NS::Elements* helts);
+
       //associate a shape to the current document
-      bool addShape(TopoDS_Shape& forme, QString& shapeName);
+      bool addShape(TopoDS_Shape& forme, QString& shapeName, bool publish=true);
 
       //returns the geom obj id in the document using its entry
-      QString getGeomObjName(QString& studyEntry) {
+      QString getGeomObjName(QString& studyEntry) const {
           return docShapesName.contains(studyEntry) ? docShapesName[studyEntry] : QString();
       }
 
       //returns the geom obj entry in the document using its id
-      QString getGeomObjEntry(QString& shapeName) {
+      QString getGeomObjEntry(QString& shapeName) const {
           return docShapesEntry.contains(shapeName) ? docShapesEntry[shapeName] : QString();
       }
 
       //returns the document's shapes entries
       QList<QString> getShapesEntries() const { return docShapesName.uniqueKeys(); }
 
-      //returns the associated geom index to the data index
-      HEXA_NS::SubShape* getGeomPtr(QString& id)
+      //returns the associated geom object to the data index
+      HEXA_NS::SubShape* getGeomPtr(QString& id) const
       {
-          if (!shapeById.contains(id)) return NULL;
+          if (!shapeById.contains(id))
+              return NULL;
           return shapeById[id];
       }
+
+      QModelIndex getGeomModelIndex(QString& id) const;
 
       void setGeomObjName(QString& studyEntry, QString& shapeName) {docShapesName[studyEntry] = shapeName;}
       void setGeomObjEntry(QString& shapeName, QString& studyEntry) {docShapesEntry[shapeName] = studyEntry;}
@@ -157,7 +171,7 @@ namespace HEXABLOCK
       bool clearEltAssociations( const QModelIndex& iElt );
       HEXA_NS::Hexa* getQuadHexa(HEXA_NS::Quad* quad);
 
-      //  ************  BUILD HEXABLOCK MODEL ************
+      //  ************  BUILD HEXABLOCK MODEL (OBSOLETE)************
       QModelIndex addVertex( double x, double y, double z );
 
       //
@@ -191,7 +205,7 @@ namespace HEXABLOCK
       QModelIndex addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h );
 
 
-      //
+      // ===================== OBSOLETE =================================
       QModelIndex makeCartesian( const QModelIndex& ivex,
           const QModelIndex& ivecx, const QModelIndex& ivecy, const QModelIndex& ivecz,
           long nx, long ny, long nz);
@@ -201,10 +215,10 @@ namespace HEXABLOCK
           int nx, int ny, int nz );
 
       QModelIndex makeCylindrical( const QModelIndex& i_pt,
-          const QModelIndex& i_vx, const QModelIndex& i_vz,
-          double dr, double da, double dl,
-          long nr, long na, long nl,
-          bool fill  = false );
+                                   const QModelIndex& i_vx, const QModelIndex& i_vz,
+                                   double dr, double da, double dl,
+                                   long nr, long na, long nl,
+                                   bool fill  = false );
 
       QModelIndex makeCylindricals(
           const QModelIndex& i_center, const QModelIndex& i_base, const QModelIndex& i_height,
@@ -215,41 +229,181 @@ namespace HEXABLOCK
 
       QModelIndex makeSpherical( const QModelIndex& i_center, double rayon, int nb, double k = 1 );
 
-      //
       QModelIndex makeCylinder( const QModelIndex& cyl, const QModelIndex& vec,
-          int nr, int na, int nl );
+                                int nr, int na, int nl );
+
+      QModelIndex makeCylinders(const QModelIndex& cyl1, const QModelIndex& cyl2);
 
       //
       QModelIndex makePipe( const QModelIndex& pipe, const QModelIndex& vecx,
-          int nr, int na, int nl );
-
-      //
-      QModelIndex makeCylinders(const QModelIndex& cyl1, const QModelIndex& cyl2);
+              int nr, int na, int nl );
 
       //
       QModelIndex makePipes( const QModelIndex& pipe1, const QModelIndex& pipe2 );
 
-
-
       QModelIndex makeRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-          double  radext, double radint, double radhole,
-          const QModelIndex& plorig,
-          int nrad, int nang, int nhaut ); //NEW HEXA3
+                            double  radext, double radint, double radhole,
+                            const QModelIndex& plorig,
+                            int nrad, int nang, int nhaut ); //NEW HEXA3
 
       QModelIndex makePartRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-          double  radext, double radint, double radhole,
-          const QModelIndex& plorig, double angle,
-          int nrad, int nang, int nhaut ); //NEW HEXA3
+                                double  radext, double radint, double radhole,
+                                const QModelIndex& plorig, double angle,
+                                int nrad, int nang, int nhaut ); //NEW HEXA3
 
       QModelIndex makeSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-          double radius, double radhole,
-          const QModelIndex& plorig,
-          int nrad, int nang, int nhaut ); //NEW HEXA3
+                              double radius, double radhole,
+                              const QModelIndex& plorig,
+                              int nrad, int nang, int nhaut ); //NEW HEXA3
 
       QModelIndex makePartSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-          double  radius, double radhole,
-          const QModelIndex& plorig, double angle,
-          int nrad, int nang, int nhaut ); //NEW HEXA3
+                                  double  radius, double radhole,
+                                  const QModelIndex& plorig, double angle,
+                                  int nrad, int nang, int nhaut ); //NEW HEXA3
+
+      // OBSOLETE: replaced by extrudeQuad...
+      QModelIndex prismQuad( const QModelIndex& quad, const QModelIndex& dv, int nb);
+      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, int nb);
+      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, std::vector<double>, int nb=0);
+
+      //
+      QModelIndex joinQuad( const QModelIndex& start_q, const QModelIndex& dest_q,
+                            const QModelIndex& v0, const QModelIndex& v1,
+                            const QModelIndex& v2, const QModelIndex& v3, int nb );
+
+      QModelIndex joinQuads( const QModelIndexList& start_q, const QModelIndex& dest_q,
+                             const QModelIndex& v0, const QModelIndex& v1,
+                             const QModelIndex& v2, const QModelIndex& v3, int nb );
+
+      QModelIndex revolutionQuads( const QModelIndexList& startQuads, const QModelIndex& center,
+                                   const QModelIndex& vec_axis, const QList<double>& angles); //NEW HEXA3
+
+      //
+      QModelIndex cutEdge( const QModelIndex &e, int nbcuts );
+
+      // ======================= END OBSOLETE =================================
+
+
+
+      // ===================== NEW =================================
+
+      // ===== CARTESIAN GRID
+
+      QModelIndex makeCartesianTop(int nx, int ny, int nz);
+      QModelIndex makeCartesianUni(const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& ivec,
+                                   const QModelIndex& iaxis, double lx, double ly, double lz, int nx, int ny, int nz);
+      QModelIndex makeCartesian(const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& ivec,
+                                const QModelIndex& iaxis, vector<double>& radius, vector<double>& angles, vector<double>& heights);
+
+      // ====== SPHERE
+
+      QModelIndex makeSphereTop (int nr, int na, int nh);
+
+      QModelIndex makeSphereUni (QModelIndex& icenter,
+                                 QModelIndex& ivec_x, QModelIndex& ivec_z,
+                                 double rtrou, double rext, double ang,
+                                 QModelIndex& ivplan,
+                                 int nr, int na, int nh);
+
+      QModelIndex makeSphere    (QModelIndex& icenter,
+                                 QModelIndex& ivec_x, QModelIndex& ivec_z,
+                                 vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+
+      // ====== SPHERICAL
+
+      QModelIndex makeSphericalTop (int nbre, int crit);
+
+      QModelIndex makeSphericalUni (QModelIndex& icenter,
+                                    QModelIndex& ivec_x, QModelIndex& ivec_z,
+                                    double rayon,
+                                    int nbre, int crit);
+
+      QModelIndex makeSpherical    (QModelIndex& icenter,
+                                    QModelIndex& ivec_x, QModelIndex& ivec_z,
+                                    vector<double>& rayon,
+                                    int crit);
+
+      // =========== RIND
+      QModelIndex makeRindTop (int nr, int na, int nh);
+
+      QModelIndex makeRindUni (QModelIndex& icenter,
+                               QModelIndex& ivec_x, QModelIndex& ivec_z,
+                               double raytrou, double rint, double rext, double ang,
+                               QModelIndex& ivplan,
+                               int nr, int na, int nh);
+
+      QModelIndex makeRind   (QModelIndex& icenter,
+                              QModelIndex& ivec_x, QModelIndex& ivec_z,
+                              vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+
+      // ======== Cylinder
+      QModelIndex makeCylinderTop(int nr, int na, int nh);
+
+      QModelIndex makeCylinderUni(QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
+                                   double rint, double rext, double angle, double haut,
+                                   int nr, int na, int nh);
+
+      QModelIndex makeCylinder   (QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
+                                  vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+
+      // ======== Cylinders
+      QModelIndex makeCylinders  (QModelIndex& iorig1, QModelIndex& ivecz1,  double r1, double h1,
+                                  QModelIndex& iorig2, QModelIndex& ivecz2, double r2, double h2);
+
+      // =========== PIPE
+      QModelIndex makePipeTop (int nr, int na, int nh);
+
+      QModelIndex makePipeUni (QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
+                               double rint, double rext, double angle, double haut,
+                               int nr, int na, int nh);
+
+      QModelIndex makePipe    (QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
+                               vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+
+      // ======== Pipes
+      QModelIndex makePipes  (QModelIndex& iorig1, QModelIndex& ivecz1, double rint1, double rex1, double h1,
+                              QModelIndex& iorig2, QModelIndex& ivecz2, double rint2, double rex2, double h2);
+
+      // ======== Join Quads
+      QModelIndex joinQuadUni(QModelIndex& istart, QModelIndex& idest, QModelIndex& iv1, QModelIndex& iv2,
+                              QModelIndex& iv3, QModelIndex& iv4, int nb);
+
+      QModelIndex joinQuad   (QModelIndex&  istart, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
+                              QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen);
+
+      QModelIndex joinQuadsUni (QModelIndexList& istarts, QModelIndex& idest, QModelIndex& iv1, QModelIndex& iv2,
+                                QModelIndex& iv3, QModelIndex& iv4, int nb);
+
+      QModelIndex joinQuads    (QModelIndexList& istarts, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
+                                QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen);
+
+      // ======== Quad Revolution
+      QModelIndex revolutionQuadUni(QModelIndex& istart, QModelIndex& icenter, QModelIndex& iaxis,
+                                    double angle, int nbre);
+
+      QModelIndex revolutionQuad(QModelIndex& istart, QModelIndex& icenter, QModelIndex& iaxis,
+                                 vector<double>& angles);
+
+      QModelIndex revolutionQuadsUni(QModelIndexList& istarts, QModelIndex& icenter, QModelIndex& iaxis,
+                                     double angle, int nbre);
+
+      QModelIndex revolutionQuads(QModelIndexList& istarts, QModelIndex& icenter, QModelIndex& iaxis,
+                                  vector<double>& angles);
+
+      // ==== PrismQuad or ExtrudeQuad
+      QModelIndex extrudeQuadTop (QModelIndex& istart, int nbre);
+      QModelIndex extrudeQuadUni (QModelIndex& istart, QModelIndex& dv, double len, int nbre);
+      QModelIndex extrudeQuad    (QModelIndex& istart, QModelIndex& dv, vector<double>& tlen);
+
+      QModelIndex extrudeQuadsTop (QModelIndexList& istarts, int nbre);
+      QModelIndex extrudeQuadsUni (QModelIndexList& istarts, QModelIndex& axis, double len, int nbre);
+      QModelIndex extrudeQuads    (QModelIndexList& istarts, QModelIndex& iaxis, vector<double>& tlen);
+
+      // ==== Cut Edge
+      QModelIndex cutUni     (QModelIndex& iEdge, int nbre);
+      QModelIndex cut        (QModelIndex& iEdge, vector<double>& tlen);
+
+      // ============================== END NEW ================================
 
       // ************  EDIT HEXABLOCK MODEL ************
 
@@ -259,26 +413,6 @@ namespace HEXABLOCK
       bool removeHexa( const QModelIndex& hexa );
       bool removeConnectedHexa( const QModelIndex& hexa );
 
-
-      //
-      QModelIndex prismQuad( const QModelIndex& quad, const QModelIndex& dv, int nb);
-      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, int nb);
-      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, std::vector<double>, int nb=0);
-
-      //
-      QModelIndex joinQuad( const QModelIndex& start_q, const QModelIndex& dest_q,
-          const QModelIndex& v0, const QModelIndex& v1,
-          const QModelIndex& v2, const QModelIndex& v3,
-          int nb );
-
-
-      QModelIndex joinQuads( const QModelIndexList& start_q, const QModelIndex& dest_q,
-          const QModelIndex& v0, const QModelIndex& v1,
-          const QModelIndex& v2, const QModelIndex& v3,
-          int nb );
-
-
-      //
       bool mergeVertices( const QModelIndex& va, const QModelIndex& vb );
       bool mergeEdges( const QModelIndex& ea, const QModelIndex& eb,
           const QModelIndex& v0, const QModelIndex& v1 );
@@ -291,9 +425,6 @@ namespace HEXABLOCK
       QModelIndex disconnectEdge( const QModelIndex& h, const QModelIndex& e );
       QModelIndex disconnectQuad( const QModelIndex& h, const QModelIndex& q );
       QModelIndex disconnectEdges( const QModelIndexList& h, const QModelIndexList& e );
-
-      //
-      QModelIndex cutEdge( const QModelIndex &e, int nbcuts );
 
       //
       QModelIndex makeTranslation( const QModelIndex& elts, const QModelIndex& vec );
@@ -321,33 +452,22 @@ namespace HEXABLOCK
       bool performSymmetryLine( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
       bool performSymmetryPlane( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
 
-
-      QModelIndex revolutionQuads( const QModelIndexList& startQuads, const QModelIndex& center,
-          const QModelIndex& vec_axis, const QList<double>& angles); //NEW HEXA3
-
       QModelIndex replace( const QModelIndexList& quadsPattern,
           const QModelIndex& p1, const QModelIndex& c1,
           const QModelIndex& p2, const QModelIndex& c2,
           const QModelIndex& p3, const QModelIndex& c3 ); //NEW HEXA3
 
 
-
-
-
       // ************  ASSOCIATION ************
-      // elt is Vertex, Edge, Quad
-//      void addAssociation( const QModelIndex& elt, const GeomObj& assoc ); //perime
-//      QList<GeomObj> getAssociations( const QModelIndex& elt ); //perime
-
       bool setVertexAssociation( const QModelIndex& iVertex, double x, double y, double z);
       bool setVertexAssociation(const QModelIndex& iVertex, const QModelIndex& iGeomVertex);
       bool addEdgeAssociation(const QModelIndex& iEdge, const QModelIndex& iGeomEdge, double start, double end);
       bool addQuadAssociation (const QModelIndex& iQuad, const QModelIndex& iGeomFace);
 
       QMultiMap< QString, int >     getAssocShapesIds(const QModelIndex& dataIndex);
-     QModelIndex getVertexAssociation(const QModelIndex& iVertex);
-     QList<GeomObj> getEdgeAssociations(const QModelIndex& iEdge);
-     QModelIndexList getQuadAssociations(const QModelIndex& iQuad);
+      QModelIndex     getVertexAssociation(const QModelIndex& iVertex);
+      QModelIndexList getEdgeAssociations(const QModelIndex& iEdge);
+      QModelIndexList getQuadAssociations(const QModelIndex& iQuad);
 
      //---------- perimees -------------
       bool associateOpenedLine( const QModelIndexList& edges,
@@ -379,7 +499,6 @@ namespace HEXABLOCK
 
 
       // ************  GROUPS  ************
-
       //
       QModelIndex addGroup( const QString& name, Group kind );
 
@@ -397,43 +516,16 @@ namespace HEXABLOCK
 
 
       // ************  LAWS  ************
-
       //
       QModelIndex addLaw( const QString& name, int nbnodes );
-
-      // 8.2 Boite: créer une loi
-      // class Law
-      // {
-      // public:
-      // int     setNodes (int  nbre);
-      // int     setCoefficient (double coeff);
-      // void    setKind (KindLaw type);
-      // }
-
       bool setLaw( const QModelIndex& ilaw, int nbnodes, double coeff, KindLaw type );
-
-      //
       bool  removeLaw( const QModelIndex& law );
-
-      // 8.3 Boite: éditer une loi
-      // (idem création)
-
-      // 9 Discrétisation
-      // 9.1 Boite: poser une loi de discrétisation sur une propagation
-      // int   setLaw (Law* loi);
-      // void  setWay (bool sens);
       bool setPropagation( const QModelIndex& iPropagation, const QModelIndex& iLaw, bool way );
       QModelIndexList getPropagation( const QModelIndex& iPropagation ) const;
-
-      //
-      // 9.1 Boite: éditer
-      // (idem création)
-
 
       // tools
       HEXA_NS::Document* documentImpl();
       QString            documentEntry();
-      //       QModelIndex        indexBy( int role, const QString& value );
 
       signals:
       void patternDataChanged();
@@ -470,10 +562,8 @@ namespace HEXABLOCK
       QStandardItem     *_implicitShapesDirItem;
       QStandardItem     *_cloudOfPointsDirItem;
 
-
       //association
       // CS_TODO
-
 
       // groups
       QStandardItem     *_groupDirItem;
@@ -512,11 +602,8 @@ namespace HEXABLOCK
 
       QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
 
-
       HEXA_NS::Document* documentImpl();
       QString            documentEntry();
-
-
     };
 
 
@@ -542,7 +629,6 @@ namespace HEXABLOCK
 
         QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
     };
-
 
 
     class  AssociationsModel : public QSortFilterProxyModel
@@ -584,9 +670,6 @@ namespace HEXABLOCK
 
       QModelIndexList getPropagation( const QModelIndex& iPropagation ) const;
     }; 
-
-
-
 
   }
 }

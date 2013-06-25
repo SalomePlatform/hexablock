@@ -32,7 +32,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-bool db = false;
+bool db = true;
 
 // ======================================================== Constructeur
 Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
@@ -58,6 +58,8 @@ Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
                  setError ();
        }
 
+   if (el_root != NULL && el_status==HOK)
+       el_root->addQuad (this);
    majReferences ();
 }
 // ======================================================== Constructeur bis
@@ -113,6 +115,8 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
       fatal_error ("Quadrangle impossible");
       }
 
+   if (el_root != NULL && el_status==HOK)
+       el_root->addQuad (this);
    majReferences ();
 }
 // ======================================================== Constructeur ter
@@ -126,6 +130,9 @@ Quad::Quad (Quad* other)
        }
    q_orientation = Q_UNDEFINED;
    q_clone       = NULL;
+
+   if (el_root != NULL && el_status==HOK)
+       el_root->addQuad (this);
 }
 // ============================================================  getEdge
 Edge* Quad::getEdge (int nro)
@@ -196,7 +203,7 @@ int Quad::anaMerge (Vertex* v1, Vertex* v2, Vertex* tv1[], Edge* te1[])
    return HOK;
 }
 // ======================================================== ordoVertex
-int Quad::ordoVertex (Vertex* v1, Vertex* v2, Vertex* tv1[])
+int Quad::ordoVertex (Vertex* v1, Vertex* v2, Vertex* tver[])
 {
    int orig = NOTHING;
    for (int nro=0 ; orig == NOTHING && nro < QUAD4 ; nro++)
@@ -212,15 +219,30 @@ int Quad::ordoVertex (Vertex* v1, Vertex* v2, Vertex* tv1[])
    if (q_vertex [nsp1] == v2)
       {
       for (int nro=0 ; nro < QUAD4 ; nro++)
-          tv1 [nro] = q_vertex [(orig+nro) MODULO QUAD4];
+          tver [nro] = q_vertex [(orig+nro) MODULO QUAD4];
       }
    else if (q_vertex [nsm1] == v2)
       {
       for (int nro=0 ; nro < QUAD4 ; nro++)
-          tv1 [nro] = q_vertex [(orig+QUAD4-nro) MODULO QUAD4];
+          tver [nro] = q_vertex [(orig+QUAD4-nro) MODULO QUAD4];
       }
    else
       return 588;
+
+   return HOK;
+}
+// ======================================================== ordonner
+int Quad::ordonner (Vertex* v1, Vertex* v2, Vertex* tver[], Edge* ted[])
+{
+   tver [0] = tver [1] = tver [2] = tver [3] = NULL;
+   ted  [0] = ted  [1] = ted  [2] = ted  [3] = NULL;
+
+   int ier = ordoVertex (v1, v2, tver);
+   if (ier != HOK)
+       return ier;
+
+   for (int nro=0 ; nro < QUAD4 ; nro++)
+       ted [nro] = findEdge (tver[nro], tver [(nro+1) MODULO QUAD4]);
 
    return HOK;
 }
@@ -598,7 +620,7 @@ int Quad::setOrientation ()
     double pmixte = prod_mixte (vi, vj, vk);
     q_orientation = pmixte > ZEROR ? Q_DIRECT : Q_INVERSE;
     if (db)
-       printf (" %s = %s\n", el_name.c_str(), t_ori [ q_orientation ]);
+       printf (" %s := %s\n", el_name.c_str(), t_ori [ q_orientation ]);
     return q_orientation;
 }
 // ========================================================== clearAssociation
@@ -632,9 +654,152 @@ int Quad::addAssociation (FaceShape* face)
 // ========================================================== getAssociation
 FaceShape* Quad::getAssociation (int nro)
 {
-   if (nro < 0 || nro >= tab_assoc.size())
+   if (nro < 0 || nro >= (int)tab_assoc.size())
       return NULL;
 
    return tab_assoc [nro];
+}
+// ======================================================== commonEdge
+Edge* Quad::commonEdge (Quad* other)
+{
+   for (int ne1=0 ; ne1<QUAD4 ; ne1++)
+       for (int ne2=0 ; ne2<QUAD4 ; ne2++)
+           if (q_edge [ne1] == other->q_edge [ne2])
+              return q_edge [ne1];
+
+   return NULL;
+}
+// ======================================================== Inter
+int Quad::inter (Quad* other, int& nother)
+{
+   for (int ne1=0 ; ne1<QUAD4 ; ne1++)
+       for (int ne2=0 ; ne2<QUAD4 ; ne2++)
+           if (q_edge [ne1] == other->q_edge [ne2])
+              {
+              nother = ne2;
+              return  ne1;
+              }
+
+   nother = NOTHING;
+   return NOTHING;
+}
+// ======================================================== Inter (2)
+Edge* Quad::inter (Quad* other)
+{
+   for (int ne1=0 ; ne1<QUAD4 ; ne1++)
+       for (int ne2=0 ; ne2<QUAD4 ; ne2++)
+           if (q_edge [ne1] == other->q_edge [ne2])
+              return  q_edge [ne1];
+   return NULL;
+}
+// ============================================================ definedBy (v)
+bool Quad::definedBy  (Vertex* v1, Vertex* v2)
+{
+   for (int n1=0 ; n1< QUAD4 ; n1++)
+       if (v1 == q_vertex[n1] && v2 == q_vertex[(n1+2) MODULO QUAD4])
+          return true;
+
+   return false;
+}
+// ============================================================ definedBy (e)
+bool Quad::definedBy  (Edge* e1, Edge* e2)
+{
+   if (e1==e2 || BadElement (e1) || BadElement (e2))
+      return false;
+
+   bool f1=false, f2=false;
+   for (int ned=0 ; ned< QUAD4 ; ned++)
+       if      (e1 == q_edge[ned]) f1 = true;
+       else if (e2 == q_edge[ned]) f2 = true;
+    // if (e1 == q_edge[ned] && e2 == q_edge[(ned+2) MODULO QUAD4]) return true;
+
+   return f1 && f2;
+}
+// =============================================================== findEdge
+Edge* Quad::findEdge (Vertex* v1, Vertex* v2)
+{
+   for (int nro=0 ; nro< QUAD4 ; nro++)
+       {
+       Vertex* va = q_edge[nro]->getVertex(V_AMONT) ;
+       Vertex* vb = q_edge[nro]->getVertex(V_AVAL) ;
+       if ((v1==va && v2==vb) || (v1==vb && v2==va))
+           return q_edge [nro];
+       }
+
+   return NULL;
+}
+// =============================================================== indexVertex
+int Quad::indexVertex  (Vertex* elt)
+{
+   for (int n1=0 ; n1< QUAD4 ; n1++)
+       if (elt == q_vertex[n1])
+          return n1;
+
+   return NOTHING;
+}
+// =============================================================== indexEdge
+int Quad::indexEdge  (Edge* elt)
+{
+   for (int n1=0 ; n1< QUAD4 ; n1++)
+       if (elt == q_edge[n1])
+          return n1;
+
+   return NOTHING;
+}
+// =============================================================== setColor
+void Quad::setColor  (double val)
+{
+   for (int n1=0 ; n1< QUAD4 ; n1++)
+       q_vertex[n1] -> setColor (val);
+}
+// =============================================================== duplicate
+void Quad::duplicate  ()
+{
+   q_orientation  = Q_UNDEFINED;
+   q_clone = new Quad (GetClone (q_edge [E_A]),
+                       GetClone (q_edge [E_B]),
+                       GetClone (q_edge [E_C]),
+                       GetClone (q_edge [E_D]));
+   q_clone->tab_assoc  = tab_assoc;
+}
+// ============================================================ nearestVertex
+Vertex* Quad::nearestVertex (Vertex* other)
+{
+   if (BadElement (other))
+      return NULL;
+ 
+   Vertex* vsol = NULL;
+   double  dmin = 1e+77;
+   int nbre = countVertex ();
+   for (int nro=0 ; nro<nbre ; nro++)
+       {
+       Vertex* vert = getVertex (nro);
+       double  dist = other->dist2 (vert);
+       if (dist < dmin)
+          {
+          dmin = dist;
+          vsol = vert; 
+          }
+       }
+   return vsol;
+}
+// =============================================================== reorienter
+void Quad::reorienter  ()
+{
+   if (q_orientation != Q_INVERSE)
+         return;
+
+   Edge* edge   = q_edge [E_B];
+   q_edge [E_B] = q_edge [E_D];
+   q_edge [E_B] = edge;
+
+   q_vertex [E_A] = q_edge [E_D]->commonVertex(q_edge [E_A]);
+   q_vertex [E_B] = q_edge [E_A]->commonVertex(q_edge [E_B]);
+   q_vertex [E_C] = q_edge [E_B]->commonVertex(q_edge [E_C]);
+   q_vertex [E_D] = q_edge [E_C]->commonVertex(q_edge [E_D]);
+
+   if (db)
+       printf (" %s est reoriente\n", el_name.c_str());
+   q_orientation = Q_DIRECT;
 }
 END_NAMESPACE_HEXA
