@@ -31,8 +31,6 @@
 #include "HexCrossElements.hxx"
 
 #include "HexVector.hxx"
-#include "HexCylinder.hxx"
-#include "HexPipe.hxx"
 #include "HexMatrix.hxx"
 #include "HexCloner.hxx"
 #include "HexPropagation.hxx"

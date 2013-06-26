@@ -20,7 +20,7 @@ if ( [ $os != Linux ] ) then
 for a in a a a a a a a a a a a a a a a a a a a a a a a
     do echo ; done
 
-echo "  -- Je swigge ..."
+echo "  -- Creation de $wrap_src  ..."
 swig -python -c++ -o $wrap_src -I../HEXABLOCK -module ${module} ${module}.i
 
 ## echo "  -- Je compile ..."

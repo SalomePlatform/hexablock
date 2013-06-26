@@ -11,6 +11,8 @@
 #include "HexVector.hxx"
 #include "HexCrossElements.hxx"
 #include "HexBiCylinder.hxx"
+#include "HexNewShape.hxx"
+#include "HexGroup.hxx"
 %}
 
 %include "std_vector.i"
@@ -20,8 +22,9 @@ namespace std
 %template(VectorQuads)    vector <Hex::Quad*>;
 %template(VectorEdges)    vector <Hex::Edge*>;
 %template(VectorVertices) vector <Hex::Vertex*>;
-%template(VectorReal) vector <double>;
-%template(VectorInt)  vector <int>;
+%template(VectorShapes)   vector <Hex::NewShape*>;
+%template(VectorReal)    vector <double>;
+%template(VectorInt)     vector <int>;
 }
 
 %include "hexa_base.hxx"
@@ -37,3 +40,5 @@ namespace std
 %include "HexElements.hxx"
 %include "HexCrossElements.hxx"
 %include "HexBiCylinder.hxx"
+%include "HexNewShape.hxx"
+%include "HexGroup.hxx"

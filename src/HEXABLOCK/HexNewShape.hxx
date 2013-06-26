@@ -6,10 +6,12 @@
 
 #include "HexEltBase.hxx"
 
+#ifndef SWIG
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
 #include <BRep_Builder.hxx>
+#endif
 
 BEGIN_NAMESPACE_HEXA
 
@@ -28,17 +30,19 @@ public :         // for TUI
    cpchar getNameEdge    (int nro);
    cpchar getNameFace    (int nro);
 
+   NewShape (Document* dad, EnumShape type=SH_NONE);
+
+#ifndef SWIG
+public :         // for GUI
    const string&       getBrep ();
    const TopoDS_Shape& getShape ();
 
-public :         // for GUI
    EnumShape    getOrigin ()        { return sh_origin ; }
    VertexShape* getVertexShape (int nro);
    EdgeShape*   getEdgeShape (int nro);
    FaceShape*   getFaceShape (int nro);
 
 public :         // for Others
-   NewShape (Document* dad, EnumShape type=SH_NONE);
    void  setShape (const TopoDS_Shape& shape, EnumShape type=SH_IMPORT);
    void  setBrep  (rcstring brep);
    int   addPoint (double* coord);
@@ -101,6 +105,7 @@ private :     // ________________________________________________________
    int sh_face_max;
    int sh_edge_max;
    int sh_vertex_max;
+#endif
 };
 END_NAMESPACE_HEXA
 #endif

@@ -2509,26 +2509,28 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t swig_types[38]
 #define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type swig_types[39]
 #define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t swig_types[40]
-#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t swig_types[41]
-#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type swig_types[42]
-#define SWIGTYPE_p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t swig_types[43]
-#define SWIGTYPE_p_std__vectorTHex__SubShape_p_std__allocatorTHex__SubShape_p_t_t swig_types[44]
-#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t swig_types[45]
-#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__allocator_type swig_types[46]
-#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t swig_types[47]
-#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t__allocator_type swig_types[48]
-#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t swig_types[49]
-#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t__allocator_type swig_types[50]
-#define SWIGTYPE_p_std__vectorTstd__string_std__allocatorTstd__string_t_t swig_types[51]
-#define SWIGTYPE_p_string swig_types[52]
-#define SWIGTYPE_p_swig__PySwigIterator swig_types[53]
-#define SWIGTYPE_p_value_type swig_types[54]
-#define SWIGTYPE_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type swig_types[55]
-#define SWIGTYPE_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type swig_types[56]
-#define SWIGTYPE_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type swig_types[57]
-#define SWIGTYPE_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type swig_types[58]
-static swig_type_info *swig_types[60];
-static swig_module_info swig_module = {swig_types, 59, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type swig_types[41]
+#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t swig_types[42]
+#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type swig_types[43]
+#define SWIGTYPE_p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t swig_types[44]
+#define SWIGTYPE_p_std__vectorTHex__SubShape_p_std__allocatorTHex__SubShape_p_t_t swig_types[45]
+#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t swig_types[46]
+#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__allocator_type swig_types[47]
+#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t swig_types[48]
+#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t__allocator_type swig_types[49]
+#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t swig_types[50]
+#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t__allocator_type swig_types[51]
+#define SWIGTYPE_p_std__vectorTstd__string_std__allocatorTstd__string_t_t swig_types[52]
+#define SWIGTYPE_p_string swig_types[53]
+#define SWIGTYPE_p_swig__PySwigIterator swig_types[54]
+#define SWIGTYPE_p_value_type swig_types[55]
+#define SWIGTYPE_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type swig_types[56]
+#define SWIGTYPE_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type swig_types[57]
+#define SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type swig_types[58]
+#define SWIGTYPE_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type swig_types[59]
+#define SWIGTYPE_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type swig_types[60]
+static swig_type_info *swig_types[62];
+static swig_module_info swig_module = {swig_types, 61, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2629,6 +2631,8 @@ namespace swig {
 #include "HexVector.hxx"
 #include "HexCrossElements.hxx"
 #include "HexBiCylinder.hxx"
+#include "HexNewShape.hxx"
+#include "HexGroup.hxx"
 
 
 #include <iostream>
@@ -4184,6 +4188,61 @@ SWIGINTERN void std_vector_Sl_Hex_Vertex_Sm__Sg____setitem__(std::vector<Hex::Ve
       *(swig::getpos(self,i)) = x;
     }
 SWIGINTERN void std_vector_Sl_Hex_Vertex_Sm__Sg__append(std::vector<Hex::Vertex * > *self,std::vector<Hex::Vertex * >::value_type x){
+      self->push_back(x);
+    }
+
+  namespace swig {
+    template <>  struct traits<Hex::NewShape > {
+      typedef pointer_category category;
+      static const char* type_name() { return"Hex::NewShape"; }
+    };
+  }
+
+
+      namespace swig {
+	template <>  struct traits<std::vector<Hex::NewShape*, std::allocator<Hex::NewShape * > > > {
+	  typedef value_category category;
+	  static const char* type_name() {
+	    return "std::vector<" "Hex::NewShape" " *," "std::allocator<Hex::NewShape * >" " >";
+	  }
+	};
+      }
+    
+SWIGINTERN swig::PySwigIterator *std_vector_Sl_Hex_NewShape_Sm__Sg__iterator(std::vector<Hex::NewShape * > *self,PyObject **PYTHON_SELF){
+      return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
+    }
+SWIGINTERN bool std_vector_Sl_Hex_NewShape_Sm__Sg____nonzero__(std::vector<Hex::NewShape * > const *self){
+      return !(self->empty());
+    }
+SWIGINTERN std::vector<Hex::NewShape * >::size_type std_vector_Sl_Hex_NewShape_Sm__Sg____len__(std::vector<Hex::NewShape * > const *self){
+      return self->size();
+    }
+SWIGINTERN std::vector<Hex::NewShape * >::value_type std_vector_Sl_Hex_NewShape_Sm__Sg__pop(std::vector<Hex::NewShape * > *self){
+      if (self->size() == 0)
+	throw std::out_of_range("pop from empty container");
+      std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >::value_type x = self->back();
+      self->pop_back();
+      return x;
+    }
+SWIGINTERN std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > *std_vector_Sl_Hex_NewShape_Sm__Sg____getslice__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i,std::vector<Hex::NewShape * >::difference_type j){
+      return swig::getslice(self, i, j);
+    }
+SWIGINTERN void std_vector_Sl_Hex_NewShape_Sm__Sg____setslice__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i,std::vector<Hex::NewShape * >::difference_type j,std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > const &v){
+      swig::setslice(self, i, j, v);
+    }
+SWIGINTERN void std_vector_Sl_Hex_NewShape_Sm__Sg____delslice__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i,std::vector<Hex::NewShape * >::difference_type j){
+      swig::delslice(self, i, j);
+    }
+SWIGINTERN void std_vector_Sl_Hex_NewShape_Sm__Sg____delitem__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i){
+      self->erase(swig::getpos(self,i));
+    }
+SWIGINTERN std::vector<Hex::NewShape * >::value_type std_vector_Sl_Hex_NewShape_Sm__Sg____getitem__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i){
+      return *(swig::cgetpos(self, i));
+    }
+SWIGINTERN void std_vector_Sl_Hex_NewShape_Sm__Sg____setitem__(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::difference_type i,std::vector<Hex::NewShape * >::value_type x){
+      *(swig::getpos(self,i)) = x;
+    }
+SWIGINTERN void std_vector_Sl_Hex_NewShape_Sm__Sg__append(std::vector<Hex::NewShape * > *self,std::vector<Hex::NewShape * >::value_type x){
       self->push_back(x);
     }
 
@@ -11752,6 +11811,1622 @@ SWIGINTERN PyObject *VectorVertices_swigregister(PyObject *SWIGUNUSEDPARM(self),
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_VectorShapes_iterator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  PyObject **arg2 = (PyObject **) 0 ;
+  swig::PySwigIterator *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  arg2 = &obj0;
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_iterator",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_iterator" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (swig::PySwigIterator *)std_vector_Sl_Hex_NewShape_Sm__Sg__iterator(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__PySwigIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes___nonzero__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___nonzero__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (bool)std_vector_Sl_Hex_NewShape_Sm__Sg____nonzero__((std::vector<Hex::NewShape * > const *)arg1);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes___len__",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___len__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = std_vector_Sl_Hex_NewShape_Sm__Sg____len__((std::vector<Hex::NewShape * > const *)arg1);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_pop(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::value_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_pop",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_pop" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  try {
+    result = (std::vector<Hex::NewShape * >::value_type)std_vector_Sl_Hex_NewShape_Sm__Sg__pop(arg1);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  std::vector<Hex::NewShape * >::difference_type arg3 ;
+  std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes___getslice__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___getslice__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___getslice__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "VectorShapes___getslice__" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val3);
+  try {
+    result = (std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > *)std_vector_Sl_Hex_NewShape_Sm__Sg____getslice__(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___setslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  std::vector<Hex::NewShape * >::difference_type arg3 ;
+  std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  int res4 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:VectorShapes___setslice__",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___setslice__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___setslice__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "VectorShapes___setslice__" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val3);
+  {
+    std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *ptr = (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *)0;
+    res4 = swig::asptr(obj3, &ptr);
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "VectorShapes___setslice__" "', argument " "4"" of type '" "std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "VectorShapes___setslice__" "', argument " "4"" of type '" "std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > const &""'"); 
+    }
+    arg4 = ptr;
+  }
+  try {
+    std_vector_Sl_Hex_NewShape_Sm__Sg____setslice__(arg1,arg2,arg3,(std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > const &)*arg4);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___delslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  std::vector<Hex::NewShape * >::difference_type arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes___delslice__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___delslice__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___delslice__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "VectorShapes___delslice__" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val3);
+  try {
+    std_vector_Sl_Hex_NewShape_Sm__Sg____delslice__(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___delitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes___delitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___delitem__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___delitem__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  try {
+    std_vector_Sl_Hex_NewShape_Sm__Sg____delitem__(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  std::vector<Hex::NewShape * >::value_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___getitem__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___getitem__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  try {
+    result = (std::vector<Hex::NewShape * >::value_type)std_vector_Sl_Hex_NewShape_Sm__Sg____getitem__(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::difference_type arg2 ;
+  std::vector<Hex::NewShape * >::value_type arg3 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes___setitem__" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes___setitem__" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::difference_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "VectorShapes___setitem__" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp3);
+  try {
+    std_vector_Sl_Hex_NewShape_Sm__Sg____setitem__(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::value_type arg2 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_append",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_append" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "VectorShapes_append" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp2);
+  std_vector_Sl_Hex_NewShape_Sm__Sg__append(arg1,arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VectorShapes__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_VectorShapes")) SWIG_fail;
+  result = (std::vector<Hex::NewShape * > *)new std::vector<Hex::NewShape * >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VectorShapes__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = 0 ;
+  std::vector<Hex::NewShape * > *result = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_VectorShapes",&obj0)) SWIG_fail;
+  {
+    std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *ptr = (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *)0;
+    res1 = swig::asptr(obj0, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_VectorShapes" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_VectorShapes" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  result = (std::vector<Hex::NewShape * > *)new std::vector<Hex::NewShape * >((std::vector<Hex::NewShape * > const &)*arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  bool result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_empty",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_empty" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (bool)((std::vector<Hex::NewShape * > const *)arg1)->empty();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_size",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_size" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->size();
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_clear",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_clear" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  (arg1)->clear();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * > *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_swap",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_swap" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "VectorShapes_swap" "', argument " "2"" of type '" "std::vector<Hex::NewShape * > &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "VectorShapes_swap" "', argument " "2"" of type '" "std::vector<Hex::NewShape * > &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp2);
+  (arg1)->swap(*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  SwigValueWrapper<std::allocator<Hex::NewShape * > > result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_get_allocator",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_get_allocator" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->get_allocator();
+  resultobj = SWIG_NewPointerObj((new std::vector<Hex::NewShape * >::allocator_type(static_cast< const std::vector<Hex::NewShape * >::allocator_type& >(result))), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_begin__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_begin",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_begin" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (arg1)->begin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_begin__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::const_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_begin",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_begin" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->begin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::const_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_begin(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_begin__SWIG_0(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_begin__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_begin'.\n  Possible C/C++ prototypes are:\n    begin()\n    begin()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_end__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_end",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_end" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (arg1)->end();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_end__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::const_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_end",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_end" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->end();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::const_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_end(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_end__SWIG_0(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_end__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_end'.\n  Possible C/C++ prototypes are:\n    end()\n    end()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rbegin__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::reverse_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_rbegin",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_rbegin" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (arg1)->rbegin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::reverse_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rbegin__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::const_reverse_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_rbegin",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_rbegin" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->rbegin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::const_reverse_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rbegin(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_rbegin__SWIG_0(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_rbegin__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_rbegin'.\n  Possible C/C++ prototypes are:\n    rbegin()\n    rbegin()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rend__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::reverse_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_rend",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_rend" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (arg1)->rend();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::reverse_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rend__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::const_reverse_iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_rend",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_rend" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->rend();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::const_reverse_iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_rend(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[2];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_rend__SWIG_0(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_VectorShapes_rend__SWIG_1(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_rend'.\n  Possible C/C++ prototypes are:\n    rend()\n    rend()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VectorShapes__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * >::size_type arg1 ;
+  std::vector<Hex::NewShape * > *result = 0 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_VectorShapes",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_VectorShapes" "', argument " "1"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg1 = static_cast< std::vector<Hex::NewShape * >::size_type >(val1);
+  result = (std::vector<Hex::NewShape * > *)new std::vector<Hex::NewShape * >(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_pop_back",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_pop_back" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  (arg1)->pop_back();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_resize",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_resize" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes_resize" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::size_type >(val2);
+  (arg1)->resize(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator arg2 ;
+  std::vector<Hex::NewShape * >::iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::PySwigIterator *iter2 = 0 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_erase",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_erase" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::PySwigIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+  } else {
+    swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *iter_t = dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+    }
+  }
+  result = (arg1)->erase(arg2);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator arg2 ;
+  std::vector<Hex::NewShape * >::iterator arg3 ;
+  std::vector<Hex::NewShape * >::iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::PySwigIterator *iter2 = 0 ;
+  int res2 ;
+  swig::PySwigIterator *iter3 = 0 ;
+  int res3 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes_erase",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_erase" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::PySwigIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+  } else {
+    swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *iter_t = dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+    }
+  }
+  res3 = SWIG_ConvertPtr(obj2, SWIG_as_voidptrptr(&iter3), swig::PySwigIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res3) || !iter3) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+  } else {
+    swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *iter_t = dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter3);
+    if (iter_t) {
+      arg3 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_erase" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+    }
+  }
+  result = (arg1)->erase(arg2,arg3);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_erase(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::PySwigIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::PySwigIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter) != 0));
+      if (_v) {
+        return _wrap_VectorShapes_erase__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::PySwigIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::PySwigIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter) != 0));
+      if (_v) {
+        swig::PySwigIterator *iter = 0;
+        int res = SWIG_ConvertPtr(argv[2], SWIG_as_voidptrptr(&iter), swig::PySwigIterator::descriptor(), 0);
+        _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter) != 0));
+        if (_v) {
+          return _wrap_VectorShapes_erase__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_erase'.\n  Possible C/C++ prototypes are:\n    erase(std::vector<Hex::NewShape * >::iterator)\n    erase(std::vector<Hex::NewShape * >::iterator,std::vector<Hex::NewShape * >::iterator)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VectorShapes__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * >::size_type arg1 ;
+  std::vector<Hex::NewShape * >::value_type arg2 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  std::vector<Hex::NewShape * > *result = 0 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_VectorShapes",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_VectorShapes" "', argument " "1"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg1 = static_cast< std::vector<Hex::NewShape * >::size_type >(val1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_VectorShapes" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp2);
+  result = (std::vector<Hex::NewShape * > *)new std::vector<Hex::NewShape * >(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VectorShapes(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_VectorShapes__SWIG_0(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_size_t(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_VectorShapes__SWIG_2(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_VectorShapes__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_size_t(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_VectorShapes__SWIG_3(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'new_VectorShapes'.\n  Possible C/C++ prototypes are:\n    std::vector<(p.Hex::NewShape)>()\n    std::vector<(p.Hex::NewShape)>(std::vector<Hex::NewShape * > const &)\n    std::vector<(p.Hex::NewShape)>(std::vector<Hex::NewShape * >::size_type)\n    std::vector<(p.Hex::NewShape)>(std::vector<Hex::NewShape * >::size_type,std::vector<Hex::NewShape * >::value_type)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_push_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::value_type arg2 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_push_back",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_push_back" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "VectorShapes_push_back" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp2);
+  (arg1)->push_back(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::value_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_front",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_front" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (std::vector<Hex::NewShape * >::value_type)((std::vector<Hex::NewShape * > const *)arg1)->front();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::value_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_back",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_back" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = (std::vector<Hex::NewShape * >::value_type)((std::vector<Hex::NewShape * > const *)arg1)->back();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_assign(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type arg2 ;
+  std::vector<Hex::NewShape * >::value_type arg3 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes_assign",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_assign" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes_assign" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::size_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "VectorShapes_assign" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp3);
+  (arg1)->assign(arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type arg2 ;
+  std::vector<Hex::NewShape * >::value_type arg3 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes_resize",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_resize" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes_resize" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::size_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "VectorShapes_resize" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp3);
+  (arg1)->resize(arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_resize(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_VectorShapes_resize__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_VectorShapes_resize__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_resize'.\n  Possible C/C++ prototypes are:\n    resize(std::vector<Hex::NewShape * >::size_type)\n    resize(std::vector<Hex::NewShape * >::size_type,std::vector<Hex::NewShape * >::value_type)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_insert__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator arg2 ;
+  std::vector<Hex::NewShape * >::value_type arg3 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  std::vector<Hex::NewShape * >::iterator result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::PySwigIterator *iter2 = 0 ;
+  int res2 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorShapes_insert",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_insert" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::PySwigIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_insert" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+  } else {
+    swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *iter_t = dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_insert" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+    }
+  }
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "VectorShapes_insert" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp3);
+  result = (arg1)->insert(arg2,arg3);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector<Hex::NewShape * >::iterator & >(result)),
+    swig::PySwigIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::iterator arg2 ;
+  std::vector<Hex::NewShape * >::size_type arg3 ;
+  std::vector<Hex::NewShape * >::value_type arg4 = (std::vector<Hex::NewShape * >::value_type) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::PySwigIterator *iter2 = 0 ;
+  int res2 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:VectorShapes_insert",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_insert" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::PySwigIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_insert" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+  } else {
+    swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *iter_t = dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "VectorShapes_insert" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::iterator""'");
+    }
+  }
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "VectorShapes_insert" "', argument " "3"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg3 = static_cast< std::vector<Hex::NewShape * >::size_type >(val3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4,SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "VectorShapes_insert" "', argument " "4"" of type '" "std::vector<Hex::NewShape * >::value_type""'"); 
+  }
+  arg4 = reinterpret_cast< std::vector<Hex::NewShape * >::value_type >(argp4);
+  (arg1)->insert(arg2,arg3,arg4);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_insert(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 4); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::PySwigIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::PySwigIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter) != 0));
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_VectorShapes_insert__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::PySwigIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::PySwigIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::PySwigIterator_T<std::vector<Hex::NewShape * >::iterator > *>(iter) != 0));
+      if (_v) {
+        {
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          void *vptr = 0;
+          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_VectorShapes_insert__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'VectorShapes_insert'.\n  Possible C/C++ prototypes are:\n    insert(std::vector<Hex::NewShape * >::iterator,std::vector<Hex::NewShape * >::value_type)\n    insert(std::vector<Hex::NewShape * >::iterator,std::vector<Hex::NewShape * >::size_type,std::vector<Hex::NewShape * >::value_type)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_reserve(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorShapes_reserve",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_reserve" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorShapes_reserve" "', argument " "2"" of type '" "std::vector<Hex::NewShape * >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector<Hex::NewShape * >::size_type >(val2);
+  (arg1)->reserve(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorShapes_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  std::vector<Hex::NewShape * >::size_type result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorShapes_capacity",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorShapes_capacity" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  result = ((std::vector<Hex::NewShape * > const *)arg1)->capacity();
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_VectorShapes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector<Hex::NewShape * > *arg1 = (std::vector<Hex::NewShape * > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_VectorShapes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_VectorShapes" "', argument " "1"" of type '" "std::vector<Hex::NewShape * > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector<Hex::NewShape * > * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *VectorShapes_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -21930,20 +23605,14 @@ fail:
 SWIGINTERN PyObject *_wrap_Document_associateOpenedLine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Edges *arg2 = 0 ;
-  Hex::NewShapes *arg3 = 0 ;
-  Hex::IntVector *arg4 = 0 ;
+  Hex::Edges arg2 ;
+  Hex::NewShapes arg3 ;
+  Hex::IntVector arg4 ;
   double arg5 ;
   double arg6 ;
   int result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
   double val5 ;
   int ecode5 = 0 ;
   double val6 ;
@@ -21961,30 +23630,33 @@ SWIGINTERN PyObject *_wrap_Document_associateOpenedLine(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_associateOpenedLine" "', argument " "1"" of type '" "Hex::Document *""'"); 
   }
   arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_associateOpenedLine" "', argument " "2"" of type '" "Hex::Edges &""'"); 
+  {
+    std::vector<Hex::Edge*,std::allocator<Hex::Edge * > > *ptr = (std::vector<Hex::Edge*,std::allocator<Hex::Edge * > > *)0;
+    int res = swig::asptr(obj1, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateOpenedLine" "', argument " "2"" of type '" "Hex::Edges""'"); 
+    }
+    arg2 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateOpenedLine" "', argument " "2"" of type '" "Hex::Edges &""'"); 
+  {
+    std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *ptr = (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *)0;
+    int res = swig::asptr(obj2, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateOpenedLine" "', argument " "3"" of type '" "Hex::NewShapes""'"); 
+    }
+    arg3 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  arg2 = reinterpret_cast< Hex::Edges * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t,  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_associateOpenedLine" "', argument " "3"" of type '" "Hex::NewShapes &""'"); 
+  {
+    std::vector<int,std::allocator<int > > *ptr = (std::vector<int,std::allocator<int > > *)0;
+    int res = swig::asptr(obj3, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateOpenedLine" "', argument " "4"" of type '" "Hex::IntVector""'"); 
+    }
+    arg4 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  if (!argp3) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateOpenedLine" "', argument " "3"" of type '" "Hex::NewShapes &""'"); 
-  }
-  arg3 = reinterpret_cast< Hex::NewShapes * >(argp3);
-  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t,  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "Document_associateOpenedLine" "', argument " "4"" of type '" "Hex::IntVector &""'"); 
-  }
-  if (!argp4) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateOpenedLine" "', argument " "4"" of type '" "Hex::IntVector &""'"); 
-  }
-  arg4 = reinterpret_cast< Hex::IntVector * >(argp4);
   ecode5 = SWIG_AsVal_double(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Document_associateOpenedLine" "', argument " "5"" of type '" "double""'");
@@ -21995,7 +23667,7 @@ SWIGINTERN PyObject *_wrap_Document_associateOpenedLine(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_associateOpenedLine" "', argument " "6"" of type '" "double""'");
   } 
   arg6 = static_cast< double >(val6);
-  result = (int)(arg1)->associateOpenedLine(*arg2,*arg3,*arg4,arg5,arg6);
+  result = (int)(arg1)->associateOpenedLine(arg2,arg3,arg4,arg5,arg6);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -22007,9 +23679,9 @@ SWIGINTERN PyObject *_wrap_Document_associateClosedLine(PyObject *SWIGUNUSEDPARM
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
   Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
-  Hex::Edges *arg3 = 0 ;
-  Hex::NewShapes *arg4 = 0 ;
-  Hex::IntVector *arg5 = 0 ;
+  Hex::Edges arg3 ;
+  Hex::NewShapes arg4 ;
+  Hex::IntVector arg5 ;
   double arg6 ;
   bool arg7 ;
   int result;
@@ -22017,12 +23689,6 @@ SWIGINTERN PyObject *_wrap_Document_associateClosedLine(PyObject *SWIGUNUSEDPARM
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
   double val6 ;
   int ecode6 = 0 ;
   bool val7 ;
@@ -22046,30 +23712,33 @@ SWIGINTERN PyObject *_wrap_Document_associateClosedLine(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_associateClosedLine" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
   }
   arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t,  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_associateClosedLine" "', argument " "3"" of type '" "Hex::Edges &""'"); 
+  {
+    std::vector<Hex::Edge*,std::allocator<Hex::Edge * > > *ptr = (std::vector<Hex::Edge*,std::allocator<Hex::Edge * > > *)0;
+    int res = swig::asptr(obj2, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateClosedLine" "', argument " "3"" of type '" "Hex::Edges""'"); 
+    }
+    arg3 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  if (!argp3) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateClosedLine" "', argument " "3"" of type '" "Hex::Edges &""'"); 
+  {
+    std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *ptr = (std::vector<Hex::NewShape*,std::allocator<Hex::NewShape * > > *)0;
+    int res = swig::asptr(obj3, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateClosedLine" "', argument " "4"" of type '" "Hex::NewShapes""'"); 
+    }
+    arg4 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  arg3 = reinterpret_cast< Hex::Edges * >(argp3);
-  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t,  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "Document_associateClosedLine" "', argument " "4"" of type '" "Hex::NewShapes &""'"); 
+  {
+    std::vector<int,std::allocator<int > > *ptr = (std::vector<int,std::allocator<int > > *)0;
+    int res = swig::asptr(obj4, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Document_associateClosedLine" "', argument " "5"" of type '" "Hex::IntVector""'"); 
+    }
+    arg5 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
-  if (!argp4) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateClosedLine" "', argument " "4"" of type '" "Hex::NewShapes &""'"); 
-  }
-  arg4 = reinterpret_cast< Hex::NewShapes * >(argp4);
-  res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t,  0 );
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Document_associateClosedLine" "', argument " "5"" of type '" "Hex::IntVector &""'"); 
-  }
-  if (!argp5) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Document_associateClosedLine" "', argument " "5"" of type '" "Hex::IntVector &""'"); 
-  }
-  arg5 = reinterpret_cast< Hex::IntVector * >(argp5);
   ecode6 = SWIG_AsVal_double(obj5, &val6);
   if (!SWIG_IsOK(ecode6)) {
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_associateClosedLine" "', argument " "6"" of type '" "double""'");
@@ -22080,7 +23749,7 @@ SWIGINTERN PyObject *_wrap_Document_associateClosedLine(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Document_associateClosedLine" "', argument " "7"" of type '" "bool""'");
   } 
   arg7 = static_cast< bool >(val7);
-  result = (int)(arg1)->associateClosedLine(arg2,*arg3,*arg4,*arg5,arg6,arg7);
+  result = (int)(arg1)->associateClosedLine(arg2,arg3,arg4,arg5,arg6,arg7);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -29956,6 +31625,688 @@ SWIGINTERN PyObject *BiCylinder_swigregister(PyObject *SWIGUNUSEDPARM(self), PyO
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_NewShape_countVertex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NewShape_countVertex",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_countVertex" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  result = (int)(arg1)->countVertex();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_countEdge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NewShape_countEdge",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_countEdge" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  result = (int)(arg1)->countEdge();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_countFace(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:NewShape_countFace",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_countFace" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  result = (int)(arg1)->countFace();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getVertex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getVertex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getVertex" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getVertex" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (int)(arg1)->getVertex(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getEdge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getEdge",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getEdge" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getEdge" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (int)(arg1)->getEdge(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getFace(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getFace",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getFace" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getFace" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (int)(arg1)->getFace(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getNameVertex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  cpchar result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getNameVertex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getNameVertex" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getNameVertex" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (cpchar)(arg1)->getNameVertex(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getNameEdge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  cpchar result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getNameEdge",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getNameEdge" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getNameEdge" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (cpchar)(arg1)->getNameEdge(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewShape_getNameFace(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  int arg2 ;
+  cpchar result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewShape_getNameFace",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewShape_getNameFace" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "NewShape_getNameFace" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (cpchar)(arg1)->getNameFace(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_NewShape__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Document *arg1 = (Hex::Document *) 0 ;
+  Hex::EnumShape arg2 ;
+  Hex::NewShape *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_NewShape",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NewShape" "', argument " "1"" of type '" "Hex::Document *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Document * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_NewShape" "', argument " "2"" of type '" "Hex::EnumShape""'");
+  } 
+  arg2 = static_cast< Hex::EnumShape >(val2);
+  result = (Hex::NewShape *)new Hex::NewShape(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__NewShape, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_NewShape__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Document *arg1 = (Hex::Document *) 0 ;
+  Hex::NewShape *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_NewShape",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_NewShape" "', argument " "1"" of type '" "Hex::Document *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Document * >(argp1);
+  result = (Hex::NewShape *)new Hex::NewShape(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__NewShape, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_NewShape(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_NewShape__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_new_NewShape__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'new_NewShape'.\n  Possible C/C++ prototypes are:\n    Hex::NewShape(Hex::Document *,Hex::EnumShape)\n    Hex::NewShape(Hex::Document *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_NewShape(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::NewShape *arg1 = (Hex::NewShape *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_NewShape",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__NewShape, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_NewShape" "', argument " "1"" of type '" "Hex::NewShape *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::NewShape * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *NewShape_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Hex__NewShape, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_Group_addElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  Hex::EltBase *arg2 = (Hex::EltBase *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Group_addElement",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_addElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__EltBase, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Group_addElement" "', argument " "2"" of type '" "Hex::EltBase *""'"); 
+  }
+  arg2 = reinterpret_cast< Hex::EltBase * >(argp2);
+  result = (int)(arg1)->addElement(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_countElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Group_countElement",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_countElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  result = (int)(arg1)->countElement();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_getKind(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  Hex::EnumGroup result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Group_getKind",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_getKind" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  result = (Hex::EnumGroup)(arg1)->getKind();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_removeElement__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  int arg2 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Group_removeElement",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_removeElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Group_removeElement" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (int)(arg1)->removeElement(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_clearElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Group_clearElement",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_clearElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  (arg1)->clearElement();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_removeElement__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  Hex::EltBase *arg2 = (Hex::EltBase *) 0 ;
+  int result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Group_removeElement",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_removeElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__EltBase, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Group_removeElement" "', argument " "2"" of type '" "Hex::EltBase *""'"); 
+  }
+  arg2 = reinterpret_cast< Hex::EltBase * >(argp2);
+  result = (int)(arg1)->removeElement(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_removeElement(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Group, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__EltBase, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Group_removeElement__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Group, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_Group_removeElement__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'Group_removeElement'.\n  Possible C/C++ prototypes are:\n    removeElement(int)\n    removeElement(Hex::EltBase *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Group_getElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  int arg2 ;
+  Hex::EltBase *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Group_getElement",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Group_getElement" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Group_getElement" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  result = (Hex::EltBase *)(arg1)->getElement(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__EltBase, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Group(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Document *arg1 = (Hex::Document *) 0 ;
+  cpchar arg2 = (cpchar) 0 ;
+  Hex::EnumGroup arg3 ;
+  Hex::Group *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:new_Group",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Group" "', argument " "1"" of type '" "Hex::Document *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Document * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_Group" "', argument " "2"" of type '" "cpchar""'");
+  }
+  arg2 = reinterpret_cast< cpchar >(buf2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_Group" "', argument " "3"" of type '" "Hex::EnumGroup""'");
+  } 
+  arg3 = static_cast< Hex::EnumGroup >(val3);
+  result = (Hex::Group *)new Hex::Group(arg1,arg2,arg3);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Group, SWIG_POINTER_NEW |  0 );
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_Group(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Group *arg1 = (Hex::Group *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_Group",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Group, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Group" "', argument " "1"" of type '" "Hex::Group *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Group * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *Group_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Hex__Group, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_PySwigIterator", _wrap_delete_PySwigIterator, METH_VARARGS, NULL},
 	 { (char *)"PySwigIterator_value", _wrap_PySwigIterator_value, METH_VARARGS, NULL},
@@ -30106,6 +32457,39 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"VectorVertices_capacity", _wrap_VectorVertices_capacity, METH_VARARGS, NULL},
 	 { (char *)"delete_VectorVertices", _wrap_delete_VectorVertices, METH_VARARGS, NULL},
 	 { (char *)"VectorVertices_swigregister", VectorVertices_swigregister, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_iterator", _wrap_VectorShapes_iterator, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___nonzero__", _wrap_VectorShapes___nonzero__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___len__", _wrap_VectorShapes___len__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_pop", _wrap_VectorShapes_pop, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___getslice__", _wrap_VectorShapes___getslice__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___setslice__", _wrap_VectorShapes___setslice__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___delslice__", _wrap_VectorShapes___delslice__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___delitem__", _wrap_VectorShapes___delitem__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___getitem__", _wrap_VectorShapes___getitem__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes___setitem__", _wrap_VectorShapes___setitem__, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_append", _wrap_VectorShapes_append, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_empty", _wrap_VectorShapes_empty, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_size", _wrap_VectorShapes_size, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_clear", _wrap_VectorShapes_clear, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_swap", _wrap_VectorShapes_swap, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_get_allocator", _wrap_VectorShapes_get_allocator, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_begin", _wrap_VectorShapes_begin, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_end", _wrap_VectorShapes_end, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_rbegin", _wrap_VectorShapes_rbegin, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_rend", _wrap_VectorShapes_rend, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_pop_back", _wrap_VectorShapes_pop_back, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_erase", _wrap_VectorShapes_erase, METH_VARARGS, NULL},
+	 { (char *)"new_VectorShapes", _wrap_new_VectorShapes, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_push_back", _wrap_VectorShapes_push_back, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_front", _wrap_VectorShapes_front, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_back", _wrap_VectorShapes_back, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_assign", _wrap_VectorShapes_assign, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_resize", _wrap_VectorShapes_resize, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_insert", _wrap_VectorShapes_insert, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_reserve", _wrap_VectorShapes_reserve, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_capacity", _wrap_VectorShapes_capacity, METH_VARARGS, NULL},
+	 { (char *)"delete_VectorShapes", _wrap_delete_VectorShapes, METH_VARARGS, NULL},
+	 { (char *)"VectorShapes_swigregister", VectorShapes_swigregister, METH_VARARGS, NULL},
 	 { (char *)"VectorReal_iterator", _wrap_VectorReal_iterator, METH_VARARGS, NULL},
 	 { (char *)"VectorReal___nonzero__", _wrap_VectorReal___nonzero__, METH_VARARGS, NULL},
 	 { (char *)"VectorReal___len__", _wrap_VectorReal___len__, METH_VARARGS, NULL},
@@ -30501,6 +32885,27 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"BiCylinder_getVertexIJK", _wrap_BiCylinder_getVertexIJK, METH_VARARGS, NULL},
 	 { (char *)"delete_BiCylinder", _wrap_delete_BiCylinder, METH_VARARGS, NULL},
 	 { (char *)"BiCylinder_swigregister", BiCylinder_swigregister, METH_VARARGS, NULL},
+	 { (char *)"NewShape_countVertex", _wrap_NewShape_countVertex, METH_VARARGS, NULL},
+	 { (char *)"NewShape_countEdge", _wrap_NewShape_countEdge, METH_VARARGS, NULL},
+	 { (char *)"NewShape_countFace", _wrap_NewShape_countFace, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getVertex", _wrap_NewShape_getVertex, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getEdge", _wrap_NewShape_getEdge, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getFace", _wrap_NewShape_getFace, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getNameVertex", _wrap_NewShape_getNameVertex, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getNameEdge", _wrap_NewShape_getNameEdge, METH_VARARGS, NULL},
+	 { (char *)"NewShape_getNameFace", _wrap_NewShape_getNameFace, METH_VARARGS, NULL},
+	 { (char *)"new_NewShape", _wrap_new_NewShape, METH_VARARGS, NULL},
+	 { (char *)"delete_NewShape", _wrap_delete_NewShape, METH_VARARGS, NULL},
+	 { (char *)"NewShape_swigregister", NewShape_swigregister, METH_VARARGS, NULL},
+	 { (char *)"Group_addElement", _wrap_Group_addElement, METH_VARARGS, NULL},
+	 { (char *)"Group_countElement", _wrap_Group_countElement, METH_VARARGS, NULL},
+	 { (char *)"Group_getKind", _wrap_Group_getKind, METH_VARARGS, NULL},
+	 { (char *)"Group_clearElement", _wrap_Group_clearElement, METH_VARARGS, NULL},
+	 { (char *)"Group_removeElement", _wrap_Group_removeElement, METH_VARARGS, NULL},
+	 { (char *)"Group_getElement", _wrap_Group_getElement, METH_VARARGS, NULL},
+	 { (char *)"new_Group", _wrap_new_Group, METH_VARARGS, NULL},
+	 { (char *)"delete_Group", _wrap_delete_Group, METH_VARARGS, NULL},
+	 { (char *)"Group_swigregister", Group_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -30509,6 +32914,12 @@ static PyMethodDef SwigMethods[] = {
 
 static void *_p_Hex__VectorTo_p_Hex__EltBase(void *x) {
     return (void *)((Hex::EltBase *)  ((Hex::Vector *) x));
+}
+static void *_p_Hex__NewShapeTo_p_Hex__EltBase(void *x) {
+    return (void *)((Hex::EltBase *)  ((Hex::NewShape *) x));
+}
+static void *_p_Hex__GroupTo_p_Hex__EltBase(void *x) {
+    return (void *)((Hex::EltBase *)  ((Hex::Group *) x));
 }
 static void *_p_Hex__PropagationTo_p_Hex__EltBase(void *x) {
     return (void *)((Hex::EltBase *)  ((Hex::Propagation *) x));
@@ -30584,6 +32995,7 @@ static swig_type_info _swigt__p_std__vectorTHex__FaceShape_p_std__allocatorTHex_
 static swig_type_info _swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t = {"_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t", "std::vector<Hex::Hexa *,std::allocator<Hex::Hexa * > > *|Hex::Hexas *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type = {"_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type", "std::allocator<Hex::Hexa * > *|std::vector<Hex::Hexa * >::allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t = {"_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t", "std::vector<Hex::NewShape *,std::allocator<Hex::NewShape * > > *|Hex::NewShapes *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type = {"_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type", "std::allocator<Hex::NewShape * > *|std::vector<Hex::NewShape * >::allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t = {"_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t", "std::vector<Hex::Quad *,std::allocator<Hex::Quad * > > *|Hex::Quads *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type = {"_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type", "std::allocator<Hex::Quad * > *|std::vector<Hex::Quad * >::allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t = {"_p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t", "std::vector<Hex::Shape *,std::allocator<Hex::Shape * > > *|Hex::Shapes *", 0, 0, (void*)0, 0};
@@ -30600,6 +33012,7 @@ static swig_type_info _swigt__p_swig__PySwigIterator = {"_p_swig__PySwigIterator
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type = {"_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type", "Hex::Edge *|std::vector<Hex::Edge * >::value_type", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type = {"_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type", "Hex::Hexa *|std::vector<Hex::Hexa * >::value_type", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type = {"_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type", "Hex::NewShape *|std::vector<Hex::NewShape * >::value_type", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type = {"_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type", "Hex::Quad *|std::vector<Hex::Quad * >::value_type", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type = {"_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type", "Hex::Vertex *|std::vector<Hex::Vertex * >::value_type", 0, 0, (void*)0, 0};
 
@@ -30645,6 +33058,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t,
   &_swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type,
   &_swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t,
+  &_swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type,
   &_swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t,
   &_swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type,
   &_swigt__p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t,
@@ -30661,6 +33075,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_value_type,
   &_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type,
   &_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type,
+  &_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type,
   &_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type,
   &_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type,
 };
@@ -30672,13 +33087,13 @@ static swig_cast_info _swigc__p_Hex__Cylinder[] = {  {&_swigt__p_Hex__Cylinder, 
 static swig_cast_info _swigc__p_Hex__Document[] = {  {&_swigt__p_Hex__Document, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Edge[] = {  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Elements[] = {  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__CrossElements, _p_Hex__CrossElementsTo_p_Hex__Elements, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__Elements, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__EltBase[] = {  {&_swigt__p_Hex__Vertex, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Elements, _p_Hex__ElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__CrossElements, _p_Hex__CrossElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hexa, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Propagation, _p_Hex__PropagationTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, _p_Hex__VectorTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Document, _p_Hex__DocumentTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Edge, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Quad, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__EltBase[] = {  {&_swigt__p_Hex__Group, _p_Hex__GroupTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Vertex, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__CrossElements, _p_Hex__CrossElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Elements, _p_Hex__ElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__NewShape, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hexa, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Propagation, _p_Hex__PropagationTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, _p_Hex__VectorTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Document, _p_Hex__DocumentTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Quad, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Edge, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Group[] = {  {&_swigt__p_Hex__Group, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Hex[] = {  {&_swigt__p_Hex__Hex, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__Hex__EltBase[] = {  {&_swigt__p_Hex__Vertex, 0, 0, 0},  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__CrossElements, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Propagation, 0, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, 0, 0, 0},  {&_swigt__p_Hex__BiCylinder, 0, 0, 0},  {&_swigt__p_Hex__Document, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__Hex__EltBase[] = {  {&_swigt__p_Hex__Group, 0, 0, 0},  {&_swigt__p_Hex__Vertex, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__CrossElements, 0, 0, 0},  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Propagation, 0, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, 0, 0, 0},  {&_swigt__p_Hex__BiCylinder, 0, 0, 0},  {&_swigt__p_Hex__Document, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Hexa[] = {  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Law[] = {  {&_swigt__p_Hex__Law, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__NewShape[] = {  {&_swigt__p_Hex__NewShape, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__NewShape[] = {  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Pipe[] = {  {&_swigt__p_Hex__Pipe, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Propagation[] = {  {&_swigt__p_Hex__Propagation, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Quad[] = {  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},{0, 0, 0, 0}};
@@ -30706,6 +33121,7 @@ static swig_cast_info _swigc__p_std__vectorTHex__FaceShape_p_std__allocatorTHex_
 static swig_cast_info _swigc__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t[] = {  {&_swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type[] = {  {&_swigt__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t[] = {  {&_swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type[] = {  {&_swigt__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t[] = {  {&_swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type[] = {  {&_swigt__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t[] = {  {&_swigt__p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -30722,6 +33138,7 @@ static swig_cast_info _swigc__p_swig__PySwigIterator[] = {  {&_swigt__p_swig__Py
 static swig_cast_info _swigc__p_value_type[] = {  {&_swigt__p_value_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type[] = {  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type[] = {  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type[] = {  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type[] = {  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type[] = {  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Vertex, 0, 0, 0},{0, 0, 0, 0}};
 
@@ -30767,6 +33184,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t,
   _swigc__p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type,
   _swigc__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t,
+  _swigc__p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type,
   _swigc__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t,
   _swigc__p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type,
   _swigc__p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t,
@@ -30783,6 +33201,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_value_type,
   _swigc__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type,
   _swigc__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type,
+  _swigc__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type,
   _swigc__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type,
   _swigc__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type,
 };

@@ -260,6 +260,52 @@ class VectorVertices(_object):
 VectorVertices_swigregister = _hexablock_swig.VectorVertices_swigregister
 VectorVertices_swigregister(VectorVertices)
 
+class VectorShapes(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, VectorShapes, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, VectorShapes, name)
+    __repr__ = _swig_repr
+    def iterator(*args): return _hexablock_swig.VectorShapes_iterator(*args)
+    def __iter__(self): return self.iterator()
+    def __nonzero__(*args): return _hexablock_swig.VectorShapes___nonzero__(*args)
+    def __len__(*args): return _hexablock_swig.VectorShapes___len__(*args)
+    def pop(*args): return _hexablock_swig.VectorShapes_pop(*args)
+    def __getslice__(*args): return _hexablock_swig.VectorShapes___getslice__(*args)
+    def __setslice__(*args): return _hexablock_swig.VectorShapes___setslice__(*args)
+    def __delslice__(*args): return _hexablock_swig.VectorShapes___delslice__(*args)
+    def __delitem__(*args): return _hexablock_swig.VectorShapes___delitem__(*args)
+    def __getitem__(*args): return _hexablock_swig.VectorShapes___getitem__(*args)
+    def __setitem__(*args): return _hexablock_swig.VectorShapes___setitem__(*args)
+    def append(*args): return _hexablock_swig.VectorShapes_append(*args)
+    def empty(*args): return _hexablock_swig.VectorShapes_empty(*args)
+    def size(*args): return _hexablock_swig.VectorShapes_size(*args)
+    def clear(*args): return _hexablock_swig.VectorShapes_clear(*args)
+    def swap(*args): return _hexablock_swig.VectorShapes_swap(*args)
+    def get_allocator(*args): return _hexablock_swig.VectorShapes_get_allocator(*args)
+    def begin(*args): return _hexablock_swig.VectorShapes_begin(*args)
+    def end(*args): return _hexablock_swig.VectorShapes_end(*args)
+    def rbegin(*args): return _hexablock_swig.VectorShapes_rbegin(*args)
+    def rend(*args): return _hexablock_swig.VectorShapes_rend(*args)
+    def pop_back(*args): return _hexablock_swig.VectorShapes_pop_back(*args)
+    def erase(*args): return _hexablock_swig.VectorShapes_erase(*args)
+    def __init__(self, *args): 
+        this = _hexablock_swig.new_VectorShapes(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def push_back(*args): return _hexablock_swig.VectorShapes_push_back(*args)
+    def front(*args): return _hexablock_swig.VectorShapes_front(*args)
+    def back(*args): return _hexablock_swig.VectorShapes_back(*args)
+    def assign(*args): return _hexablock_swig.VectorShapes_assign(*args)
+    def resize(*args): return _hexablock_swig.VectorShapes_resize(*args)
+    def insert(*args): return _hexablock_swig.VectorShapes_insert(*args)
+    def reserve(*args): return _hexablock_swig.VectorShapes_reserve(*args)
+    def capacity(*args): return _hexablock_swig.VectorShapes_capacity(*args)
+    __swig_destroy__ = _hexablock_swig.delete_VectorShapes
+    __del__ = lambda self : None;
+VectorShapes_swigregister = _hexablock_swig.VectorShapes_swigregister
+VectorShapes_swigregister(VectorShapes)
+
 class VectorReal(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, VectorReal, name, value)
@@ -997,6 +1043,55 @@ class BiCylinder(Elements):
     __del__ = lambda self : None;
 BiCylinder_swigregister = _hexablock_swig.BiCylinder_swigregister
 BiCylinder_swigregister(BiCylinder)
+
+class NewShape(EltBase):
+    __swig_setmethods__ = {}
+    for _s in [EltBase]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, NewShape, name, value)
+    __swig_getmethods__ = {}
+    for _s in [EltBase]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, NewShape, name)
+    __repr__ = _swig_repr
+    def countVertex(*args): return _hexablock_swig.NewShape_countVertex(*args)
+    def countEdge(*args): return _hexablock_swig.NewShape_countEdge(*args)
+    def countFace(*args): return _hexablock_swig.NewShape_countFace(*args)
+    def getVertex(*args): return _hexablock_swig.NewShape_getVertex(*args)
+    def getEdge(*args): return _hexablock_swig.NewShape_getEdge(*args)
+    def getFace(*args): return _hexablock_swig.NewShape_getFace(*args)
+    def getNameVertex(*args): return _hexablock_swig.NewShape_getNameVertex(*args)
+    def getNameEdge(*args): return _hexablock_swig.NewShape_getNameEdge(*args)
+    def getNameFace(*args): return _hexablock_swig.NewShape_getNameFace(*args)
+    def __init__(self, *args): 
+        this = _hexablock_swig.new_NewShape(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _hexablock_swig.delete_NewShape
+    __del__ = lambda self : None;
+NewShape_swigregister = _hexablock_swig.NewShape_swigregister
+NewShape_swigregister(NewShape)
+
+class Group(EltBase):
+    __swig_setmethods__ = {}
+    for _s in [EltBase]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Group, name, value)
+    __swig_getmethods__ = {}
+    for _s in [EltBase]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, Group, name)
+    __repr__ = _swig_repr
+    def addElement(*args): return _hexablock_swig.Group_addElement(*args)
+    def countElement(*args): return _hexablock_swig.Group_countElement(*args)
+    def getKind(*args): return _hexablock_swig.Group_getKind(*args)
+    def clearElement(*args): return _hexablock_swig.Group_clearElement(*args)
+    def removeElement(*args): return _hexablock_swig.Group_removeElement(*args)
+    def getElement(*args): return _hexablock_swig.Group_getElement(*args)
+    def __init__(self, *args): 
+        this = _hexablock_swig.new_Group(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _hexablock_swig.delete_Group
+    __del__ = lambda self : None;
+Group_swigregister = _hexablock_swig.Group_swigregister
+Group_swigregister(Group)
 
 
 

@@ -30,18 +30,19 @@ BEGIN_NAMESPACE_HEXA
 class Group : public EltBase 
 {
 public :
-   Group (Document* dad, cpchar nom, EnumGroup grp);
-  ~Group ()                   {}
-
-   EnumGroup getKind ()                    { return grp_kind ; }
    int       addElement    (EltBase* elt);
-   int       removeElement (EltBase* elt);
-   int       findElement   (EltBase* elt);
-   int       removeElement (int nro);
-   EltBase*  getElement    (int nro)       { return grp_table [nro] ; }
    int       countElement  ()              { return grp_table.size () ; }
+   EnumGroup getKind ()                    { return grp_kind ; }
+   int       removeElement (int nro);
    void      clearElement  ()              { grp_table.clear () ; }
+   int       removeElement (EltBase* elt);
+   EltBase*  getElement    (int nro)       { return grp_table [nro] ; }
 
+   Group (Document* dad, cpchar nom, EnumGroup grp);
+#ifndef SWIG
+public :
+   int       findElement   (EltBase* elt);
+  ~Group ()                   {}
    void      saveXml  (XmlWriter* xml);
    EnumElt   getTypeElt ()                 { return grp_typelt ; }
 
@@ -53,6 +54,7 @@ private :
    EnumGroup   grp_kind;
    EnumElt     grp_typelt;
    std::vector <EltBase*> grp_table;
+#endif
 };
 
 END_NAMESPACE_HEXA

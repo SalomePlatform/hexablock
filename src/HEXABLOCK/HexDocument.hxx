@@ -111,11 +111,11 @@ public :
 
                                  // ----------------- Associations
    void clearAssociation ();
-   int  associateOpenedLine (Edges&  mline, NewShapes& gline, IntVector& tabid,
+   int  associateOpenedLine (Edges  mline, NewShapes gline, IntVector tabid,
                              double pstart, double pend);
 
-   int  associateClosedLine (Vertex* mfirst,   Edges&  mline,
-                             NewShapes& gline, IntVector& tabid,
+   int  associateClosedLine (Vertex* mfirst,   Edges  mline,
+                             NewShapes gline, IntVector tabid,
                              double pstart, bool inv);
                                  // ----------------- count
    int countHexa   ();

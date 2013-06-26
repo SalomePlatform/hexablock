@@ -187,4 +187,5 @@ def addToStudy(doc):
 # ==================================================== addShape
 # Add a document in the current study
 def addShape (doc, shape, name):
-    doc.addShape (shape.getShape(), name)
+    forme = doc.addShape (shape.getShape(), name)
+    return forme 

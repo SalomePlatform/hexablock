@@ -21,10 +21,6 @@ BRep_Builder.hxx
 BRep_Tool.hxx
 GCPnts_AbscissaPoint.hxx
 GC_MakeCircle.hxx
-GEOMImpl_CircleDriver.hxx
-GEOMImpl_CylinderDriver.hxx
-GEOMImpl_ICircle.hxx
-GEOMImpl_ICylinder.hxx
 GeomAPI_ProjectPointOnCurve.hxx
 Geom_Circle.hxx
 TopExp_Explorer.hxx

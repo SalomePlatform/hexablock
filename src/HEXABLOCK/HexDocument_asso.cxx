@@ -202,8 +202,8 @@ Edge* find_edge (Edges& mline, Vertex* vfirst, int& sens)
    return NULL;
 }
 // ====================================================== associateOpenedLine
-int Document::associateOpenedLine (Edges&  mline, NewShapes& gline,
-                                   IntVector& tabid,
+int Document::associateOpenedLine (Edges  mline, NewShapes gline,
+                                   IntVector tabid,
                                    double pstart, double pend)
 {
    cout << "_________________________________ Asso Open Line"
@@ -214,8 +214,8 @@ int Document::associateOpenedLine (Edges&  mline, NewShapes& gline,
    return ier;
 }
 // ====================================================== associateClosedLine
-int Document::associateClosedLine (Vertex* vfirst,   Edges&  mline,
-                                   NewShapes& gline, IntVector& tabid,
+int Document::associateClosedLine (Vertex* vfirst,   Edges  mline,
+                                   NewShapes gline, IntVector tabid,
                                    double pstart, bool inv)
 {
    if (vfirst == NULL)

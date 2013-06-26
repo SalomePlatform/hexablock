@@ -32,8 +32,6 @@
 #include "HexElements.hxx"
 
 #include "HexVector.hxx"
-#include "HexCylinder.hxx"
-#include "HexPipe.hxx"
 #include "HexMatrix.hxx"
 #include "HexCloner.hxx"
 #include "HexPropagation.hxx"
@@ -339,39 +337,6 @@ int Document::parseXml (XmlTree& xml)
            edge->setLaw (law);
        }
 
-   for (int pipe=0 ; pipe<2 ; pipe++)
-       {
-       rubrique = pipe ? xml.findChild ("ListPipes")
-                       : xml.findChild ("ListCylinders");
-
-       nbrelts  = count_children (rubrique);
-
-       for (int nro=0 ; nro < nbrelts ; nro++)
-           {
-           XmlTree* node = rubrique->getChild (nro);
-           const  string& cbase   = node->findValue ("c_base"  );
-           const  string& cdir    = node->findValue ("c_dir"   );
-           const  string& cradius = node->findValue ("c_radius");
-           const  string& cheight = node->findValue ("c_height");
-
-           Vertex* base    = t_vertex [cbase];
-           Vector* dir     = t_vector [cdir];
-           double radius  = atof (cradius.c_str());
-           double height  = atof (cheight.c_str());
-
-           if (pipe)
-              {
-              const string& cradius1  = node->findValue ("c_int_radius");
-              double radius1  = atof (cradius1.c_str());
-              addPipe (base, dir, radius1, radius, height);
-              }
-           else
-              {
-              addCylinder (base, dir, radius, height);
-              }
-           }
-       }
-
    rubrique = xml.findChild ("ListGroups");
    int nbrgroups  = count_children (rubrique);
 
@@ -492,19 +457,7 @@ int Document::genXml ()
        doc_propagation[nro]->saveXml (doc_xml);
    doc_xml->closeMark (true);
 
-   int nombre = countCylinder();
-   doc_xml->addMark ("ListCylinders");
-   for (int nro=0 ; nro<nombre ; nro++)
-       doc_cylinder[nro]->saveXml (doc_xml);
-   doc_xml->closeMark (true);
-
-   nombre = countPipe();
-   doc_xml->addMark ("ListPipes");
-   for (int nro=0 ; nro<nombre ; nro++)
-       doc_pipe[nro]->saveXml (doc_xml);
-   doc_xml->closeMark (true);
-
-   nombre = countGroup();
+   int nombre = countGroup();
    doc_xml->addMark ("ListGroups");
    for (int nro=0 ; nro<nombre ; nro++)
        doc_group[nro]->saveXml (doc_xml);
