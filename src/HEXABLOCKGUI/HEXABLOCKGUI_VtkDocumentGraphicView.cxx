@@ -111,7 +111,7 @@ Document_Actor::Document_Actor( Document* doc, const QString& entry ):
     setIO(anIO);
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInput(aGrid);
+    aMapper->SetInputData(aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
@@ -306,7 +306,7 @@ Associate_Actor::Associate_Actor( Document* doc, const QString& entry)
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
 
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInput(aGrid);
+    aMapper->SetInputData(aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
@@ -981,7 +981,7 @@ void VtkDocumentGraphicView::setModel ( QAbstractItemModel * model )
 //   // Create and display actor
 //
 //   vtkDataSetMapper* myMapper = vtkDataSetMapper::New();
-//   myMapper->SetInput(myGrid);
+//   myMapper->SetInputData(myGrid);
 //
 // //   if ( myPreviewActor ){
 // //     myVTKViewWindow->RemoveActor(myPreviewActor);

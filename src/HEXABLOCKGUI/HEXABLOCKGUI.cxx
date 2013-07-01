@@ -142,7 +142,6 @@ SalomeApp_Application*  HEXABLOCKGUI::myApplication = NULL;
 
 HEXABLOCKGUI::HEXABLOCKGUI() :
           SalomeApp_Module( "HEXABLOCK" ),
-          LightApp_Module( "HEXABLOCK" ),
           _menuId(190),
           _dwPattern(0),
           _dwAssociation(0),
