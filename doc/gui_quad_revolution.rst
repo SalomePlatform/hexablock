@@ -1,6 +1,6 @@
 :tocdepth: 3
 
-.. _guiquadrevolution:
+.. _guiquadsrevolution:
 
 ===============
 Quad revolution
@@ -9,39 +9,49 @@ Quad revolution
 
 To make a **Quad revolution** in the **Main Menu** select **Model -> Operation -> Quad Revolution**.
 
-.. image:: _static/gui_quadrevolution.png
+.. _guiquadsrevolutionuniform:
+
+Uniform Quad Revolution
+=======================
+
+.. image:: _static/gui_quadsrevolutionuniform.png
    :align: center
 
 .. centered::
-      Dialog Box to make a quadrangle revolution
+      Dialog Box to make a uniform quadrangle revolution
 
 
+**Arguments:** 
 
-The following data are required:
+- *Quad(s)*  : a set of quadrangles from which hexahedrons will be created (select quads).
+- *center*   : center of rotation (select a vertex).
+- *axis*     : axis of rotation (select a vector).
+- *angle*    : Specify the rotation's angle at each step.
+- *Nb layers*: the number of steps.
 
-   - Quads: a set of quadrangles from which hexahedrons will be created (select quads).
-   - Center: center of rotation (select a vertex).
-   - Axis: axis of rotation (select a vector).
-   - Angles: a set of angle (in degrees). Specify the rotation's angle at each step of it.
+
+TUI command: :ref:`tuiquadsrevolutionuniform`
 
 
-Here is an example where the selected quadrangles are highlighted:
+.. _guiquadsrevolutioncustom:
 
-.. image:: _static/before_quadrevolution.png
+Custom Quad Revolution
+======================
+
+.. image:: _static/gui_quadsrevolutioncustom.png
    :align: center
 
 .. centered::
-   Quad selection
-   
+      Dialog Box to make a custom quadrangle revolution
 
-The result:
 
-.. image:: _static/quadrevolution.png
-   :align: center
+**Arguments:** 
 
-.. centered::
-   Quadrangle revolution
+- Quad(s): a set of quadrangles from which hexahedrons will be created (select quads).
+- center: center of rotation (select a vertex).
+- axis: axis of rotation (select a vector).
+- angle: a set of angle (in degrees). Specify the rotation's angle at each step.
 
-TUI command: :ref:`tuiquadrevolution`
 
+TUI command: :ref:`tuiquadsrevolutioncustom`
 

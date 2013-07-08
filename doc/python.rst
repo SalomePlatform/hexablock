@@ -19,12 +19,8 @@ By the links below you can find sample scripts for all operations provided by He
    tui_quadrangle.rst
    tui_hexahedron.rst
    tui_vector.rst
-   tui_cyl.rst
-   tui_pipe.rst
    tui_blocks_for_cyl_pipe.rst
    tui_cartgrid.rst
-   tui_cylgrid.rst
-   tui_sphergrid.rst
    tui_hemisphere_rind.rst
    tui_remove.rst
    tui_cut_hexa.rst

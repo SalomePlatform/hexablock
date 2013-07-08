@@ -7,34 +7,47 @@
 Cut hexahedra
 =============
 
-Cut hexahedra from the model of blocks::
+.. _tuicuthexauniform:
 
-    elts = doc.cut(an_edge, nb_of_cuts)
+Uniform Cut
+===========
+
+To make a uniform cut of an hexahedra in python mode, you need the following arguments:
+
+- *edge*    : an edge on the hexahedra to cut.
+- *nbCuts*: the number of cuts.
+
+Use the function **cutUni**::
+
+	elts = doc.cutUni(edge, nbCuts)
+	
+
+GUI command: :ref:`guicuthexauniform`
+
+
+.. _tuicuthexacustom:
+
+Custom Cut
+==========
+
+To make a custom cut of an hexahedra you need the following arguments:
+
+- *edge*: an edge on the hexahedra to cut.
+- *tl*  : the list of the lengths of the layers in ascendant order.
+
+Use the funtion **cut**::
+
+	elts = doc.cut(edge, tl)
+	
+GUI command: :ref:`guicuthexacustom`
 
 Operations on *elts*: :ref:`tuielements2`
 
-This method enables to cut in two (or more) a series of hexahedra using a series of edges propagation.
-
 
 Example
--------
+=======
 
-.. literalinclude:: test_doc/cut_hexa/cut_hexa.py
+.. literalinclude:: test_doc/cutHexa/cut_hexa.py
    :linenos:
 
-
-.. image:: _static/non_cut_hexa.png
-   :align: center
-
-.. centered::
-   Initial hexa
    
-   
-.. image:: _static/cut_hexa.png
-   :align: center
-
-.. centered::
-   Cut hexa
-   
-
-GUI command: :ref:`guicuthexa`

@@ -3,119 +3,262 @@
 .. _guihemisphere:
 
 =========================
-Create HemiSpherical Grid
+Create Hemispherical Grid
 =========================
 
+To create an **Hemispherical Grid** in the **Main Menu** select **Model -> Construction -> Make Hemisphere**.
 
-To create an **HemiSpherical Grid** in the **Main Menu** select **Model -> Construction -> Make Hemisphere**.
+.. _guisphereandrindsimple:
 
-.. image:: _static/gui_hemispherical.png
+Simple Sphere and Simple Rind
+=============================
+
+.. image:: _static/gui_spheresimple.png
    :align: center
 
 .. centered::
-      Dialog Box for an hemispherical grid
+      Parameters for a Simple Sphere or Rind
 
 
 The following data are required:
 
-- Sphere
-    - center: center coordinates of the sphere (select a vertex).
-    - external radius: radius size of the sphere.
-    - internal radius: fill this field to create rind (**optional**).
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the sphere.
+- *nb Height*  : number of hexahedra along the axis of the sphere.
+    
+The result of this action is:
 
-- Hole
-    - axis(z): axes of the hole (select a vector).
-    - radius: radius size of the hole.
-
-- Cross section
-    - point: coordinates of a point on the surface of the cross section (select a vertex).
-    - vector: normal vector to the surface of the cross section (select a vector).
-
-- Radial section
-    - start   : a vector defining the start of the radial section (select a vector).
-    - angle   : fill this field to customize the section (value in degree, **optional**).
-
-- Grid
-    - n (radial)  : number of hexahedra from the center of the sphere.
-    - n (anglular): number of hexahedra along the perimeter of the sphere.
-    - n (height)  : number of hexahedra on the height of the sphere.
-
-From this dialog box, four kinds of grid can be created:
-
-- hemispherical grid (see :ref:`guihemisphericalgrid`),
-- partial hemisphericalgrid (see :ref:`guiparthemisphericalgrid`),
-- rind grid (see :ref:`guirindgrid`),
-- partial rind grid (see :ref:`guipartrindgrid`).
-
-
-
-.. _guihemisphericalgrid:
-
-HemiSpherical Grid
-==================
-
-This is the default kind of grid when no optional values are filled.
-
-.. image:: _static/hemisphericalgrid.png
+.. image:: _static/spheresimple.png
    :align: center
 
 .. centered::
-   An hemispherical grid
-
-TUI command: :ref:`tuihemisphericalgrid`
+      Simple Sphere
 
 
-.. _guiparthemisphericalgrid:
-
-Partial HemiSpherical Grid
-==========================
-
-To create a partial hemispherical grid: On *Radial section* check the *partial* check box and fill in the *angle* parameter.
-
-
-.. image:: _static/parthemisphericalgrid.png
+.. image:: _static/rindsimple.png
    :align: center
 
 .. centered::
-   A partial hemispherical grid
+      Simple Rind
 
-TUI command: :ref:`tuiparthemisphericalgrid`
+TUI command: :ref:`tuispheresimple`
 
-
-
-.. _guirindgrid:
-
-Rind Grid
-==========
-
-To create a rind grid: On *Sphere* check the *rind* check box and fill in the *internal radius* parameter.
+TUI command: :ref:`tuirindsimple`
 
 
-.. image:: _static/rindgrid.png
+.. _guisphereuniform:
+
+Uniform Sphere
+==============
+
+.. image:: _static/gui_sphereuniform.png
    :align: center
 
 .. centered::
-   A rind grid
-
-TUI command: :ref:`tuirindgrid`
+      Parameters for an Uniform Sphere
 
 
+The following data are required:
 
-.. _guipartrindgrid:
+- *center* 	   : center coordinates of the sphere (select a vertex).
+- *axis*	   : the axis of the hole (select a vector).
+- *base*       : the base of the sphere (select a vector).
+- *external radius*: the radius of the sphere.
+- *hole radius*: the radius of the hole in the sphere .
+- *slice angle*: angle of the sphere around the Z axis.
+- *vertex for cut plan*: the vertex along the vertical axis where the rind will be cut.
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the sphere.
+- *nb Height*  : number of hexahedra along the axis of the sphere.
+    
+The result of this action is:
 
-Partial Rind Grid
-=================
-
-To create a partial rind grid: in addition to the *internal radius* parameter 
-(see :ref:`guirindgrid`), on *Radial section* check the *partial* check box and fill
-in the *angle* parameter.
-
-
-.. image:: _static/partrindgrid.png
+.. image:: _static/sphereuniform.png
    :align: center
 
 .. centered::
-   A partial rind grid
+      Uniform Sphere
 
-TUI command: :ref:`tuipartrindgrid`
+TUI command: :ref:`tuisphereuniform`
 
+
+.. _guispherecustom:
+
+Custom Sphere
+=============
+
+.. image:: _static/gui_spherecustom.png
+   :align: center
+
+.. centered::
+      Parameters for a Custom Sphere
+
+
+The following data are required:
+
+- *center*: center coordinates of the sphere (select a vertex).
+- *axis*  : the axis of the hole (select a vector).
+- *base*  : the base of the sphere (select a vector).
+- *radius*: a list of radiuses in ascendant order.
+- *angle* : a list of angles in ascendant order. 
+- *height*: a list of heights in ascendant order.
+    
+The result of this action is:
+
+.. image:: _static/spherecustom.png
+   :align: center
+
+.. centered::
+      Custom Sphere
+
+TUI command: :ref:`tuispherecustom`
+
+
+.. _guirinduniform:
+
+Uniform Rind
+============
+
+.. image:: _static/gui_rinduniform.png
+   :align: center
+
+.. centered::
+      Parameters for a Uniform Rind
+      
+The following data are required:
+
+- *center* 	   : center coordinates of the rind (select a vertex).
+- *axis*	   : the vertical axis of the rind (select a vector).
+- *base*       : the base of the rind (select a vector).
+- *external radius*: the radius of the rind.
+- *internal radius*: the internal radius.
+- *hole radius*: the radius of the hole.
+- *slice angle*: angle of the rind around the Z axis.
+- *vertex for cut plan*: the vertex along the vertical axis where the rind will be cut.
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter.
+- *nb Height*  : number of hexahedra along the axis of the rind.
+    
+The result of this action is:
+
+.. image:: _static/rinduniform.png
+   :align: center
+
+.. centered::
+      Uniform Rind
+
+TUI command: :ref:`tuirinduniform`
+
+
+.. _guirindcustom:
+
+Custom Rind
+===========
+
+.. image:: _static/gui_rindcustom.png
+   :align: center
+
+.. centered::
+      Parameters for a Custom Rind
+      
+The following data are required:
+
+- *center*: center coordinates of the rind (select a vertex).
+- *axis*  : the vertical axis (select a vector).
+- *base*  : the base of the rind (select a vector).
+- *radius*: a list of radiuses in ascendant order.
+- *angle* : a list of angles in ascendant order. 
+- *height*: a list of heights in ascendant order.
+
+    
+The result of this action is:
+
+.. image:: _static/rindcustom.png
+   :align: center
+
+.. centered::
+      Custom Rind
+
+TUI command: :ref:`tuirindcustom`
+
+
+.. _guiconcentricsimple:
+
+Simple Concentric (Spherical)
+=============================
+
+.. image:: _static/gui_concentricsimple.png
+   :align: center
+
+.. centered::
+      Parameters for a Simple Concentric
+
+
+The following data are required:
+
+- *nb Layers*: the number of nested hexahedra.
+- *Criteria*
+    
+The result of this action is:
+
+.. image:: _static/concentricsimple.png
+   :align: center
+
+.. centered::
+      Simple Concentric
+
+TUI command: :ref:`tuiconcentricsimple`
+
+
+.. _guiconcentricuniform:
+
+Uniform Concentric (Spherical)
+==============================
+
+.. image:: _static/gui_concentricuniform.png
+   :align: center
+
+.. centered::
+      Parameters for a Uniform Concentric
+
+
+The following data are required:
+
+- *center*: the center's coordinates (select a vertex).
+- *axis*  : the vertical axis (select a vector).
+- *base*  : the base of the concentric (select a vector).
+- *external radius*: the radius of the concentric.
+- *nb Layers*: the number of nested hexahedra in the concentric.
+- *Criteria*.
+
+TUI command: :ref:`tuiconcentricuniform`
+
+
+.. _guiconcentriccustom:
+
+Custom Concentric (Spherical)
+=============================
+
+.. image:: _static/gui_concentriccustom.png
+   :align: center
+
+.. centered::
+      Parameters for a Custom Concentric
+      
+The following data are required:
+
+- *center*: the center's coordinates (select a vertex).
+- *axis*  : the vertical axis (select a vector).
+- *base*  : the base of the concentric (select a vector).
+- *criteria*.
+- *radius*: a list of radiuses in ascendant order.
+    
+The result of this action is:
+
+.. image:: _static/concentriccustom.png
+   :align: center
+
+.. centered::
+      Custom Concentric
+
+TUI command: :ref:`tuiconcentriccustom`

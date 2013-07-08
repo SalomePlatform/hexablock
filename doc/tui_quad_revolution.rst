@@ -3,66 +3,68 @@
 
 .. _tuiquadrevolution:
 
-
 =============== 
 Quad Revolution
 ===============
 
-To make quad revolution you need:
+.. _tuiquadsrevolutionuniform:
 
-- a set of quadrangles you want to make a revolution on
+Uniform Quad Revolution
+=======================
 
-.. literalinclude:: test_doc/quad_revolution/make_grid.py
-   :lines: 3-
-   :linenos:
+To make a uniform  quad revolution you need:
 
-- center of rotation::
+- *quad*    : the quadrangle from which hexahedrons will be created (only for one quad revolution).
+- *quads*   : a set of quadrangles from which hexahedrons will be created (only for multiple quads revolution).
+- *center*  : center of rotation (a vertex).
+- *axis*    : axis of rotation (a vector).
+- *angle*   : Specify the rotation's angle at each step.
+- *nbLayers*: the number of steps.
 
-	center = doc.addVertex (0, -10, 0)
- 
-- axis of rotation (a vector)::
+One quad revolution::
 
-	axis   = doc.addVector (1, 0, 0)
- 
-- Specify the rotation’s angle at each step (a list of angles in degrees)::
+	elts = doc.revolutionQuadUni(quad, center, axis, angle, nbLayers)
 
-	angles = [5, 10, 15, 20, 30, 20, 15, 10, 5 ]
+Revolution of a set of quads::
 
-Then you can make you can make your quad revolution this way::
+	elts = doc.revolutionQuadsUni(quads, center, axis, angle, nbLayers)
+	
 
-	elts = doc.revolutionQuads  (liste, center, axis, angles)
+GUI command: :ref:`guiquadsrevolutionuniform`
+
+
+.. _tuiquadsrevolutioncustom:
+
+Custom Quad Revolution
+======================
+
+To make a custom quad revolution you need:
+
+- *quad*    : the quadrangle from which hexahedrons will be created (only for one quad revolution).
+- *quads*   : a set of quadrangles from which hexahedrons will be created (only for multiple quads revolution).
+- *center*  : center of rotation (a vertex).
+- *axis*    : axis of rotation (a vector).
+- *angles*  : a set of angles (in degrees). Specify the rotation's angle at each step.
+
+One quad revolution::
+
+	elts = doc.revolutionQuad(quad, center, axis, angles)
+	
+Revolution of a set of quads::
+
+	elts = doc.revolutionQuads(quads, center, axis, angles)
+	
+	
+GUI command: :ref:`guiquadsrevolutioncustom`
 
 Operations on *elts*: :ref:`tuielements2`
 
 
-Complete Example
-================
+Example
+=======
 
-
-Snippet Code
-------------
-
-.. literalinclude:: test_doc/quad_revolution/revolution.py
-   :emphasize-lines: 59
+.. literalinclude:: test_doc/quadRevolution/revolution_quad.py
    :linenos:
 
 
-The result
-----------
-
-.. image:: _static/grid_for_revolution.png
-   :align: center
-
-.. centered::
-   Initial
-
-
-.. image:: _static/quad_revolution.png
-   :align: center
-
-.. centered::
-   Quad Revolution
-
-   
-GUI command: :ref:`guiquadrevolution`
-
+	

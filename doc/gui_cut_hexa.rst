@@ -10,32 +10,45 @@ Cut hexahedra
 This method allows to cut in two (or more) a series of hexahedra
 using a series of edges propagation.
 
-To cut an hexahedra in the **Main Menu** select **Model -> Operation -> Cut Hexahedra**.
+To cut an hexahedra in the **Main Menu** select **Model -> Operation -> Cut Edge**.
 
-**Arguments:** an edge and the number of cuts (nb).
+.. _guicuthexauniform:
 
-The dialogue box for the cut of an hexahedra is:
+Uniform Cut
+===========
 
-.. image:: _static/gui_cut_hexa.png
+The dialogue box to make a uniform cut of an hexahedra is:
+
+.. image:: _static/gui_cuthexauniform.png
    :align: center
 
 .. centered::
-   Cut Hexahedra
+   Uniform Cut
 
-Example:
+**Arguments:** 
 
-.. image:: _static/no_cut.png
+- *Edge*     : an edge on the hexahedra to cut.
+- *Nb layers*: the number of cuts.
+
+TUI command: :ref:`tuicuthexauniform`
+
+
+.. _guicuthexacustom:
+
+Custom Cut
+==========
+
+The dialogue box to make a custom cut of an hexahedra is:
+
+.. image:: _static/gui_cuthexacustom.png
    :align: center
 
 .. centered::
-   no cut
+   Custom Cut
 
+**Arguments:** 
 
-.. image:: _static/cut.png
-   :align: center
+- *Edge*     : an edge on the hexahedra to cut.
+- *length*   : the list of the lengths of the layers in ascendant order.
 
-.. centered::
-   cut
-
-
-TUI command: :ref:`tuicuthexa`
+TUI command: :ref:`tuicuthexacustom`

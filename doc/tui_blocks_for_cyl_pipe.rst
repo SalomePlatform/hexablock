@@ -3,142 +3,224 @@
 
 .. _tuiblockscylinderpipe:
 
-=====================================
-Make blocks for a cylinder and a pipe
-=====================================
+================================
+Cylinders and Pipes Construction
+================================
 
-.. _tuimakecylinder:
+.. _tuicylinder:
 
-Make blocks for a cylinder
-==========================
+Cylinder
+========
 
-.. code-block:: python
+.. _tuicylindersimple:
 
-	elts = doc.makeCylinder(cyl, vb, nr, na, nl)
+Simple Cylinder
+---------------
 
-cyl: cylinder built using *addCylinder()* function (:ref:`tuicylinder`)
+To make a simple cylinder grid in python mode, the following data are required:
 
-vb: vector on the base of the cylinder to start hexahedra.
+- *nbR* : number of hexahedra on radial.
+- *nbA* : number of hexahedra along the perimeter of the cylinder.
+- *nbH* : number of hexahedra along the axis of the cylinder.
 
-nr: number of blocks on radial.
+Use the function **makeCyinderTop**::
 
-na: number of angular section.
+	elts = doc.makeCylinderTop(nbR, nbA, nbH)
 
-nl: number of blocks along the axis of the cylinder.
-
-Operations on *elts*: :ref:`tuielements2`
-
-The result is an array of hexahedra ranked first by following the
-radial direction and the angular direction, then according to the
-layers in the cylinder axis.
+GUI command: :ref:`guicylindersimple`
 
 
-Example of cylinder construction
---------------------------------
+.. _tuicylinderuniform:
 
-.. literalinclude:: test_doc/cylinder_pipe/make_cylinder.py
-   :linenos:
+Uniform Cylinder
+----------------
+
+The following data are required:
+
+- *origin* : origin's coordinates of the cylinder (select a vertex).
+- *vx*     : the base of the cylinder (select a vector).
+- *vz*	   : the axis of the cylinder (select a vector).
+- *rint*   : the radius of the hole in the cylinder .
+- *rext*   : the radius of the cylinder.
+- *angle*  : angle of the cylinder around the Z axis.
+- *hauteur*: the height of the cylinder.
+- *nbR*    : number of hexahedra on radial.
+- *nbA*    : number of hexahedra along the perimeter of the cylinder.
+- *nbH*    : number of hexahedra along the axis of the cylinder.
+
+Use the function **makeCylinderUni** to  make a uniform cylinder::
+
+	elts = doc.makeCylinderUni(origin, vx, vz, rint, rext, angle, hauteur, nbR, nbA, nbH)
+
+GUI command: :ref:`guicylinderuniform`
 
 
-.. image:: _static/make_cylinder.png
-   :align: center
+.. _tuicylindercustom:
 
-.. centered::
-   Cylinder
+Custom Cylinder
+---------------
 
+The following data are required:
 
-.. _tuimakecylinders:
+- *origin* : origin's coordinates of the cylinder (select a vertex).
+- *vx*     : the base of the cylinder (select a vector).
+- *vz*	   : the axis of the cylinder (select a vector).
+- *tr*     : a list of radiuses in ascendant order.
+- *ta*     : a list of angles in ascendant order. 
+- *th*     : a list of heights in ascendant order.
 
-Make blocks for cylinders
-=========================
+Use the function **makeCylinder** to make a custom cylinder::
 
-.. code-block:: python
-
-	elts = doc.makeCylinders (cylinder1, cylinder2)
+	elts = doc.makeCylinder(origin, vx, vz, tr, ta, th)
 	
+GUI command: :ref:`guicylindercustom`
+
 Operations on *elts*: :ref:`tuielements2`
 
-Construction of an element from 2 cylinders:
 
-.. literalinclude:: test_doc/cylinder_pipe/make_cylinders.py
+Example
+-------
+
+.. literalinclude:: test_doc/cylinder/cylinder.py
    :linenos:
 
 
-.. image:: _static/make_cylinders.png
-   :align: center
+.. _tuicylinders:
 
-.. centered::
-   Element from 2 cylinders
+Make Cylinders
+==============
+
+To make **two cylinders in T shape** the following data are required for each cylinder:
+
+- *orig* : the origin of the cylinder (select a vertex).
+- *vz*	 : the axis of the cylinder (select a vector).
+- *rext* : the radius of the cylinder.
+- *h*    : the height of the cylinder. 
+
+*One of the two cylinders must be bigger than the other.*
+
+Use the function **makeCylinders**::
+
+	elts = doc.makeCylinders (orig1, vz1, rext1, h1, orig2, vz2, rext2, h2)
+
+GUI command: :ref:`guicylinders`
+
+Operations on *elts*: :ref:`tuielements2`
+
+
+Example
+-------
+
+.. literalinclude:: test_doc/cylinder/cylinders.py
+   :linenos:
+	
+
+.. _tuipipe:
+
+Pipe
+====
+
+.. _tuipipesimple:
+
+Simple Pipe
+-----------
+
+To make a simple pipe grid in python mode, the following data are required:
+
+- *nbR* : number of hexahedra on radial.
+- *nbA* : number of hexahedra along the perimeter of the pipe.
+- *nbH* : number of hexahedra along the axis of the pipe.
+
+Use the function **makePipeTop**::
+
+	elts = doc.makePipeTop(nbR, nbA, nbH)
+
+GUI command: :ref:`guipipesimple`
+
+
+.. _tuipipeuniform:
+
+Uniform Pipe
+------------
+
+The following data are required:
+
+
+- *origin* : the origin's coordinates of the pipe (select a vertex).
+- *vx*     : the base of the pipe (select a vector).
+- *vz*	   : the axis of the pipe (select a vector).
+- *rint*   : the radius of the hole in the pipe .
+- *rext*   : the radius of the pipe.
+- *angle*  : angle of the pipe around the Z axis.
+- *hauteur*: the height of the pipe.
+- *nbR*    : number of hexahedra on radial.
+- *nbA*    : number of hexahedra along the perimeter of the pipe.
+- *nbH*    : number of hexahedra along the axis of the pipe.
+
+Use the function **makePipeUni** to  make a uniform pipe::
+
+	elts = doc.makePipeUni(origin, vx, vz, rint, rext, angle, hauteur, nbR, nbA, nbH)
+
+GUI command: :ref:`guipipeuniform`
+
+
+.. _tuipipecustom:
+
+Custom Pipe
+-----------
+
+The following data are required:
+
+- *origin* : origin's coordinates of the pipe (select a vertex).
+- *vx*     : the base of the pipe (select a vector).
+- *vz*	   : the axis of the pipe (select a vector).
+- *tr*     : a list of radiuses in ascendant order.
+- *ta*     : a list of angles in ascendant order. 
+- *th*     : a list of heights in ascendant order.
+
+Use the function **makePipe** to make a custom pipe::
+
+	elts = doc.makePipe(origin, vx, vz, tr, ta, th)
+	
+GUI command: :ref:`guipipecustom`
+
+Operations on *elts*: :ref:`tuielements2`
+
+
+Example
+-------
+
+.. literalinclude:: test_doc/pipe/pipe.py
+   :linenos:
    
-The result is an array of hexahedral.
 
 
-.. _tuimakepipe:
+.. _tuipipes:
 
-Make blocks for a pipe
-======================
+Make Pipes
+==========
 
-.. code-block:: python
+To make **two pipes in T shape** the following data are required for each pipe:
 
-    elts = doc.makePipe(pi, vb, nr, na, nl)
+- *orig* : the origin of the pipe (select a vertex).
+- *vz*	 : the axis of the pipe (select a vector).
+- *rint* : the internal radius of the pipe.
+- *rext* : the radius of the pipe.
+- *h*    : the height of the pipe. 
 
-pi: pipe built using *addPipe()* function (:ref:`tuipipe`)
+*One of the two pipes must be bigger than the other.*
 
-vb: vector on the base of the pipe to start hexahedra.
+Use the function **makepipes**::
 
-nr: number of blocks on radial.
+	elts = doc.makePipes(orig1, vz1, rint1, rext1, h1, orig2, vz2, rint2, rext2, h2)
 
-na: number of angular section.
-
-nl: number of blocks along the axis of the pipe.
+GUI command: :ref:`guipipes`
 
 Operations on *elts*: :ref:`tuielements2`
 
-The result is an array of hexahedral arranged in layers following the
-first radial and angular layers, and finally the axial layers.
 
+Example
+-------
 
-Example of pipe construction
-----------------------------
-
-.. literalinclude:: test_doc/cylinder_pipe/make_pipe.py
+.. literalinclude:: test_doc/pipe/pipes.py
    :linenos:
-
-
-.. image:: _static/make_pipe.png
-   :align: center
-
-.. centered::
-   Pipe
-
-.. _tuimakepipes:
-
-Make blocks for pipes
-=====================
-
-.. code-block:: python
-
-	elts  = doc.makePipes (pipe1, pipe2)
-
-Operations on *elts*: :ref:`tuielements2`
-
-Construction of an element from 2 pipes:
-
-
-.. literalinclude:: test_doc/cylinder_pipe/make_pipes.py
-   :linenos:
-
-
-.. image:: _static/make_pipes.png
-   :align: center
-
-.. centered::
-   Element from 2 pipes
-
-The result is an array of hexahedra where we first find hexahedra of
-the first pipe and the second pipe. Each pipe range hexahedra following
-first radial layers and angular layers, and finally the axial layers.
-
-Operations on *elts*: :ref:`tuielements2`
-
-GUI command: :ref:`guiblockscylinderpipe`

@@ -2,164 +2,233 @@
 
 .. _tuihemisphere:
 
-=======================
-Hemisphere Construction
-=======================
+============================
+Hemisphere Grid Construction
+============================
 
-.. _tuihemisphericalgrid:
+.. _tuisphere:
 
-Hemispherical Grid
-==================
+Sphere
+======
 
-To create an hemispherical grid in textual mode, you need the following arguments:
+.. _tuispheresimple:
+
+Simple Sphere
+-------------
+
+To create a Simple Sphere Grid in python mode, you need the following arguments:
+
+- *nbR*  : number of hexahedra on radial.
+- *nbA*  : number of hexahedra along the perimeter of the sphere.
+- *nbH*  : number of hexahedra along the axis of the sphere.
+    
+Use the function **makeSphereTop**::
      
-- center : center coordinates of the sphere
-- vx     : normal vector to the surface of the cross section
-- vz     : axes of the hole
-- radius : radius size of the sphere
-- radhole: radius size of the hole
-- orig   : coordinates of a point on the surface of the cross section
-- nrad   : number of hexahedra from the center of the sphere
-- nang   : number of hexahedra along the perimeter of the sphere
-- nhaut  : number of hexahedra on the height of the sphere
+	elts = doc.makeSphereTop(nbR, nbA, nbH)
 
-::
+GUI command: :ref:`guisphereandrindsimple`
 
-	elts = doc.makeSphere (center, vx, vz, radius, radhole, orig, nrad, nang, nhaut)
+
+.. _tuisphereuniform:
+
+Uniform Sphere
+--------------
+
+The following data are required:
+
+- *center*: center coordinates of the sphere (a vertex).
+- *vx*    : the base of the sphere (a vector).
+- *vz*	  : the axis of the hole (a vector).
+- *rtrou* : the radius of the hole in the sphere.
+- *rext*  : the radius of the sphere.
+- *angle* : angle of the sphere around the Z axis.
+- *vplan* : the vertex along the vertical axis where the rind will be cut.
+- *nr*    : number of hexahedra on radial.
+- *na*    : number of hexahedra along the perimeter of the sphere.
+- *nh*    : number of hexahedra along the axis of the sphere.
+
+Use the function **makeSphereUni** to make a uniform sphere grid::
+
+	elts = doc.makeSphereUni (center, vx, vz, rtrou, rext, angle, vplan, nr, na, nh)
+	
+GUI command: :ref:`guisphereuniform`
+	
+.. _tuispherecustom:
+
+Custom Sphere
+-------------
+
+The following data are required:
+
+- *center*: center coordinates of the sphere (a vertex).
+- *vx*    : the base of the sphere (a vector).
+- *vz*	  : the axis of the sphere (a vector).
+- *trad*  : a list of radiuses in ascendant order.
+- *tang*  : a list of angles in ascendant order. 
+- *tphi*  : a list of heights in ascendant order.
+
+Use the function **makeSphere** to make a custom sphere::
+
+	elts = doc.makeSphere(center, vx, vz, trad, tang, tphi)
+
+GUI command: :ref:`guispherecustom`
 	
 Operations on *elts*: :ref:`tuielements2`
 
-    
-Code Sample
------------
 
-.. literalinclude:: test_doc/hemispherical_rind/hemispherical_grid.py
-   :emphasize-lines: 22
+Example
+-------
+
+.. literalinclude:: test_doc/hemisphere/sphere.py
    :linenos:
 
-Result
-------
-
-.. image:: _static/hemispherical_grid.png
-   :align: center
 
 
-.. _tuiparthemisphericalgrid:
+.. _tuirind:
 
-Partial Hemispherical Grid
-==========================
+Rind
+====
 
-To create a partial hemispherical grid in textual mode, you need the following parameters:
+.. _tuirindsimple:
 
-- center : center coordinates of the sphere
-- vx     : normal vector to the surface of the cross section
-- vz     : axes of the hole
-- radius : radius size of the sphere
-- radhole: radius size of the hole
-- orig   : coordinates of a point on the surface of the cross section
-- angle  : fill this field to customize the section (value in degree)
-- nrad   : number of hexahedra from the center of the sphere
-- nang   : number of hexahedra along the perimeter of the sphere
-- nhaut  : number of hexahedra on the height of the sphere
+Simple Rind
+-----------
 
-::
+To create a Simple Rind Grid in python mode, you need the following arguments:
 
-	elts = doc.makePartSphere (center, vx, vz, radius, radhole, orig, angle, nrad, nang, nhaut)
+- *nbR*  : number of hexahedra on radial.
+- *nbA*  : number of hexahedra along the perimeter of the rind.
+- *nbH*  : number of hexahedra along the axis of the rind.
+    
+Use the function **makeRindTop**::
+     
+	elts = doc.makeRindTop(nbR, nbA, nbH)
 
-Operations on *elts*: :ref:`tuielements2`
+GUI command: :ref:`guisphereandrindsimple`
 
+
+.. _tuirinduniform:
+
+Uniform Rind
+------------
+
+The following data are required:
+
+- *center*: center coordinates of the rind (a vertex).
+- *vx*    : the base of the rind (a vector).
+- *vz*	  : the axis of the hole (a vector).
+- *rtrou* : the radius of the hole in the rind.
+- *rint*  : the internal radius.
+- *rext*  : the radius of the rind.
+- *angle* : angle of the rind around the Z axis.
+- *vplan* : the vertex along the vertical axis where the rind will be cut.
+- *nr*    : number of hexahedra on radial.
+- *na*    : number of hexahedra along the perimeter of the rind.
+- *nh*    : number of hexahedra along the axis of the rind.
+
+Use the function **makeRindUni** to make a uniform rind grid::
+
+	elts = doc.makeRindUni(center, vx, vz, rtrou, rint, rext, angle, vplan, nr, na, nh)
 	
-Code Sample
+GUI command: :ref:`guirinduniform`
+	
+.. _tuirindcustom:
+
+Custom Rind
 -----------
 
-.. literalinclude:: test_doc/hemispherical_rind/partial_hemispherical_grid.py
-   :emphasize-lines: 23,24
-   :linenos:
+The following data are required:
 
-Result
-------
+- *center*: center coordinates of the rind grid (a vertex).
+- *vx*    : the base of the rind grid (a vector).
+- *vz*	  : the axis of the rind (a vector).
+- *trad*  : a list of radiuses in ascendant order.
+- *tang*  : a list of angles in ascendant order. 
+- *tphi*  : a list of heights in ascendant order.
 
-.. image:: _static/partial_hemispherical_grid.png
-   :align: center
+Use the function **makeRind** to make a custom rind grid::
 
+	elts = doc.makeRind(center, vx, vz, trad, tang, tphi)
 
-.. _tuirindgrid:
-
-Rind Grid
-=========
-
-To create a rind grid in textual mode, you need the following arguments:
-
-- center : center coordinates of the sphere
-- vx     : normal vector to the surface of the cross section
-- vz     : axes of the hole
-- radius : radius size of the sphere
-- internal radius: fill this field to create rind
-- radhole: radius size of the hole
-- orig   : coordinates of a point on the surface of the cross section
-- nrad   : number of hexahedra from the center of the sphere
-- nang   : number of hexahedra along the perimeter of the sphere
-- nhaut  : number of hexahedra on the height of the sphere
-
-::
-
-	elts = doc.makeRind (center, vx, vz, radius, radint, radhole, orig, nrad, nang, nhaut)
-    
+GUI command: :ref:`guirindcustom`
+	
 Operations on *elts*: :ref:`tuielements2`
 
-              
-Code Sample
------------
 
-.. literalinclude:: test_doc/hemispherical_rind/rind_grid.py
-   :emphasize-lines: 23,24
+Example
+-------
+
+.. literalinclude:: test_doc/hemisphere/rind.py
    :linenos:
 
-Result
-------
-
-.. image:: _static/rind_grid.png
-   :align: center
 
 
-.. _tuipartrindgrid:
+.. _tuiconcentric:
 
-Partial Rind Grid
-=================
+Concentric (Spherical) Grid
+===========================
 
-To create a partial rind grid in textual mode, you need the following arguments:
+.. _tuiconcentricsimple:
 
-- center : center coordinates of the sphere
-- vx     : normal vector to the surface of the cross section
-- vz     : axes of the hole
-- radius : radius size of the sphere
-- radint : fill this field to create rind
-- radhole: radius size of the hole
-- orig   : coordinates of a point on the surface of the cross section
-- angle  : fill this field to customize the section (value in degree)
-- nrad   : number of hexahedra from the center of the sphere
-- nang   : number of hexahedra along the perimeter of the sphere
-- nhaut  : number of hexahedra on the height of the sphere
+Simple Concentric
+-----------------
 
-::
+To create a Simple Concentric Grid in python mode, you need the following arguments:
 
-	elts = doc.makePartRind (center, vx, vz, radius, radint, radhole, orig, angle, nrad, nang, nhaut)
+- *nbLayers*: the number of nested hexahedra.
+- *crit*    : the criteria.
 
+Use the function **makeSphericalTop**::
+     
+	elts = doc.makeSphericalTop(nbLayers, crit)
+
+GUI command: :ref:`guiconcentricsimple`
+
+
+.. _tuiconcentricuniform:
+
+Uniform Concentric
+------------------
+
+The following data are required:
+
+- *center*  : center coordinates of the concentric.
+- *vx*      : the base of the concentric (a vector).
+- *vz*	    : the axis of the concentric (a vector).
+- *rayon*   : the radius.
+- *nbLayers*: the number of nested hexahedra.
+- *crit*    : the criteria.
+
+Use the function **makeSphericalUni** to make a uniform concentric::
+
+	elts = doc.makeSphericalUni(center, vx, vz, rayon, nbLayers, crit)
+	
+GUI command: :ref:`guiconcentricuniform`
+	
+.. _tuiconcentriccustom:
+
+Custom Concentric
+-----------------
+
+The following data are required:
+
+- *center*  : center coordinates of the concentric.
+- *vx*      : the base of the concentric (a vector).
+- *vz*	    : the axis of the concentric (a vector).
+- *tr*      : a list of radiuses in ascendant order.
+- *crit*    : the criteria.
+
+Use the function **makeSpherical** to make a custom concentric grid::
+
+	elts = doc.makeSpherical (center, vx, vz, tr, crit)
+
+GUI command: :ref:`guiconcentriccustom`
+	
 Operations on *elts*: :ref:`tuielements2`
 
-                      
-Code Sample
------------
 
-.. literalinclude:: test_doc/hemispherical_rind/partial_rind_grid.py
-   :emphasize-lines: 24,25
+Example
+-------
+
+.. literalinclude:: test_doc/hemisphere/concentric.py
    :linenos:
-
-Result
-------
-
-.. image:: _static/partial_rind_grid.png
-   :align: center
-
-
-GUI command: :ref:`guihemisphere`

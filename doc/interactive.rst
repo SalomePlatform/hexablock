@@ -50,8 +50,6 @@ It provides the toolset allowing to:
    gui_quadrangle.rst
    gui_hexahedron.rst
    gui_vector.rst
-   gui_cyl.rst
-   gui_pipe.rst
    gui_blocks_for_cyl_pipe.rst
    creategrids.rst
    gui_hemisphere.rst

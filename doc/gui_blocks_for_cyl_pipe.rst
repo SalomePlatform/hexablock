@@ -3,131 +3,270 @@
 
 .. _guiblockscylinderpipe:
 
-=====================================
-Make blocks for a cylinder and a pipe
-=====================================
+================================
+Cylinders and Pipes Construction
+================================
 
-.. _makecylinder:
+.. _guicylinder:
 
-Make Cylinder
-=============
+Cylinder
+========
 
 To make a **Cylinder** in the **Main Menu** select **Model -> Construction -> Make Cylinder**.
 
-To make a cylinder, the following data are required:
 
-- Cylinder: a cylinder.
-- Vector: a vector on the base of the cylinder to start hexahedra.
-- n (radial) : the number of blocks on radial.
-- n (angular): the number of angular section.
-- n (length) : the number of blocks along the axis of the cylinder.
+.. _guicylindersimple:
 
-The dialogue box to make a cylinder is:
+Simple Cylinder
+---------------
 
-.. image:: _static/gui_make_cylinder.png
+.. image:: _static/gui_cylindersimple.png
    :align: center
 
 .. centered::
-   Make a Cylinder
+      Dialog Box to make a Simple Cylinder
+
+
+The following data are required:
+
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the cylinder.
+- *nb Height*  : number of hexahedra along the axis of the cylinder.
+
+Clicking on "Apply" on the previous dialog box will produce the following result:
+
+.. image:: _static/cylindersimple.png
+   :align: center
+
+.. centered::
+   Simple Cylinder
 
 The result is an array of hexahedral ranked first by following the
 radial direction and the angular direction, then according to the
 layers in the cylinder axis.
 
-The result of this action is:
 
-.. image:: _static/cylinder.png
+TUI command: :ref:`tuicylindersimple`
+
+
+.. _guicylinderuniform:
+
+Uniform Cylinder
+----------------
+
+.. image:: _static/gui_cylinderuniform.png
    :align: center
 
 .. centered::
-   Cylinder
-
-TUI command: :ref:`tuimakecylinder`
+      Dialog Box to make a Uniform Cylinder
 
 
-.. _makecylinders:
+The following data are required:
 
-Make Cylinders
-==============
+- *origin* 	   : origin's coordinates of the cylinder (select a vertex).
+- *axis*	   : the axis of the cylinder (select a vector).
+- *base*       : the base of the cylinder (select a vector).
+- *radius*     : the radius of the cylinder.
+- *hole radius*: the radius of the hole in the cylinder .
+- *slice angle*: angle of the cylinder around the Z axis.
+- *height*     : the height of the cylinder.
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the cylinder.
+- *nb Height*  : number of hexahedra along the axis of the cylinder.
+
+Clicking on "Apply" on the previous dialog box will produce the following result:
+
+.. image:: _static/cylinderuniform.png
+   :align: center
+
+.. centered::
+   Uniform Cylinder
+
+
+TUI command: :ref:`tuicylinderuniform`
+
+
+.. _guicylindercustom:
+
+Custom Cylinder
+---------------
+
+.. image:: _static/gui_cylindercustom.png
+   :align: center
+
+.. centered::
+      Dialog Box to make a Custom Cylinder
+
+
+The following data are required:
+
+- *origin* 	   : origin's coordinates of the cylinder (select a vertex).
+- *axis*	   : the axis of the cylinder (select a vector).
+- *base*       : the base of the cylinder (select a vector).
+- *radius*     : a list of radiuses in ascendant order.
+- *angle*      : a list of angles in ascendant order. 
+- *height*     : a list of heights in ascendant order.
+
+Clicking on "Apply" on the previous dialog box will produce the following result:
+
+.. image:: _static/cylindercustom.png
+   :align: center
+
+.. centered::
+   Custom Cylinder
+
+
+TUI command: :ref:`tuicylindercustom`
+
+
+.. _guicylinders:
+
+Cylinders
+=========
 
 To make **two cylinders in T shape** in the **Main Menu** select **Model -> Construction -> Make Cylinders** 
 
-You can make **Cylinders** through **Cylinder1** and **Cylinder2**.
-
-**Arguments:** 2 cylinders.
-
 The dialogue box to make cylinders is:
 
-.. image:: _static/gui_make_cylinders.png
+.. image:: _static/gui_cylinders.png
    :align: center
 
 .. centered::
    Make Cylinders
 
-The result is an array of hexahedral.
 
-TUI command: :ref:`tuimakecylinders`
+The following data are required:
+
+- *origin* 	   : the origin of the cylinder (select a vertex).
+- *axis*	   : the axis of the cylinder (select a vector).
+- *radius*     : the radius of the cylinder.
+- *height*      : the height of the cylinder. 
+
+Those arguments must be filled for the **Big Cylinder** and the **Small Cylinder**.
+
+Clicking on "Apply" on the previous dialog box will produce the following result:
+
+.. image:: _static/cylinders.png
+   :align: center
+
+.. centered::
+   Make Cylinders (T Shape)
 
 
-.. _makepipe:
+TUI command: :ref:`tuicylinders`
 
-Make Pipe
-=========
+
+
+.. _guipipe:
+
+Pipe
+====
 
 To make a **Pipe** in the **Main Menu** select **Model -> Construction -> Make Pipe**.
 
-To make a pipe, the following data are required:
 
-- Pipe: a pipe.
-- Vector: a vector on the base of the pipe to start hexahedra.
-- n (radial) : the number of blocks on radial.
-- n (angular): the number of angular section.
-- n (length) : the number of blocks along the axis of the pipe.
+.. _guipipesimple:
 
-The dialogue box to make a pipe is:
+Simple Pipe
+-----------
 
-.. image:: _static/gui_make_pipe.png
+.. image:: _static/gui_pipesimple.png
    :align: center
 
 .. centered::
-   Make a Pipe
+      Dialog Box to make a Simple Pipe
 
-The result is an array of hexahedral arranged in layers following the
-first radial and angular layers, and finally the axial layers.
 
-The result of this action is:
+The following data are required:
 
-.. image:: _static/pipe.png
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the pipe.
+- *nb Height*  : number of hexahedra along the axis of the pipe.
+
+
+TUI command: :ref:`tuipipesimple`
+
+
+.. _guipipeuniform:
+
+Uniform Pipe
+------------
+
+.. image:: _static/gui_pipeuniform.png
    :align: center
 
 .. centered::
-   Pipe
-
-TUI command: :ref:`tuimakepipe`
+      Dialog Box to make a Uniform Pipe
 
 
-.. _makepipes:
+The following data are required:
 
-Make Pipes
-==========
+- *origin* 	   : origin's coordinates of the pipe (select a vertex).
+- *axis*	   : the axis of the pipe (select a vector).
+- *base*       : the base of the pipe (select a vector).
+- *radius*     : the radius of the pipe.
+- *hole radius*: the radius of the hole in the pipe.
+- *slice angle*: angle of the pipe around the Z axis.
+- *height*     : the height of the pipe.
+- *nb Radial*  : number of hexahedra on radial.
+- *nb Angular* : number of hexahedra along the perimeter of the pipe.
+- *nb Height*  : number of hexahedra along the axis of the pipe.
+
+
+TUI command: :ref:`tuipipeuniform`
+
+
+.. _guipipecustom:
+
+Custom Pipe
+-----------
+
+.. image:: _static/gui_pipecustom.png
+   :align: center
+
+.. centered::
+      Dialog Box to make a Custom Pipe
+
+
+The following data are required:
+
+- *origin* 	   : origin's coordinates of the pipe (select a vertex).
+- *axis*	   : the axis of the pipe (select a vector).
+- *base*       : the base of the pipe (select a vector).
+- *radius*     : a list of radiuses in ascendant order.
+- *angle*      : a list of angles in ascendant order. 
+- *height*     : a list of heights in ascendant order.
+
+
+TUI command: :ref:`tuipipecustom`
+
+
+.. _guipipes:
+
+Pipes
+=====
 
 To make **two intersect pipes** in the **Main Menu** select **Model -> Construction -> Make Pipes**.
 
-You can make **Pipes** through **Pipe1** and **Pipe2**.
-
-**Arguments:** 2 pipes.
 
 The dialogue box to make pipes is:
 
-.. image:: _static/gui_make_pipes.png
+.. image:: _static/gui_pipes.png
    :align: center
 
 .. centered::
    Make Pipes
 
-The result is an array of hexahedra where we first find hexahedra of
-the first pipe and the second pipe. Each pipe range hexahedra following
-first radial layers and angular layers, and finally the axial layers.
+You can make **Pipes** (T Shape) through a **Big Pipe** and a **Small Pipe**. 
 
-TUI command: :ref:`tuimakepipes`
+The following data are required:
 
+- *origin* 	   : the origin of the pipe (select a vertex).
+- *axis*	   : the axis of the pipe (select a vector).
+- *radius*     : the radius of the pipe.
+- *hole radius*: the radius of the hole in the pipe.
+- *height*     : the height of the pipe. 
+
+Those arguments must be filled for the **Big Pipe** and the **Small Pipe**.
+
+TUI command: :ref:`tuipipes`

@@ -7,42 +7,77 @@
 Make cartesian grids
 ====================
 
-To add a cartesian grid to the model, the following data are required:
+.. _tuicartgridsimple:
 
-- the vertex of the initial hexahedron: *pt*
-- the vector corresponding to the diametrically opposite vertex to the initial vertex: *vx, vy, vz*
-- the number of repetition of this hexahedra along the three axes: *ni, nj, nk*
+Simple Cartesian Grid
+=====================
 
-Make a Cartesian grid::
+To add a simple cartesian grid to the model, the following data are required:
 
-    elts = doc.makeCartesian(pt, vx, vy, vz, ni, nj, nk)
+- *nb X*: The number of hexahedra along the X axis
+- *nb Y*: The number of hexahedra along the Y axis
+- *nb Z*: The number of hexahedra along the Z axis
 
-or:
-	- the vertex of the initial hexahedron: *pt*
-	- the vector corresponding to the diametrically opposite vertex to the initial vertex
-	- the coordinates of the vector *vec1* on x, y and z: *px, py, pz*
-	- the number of repetition of this hexahedra along the three axes: *mx, my, mz*
 
-.. code-block:: python
+Make a Simple Cartesian Grid::
 
-    elts = doc.makeCartesian1(pt, vec1, px, py, pz, mx, my, mz)
+    elts = doc.makeCartesianTop(nbX, nbY, nbZ)
+
+GUI command: :ref:`guicartgridsimple`
+
+
+.. _tuicartgriduniform:
+
+Uniform Cartesian Grid
+======================
+
+To add a uniform cartesian grid to the model, the following data are required:
+
+- *origin*: The vertex of the origin
+- *vec X* : The X vector
+- *vec Y* : The Y vector
+- *vec Z* : The Z vector
+- *len X* : The length of an hexahedra on the X axis
+- *len Y* : The length of an hexahedra on the Y axis
+- *len Z* : The length of an hexahedra on the Z axis
+- *nb X*  : The number of hexahedra on the X axis
+- *nb Y*  : The number of hexahedra on the Y axis
+- *nb Z*  : The number of hexahedra on the Z axis
+
+Make a Uniform Cartesian Grid::
+
+    elts = doc.makeCartesianUni(orig, vecX, vecY, vecZ, lenX, lenY, lenZ, nbX, nbY, nbZ)
+  
+GUI command: :ref:`guicartgriduniform`  
+
+
+.. _tuicartgridcustom:
+
+Custom Cartesian Grid
+=====================
+
+To add a custom cartesian grid to the model, the following data are required:
+
+- *origin*: The vertex of the origin
+- *vec X* : The X vector
+- *vec Y* : The Y vector
+- *vec Z* : The Z vector
+- *tx*    : A list of x coordinates in ascendant order
+- *ty*    : A list of y coordinates in ascendant order
+- *tz*    : A list of z coordinates in ascendant order
+
+Make a Custom Cartesian Grid::
+
+    elts = doc.makeCartesian(orig, vecX, vecY, vecZ, tx, ty, tz)
+    
+GUI command: :ref:`guicartgridcustom`
+
 
 Operations on *elts*: :ref:`tuielements2`
 
 
 Example
--------
+=======
 
-
-.. literalinclude:: test_doc/grid/cartesian_grid.py
+.. literalinclude:: test_doc/cartesian_grid/cartesian_grid.py
    :linenos:
-
-
-.. image:: _static/cartesian_grid.png
-   :align: center
-
-.. centered::
-   Cartesian Grid
-
-
-GUI command: :ref:`guicartgrid`
