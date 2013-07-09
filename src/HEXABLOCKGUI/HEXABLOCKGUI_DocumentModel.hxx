@@ -25,8 +25,6 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
-#include "GEOM_GenericObjPtr.h"
-
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexDocument.hxx"
 #include "HexNewShape.hxx"

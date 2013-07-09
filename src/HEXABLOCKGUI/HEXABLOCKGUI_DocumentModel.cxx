@@ -39,10 +39,7 @@
 #include <TopoDS.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 
-#include <GEOMBase.h>
 #include "HEXABLOCKGUI_SalomeTools.hxx"
-
-#include "GEOM_GEOMBase.hxx"
 
 #include <SALOME_ListIO.hxx>
 #include <SALOMEconfig.h>

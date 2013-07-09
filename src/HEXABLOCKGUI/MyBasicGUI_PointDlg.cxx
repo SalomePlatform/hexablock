@@ -26,7 +26,6 @@
 
 #include "MyDlgRef.hxx"
 
-#include <GEOMImpl_Types.hxx>
 
 #include <QApplication>
 #include <QButtonGroup>

@@ -65,8 +65,6 @@
 
 #include <QMultiMap>
 
-#include "GEOMBase.h"
-
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 #include <SalomeApp_Study.h>

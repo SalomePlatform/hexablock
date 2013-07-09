@@ -191,7 +191,9 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
           _makeHemiSphereDiag(0),
           _modelInfoDiag(NULL),
           _addShapeDiag(NULL),
-          currentDialog(NULL)
+          currentDialog(NULL),
+          lastOccPrs(NULL),
+          lastVtkDocGView(NULL)
 {
     DEBTRACE("HEXABLOCKGUI::HEXABLOCKGUI");
 
@@ -338,7 +340,7 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
             _hexaEngine->SetCurrentStudy( _CAST(Study,aStudy)->GetStudy() );
             updateObjBrowser(); // objects can be removed
         }
-       ************************************ */
+     ************************************ */
 
     if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
             currentOccGView->getViewWindow()->installEventFilter(this);
@@ -365,22 +367,24 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     disconnect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
             this, SLOT( onObjectBrowserClick(const QModelIndex&) ) );
 
-//    if ( currentDocGView != NULL && currentDocGView->getViewWindow() != NULL )
-//    {
-//        //default selectionMode in VTKView
-////        currentDocGView->getViewWindow()->SetSelectionMode( ActorSelection );
-//        currentDocGView->getViewWindow()->close();
-//    }
-//
-//    if (currentOccGView != NULL)
-//    {
-//        //defaut selectionMode in OccView
-////        selectionMgr()->clearSelected();
-////        currentOccGView->globalSelection();
-////        currentOccGView->localSelection(TopAbs_SHAPE);
-//        if (currentOccGView->getViewWindow() != NULL)
-//            currentOccGView->getViewWindow()->close();
-//    }
+    SVTK_ViewWindow* vtkView = (currentDocGView != NULL) ? currentDocGView->getViewWindow() : NULL;
+    if ( vtkView != NULL)
+    {
+        //default selectionMode in VTKView
+        vtkView->SetSelectionMode( ActorSelection );
+        vtkView->removeEventFilter(this);
+//        vtkView->close();
+    }
+
+    OCCViewer_ViewWindow* occView = (currentOccGView != NULL) ? currentOccGView->getViewWindow() : NULL;
+    if (occView != NULL)
+    {
+        //defaut selectionMode in OccView
+        selectionMgr()->clearSelected();
+        currentOccGView->globalSelection();
+        occView->removeEventFilter(this);
+//        occView->close();
+    }
 
     qDeleteAll(myOCCSelectors);
     myOCCSelectors.clear();
@@ -389,15 +393,6 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     qDeleteAll(myVTKSelectors);
     myVTKSelectors.clear();
     getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
-
-    //Must be done for all views later
-    if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
-//        currentOccGView->getViewWindow()->removeEventFilter(this);
-        currentOccGView->getViewWindow()->close();
-
-    if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
-//        currentDocGView->getViewWindow()->removeEventFilter(this);
-        currentDocGView->getViewWindow()->close();
 
     bool bOk = SalomeApp_Module::deactivateModule( theStudy );
 
@@ -582,7 +577,6 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 {
     // ** we want to switch automatically to the right view windows
 
-    MESSAGE("===============>  ON OBJECT BROWSER CLICKED!!!!!!! ");
     //first, find selected item
     QString itemEntry;
     DataObjectList dol = getApp()->objectBrowser()->getSelected();
@@ -598,9 +592,6 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
         docGView = docs[item->entry()];
     else
         docGView = getOrCreateDocument(item);
-
-    if (docGView == NULL || docGView == currentDocGView)
-        return;
 
     //Init OCC if necessary
     if (currentOccGView == NULL)
@@ -627,6 +618,12 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 
         if (docGView->getDocumentActor() == NULL)
             docGView->update();
+    }
+
+    if (docGView == NULL || docGView == currentDocGView)
+    {
+        showOnlyActor();
+        return;
     }
 
     //update the current document
@@ -695,6 +692,7 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
         if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
 
         currentOccGView->getViewWindow()->removeEventFilter(this);
+
         currentOccGView->setViewWindow(NULL);
     }
 }
@@ -1716,40 +1714,32 @@ void HEXABLOCKGUI::showOnlyActor()
     if (vtkView == NULL)
         return;
 
-    SALOME_Actor *actor = NULL;
-    vtkActor     *aVTKActor  = NULL;
-    Handle(SALOME_InteractiveObject) anIO;
-
     SUIT_ViewManager* vman = vtkView->getViewManager();
     SalomeApp_Study* aStudy = HEXABLOCKGUI::activeStudy();
-    vtkRenderer *aRenderer = vtkView->getRenderer();
-    if (aStudy == NULL || vman == NULL || aRenderer == NULL) return;
-
-    //update the visibility state for all actors -----------
-    VTK::ActorCollectionCopy aCopy(aRenderer->GetActors());
-    vtkActorCollection *aCollection = aCopy.GetActors();
-    if (aCollection == NULL) return;
-    aCollection->InitTraversal();
-
-    while( (aVTKActor = aCollection->GetNextActor()) != NULL ){
-        actor = dynamic_cast<SALOME_Actor*>( aVTKActor );
-        if ( actor && actor->hasIO() ){
-            anIO = actor->getIO();
-            if( anIO->hasEntry())
-            {
-                aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),  "Visibility", 0 );
-                displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
-            }//if
-        }//if
-    }//while
 
     //show only the current actor -----------------
     vtkView->setFocus();
-    vtkView->DisplayOnly(currentVtkGView->getDocumentActor()->getIO());
+//    vtkView->DisplayOnly(currentVtkGView->getDocumentActor()->getIO());
+    Document_Actor *lastDocActor, *currentDocActor = currentVtkGView->getDocumentActor();
+    if (lastVtkDocGView != NULL)
+    {
+        lastDocActor = lastVtkDocGView->getDocumentActor();
+        Handle(SALOME_InteractiveObject) lastActorIO = lastDocActor->getIO();
+        if (!lastActorIO.IsNull() && lastActorIO->hasEntry())
+        {
+            vtkView->Erase(lastActorIO);
+            aStudy->setObjectProperty(vman->getId(), lastActorIO->getEntry(),  "Visibility", 0 );
+            displayer()->setVisibilityState(lastActorIO->getEntry(), Qtx::HiddenState);
+        }
+    }
     currentVtkGView->update();
-    anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),  "Visibility", 1 );
-    displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
+    Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
+    if (!anIO.IsNull() && anIO->hasEntry())
+    {
+        vtkView->Display(anIO);
+        aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),  "Visibility", 1 );
+        displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
+    }
     vtkView->onFitAll();
 
 //    //showOnly in occ viewer -------------
@@ -1763,7 +1753,9 @@ void HEXABLOCKGUI::showOnlyActor()
     if (vf == NULL)
         return;
 
-    vf->EraseAll();
+//    vf->EraseAll();
+    if (lastOccPrs != NULL)
+        vf->Erase(lastOccPrs);
     currentOccGView->globalSelection();
     SOCC_Prs* prs = getOccPrs(currentDocGView);
     currentOccGView->setPrs(prs);
@@ -1801,7 +1793,10 @@ void HEXABLOCKGUI::hideActor()
     if (vf == NULL)
         return;
 
-    vf->EraseAll();
+//    vf->EraseAll();
+    SOCC_Prs* currentOccPrs = getOccPrs(currentDocGView);
+    if (currentOccPrs != NULL)
+        vf->Erase(currentOccPrs);
     vf->Repaint();
     occView->onResetView();
 }
@@ -1896,7 +1891,6 @@ void HEXABLOCKGUI::switchOffGraphicView(VtkDocumentGraphicView* dgview, bool sav
 void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
 {
     DEBTRACE("HEXABLOCKGUI::switchModel " << dgview);
-    MESSAGE("=========> SWITCH MODEL");
 
     if (dgview == NULL)
     {
@@ -1947,19 +1941,33 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
 
 
     // = * init vtk view * =
-    if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
-        dgview->setViewWindow(currentDocGView->getViewWindow());
-
-    if (dgview->getViewWindow() == NULL)
+    if (currentDocGView != NULL)
     {
-        dgview->setViewWindow(graphicViewsHandler->createVtkWindow());
-        dgview->getViewWindow()->installEventFilter(this);
+        if (currentDocGView->getViewWindow() != NULL)
+            dgview->setViewWindow(currentDocGView->getViewWindow());
+        else
+        {
+            dgview->setViewWindow(graphicViewsHandler->createVtkWindow());
+            dgview->getViewWindow()->installEventFilter(this);
+        }
     }
+
     // ==
 
     switchOnGraphicView(dgview);
+
+    if (currentDocGView != NULL)
+    {
+        lastVtkDocGView = currentDocGView;
+        lastOccPrs = getOccPrs(currentDocGView);
+    }
+    else
+    {
+        lastVtkDocGView = dgview;
+        lastOccPrs = getOccPrs(dgview);
+    }
+
     currentDocGView = dgview;
-    currentDocGView->getViewWindow()->setFocus();
     showOnlyActor();
     currentDocGView->getDocumentModel()->refresh();
     _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());

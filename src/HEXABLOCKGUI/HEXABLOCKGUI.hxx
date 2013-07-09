@@ -220,6 +220,9 @@ protected:
   void _showDialogBox( HEXABLOCK::GUI::HexaBaseDialog* diag );
   HEXABLOCK::GUI::HexaBaseDialog* currentDialog;
 
+  SOCC_Prs* lastOccPrs;
+  HEXABLOCK::GUI::VtkDocumentGraphicView* lastVtkDocGView;
+
   HEXABLOCKGUI_Resource* _myresource;
   static int _oldStudyId;
   // static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;  // Hexa6 TODo

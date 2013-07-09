@@ -20,7 +20,6 @@
 #ifndef MYGEOMBASE_SKELETON_H
 #define MYGEOMBASE_SKELETON_H
 
-#include <GEOM_GEOMBase.hxx>
 
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"

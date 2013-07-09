@@ -23,7 +23,6 @@
 #include "utilities.h"
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
-#include "GEOMBase.h"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 #include "HexNewShape.hxx"
 #include "HexVertexShape.hxx"

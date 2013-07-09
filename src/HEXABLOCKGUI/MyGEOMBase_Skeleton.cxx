@@ -17,7 +17,6 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <GEOMBase.h>
 
 #include "MyGEOMBase_Skeleton.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"

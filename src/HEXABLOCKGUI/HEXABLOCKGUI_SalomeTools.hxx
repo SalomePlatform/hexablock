@@ -43,10 +43,6 @@ namespace HEXABLOCK
   SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry );
   _PTR(Study)   GetActiveStudyDocument();
 
-  CORBA::Object_var corbaObj( _PTR(SObject) theSO );
-
-  CORBA::Object_var corbaObj( const Handle(SALOME_InteractiveObject)& theIO );
-
   int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,/* SVTK_Selector* theSelector,*/
                                  const Handle(SALOME_InteractiveObject)& theIO,
                                  QString& theName );

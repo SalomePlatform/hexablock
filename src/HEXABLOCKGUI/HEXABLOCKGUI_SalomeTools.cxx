@@ -99,35 +99,6 @@ namespace GUI
 	}
 
 
-	CORBA::Object_var corbaObj( _PTR(SObject) theSO )
-	{
-		CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-		if ( theSO ) {
-			std::string aValue = theSO->GetIOR();
-			if (strcmp(aValue.c_str(), "") != 0) {
-				CORBA::ORB_ptr anORB = SalomeApp_Application::orb();
-				aCorbaObj = anORB->string_to_object(aValue.c_str());
-			}
-		}
-		return aCorbaObj._retn();
-	}
-
-
-	CORBA::Object_var corbaObj( const Handle(SALOME_InteractiveObject)& theIO )
-	{
-		CORBA::Object_var aCorbaObj = CORBA::Object::_nil();
-
-		if ( !theIO.IsNull() && theIO->hasEntry() ){
-			_PTR(Study)   aStudy = GetActiveStudyDocument();
-			_PTR(SObject) aSObj  = aStudy->FindObjectID(theIO->getEntry());
-			aCorbaObj = corbaObj(aSObj);
-		}
-		return aCorbaObj._retn();
-	}
-
-
-
-
 	SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry)
 	{
 		SALOME_Actor *foundActor = NULL;
