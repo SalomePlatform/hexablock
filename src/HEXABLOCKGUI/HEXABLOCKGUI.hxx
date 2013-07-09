@@ -300,7 +300,6 @@ private:
 
 
   QStringList getQuickDirList();
-  void restoreGraphicViews();
   void clearDialogs();
 
   SOCC_Prs* getOccPrs(HEXABLOCK::GUI::VtkDocumentGraphicView* docGView)

@@ -137,8 +137,8 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags
     _strHexaWidgetType[HEXA_TREE]   = tr( "HEXA" );
 
     _strHexaWidgetType[VECTOR_TREE]   = tr( "VECTOR" );
-    _strHexaWidgetType[CYLINDER_TREE] = tr( "CYLINDER" );
-    _strHexaWidgetType[PIPE_TREE]     = tr( "PIPE" );
+//    _strHexaWidgetType[CYLINDER_TREE] = tr( "CYLINDER" );
+//    _strHexaWidgetType[PIPE_TREE]     = tr( "PIPE" );
     _strHexaWidgetType[ELEMENTS_TREE] = tr( "ELEMENTS" );
     _strHexaWidgetType[CROSSELEMENTS_TREE]= tr( "CROSSELEMENTS" );
 
@@ -535,8 +535,8 @@ QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
     case QUAD_TREE:
     case HEXA_TREE: selector = getPatternDataSelectionModel(); break;
     case VECTOR_TREE:
-    case CYLINDER_TREE:
-    case PIPE_TREE:
+//    case CYLINDER_TREE:
+//    case PIPE_TREE:
     case ELEMENTS_TREE:
     case CROSSELEMENTS_TREE: selector = getPatternBuilderSelectionModel(); break;
     case GEOMPOINT_TREE:
@@ -1903,7 +1903,7 @@ MakeGridDialog::MakeGridDialog( QWidget* parent, Mode editmode, Qt::WindowFlags 
     _initWidget(editmode);
     rb0->click();
 
-    _helpFileName = "creategrids.html#guicartgrid";
+    _helpFileName = "creategrids.html#guicartgridsimple";
     connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     connect( rb0, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
     connect( rb0, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
@@ -1944,7 +1944,7 @@ void MakeGridDialog::_initInputWidget( Mode editmode )
     radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
     radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-    angle_lw->setItemDelegate(new HexaAngleDoubleSpinBoxDelegate(angle_lw));
+    angle_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(angle_lw));
     angle_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
 
     height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
@@ -1982,11 +1982,11 @@ void MakeGridDialog::clear()
 void MakeGridDialog::updateHelpFileName()
 {
     if ( sender() == rb0 ){
-        _helpFileName = "creategrids.html#guicartgrid";
+        _helpFileName = "creategrids.html#guicartgridsimple";
     } else if ( sender() == rb1 ){
-        _helpFileName = "creategrids.html#guicylgrid";
+        _helpFileName = "creategrids.html#guicartgriduniform";
     } else if ( sender() == rb2 ){
-        _helpFileName = "creategrids.html#guisphergrid";
+        _helpFileName = "creategrids.html#guicartgridcustom";
     }
 }
 
@@ -2017,7 +2017,7 @@ void MakeGridDialog::addAngleItem()
     QListWidgetItem* previousItem = angle_lw->currentItem();
     QListWidgetItem* newItem      = new QListWidgetItem();
 
-    double defaultValue = 180.;
+    double defaultValue = 1.;
     if ( previousItem )
         defaultValue = previousItem->data(Qt::EditRole).toDouble();
 
@@ -2080,15 +2080,15 @@ bool MakeGridDialog::apply(QModelIndex& result)
 
         if ( icenter.isValid() && iaxis.isValid() && ibase.isValid() && ivec.isValid() )
         {
-                double nx = nx_spb->value();
-                double ny = ny_spb->value();
-                double nz = nz_spb->value();
-                double lx = lx_spb->value();
-                double ly = ly_spb->value();
-                double lz = lz_spb->value();
+            double lx = lx_spb->value();
+            double ly = ly_spb->value();
+            double lz = lz_spb->value();
+            double nx = nx_spb->value();
+            double ny = ny_spb->value();
+            double nz = nz_spb->value();
 
-                iNewElts = docModel->makeCartesianUni( icenter, ibase, ivec, iaxis,
-                                                       nx, ny, nz, lx, ly, lz);
+            iNewElts = docModel->makeCartesianUni( icenter, ibase, ivec, iaxis,
+                                                   lx, ly, lz, nx, ny, nz);
         }
 
     } else if ( rb2->isChecked() )
@@ -2106,21 +2106,21 @@ bool MakeGridDialog::apply(QModelIndex& result)
             vector<double> angles;
             vector<double> heights;
 
-            double somme = 0.;
+//            double somme = 0.;
             int nbAngles = angle_lw->count();
             for ( int r = 0; r < nbAngles; ++r){
                 item = angle_lw->item(r);
                 double itemValue = item->data(Qt::EditRole).toDouble();
                 angles.push_back(itemValue);
-                somme += itemValue;
+//                somme += itemValue;
             }
-            if (somme > 360.01)
-            {
-                SUIT_MessageBox::information( 0,
-                        tr("HEXA_INFO"),
-                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-                return false;
-            }
+//            if (somme > 360.01)
+//            {
+//                SUIT_MessageBox::information( 0,
+//                        tr("HEXA_INFO"),
+//                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+//                return false;
+//            }
 
             int nbRadius = radius_lw->count();
             for ( int r = 0; r < nbRadius; ++r){
@@ -2156,8 +2156,11 @@ bool MakeGridDialog::apply(QModelIndex& result)
 MakeCylinderDialog::MakeCylinderDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinder";
     setupUi( this );
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#guicylinder";
+    connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
 
     rb0->click();
@@ -2200,6 +2203,18 @@ void MakeCylinderDialog::_initInputWidget( Mode editmode )
 
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== updateHelpFileName
+void MakeCylinderDialog::updateHelpFileName()
+{
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guicylindersimple";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guicylinderuniform";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guicylindercustom";
+    }
 }
 
 // ============================================================== addRadiusItem
@@ -2318,21 +2333,21 @@ bool MakeCylinderDialog::apply(QModelIndex& result)
         vector<double> angles;
         vector<double> heights;
 
-        double somme = 0.;
+//        double somme = 0.;
         int nbAngles = angle_lw->count();
         for ( int r = 0; r < nbAngles; ++r){
             item = angle_lw->item(r);
             double itemValue = item->data(Qt::EditRole).toDouble();
             angles.push_back(itemValue);
-            somme += itemValue;
+//            somme += itemValue;
         }
-        if (somme > 360.01)
-        {
-            SUIT_MessageBox::information( 0,
-                    tr("HEXA_INFO"),
-                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-            return false;
-        }
+//        if (somme > 360.01)
+//        {
+//            SUIT_MessageBox::information( 0,
+//                    tr("HEXA_INFO"),
+//                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+//            return false;
+//        }
 
         int nbRadius = radius_lw->count();
         for ( int r = 0; r < nbRadius; ++r){
@@ -2367,8 +2382,11 @@ bool MakeCylinderDialog::apply(QModelIndex& result)
 MakePipeDialog::MakePipeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipe";
-    setupUi( this );
+	setupUi( this );
+	_helpFileName = "gui_blocks_for_cyl_pipe.html#guipipe";
+	connect( rb0, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+	connect( rb1, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+	connect( rb2, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
     rb0->click();
 }
@@ -2411,6 +2429,19 @@ void MakePipeDialog::_initInputWidget( Mode editmode )
 
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+
+// ============================================================== updateHelpFileName
+void MakePipeDialog::updateHelpFileName()
+{
+    if ( sender() == rb0 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guipipesimple";
+    } else if ( sender() == rb1 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guipipeuniform";
+    } else if ( sender() == rb2 ){
+        _helpFileName = "gui_blocks_for_cyl_pipe.html#guipipecustom";
+    }
 }
 
 // ============================================================== addRadiusItem
@@ -2530,21 +2561,21 @@ bool MakePipeDialog::apply(QModelIndex& result)
         vector<double> angles;
         vector<double> heights;
 
-        double somme = 0.;
+//        double somme = 0.;
         int nbAngles = angle_lw->count();
         for ( int r = 0; r < nbAngles; ++r){
             item = angle_lw->item(r);
             double itemValue = item->data(Qt::EditRole).toDouble();
             angles.push_back(itemValue);
-            somme += itemValue;
+//            somme += itemValue;
         }
-        if (somme > 360.01)
-        {
-            SUIT_MessageBox::information( 0,
-                    tr("HEXA_INFO"),
-                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-            return false;
-        }
+//        if (somme > 360.01)
+//        {
+//            SUIT_MessageBox::information( 0,
+//                    tr("HEXA_INFO"),
+//                    tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+//            return false;
+//        }
 
         int nbRadius = radius_lw->count();
         for ( int r = 0; r < nbRadius; ++r){
@@ -2578,7 +2609,7 @@ bool MakePipeDialog::apply(QModelIndex& result)
 MakeCylindersDialog::MakeCylindersDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-cylinders";
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#guicylinders";
     setupUi( this );
     _initWidget(editmode);
 }
@@ -2665,7 +2696,7 @@ bool MakeCylindersDialog::apply(QModelIndex& result)
 MakePipesDialog::MakePipesDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_blocks_for_cyl_pipe.html#make-pipes";
+    _helpFileName = "gui_blocks_for_cyl_pipe.html#guipipes";
     setupUi( this );
     _initWidget(editmode);
 }
@@ -2825,8 +2856,11 @@ bool RemoveHexaDialog::apply(QModelIndex& result)
 PrismQuadDialog::PrismQuadDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_prism_join_quad.html#prism-quadrangles";
-    setupUi( this );
+	setupUi( this );
+    _helpFileName = "gui_prism_join_quad.html#guiextrudequads";
+    connect( extrudeTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( extrudeUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( extrude_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
     extrudeTop_rb->click();
 }
@@ -2880,6 +2914,18 @@ void PrismQuadDialog::_initInputWidget( Mode editmode )
     connect( quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection );
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== updateHelpFileName
+void PrismQuadDialog::updateHelpFileName()
+{
+    if ( sender() == extrudeTop_rb ){
+        _helpFileName = "gui_prism_join_quad.html#guiextrudequadssimple";
+    } else if ( sender() == extrudeUni_rb ){
+        _helpFileName = "gui_prism_join_quad.html#guiextrudequadsuniform";
+    } else if ( sender() == extrude_rb ){
+        _helpFileName = "gui_prism_join_quad.html#guiextrudequadscustom";
+    }
 }
 
 // ============================================================== clear
@@ -2988,8 +3034,10 @@ bool PrismQuadDialog::apply(QModelIndex& result)
 JoinQuadDialog::JoinQuadDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
 : HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_prism_join_quad.html#join-quadrangles";
-    setupUi( this );
+	setupUi( this );
+	_helpFileName = "gui_prism_join_quad.html#guijoinquads";
+	connect( joinUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+	connect( join_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
     joinUni_rb->click();
 }
@@ -3060,6 +3108,16 @@ void JoinQuadDialog::_initInputWidget( Mode editmode )
 
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== updateHelpFileName
+void JoinQuadDialog::updateHelpFileName()
+{
+    if ( sender() == joinUni_rb ){
+        _helpFileName = "gui_prism_join_quad.html#guijoinquadsuniform";
+    } else if ( sender() == join_rb ){
+        _helpFileName = "gui_prism_join_quad.html#guijoinquadscustom";
+    }
 }
 
 // ============================================================== addHeightItem
@@ -3658,8 +3716,10 @@ bool DisconnectDialog::apply(QModelIndex& result)
 CutEdgeDialog::CutEdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_cut_hexa.html";
     setupUi( this );
+    _helpFileName = "gui_cut_hexa.html";
+    connect( cutUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( cut_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
 
     cutUni_rb->click();
@@ -3685,6 +3745,16 @@ void CutEdgeDialog::_initInputWidget( Mode editmode )
 
     connect( add_height_pb, SIGNAL(clicked()), this, SLOT(addHeightItem()) );
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
+}
+
+// ============================================================== updateHelpFileName
+void CutEdgeDialog::updateHelpFileName()
+{
+    if ( sender() == cutUni_rb ){
+        _helpFileName = "gui_cut_hexa.html#guicuthexauniform";
+    } else if ( sender() == cut_rb ){
+        _helpFileName = "gui_cut_hexa.html#guicuthexacustom";
+    }
 }
 
 // ============================================================== clear
@@ -5748,8 +5818,10 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
 QuadRevolutionDialog::QuadRevolutionDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
          HexaBaseDialog(parent, editmode, f)
 {
-    _helpFileName = "gui_quad_revolution.html";
     setupUi( this );
+    _helpFileName = "gui_quad_revolution.html#guiquadsrevolution";
+    connect( revolutionUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( revolution_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     _initWidget(editmode);
     revolutionUni_rb->click();
 }
@@ -5808,6 +5880,16 @@ void QuadRevolutionDialog::_initInputWidget( Mode editmode )
     connect( del_angle_pb, SIGNAL(clicked()), this, SLOT(delAngleItem()));
 
     connect(quads_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
+}
+
+// ============================================================== updateHelpFileName
+void QuadRevolutionDialog::updateHelpFileName()
+{
+    if ( sender() == revolutionUni_rb ){
+        _helpFileName = "gui_quad_revolution.html#guiquadsrevolutionuniform";
+    } else if ( sender() == revolution_rb ){
+        _helpFileName = "gui_quad_revolution.html#guiquadsrevolutioncustom";
+    }
 }
 
 // ============================================================== clear
@@ -5994,6 +6076,28 @@ void MakeHemiSphereDialog::_initInputWidget( Mode editmode )
     connect( del_height_pb, SIGNAL(clicked()), this, SLOT(delHeightItem()) );
 }
 
+// ============================================================== updateHelpFileName
+void MakeHemiSphereDialog::updateHelpFileName()
+{
+    if ( sender() == sphereTop_rb || sender() == rindTop_rb ){
+        _helpFileName = "gui_hemisphere.html#guisphereandrindsimple";
+    } else if ( sender() == sphereUni_rb ){
+        _helpFileName = "gui_hemisphere.html#guisphereuniform";
+    } else if ( sender() == sphere2_rb ){
+        _helpFileName = "gui_hemisphere.html#guispherecustom";
+    } else if ( sender() == rindUni_rb ){
+        _helpFileName = "gui_hemisphere.html#guirinduniform";
+    } else if ( sender() == rind2_rb ){
+        _helpFileName = "gui_hemisphere.html#guirindcustom";
+    } else if ( sender() == sphericalTop_rb ){
+        _helpFileName = "gui_hemisphere.html#guiconcentricsimple";
+    } else if ( sender() == sphericalUni_rb ){
+        _helpFileName = "gui_hemisphere.html#guiconcentricuniform";
+    } else if ( sender() == spherical2_rb ){
+        _helpFileName = "gui_hemisphere.html#guiconcentriccustom";
+    }
+}
+
 // ============================================================== addRadiusItem
 void MakeHemiSphereDialog::addRadiusItem1()
 {
@@ -6078,11 +6182,6 @@ void MakeHemiSphereDialog::delHeightItem()
     delete height_lw->currentItem();
 }
 
-// ============================================================== updateHelpFileName
-void MakeHemiSphereDialog::updateHelpFileName()
-{
-}
-
 // ============================================================== clear
 void MakeHemiSphereDialog::clear()
 {
@@ -6137,13 +6236,13 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
     vector<double> heights;
 
     //angles collection
-    double somme = 0.;
+//    double somme = 0.;
     int nbAngles = angle_lw->count();
     for ( int r = 0; r < nbAngles; ++r){
         item = angle_lw->item(r);
         double itemValue = item->data(Qt::EditRole).toDouble();
         angles.push_back(itemValue);
-        somme += itemValue;
+//        somme += itemValue;
     }
 
     //radius1 collection
@@ -6179,13 +6278,13 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
         }
         else if (sphere2_rb->isChecked())
         {
-            if (somme > 360.01)
-            {
-                SUIT_MessageBox::information( 0,
-                        tr("HEXA_INFO"),
-                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-                return false;
-            }
+//            if (somme > 360.01)
+//            {
+//                SUIT_MessageBox::information( 0,
+//                        tr("HEXA_INFO"),
+//                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+//                return false;
+//            }
             if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
                 iElts = docModel->makeSphere(icenter, ivecx, ivecz, radius2, angles, heights);
         }
@@ -6218,13 +6317,13 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
         }
         else if (rind2_rb->isChecked())
         {
-            if (somme > 360.01)
-            {
-                SUIT_MessageBox::information( 0,
-                        tr("HEXA_INFO"),
-                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
-                return false;
-            }
+//            if (somme > 360.01)
+//            {
+//                SUIT_MessageBox::information( 0,
+//                        tr("HEXA_INFO"),
+//                        tr("The sum of the picked angles has to be \nless or equal than %1 degrees.").arg(360));
+//                return false;
+//            }
             if (icenter.isValid() && ivecx.isValid() && ivecz.isValid())
                 iElts = docModel->makeRind(icenter, ivecx, ivecz, radius2, angles, heights);
         }
@@ -6490,42 +6589,42 @@ HEXA_NS::Cylinder* CylinderDialog::getValue()
 // ============================================================== apply
 bool CylinderDialog::apply(QModelIndex& result)
 {
-    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-    _currentObj = NULL;
-
-    if ( !getDocumentModel() ) return false;
-    const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel) return false;
-
-    QModelIndex iCyl;
-    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-    double r = r_spb->value();
-    double h = h_spb->value();
-
-    if ( ivex.isValid()
-            && ivec.isValid() ){
-        iCyl = getDocumentModel()->addCylinder( ivex, ivec, r,  h );
-    }
-
-    if ( !iCyl.isValid() ){
-        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
-        return false;
-    }
-
-    _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
-
-    QString newName = name_le->text();
-    if (!newName.isEmpty()) /*{*/
-        getDocumentModel()->setName( iCyl, newName );
-
-    //update the default name in the dialog box
-    if (_value != NULL)
-        updateDefaultName(name_le, _value->getType());
-
-    // to select/highlight result
-    result = patternBuilderModel->mapFromSource(iCyl);
+//    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+//    _currentObj = NULL;
+//
+//    if ( !getDocumentModel() ) return false;
+//    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    if ( !patternDataModel || !patternBuilderModel) return false;
+//
+//    QModelIndex iCyl;
+//    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
+//    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
+//    double r = r_spb->value();
+//    double h = h_spb->value();
+//
+//    if ( ivex.isValid()
+//            && ivec.isValid() ){
+//        iCyl = getDocumentModel()->addCylinder( ivex, ivec, r,  h );
+//    }
+//
+//    if ( !iCyl.isValid() ){
+//        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
+//        return false;
+//    }
+//
+//    _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
+//
+//    QString newName = name_le->text();
+//    if (!newName.isEmpty()) /*{*/
+//        getDocumentModel()->setName( iCyl, newName );
+//
+//    //update the default name in the dialog box
+//    if (_value != NULL)
+//        updateDefaultName(name_le, _value->getType());
+//
+//    // to select/highlight result
+//    result = patternBuilderModel->mapFromSource(iCyl);
 
     return true;
 }
@@ -6638,48 +6737,48 @@ HEXA_NS::Pipe* PipeDialog::getValue()
 // ============================================================== apply
 bool PipeDialog::apply(QModelIndex& result)
 {
-    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-    _currentObj = NULL;
-
-    if ( !getDocumentModel() ) return false;
-    const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
-
-    QModelIndex iPipe;
-    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-    double ir = ir_spb->value();
-    double er = er_spb->value();
-    double h  = h_spb->value();
-
-    if (ir >= er) {
-        SUIT_MessageBox::information( this, tr( "CANNOT ADD PIPE" ), tr( "External radius must be greather than Internal radius!" ) );
-        return false;
-    }
-
-
-    if ( ivex.isValid()
-            && ivec.isValid() ){
-        iPipe = getDocumentModel()->addPipe( ivex, ivec, ir, er, h );
-    }
-
-    if ( !iPipe.isValid() ){
-        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
-        return false;
-    }
-    _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
-
-    QString newName = name_le->text();
-    if ( !newName.isEmpty() )/*{*/
-        getDocumentModel()->setName( iPipe, newName );
-
-    //update the default name in the dialog box
-    if (_value != NULL)
-        updateDefaultName(name_le, _value->getType());
-
-    // to select/highlight result
-    result = patternBuilderModel->mapFromSource(iPipe);
+//    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
+//    _currentObj = NULL;
+//
+//    if ( !getDocumentModel() ) return false;
+//    const PatternDataModel*    patternDataModel    = getPatternDataModel();
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    if ( !patternDataModel || !patternBuilderModel)    return false;
+//
+//    QModelIndex iPipe;
+//    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
+//    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
+//    double ir = ir_spb->value();
+//    double er = er_spb->value();
+//    double h  = h_spb->value();
+//
+//    if (ir >= er) {
+//        SUIT_MessageBox::information( this, tr( "CANNOT ADD PIPE" ), tr( "External radius must be greather than Internal radius!" ) );
+//        return false;
+//    }
+//
+//
+//    if ( ivex.isValid()
+//            && ivec.isValid() ){
+//        iPipe = getDocumentModel()->addPipe( ivex, ivec, ir, er, h );
+//    }
+//
+//    if ( !iPipe.isValid() ){
+//        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
+//        return false;
+//    }
+//    _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
+//
+//    QString newName = name_le->text();
+//    if ( !newName.isEmpty() )/*{*/
+//        getDocumentModel()->setName( iPipe, newName );
+//
+//    //update the default name in the dialog box
+//    if (_value != NULL)
+//        updateDefaultName(name_le, _value->getType());
+//
+//    // to select/highlight result
+//    result = patternBuilderModel->mapFromSource(iPipe);
 
     return true;
 }

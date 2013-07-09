@@ -118,8 +118,8 @@ QVariant ElementItem::data( int role ) const
         case QUADITEM: return QVariant::fromValue( (HEXA_NS::Quad*)m_DocElt );
         case HEXAITEM: return QVariant::fromValue( (HEXA_NS::Hexa*)m_DocElt );
         case VECTORITEM: return QVariant::fromValue( (HEXA_NS::Vector*)m_DocElt );
-        case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
-        case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
+//        case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
+//        case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
         case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
         case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
         case GEOMSHAPEITEM: return QVariant::fromValue( (HEXA_NS::NewShape*) m_DocElt );
@@ -185,17 +185,17 @@ VectorItem::VectorItem( HEXA_NS::Vector* hexaVector, QString entry ):
 {
 }
 
-// ----------------------- CYLINDER (BUILDER)
-CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder, QString entry):
-		StandardElementItem(hexaCylinder, entry, CYLINDERITEM, CYLINDER_TREE)
-{
-}
-
-// ----------------------- PIPE     (BUILDER)
-PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry ):
-		StandardElementItem(hexaPipe, entry, PIPEITEM, PIPE_TREE)
-{
-}
+//// ----------------------- CYLINDER (BUILDER)
+//CylinderItem::CylinderItem( HEXA_NS::Cylinder* hexaCylinder, QString entry):
+//		StandardElementItem(hexaCylinder, entry, CYLINDERITEM, CYLINDER_TREE)
+//{
+//}
+//
+//// ----------------------- PIPE     (BUILDER)
+//PipeItem::PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry ):
+//		StandardElementItem(hexaPipe, entry, PIPEITEM, PIPE_TREE)
+//{
+//}
 
 // ----------------------- ELEMENTS      (NOT USED)
 ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements, QString entry ):
@@ -204,10 +204,10 @@ ElementsItem::ElementsItem( HEXA_NS::Elements* hexaElements, QString entry ):
 }
 
 // ----------------------- CROSSELEMENTS (NOT USED)
-CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry ):
-		StandardElementItem(hexaCrossElts, entry, CROSSELEMENTSITEM, CROSSELEMENTS_TREE)
-{
-}
+//CrossElementsItem::CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry ):
+//		StandardElementItem(hexaCrossElts, entry, CROSSELEMENTSITEM, CROSSELEMENTS_TREE)
+//{
+//}
 
 // ----------------------- GEOM     (GEOMETRY)
 GeomItem::GeomItem( HEXA_NS::EltBase* geomShape, QString entry, HexaType ttype, HexaTreeRole treeRole, HEXA_NS::EltBase* assoc ):

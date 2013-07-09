@@ -66,8 +66,14 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     case QUAD_TREE :     editor = new QuadDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case HEXA_TREE :     editor = new HexaDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case VECTOR_TREE :   editor = new VectorDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
-    case CYLINDER_TREE : editor = new CylinderDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
-    case PIPE_TREE :     editor = new PipeDialog(_dw, HexaBaseDialog::INFO_MODE);       break;
+
+//    case ELEMENTS_DIR_TREE : trouver le type exact (cylinder ou pipe) et creer la boite d'info en fonction.
+
+    // * OBSOLETE ******
+//    case CYLINDER_TREE : editor = new CylinderDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
+//    case PIPE_TREE :     editor = new PipeDialog(_dw, HexaBaseDialog::INFO_MODE);       break;
+    // ******************
+
     case GROUP_TREE       : editor = new GroupDialog(_dw, HexaBaseDialog::INFO_MODE/*UPDATE_MODE*/); break;
     case LAW_TREE         : editor = new LawDialog(_dw, HexaBaseDialog::INFO_MODE); break;
     case PROPAGATION_TREE : editor = new PropagationDialog(_dw, HexaBaseDialog::INFO_MODE); break;
@@ -136,19 +142,32 @@ void DocumentDelegate::setEditorData( QWidget *editor,
       vectorEditor->setValue(value);
     }
     break;
-    case CYLINDER_TREE : {
-      HEXA_NS::Cylinder *value = documentModel->getHexaPtr<HEXA_NS::Cylinder*>(index);
-      CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
-      cylinderEditor->setValue(value);
+
+    /*
+    case ELEMENTS_DIR_TREE : {
+        HEXA_NS::Elements* value = documentModel->getHexaPtr<HEXA_NS::Elements*>(index);
+        // trouver le type exact (cylinder ou pipe) pour choisir le bon editor
+        // editor->setValue(value)
     }
     break;
-    case PIPE_TREE : {
-      HEXA_NS::Pipe *value = documentModel->getHexaPtr<HEXA_NS::Pipe*>(index);
-      PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
-      pipeEditor->setValue(value);
-    }
-    break;
-    case GROUP_TREE :{
+    */
+
+    // ************ OBSOLETE ********************
+//    case CYLINDER_TREE : {
+//      HEXA_NS::Cylinder *value = documentModel->getHexaPtr<HEXA_NS::Cylinder*>(index);
+//      CylinderDialog *cylinderEditor = static_cast<CylinderDialog*>(editor);
+//      cylinderEditor->setValue(value);
+//    }
+//    break;
+//    case PIPE_TREE : {
+//      HEXA_NS::Pipe *value = documentModel->getHexaPtr<HEXA_NS::Pipe*>(index);
+//      PipeDialog *pipeEditor= static_cast<PipeDialog*>(editor);
+//      pipeEditor->setValue(value);
+//    }
+//    break;
+    // ************ FIN OBSOLETE *****************
+
+    case GROUP_TREE : {
       HEXA_NS::Group *value = index.data( HEXA_DATA_ROLE ).value< HEXA_NS::Group* >();
       GroupDialog *groupEditor = static_cast<GroupDialog*>(editor);
       groupEditor->setValue(value);

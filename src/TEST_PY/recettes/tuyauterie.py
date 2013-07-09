@@ -88,8 +88,8 @@ grand_dir_b = doc.addVectorVertices(grand_oppo, grand_base)
 grand_hauteur_a = grand_dir_a.getNorm()*0.20
 grand_hauteur_b = grand_dir_b.getNorm()*0.60
 
-grand_cylindre_a = doc.addCylinder(grand_base, grand_dir_a, grand_rayon, grand_hauteur_a)
-grand_cylindre_b = doc.addCylinder(grand_oppo, grand_dir_b, grand_rayon, grand_hauteur_b)
+####   grand_cylindre_a = doc.addCylinder(grand_base, grand_dir_a, grand_rayon, grand_hauteur_a)
+####   grand_cylindre_b = doc.addCylinder(grand_oppo, grand_dir_b, grand_rayon, grand_hauteur_b)
 
 # Construire le moyen cylindre
 # ----------------------------
@@ -103,7 +103,6 @@ moyen_dir = doc.addVectorVertices(moyen_arri, moyen_avan)
 
 moyen_hauteur = geompy.MinDistance(moyen_arri_v, grand_generat) - grand_rayon
 
-moyen_cylindre = doc.addCylinder(moyen_base, moyen_dir, moyen_rayon, moyen_hauteur)
 
 # Construire le petit cylindre
 # ----------------------------
@@ -117,54 +116,75 @@ petit_dir = doc.addVectorVertices(petit_arri, petit_avan)
 
 petit_hauteur = geompy.MinDistance(petit_arri_v, grand_generat)
 
-petit_cylindre = doc.addCylinder(petit_base, petit_dir, petit_rayon, petit_hauteur)
 
 # Construire les 2 cylindres qui s'intersectent
 # ---------------------------------------------
 
-cylindres_gm = doc.makeCylinders(grand_cylindre_a, moyen_cylindre)
-cylindres_gp = doc.makeCylinders(grand_cylindre_b, petit_cylindre)
+moyen_rayon  = moyen_rayon*0.7
+cylindres_gm = doc.makeCylinders (grand_base, grand_dir_a, grand_rayon, grand_hauteur_a, 
+                                  moyen_base, moyen_dir, moyen_rayon, moyen_hauteur)
+cylindres_gp = doc.makeCylinders (grand_oppo, grand_dir_b, grand_rayon, grand_hauteur_b,
+                                  petit_base, petit_dir, petit_rayon, petit_hauteur)
+
+doc.saveVtk ("tuyauterie0.vtk")
+
+print "grand_rayon = ", grand_rayon
+print "moyen_rayon = ", moyen_rayon
+print "petit_rayon = ", petit_rayon
+
 
 # Joindre les 2 croix
 # -------------------
 
-gm_quads = []
+CYL_BIG  = 1
+CYL_KMAX = 3
+CYL_JMAX = 4
 
-for i in xrange(1, -1, -1):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
-        quad = cylindres_gm.getQuadIJ(hexablock.CYL_BIG, i, j, hexablock.CYL_BIG_SLICES)
-        gm_quads.append(quad)
+qstart = cylindres_gm.getQuadIJ (CYL_BIG, 0,0,CYL_KMAX)
 
-gp_q = cylindres_gp.getQuadIJ(hexablock.CYL_BIG, 1, hexablock.V_SW, hexablock.CYL_BIG_SLICES)
+qdest  = cylindres_gp.getQuadIJ (CYL_BIG, 0,0,CYL_KMAX)
 
-gp_v0 = cylindres_gp.getVertexIJK(hexablock.CYL_BIG, 2, hexablock.V_S , hexablock.CYL_BIG_SLICES)
-gp_v1 = cylindres_gp.getVertexIJK(hexablock.CYL_BIG, 2, hexablock.V_SW, hexablock.CYL_BIG_SLICES)
+va1 = qstart.getVertex (0)
+va2 = qstart.getVertex (1)
+vb1 = qdest .nearestVertex (va1)
+vb2 = qdest .nearestVertex (va2)
 
-gm_v0 = cylindres_gm.getVertexIJK(hexablock.CYL_BIG, 2, hexablock.V_E , hexablock.CYL_BIG_SLICES)
-gm_v1 = cylindres_gm.getVertexIJK(hexablock.CYL_BIG, 2, hexablock.V_NE, hexablock.CYL_BIG_SLICES)
+gm_quads = [qstart]
 
-prisme = doc.joinQuads(gm_quads,  gp_q, gm_v0, gp_v0, gm_v1, gp_v1,  1)
+for nj in range (CYL_JMAX) :
+    quad = cylindres_gm.getQuadIJ (CYL_BIG, 1,nj, CYL_KMAX)
+    gm_quads.append (quad)
+
+prisme = doc.joinQuadsUni (gm_quads, qdest, va1,vb1,va2,vb2, 1)
+
 
 # Ajouter le coude au grand cylindre
 # ----------------------------------
 
-coude_quads = []
+coude_quads = [ cylindres_gp.getQuadIJ(CYL_BIG, 0, 0, 0) ]
 
-for i in xrange(1, -1, -1):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
-        quad = cylindres_gp.getQuadIJ(hexablock.CYL_BIG, i, j, 0)
+for nj in range (CYL_JMAX) :
+        quad = cylindres_gp.getQuadIJ(CYL_BIG, 1, nj, 0)
         coude_quads.append(quad)
 
 coude_centre = doc.addVertex(arc_x , arc_y , arc_z )
 coude_dir    = doc.addVector(arc_dx, arc_dy, arc_dz)
 coude_angle  = geompy.GetAngle(arc_a1, arc_a2)
 
-coude = doc.revolutionQuads(coude_quads, coude_centre, coude_dir, [coude_angle])
+coude = doc.revolutionQuads (coude_quads, coude_centre, coude_dir, [coude_angle])
+##coude = doc.revolutionQuadsUni (coude_quads, coude_centre, coude_dir, coude_angle, 8)
+
+doc.saveVtk ("tuyauterie1.vtk")
+doc.addLaws (0.02, True)
+blocs = hexablock.mesh(doc)
+muv, mue, muq, muh = hexablock.dump(doc, blocs)
+
+arret_procedure ()
 
 # Associer la géométrie au modèle de bloc
 # =======================================
 
-doc.setShape(geometrie)
+doc.addShape(geometrie, nom)
 
 # Associer les arêtes du modèle issues du joinQuads
 # -------------------------------------------------

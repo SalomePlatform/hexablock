@@ -56,16 +56,6 @@ namespace HEXABLOCK
       typedef HEXA_NS::EnumGroup Group;
       typedef HEXA_NS::KindLaw   KindLaw;
 
-//      struct GeomObj
-//      {
-//        QString shapeName;
-//        QString name;
-//        QString subid; // sub-shape id
-//        QString brep;
-//        double  start;
-//        double  end;
-//      };
-
       typedef QList<GeomObj> GeomObjList;
 
       DocumentModel( HEXA_NS::Document* doc, const QString& entry, QObject * parent = 0 );
@@ -136,7 +126,7 @@ namespace HEXABLOCK
       int getNbrUsedElt(HEXA_NS::EnumElt eltType);
       int getNbrUnusedElt(HEXA_NS::EnumElt eltType);
 
-      QModelIndex addToElementsTree(HEXA_NS::Elements* helts);
+      QModelIndex addElementsToTree(HEXA_NS::Elements* helts, QStandardItem* tree);
 
       //associate a shape to the current document
       bool addShape(TopoDS_Shape& forme, QString& shapeName, bool publish=true);
@@ -199,89 +189,10 @@ namespace HEXABLOCK
       QModelIndex addVectorVertices( const QModelIndex &i_v0, const QModelIndex &i_v1 );
 
       //
-      QModelIndex addCylinder( const QModelIndex &iv, const QModelIndex &ivec, double r,  double h );
-
-      //
-      QModelIndex addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h );
-
-
-      // ===================== OBSOLETE =================================
-      QModelIndex makeCartesian( const QModelIndex& ivex,
-          const QModelIndex& ivecx, const QModelIndex& ivecy, const QModelIndex& ivecz,
-          long nx, long ny, long nz);
-
-      QModelIndex makeCartesian( const QModelIndex& ivex,
-          const QModelIndex& ivec,
-          int nx, int ny, int nz );
-
-      QModelIndex makeCylindrical( const QModelIndex& i_pt,
-                                   const QModelIndex& i_vx, const QModelIndex& i_vz,
-                                   double dr, double da, double dl,
-                                   long nr, long na, long nl,
-                                   bool fill  = false );
-
-      QModelIndex makeCylindricals(
-          const QModelIndex& i_center, const QModelIndex& i_base, const QModelIndex& i_height,
-          QList< double>     i_radius, QList<double> i_angles,    QList<double> i_heights,
-          bool fill = false ); //NEW HEXA3
-
-      QModelIndex makeSpherical( const QModelIndex& i_v, const QModelIndex& i_vec, int nb, double k = 1 ); //CS_TO_DEL
-
-      QModelIndex makeSpherical( const QModelIndex& i_center, double rayon, int nb, double k = 1 );
-
-      QModelIndex makeCylinder( const QModelIndex& cyl, const QModelIndex& vec,
-                                int nr, int na, int nl );
-
-      QModelIndex makeCylinders(const QModelIndex& cyl1, const QModelIndex& cyl2);
-
-      //
-      QModelIndex makePipe( const QModelIndex& pipe, const QModelIndex& vecx,
-              int nr, int na, int nl );
-
-      //
-      QModelIndex makePipes( const QModelIndex& pipe1, const QModelIndex& pipe2 );
-
-      QModelIndex makeRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-                            double  radext, double radint, double radhole,
-                            const QModelIndex& plorig,
-                            int nrad, int nang, int nhaut ); //NEW HEXA3
-
-      QModelIndex makePartRind( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-                                double  radext, double radint, double radhole,
-                                const QModelIndex& plorig, double angle,
-                                int nrad, int nang, int nhaut ); //NEW HEXA3
-
-      QModelIndex makeSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-                              double radius, double radhole,
-                              const QModelIndex& plorig,
-                              int nrad, int nang, int nhaut ); //NEW HEXA3
-
-      QModelIndex makePartSphere( const QModelIndex& center, const QModelIndex& vecx, const QModelIndex& vecz,
-                                  double  radius, double radhole,
-                                  const QModelIndex& plorig, double angle,
-                                  int nrad, int nang, int nhaut ); //NEW HEXA3
-
-      // OBSOLETE: replaced by extrudeQuad...
-      QModelIndex prismQuad( const QModelIndex& quad, const QModelIndex& dv, int nb);
-      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, int nb);
-      QModelIndex prismQuads( const QModelIndexList& quads, const QModelIndex& dv, std::vector<double>, int nb=0);
-
-      //
-      QModelIndex joinQuad( const QModelIndex& start_q, const QModelIndex& dest_q,
-                            const QModelIndex& v0, const QModelIndex& v1,
-                            const QModelIndex& v2, const QModelIndex& v3, int nb );
-
-      QModelIndex joinQuads( const QModelIndexList& start_q, const QModelIndex& dest_q,
-                             const QModelIndex& v0, const QModelIndex& v1,
-                             const QModelIndex& v2, const QModelIndex& v3, int nb );
-
-      QModelIndex revolutionQuads( const QModelIndexList& startQuads, const QModelIndex& center,
-                                   const QModelIndex& vec_axis, const QList<double>& angles); //NEW HEXA3
-
-      //
-      QModelIndex cutEdge( const QModelIndex &e, int nbcuts );
-
-      // ======================= END OBSOLETE =================================
+//      QModelIndex addCylinder( const QModelIndex &iv, const QModelIndex &ivec, double r,  double h );
+//
+//      //
+//      QModelIndex addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h );
 
 
 
@@ -552,8 +463,6 @@ namespace HEXABLOCK
 
       //builder
       QStandardItem     *_vectorDirItem;
-      QStandardItem     *_cylinderDirItem;
-      QStandardItem     *_pipeDirItem;
       QStandardItem     *_elementsDirItem;
       QStandardItem     *_crossElementsDirItem;
 
@@ -579,8 +488,6 @@ namespace HEXABLOCK
       Qt::ItemFlags     _hexaItemFlags;
 
       Qt::ItemFlags     _vectorItemFlags;
-      Qt::ItemFlags     _cylinderItemFlags;
-      Qt::ItemFlags     _pipeItemFlags;
       Qt::ItemFlags     _elementsItemFlags;
       Qt::ItemFlags     _crossElementsItemFlags;
 

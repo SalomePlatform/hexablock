@@ -798,5 +798,18 @@ int Elements::findVertex (double vx, double vy, double vz)
        }
    return NOTHING;
 }
+// ============================================================ findQuad
+Quad* Elements::findQuad (Edge* e1, Edge* e2)
+{
+   int nbre = tab_quad.size();
+   for (int nro=0 ; nro<nbre ; nro++)
+       {
+       Quad* quad = tab_quad [nro];
+       if (quad != NULL && quad->isHere ()
+                        && quad->definedBy (e1, e2))
+              return quad;
+       }
+   return NULL;
+}
 
 END_NAMESPACE_HEXA

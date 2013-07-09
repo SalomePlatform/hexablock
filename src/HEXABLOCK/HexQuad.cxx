@@ -32,7 +32,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-bool db = true;
+bool db = false;
 
 // ======================================================== Constructeur
 Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
@@ -801,5 +801,32 @@ void Quad::reorienter  ()
    if (db)
        printf (" %s est reoriente\n", el_name.c_str());
    q_orientation = Q_DIRECT;
+}
+// =============================================================== getCenter
+double* Quad::getCenter (double* center)
+{
+   center[dir_x] = center[dir_y] = center[dir_z] =  0;
+   if (BadElement (this))
+      return NULL;
+
+   for (int nv=0 ; nv<QUAD4 ; nv++)
+       {
+       if (BadElement (q_vertex [nv]))
+           return NULL;
+       center [dir_x] += q_vertex[nv]->getX();
+       center [dir_y] += q_vertex[nv]->getY();
+       center [dir_z] += q_vertex[nv]->getZ();
+       }
+    return center;
+}
+// =============================================================== getCenter
+double Quad::dist2 (double* point)
+{
+   Real3 center;
+   getCenter (center);
+   double d2 = carre (point[dir_x] - center[dir_x]) 
+             + carre (point[dir_y] - center[dir_y]) 
+             + carre (point[dir_z] - center[dir_z]) ;
+   return d2;
 }
 END_NAMESPACE_HEXA

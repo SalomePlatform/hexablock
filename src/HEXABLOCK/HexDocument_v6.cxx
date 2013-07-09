@@ -986,6 +986,7 @@ Elements* Document::joinQuadUni (Quad* quada, Quad* quadb, Vertex* va1,
    RealVector tlen;
    Elements*  grid = new Elements (this);
 
+   update ();
    grid->checkQuad  (quada);
    grid->checkQuad  (quadb, -1);
    grid->checkSense (3, va1, va2, quada);
@@ -1014,6 +1015,7 @@ Elements* Document::joinQuad (Quad* quada, Quad* quadb, Vertex* va1,
    Quads      tquada;
    Elements*  grid = new Elements (this);
 
+   update ();
    grid->checkQuad   (quada);
    grid->checkQuad   (quadb, -1);
    grid->checkSense  (3, va1, va2, quada);
@@ -1039,6 +1041,7 @@ Elements* Document::joinQuadsUni (Quads tquada, Quad* quadb, Vertex* va1,
    RealVector tlen;
    Elements* grid = new Elements (this);
 
+   update ();
    grid->checkQuads (tquada);
    grid->checkQuad  (quadb, -1);
    if (tquada.size()>0) 
@@ -1066,6 +1069,7 @@ Elements* Document::joinQuads (Quads tquada, Quad* quadb, Vertex* va1,
 
    Elements* grid = new Elements (this);
 
+   update ();
    grid->checkQuads (tquada);
    grid->checkQuad  (quadb, -1);
    if (tquada.size()>0) 

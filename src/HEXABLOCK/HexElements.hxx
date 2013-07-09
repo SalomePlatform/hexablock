@@ -62,10 +62,12 @@ public:
 #ifndef SWIG
 public:
    int findHexa   (Hexa*   elt);
-   int findQuad   (Quad*   elt);
-   int findEdge   (Edge*   elt);
+   int findQuad   (Quad*   elt);   // indexQuad   ?
+   int findEdge   (Edge*   elt);   // indexVertex ?
 
    int findVertex (double vx, double vy, double vz);
+   Edge* findEdge   (Vertex* v1, Vertex* v2);
+   Quad* findQuad   (Edge*   e1, Edge*   e2);
 
    Elements (Document* doc, int nx, int ny, int nz);
    Elements (Elements* orig);

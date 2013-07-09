@@ -66,8 +66,6 @@ private :
 
    void createLittlePipe ();
    void createBigPipe    ();
-   void createLittleCyl ();
-   void createBigCyl    ();
    void adjustLittleSlice  (int nx, int nzs);
    void adjustLittleSquare (int nk);
 
@@ -86,14 +84,13 @@ private :
    Quad*   findQuad (Edge* e1, Edge* e2, int dir, int nx, int ny, int nz);
    Hexa*   findHexa (Quad* qa, Quad* qb, int nx, int ny, int nz);
 
-   Edge* findEdge (Vertex* v1, Vertex* v2);
-   Quad* findQuad (Edge*   e1, Edge*   e2);
+   Edge* findEdge (Vertex* v1, Vertex* v2);    // A replacer dans HexElements
 
-   void assoCylinder  (int cyl, double* normal);
-   void assoCylinders (double* snormal, double* gnormal);
+   void assoCylinders ();
    void assoSlice    (int cyl, int nx, int nzs, double* norm);
    void assoArc (int cyl, int nx, int ny, int nz, int subid);
-   int  assoIntersection (int nx, int nzlice, double* snorm, double* bnorm);
+   void assoArc (int cyl, int ny, Vertex* v1, Vertex* v2, int subid);
+   int  assoIntersection (int nx, int nzlice);
 
 
    void addSlice  (int cyl, int i, int k, double h, double r, bool find=false);

@@ -82,8 +82,6 @@ namespace HEXABLOCK
       HEXAITEM,
 
       VECTORITEM,
-      CYLINDERITEM,
-      PIPEITEM,
       ELEMENTSITEM,
       CROSSELEMENTSITEM,
 
@@ -107,8 +105,6 @@ namespace HEXABLOCK
       HEXA_TREE,
 
       VECTOR_TREE,
-      CYLINDER_TREE,
-      PIPE_TREE,
       ELEMENTS_TREE,
       CROSSELEMENTS_TREE,
 
@@ -131,8 +127,6 @@ namespace HEXABLOCK
       HEXA_DIR_TREE,
 
       VECTOR_DIR_TREE,
-      CYLINDER_DIR_TREE,
-      PIPE_DIR_TREE,
       ELEMENTS_DIR_TREE,
       CROSSELEMENTS_DIR_TREE,
 
@@ -235,18 +229,18 @@ namespace HEXABLOCK
     };
     //-----------------------------------------
 
-    class CylinderItem : public StandardElementItem
-    {
-      public:
-        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry = "");
-    };
+//    class CylinderItem : public StandardElementItem
+//    {
+//      public:
+//        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry = "");
+//    };
     //-----------------------------------------
 
-    class PipeItem : public StandardElementItem
-    {
-      public:
-        PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry = "");
-    };
+//    class PipeItem : public StandardElementItem
+//    {
+//      public:
+//        PipeItem( HEXA_NS::Pipe* hexaPipe, QString entry = "");
+//    };
     //-----------------------------------------
 
     class ElementsItem : public StandardElementItem
@@ -255,11 +249,11 @@ namespace HEXABLOCK
         ElementsItem( HEXA_NS::Elements* hexaElements, QString entry = "" );
     };
     //-----------------------------------------
-    class CrossElementsItem : public StandardElementItem
-    {
-      public:
-        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry = "");
-    };
+//    class CrossElementsItem : public StandardElementItem
+//    {
+//      public:
+//        CrossElementsItem( HEXA_NS::CrossElements* hexaCrossElts, QString entry = "");
+//    };
 
     //------------------------------------------------
     class GeomItem: public StandardElementItem

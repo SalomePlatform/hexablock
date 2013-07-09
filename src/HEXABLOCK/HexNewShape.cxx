@@ -59,7 +59,7 @@
 BEGIN_NAMESPACE_HEXA
 
 static bool db  = on_debug ();  // == getenv ("HEXA_DB") > 0
-static bool db0 = true;
+static bool db0 = db;
 
 // ====================================================== Constructeur
 NewShape::NewShape (Document* dad, EnumShape type)
@@ -223,6 +223,15 @@ void NewShape::addAssociation (Edge* edge, int subid, double pmin, double pmax)
 {
    if (edge==NULL)
       return;
+
+   if (db0) 
+      {
+      cout << edge->getName() 
+           << " = (" << edge->getVertex(0)->getName() 
+           << ", "   << edge->getVertex(1)->getName() 
+           << ") --> subid= " << subid << " [ " 
+           << pmin << ", " << pmax << "]" << endl;
+      }
 
    asso_edge.push_back (edge);
    asso_pmin.push_back (pmin);

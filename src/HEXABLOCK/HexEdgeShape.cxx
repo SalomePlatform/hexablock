@@ -119,7 +119,7 @@ int EdgeShape::getPoint (double param, double* point)
 // ========================================================= samePoints
 bool EdgeShape::samePoints (double* point1, double* point2)
 {
-   const double Epsilon2 = 1e-4;
+   const double Epsilon2 = 1e-6;
    bool   rep = same_coords (point1, point2, Epsilon2);
    return rep;
 }

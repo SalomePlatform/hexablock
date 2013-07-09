@@ -682,6 +682,8 @@ class Quad(EltBase):
     def addAssociation(*args): return _hexablock_swig.Quad_addAssociation(*args)
     def clearAssociation(*args): return _hexablock_swig.Quad_clearAssociation(*args)
     def setColor(*args): return _hexablock_swig.Quad_setColor(*args)
+    def nearestVertex(*args): return _hexablock_swig.Quad_nearestVertex(*args)
+    def getCenter(*args): return _hexablock_swig.Quad_getCenter(*args)
     def __init__(self, *args): 
         this = _hexablock_swig.new_Quad(*args)
         try: self.this.append(this)

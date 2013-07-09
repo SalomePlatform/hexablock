@@ -254,31 +254,6 @@ void HEXABLOCKGUI::viewManagers( QStringList& list ) const
     //   list.append( SVTK_Viewer::Type() );
 }
 
-void HEXABLOCKGUI::restoreGraphicViews()
-{
-    //Init OCC
-    if (currentOccGView == NULL)
-    {
-        currentOccGView = new OccGraphicView(graphicViewsHandler->createOccWindow(),
-                application()->desktop());
-        currentOccGView->getViewWindow()->installEventFilter(this);
-    }
-    else if (currentOccGView->getViewWindow() == NULL)
-    {
-        currentOccGView->setViewWindow(graphicViewsHandler->createOccWindow());
-        currentOccGView->getViewWindow()->installEventFilter(this);
-    }
-
-    //Init VTK
-    if (currentDocGView == NULL)
-        newDocument();
-    else if (currentDocGView->getViewWindow() == NULL)
-    {
-        currentDocGView->setViewWindow(graphicViewsHandler->createVtkWindow());
-        currentDocGView->getViewWindow()->installEventFilter(this);
-    }
-}
-
 
 bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 {
@@ -390,17 +365,22 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     disconnect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
             this, SLOT( onObjectBrowserClick(const QModelIndex&) ) );
 
-    if ( currentDocGView != NULL && currentDocGView->getViewWindow() != NULL )
-        //default selectionMode in VTKView
-        currentDocGView->getViewWindow()->SetSelectionMode( ActorSelection );
-
-    if (currentOccGView != NULL)
-    {
-        //defaut selectionMode in OccView
-        selectionMgr()->clearSelected();
-        currentOccGView->globalSelection();
-        currentOccGView->localSelection(TopAbs_SHAPE);
-    }
+//    if ( currentDocGView != NULL && currentDocGView->getViewWindow() != NULL )
+//    {
+//        //default selectionMode in VTKView
+////        currentDocGView->getViewWindow()->SetSelectionMode( ActorSelection );
+//        currentDocGView->getViewWindow()->close();
+//    }
+//
+//    if (currentOccGView != NULL)
+//    {
+//        //defaut selectionMode in OccView
+////        selectionMgr()->clearSelected();
+////        currentOccGView->globalSelection();
+////        currentOccGView->localSelection(TopAbs_SHAPE);
+//        if (currentOccGView->getViewWindow() != NULL)
+//            currentOccGView->getViewWindow()->close();
+//    }
 
     qDeleteAll(myOCCSelectors);
     myOCCSelectors.clear();
@@ -410,14 +390,16 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     myVTKSelectors.clear();
     getApp()->selectionMgr()->setEnabled( true, SVTK_Viewer::Type() );
 
-    bool bOk = SalomeApp_Module::deactivateModule( theStudy );
-
     //Must be done for all views later
     if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
-        currentOccGView->getViewWindow()->removeEventFilter(this);
+//        currentOccGView->getViewWindow()->removeEventFilter(this);
+        currentOccGView->getViewWindow()->close();
 
     if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
-        currentDocGView->getViewWindow()->removeEventFilter(this);
+//        currentDocGView->getViewWindow()->removeEventFilter(this);
+        currentDocGView->getViewWindow()->close();
+
+    bool bOk = SalomeApp_Module::deactivateModule( theStudy );
 
     //switch off current document graphic view
     switchOffGraphicView(currentDocGView);
@@ -600,6 +582,7 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
 {
     // ** we want to switch automatically to the right view windows
 
+    MESSAGE("===============>  ON OBJECT BROWSER CLICKED!!!!!!! ");
     //first, find selected item
     QString itemEntry;
     DataObjectList dol = getApp()->objectBrowser()->getSelected();
@@ -622,8 +605,7 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
     //Init OCC if necessary
     if (currentOccGView == NULL)
     {
-        currentOccGView = new OccGraphicView(graphicViewsHandler->createOccWindow(),
-                application()->desktop());
+        currentOccGView = new OccGraphicView(graphicViewsHandler->createOccWindow(), application()->desktop());
         currentOccGView->getViewWindow()->installEventFilter(this);
     }
     else if (currentOccGView->getViewWindow() == NULL)
@@ -1879,17 +1861,6 @@ void HEXABLOCKGUI::switchOnGraphicView(VtkDocumentGraphicView* dgview)
    connect( dgview->getMeshSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
          this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
 
-   if (currentDocGView != NULL)
-   {
-       if (currentDocGView->getViewWindow() != NULL)
-           dgview->setViewWindow(currentDocGView->getViewWindow());
-       else
-       {
-           dgview->setViewWindow(graphicViewsHandler->createVtkWindow());
-           dgview->getViewWindow()->installEventFilter(this);
-       }
-   }
-   dgview->getViewWindow()->setFocus();
    showAllMenus();
 }
 
@@ -1925,6 +1896,7 @@ void HEXABLOCKGUI::switchOffGraphicView(VtkDocumentGraphicView* dgview, bool sav
 void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
 {
     DEBTRACE("HEXABLOCKGUI::switchModel " << dgview);
+    MESSAGE("=========> SWITCH MODEL");
 
     if (dgview == NULL)
     {
@@ -1964,7 +1936,27 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     _meshTreeView->setSelectionModel(dgview->getMeshSelectionModel());
     _meshTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
-    //switch on this graphic view (connect signals...)
+
+    // = * init occ view * =
+    if (currentOccGView != NULL && currentOccGView->getViewWindow() == NULL)
+    {
+        currentOccGView->setViewWindow(graphicViewsHandler->createOccWindow());
+        currentOccGView->getViewWindow()->installEventFilter(this);
+    }
+    // ==
+
+
+    // = * init vtk view * =
+    if (currentDocGView != NULL && currentDocGView->getViewWindow() != NULL)
+        dgview->setViewWindow(currentDocGView->getViewWindow());
+
+    if (dgview->getViewWindow() == NULL)
+    {
+        dgview->setViewWindow(graphicViewsHandler->createVtkWindow());
+        dgview->getViewWindow()->installEventFilter(this);
+    }
+    // ==
+
     switchOnGraphicView(dgview);
     currentDocGView = dgview;
     currentDocGView->getViewWindow()->setFocus();
@@ -2069,7 +2061,7 @@ void HEXABLOCKGUI::newDocument()
     // Create Document from HEXABLOCK ENGINE
     pair <QString, HEXA_NS::Document*> docEntry_Doc ( newHexaDocument() );
 
-    VtkDocumentGraphicView* newGraphicView;
+    VtkDocumentGraphicView* newGraphicView = NULL;
     //One document at a time
     if (currentDocGView != NULL)
     {
@@ -2909,27 +2901,27 @@ void HEXABLOCKGUI::test_make_cart_grid()
 void HEXABLOCKGUI::test_make_elmts_transform()
 {
 
-    int size_x = 1;
-    int size_y = 1;
-    int size_z = 2;
-
-    QModelIndex orig = getCurrentModel()->addVertex(0, 0, 0);
-    QModelIndex dirVr = getCurrentModel()->addVector(1, 1, 1);
+//    int size_x = 1;
+//    int size_y = 1;
+//    int size_z = 2;
+//
+//    QModelIndex orig = getCurrentModel()->addVertex(0, 0, 0);
+//    QModelIndex dirVr = getCurrentModel()->addVector(1, 1, 1);
 
     //obsolete
-    QModelIndex grid = getCurrentModel()->makeCartesian(orig, dirVr, size_x, size_y, size_z);//, 0, 0, 0);
+//    QModelIndex grid = getCurrentModel()->makeCartesian(orig, dirVr, size_x, size_y, size_z);//, 0, 0, 0);
     // orig.setScalar(2);
 
     // file_name = os.path.join(os.environ['TMP'], 'transfo0.vtk')
     // getCurrentModel()->saveVtk(file_name)
 
-    QModelIndex devant = getCurrentModel()->addVector(5, 0, 0);
-    QModelIndex grid2  = getCurrentModel()->makeTranslation(grid, devant);
+//    QModelIndex devant = getCurrentModel()->addVector(5, 0, 0);
+//    QModelIndex grid2  = getCurrentModel()->makeTranslation(grid, devant);
 
     // file_name = os.path.join(os.environ['TMP'], 'transfo_translation.vtk')
     // getCurrentModel()->saveVtk(file_name)
 
-    QModelIndex grid4 = getCurrentModel()->makeRotation(grid2, orig, dirVr, 45);
+//    QModelIndex grid4 = getCurrentModel()->makeRotation(grid2, orig, dirVr, 45);
 
 
     // file_name = os.path.join(os.environ['TMP'], 'transfo_rotation.vtk');

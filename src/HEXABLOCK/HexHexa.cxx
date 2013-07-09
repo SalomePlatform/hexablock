@@ -1152,12 +1152,18 @@ bool Hexa::definedBy  (Vertex* v1, Vertex* v2)
 // =============================================================== definedBy
 bool Hexa::definedBy  (Quad* qa, Quad* qb)
 {
-   for (int nc=0 ; nc< 3 ; nc++)
+   if (qa==qb || BadElement (qa) || BadElement (qb))
+       return false;
+
+   bool p1 = false, p2 = false;
+   for (int nq=0 ; nq< HQ_MAXI ; nq++)
        {
-       if (   (qa == h_quad[2*nc]   && qb == h_quad[2*nc+1])
-           || (qa == h_quad[2*nc+1] && qb == h_quad[2*nc])) return true;
+       if (qa == h_quad[nq])
+          p1 = true;
+       else if (qb == h_quad[nq])
+          p2 = true;
        }
-   return false;
+   return p1 && p2;
 }
 // =============================================================== setColor
 void Hexa::setColor  (double val)

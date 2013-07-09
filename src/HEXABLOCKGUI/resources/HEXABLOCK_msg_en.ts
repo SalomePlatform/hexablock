@@ -655,7 +655,7 @@ Please select a %2.</source>
     </message>
     <message>
         <source>CANNOT PRISM QUAD(S)</source>
-        <translation>Cannot prism quadrangle(s)</translation>
+        <translation>Cannot extrude quadrangle(s)</translation>
     </message>
 </context>
 <context>
@@ -1003,7 +1003,7 @@ Please select a %2.</source>
     </message>
     <message>
         <source>Prism quadrangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrude quadrangles</translation>
     </message>
     <message>
         <source>ICON_PRISM_QUAD</source>
@@ -1011,7 +1011,7 @@ Please select a %2.</source>
     </message>
     <message>
         <source>Prism Quadrangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Extrude Quadrangles</translation>
     </message>
     <message>
         <source>Join quadrangles</source>

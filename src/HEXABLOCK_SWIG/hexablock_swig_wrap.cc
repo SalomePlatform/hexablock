@@ -20069,6 +20069,68 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Quad_nearestVertex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Quad *arg1 = (Hex::Quad *) 0 ;
+  Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
+  Hex::Vertex *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Quad_nearestVertex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Quad, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Quad_nearestVertex" "', argument " "1"" of type '" "Hex::Quad *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Quad * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Vertex, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Quad_nearestVertex" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
+  }
+  arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
+  result = (Hex::Vertex *)(arg1)->nearestVertex(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Vertex, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Quad_getCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Quad *arg1 = (Hex::Quad *) 0 ;
+  double *arg2 = (double *) 0 ;
+  double *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Quad_getCenter",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Quad, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Quad_getCenter" "', argument " "1"" of type '" "Hex::Quad *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Quad * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Quad_getCenter" "', argument " "2"" of type '" "double *""'"); 
+  }
+  arg2 = reinterpret_cast< double * >(argp2);
+  result = (double *)(arg1)->getCenter(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_double, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_Quad(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Vertex *arg1 = (Hex::Vertex *) 0 ;
@@ -32653,6 +32715,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Quad_addAssociation", _wrap_Quad_addAssociation, METH_VARARGS, NULL},
 	 { (char *)"Quad_clearAssociation", _wrap_Quad_clearAssociation, METH_VARARGS, NULL},
 	 { (char *)"Quad_setColor", _wrap_Quad_setColor, METH_VARARGS, NULL},
+	 { (char *)"Quad_nearestVertex", _wrap_Quad_nearestVertex, METH_VARARGS, NULL},
+	 { (char *)"Quad_getCenter", _wrap_Quad_getCenter, METH_VARARGS, NULL},
 	 { (char *)"new_Quad", _wrap_new_Quad, METH_VARARGS, NULL},
 	 { (char *)"delete_Quad", _wrap_delete_Quad, METH_VARARGS, NULL},
 	 { (char *)"Quad_swigregister", Quad_swigregister, METH_VARARGS, NULL},

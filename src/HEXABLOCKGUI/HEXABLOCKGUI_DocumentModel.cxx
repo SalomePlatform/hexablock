@@ -77,8 +77,6 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
                               _hexaDirItem( new QStandardItem(tr("TREE_ITEM_HEXA")) ),
 
                               _vectorDirItem( new QStandardItem(tr("TREE_ITEM_VECTOR")) ),
-                              _cylinderDirItem( new QStandardItem(tr("TREE_ITEM_CYLINDER")) ),
-                              _pipeDirItem( new QStandardItem(tr("TREE_ITEM_PIPE")) ),
                               _elementsDirItem( new QStandardItem(tr("TREE_ITEM_ELEMENT")) ),
                               _crossElementsDirItem( new QStandardItem(tr("TREE_ITEM_CROSSELEMENT")) ),
 
@@ -96,8 +94,6 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
                               _quadItemFlags( Qt::NoItemFlags ),
                               _hexaItemFlags( Qt::NoItemFlags ),
                               _vectorItemFlags( Qt::NoItemFlags ),
-                              _cylinderItemFlags( Qt::NoItemFlags ),
-                              _pipeItemFlags( Qt::NoItemFlags ),
                               _elementsItemFlags( Qt::NoItemFlags ),
                               _crossElementsItemFlags( Qt::NoItemFlags ),
 
@@ -119,8 +115,6 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
     _hexaDirItem->setData( HEXA_DIR_TREE,               HEXA_TREE_ROLE );
 
     _vectorDirItem->setData( VECTOR_DIR_TREE,           HEXA_TREE_ROLE );
-    _cylinderDirItem->setData( CYLINDER_DIR_TREE,       HEXA_TREE_ROLE );
-    _pipeDirItem->setData( PIPE_DIR_TREE,                   HEXA_TREE_ROLE );
     _elementsDirItem->setData( ELEMENTS_DIR_TREE,           HEXA_TREE_ROLE );
     _crossElementsDirItem->setData( CROSSELEMENTS_DIR_TREE, HEXA_TREE_ROLE );
 
@@ -141,8 +135,6 @@ DocumentModel::DocumentModel(HEXA_NS::Document* docIn, const QString& entryIn, Q
     parentItem->appendRow(_hexaDirItem);
 
     parentItem->appendRow(_vectorDirItem);
-    parentItem->appendRow(_cylinderDirItem);
-    parentItem->appendRow(_pipeDirItem);
     parentItem->appendRow(_elementsDirItem);
     parentItem->appendRow(_crossElementsDirItem);
 
@@ -178,8 +170,6 @@ HEXA_NS::EltBase* DocumentModel::getHexaPtr(const QModelIndex& iElt)
     case QUAD_TREE : elt = getHexaPtr<HEXA_NS::Quad*>(iElt); break;
     case HEXA_TREE : elt = getHexaPtr<HEXA_NS::Hexa*>(iElt); break;
     case VECTOR_TREE : elt = getHexaPtr<HEXA_NS::Vector*>(iElt); break;
-    case CYLINDER_TREE : elt = getHexaPtr<HEXA_NS::Cylinder*>(iElt); break;
-    case PIPE_TREE : elt = getHexaPtr<HEXA_NS::Pipe*>(iElt); break;
     case ELEMENTS_TREE : elt = getHexaPtr<HEXA_NS::Elements*>(iElt); break;
     case CROSSELEMENTS_TREE : elt = getHexaPtr<HEXA_NS::CrossElements*>(iElt); break;
     case GEOMSHAPE_TREE: elt = getHexaPtr<HEXA_NS::NewShape*>(iElt); break;
@@ -308,11 +298,15 @@ void DocumentModel::updateGeomTree()
     fillGeometry();
 }
 
-QModelIndex DocumentModel::addToElementsTree(HEXA_NS::Elements* helts)
+QModelIndex DocumentModel::addElementsToTree(HEXA_NS::Elements* helts, QStandardItem* tree)
 {
+    QModelIndex eltIndex;
+    if (helts == NULL || tree == NULL)
+        return eltIndex;
+
     updateData();
     ElementsItem* eltsItem = new ElementsItem(helts);
-    _elementsDirItem->appendRow(eltsItem);
+    tree->appendRow(eltsItem);
 
     return eltsItem->index();
 }
@@ -353,8 +347,6 @@ void DocumentModel::clearData()
 void DocumentModel::clearBuilder()
 {
     _vectorDirItem->removeRows(0, _vectorDirItem->rowCount() );
-    _cylinderDirItem->removeRows(0, _cylinderDirItem->rowCount() );
-    _pipeDirItem->removeRows(0, _pipeDirItem->rowCount() );
     _elementsDirItem->removeRows(0, _elementsDirItem->rowCount() );
     _crossElementsDirItem->removeRows(0, _crossElementsDirItem->rowCount() );
 }
@@ -440,25 +432,37 @@ void DocumentModel::fillBuilder()
         _vectorDirItem->appendRow(vItem);
     }
 
+    //******* A VOIR AVEC ALAIN POUR LE REMPLISSAGE DE L'ARBRE ELEMENTS ET CROSSELEMENTS (ByCylinder) *******/
+    //******* OU SONT STOCKES LES ELEMENTS ET LES CROSSELEMENTS DANS LE DOCUMENT?                     ******/
+
     //   _cylinderDirItem
-    HEXA_NS::Cylinder *c     = NULL;
-    CylinderItem      *cItem = NULL;
-    int nbCylinder = _hexaDocument->countCylinder();
-    for ( int i=0; i<nbCylinder; ++i ){
-        c = _hexaDocument->getCylinder(i);
-        cItem = new CylinderItem(c, _entry);
-        _cylinderDirItem->appendRow(cItem);
-    }
+//    HEXA_NS::Cylinder *c     = NULL;
+//    HEXA_NS::Elements* c = NULL;
+//    CylinderItem      *cItem = NULL;
+//    ElementsItem* cItem = NULL;
+//    int nbCylinder = _hexaDocument->countCylinder();
+//    for ( int i=0; i<nbCylinder; ++i ){
+//        c = _hexaDocument->getCylinder(i);
+//        cItem = new CylinderItem(c, _entry);
+//        cItem = new ElementsItem(c, _entry);
+//        _cylinderDirItem->appendRow(cItem);
+//        _elementsDirItem->appendRow(cItem);
+//    }
 
     //   _pipeDirItem
-    HEXA_NS::Pipe *p     = NULL;
-    PipeItem      *pItem = NULL;
-    int nbPipe = _hexaDocument->countPipe();
-    for ( int i=0; i<nbPipe; ++i ){
-        p = _hexaDocument->getPipe(i);
-        pItem = new PipeItem(p);
-        _pipeDirItem->appendRow(pItem);
-    }
+//    HEXA_NS::Pipe *p     = NULL;
+//    HEXA_NS::Elements* p = NULL;
+//    PipeItem      *pItem = NULL;
+//    ElementsItem* pItem = NULL;
+//    int nbPipe = _hexaDocument->countPipe();
+//    for ( int i=0; i<nbPipe; ++i ){
+//        p = _hexaDocument->getPipe(i);
+//        pItem = new PipeItem(p);
+//        pItem = new ElementsItem(p, _entry);
+//        _pipeDirItem->appendRow(pItem);
+//        _elementsDirItem->appendRow(pItem);
+//    }
+    //********************************************************************************************************
 }
 
 void DocumentModel::fillGeometry()
@@ -504,21 +508,32 @@ void DocumentModel::fillGeometry()
             _implicitShapesDirItem->appendRow(shItem);
 
         //add vertices to the tree
-        QStandardItem* geomPointDirItem = new QStandardItem(tr("TREE_ITEM_VERTEX"));
-        geomPointDirItem->setData( GEOMPOINT_DIR_TREE, HEXA_TREE_ROLE );
-        shItem->appendRow(geomPointDirItem);
+        QStandardItem* geomPointDirItem = NULL;
+        if (shape->getOrigin() != HEXA_NS::SH_CLOUD)
+        {
+            geomPointDirItem = new QStandardItem(tr("TREE_ITEM_VERTEX"));
+            geomPointDirItem->setData( GEOMPOINT_DIR_TREE, HEXA_TREE_ROLE );
+        }
+        if (geomPointDirItem != NULL)
+            shItem->appendRow(geomPointDirItem);
         int nbVertexShape = shape->countVertex();
         for (int j=0; j < nbVertexShape; ++j)
         {
             node = shape->getVertexShape(j);
             GeomPointItem* gPointItem = new GeomPointItem(node);
-            geomPointDirItem->appendRow(gPointItem);
+            if (geomPointDirItem != NULL)
+                geomPointDirItem->appendRow(gPointItem);
+            else
+                shItem->appendRow(gPointItem);
             shapeById[shapeName+","+QString::number(node->getIdent())] = node;
 
             // * update the compound of vertices
             if (shape->getOrigin() == HEXA_NS::SH_CLOUD && !vertexCompound.IsNull())
                 compoundBuilder.Add(topo_shapes[shapeName], node->getShape());
         }
+
+        if (shape->getOrigin() == HEXA_NS::SH_CLOUD)
+            continue; // * it's a cloud of points, there's no edges and no quads to fill
 
         //add edges to the tree
         QStandardItem* geomEdgeDirItem = new QStandardItem(tr("TREE_ITEM_EDGE"));
@@ -678,8 +693,6 @@ void DocumentModel::allowDataSelectionOnly()
     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -696,8 +709,6 @@ void DocumentModel::allowVertexSelectionOnly()
     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEditable );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
@@ -716,8 +727,6 @@ void DocumentModel::allowEdgeSelectionOnly()
     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -734,8 +743,6 @@ void DocumentModel::allowQuadSelectionOnly()
     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -752,8 +759,6 @@ void DocumentModel::allowHexaSelectionOnly()
     _hexaItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
     _vectorItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -770,8 +775,6 @@ void DocumentModel::allowVectorSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEditable );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -788,8 +791,6 @@ void DocumentModel::allowCylinderSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -806,8 +807,6 @@ void DocumentModel::allowPipeSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEditable );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -824,8 +823,6 @@ void DocumentModel::allowElementsSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
@@ -842,8 +839,6 @@ void DocumentModel::allowCrossElementsSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEditable );
 
@@ -860,8 +855,6 @@ void DocumentModel::allowLawSelectionOnly()
     _hexaItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 
     _vectorItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _cylinderItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
-    _pipeItemFlags     = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _elementsItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _crossElementsItemFlags = Qt::ItemFlags( Qt::ItemIsEnabled );
 
@@ -1576,34 +1569,6 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
     return false;
 }
 
-QModelIndex DocumentModel::revolutionQuads( const QModelIndexList& istartquads,
-        const QModelIndex& icenter,
-        const QModelIndex& ivecaxis,
-        const QList<double>& angles )
-{
-    QModelIndex ielts;
-
-    HEXA_NS::Quads   hstartquads;
-    HEXA_NS::Quad*   hquad = NULL;
-    foreach( const QModelIndex& iquad, istartquads){
-        hquad = data( iquad, HEXA_DATA_ROLE ).value<HEXA_NS::Quad*>();
-        hstartquads.push_back( hquad );
-    }
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* haxis   = getHexaPtr<HEXA_NS::Vector*>(ivecaxis);
-    std::vector<double> hangles = angles.toVector().toStdVector();
-
-    HEXA_NS::Elements* helts = _hexaDocument->revolutionQuads( hstartquads, hcenter, haxis, hangles );
-    if ( BadElement(helts) ) return ielts;
-
-    updateData();
-    ElementsItem* eltsItem = new ElementsItem(helts);
-    _elementsDirItem->appendRow(eltsItem);
-    ielts = eltsItem->index();
-
-    return ielts;
-}
-
 QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
         const QModelIndex& ip1, const QModelIndex& ic1,
         const QModelIndex& ip2, const QModelIndex& ic2,
@@ -2229,10 +2194,9 @@ QStandardItem* PatternDataModel::itemFromIndex ( const QModelIndex & index ) con
 PatternBuilderModel::PatternBuilderModel( QObject * parent ) :
                               QSortFilterProxyModel( parent )
 {
-    QString builderRegExp =QString("(%1|%2|%3|%4|%5|%6|%7|%8|%9|%10)").
-            arg(VECTOR_TREE).arg(CYLINDER_TREE).arg(PIPE_TREE).arg(ELEMENTS_TREE).
-            arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(CYLINDER_DIR_TREE).
-            arg(PIPE_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
+    QString builderRegExp =QString("(%1|%2|%3|%4|%5|%6)").
+            arg(VECTOR_TREE).arg(ELEMENTS_TREE).
+            arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
 
     setFilterRole( HEXA_TREE_ROLE );
     setFilterRegExp ( QRegExp( builderRegExp ) );
@@ -2486,7 +2450,7 @@ QModelIndex DocumentModel::makeCartesianTop(int nx, int ny, int nz)
     if ( BadElement(helts) )
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2507,7 +2471,7 @@ QModelIndex DocumentModel::makeCartesianUni(const QModelIndex& icenter,
     if ( BadElement(helts) )
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2528,7 +2492,7 @@ QModelIndex DocumentModel::makeCartesian(const QModelIndex& icenter,
     if ( BadElement(helts) )
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2544,7 +2508,7 @@ QModelIndex DocumentModel::makeSphereTop (int nr, int na, int nh)
     if ( BadElement(helts) )
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2565,7 +2529,7 @@ QModelIndex DocumentModel::makeSphereUni (QModelIndex& icenter,
     HEXA_NS::Elements* helts = _hexaDocument->makeSphereUni( hcenter, hvec_x, hvec_z,
                                                              rtrou, rext, ang, hvplan,
                                                              nr, na, nh);
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2583,7 +2547,7 @@ QModelIndex DocumentModel::makeSphere    (QModelIndex& icenter,
     HEXA_NS::Elements* helts = _hexaDocument->makeSphere( hcenter, hvec_x, hvec_z,
                                                           tray, tang, thaut);
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2598,7 +2562,7 @@ QModelIndex DocumentModel::makeSphericalTop (int nbre, int crit)
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2618,7 +2582,7 @@ QModelIndex DocumentModel::makeSphericalUni (QModelIndex& icenter,
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2638,7 +2602,7 @@ QModelIndex DocumentModel::makeSpherical    (QModelIndex& icenter,
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2652,7 +2616,7 @@ QModelIndex DocumentModel::makeRindTop (int nr, int na, int nh)
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2675,7 +2639,7 @@ QModelIndex DocumentModel::makeRindUni (QModelIndex& icenter,
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2694,7 +2658,7 @@ QModelIndex DocumentModel::makeRind    (QModelIndex& icenter,
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2708,7 +2672,7 @@ QModelIndex DocumentModel::makeCylinderTop(int nr, int na, int nh)
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2729,7 +2693,7 @@ QModelIndex DocumentModel::makeCylinderUni(QModelIndex& iorig, QModelIndex& ivec
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2747,7 +2711,7 @@ QModelIndex DocumentModel::makeCylinder(QModelIndex& iorig, QModelIndex& ivecx, 
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2769,7 +2733,7 @@ QModelIndex DocumentModel::makeCylinders(QModelIndex& iorig1, QModelIndex& ivecz
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _crossElementsDirItem);
 
     return result;
 }
@@ -2783,7 +2747,7 @@ QModelIndex DocumentModel::makePipeTop(int nr, int na, int nh)
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2803,7 +2767,7 @@ QModelIndex DocumentModel::makePipeUni(QModelIndex& iorig, QModelIndex& ivecx, Q
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2821,7 +2785,7 @@ QModelIndex DocumentModel::makePipe(QModelIndex& iorig, QModelIndex& ivecx, QMod
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2842,7 +2806,7 @@ QModelIndex DocumentModel::makePipes(QModelIndex& iorig1, QModelIndex& ivecz1, d
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _crossElementsDirItem);
 
     return result;
 }
@@ -2864,7 +2828,7 @@ QModelIndex DocumentModel::joinQuadUni(QModelIndex&  istart, QModelIndex& idest,
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2885,7 +2849,7 @@ QModelIndex DocumentModel::joinQuad(QModelIndex&  istart, QModelIndex& idest, QM
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2910,7 +2874,7 @@ QModelIndex DocumentModel::joinQuadsUni(QModelIndexList& istarts, QModelIndex& i
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2935,7 +2899,7 @@ QModelIndex DocumentModel::joinQuads(QModelIndexList& istarts, QModelIndex& ides
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2954,7 +2918,7 @@ QModelIndex DocumentModel::revolutionQuadUni(QModelIndex& istart, QModelIndex& i
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2972,7 +2936,7 @@ QModelIndex DocumentModel::revolutionQuad(QModelIndex& istart, QModelIndex& icen
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -2994,7 +2958,7 @@ QModelIndex DocumentModel::revolutionQuadsUni(QModelIndexList& istarts, QModelIn
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3016,7 +2980,7 @@ QModelIndex DocumentModel::revolutionQuads(QModelIndexList& istarts, QModelIndex
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 
@@ -3032,7 +2996,7 @@ QModelIndex DocumentModel::extrudeQuadTop(QModelIndex& istart, int nbre)
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3048,7 +3012,7 @@ QModelIndex DocumentModel::extrudeQuadUni(QModelIndex& istart, QModelIndex& dv, 
     if (BadElement(helts))
         return result;
 
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3063,7 +3027,7 @@ QModelIndex DocumentModel::extrudeQuad(QModelIndex& istart, QModelIndex& dv, vec
     HEXA_NS::Elements* helts = _hexaDocument->extrudeQuad(hstart, hvec, tlen);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3080,7 +3044,7 @@ QModelIndex DocumentModel::extrudeQuadsTop (QModelIndexList& istarts, int nbre)
     HEXA_NS::Elements* helts = _hexaDocument->extrudeQuadsTop(hquads, nbre);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3099,7 +3063,7 @@ QModelIndex DocumentModel::extrudeQuadsUni (QModelIndexList& istarts, QModelInde
     HEXA_NS::Elements* helts = _hexaDocument->extrudeQuadsUni(hquads, haxis, len, nbre);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3118,7 +3082,7 @@ QModelIndex DocumentModel::extrudeQuads(QModelIndexList& istarts, QModelIndex& i
     HEXA_NS::Elements* helts = _hexaDocument->extrudeQuads(hquads, haxis, tlen);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3133,7 +3097,7 @@ QModelIndex DocumentModel::cutUni(QModelIndex& iEdge, int nbre)
     HEXA_NS::Elements* helts = _hexaDocument->cutUni(hedge, nbre);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
@@ -3147,550 +3111,9 @@ QModelIndex DocumentModel::cut(QModelIndex& iEdge, vector<double>& tlen)
     HEXA_NS::Elements* helts = _hexaDocument->cut(hedge, tlen);
     if (BadElement(helts))
         return result;
-    result = addToElementsTree(helts);
+    result = addElementsToTree(helts, _elementsDirItem);
 
     return result;
 }
 
 // ================================== END NEW ==================================
-
-
-// ================================== OBSOLETE =============================================
-
-QModelIndex DocumentModel::makeCartesian( const QModelIndex& i_pt,
-        const QModelIndex& i_vec_x, const QModelIndex& i_vec_y, const QModelIndex& i_vec_z,
-        long nx, long ny, long nz)
-{
-    QModelIndex eltsIndex;
-
-    HEXA_NS::Vertex* hpt    = getHexaPtr<HEXA_NS::Vertex*>(i_pt);
-    HEXA_NS::Vector* hvec_x = getHexaPtr<HEXA_NS::Vector*>(i_vec_x);
-    HEXA_NS::Vector* hvec_y = getHexaPtr<HEXA_NS::Vector*>(i_vec_y);
-    HEXA_NS::Vector* hvec_z = getHexaPtr<HEXA_NS::Vector*>(i_vec_z);
-
-    HEXA_NS::Elements* new_helts = _hexaDocument->makeCartesian( hpt,
-            hvec_x, hvec_y, hvec_z,
-            nx, ny, nz );
-    if ( BadElement(new_helts) )
-        return eltsIndex;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* eltsItem = new ElementsItem(new_helts);
-    _elementsDirItem->appendRow(eltsItem);
-    eltsIndex = eltsItem->index();
-
-    return eltsIndex;
-}
-
-QModelIndex DocumentModel::makeCartesian( const QModelIndex& ivex,
-        const QModelIndex& ivec,
-        int nx, int ny, int nz )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hVex = getHexaPtr<HEXA_NS::Vertex*>(ivex);
-    HEXA_NS::Vector* hVec = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makeCartesian( hVex,
-            hVec,
-            nx, ny, nz );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makeCylindrical( const QModelIndex& i_pt,
-        const QModelIndex& i_vec_x, const QModelIndex& i_vec_z,
-        double dr, double da, double dl,
-        long nr, long na, long nl,
-        bool fill )
-{
-
-    QModelIndex eltsIndex;
-
-    HEXA_NS::Vertex* hpt    = getHexaPtr<HEXA_NS::Vertex*>(i_pt);
-    HEXA_NS::Vector* hvec_x = getHexaPtr<HEXA_NS::Vector*>(i_vec_x);
-    HEXA_NS::Vector* hvec_z = getHexaPtr<HEXA_NS::Vector*>(i_vec_z);
-
-    HEXA_NS::Elements* new_helts = _hexaDocument->makeCylindrical( hpt, hvec_x, hvec_z, dr, da, dl, nr, na, nl, fill );
-    if ( BadElement(new_helts) ) return eltsIndex;
-
-    updateData(); //CS_TODO  more or less?
-    ElementsItem* eltsItem = new ElementsItem(new_helts);
-    _elementsDirItem->appendRow(eltsItem);
-    eltsIndex = eltsItem->index();
-
-    return eltsIndex;
-}
-
-QModelIndex DocumentModel::makeCylindricals(
-        const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& iheight,
-        QList< double> radius, QList<double> angles, QList<double> heights,
-        bool fill ) //HEXA3
-{
-    QModelIndex eltsIndex;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* hbase   =getHexaPtr<HEXA_NS::Vector*>(ibase);
-    HEXA_NS::Vector* hheight = getHexaPtr<HEXA_NS::Vector*>(iheight);
-
-    std::vector<double> r = radius.toVector().toStdVector();
-    std::vector<double> a = angles.toVector().toStdVector();
-    std::vector<double> h = heights.toVector().toStdVector();
-
-    HEXA_NS::Elements* helts = _hexaDocument->makeCylindricals(
-            hcenter, hbase, hheight,
-            r, a, h,
-            fill );
-    if ( BadElement(helts) ) return eltsIndex;
-
-    updateData(); //CS_TODO  more or less?
-    ElementsItem* eltsItem = new ElementsItem(helts);
-    _elementsDirItem->appendRow(eltsItem);
-    eltsIndex = eltsItem->index();
-
-    return eltsIndex;
-}
-
-QModelIndex DocumentModel::makeSpherical( const QModelIndex& iv, const QModelIndex& ivec, int nb, double k)
-{
-    QModelIndex iElts;
-
-//    HEXA_NS::Vertex* hv   = getHexaPtr<HEXA_NS::Vertex*>(iv);
-//    HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(ivec);
-//
-//    HEXA_NS::Elements* hElts = _hexaDocument->makeSpherical( hv, hvec, nb, k ); // OBSOLETE
-//    HEXA_NS::Elements* hElts = NULL;
-//    if ( BadElement(hElts) ) return iElts;
-//
-//    updateData(); //CS_TODO more or less?
-//    ElementsItem* elts = new ElementsItem(hElts);
-//    _elementsDirItem->appendRow(elts);
-//    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makeSpherical( const QModelIndex& icenter, double radius, int nb, double k )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-
-    HEXA_NS::Elements* helts = _hexaDocument->makeSpherical( hcenter, radius, nb, k );
-    if ( BadElement(helts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* eltsItem = new ElementsItem(helts);
-    _elementsDirItem->appendRow(eltsItem);
-    iElts = eltsItem->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makeCylinder( const QModelIndex& icyl, const QModelIndex& ivec,
-        int nr, int na, int nl )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Cylinder* hcyl = getHexaPtr<HEXA_NS::Cylinder*>(icyl);
-    HEXA_NS::Vector* hvec   = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makeCylinder( hcyl, hvec, nr, na, nl );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makeCylinders(const QModelIndex& icyl1, const QModelIndex& icyl2)
-{ //CS_TODO
-    QModelIndex iCrossElts;
-
-    HEXA_NS::Cylinder* hCyl1  = getHexaPtr<HEXA_NS::Cylinder*>(icyl1);
-    HEXA_NS::Cylinder* hCyl2  = getHexaPtr<HEXA_NS::Cylinder*>(icyl2);
-
-    HEXA_NS::CrossElements* hCrossElts = _hexaDocument->makeCylinders( hCyl1, hCyl2 );
-    if ( BadElement(hCrossElts) ) return iCrossElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* crossElts = new ElementsItem(hCrossElts);
-    _crossElementsDirItem->appendRow(crossElts);
-    iCrossElts = crossElts->index();
-
-    return iCrossElts;
-}
-
-QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIndex &i_vec )
-{
-    QModelIndex edgeIndex;
-
-    HEXA_NS::Vertex* hv   = getHexaPtr<HEXA_NS::Vertex*>(i_v);
-    HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(i_vec);
-
-    if (!hv || !hvec) return edgeIndex;
-
-//    HEXA_NS::Edge* he = _hexaDocument->addEdge( hv, hvec ); //OBSOLETE
-    HEXA_NS::Edge* he = NULL;
-    if ( BadElement(he) ) return edgeIndex;
-
-    HEXA_NS::Vertex* hv2 = he->getAval(); //the new vertex resulting from the creation of the edge
-    if (hv2 == NULL) return edgeIndex;
-
-    //ADD the elements in the treeview
-    //The Edge
-    EdgeItem* e = new EdgeItem(he, _entry);
-    _edgeDirItem->appendRow(e);
-
-    //The resulting Vertex
-    VertexItem* v = new VertexItem(hv2, _entry);
-    _vertexDirItem->appendRow(v);
-    edgeIndex = e->index();
-    emit patternDataChanged();
-
-    return edgeIndex;
-}
-
-QModelIndex DocumentModel::addCylinder( const QModelIndex &iv, const QModelIndex &ivec, double r,  double h )
-{
-    QModelIndex iCyl;
-
-    HEXA_NS::Vertex* hv   = getHexaPtr<HEXA_NS::Vertex*>(iv);
-    HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Cylinder* hcyl = _hexaDocument->addCylinder( hv, hvec, r, h );
-    if ( BadElement(hcyl) ) return iCyl;
-
-    CylinderItem* cyl = new CylinderItem(hcyl);
-    _cylinderDirItem->appendRow(cyl);
-    iCyl = cyl->index();
-
-    return iCyl;
-}
-
-
-QModelIndex DocumentModel::addPipe( const QModelIndex &iv, const QModelIndex &ivec, double ri, double re, double h )
-{
-    QModelIndex iPipe;
-
-    HEXA_NS::Vertex* hv   = getHexaPtr<HEXA_NS::Vertex*>(iv);
-    HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Pipe* hPipe = _hexaDocument->addPipe( hv, hvec, ri, re, h );
-    if ( BadElement(hPipe) ) return iPipe;
-
-    PipeItem* pipe = new PipeItem(hPipe);
-    _pipeDirItem->appendRow(pipe);
-    iPipe = pipe->index();
-
-    return iPipe;
-}
-
-QModelIndex DocumentModel::makePipe( const QModelIndex& ipipe, const QModelIndex& ivecx,
-        int nr, int na, int nl )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Pipe*   hPipe  = getHexaPtr<HEXA_NS::Pipe*>(ipipe);
-    HEXA_NS::Vector* hVecx  = getHexaPtr<HEXA_NS::Vector*>(ivecx);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makePipe( hPipe, hVecx, nr, na, nl );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-//
-QModelIndex DocumentModel::makePipes( const QModelIndex& ipipe1, const QModelIndex& ipipe2 )
-{
-    QModelIndex iCrossElts;
-
-    HEXA_NS::Pipe* hPipe1  = getHexaPtr<HEXA_NS::Pipe*>(ipipe1);
-    HEXA_NS::Pipe* hPipe2  = getHexaPtr<HEXA_NS::Pipe*>(ipipe2);
-
-    HEXA_NS::CrossElements* hCrossElts = _hexaDocument->makePipes( hPipe1, hPipe2 );
-    if ( BadElement(hCrossElts) ) return iCrossElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* crossElts = new ElementsItem(hCrossElts);
-    _crossElementsDirItem->appendRow(crossElts);
-    iCrossElts = crossElts->index();
-
-    return iCrossElts;
-}
-
-QModelIndex DocumentModel::makeRind( const QModelIndex& icenter,
-        const QModelIndex& ivecx, const QModelIndex& ivecz,
-        double  radext, double radint, double radhole,
-        const QModelIndex& iplorig,
-        int nrad, int nang, int nhaut )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* hvecx   = getHexaPtr<HEXA_NS::Vector*>(ivecx);
-    HEXA_NS::Vector* hvecz   = getHexaPtr<HEXA_NS::Vector*>(ivecz);
-    HEXA_NS::Vertex* hplorig = getHexaPtr<HEXA_NS::Vertex*>(iplorig);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makeRind( hcenter,
-            hvecx, hvecz,
-            radext, radint, radhole,
-            hplorig,
-            nrad, nang, nhaut );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* eltsItem = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(eltsItem);
-    iElts = eltsItem->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makePartRind( const QModelIndex& icenter,
-        const QModelIndex& ivecx, const QModelIndex& ivecz,
-        double  radext, double radint, double radhole,
-        const QModelIndex& iplorig, double angle,
-        int nrad, int nang, int nhaut )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* hvecx   = getHexaPtr<HEXA_NS::Vector*>(ivecx);
-    HEXA_NS::Vector* hvecz   = getHexaPtr<HEXA_NS::Vector*>(ivecz);
-    HEXA_NS::Vertex* hplorig = getHexaPtr<HEXA_NS::Vertex*>(iplorig);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makePartRind( hcenter,
-            hvecx, hvecz,
-            radext, radint, radhole,
-            hplorig, angle,
-            nrad, nang, nhaut );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData();
-    ElementsItem* eltsItem = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(eltsItem);
-    iElts = eltsItem->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makeSphere( const QModelIndex& icenter,
-        const QModelIndex& ivecx, const QModelIndex& ivecz,
-        double radius, double radhole,
-        const QModelIndex& iplorig,
-        int nrad, int nang, int nhaut )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* hvecx   = getHexaPtr<HEXA_NS::Vector*>(ivecx);
-    HEXA_NS::Vector* hvecz   = getHexaPtr<HEXA_NS::Vector*>(ivecz);
-    HEXA_NS::Vertex* hplorig = getHexaPtr<HEXA_NS::Vertex*>(iplorig);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makeSphere( hcenter,
-            hvecx, hvecz,
-            radius, radhole,
-            hplorig,
-            nrad, nang, nhaut);
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData();
-    ElementsItem* eltsItem = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(eltsItem);
-    iElts = eltsItem->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::makePartSphere( const QModelIndex& icenter,
-        const QModelIndex& ivecx, const QModelIndex& ivecz,
-        double  radius, double radhole,
-        const QModelIndex& iplorig, double angle,
-        int nrad, int nang, int nhaut )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Vertex* hcenter = getHexaPtr<HEXA_NS::Vertex*>(icenter);
-    HEXA_NS::Vector* hvecx   = getHexaPtr<HEXA_NS::Vector*>(ivecx);
-    HEXA_NS::Vector* hvecz   = getHexaPtr<HEXA_NS::Vector*>(ivecz);
-    HEXA_NS::Vertex* hplorig = getHexaPtr<HEXA_NS::Vertex*>(iplorig);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->makePartSphere( hcenter,
-            hvecx, hvecz,
-            radius, radhole,
-            hplorig, angle,
-            nrad, nang, nhaut);
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData();
-    ElementsItem* eltsItem = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(eltsItem);
-    iElts = eltsItem->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::prismQuad( const QModelIndex& iquad, const QModelIndex& ivec, int nb)
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Quad*   hQuad = getHexaPtr<HEXA_NS::Quad*>(iquad);
-    HEXA_NS::Vector* hVect = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->prismQuad( hQuad, hVect, nb );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::prismQuads( const QModelIndexList& iquads, const QModelIndex& ivec, int nb)
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Quads   hQuads;
-    HEXA_NS::Quad*   hQuad = NULL;
-    foreach( const QModelIndex& iquad, iquads ){
-        hQuad = getHexaPtr<HEXA_NS::Quad*>(iquad);
-        hQuads.push_back( hQuad );
-    }
-    HEXA_NS::Vector* hVect = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->prismQuads( hQuads, hVect, nb );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::prismQuads( const QModelIndexList& iquads, const QModelIndex& ivec, std::vector<double> layersSize, int nb)
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Quads   hQuads;
-    HEXA_NS::Quad*   hQuad = NULL;
-    foreach( const QModelIndex& iquad, iquads ){
-        hQuad = getHexaPtr<HEXA_NS::Quad*>(iquad);
-        hQuads.push_back( hQuad );
-    }
-    HEXA_NS::Vector* hVect = getHexaPtr<HEXA_NS::Vector*>(ivec);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->prismQuadsVec( hQuads, hVect, layersSize, nb );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-//
-QModelIndex DocumentModel::joinQuad(
-        const QModelIndex& iquadstart, const QModelIndex& iquaddest,
-        const QModelIndex& iv0, const QModelIndex& iv1,
-        const QModelIndex& iv2, const QModelIndex& iv3,
-        int nb )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Quad*   hQuadStart  = getHexaPtr<HEXA_NS::Quad*>(iquadstart);
-    HEXA_NS::Quad*   hQuadDest   = getHexaPtr<HEXA_NS::Quad*>(iquaddest);
-
-    HEXA_NS::Vertex* hVertex0 = getHexaPtr<HEXA_NS::Vertex*>(iv0);
-    HEXA_NS::Vertex* hVertex1 = getHexaPtr<HEXA_NS::Vertex*>(iv1);
-    HEXA_NS::Vertex* hVertex2 = getHexaPtr<HEXA_NS::Vertex*>(iv2);
-    HEXA_NS::Vertex* hVertex3 = getHexaPtr<HEXA_NS::Vertex*>(iv3);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->joinQuad( hQuadStart, hQuadDest,
-            hVertex0,  hVertex1,  hVertex2,  hVertex3, nb );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::joinQuads(
-        const QModelIndexList& iquadsstart, const QModelIndex& iquaddest,
-        const QModelIndex& iv0, const QModelIndex& iv1,
-        const QModelIndex& iv2, const QModelIndex& iv3,
-        int nb )
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Quad*   hQuadStart;
-    HEXA_NS::Quads  hQuadsStart;
-
-    foreach( const QModelIndex& iquad, iquadsstart ){
-        hQuadStart = data( iquad, HEXA_DATA_ROLE ).value<HEXA_NS::Quad *>();
-        hQuadsStart.push_back( hQuadStart );
-    }
-    HEXA_NS::Quad*   hQuadDest = data( iquaddest, HEXA_DATA_ROLE ).value<HEXA_NS::Quad *>();
-
-    HEXA_NS::Vertex* hVertex0 = getHexaPtr<HEXA_NS::Vertex*>(iv0);
-    HEXA_NS::Vertex* hVertex1 = getHexaPtr<HEXA_NS::Vertex*>(iv1);
-    HEXA_NS::Vertex* hVertex2 = getHexaPtr<HEXA_NS::Vertex*>(iv2);
-    HEXA_NS::Vertex* hVertex3 = getHexaPtr<HEXA_NS::Vertex*>(iv3);
-
-    HEXA_NS::Elements* hElts = _hexaDocument->joinQuads(
-            hQuadsStart, hQuadDest,
-            hVertex0,  hVertex1,  hVertex2,  hVertex3,
-            nb );
-    if ( BadElement(hElts) ) return iElts;
-
-    updateData(); //CS_TODO more or less?
-    ElementsItem* elts = new ElementsItem(hElts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-QModelIndex DocumentModel::cutEdge( const QModelIndex &i_e0, int nbcuts )
-//CS_TODO : impact sur le model?
-{
-    QModelIndex iElts;
-
-    HEXA_NS::Edge* he0 = getHexaPtr<HEXA_NS::Edge*>(i_e0);
-    HEXA_NS::Elements* helts = _hexaDocument->cut( he0, nbcuts );
-
-    if ( BadElement(helts) ) return iElts;
-
-    updateData(); //CS_TODO more?
-    ElementsItem* elts = new ElementsItem(helts);
-    _elementsDirItem->appendRow(elts);
-    iElts = elts->index();
-
-    return iElts;
-}
-
-// ===================================== END OBSOLETE ==========================================
-

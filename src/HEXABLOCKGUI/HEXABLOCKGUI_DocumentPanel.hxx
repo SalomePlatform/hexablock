@@ -568,6 +568,7 @@ namespace HEXABLOCK
     protected slots:
     void addHeightItem();
     void delHeightItem();
+    void updateHelpFileName();
 
     private slots:
     void addQuad();
@@ -597,6 +598,7 @@ namespace HEXABLOCK
     protected slots:
     void addHeightItem();
     void delHeightItem();
+    void updateHelpFileName();
 
     private slots:
     void addQuad();
@@ -670,6 +672,7 @@ namespace HEXABLOCK
     protected slots:
     void addHeightItem();
     void delHeightItem();
+    void updateHelpFileName();
 
     public slots:
     virtual bool apply(QModelIndex& result);
@@ -1006,6 +1009,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     void addAngleItem();
     void delAngleItem();
     void delQuadItem();
+    void updateHelpFileName();
 
     private:
     HEXA_NS::Elements *_value;

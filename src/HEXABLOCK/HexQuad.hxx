@@ -54,6 +54,9 @@ public:
     virtual void  clearAssociation  ();
 
     void setColor  (double valeur);
+    Vertex* nearestVertex (Vertex* other);
+    double* getCenter     (double* center);
+
     Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd);
 
 #ifndef SWIG
@@ -118,7 +121,7 @@ public:
     int   countAssociation ()                     { return tab_assoc.size () ; }
     FaceShape* getAssociation (int nro);
 
-    Vertex* nearestVertex (Vertex* other);
+    double  dist2         (double* point);
 
 private:
     friend class Cloner;

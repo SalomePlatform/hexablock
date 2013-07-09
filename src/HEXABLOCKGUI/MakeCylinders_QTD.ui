@@ -29,7 +29,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
-         <string>Cylinder 1</string>
+         <string>Big Cylinder</string>
         </property>
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
@@ -84,7 +84,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>1.000000000000000</double>
+            <double>4.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -97,7 +97,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>1.000000000000000</double>
+            <double>2.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -121,7 +121,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_3">
         <property name="title">
-         <string>Cylinder 2</string>
+         <string>Small Cylinder</string>
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0">
@@ -176,7 +176,7 @@
             <double>1000000000.000000000000000</double>
            </property>
            <property name="value">
-            <double>1.000000000000000</double>
+            <double>2.000000000000000</double>
            </property>
           </widget>
          </item>

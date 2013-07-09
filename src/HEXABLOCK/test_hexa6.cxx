@@ -37,7 +37,7 @@ static Hex::Hex         mon_ex;
 static Hex::Document*   docu = NULL;
 static cpchar           case_name = "hexa";
 
-// ======================================================== get_document 
+// ======================================================== get_document
 Hex::Document* get_document ()
 {
    if (docu==NULL)
@@ -53,7 +53,7 @@ void save_file ()
    char filename[20];
 
    nbr_files ++;
-   sprintf (filename, "%s%02d.vtk", case_name, nbr_files); 
+   sprintf (filename, "%s%02d.vtk", case_name, nbr_files);
    docu->saveVtk (filename);
 }
 
@@ -67,20 +67,20 @@ Hex::Vertex* nearest (Hex::Elements* grid, Hex::Vertex* vertex)
     double       py = vertex->getY();
     double       pz = vertex->getZ();
     for (int nro=0 ; nro < nbre ; ++nro)
-        { 
+        {
         Hex::Vertex* v1 = grid->getVertex (nro);
-        double       d2 = Hex::carre(px-v1->getX()) + Hex::carre(py-v1->getY()) 
+        double       d2 = Hex::carre(px-v1->getX()) + Hex::carre(py-v1->getY())
                                                     + Hex::carre(pz-v1->getZ()) ;
         if (d2 < dmin)
-           { 
+           {
            result = v1;
            dmin   = d2;
            }
         }
 
-    cout << " nearest : " << vertex->getName() 
-         << " -> "        << result->getName() 
-         << " ( " << px << ",  " << py << ",  " << pz << ") " << endl; 
+    cout << " nearest : " << vertex->getName()
+         << " -> "        << result->getName()
+         << " ( " << px << ",  " << py << ",  " << pz << ") " << endl;
     return result;
 }
 
@@ -89,14 +89,14 @@ void eplucher (Hex::Document* doc, Hex::Elements* grid, string& radical)
 {
    int nbfic = 0;
    int nbre  = grid->countHexa();
-   for (int nro=nbre-1 ; nro >0 ; nro--) 
+   for (int nro=nbre-1 ; nro >0 ; nro--)
        {
        nbfic++;
        char name [32];
        sprintf (name, "%s%02d.vtk", radical.c_str(), nbfic);
        grid->saveVtk (name);
        doc->removeHexa (grid->getHexa(nro));
-       } 
+       }
 }
 // ======================================================== test_cartesian6
 int test_cartesian6 (int nbargs, cpchar tabargs[])
@@ -118,7 +118,7 @@ int test_cartesian6 (int nbargs, cpchar tabargs[])
    Hex::Vector*   vy    = doc->addVector (0, 1, 0);
    Hex::Vector*   vz    = doc->addVector (0, 0, 1);
    double dx =1, dy=1, dz=1;
-   Hex::Elements* grid2 = doc->makeCartesianUni (orig2, vx, vy, vz, dx, dy, dz, 
+   Hex::Elements* grid2 = doc->makeCartesianUni (orig2, vx, vy, vz, dx, dy, dz,
                                                         size_x, size_y, size_z);
    grid2->saveVtk ("makeCartesianUni.vtk");
    PutData (grid2->isValid());
@@ -153,7 +153,7 @@ int test_cylinder60 (int nbargs, cpchar tabargs[])
    Hex::Vector*  vx   = doc->addVector (1, 0, 0);
    Hex::Vector*  vz   = doc->addVector (0, 0, 1);
    double rint =1, rext = 3, angle = 360, hauteur = 2;
-   Hex::Elements* grid3 = doc->makePipeUni (orig, vx, vz, 
+   Hex::Elements* grid3 = doc->makePipeUni (orig, vx, vz,
                                                 rint, rext, angle, hauteur,
                                                 size_x, size_y, size_z);
    grid3->saveVtk ("makeCylinderUni.vtk");
@@ -193,7 +193,7 @@ int test_cylinder6 (int nbargs, cpchar tabargs[])
    Hex::Elements* grid1 = doc->makeCylinderTop (size_x, size_y, size_z);
    grid1->saveVtk ("makeCylinderTop.vtk");
    PutData (grid1->isValid());
-   
+
 
    Hex::Elements* grid2 = doc->makePipeTop (size_x, size_y, size_z);
    grid2->saveVtk ("makePipeTop.vtk");
@@ -204,7 +204,7 @@ int test_cylinder6 (int nbargs, cpchar tabargs[])
    Hex::Vector*  vx    = doc->addVector (1, 0, 0);
    Hex::Vector*  vz    = doc->addVector (0, 0, 1);
    double rint =2, rext = 4, angle = 300, hauteur = 1;
-   Hex::Elements* grid3 = doc->makeCylinderUni (orig2, vx, vz, 
+   Hex::Elements* grid3 = doc->makeCylinderUni (orig2, vx, vz,
                                                 rint, rext, angle, hauteur,
                                                 2, 3, 2);
                                     //          size_x, size_y, size_z);
@@ -248,7 +248,7 @@ int test_spherical6 (int nbargs, cpchar tabargs[])
    PutData (nbhexas);
    for (int nro=3 ; nro<nbhexas ; nro +=3)
        grid1->getHexa(nro)->remove();
- 
+
    grid1->saveVtk ("makeSphericalTop.vtk");
 
    Hex::Vertex*  orig2 = doc->addVertex (0, 0, 10);
@@ -265,7 +265,7 @@ int test_spherical6 (int nbargs, cpchar tabargs[])
 
    for (int nro=3 ; nro<nbhexas ; nro +=3)
        grid2->getHexa(nro)->remove();
- 
+
    grid2->saveVtk ("makeSphericalUni.vtk");
    return HOK;
 }
@@ -283,14 +283,14 @@ int test_rind6 (int nbargs, cpchar tabargs[])
    PutData (grid1->isValid());
    if (NOT (grid1->isValid()))
        Hex::what ();
-   else 
+   else
        grid1->saveVtk ("makeSphereTop.vtk");
 
    Hex::Elements* grid2 = doc->makeRindTop (size_r, size_a, size_h);
    PutData (grid2->isValid());
    if (NOT (grid2->isValid()))
        Hex::what ();
-   else 
+   else
        grid2->saveVtk ("makeRindTop.vtk");
 
    Hex::Vertex* orig  = doc->addVertex (0, 0, 0);
@@ -302,28 +302,21 @@ int test_rind6 (int nbargs, cpchar tabargs[])
    double rext  = 10;
    double angle = 180;
 
-   Hex::Elements* grid3 = doc->makeSphereUni (orig, vx, vz, 
-                                              rtrou, rext, angle, vplan, 
+   Hex::Elements* grid3 = doc->makeSphereUni (orig, vx, vz,
+                                              rtrou, rext, angle, vplan,
                                               size_r, size_a, size_h);
    if (NOT (grid3->isValid()))
        Hex::what ();
-   else 
+   else
        grid3->saveVtk ("makeSphereUni.vtk");
 
-   Hex::Elements* grid4 = doc->makeRindUni (orig, vx, vz, 
-                                            rtrou, rext, rint, angle, vplan, 
+   Hex::Elements* grid4 = doc->makeRindUni (orig, vx, vz,
+                                            rtrou, rint, rext, angle, vplan,
                                             size_r, size_a, size_h);
    if (NOT (grid4->isValid()))
        Hex::what ();
-   else 
+   else
        grid4->saveVtk ("makeRindUni.vtk");
-
-   Hex::Elements* grid5 = doc->makePartSphere (orig, vx, vz, rext, rtrou, vplan,
-                                               angle, size_r, size_a, size_h);
-   if (NOT (grid5->isValid()))
-       Hex::what ();
-   else 
-       grid5->saveVtk ("makeSphereOld.vtk");
 
    Hex::RealVector trad, tang, tphi;
    double dr     = (rext-rtrou)/size_r;
@@ -331,12 +324,12 @@ int test_rind6 (int nbargs, cpchar tabargs[])
    double dphi   = 180.0/size_h;
    for (int nro=0 ; nro<=size_r ; nro++) trad.push_back (rtrou + nro*dr);
    for (int nro=0 ; nro<=size_a ; nro++) tang.push_back (        nro*dtheta);
-   for (int nro=0 ; nro<=size_h ; nro++) tphi.push_back (-90   + nro*dphi); 
+   for (int nro=0 ; nro<=size_h ; nro++) tphi.push_back (-90   + nro*dphi);
 
    Hex::Elements* grid6 = doc->makeSphere (orig, vx, vz, trad, tang, tphi);
    if (NOT (grid6->isValid()))
        Hex::what ();
-   else 
+   else
        grid6->saveVtk ("makeSphereNew.vtk");
 
    trad.clear ();
@@ -345,7 +338,7 @@ int test_rind6 (int nbargs, cpchar tabargs[])
    Hex::Elements* grid7 = doc->makeRind (orig, vx, vz, trad, tang, tphi);
    if (NOT (grid7->isValid()))
        Hex::what ();
-   else 
+   else
        grid7->saveVtk ("makeRindNew.vtk");
    return HOK;
 }
@@ -364,7 +357,7 @@ int test_pipes6 (int nbargs, cpchar tabargs[])
        else if (arg=="-pipe")  pipe    = true;
        else if (arg=="-left")  t_left  = true;
        else if (arg=="-right") t_right = true;
-       else 
+       else
           {
           cout << " Syntax : " << endl;
           cout << " $ " << tabargs[0]  << " <args> " << endl;
@@ -390,13 +383,13 @@ int test_pipes6 (int nbargs, cpchar tabargs[])
    if (t_left)
       {
       h1 = 10;
-      radical += "_L";  
+      radical += "_L";
       }
    else if (t_right)
       {
       xl1 = -2;
       h1   = 10;
-      radical += "_R";  
+      radical += "_R";
       }
 
    Hex::Document* doc  = get_document ();
@@ -407,7 +400,7 @@ int test_pipes6 (int nbargs, cpchar tabargs[])
    Hex::Vector* vz2   = doc->addVector ( 1, 0,  0);
 
    Hex::BiCylinder* grid1 = NULL;
-   if (pipe) 
+   if (pipe)
        grid1 = doc->makePipes (ori1, vz1, rint1, rext1, h1, ori2, vz2, rint2,
                                rext2, h2);
    else
@@ -589,7 +582,7 @@ int test_joint6 (int nbargs, cpchar tabargs[])
    Hex::what ();
    if (NOT joint->isValid ())
       return HERR;
-   
+
    doc->saveVtk ("jointQuad2.vtk");
    int nbr_joint_vertex =  joint->countVertex ();
    int nbr_surf_vertex  =  nbr_joint_vertex/(hauteur+1);
@@ -710,14 +703,14 @@ int test_monica (int nbargs, cpchar tabargs[])
    Hex::what ();
    save_file ();
 
-   Hex::Elements* pipe = doc->makePipeUni (orig2, vxy, vz, 0.15, 0.5, 360, 3, 
+   Hex::Elements* pipe = doc->makePipeUni (orig2, vxy, vz, 0.15, 0.5, 360, 3,
                                            1, 4, 3);
    doc->dump ();
    Hex::what ();
    for (int nv=0 ; nv<8 ; nv++)
        tabv0.push_back (nearest (pipe, tabv1[nv]));
 
-   doc->setLevel (1); 
+   doc->setLevel (1);
    for (int nv=0 ; nv<8 ; nv++)
        {
        int ier = doc->mergeVertices (tabv0[nv], tabv1[nv]);
