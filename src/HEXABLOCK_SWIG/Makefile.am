@@ -38,7 +38,7 @@ BUILT_SOURCES = \
 	hexablock_swig_wrap.cc 
 
 _hexablock_swig_la_SOURCES = \
-	hexablock_swig_wrap.cc 
+	hexablock_swig_wrap.cc hexablock_swig.i
 
 _hexablock_swig_la_CPPFLAGS = \
 	$(KERNEL_CXXFLAGS)    \

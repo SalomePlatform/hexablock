@@ -122,6 +122,7 @@ dist_libHEXABLOCKEngine_la_SOURCES = \
 	HexElements_del.cxx \
 	HexWitness.cxx \
 	Hex_salome.cxx \
+	test_unit.hxx \
 	test_hexa6.cxx \
 	HexKas_functions.cxx 
 
