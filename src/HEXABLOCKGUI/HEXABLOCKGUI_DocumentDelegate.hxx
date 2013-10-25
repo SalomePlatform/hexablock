@@ -79,7 +79,7 @@ namespace HEXABLOCK
           QDockWidget* _dw; // creator's container
 
       private slots:
-          void commitEditor();
+          //void commitEditor();
 
       };
   }

@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,13 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-dist_admlocalm4_DATA =	\
-	check_sphinx.m4 \
-	ac_python_devel.m4 \
-	check_HEXABLOCK.m4
+# --- scripts ---
+
+# scripts / static
+SET(_bin_SCRIPTS
+  foo.py
+)
+
+# --- rules ---
+SALOME_INSTALL_SCRIPTS("${_bin_SCRIPTS}" ${SALOME_INSTALL_BINS})

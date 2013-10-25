@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,13 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-SUBDIRS = config_files
+# ===============================================================
+# Files to be installed
+# ===============================================================
+
+# These files are data, module or lib files
+SET(_adm_data
+  FindSalomeHEXABLOCK.cmake
+)
+INSTALL(FILES ${_adm_data} DESTINATION ${SALOME_INSTALL_CMAKE_LOCAL})

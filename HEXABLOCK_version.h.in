@@ -20,12 +20,22 @@
 #if !defined(__HEXABLOCK_VERSION_H__)
 #define __HEXABLOCK_VERSION_H__
 
-/*
-  HEXABLOCK_VERSION is (major << 16) + (minor << 8) + patch.
+/*!
+  Specify version of SALOME HEXABLOCK module, as follows
+
+  HEXABLOCK_VERSION_MAJOR       : (integer) number identifying major version
+  HEXABLOCK_VERSION_MINOR       : (integer) number identifying minor version
+  HEXABLOCK_VERSION_MAINTENANCE : (integer) number identifying maintenance version
+  HEXABLOCK_VERSION_STR         : (string)  complete version number "major.minor.maintenance"
+  HEXABLOCK_VERSION             : (hex)     complete version number (major << 16) + (minor << 8) + maintenance
+  HEXABLOCK_DEVELOPMENT         : (integer) indicates development version when set to 1
 */
 
-#define HEXABLOCK_VERSION_STR "@VERSION@"
-#define HEXABLOCK_VERSION     @XVERSION@
-#define HEXABLOCK_DEVELOPMENT @VERSION_DEV@
+#define HEXABLOCK_VERSION_MAJOR       @SALOMEHEXABLOCK_MAJOR_VERSION@
+#define HEXABLOCK_VERSION_MINOR       @SALOMEHEXABLOCK_MINOR_VERSION@
+#define HEXABLOCK_VERSION_MAINTENANCE @SALOMEHEXABLOCK_PATCH_VERSION@
+#define HEXABLOCK_VERSION_STR         "@SALOMEHEXABLOCK_VERSION@"
+#define HEXABLOCK_VERSION             @SALOMEHEXABLOCK_XVERSION@
+#define HEXABLOCK_DEVELOPMENT         @SALOMEHEXABLOCK_VERSION_DEV@
 
 #endif // __HEXABLOCK_VERSION_H__

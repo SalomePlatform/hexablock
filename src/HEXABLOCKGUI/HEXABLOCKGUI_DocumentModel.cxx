@@ -987,6 +987,24 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
     return edgeIndex;
 }
 
+QModelIndex DocumentModel::addEdgeVector ( const QModelIndex &i_v, const QModelIndex &i_vec )
+{
+    QModelIndex edgeIndex;
+
+    HEXA_NS::Vertex* hv0 = getHexaPtr<HEXA_NS::Vertex*>(i_v);
+    HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(i_vec);
+
+    HEXA_NS::Edge* he = _hexaDocument->addEdgeVector( hv0, hvec );
+    if ( BadElement(he) ) return edgeIndex;
+
+    EdgeItem* e = new EdgeItem(he, _entry);
+    _vectorDirItem->appendRow(e);
+    edgeIndex = e->index();
+    emit patternDataChanged();
+
+    return edgeIndex;
+}
+
 QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QModelIndex &i_v1,
         const QModelIndex &i_v2, const QModelIndex &i_v3 )
 { //CS_TODO : gestion erreur

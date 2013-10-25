@@ -1,4 +1,7 @@
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+# Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+# CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,28 +20,5 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
-
-ACLOCAL_AMFLAGS = -I adm_local/unix/config_files \
-                  -I ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files \
-                  -I ${GUI_ROOT_DIR}/adm_local/unix/config_files \
-                  -I ${GEOM_ROOT_DIR}/adm_local/unix/config_files 
-
-SUBDIRS = adm_local src bin doc
-
-DIST_SUBDIRS= adm_local src bin doc
-
-DISTCLEANFILES = a.out aclocal.m4 configure
-
-salomeinclude_DATA = HEXABLOCK_version.h
-
-EXTRA_DIST +=		\
-	build_configure	\
-	clean_configure \
-	cppunit-report.xml
-
-dist-hook:
-	rm -rf `find $(distdir) -name CVS`
-
-unittest:
-	( ./src/TEST_CPP/Test_HEXABLOCK )
+ADD_SUBDIRECTORY(unix)
+ADD_SUBDIRECTORY(cmake_files)

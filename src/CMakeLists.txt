@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,34 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-SUBDIRS = unix
+##
+# Common packages
+##
+SET(SUBDIRS_COMMON
+  HEXABLOCK
+  HEXABLOCK_SWIG
+)
+
+IF(SALOME_BUILD_GUI)
+  SET(SUBDIRS_ENABLE_GUI
+    HEXABLOCKGUI
+  )
+ENDIF(SALOME_BUILD_GUI)
+
+IF(SALOME_BUILD_TESTS)
+  SET(SUBDIRS_TESTS
+      TEST_CPP
+      TEST_PY
+     )
+ENDIF(SALOME_BUILD_TESTS)
+
+SET(SUBDIRS
+  ${SUBDIRS_COMMON}
+  ${SUBDIRS_ENABLE_GUI}
+  ${SUBDIRS_TESTS}
+)
+
+FOREACH(dir ${SUBDIRS})
+ ADD_SUBDIRECTORY(${dir})
+ENDFOREACH(dir ${SUBDIRS})

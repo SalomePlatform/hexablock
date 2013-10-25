@@ -571,9 +571,9 @@ namespace HEXABLOCK
     void updateHelpFileName();
 
     private slots:
-    void addQuad();
+    //void addQuad();
     void removeQuad();
-    void clearQuads();
+    //void clearQuads();
 
     };
 
@@ -601,9 +601,9 @@ namespace HEXABLOCK
     void updateHelpFileName();
 
     private slots:
-    void addQuad();
+    //void addQuad();
     void removeQuad();
-    void clearQuads();
+    //void clearQuads();
 
     };
 
@@ -920,7 +920,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     void _initInputWidget( Mode editmode );
 
     protected slots:
-    void updateHelpFileName();
+    //void updateHelpFileName();
     void deletePropagationItem();
     virtual void selectElementOfModel();
 

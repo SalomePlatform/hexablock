@@ -112,8 +112,8 @@ private slots:
   void                               ClickParamCoord( int );
   void                               onBtnPopup( QAction* );
   void                               updateSize();
-  void                               onRefPointChanged(const QString& pointName);
-  void                               onStartPointSelected(const QString& pointName);
+//void                               onRefPointChanged(const QString& pointName);
+//void                               onStartPointSelected(const QString& pointName);
   void                               onParamValueChanged(double newValue);
   void                               onXCoordChanged(double newValue);
   void                               onYCoordChanged(double newValue);

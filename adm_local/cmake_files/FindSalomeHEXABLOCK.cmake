@@ -1,4 +1,4 @@
-# Copyright (C) 2009-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2013  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,17 +16,16 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+#
 
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
+IF(NOT SalomeHEXABLOCK_FIND_QUIETLY)
+  MESSAGE(STATUS "Looking for Salome HEXABLOCK ...")
+ENDIF()
 
-DIST_SUBDIRS = HEXABLOCK HEXABLOCK_SWIG HEXABLOCKGUI TEST_PY TEST_CPP
+SET(CMAKE_PREFIX_PATH "${HEXABLOCK_ROOT_DIR}")
 
-SUBDIRS      = HEXABLOCK HEXABLOCK_SWIG TEST_PY
+SALOME_FIND_PACKAGE(SalomeHEXABLOCK SalomeHEXABLOCK CONFIG)
 
-if HEXABLOCK_ENABLE_GUI
-  SUBDIRS += HEXABLOCKGUI
-endif
-
-##  if CPPUNIT_IS_OK
-  ##  SUBDIRS += TEST_CPP
-##  endif
+IF(NOT SalomeHEXABLOCK_FIND_QUIETLY)
+  MESSAGE(STATUS "Found Salome HEXABLOCK: ${HEXABLOCK_ROOT_DIR}")
+ENDIF()
