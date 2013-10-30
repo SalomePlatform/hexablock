@@ -43,8 +43,8 @@ def add_edge (nro, v1,v2, ass=True) :
       edge.addAssociation (the_shape, nro, 0.0, 1.0)
    return edge
 
-# ============================================================= mailler
-def mailler (doc=None) :
+# ============================================================= mailler0
+def mailler0 (doc=None) :
 
     if doc == None :
        doc = the_doc
@@ -54,6 +54,16 @@ def mailler (doc=None) :
         propa = doc.getPropagation(j)
         propa.setLaw(law)
 
+    mesh_hexas = hexablock.mesh(doc)
+    return  mesh_hexas
+
+# ============================================================= mailler
+def mailler (doc=None) :
+
+    if doc == None :
+       doc = the_doc
+
+    doc.addLaws (10, True)
     mesh_hexas = hexablock.mesh(doc)
     return  mesh_hexas
 
