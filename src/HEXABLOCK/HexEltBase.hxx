@@ -23,6 +23,7 @@
 #ifndef __ELT_BASE_H
 #define __ELT_BASE_H
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include <vector>
 
@@ -34,9 +35,13 @@
 #define BadElement(elt) (elt)==NULL || (elt)->isBad()
 #define EltIsValid(elt)    (elt)!=NULL && (elt)->isValid()
 
+#if defined WIN32
+#pragma warning ( disable: 4251 )
+#endif
+
 BEGIN_NAMESPACE_HEXA
 
-class EltBase
+class HEXABLOCKENGINE_EXPORT EltBase
 {
 public :
    virtual int     countHexa   ()  { return 0; }

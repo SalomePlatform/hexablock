@@ -4,11 +4,12 @@
 #ifndef __FACE_SHAPE_H_
 #define __FACE_SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "HexSubShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class FaceShape : public SubShape
+class HEXABLOCKENGINE_EXPORT FaceShape : public SubShape
 {
 public :
     FaceShape (NewShape* dad, int id);

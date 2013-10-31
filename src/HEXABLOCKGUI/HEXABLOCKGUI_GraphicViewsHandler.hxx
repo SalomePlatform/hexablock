@@ -20,6 +20,8 @@
 #ifndef _HEXABLOCKGUI_VTKGRAPHICVIEWSHANDLER_HXX_
 #define _HEXABLOCKGUI_VTKGRAPHICVIEWSHANDLER_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 //Salome Includes
 #include <SVTK_ViewWindow.h>
 #include <OCCViewer_ViewWindow.h>
@@ -35,7 +37,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-      class GraphicViewsHandler
+      class HEXABLOCK_EXPORT GraphicViewsHandler
       {
 
       public:

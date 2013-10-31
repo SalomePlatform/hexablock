@@ -90,7 +90,7 @@ bool DumpStudy::start (cpchar obj, cpchar method, bool raz)
 // =================================================== operator << (int)
 DumpStudy& DumpStudy::operator << (int val)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    char     valeur [20];
@@ -102,7 +102,7 @@ DumpStudy& DumpStudy::operator << (int val)
 // =================================================== operator << (double)
 DumpStudy& DumpStudy::operator << (double val)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    char valeur [20];
@@ -114,7 +114,7 @@ DumpStudy& DumpStudy::operator << (double val)
 // =================================================== operator << (cpchar)
 DumpStudy& DumpStudy::operator << (cpchar val)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    string valeur ("'");
@@ -127,7 +127,7 @@ DumpStudy& DumpStudy::operator << (cpchar val)
 // =================================================== operator << (elt)
 DumpStudy& DumpStudy::operator << (EltBase* elt)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    cpchar name = findName (elt);
@@ -137,7 +137,7 @@ DumpStudy& DumpStudy::operator << (EltBase* elt)
 // =================================================== operator << (Quads)
 DumpStudy& DumpStudy::operator << (Quads& tab)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    TabElts&  tabelt = (TabElts&) tab;
@@ -147,7 +147,7 @@ DumpStudy& DumpStudy::operator << (Quads& tab)
 // =================================================== operator << (Edges)
 DumpStudy& DumpStudy::operator << (Edges& tab)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    TabElts&  tabelt = (TabElts&) tab;
@@ -157,7 +157,7 @@ DumpStudy& DumpStudy::operator << (Edges& tab)
 // =================================================== operator << (Hexas)
 DumpStudy& DumpStudy::operator << (Hexas& tab)
 {
-   if (not is_open)
+   if (!is_open)
       return *this; 
 
    TabElts&  tabelt = (TabElts&) tab;
@@ -167,7 +167,7 @@ DumpStudy& DumpStudy::operator << (Hexas& tab)
 // =================================================== operator << (Reals)
 DumpStudy& DumpStudy::operator << (RealVector& tab)
 {
-   if (not is_open)
+   if (! is_open)
       return *this; 
 
    char name [20], valeur [30];

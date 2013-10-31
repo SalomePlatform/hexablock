@@ -19,7 +19,7 @@
 #ifndef __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 #define __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 
-
+#include "HEXABLOCKGUI_Export.hxx"
 // QEvent * event, QAbstractItemModel 
 
 #include <QEvent>
@@ -41,7 +41,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-      class DocumentDelegate : public QItemDelegate
+      class HEXABLOCK_EXPORT DocumentDelegate : public QItemDelegate
       {
           Q_OBJECT
       

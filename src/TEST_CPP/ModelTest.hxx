@@ -20,6 +20,8 @@
 #ifndef __ModelTest__
 #define __ModelTest__
 
+#include "HexTest.hxx"
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -28,7 +30,7 @@
 #include "HexDocument.hxx"
 #include "HexEltBase.hxx"
 
-class ModelTest : public CppUnit::TestFixture
+class HEXABLOCKTEST_EXPORT ModelTest : public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE( ModelTest );
     CPPUNIT_TEST( myTest_croix);

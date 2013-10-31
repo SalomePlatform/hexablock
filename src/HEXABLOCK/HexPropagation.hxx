@@ -22,6 +22,7 @@
 #ifndef __PROPAGATION_H
 #define __PROPAGATION_H
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #include "HexDocument.hxx"
@@ -32,7 +33,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Propagation : public EltBase 
+class HEXABLOCKENGINE_EXPORT Propagation : public EltBase 
 {
 public:
    const Edges& getEdges ()        { return prop_edges; }

@@ -22,13 +22,14 @@
 #ifndef __XML_WRITER_H
 #define __XML_WRITER_H
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include <stack>
 #include <vector>
 
 BEGIN_NAMESPACE_HEXA
 
-class XmlWriter 
+class HEXABLOCKENGINE_EXPORT XmlWriter 
 {
 public :
    XmlWriter ();

@@ -22,12 +22,13 @@
 #ifndef __QUAD_H
 #define __QUAD_H
 
+#include "Hex_defines.hxx"
 #include "HexEdge.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
 #ifndef SWIG
-struct StrOrient
+struct HEXABLOCKENGINE_EXPORT StrOrient
 {
    Vertex* v11;     // 1er sommet 1er quad
    Vertex* v12;     // 2eme
@@ -44,7 +45,7 @@ StrOrient ( StrOrient* s)
 };
 #endif
 
-class Quad : public EltBase
+class HEXABLOCKENGINE_EXPORT Quad : public EltBase
 {
 public:
     virtual Edge*   getEdge   (int  nro);

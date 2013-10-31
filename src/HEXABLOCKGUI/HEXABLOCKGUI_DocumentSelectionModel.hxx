@@ -20,6 +20,8 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <QItemSelectionModel>
 #include <LightApp_SelectionMgr.h>
 
@@ -36,7 +38,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class SelectionModel: public QItemSelectionModel
+    class HEXABLOCK_EXPORT SelectionModel: public QItemSelectionModel
     {
         Q_OBJECT
 

@@ -4,11 +4,12 @@
 #ifndef __NODE_SHAPE_H_
 #define __NODE_SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "HexSubShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class VertexShape : public SubShape
+class HEXABLOCKENGINE_EXPORT VertexShape : public SubShape
 {
 public :
     VertexShape (NewShape* dad, int id);

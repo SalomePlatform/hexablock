@@ -24,8 +24,9 @@
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HexAssoEdge.hxx"
 
+#ifndef WIN32
 #include <inttypes.h>
-
+#endif
 
 using namespace std;
 using namespace HEXABLOCK::GUI;

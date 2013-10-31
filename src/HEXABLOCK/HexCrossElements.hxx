@@ -22,6 +22,7 @@
 #ifndef __CROSS_ELEMENTS_H
 #define __CROSS_ELEMENTS_H
 
+#include "Hex_defines.hxx"
 #include "HexElements.hxx"
 
 BEGIN_NAMESPACE_HEXA
@@ -33,7 +34,7 @@ enum { MiddleSlice1=NbrSlices1/2};
 enum { Cyl1=CylSmall, Cyl2=CylBig };
 enum { NO_CYL=-1, NO_PIPE=0, IS_HERE=1 };
 
-class CrossElements : public Elements
+class HEXABLOCKENGINE_EXPORT CrossElements : public Elements
 {
 public:
    CrossElements (Document* doc, EnumGrid type);

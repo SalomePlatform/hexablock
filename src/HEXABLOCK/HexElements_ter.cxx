@@ -356,7 +356,7 @@ void Elements::assoCircle (double* center, Edge* ed1, Edge* ed2, NewShape* geom)
    double rayon = calc_norme (oa);
    int    subid = geom->addCircle (center, rayon, normal, oa);
 
-   const double alpha = atan (sqrt(2)/2)/M_PI; //  angle proche de 70.528 degres
+   const double alpha = atan (sqrt(2.)/2)/M_PI; //  angle proche de 70.528 degres
    // asso1->setBounds (0,   alpha);
    // asso2->setBounds (0.5, alpha + 0.5);
 

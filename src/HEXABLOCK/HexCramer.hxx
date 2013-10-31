@@ -22,12 +22,13 @@
 #ifndef __CRAMER_H_
 #define __CRAMER_H_
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 // #include <cmath>
 
 BEGIN_NAMESPACE_HEXA
 
-class Cramer 
+class HEXABLOCKENGINE_EXPORT Cramer 
 {
 public:
     Cramer (int size);

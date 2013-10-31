@@ -20,6 +20,8 @@
 #ifndef __HEXABLOCKGUI_TRACE_HXX__
 #define __HEXABLOCKGUI_TRACE_HXX__
 
+
+
 #include <iostream>
 #include <sstream>
 
@@ -34,7 +36,7 @@
 
 namespace HEXABLOCK {
   namespace GUI {
-    extern HEXABLOCKGUI_EXPORT int traceLevel;
+    extern HEXABLOCK_EXPORT int traceLevel;
   }
 }
 

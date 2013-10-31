@@ -23,6 +23,7 @@
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 
@@ -30,7 +31,7 @@ BEGIN_NAMESPACE_HEXA
 
 class NewShape;
 
-class Document : public EltBase
+class HEXABLOCKENGINE_EXPORT Document : public EltBase
 {
                                    // Fonctions utilisateur
 public :

@@ -20,6 +20,8 @@
 #ifndef __EdgeTest__
 #define __EdgeTest__
 
+#include "HexTest.hxx"
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -27,7 +29,7 @@
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 
-class EdgeTest : public CppUnit::TestFixture
+class HEXABLOCKTEST_EXPORT EdgeTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( EdgeTest );
   CPPUNIT_TEST( TestGetVertex );

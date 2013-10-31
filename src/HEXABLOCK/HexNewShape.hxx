@@ -4,6 +4,7 @@
 #ifndef __NEW_SHAPE_H_
 #define __NEW_SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #ifndef SWIG
@@ -15,7 +16,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class NewShape : public EltBase
+class HEXABLOCKENGINE_EXPORT NewShape : public EltBase
 {
 public :         // for TUI
    virtual int countVertex ()   { return tab_vertex.size ();  }

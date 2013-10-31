@@ -22,11 +22,12 @@
 #ifndef __CYLINDER_H_
 #define __CYLINDER_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Cylinder : public EltBase
+class HEXABLOCKENGINE_EXPORT Cylinder : public EltBase
 {
 public :
     Vertex* getBase ()      { return c_base;   }
@@ -34,12 +35,11 @@ public :
     double  getRadius ()    { return c_radius; }
     double  getHeight ()    { return c_height; }
 
-public :
     Cylinder (Vertex* b, Vector* v, double r, double h);
     virtual ~Cylinder () {}
 
-    int interCylinder (Cylinder* small, bool& left, bool& right, double* sol);
-    Vertex* interCylinder (Cylinder* other, bool& left, bool& right);
+    int interCylinder(Cylinder* s, bool& left, bool& right, double* sol);
+    Vertex* interCylinder(Cylinder* other, bool& left, bool& right);
     void saveXml (XmlWriter* xml);
     virtual double  getInternalRadius () { return 0; }
 

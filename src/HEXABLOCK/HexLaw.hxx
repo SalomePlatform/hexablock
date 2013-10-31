@@ -22,12 +22,13 @@
 #ifndef __LAW_H_
 #define __LAW_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 #include "HexXmlWriter.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Law : public EltBase  
+class HEXABLOCKENGINE_EXPORT Law : public EltBase  
 {
 public:
    const char* getName ()          { return law_name.c_str() ; }

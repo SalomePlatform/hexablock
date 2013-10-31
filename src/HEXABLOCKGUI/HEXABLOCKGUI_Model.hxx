@@ -20,10 +20,12 @@
 #ifndef _HEXABLOCKGUI_MODEL_HXX_
 #define _HEXABLOCKGUI_MODEL_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <SalomeApp_DataModel.h>
 
 
-class HEXABLOCKGUI_Model : public SalomeApp_DataModel
+class HEXABLOCK_EXPORT CHEXABLOCKGUI_Model : public SalomeApp_DataModel
 {
     public:
       HEXABLOCKGUI_Model(CAM_Module* theModule);

@@ -23,8 +23,14 @@
 #ifndef __DUMP_STUDY_H_
 #define __DUMP_STUDY_H_
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include <map>
+
+#if defined WIN32
+#pragma warning ( disable: 4251 )
+#endif
+
 
 BEGIN_NAMESPACE_HEXA
 
@@ -38,7 +44,7 @@ BEGIN_NAMESPACE_HEXA
 #define DumpRestore            el_root->glob->dump.restore (actif)
 
 class Witness;
-class DumpStudy
+class HEXABLOCKENGINE_EXPORT DumpStudy
 {
 public :
     DumpStudy ();

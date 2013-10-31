@@ -20,6 +20,7 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTITEM_HXX_
 #define _HEXABLOCKGUI_DOCUMENTITEM_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QStandardItem>
 
@@ -156,7 +157,7 @@ namespace HEXABLOCK
 // QVariant::UserType
 
     //===================================================================================
-    class ElementItem : public QStandardItem
+    class HEXABLOCK_EXPORT ElementItem : public QStandardItem
     {
       public:
     	ElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole);
@@ -174,7 +175,7 @@ namespace HEXABLOCK
     };
     //===================================================================================
 
-    class GraphicElementItem : public ElementItem
+    class HEXABLOCK_EXPORT GraphicElementItem : public ElementItem
     {
       public:
     	GraphicElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole):
@@ -187,7 +188,7 @@ namespace HEXABLOCK
         int       IDinActor;
     };
 
-    class StandardElementItem : public ElementItem
+    class HEXABLOCK_EXPORT StandardElementItem : public ElementItem
     {
        public:
     	StandardElementItem( HEXA_NS::EltBase* docElement, QString entry, HexaType ttype, HexaTreeRole treeRole):
@@ -196,40 +197,40 @@ namespace HEXABLOCK
     	}
     };
 
-    class VertexItem : public GraphicElementItem
+    class HEXABLOCK_EXPORT VertexItem : public GraphicElementItem
     {
       public:
         VertexItem( HEXA_NS::Vertex* hexaVertex, QString entry = "");
     };
 
-    class EdgeItem : public GraphicElementItem
+    class HEXABLOCK_EXPORT EdgeItem : public GraphicElementItem
     {
       public:
         EdgeItem( HEXA_NS::Edge* hexaEdge, QString entry = "");
     };
     //-----------------------------------------
-    class QuadItem : public GraphicElementItem
+    class HEXABLOCK_EXPORT QuadItem : public GraphicElementItem
     {
       public:
         QuadItem( HEXA_NS::Quad* hexaQuad, QString entry = "");
     };
     //-----------------------------------------
 
-    class HexaItem : public GraphicElementItem
+    class HEXABLOCK_EXPORT HexaItem : public GraphicElementItem
     {
       public:
         HexaItem( HEXA_NS::Hexa* hexaHexa, QString entry = "");
     };
     //-----------------------------------------
 
-    class VectorItem : public StandardElementItem
+    class HEXABLOCK_EXPORT VectorItem : public StandardElementItem
     {
       public:
         VectorItem( HEXA_NS::Vector* hexaVector, QString entry = "");
     };
     //-----------------------------------------
 
-//    class CylinderItem : public StandardElementItem
+//    class HEXABLOCK_EXPORT CylinderItem : public StandardElementItem
 //    {
 //      public:
 //        CylinderItem( HEXA_NS::Cylinder* hexaCyl, QString entry = "");
@@ -243,7 +244,7 @@ namespace HEXABLOCK
 //    };
     //-----------------------------------------
 
-    class ElementsItem : public StandardElementItem
+    class HEXABLOCK_EXPORT ElementsItem : public StandardElementItem
     {
       public:
         ElementsItem( HEXA_NS::Elements* hexaElements, QString entry = "" );
@@ -256,7 +257,7 @@ namespace HEXABLOCK
 //    };
 
     //------------------------------------------------
-    class GeomItem: public StandardElementItem
+    class HEXABLOCK_EXPORT GeomItem: public StandardElementItem
     {
     public:
         GeomItem( HEXA_NS::EltBase* geomShape, QString entry, HexaType ttype, HexaTreeRole treeRole, HEXA_NS::EltBase* assoc = NULL );
@@ -268,35 +269,35 @@ namespace HEXABLOCK
     };
 
     //------------------------------------------------
-    class GeomShapeItem: public GeomItem
+    class HEXABLOCK_EXPORT GeomShapeItem: public GeomItem
     {
     public:
         GeomShapeItem( HEXA_NS::NewShape* shape, HEXA_NS::EltBase* assoc = NULL);
     };
 
     //------------------------------------------------
-    class GeomPointItem: public GeomItem
+    class HEXABLOCK_EXPORT GeomPointItem: public GeomItem
     {
     public:
         GeomPointItem( HEXA_NS::VertexShape* geomPoint, HEXA_NS::Vertex* associatedVertex = NULL);
     };
 
     //------------------------------------------------
-    class GeomEdgeItem: public GeomItem
+    class HEXABLOCK_EXPORT GeomEdgeItem: public GeomItem
     {
     public:
         GeomEdgeItem( HEXA_NS::EdgeShape* geomEdge, HEXA_NS::Edge* associatedEdge = NULL);
     };
 
     //------------------------------------------------
-    class GeomFaceItem: public GeomItem
+    class HEXABLOCK_EXPORT GeomFaceItem: public GeomItem
     {
     public:
         GeomFaceItem( HEXA_NS::FaceShape* geomFace, HEXA_NS::Quad* associatedQuad = NULL);
     };
 
     //-----------------------------------------
-    class GroupItem : public QStandardItem
+    class HEXABLOCK_EXPORT GroupItem : public QStandardItem
     {
     public:
     	GroupItem( HEXA_NS::Group* hexaGroup );
@@ -308,7 +309,7 @@ namespace HEXABLOCK
     };
 
 
-    class LawItem : public QStandardItem
+    class HEXABLOCK_EXPORT LawItem : public QStandardItem
     {
     public:
     	LawItem( HEXA_NS::Law* hexaLaw );
@@ -320,7 +321,7 @@ namespace HEXABLOCK
     };
 
 
-    class PropagationItem : public QStandardItem
+    class HEXABLOCK_EXPORT PropagationItem : public QStandardItem
     {
     public:
     	PropagationItem( HEXA_NS::Propagation* hexaPropagation );

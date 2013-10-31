@@ -22,11 +22,12 @@
 #ifndef __PIPE_H
 #define __PIPE_H
 
+#include "Hex_defines.hxx"
 #include "HexCylinder.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Pipe : public Cylinder 
+class HEXABLOCKENGINE_EXPORT Pipe : public Cylinder 
 {
 public :
     virtual double  getInternalRadius () { return c_int_radius; }

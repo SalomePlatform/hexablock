@@ -24,14 +24,20 @@
 #ifndef __HEX_H
 #define __HEX_H
 
+#include "Hex_defines.hxx"
+
 #include "hexa_base.hxx"
+
+#if defined WIN32
+#pragma warning ( disable: 4251 )
+#endif
 
 BEGIN_NAMESPACE_HEXA
 
 class Hex;
-Hex*  hex_instance ();
+HEXABLOCKENGINE_EXPORT Hex*  hex_instance ();
 
-class Hex
+class HEXABLOCKENGINE_EXPORT Hex
 {
 public:
    static Hex* getInstance ();
@@ -69,7 +75,7 @@ private:
 #endif    // not SWIG
 };
 
-void what ();
+HEXABLOCKENGINE_EXPORT void what ();
 
 END_NAMESPACE_HEXA
 #endif

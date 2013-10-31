@@ -152,6 +152,7 @@ SET(HEXABLOCKEngine_SOURCES
   test_unit.hxx
   test_hexa6.cxx
   HexKas_functions.cxx 
+  Hex_defines.hxx 
 )
 
 # --- rules ---

@@ -19,17 +19,7 @@
 #ifndef __HEXABLOCKGUI_DOCUMENTPANEL_HXX_
 #define __HEXABLOCKGUI_DOCUMENTPANEL_HXX_
 
-
-#if defined WIN32
-#  if defined HEXABLOCKGUI_DOCUMENTPANEL_EXPORT || defined HexablockGui_DocumentPanel_EXPORTS
-#    define HEXABLOCKGUI_DOCUMENTPANEL_EXPORT __declspec( dllexport )
-#  else
-#    define HEXABLOCKGUI_DOCUMENTPANEL_EXPORT __declspec( dllimport )
-#  endif
-#else
-#  define HEXABLOCKGUI_DOCUMENTPANEL_EXPORT
-#endif
-
+#include "HEXABLOCKGUI_Export.hxx "
 
 #define MAX_WIDTH 16777215
 #define MAX_HEIGHT 16777215
@@ -94,7 +84,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaBaseDialog : public QDialog
+    class HEXABLOCK_EXPORT HexaBaseDialog : public QDialog
     {
       Q_OBJECT
 
@@ -264,7 +254,7 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VertexDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT VertexDialog : public HexaBaseDialog,
     public Ui::VertexDialog
     {
       Q_OBJECT
@@ -292,7 +282,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT EdgeDialog : public HexaBaseDialog,
     public Ui::EdgeDialog
     {
       Q_OBJECT
@@ -318,7 +308,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT QuadDialog : public HexaBaseDialog,
     public Ui::QuadDialog
     {
       Q_OBJECT
@@ -345,7 +335,7 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT HexaDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT HexaDialog : public HexaBaseDialog,
     public Ui::HexaDialog
     {
       Q_OBJECT
@@ -380,7 +370,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT VectorDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT VectorDialog : public HexaBaseDialog,
     public Ui::VectorDialog
     {
       Q_OBJECT
@@ -405,7 +395,7 @@ namespace HEXABLOCK
     QModelIndex     _ivalue;
     };
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeGridDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeGridDialog : public HexaBaseDialog,
     public Ui::MakeGridDialog
     {
       Q_OBJECT
@@ -434,7 +424,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylinderDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeCylinderDialog : public HexaBaseDialog,
     public Ui::MakeCylinderDialog
     {
       Q_OBJECT
@@ -462,7 +452,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipeDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakePipeDialog : public HexaBaseDialog,
     public Ui::MakePipeDialog
     {
       Q_OBJECT
@@ -490,7 +480,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeCylindersDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeCylindersDialog : public HexaBaseDialog,
     public Ui::MakeCylindersDialog
     {
       Q_OBJECT
@@ -509,7 +499,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakePipesDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakePipesDialog : public HexaBaseDialog,
     public Ui::MakePipesDialog
     {
       Q_OBJECT
@@ -529,7 +519,7 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT RemoveHexaDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT RemoveHexaDialog : public HexaBaseDialog,
     public Ui::RemoveHexaDialog
     {
       Q_OBJECT
@@ -548,7 +538,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PrismQuadDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT PrismQuadDialog : public HexaBaseDialog,
     public Ui::PrismQuadDialog
     {
       Q_OBJECT
@@ -577,7 +567,7 @@ namespace HEXABLOCK
 
     };
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT JoinQuadDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT JoinQuadDialog : public HexaBaseDialog,
     public Ui::JoinQuadDialog
     {
       Q_OBJECT
@@ -608,7 +598,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MergeDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MergeDialog : public HexaBaseDialog,
     public Ui::MergeDialog
     {
       Q_OBJECT
@@ -632,7 +622,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT DisconnectDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT DisconnectDialog : public HexaBaseDialog,
     public Ui::DisconnectDialog
     {
       Q_OBJECT
@@ -658,7 +648,7 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CutEdgeDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT CutEdgeDialog : public HexaBaseDialog,
     public Ui::CutEdgeDialog
     {
       Q_OBJECT
@@ -682,7 +672,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeTransformationDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeTransformationDialog : public HexaBaseDialog,
     public Ui::TransformationDialog
     {
       Q_OBJECT
@@ -704,7 +694,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeSymmetryDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeSymmetryDialog : public HexaBaseDialog,
     public Ui::SymmetryDialog
     {
       Q_OBJECT
@@ -728,7 +718,7 @@ namespace HEXABLOCK
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformTransformationDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT PerformTransformationDialog : public HexaBaseDialog,
     public Ui::TransformationDialog
     {
       Q_OBJECT
@@ -750,7 +740,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT PerformSymmetryDialog : public HexaBaseDialog,
     public Ui::SymmetryDialog
     {
       Q_OBJECT
@@ -771,7 +761,7 @@ namespace HEXABLOCK
     void updateHelpFileName();
     };
 
-class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
+class HEXABLOCK_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     public Ui::EdgeAssocDialog
     {
       Q_OBJECT
@@ -809,7 +799,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     };
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadAssocDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT QuadAssocDialog : public HexaBaseDialog,
     public Ui::QuadAssocDialog
     {
       Q_OBJECT
@@ -840,7 +830,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT GroupDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT GroupDialog : public HexaBaseDialog,
     public Ui::GroupDialog
     {
       Q_OBJECT
@@ -872,7 +862,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT LawDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT LawDialog : public HexaBaseDialog,
     public Ui::LawDialog
     {
       Q_OBJECT
@@ -900,7 +890,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PropagationDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT PropagationDialog : public HexaBaseDialog,
     public Ui::PropagationDialog
     {
       Q_OBJECT
@@ -933,7 +923,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     // Define the compute mesh dialog box
     // ----------------------------------
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ComputeMeshDialog : public HexaBaseDialog
+    class HEXABLOCK_EXPORT ComputeMeshDialog : public HexaBaseDialog
     {
       Q_OBJECT
 
@@ -958,7 +948,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ReplaceHexaDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT ReplaceHexaDialog : public HexaBaseDialog,
     public Ui::ReplaceHexaDialog
     {
       Q_OBJECT
@@ -988,7 +978,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT QuadRevolutionDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT QuadRevolutionDialog : public HexaBaseDialog,
     public Ui::QuadRevolutionDialog
     {
       Q_OBJECT
@@ -1017,7 +1007,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
 
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT MakeHemiSphereDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT MakeHemiSphereDialog : public HexaBaseDialog,
     public Ui::MakeHemiSphereDialog
     {
       Q_OBJECT
@@ -1048,7 +1038,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     HEXA_NS::Elements *_value;
     };
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT ModelInfoDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT ModelInfoDialog : public HexaBaseDialog,
     public Ui::ModelInfoDialog
     {
         Q_OBJECT
@@ -1067,7 +1057,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
         virtual void _initInputWidget( Mode editmode ){}
     };
 
-    class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT AddShapeDialog : public HexaBaseDialog,
+    class HEXABLOCK_EXPORT AddShapeDialog : public HexaBaseDialog,
     public Ui::AddShapeDialog
     {
         Q_OBJECT
@@ -1092,7 +1082,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
     //*****************************  OBSOLETE: A SUPPRIMER !!!!  ************************************//
 
-        class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT CylinderDialog : public HexaBaseDialog,
+        class HEXABLOCK_EXPORT CylinderDialog : public HexaBaseDialog,
         public Ui::CylinderDialog
         {
           Q_OBJECT
@@ -1117,7 +1107,7 @@ class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT EdgeAssocDialog : public HexaBaseDialog,
         QModelIndex         _ivalue;
         };
 
-        class HEXABLOCKGUI_DOCUMENTPANEL_EXPORT PipeDialog : public HexaBaseDialog,
+        class HEXABLOCK_EXPORT PipeDialog : public HexaBaseDialog,
         public Ui::PipeDialog
         {
           Q_OBJECT

@@ -22,7 +22,7 @@
 #define MYGEOM_MYDLGREF_HXX
 
 #if defined WIN32
-#  if defined MYMYDLGREF_EXPORTS || defined DlgRef_EXPORTS
+#  if defined MYMYDLGREF_EXPORTS || defined MyDlgRef_EXPORTS
 #    define MYDLGREF_EXPORT __declspec( dllexport )
 #  else
 #    define MYDLGREF_EXPORT __declspec( dllimport )

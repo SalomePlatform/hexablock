@@ -4,13 +4,14 @@
 #ifndef __SUB_SHAPE_H_
 #define __SUB_SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #include <TopoDS_Shape.hxx>
 
 BEGIN_NAMESPACE_HEXA
 
-class SubShape : public EltBase
+class HEXABLOCKENGINE_EXPORT SubShape : public EltBase
 {
 public :
     SubShape (NewShape* dad, int id, int dim);

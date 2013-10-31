@@ -42,6 +42,7 @@
 #ifndef __HEX_HEXA_H_
 #define __HEX_HEXA_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #include "HexQuad.hxx"
@@ -50,7 +51,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Hexa : public EltBase
+class HEXABLOCKENGINE_EXPORT Hexa : public EltBase
 {
 public:
     virtual Quad*   getQuad   (int  nro);

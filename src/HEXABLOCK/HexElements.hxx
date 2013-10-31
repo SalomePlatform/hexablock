@@ -23,6 +23,7 @@
 #ifndef __ELEMENTS_H
 #define __ELEMENTS_H
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 #include "HexMatrix.hxx"
 
@@ -30,7 +31,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Elements : public EltBase
+class HEXABLOCKENGINE_EXPORT Elements : public EltBase
 {
 public:
    virtual Hexa*   getHexa   (int nro);

@@ -17,17 +17,18 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef _HEXABLOCKGUI_EXPORT_HXX_
-#define _HEXABLOCKGUI_EXPORT_HXX_
+#ifndef __HexTest__
+#define __HexTest__
 
 #ifdef WIN32
-#  if defined HEXABLOCKGUI_EXPORTS || defined HEXABLOCK_EXPORTS
-#    define HEXABLOCK_EXPORT __declspec( dllexport )
-#  else
-#    define HEXABLOCK_EXPORT __declspec( dllimport )
-#  endif
+  #if defined HEXABLOCKTEST_EXPORTS || defined HEXABLOCKTest_EXPORTS
+    #define HEXABLOCKTEST_EXPORT __declspec( dllexport )
+  #else
+    #define HEXABLOCKTEST_EXPORT __declspec( dllimport )
+  #endif
 #else
-#  define HEXABLOCK_EXPORT
+   #define HEXABLOCKTEST_EXPORT
 #endif
 
-#endif
+#endif //__HexTest__
+

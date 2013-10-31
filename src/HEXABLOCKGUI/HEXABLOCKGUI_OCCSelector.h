@@ -27,10 +27,11 @@
 #ifndef HEXABLOCKGUI_OCCSELECTOR_H
 #define HEXABLOCKGUI_OCCSELECTOR_H
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <LightApp_OCCSelector.h>
 
-class HEXABLOCKGUI_OCCSelector : public LightApp_OCCSelector
+class HEXABLOCK_EXPORT HEXABLOCKGUI_OCCSelector : public LightApp_OCCSelector
 {
 public:
     HEXABLOCKGUI_OCCSelector( OCCViewer_Viewer*, SUIT_SelectionMgr* );

@@ -22,13 +22,14 @@
 #ifndef __CLONER_H
 #define __CLONER_H
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 
 #include <map>
 
 BEGIN_NAMESPACE_HEXA
 
-class Cloner 
+class HEXABLOCKENGINE_EXPORT Cloner 
 {
 public:
     Cloner (Matrix* mat);

@@ -21,6 +21,8 @@
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
@@ -35,7 +37,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class DocumentModel : public QStandardItemModel
+    class HEXABLOCK_EXPORT DocumentModel : public QStandardItemModel
     {
       Q_OBJECT
     public:
@@ -496,7 +498,7 @@ namespace HEXABLOCK
     };
 
 
-    class  PatternDataModel : public QSortFilterProxyModel
+    class HEXABLOCK_EXPORT PatternDataModel : public QSortFilterProxyModel
     {
     public:
       PatternDataModel( QObject * parent = 0 );

@@ -21,7 +21,7 @@
 #ifndef MYBASICGUI_POINTDLG_H
 #define MYBASICGUI_POINTDLG_H
 
-
+#include "HEXABLOCKGUI_Export.hxx"
 
 
 #include "MyGEOMBase_Skeleton.hxx"
@@ -63,7 +63,7 @@ namespace HEXABLOCK
 // class    : MyBasicGUI_PointDlg
 // purpose  :
 //=================================================================================
-typedef class MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
+typedef class HEXABLOCK_EXPORT MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
 {
   Q_OBJECT
 

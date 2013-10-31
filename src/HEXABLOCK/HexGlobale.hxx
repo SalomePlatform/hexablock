@@ -24,6 +24,7 @@
 #ifndef _HEX_GLOBALE_H
 #define _HEX_GLOBALE_H
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include "HexDumpStudy.hxx"
 #include "HexWitness.hxx"
@@ -51,7 +52,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Globale
+class HEXABLOCKENGINE_EXPORT Globale
 {
 public :
    static Globale* getInstance ();

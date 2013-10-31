@@ -100,7 +100,7 @@ double norme (double px, double py, double pz)
 ///  dxy =  xv1*yv2 - yv1*xv2
 ///             
 // ======================================================== interCylinder
-Vertex* Cylinder::interCylinder (Cylinder* small, bool& left, bool& right)
+Vertex* Cylinder::interCylinder(Cylinder* small, bool& left, bool& right)
 {
    Real3 orig;
    int ier = interCylinder (small, left, right, orig);

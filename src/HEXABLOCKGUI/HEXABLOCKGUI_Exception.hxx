@@ -29,7 +29,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HEXABLOCKGUI_EXPORT Exception : public std::exception
+    class HEXABLOCK_EXPORT Exception : public std::exception
     {
     protected:
       std::string _what;

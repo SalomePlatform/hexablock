@@ -20,6 +20,8 @@
 #ifndef __VertexTest__
 #define __VertexTest__
 
+#include "HexTest.hxx"
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -27,7 +29,7 @@
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 
-class VertexTest : public CppUnit::TestFixture
+class HEXABLOCKTEST_EXPORT VertexTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( VertexTest );
   CPPUNIT_TEST( TestGetX );

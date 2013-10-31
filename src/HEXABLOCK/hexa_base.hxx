@@ -26,6 +26,8 @@
 #ifndef _HEXA_BASE_H_
 #define _HEXA_BASE_H_
 
+#include "Hex_defines.hxx"
+
 #include <cstdio>
 #include <cstring>
 
@@ -239,41 +241,41 @@ typedef double Real3 [DIM3];
 
                         // Quelques fonctions :
 
-pchar   get_temp_name (cpchar format, pchar nomfic);
-void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
+HEXABLOCKENGINE_EXPORT pchar   get_temp_name (cpchar format, pchar nomfic);
+HEXABLOCKENGINE_EXPORT void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
 
-double  prod_scalaire  (double v1[], double v2[]);
-double* prod_vectoriel (double v1[], double v2[], double v3[]);
-double  prod_mixte     (double vi[], double vj[], double vk[]);
+HEXABLOCKENGINE_EXPORT double   prod_scalaire  (double v1[], double v2[]);
+HEXABLOCKENGINE_EXPORT double* prod_vectoriel (double v1[], double v2[], double v3[]);
+HEXABLOCKENGINE_EXPORT double  prod_mixte     (double vi[], double vj[], double vk[]);
 
-inline double  deg2radians (double angle) {  return (angle*M_PI/180.0); }
-inline double  rad2degres  (double angle) {  return (angle*180.0/M_PI); }
+HEXABLOCKENGINE_EXPORT inline  double deg2radians (double angle) {  return (angle*M_PI/180.0); }
+HEXABLOCKENGINE_EXPORT inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI); }
 
-double  calc_norme     (double v1[]);
-double  calc_distance  (double v1[], double v2[]);
-void    calc_vecteur   (double pta[], double ptb[], double vab[]);
-void    copy_vecteur   (double va [], double vb []);
-void    calc_milieu    (double pta[], double ptb[], double milieu[]);
-int     normer_vecteur (double v1[]);
+HEXABLOCKENGINE_EXPORT double  calc_norme     (double v1[]);
+HEXABLOCKENGINE_EXPORT double  calc_distance  (double v1[], double v2[]);
+HEXABLOCKENGINE_EXPORT void    calc_vecteur   (double pta[], double ptb[], double vab[]);
+HEXABLOCKENGINE_EXPORT void    copy_vecteur   (double va [], double vb []);
+HEXABLOCKENGINE_EXPORT void    calc_milieu    (double pta[], double ptb[], double milieu[]);
+HEXABLOCKENGINE_EXPORT int     normer_vecteur (double v1[]);
 
-double carre       (double val);
-bool   same_coords (double* pa, double* pb, double epsilon=1e-6);
+HEXABLOCKENGINE_EXPORT double  carre       (double val);
+HEXABLOCKENGINE_EXPORT bool    same_coords (double* pa, double* pb, double epsilon=1e-6);
 
-bool requals (const double  v1, const double  v2);
-bool requals (const double* v1, const double* v2);
+HEXABLOCKENGINE_EXPORT bool requals (const double  v1, const double  v2);
+HEXABLOCKENGINE_EXPORT bool requals (const double* v1, const double* v2);
 
-bool   on_debug();     // == getenv ("HEXA_DB") > 0
-bool   in_test ();     // == getenv ("HEXA_TEST") > 0
-int    niv_debug();    // Implemente prochainement
+HEXABLOCKENGINE_EXPORT bool    on_debug();     // == getenv ("HEXA_DB") > 0
+HEXABLOCKENGINE_EXPORT bool   in_test ();     // == getenv ("HEXA_TEST") > 0
+HEXABLOCKENGINE_EXPORT int    niv_debug();    // Implemente prochainement
 
-void   set_minus (string& chaine);
+HEXABLOCKENGINE_EXPORT void   set_minus (string& chaine);
 
-bool   special_option ();
-void   set_special_option (bool opt);
+HEXABLOCKENGINE_EXPORT bool   special_option ();
+HEXABLOCKENGINE_EXPORT void   set_special_option (bool opt);
 
-int   sizeof_file (cpchar filename);
-char* read_file   (cpchar filename, int& size);
-cpchar get_time   (string& buffer);
+HEXABLOCKENGINE_EXPORT int    sizeof_file (cpchar filename);
+HEXABLOCKENGINE_EXPORT char*  read_file   (cpchar filename, int& size);
+HEXABLOCKENGINE_EXPORT cpchar get_time   (string& buffer);
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;

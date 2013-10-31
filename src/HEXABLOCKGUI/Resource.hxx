@@ -183,7 +183,7 @@
 
 namespace HEXABLOCK {
   namespace GUI {
-    class HEXABLOCKGUI_EXPORT Resource {
+    class HEXABLOCK_EXPORT Resource {
       public:
         Resource();
 

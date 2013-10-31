@@ -21,7 +21,11 @@
 //
 #include "Hex.hxx"
 
+#include "test_unit.hxx"
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include "HexDocument.hxx"
 #include "HexElements.hxx"

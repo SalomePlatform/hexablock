@@ -4,6 +4,7 @@
 #ifndef __ASSO_EDGE_H_
 #define __ASSO_EDGE_H_
 
+#include "Hex_defines.hxx"
 #include "HexEdgeShape.hxx"
 
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -11,7 +12,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class AssoEdge
+class HEXABLOCKENGINE_EXPORT AssoEdge
 {
 public :
     AssoEdge (EdgeShape* shape, double deb, double fin);

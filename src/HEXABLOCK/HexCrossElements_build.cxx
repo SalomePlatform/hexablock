@@ -286,7 +286,7 @@ int CrossElements::crossCylinders (Cylinder* lun, Cylinder* lautre, bool fill)
       return HERR;
       }
 
-   cross_center = cross_cyl2->interCylinder (cross_cyl1, at_left, at_right);
+   cross_center = cross_cyl2->interCylinder(cross_cyl1, at_left, at_right);
    if (cross_center==NULL)
       {
       setError (HERR);

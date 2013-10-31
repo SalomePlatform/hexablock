@@ -22,6 +22,7 @@
 #ifndef __XML_TREE_H_
 #define __XML_TREE_H_
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 
 #include <vector>
@@ -32,7 +33,7 @@ BEGIN_NAMESPACE_HEXA
                    M_IDENT, M_EQUALS, M_STRING,
                    M_COMMENT, M_END_COMMENT, M_PROLOG, M_END_PROLOG,
                    M_ERROR};
-class XmlTree
+class HEXABLOCKENGINE_EXPORT XmlTree
 {
 public :
    XmlTree (const string& name, XmlTree* dad=NULL);

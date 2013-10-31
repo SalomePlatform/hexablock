@@ -14,20 +14,20 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+// See http://www.salome-platform.org/ 
+// or email : webmaster.salome@opencascade.com
 
-#ifndef _HEXABLOCKGUI_EXPORT_HXX_
-#define _HEXABLOCKGUI_EXPORT_HXX_
+#ifndef _HEX_DEFINES_HXX_
+#define _HEX_DEFINES_HXX_
 
 #ifdef WIN32
-#  if defined HEXABLOCKGUI_EXPORTS || defined HEXABLOCK_EXPORTS
-#    define HEXABLOCK_EXPORT __declspec( dllexport )
-#  else
-#    define HEXABLOCK_EXPORT __declspec( dllimport )
-#  endif
+  #if defined HEXABLOCKENGINE_EXPORTS || defined HEXABLOCKEngine_EXPORTS
+    #define HEXABLOCKENGINE_EXPORT __declspec( dllexport )
+  #else
+    #define HEXABLOCKENGINE_EXPORT __declspec( dllimport )
+  #endif
 #else
-#  define HEXABLOCK_EXPORT
+   #define HEXABLOCKENGINE_EXPORT
 #endif
 
-#endif
+#endif //_HEX_DEFINES_HXX_

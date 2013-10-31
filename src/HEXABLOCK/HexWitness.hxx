@@ -23,17 +23,23 @@
 #ifndef __WITNESS_H_
 #define __WITNESS_H_
 
+#include "Hex_defines.hxx"
+
 #define  Mess   el_root->glob->mess << Begin
 #define  Follow el_root->glob->mess
 
 #include "hexa_base.hxx"
+
+#if defined WIN32
+#pragma warning ( disable: 4251 )
+#endif
 
 BEGIN_NAMESPACE_HEXA
 
 const std::string Begin (" **** ");
 
 class DumpStudy;
-class Witness
+class HEXABLOCKENGINE_EXPORT Witness
 {
 public :
    Witness ();

@@ -4,11 +4,12 @@
 #ifndef __LIBE_SHAPE_H_
 #define __LIBE_SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "HexSubShape.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class EdgeShape : public SubShape
+class HEXABLOCKENGINE_EXPORT EdgeShape : public SubShape
 {
 public :
     EdgeShape (NewShape* dad, int id);

@@ -23,11 +23,12 @@
 #ifndef __SHAPE_H_
 #define __SHAPE_H_
 
+#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class Shape 
+class HEXABLOCKENGINE_EXPORT Shape 
 {
 public :
     Shape (string brep);

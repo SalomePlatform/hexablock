@@ -25,10 +25,18 @@
 
 #include <string>
 #include <cstdlib>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include <sys/types.h>   // pour getpid()
+#ifndef WIN32
 #include <unistd.h>      // pour getpid()
+#else
+#include <direct.h>
+#include <process.h>
+#endif
+
 
 static int nbr_vtk = 0;
 static cpchar case_name = "hexa";
@@ -50,7 +58,11 @@ void goto_workspace ()
 
    if (w_default)
       {
+#ifndef WIN32
       pid_t pid = getpid ();
+#else
+     int pid = _getpid ();
+#endif
       char     bufpid [8];
       sprintf (bufpid, "_p%d", pid);
       workspace += bufpid;
@@ -60,7 +72,12 @@ void goto_workspace ()
    call_system (rmdir + workspace);
    call_system (mkdir + workspace);
 
+#ifndef WIN32
    chdir (workspace.c_str());
+#else
+   _chdir (workspace.c_str());
+#endif
+
 }
 // ======================================================== free_workspace
 void free_workspace ()
