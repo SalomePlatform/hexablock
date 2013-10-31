@@ -94,6 +94,7 @@ SET(HEXABLOCKEngine_HEADERS
   HexKas_functions.hxx
   HexWitness.hxx
   HexCramer.hxx
+  Hex_defines.hxx 
 )
 
 # --- sources ---
@@ -151,8 +152,7 @@ SET(HEXABLOCKEngine_SOURCES
   Hex_salome.cxx
   test_unit.hxx
   test_hexa6.cxx
-  HexKas_functions.cxx 
-  Hex_defines.hxx 
+  HexKas_functions.cxx   
 )
 
 # --- rules ---
