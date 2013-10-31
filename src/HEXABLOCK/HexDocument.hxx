@@ -26,6 +26,12 @@
 #include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
+#ifdef WIN32
+ #ifdef max
+  #undef max
+#endif
+#endif
+
 
 BEGIN_NAMESPACE_HEXA
 
