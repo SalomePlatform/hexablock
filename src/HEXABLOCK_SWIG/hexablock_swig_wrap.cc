@@ -2470,67 +2470,64 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 
 #define SWIGTYPE_p_FILE swig_types[0]
 #define SWIGTYPE_p_Hex__BiCylinder swig_types[1]
-#define SWIGTYPE_p_Hex__CrossElements swig_types[2]
-#define SWIGTYPE_p_Hex__Cylinder swig_types[3]
-#define SWIGTYPE_p_Hex__Document swig_types[4]
-#define SWIGTYPE_p_Hex__Edge swig_types[5]
-#define SWIGTYPE_p_Hex__Elements swig_types[6]
-#define SWIGTYPE_p_Hex__EltBase swig_types[7]
-#define SWIGTYPE_p_Hex__Group swig_types[8]
-#define SWIGTYPE_p_Hex__Hex swig_types[9]
-#define SWIGTYPE_p_Hex__Hex__EltBase swig_types[10]
-#define SWIGTYPE_p_Hex__Hexa swig_types[11]
-#define SWIGTYPE_p_Hex__Law swig_types[12]
-#define SWIGTYPE_p_Hex__NewShape swig_types[13]
-#define SWIGTYPE_p_Hex__Pipe swig_types[14]
-#define SWIGTYPE_p_Hex__Propagation swig_types[15]
-#define SWIGTYPE_p_Hex__Quad swig_types[16]
-#define SWIGTYPE_p_Hex__Shape swig_types[17]
-#define SWIGTYPE_p_Hex__Vector swig_types[18]
-#define SWIGTYPE_p_Hex__Vertex swig_types[19]
-#define SWIGTYPE_p_Hex__XmlWriter swig_types[20]
-#define SWIGTYPE_p_a_Hex__DIM3__double swig_types[21]
-#define SWIGTYPE_p_allocator_type swig_types[22]
-#define SWIGTYPE_p_char swig_types[23]
-#define SWIGTYPE_p_const_reference swig_types[24]
-#define SWIGTYPE_p_difference_type swig_types[25]
-#define SWIGTYPE_p_double swig_types[26]
-#define SWIGTYPE_p_int swig_types[27]
-#define SWIGTYPE_p_p_PyObject swig_types[28]
-#define SWIGTYPE_p_reference swig_types[29]
-#define SWIGTYPE_p_size_type swig_types[30]
-#define SWIGTYPE_p_std__invalid_argument swig_types[31]
-#define SWIGTYPE_p_std__vectorTHex__AssoEdge_p_std__allocatorTHex__AssoEdge_p_t_t swig_types[32]
-#define SWIGTYPE_p_std__vectorTHex__EdgeShape_p_std__allocatorTHex__EdgeShape_p_t_t swig_types[33]
-#define SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t swig_types[34]
-#define SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__allocator_type swig_types[35]
-#define SWIGTYPE_p_std__vectorTHex__EltBase_p_std__allocatorTHex__EltBase_p_t_t swig_types[36]
-#define SWIGTYPE_p_std__vectorTHex__FaceShape_p_std__allocatorTHex__FaceShape_p_t_t swig_types[37]
-#define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t swig_types[38]
-#define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type swig_types[39]
-#define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t swig_types[40]
-#define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type swig_types[41]
-#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t swig_types[42]
-#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type swig_types[43]
-#define SWIGTYPE_p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t swig_types[44]
-#define SWIGTYPE_p_std__vectorTHex__SubShape_p_std__allocatorTHex__SubShape_p_t_t swig_types[45]
-#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t swig_types[46]
-#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__allocator_type swig_types[47]
-#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t swig_types[48]
-#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t__allocator_type swig_types[49]
-#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t swig_types[50]
-#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t__allocator_type swig_types[51]
-#define SWIGTYPE_p_std__vectorTstd__string_std__allocatorTstd__string_t_t swig_types[52]
-#define SWIGTYPE_p_string swig_types[53]
-#define SWIGTYPE_p_swig__PySwigIterator swig_types[54]
-#define SWIGTYPE_p_value_type swig_types[55]
-#define SWIGTYPE_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type swig_types[56]
-#define SWIGTYPE_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type swig_types[57]
-#define SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type swig_types[58]
-#define SWIGTYPE_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type swig_types[59]
-#define SWIGTYPE_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type swig_types[60]
-static swig_type_info *swig_types[62];
-static swig_module_info swig_module = {swig_types, 61, 0, 0, 0, 0};
+#define SWIGTYPE_p_Hex__Document swig_types[2]
+#define SWIGTYPE_p_Hex__Edge swig_types[3]
+#define SWIGTYPE_p_Hex__Elements swig_types[4]
+#define SWIGTYPE_p_Hex__EltBase swig_types[5]
+#define SWIGTYPE_p_Hex__Group swig_types[6]
+#define SWIGTYPE_p_Hex__Hex swig_types[7]
+#define SWIGTYPE_p_Hex__Hex__EltBase swig_types[8]
+#define SWIGTYPE_p_Hex__Hexa swig_types[9]
+#define SWIGTYPE_p_Hex__Law swig_types[10]
+#define SWIGTYPE_p_Hex__NewShape swig_types[11]
+#define SWIGTYPE_p_Hex__Propagation swig_types[12]
+#define SWIGTYPE_p_Hex__Quad swig_types[13]
+#define SWIGTYPE_p_Hex__Shape swig_types[14]
+#define SWIGTYPE_p_Hex__Vector swig_types[15]
+#define SWIGTYPE_p_Hex__Vertex swig_types[16]
+#define SWIGTYPE_p_Hex__XmlWriter swig_types[17]
+#define SWIGTYPE_p_a_Hex__DIM3__double swig_types[18]
+#define SWIGTYPE_p_allocator_type swig_types[19]
+#define SWIGTYPE_p_char swig_types[20]
+#define SWIGTYPE_p_const_reference swig_types[21]
+#define SWIGTYPE_p_difference_type swig_types[22]
+#define SWIGTYPE_p_double swig_types[23]
+#define SWIGTYPE_p_int swig_types[24]
+#define SWIGTYPE_p_p_PyObject swig_types[25]
+#define SWIGTYPE_p_reference swig_types[26]
+#define SWIGTYPE_p_size_type swig_types[27]
+#define SWIGTYPE_p_std__invalid_argument swig_types[28]
+#define SWIGTYPE_p_std__vectorTHex__AssoEdge_p_std__allocatorTHex__AssoEdge_p_t_t swig_types[29]
+#define SWIGTYPE_p_std__vectorTHex__EdgeShape_p_std__allocatorTHex__EdgeShape_p_t_t swig_types[30]
+#define SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t swig_types[31]
+#define SWIGTYPE_p_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__allocator_type swig_types[32]
+#define SWIGTYPE_p_std__vectorTHex__EltBase_p_std__allocatorTHex__EltBase_p_t_t swig_types[33]
+#define SWIGTYPE_p_std__vectorTHex__FaceShape_p_std__allocatorTHex__FaceShape_p_t_t swig_types[34]
+#define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t swig_types[35]
+#define SWIGTYPE_p_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__allocator_type swig_types[36]
+#define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t swig_types[37]
+#define SWIGTYPE_p_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__allocator_type swig_types[38]
+#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t swig_types[39]
+#define SWIGTYPE_p_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__allocator_type swig_types[40]
+#define SWIGTYPE_p_std__vectorTHex__Shape_p_std__allocatorTHex__Shape_p_t_t swig_types[41]
+#define SWIGTYPE_p_std__vectorTHex__SubShape_p_std__allocatorTHex__SubShape_p_t_t swig_types[42]
+#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t swig_types[43]
+#define SWIGTYPE_p_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__allocator_type swig_types[44]
+#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t swig_types[45]
+#define SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t__allocator_type swig_types[46]
+#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t swig_types[47]
+#define SWIGTYPE_p_std__vectorTint_std__allocatorTint_t_t__allocator_type swig_types[48]
+#define SWIGTYPE_p_std__vectorTstd__string_std__allocatorTstd__string_t_t swig_types[49]
+#define SWIGTYPE_p_string swig_types[50]
+#define SWIGTYPE_p_swig__PySwigIterator swig_types[51]
+#define SWIGTYPE_p_value_type swig_types[52]
+#define SWIGTYPE_std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type swig_types[53]
+#define SWIGTYPE_std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type swig_types[54]
+#define SWIGTYPE_std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type swig_types[55]
+#define SWIGTYPE_std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type swig_types[56]
+#define SWIGTYPE_std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type swig_types[57]
+static swig_type_info *swig_types[59];
+static swig_module_info swig_module = {swig_types, 58, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2629,7 +2626,6 @@ namespace swig {
 #include "HexHexa.hxx"
 #include "HexEdge.hxx"
 #include "HexVector.hxx"
-#include "HexCrossElements.hxx"
 #include "HexBiCylinder.hxx"
 #include "HexNewShape.hxx"
 #include "HexGroup.hxx"
@@ -23178,46 +23174,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_cut__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Edge *arg2 = (Hex::Edge *) 0 ;
-  int arg3 ;
-  Hex::Elements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:Document_cut",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_cut" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Edge, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_cut" "', argument " "2"" of type '" "Hex::Edge *""'"); 
-  }
-  arg2 = reinterpret_cast< Hex::Edge * >(argp2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Document_cut" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  result = (Hex::Elements *)(arg1)->cut(arg2,arg3);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_Document_disconnectQuad(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
@@ -24105,50 +24061,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_countCylinder(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  int result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Document_countCylinder",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_countCylinder" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  result = (int)(arg1)->countCylinder();
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_countPipe(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  int result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Document_countPipe",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_countPipe" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  result = (int)(arg1)->countPipe();
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_Document_getHexa(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
@@ -24428,68 +24340,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_getCylinder(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  int arg2 ;
-  Hex::Cylinder *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Document_getCylinder",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_getCylinder" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Document_getCylinder" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  result = (Hex::Cylinder *)(arg1)->getCylinder(arg2);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Cylinder, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_getPipe(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  int arg2 ;
-  Hex::Pipe *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Document_getPipe",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_getPipe" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Document_getPipe" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  result = (Hex::Pipe *)(arg1)->getPipe(arg2);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Pipe, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_Document_getShape(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
@@ -24703,7 +24553,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_findQuad(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Document_findQuad__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
   Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
@@ -24739,6 +24589,101 @@ SWIGINTERN PyObject *_wrap_Document_findQuad(PyObject *SWIGUNUSEDPARM(self), PyO
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Quad, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Document_findQuad__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Document *arg1 = (Hex::Document *) 0 ;
+  Hex::Edge *arg2 = (Hex::Edge *) 0 ;
+  Hex::Edge *arg3 = (Hex::Edge *) 0 ;
+  Hex::Quad *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Document_findQuad",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_findQuad" "', argument " "1"" of type '" "Hex::Document *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Document * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Edge, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_findQuad" "', argument " "2"" of type '" "Hex::Edge *""'"); 
+  }
+  arg2 = reinterpret_cast< Hex::Edge * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_Hex__Edge, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_findQuad" "', argument " "3"" of type '" "Hex::Edge *""'"); 
+  }
+  arg3 = reinterpret_cast< Hex::Edge * >(argp3);
+  result = (Hex::Quad *)(arg1)->findQuad(arg2,arg3);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Quad, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Document_findQuad(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Document_findQuad__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Edge, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Edge, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Document_findQuad__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'Document_findQuad'.\n  Possible C/C++ prototypes are:\n    findQuad(Hex::Vertex *,Hex::Vertex *)\n    findQuad(Hex::Edge *,Hex::Edge *)\n");
   return NULL;
 }
 
@@ -25229,7 +25174,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_makeCartesian__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Document_makeCartesian(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
   Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
@@ -28029,7 +27974,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Document_cut__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Document_cut(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
   Hex::Edge *arg2 = (Hex::Edge *) 0 ;
@@ -28068,62 +28013,6 @@ SWIGINTERN PyObject *_wrap_Document_cut__SWIG_1(PyObject *SWIGUNUSEDPARM(self), 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
   return resultobj;
 fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_cut(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Edge, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_std__vectorTdouble_std__allocatorTdouble_t_t, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_Document_cut__SWIG_1(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Edge, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_Document_cut__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'Document_cut'.\n  Possible C/C++ prototypes are:\n    cut(Hex::Edge *,int)\n    cut(Hex::Edge *,Hex::RealVector &)\n");
   return NULL;
 }
 
@@ -28264,570 +28153,6 @@ SWIGINTERN PyObject *_wrap_Document_getLevel(PyObject *SWIGUNUSEDPARM(self), PyO
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_makeCartesian__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
-  Hex::Vector *arg3 = (Hex::Vector *) 0 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  int arg7 ;
-  int arg8 ;
-  int arg9 ;
-  Hex::Elements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  int val6 ;
-  int ecode6 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
-  int val8 ;
-  int ecode8 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  PyObject * obj8 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOO:Document_makeCartesian",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_makeCartesian" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Vertex, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_makeCartesian" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
-  }
-  arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_Hex__Vector, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_makeCartesian" "', argument " "3"" of type '" "Hex::Vector *""'"); 
-  }
-  arg3 = reinterpret_cast< Hex::Vector * >(argp3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Document_makeCartesian" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Document_makeCartesian" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(obj5, &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_makeCartesian" "', argument " "6"" of type '" "int""'");
-  } 
-  arg6 = static_cast< int >(val6);
-  ecode7 = SWIG_AsVal_int(obj6, &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Document_makeCartesian" "', argument " "7"" of type '" "int""'");
-  } 
-  arg7 = static_cast< int >(val7);
-  ecode8 = SWIG_AsVal_int(obj7, &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "Document_makeCartesian" "', argument " "8"" of type '" "int""'");
-  } 
-  arg8 = static_cast< int >(val8);
-  ecode9 = SWIG_AsVal_int(obj8, &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "Document_makeCartesian" "', argument " "9"" of type '" "int""'");
-  } 
-  arg9 = static_cast< int >(val9);
-  result = (Hex::Elements *)(arg1)->makeCartesian(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_makeCartesian__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
-  Hex::Vector *arg3 = (Hex::Vector *) 0 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  int arg7 ;
-  int arg8 ;
-  Hex::Elements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  int val6 ;
-  int ecode6 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
-  int val8 ;
-  int ecode8 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOO:Document_makeCartesian",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_makeCartesian" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Vertex, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_makeCartesian" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
-  }
-  arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_Hex__Vector, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_makeCartesian" "', argument " "3"" of type '" "Hex::Vector *""'"); 
-  }
-  arg3 = reinterpret_cast< Hex::Vector * >(argp3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Document_makeCartesian" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Document_makeCartesian" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(obj5, &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_makeCartesian" "', argument " "6"" of type '" "int""'");
-  } 
-  arg6 = static_cast< int >(val6);
-  ecode7 = SWIG_AsVal_int(obj6, &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Document_makeCartesian" "', argument " "7"" of type '" "int""'");
-  } 
-  arg7 = static_cast< int >(val7);
-  ecode8 = SWIG_AsVal_int(obj7, &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "Document_makeCartesian" "', argument " "8"" of type '" "int""'");
-  } 
-  arg8 = static_cast< int >(val8);
-  result = (Hex::Elements *)(arg1)->makeCartesian(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_makeCartesian__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
-  Hex::Vector *arg3 = (Hex::Vector *) 0 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  int arg7 ;
-  Hex::Elements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  int val6 ;
-  int ecode6 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:Document_makeCartesian",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_makeCartesian" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Vertex, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_makeCartesian" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
-  }
-  arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_Hex__Vector, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_makeCartesian" "', argument " "3"" of type '" "Hex::Vector *""'"); 
-  }
-  arg3 = reinterpret_cast< Hex::Vector * >(argp3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Document_makeCartesian" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Document_makeCartesian" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(obj5, &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_makeCartesian" "', argument " "6"" of type '" "int""'");
-  } 
-  arg6 = static_cast< int >(val6);
-  ecode7 = SWIG_AsVal_int(obj6, &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Document_makeCartesian" "', argument " "7"" of type '" "int""'");
-  } 
-  arg7 = static_cast< int >(val7);
-  result = (Hex::Elements *)(arg1)->makeCartesian(arg2,arg3,arg4,arg5,arg6,arg7);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_makeCartesian__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::Vertex *arg2 = (Hex::Vertex *) 0 ;
-  Hex::Vector *arg3 = (Hex::Vector *) 0 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  Hex::Elements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  int val6 ;
-  int ecode6 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOO:Document_makeCartesian",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_makeCartesian" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Hex__Vertex, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Document_makeCartesian" "', argument " "2"" of type '" "Hex::Vertex *""'"); 
-  }
-  arg2 = reinterpret_cast< Hex::Vertex * >(argp2);
-  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_Hex__Vector, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Document_makeCartesian" "', argument " "3"" of type '" "Hex::Vector *""'"); 
-  }
-  arg3 = reinterpret_cast< Hex::Vector * >(argp3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Document_makeCartesian" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Document_makeCartesian" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(obj5, &val6);
-  if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Document_makeCartesian" "', argument " "6"" of type '" "int""'");
-  } 
-  arg6 = static_cast< int >(val6);
-  result = (Hex::Elements *)(arg1)->makeCartesian(arg2,arg3,arg4,arg5,arg6);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Elements, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Document_makeCartesian(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[10];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 9); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 6) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_int(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              {
-                int res = SWIG_AsVal_int(argv[5], NULL);
-                _v = SWIG_CheckState(res);
-              }
-              if (_v) {
-                return _wrap_Document_makeCartesian__SWIG_4(self, args);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 7) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_int(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              {
-                int res = SWIG_AsVal_int(argv[5], NULL);
-                _v = SWIG_CheckState(res);
-              }
-              if (_v) {
-                {
-                  int res = SWIG_AsVal_int(argv[6], NULL);
-                  _v = SWIG_CheckState(res);
-                }
-                if (_v) {
-                  return _wrap_Document_makeCartesian__SWIG_3(self, args);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 8) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          void *vptr = 0;
-          int res = SWIG_ConvertPtr(argv[3], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-          _v = SWIG_CheckState(res);
-          if (_v) {
-            void *vptr = 0;
-            int res = SWIG_ConvertPtr(argv[4], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              int res = swig::asptr(argv[5], (std::vector<double,std::allocator<double > >**)(0));
-              _v = SWIG_CheckState(res);
-              if (_v) {
-                int res = swig::asptr(argv[6], (std::vector<double,std::allocator<double > >**)(0));
-                _v = SWIG_CheckState(res);
-                if (_v) {
-                  int res = swig::asptr(argv[7], (std::vector<double,std::allocator<double > >**)(0));
-                  _v = SWIG_CheckState(res);
-                  if (_v) {
-                    return _wrap_Document_makeCartesian__SWIG_0(self, args);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 8) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_int(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              {
-                int res = SWIG_AsVal_int(argv[5], NULL);
-                _v = SWIG_CheckState(res);
-              }
-              if (_v) {
-                {
-                  int res = SWIG_AsVal_int(argv[6], NULL);
-                  _v = SWIG_CheckState(res);
-                }
-                if (_v) {
-                  {
-                    int res = SWIG_AsVal_int(argv[7], NULL);
-                    _v = SWIG_CheckState(res);
-                  }
-                  if (_v) {
-                    return _wrap_Document_makeCartesian__SWIG_2(self, args);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 9) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Hex__Document, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Hex__Vertex, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        void *vptr = 0;
-        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Hex__Vector, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            {
-              int res = SWIG_AsVal_int(argv[4], NULL);
-              _v = SWIG_CheckState(res);
-            }
-            if (_v) {
-              {
-                int res = SWIG_AsVal_int(argv[5], NULL);
-                _v = SWIG_CheckState(res);
-              }
-              if (_v) {
-                {
-                  int res = SWIG_AsVal_int(argv[6], NULL);
-                  _v = SWIG_CheckState(res);
-                }
-                if (_v) {
-                  {
-                    int res = SWIG_AsVal_int(argv[7], NULL);
-                    _v = SWIG_CheckState(res);
-                  }
-                  if (_v) {
-                    {
-                      int res = SWIG_AsVal_int(argv[8], NULL);
-                      _v = SWIG_CheckState(res);
-                    }
-                    if (_v) {
-                      return _wrap_Document_makeCartesian__SWIG_1(self, args);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'Document_makeCartesian'.\n  Possible C/C++ prototypes are:\n    makeCartesian(Hex::Vertex *,Hex::Vector *,Hex::Vector *,Hex::Vector *,Hex::RealVector,Hex::RealVector,Hex::RealVector)\n    makeCartesian(Hex::Vertex *,Hex::Vector *,int,int,int,int,int,int)\n    makeCartesian(Hex::Vertex *,Hex::Vector *,int,int,int,int,int)\n    makeCartesian(Hex::Vertex *,Hex::Vector *,int,int,int,int)\n    makeCartesian(Hex::Vertex *,Hex::Vector *,int,int,int)\n");
   return NULL;
 }
 
@@ -30648,530 +29973,6 @@ SWIGINTERN PyObject *Elements_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_new_CrossElements(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::Document *arg1 = (Hex::Document *) 0 ;
-  Hex::EnumGrid arg2 ;
-  Hex::CrossElements *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:new_CrossElements",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_CrossElements" "', argument " "1"" of type '" "Hex::Document *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::Document * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_CrossElements" "', argument " "2"" of type '" "Hex::EnumGrid""'");
-  } 
-  arg2 = static_cast< Hex::EnumGrid >(val2);
-  result = (Hex::CrossElements *)new Hex::CrossElements(arg1,arg2);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__CrossElements, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getHexaIJK(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Hexa *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getHexaIJK",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getHexaIJK" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getHexaIJK" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getHexaIJK" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getHexaIJK" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getHexaIJK" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Hexa *)(arg1)->getHexaIJK(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Hexa, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getQuadIJ(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Quad *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getQuadIJ",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getQuadIJ" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getQuadIJ" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getQuadIJ" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getQuadIJ" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getQuadIJ" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Quad *)(arg1)->getQuadIJ(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Quad, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getQuadJK(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Quad *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getQuadJK",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getQuadJK" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getQuadJK" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getQuadJK" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getQuadJK" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getQuadJK" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Quad *)(arg1)->getQuadJK(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Quad, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getQuadIK(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Quad *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getQuadIK",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getQuadIK" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getQuadIK" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getQuadIK" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getQuadIK" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getQuadIK" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Quad *)(arg1)->getQuadIK(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Quad, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getEdgeI(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Edge *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getEdgeI",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getEdgeI" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getEdgeI" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getEdgeI" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getEdgeI" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getEdgeI" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Edge *)(arg1)->getEdgeI(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Edge, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getEdgeJ(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Edge *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getEdgeJ",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getEdgeJ" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getEdgeJ" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getEdgeJ" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getEdgeJ" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getEdgeJ" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Edge *)(arg1)->getEdgeJ(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Edge, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getEdgeK(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Edge *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getEdgeK",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getEdgeK" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getEdgeK" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getEdgeK" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getEdgeK" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getEdgeK" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Edge *)(arg1)->getEdgeK(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Edge, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CrossElements_getVertexIJK(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  Hex::Vertex *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  int val5 ;
-  int ecode5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:CrossElements_getVertexIJK",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CrossElements_getVertexIJK" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "CrossElements_getVertexIJK" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "CrossElements_getVertexIJK" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "CrossElements_getVertexIJK" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
-  if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "CrossElements_getVertexIJK" "', argument " "5"" of type '" "int""'");
-  } 
-  arg5 = static_cast< int >(val5);
-  result = (Hex::Vertex *)(arg1)->getVertexIJK(arg2,arg3,arg4,arg5);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Vertex, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_CrossElements(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Hex::CrossElements *arg1 = (Hex::CrossElements *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_CrossElements",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__CrossElements, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_CrossElements" "', argument " "1"" of type '" "Hex::CrossElements *""'"); 
-  }
-  arg1 = reinterpret_cast< Hex::CrossElements * >(argp1);
-  delete arg1;
-  
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *CrossElements_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_Hex__CrossElements, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
 SWIGINTERN PyObject *_wrap_new_BiCylinder(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
@@ -32801,8 +31602,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Document_countUsedQuad", _wrap_Document_countUsedQuad, METH_VARARGS, NULL},
 	 { (char *)"Document_countUsedEdge", _wrap_Document_countUsedEdge, METH_VARARGS, NULL},
 	 { (char *)"Document_countUsedVertex", _wrap_Document_countUsedVertex, METH_VARARGS, NULL},
-	 { (char *)"Document_countCylinder", _wrap_Document_countCylinder, METH_VARARGS, NULL},
-	 { (char *)"Document_countPipe", _wrap_Document_countPipe, METH_VARARGS, NULL},
 	 { (char *)"Document_getHexa", _wrap_Document_getHexa, METH_VARARGS, NULL},
 	 { (char *)"Document_getQuad", _wrap_Document_getQuad, METH_VARARGS, NULL},
 	 { (char *)"Document_getEdge", _wrap_Document_getEdge, METH_VARARGS, NULL},
@@ -32812,8 +31611,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Document_getUsedEdge", _wrap_Document_getUsedEdge, METH_VARARGS, NULL},
 	 { (char *)"Document_getUsedVertex", _wrap_Document_getUsedVertex, METH_VARARGS, NULL},
 	 { (char *)"Document_getVector", _wrap_Document_getVector, METH_VARARGS, NULL},
-	 { (char *)"Document_getCylinder", _wrap_Document_getCylinder, METH_VARARGS, NULL},
-	 { (char *)"Document_getPipe", _wrap_Document_getPipe, METH_VARARGS, NULL},
 	 { (char *)"Document_getShape", _wrap_Document_getShape, METH_VARARGS, NULL},
 	 { (char *)"Document_getGroup", _wrap_Document_getGroup, METH_VARARGS, NULL},
 	 { (char *)"Document_getLaw", _wrap_Document_getLaw, METH_VARARGS, NULL},
@@ -32832,6 +31629,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Document_removeLaw", _wrap_Document_removeLaw, METH_VARARGS, NULL},
 	 { (char *)"Document_makeCartesianTop", _wrap_Document_makeCartesianTop, METH_VARARGS, NULL},
 	 { (char *)"Document_makeCartesianUni", _wrap_Document_makeCartesianUni, METH_VARARGS, NULL},
+	 { (char *)"Document_makeCartesian", _wrap_Document_makeCartesian, METH_VARARGS, NULL},
 	 { (char *)"Document_makeCylinderTop", _wrap_Document_makeCylinderTop, METH_VARARGS, NULL},
 	 { (char *)"Document_makeCylinderUni", _wrap_Document_makeCylinderUni, METH_VARARGS, NULL},
 	 { (char *)"Document_makeCylinder", _wrap_Document_makeCylinder, METH_VARARGS, NULL},
@@ -32870,7 +31668,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Document_appendXml", _wrap_Document_appendXml, METH_VARARGS, NULL},
 	 { (char *)"Document_getXml", _wrap_Document_getXml, METH_VARARGS, NULL},
 	 { (char *)"Document_getLevel", _wrap_Document_getLevel, METH_VARARGS, NULL},
-	 { (char *)"Document_makeCartesian", _wrap_Document_makeCartesian, METH_VARARGS, NULL},
 	 { (char *)"Document_findVertex", _wrap_Document_findVertex, METH_VARARGS, NULL},
 	 { (char *)"Document_closeQuads", _wrap_Document_closeQuads, METH_VARARGS, NULL},
 	 { (char *)"Document_addLaw", _wrap_Document_addLaw, METH_VARARGS, NULL},
@@ -32927,17 +31724,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_Elements", _wrap_new_Elements, METH_VARARGS, NULL},
 	 { (char *)"delete_Elements", _wrap_delete_Elements, METH_VARARGS, NULL},
 	 { (char *)"Elements_swigregister", Elements_swigregister, METH_VARARGS, NULL},
-	 { (char *)"new_CrossElements", _wrap_new_CrossElements, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getHexaIJK", _wrap_CrossElements_getHexaIJK, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getQuadIJ", _wrap_CrossElements_getQuadIJ, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getQuadJK", _wrap_CrossElements_getQuadJK, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getQuadIK", _wrap_CrossElements_getQuadIK, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getEdgeI", _wrap_CrossElements_getEdgeI, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getEdgeJ", _wrap_CrossElements_getEdgeJ, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getEdgeK", _wrap_CrossElements_getEdgeK, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_getVertexIJK", _wrap_CrossElements_getVertexIJK, METH_VARARGS, NULL},
-	 { (char *)"delete_CrossElements", _wrap_delete_CrossElements, METH_VARARGS, NULL},
-	 { (char *)"CrossElements_swigregister", CrossElements_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_BiCylinder", _wrap_new_BiCylinder, METH_VARARGS, NULL},
 	 { (char *)"BiCylinder_getHexaIJK", _wrap_BiCylinder_getHexaIJK, METH_VARARGS, NULL},
 	 { (char *)"BiCylinder_getQuadIJ", _wrap_BiCylinder_getQuadIJ, METH_VARARGS, NULL},
@@ -33003,25 +31789,17 @@ static void *_p_Hex__QuadTo_p_Hex__EltBase(void *x) {
 static void *_p_Hex__ElementsTo_p_Hex__EltBase(void *x) {
     return (void *)((Hex::EltBase *)  ((Hex::Elements *) x));
 }
-static void *_p_Hex__CrossElementsTo_p_Hex__EltBase(void *x) {
-    return (void *)((Hex::EltBase *) (Hex::Elements *) ((Hex::CrossElements *) x));
-}
 static void *_p_Hex__DocumentTo_p_Hex__EltBase(void *x) {
     return (void *)((Hex::EltBase *)  ((Hex::Document *) x));
 }
 static void *_p_Hex__BiCylinderTo_p_Hex__EltBase(void *x) {
     return (void *)((Hex::EltBase *) (Hex::Elements *) ((Hex::BiCylinder *) x));
 }
-static void *_p_Hex__CrossElementsTo_p_Hex__Elements(void *x) {
-    return (void *)((Hex::Elements *)  ((Hex::CrossElements *) x));
-}
 static void *_p_Hex__BiCylinderTo_p_Hex__Elements(void *x) {
     return (void *)((Hex::Elements *)  ((Hex::BiCylinder *) x));
 }
 static swig_type_info _swigt__p_FILE = {"_p_FILE", "FILE *|pfile", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__BiCylinder = {"_p_Hex__BiCylinder", "Hex::BiCylinder *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Hex__CrossElements = {"_p_Hex__CrossElements", "Hex::CrossElements *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Hex__Cylinder = {"_p_Hex__Cylinder", "Hex::Cylinder *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Document = {"_p_Hex__Document", "Hex::Document *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Edge = {"_p_Hex__Edge", "Hex::Edge *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Elements = {"_p_Hex__Elements", "Hex::Elements *", 0, 0, (void*)0, 0};
@@ -33032,7 +31810,6 @@ static swig_type_info _swigt__p_Hex__Hex__EltBase = {"_p_Hex__Hex__EltBase", "He
 static swig_type_info _swigt__p_Hex__Hexa = {"_p_Hex__Hexa", "Hex::Hexa *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Law = {"_p_Hex__Law", "Hex::Law *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__NewShape = {"_p_Hex__NewShape", "Hex::NewShape *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Hex__Pipe = {"_p_Hex__Pipe", "Hex::Pipe *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Propagation = {"_p_Hex__Propagation", "Hex::Propagation *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Quad = {"_p_Hex__Quad", "Hex::Quad *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hex__Shape = {"_p_Hex__Shape", "Hex::Shape *|Hex::OldShape *", 0, 0, (void*)0, 0};
@@ -33083,8 +31860,6 @@ static swig_type_info _swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vert
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_FILE,
   &_swigt__p_Hex__BiCylinder,
-  &_swigt__p_Hex__CrossElements,
-  &_swigt__p_Hex__Cylinder,
   &_swigt__p_Hex__Document,
   &_swigt__p_Hex__Edge,
   &_swigt__p_Hex__Elements,
@@ -33095,7 +31870,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Hex__Hexa,
   &_swigt__p_Hex__Law,
   &_swigt__p_Hex__NewShape,
-  &_swigt__p_Hex__Pipe,
   &_swigt__p_Hex__Propagation,
   &_swigt__p_Hex__Quad,
   &_swigt__p_Hex__Shape,
@@ -33146,19 +31920,16 @@ static swig_type_info *swig_type_initial[] = {
 
 static swig_cast_info _swigc__p_FILE[] = {  {&_swigt__p_FILE, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__BiCylinder[] = {  {&_swigt__p_Hex__BiCylinder, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__CrossElements[] = {  {&_swigt__p_Hex__CrossElements, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__Cylinder[] = {  {&_swigt__p_Hex__Cylinder, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Document[] = {  {&_swigt__p_Hex__Document, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Edge[] = {  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__Elements[] = {  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__CrossElements, _p_Hex__CrossElementsTo_p_Hex__Elements, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__Elements, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__EltBase[] = {  {&_swigt__p_Hex__Group, _p_Hex__GroupTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Vertex, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__CrossElements, _p_Hex__CrossElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Elements, _p_Hex__ElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__NewShape, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hexa, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Propagation, _p_Hex__PropagationTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, _p_Hex__VectorTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Document, _p_Hex__DocumentTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Quad, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Edge, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__Elements[] = {  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__Elements, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__EltBase[] = {  {&_swigt__p_Hex__Group, _p_Hex__GroupTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Vertex, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Elements, _p_Hex__ElementsTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__NewShape, _p_Hex__NewShapeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hexa, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, _p_Hex__HexaTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, _p_Hex__VertexTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Propagation, _p_Hex__PropagationTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, _p_Hex__VectorTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__BiCylinder, _p_Hex__BiCylinderTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Document, _p_Hex__DocumentTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Quad, _p_Hex__QuadTo_p_Hex__EltBase, 0, 0},  {&_swigt__p_Hex__Edge, _p_Hex__EdgeTo_p_Hex__EltBase, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Group[] = {  {&_swigt__p_Hex__Group, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Hex[] = {  {&_swigt__p_Hex__Hex, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__Hex__EltBase[] = {  {&_swigt__p_Hex__Group, 0, 0, 0},  {&_swigt__p_Hex__Vertex, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__CrossElements, 0, 0, 0},  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Propagation, 0, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, 0, 0, 0},  {&_swigt__p_Hex__BiCylinder, 0, 0, 0},  {&_swigt__p_Hex__Document, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Hex__Hex__EltBase[] = {  {&_swigt__p_Hex__Group, 0, 0, 0},  {&_swigt__p_Hex__Vertex, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Elements, 0, 0, 0},  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Vertex_p_std__allocatorTHex__Vertex_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Propagation, 0, 0, 0},  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__std__vectorTHex__Edge_p_std__allocatorTHex__Edge_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Hex__EltBase, 0, 0, 0},  {&_swigt__p_Hex__Vector, 0, 0, 0},  {&_swigt__p_Hex__BiCylinder, 0, 0, 0},  {&_swigt__p_Hex__Document, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},  {&_swigt__p_Hex__Edge, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Hexa[] = {  {&_swigt__std__vectorTHex__Hexa_p_std__allocatorTHex__Hexa_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Hexa, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Law[] = {  {&_swigt__p_Hex__Law, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__NewShape[] = {  {&_swigt__p_Hex__NewShape, 0, 0, 0},  {&_swigt__std__vectorTHex__NewShape_p_std__allocatorTHex__NewShape_p_t_t__value_type, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Hex__Pipe[] = {  {&_swigt__p_Hex__Pipe, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Propagation[] = {  {&_swigt__p_Hex__Propagation, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Quad[] = {  {&_swigt__std__vectorTHex__Quad_p_std__allocatorTHex__Quad_p_t_t__value_type, 0, 0, 0},  {&_swigt__p_Hex__Quad, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Hex__Shape[] = {  {&_swigt__p_Hex__Shape, 0, 0, 0},{0, 0, 0, 0}};
@@ -33209,8 +31980,6 @@ static swig_cast_info _swigc__std__vectorTHex__Vertex_p_std__allocatorTHex__Vert
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_FILE,
   _swigc__p_Hex__BiCylinder,
-  _swigc__p_Hex__CrossElements,
-  _swigc__p_Hex__Cylinder,
   _swigc__p_Hex__Document,
   _swigc__p_Hex__Edge,
   _swigc__p_Hex__Elements,
@@ -33221,7 +31990,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Hex__Hexa,
   _swigc__p_Hex__Law,
   _swigc__p_Hex__NewShape,
-  _swigc__p_Hex__Pipe,
   _swigc__p_Hex__Propagation,
   _swigc__p_Hex__Quad,
   _swigc__p_Hex__Shape,
@@ -33925,17 +32693,5 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"Epsil",Epsil_get, Epsil_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"UnEpsil",UnEpsil_get, UnEpsil_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Epsil2",Epsil2_get, Epsil2_set);
-  SWIG_Python_SetConstant(d, "NbrSlices1",SWIG_From_int(static_cast< int >(Hex::NbrSlices1)));
-  SWIG_Python_SetConstant(d, "NbrSlices2",SWIG_From_int(static_cast< int >(Hex::NbrSlices2)));
-  SWIG_Python_SetConstant(d, "SizeRay",SWIG_From_int(static_cast< int >(Hex::SizeRay)));
-  SWIG_Python_SetConstant(d, "BiCyl",SWIG_From_int(static_cast< int >(Hex::BiCyl)));
-  SWIG_Python_SetConstant(d, "NbrVSlices1",SWIG_From_int(static_cast< int >(Hex::NbrVSlices1)));
-  SWIG_Python_SetConstant(d, "NbrVSlices2",SWIG_From_int(static_cast< int >(Hex::NbrVSlices2)));
-  SWIG_Python_SetConstant(d, "MiddleSlice1",SWIG_From_int(static_cast< int >(Hex::MiddleSlice1)));
-  SWIG_Python_SetConstant(d, "Cyl1",SWIG_From_int(static_cast< int >(Hex::Cyl1)));
-  SWIG_Python_SetConstant(d, "Cyl2",SWIG_From_int(static_cast< int >(Hex::Cyl2)));
-  SWIG_Python_SetConstant(d, "NO_CYL",SWIG_From_int(static_cast< int >(Hex::NO_CYL)));
-  SWIG_Python_SetConstant(d, "NO_PIPE",SWIG_From_int(static_cast< int >(Hex::NO_PIPE)));
-  SWIG_Python_SetConstant(d, "IS_HERE",SWIG_From_int(static_cast< int >(Hex::IS_HERE)));
 }
 

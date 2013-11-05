@@ -59,11 +59,11 @@ Elements* Document::makeCartesianTop (int nx, int ny, int nz)
 // ======================================================== makeCartesianUni
 Elements* Document::makeCartesianUni (Vertex* orig, 
                                       Vector* vx, Vector* vy, Vector* vz,
-                                      double  dx, double  dy, double  dz, 
+                                      double  lx, double  ly, double  lz, 
                                       int     nx, int     ny, int     nz)
 {
    DumpStart ("makeCartesianUni", orig << vx << vy << vz 
-                                       << dx << dy << dz
+                                       << lx << ly << lz
                                        << nx << ny << nz);
 
    Elements* grid = new Elements (this);
@@ -76,6 +76,9 @@ Elements* Document::makeCartesianUni (Vertex* orig,
    if (grid->isValid())
       {
       RealVector tx, ty, tz;
+      double dx = lx / nx;
+      double dy = ly / ny;
+      double dz = lz / nz;
       for (int nro=1 ; nro<=nx; ++nro) tx.push_back (nro*dx); 
       for (int nro=1 ; nro<=ny; ++nro) ty.push_back (nro*dy); 
       for (int nro=1 ; nro<=nz; ++nro) tz.push_back (nro*dz); 

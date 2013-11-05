@@ -29,7 +29,6 @@
 #include "HexHexa.hxx"
 
 #include "HexElements.hxx"
-#include "HexCrossElements.hxx"
 
 #include "HexVector.hxx"
 #include "HexMatrix.hxx"
@@ -1121,8 +1120,7 @@ char* Document::makeVarName (char* name)
 // ======================================================== isEmpty
 bool Document::isEmpty ()
 {
-   int nombre = countVertex () + countVector ()
-                               + countCylinder() + countPipe();
+   int nombre = countVertex () + countVector ();
    return nombre <= 0 && countLaw  () <= 1;
 }
 // ======================================================== getNextName

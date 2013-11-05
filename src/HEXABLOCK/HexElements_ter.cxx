@@ -39,52 +39,6 @@ BEGIN_NAMESPACE_HEXA
 
 // static bool db=false;
 
-// ====================================================== makeRind
-int Elements::makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz,
-                        double radext, double radint, double radhole,
-		        Vertex* plorig, double angle, int nr, int na, int nl)
-{
-   double phi1;
-   int ier = controlRind (type, center, vx, vz, radext, radint, radhole,
-                          plorig, angle, nr, na, nl, cyl_phi0, phi1);
-   if (ier!=HOK)
-      return ier;
-
-   resize (type, nr, na, nl);
-
-   cyl_radext  = radext;
-   cyl_radint  = radint;
-   cyl_radhole = radhole;
-   cyl_closed  = type==GR_HEMISPHERIC || type==GR_RIND;
-
-   double theta  = cyl_closed ? 2*M_PI : M_PI*angle/180;
-   cyl_dphi      = (phi1-cyl_phi0)/ size_hz;
-   cyl_dtheta    = theta / size_hy;
-
-   int nb_secteurs = cyl_closed ? size_vy-1 : size_vy;
-
-   for (int ny=0 ; ny<nb_secteurs ; ny++)
-       for (int nx=0 ; nx<size_vx ; nx++)
-           for (int nz=0 ; nz<size_vz ; nz++)
-               {
-               double px, py, pz;
-               getCylPoint (nx, ny, nz, px, py, pz);
-               Vertex* node = el_root->addVertex (px, py, pz);
-               setVertex (node, nx, ny, nz);
-               }
-   if (cyl_closed)
-      for (int nx=0 ; nx<size_vx ; nx++)
-          for (int nz=0 ; nz<size_vz ; nz++)
-              {
-              Vertex* node = getVertexIJK (nx, 0, nz);
-              setVertex (node, nx, size_vy-1, nz);
-              }
-
-   transfoVertices (center, vx, vz);
-   fillGrid ();
-   assoCylinder (center, vz, angle);
-   return HOK;
-}
 // ====================================================== getCylPoint
 int Elements::getCylPoint (int nr, int na, int nh, double& px, double& py,
                            double& pz)

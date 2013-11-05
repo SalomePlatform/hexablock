@@ -16,7 +16,7 @@ def moduleName () :
     return "HEXABLOCK"
 
 # ======================================================== getEngine
-# ### Gives the component 
+# ### Gives the component
 def getEngine () :
     return component
 
@@ -85,7 +85,7 @@ def dump(doc, mesh=None, full=False):
     print "Model blocks      number: ", uh
 
     if mesh != None:
-        print 
+        print
         print "Mesh nodes       number: ", mesh.NbNodes()
         print "Mesh segments    number: ", mesh.NbEdges()
         print "Mesh quadrangles number: ", mesh.NbQuadrangles()
@@ -125,6 +125,8 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     ### hypo.SetDocument(doc.getXml())   ## Hexa6 TODO et a verifier
+    print " Maillage du document "
+    print " Maillage du document ", docname
     hypo.SetDocument (docname);
     hypo.SetDimension(dim)
 
@@ -187,5 +189,6 @@ def addToStudy(doc):
 # ==================================================== addShape
 # Add a document in the current study
 def addShape (doc, shape, name):
+    print "Call addShape"
     forme = doc.addShape (shape.getShape(), name)
-    return forme 
+    return forme

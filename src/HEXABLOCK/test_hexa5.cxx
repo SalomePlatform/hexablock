@@ -26,7 +26,6 @@
 
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
-#include "HexCrossElements.hxx"
 
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
@@ -43,7 +42,6 @@ int test_replace5 (int nbargs, cpchar tabargs[])
    const int size_z = 2;
 
    double lgcell = 3;
-   double cray   = lgcell*size_x/2;
    double decal  = lgcell/sqrt (2.0);
 
    int nvtk = 0;
@@ -52,23 +50,11 @@ int test_replace5 (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument (son_nom);
 
-   Hex::Vertex* ori1 = doc->addVertex (-cray, -cray, 0);
    Hex::Vector* vx   = doc->addVector (3,0,0);
-   Hex::Vector* vy   = doc->addVector (0,3,0);
    Hex::Vector* vz   = doc->addVector (0,0,1);
 
-   Hex::Elements* grid1 = doc->makeCartesian (ori1, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid1 = doc->makeCartesianTop (size_x,size_y,size_z);
    doc->saveVtk (son_nom, nvtk);
-
-/************************
-   for (int nz=0 ; nz<size_z ; ++nz)
-       for (int ny=1 ; ny<3 ; ++ny)
-           for (int nx=1 ; nx<3 ; ++nx)
-               grid1->getHexaIJK (nx,ny,nz)->remove ();
-
-   doc->saveVtk (son_nom, nvtk);
-********************/
 
    for (int nz=0 ; nz<=size_z ; ++nz)
        {
@@ -89,7 +75,6 @@ int test_replace5 (int nbargs, cpchar tabargs[])
 
    Hex::Vertex* ori0 = doc->addVertex (0,-10,0);
    Hex::Vertex* ori2 = doc->addVertex (0,0,0);
-   const double dr = 1;
    const double da = 360;
    const double dl = 1;
    const int    nr = 2;
@@ -97,13 +82,13 @@ int test_replace5 (int nbargs, cpchar tabargs[])
    const int    nl = 3;
 
 
-   Hex::Elements* grid0 = doc->makeCylindrical (ori0, vx, vz, 
-                                                dr, da, dl, nr, na, 1, false);
+   Hex::Elements* grid0 = doc->makePipeUni (ori0, vx, vz, 
+                                            1.0,5.0, da, dl, nr, na, nl);
 
    doc->saveVtk (son_nom, nvtk);
 
    // Hex::Elements* grid2 = 
-   doc->makeCylindrical (ori2, vx, vz, dr, da, dl, nr, na, nl, false);
+   doc->makePipeUni (ori2, vx, vz, 1.0,5.0, da, dl, nr, na, nl);
 
    doc->saveVtk (son_nom, nvtk);
    grid0->remove ();
@@ -123,13 +108,7 @@ int test_get (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument (son_nom);
 
-   Hex::Vertex* ori1 = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid = doc->makeCartesian (ori1, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid = doc->makeCartesianTop (size_x,size_y,size_z);
    doc->saveVtk (son_nom, nvtk);
    grid->getVertexIJK (2, 1, 1)->setColor (4);
    doc->saveVtk (son_nom, nvtk);
@@ -160,23 +139,13 @@ int test_dump (int nbargs, cpchar tabargs[])
    const int size_y = 4;
    const int size_z = 2;
 
-   double lgcell = 3;
-   double cray   = lgcell*size_x/2;
-   // double decal  = lgcell/sqrt (2.0);
-
    int nvtk = 0;
    cpchar son_nom = "test_dump";
 
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument (son_nom);
 
-   Hex::Vertex* ori1 = doc->addVertex (-cray, -cray, 0);
-   Hex::Vector* vx   = doc->addVector (3,0,0);
-   Hex::Vector* vy   = doc->addVector (0,3,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   //Hex::Elements* grid1 = 
-   doc->makeCartesian (ori1, vx, vy, vz, size_x,size_y,size_z);
+   doc->makeCartesianTop (size_x,size_y,size_z);
    doc->saveVtk (son_nom, nvtk);
    return HOK;
 }

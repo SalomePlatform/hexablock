@@ -25,7 +25,6 @@
 #include "Hex.hxx"
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
-#include "HexCrossElements.hxx"
 
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
@@ -103,12 +102,10 @@ int test_sphere (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
-   Hex::Vertex*  orig = doc->addVertex (0,0,0);
 
    int    ncouches = 2;
    double k      = 1;
-   double rayon  = 1;
-   Hex::Elements* sphere = doc->makeSpherical (orig, rayon, ncouches, k);
+   Hex::Elements* sphere = doc->makeSphericalTop (ncouches, k);
 
    if (ncouches>0)
       {
@@ -135,10 +132,8 @@ int test_cartesi1 ()
 
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
 
-   Hex::Vector*   dir  = doc->addVector (1,1,1);
-   Hex::Elements* grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   Hex::Elements* grid = doc->makeCartesianTop (size_x,size_y,size_z);
 
    //  print_propagations (doc);
 
@@ -180,9 +175,7 @@ int test_find ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-   Hex::Elements*  grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   Hex::Elements*  grid = doc->makeCartesianTop (size_x,size_y,size_z);
 
    grid->saveVtk ("mini1.vtk");
    doc->dump ();
@@ -224,15 +217,12 @@ int test_joint (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
-   Hex::Vector* dir   = doc->addVector (1,1,1);
-
-   Hex::Elements* grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
+   Hex::Elements* grid1 = doc->makeCartesianTop   (dimx,dimy,dimz);
 
    Hex::Vertex*   orig2 = doc->addVertex  (dimx/2.0,0,8);
    Hex::Vector*   vectj = doc->addVector (0,1,0);
    Hex::Vector*   vecti = doc->addVector (1,0,0);
-   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vecti, vectj,
+   Hex::Elements* grid2 = doc->makeCylinderUni (orig2, vecti, vectj,
                    1, 180, 1,        dimz,dimy,dimx, true);
 
    int mx = dimx/2;
@@ -264,7 +254,7 @@ int test_joint (int nbargs, cpchar tabargs[])
 
    doc->saveVtk ("joint1.vtk");
    const int hauteur = 5;
-   Hex::Elements* joint = doc->joinQuads(liste, cible, v1,v2,v3,v4, hauteur);
+   Hex::Elements* joint = doc->joinQuadsUni(liste,cible, v1,v2,v3,v4, hauteur);
    // for (int nh=0 ; nh<hauteur ; nh++) joint->getHexa(nh)->setScalar (5);
 
    int nbr_joint_vertex =  joint->countVertex ();
@@ -285,297 +275,17 @@ int test_joint (int nbargs, cpchar tabargs[])
    doc->saveVtk ("joint2.vtk");
    return HOK;
 }
-// ======================================================== test_prism
-int test_prism (int nbargs, cpchar tabargs[])
-{
-   const int dimx = 11;
-   const int dimy = 11;
-   const int dimz = 2;
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex ( 0,0,0);
-   Hex::Vector* dir1  = doc->addVector ( 1,1,1);
-   Hex::Vector* dir2  = doc->addVector ( 1,1,-1);
-
-   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir1, dimx,dimy,dimz);
-
-   int mx = dimx/2;
-   int my = dimy/2;
-   Hex::Quads liste1, liste2;
-
-   liste1.push_back (grid1->getQuadIJ (mx, my, dimz));
-   liste2.push_back (grid1->getQuadIJ (mx, my, 0));
-   for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx)
-          {
-          liste1.push_back (grid1->getQuadIJ (nx, my, dimz));
-          liste2.push_back (grid1->getQuadIJ (nx, my, 0));
-          }
-
-   for (int ny=0; ny<dimy; ny++)
-       if (ny!=my)
-          {
-          liste1.push_back (grid1->getQuadIJ (mx, ny, dimz));
-          liste2.push_back (grid1->getQuadIJ (mx, ny, 0));
-          }
-
-   Hex::RealVector tlen;
-   double dh = 2;
-   for (int nro=0; nro<5; nro++)
-       {
-       dh = 2*dh + 1;
-       tlen.push_back (dh);
-       }
-
-   const int nbiter = 5;
-   doc->saveVtk ("prisme1.vtk");
-   Hex::Elements* prisme2 = doc->prismQuads    (liste2, dir2, nbiter);
-   doc->saveVtk ("prisme2.vtk");
-
-   Hex::Elements* prisme1 = doc->prismQuadsVec (liste1, dir1, tlen, 0);
-
-   PutData (liste1.size());
-   PutData (tlen.size());
-   PutData (prisme1->countHexa());
-   PutData (prisme1->countQuad());
-   PutData (prisme1->countEdge());
-   PutData (prisme1->countVertex());
-
-   for (int nro=0 ; nro <nbiter  ; nro++)
-       {
-       Hex::Hexa* cell = prisme2-> getHexa (nbiter+nro);
-       cell->setScalar (5);
-       }
-
-   doc->saveVtk ("prisme3.vtk");
-   return HOK;
-}
-// ======================================================== test_revolution9
-int test_revolution9 (int nbargs, cpchar tabargs[])
-{
-   const int dimx = 11;
-   const int dimy = 11;
-   const int dimz = 2;
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex (0,0,0);
-   Hex::Vector* dir   = doc->addVector (1,1,1);
-
-   Hex::Elements* grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
-
-   int mx = dimx/2;
-   int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
-   Hex::Quads liste;
-
-   liste.push_back (prems);
-   prems -> setScalar (5);
-   for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx)
-          {
-          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz);
-          liste.push_back (cell);
-          cell -> setScalar (5);
-          }
-
-   for (int ny=0; ny<dimy; ny++)
-       if (ny!=my)
-          {
-          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz);
-          liste.push_back (cell);
-          cell -> setScalar (5);
-          }
-
-   Hex::Vertex* center = doc->addVertex (0, -10, 0);
-   Hex::Vector* axis   = doc->addVector (1,   0, 0);
-   Hex::RealVector  angles;
-
-   Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);
-   Hex::Elements* grid2 = doc->makeCartesian (center, dir1, 1,1,1);
-   Hex::Hexa*     cell  = grid2->getHexaIJK (0,0,0);
-   cell->setScalar (5);
-
-   doc->saveVtk ("revolution1.vtk");
-
-   double alpha = 5;
-   int niter    = 5;
-   double coeff = 1.5;
-   for (int na=0 ; na<niter ; na++)
-       {
-       angles.push_back (alpha);
-       alpha *= coeff;
-       }
-   for (int na=1 ; na<niter ; na++)
-       {
-       alpha /= coeff;
-       angles.push_back (alpha);
-       }
-
-   Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
-   if (bloc != NULL)
-       doc->saveVtk ("revolution2.vtk");
-
-   return HOK;
-}
-// ======================================================== test_revolution
-int test_revolution (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* ori = doc->addVertex (0,0,0);
-   Hex::Vector* vx  = doc->addVector (1,0,0);
-   Hex::Vector* vz  = doc->addVector (0,0,1);
-
-   int dr = 1;
-   int da = 360;
-   int dl = 1;
-
-   int nr = 1;
-   int na = 6;
-   int nl = 1;
-
-   Hex::Elements* grid = doc->makeCylindrical (ori, vx,vz, dr,da,dl,
-                                               nr,na,nl, false);
-   Hex::Quads liste;
-   for (int nx=0; nx<nr; nx++)
-       for (int ny=0; ny<na; ny++)
-           {
-           Hex::Quad* cell = grid->getQuadIJ (nx, ny, nl);
-           liste.push_back (cell);
-           cell -> setScalar (5);
-           }
-
-   Hex::Vertex* center = doc->addVertex (0, -10, 0);
-   Hex::Vector* axis   = doc->addVector (1, 0, 0);
-   Hex::RealVector  angles;
-
-   Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);
-   Hex::Elements* grid2 = doc->makeCartesian (center, dir1, 1,1,1);
-   Hex::Hexa*     cell  = grid2->getHexaIJK (0,0,0);
-   cell->setScalar (5);
-
-   doc->saveVtk ("revolution1.vtk");
-
-   double alpha = 5;
-   int niter    = 5;
-   double coeff = 1.5;
-   for (int na=0 ; na<niter ; na++)
-       {
-       angles.push_back (alpha);
-       alpha *= coeff;
-       }
-   for (int na=1 ; na<niter ; na++)
-       {
-       alpha /= coeff;
-       angles.push_back (alpha);
-       }
-
-   Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
-   if (bloc != NULL)
-       doc->saveVtk ("revolution2.vtk");
-
-   return HOK;
-}
-// ======================================================== test_coude
-int test_coude (int nbargs, cpchar tabargs[])
-{
-#if 0
-   const int dimx = 11;
-   const int dimy = 11;
-   const int dimz = 2;
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   //   grid1 = doc->makeCartesian   (orig1, dir, dimx,dimy,dimz);
-   double dr = 1;
-   int    dl = 5;
-   int    nr = 4;
-   int    na = 8;
-
-   Hex::Elements* grid1 = doc->makeCylindrical (orig1, vx,vz,dr,360, dl,
-                                                nr, 10, nl, false);
-   int mx = dimx/2;
-   int my = dimy/2;
-   Hex::Quad* prems = grid1->getQuadIJ (mx, my, dimz);
-   Hex::Quads liste;
-
-   liste.push_back (prems);
-   prems -> setScalar (5);
-   for (int nx=0; nx<dimx; nx++)
-       if (nx!=mx)
-          {
-          Hex::Quad* cell = grid1->getQuadIJ (nx, my, dimz);
-          liste.push_back (cell);
-          cell -> setScalar (5);
-          }
-
-   for (int ny=0; ny<dimy; ny++)
-       if (ny!=my)
-          {
-          Hex::Quad* cell = grid1->getQuadIJ (mx, ny, dimz);
-          liste.push_back (cell);
-          cell -> setScalar (5);
-          }
-
-
-   Hex::Vertex* center = doc->addVertex (0, -10, 0);
-   Hex::Vector* axis   = doc->addVector (1, 0, 0);
-   Hex::RealVector  angles;
-
-   Hex::Vector*   dir1  = doc->addVector (10,0.3,0.3);
-   Hex::Elements* grid2 = doc->makeCartesian (center, dir1, 1,1,1);
-   Hex::Hexa*     cell  = grid2->getHexaIJK (0,0,0);
-   cell->setScalar (5);
-
-   doc->saveVtk ("revolution1.vtk");
-
-   double alpha = 5;
-   int niter    = 5;
-   double coeff = 1.5;
-   for (int na=0 ; na<niter ; na++)
-       {
-       angles.push_back (alpha);
-       alpha *= coeff;
-       }
-   for (int na=1 ; na<niter ; na++)
-       {
-       alpha /= coeff;
-       angles.push_back (alpha);
-       }
-
-   Hex::Elements* bloc = doc->revolutionQuads  (liste, center, axis, angles);
-   if (bloc != NULL)
-       doc->saveVtk ("revolution2.vtk");
-#endif
-   return HOK;
-}
 // ======================================================== test_count
 int test_count (int nbargs, cpchar tabargs[])
 {
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
-   Hex::Vector* vx    = doc->addVector (1,0,0);
-   Hex::Vector* vz    = doc->addVector (0,0,1);
-
-   double dr = 1;
-   double dl = 1;
    int    nr = 2;
    int    nl = 3;
 
 // Hex::Elements* c1 =
-   doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, 10, nl, false);
+   doc->makeCylinderTop (nr, 10, nl);
 
    HexDisplay (doc->countVertex ());
    HexDisplay (doc->countUsedVertex ());
@@ -593,16 +303,13 @@ int test_decoupage (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    Hex::Edge*     arete = grid->getEdgeK (0, 0, 0);
 
    //  doc ->dump ();
    int nvtk=0;
    doc ->saveVtk ("decoupe", nvtk);
-/* Hex::Elements* grid2 = */  doc->cut (arete, 1);
+/* Hex::Elements* grid2 = */  doc->cutUni (arete, 1);
 
    ///  doc ->dump ();
    doc ->saveVtk ("decoupe", nvtk);
@@ -619,10 +326,8 @@ int test_gen_xml (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
    // Hex::Elements*  grid =
-   doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   doc->makeCartesianTop (size_x,size_y,size_z);
 
    // Hex::Hexa*   cell    = grid->getHexa (0);
    // Hex::Quad*   face    = cell->getQuad (0);
@@ -672,23 +377,8 @@ int test_string_xml (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
    // Hex::Elements*  grid =
-   doc->makeCartesian (orig, dir, size_x,size_y,size_z);
-
-   // Hex::Hexa*   cell    = grid->getHexa (0);
-   // Hex::Quad*   face    = cell->getQuad (0);
-   // Hex::Edge*   arete   = cell->getEdge (0);
-   // Hex::Vertex* noeud   = cell->getVertex (0);
-
-   // Hex::Shape* shape1 = new Hex::Shape("riri");
-   // Hex::Shape* shape2 = new Hex::Shape("fifi");
-   // Hex::Shape* shape3 = new Hex::Shape("loulou");
-
-   // noeud->setAssociation (shape1);
-   // arete->setAssociation (shape2);
-   // face ->setAssociation (shape3);
+   doc->makeCartesianTop (size_x,size_y,size_z);
 
    Hex::Law* law1 = doc->addLaw("loi1", 1);
    Hex::Law* law2 = doc->addLaw("loi2", 2);
@@ -761,10 +451,7 @@ int test_clone ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-   Hex::Elements* grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
-
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    Hex::Vector*   bond  = doc->addVector (0, 0, 7);
    Hex::Elements* grid2 = doc->makeTranslation (grid, bond);
 
@@ -787,10 +474,7 @@ int test_separ ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-   //  Hex::Elements*  grid =
-   doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   doc->makeCartesianTop (size_x,size_y,size_z);
 
    doc ->saveVtk ("separ.vtk");
    doc ->dump();
@@ -803,11 +487,9 @@ int test_spherical (int nbargs, const char* tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   double       rayon  = 1;
    int          nbr    = 3;
 
-   Hex::Elements* grid = doc->makeSpherical (orig, rayon, nbr, 1);
+   Hex::Elements* grid = doc->makeSphericalTop (nbr, 1);
 
    int nbhexas = grid->countHexa ();
    HexDisplay (nbhexas);
@@ -837,18 +519,19 @@ int test_grille_cyl (int nbargs, cpchar tabargs[])
    Hex::Vector* vz = doc->addVector (0,0,1);
    Hex::Vector* vx = doc->addVector (1,0,0);
 
-   double dr = 1;
+   double rint = 5;
+   double rext = 1;
    double dl = 1;
    int    nr = 2;
    int    nl = 3;
 
-   doc->makeCylindrical (orig1, vx,vz,dr, 360, dl,nr, 4, nl, true);
+   doc->makeCylinderUni (orig1, vx,vz, rint,rext, 360,dl,nr, 4, nl);
    Hex::Elements* c2 =
-   doc->makeCylindrical (orig2, vx,vz,dr, 360, dl,nr, 8, nl, true);
-   doc->makeCylindrical (orig3, vx,vz,dr, 270, dl,nr, 8, nl, true);
-   doc->makeCylindrical (orig4, vx,vz,dr, 270, dl,nr, 7, nl, true);
-   doc->makeCylindrical (orig5, vx,vz,dr, 360, dl,nr, 5, nl, true);
-   doc->makeCylindrical (orig6, vx,vz,dr, 360, dl,nr, 6, nl, true);
+   doc->makeCylinderUni (orig2, vx,vz, rint,rext, 360,dl,nr, 8, nl);
+   doc->makeCylinderUni (orig3, vx,vz, rint,rext, 270,dl,nr, 8, nl);
+   doc->makeCylinderUni (orig4, vx,vz, rint,rext, 270,dl,nr, 7, nl);
+   doc->makeCylinderUni (orig5, vx,vz, rint,rext, 360,dl,nr, 5, nl);
+   doc->makeCylinderUni (orig6, vx,vz, rint,rext, 360,dl,nr, 6, nl);
 
    int base2 = nr*nl*8;
    c2->getHexa(base2 + 0)->setScalar (5);
@@ -872,7 +555,6 @@ int test_cylindrical (int nbargs, cpchar tabargs[])
    Hex::Vector* vx   = doc->addVector (1, 0, 0);
    Hex::Vector* vz   = doc->addVector (0, 0, 1);
 
-   double dr = 1;
    double da = 360;
    double dl = 1;
 
@@ -894,132 +576,9 @@ int test_cylindrical (int nbargs, cpchar tabargs[])
       HexDisplay (da);
       }
 
-   // Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, nr, nl);
-   // Hex::Elements* grid = doc->makeCylinder (cyl, vx, nr, na, nl);
-   doc->makeCylindrical (orig,vx, vz, dr,da,dl, nr,na, nl, true);
+   doc->makeCylinderUni (orig,vx, vz, 5.0,1.0,da,dl, nr,na, nl);
    doc->saveVtk (fic_vtk, na);
    return HOK;
-}
-// ===================================================== test_cylinder
-int test_cylinder (int nbargs, cpchar tabargs[])
-{
-   int    nvtk    = 1;
-   cpchar fic_vtk = "cylindre";
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig = doc->addVertex (0, 0, 0);
-   Hex::Vector* vx   = doc->addVector (1, 0, 0);
-   Hex::Vector* vz   = doc->addVector (0, 0, 1);
-
-   double rayon   = 10;
-   double hauteur = 6;
-
-   int nr = 2;
-   int na = 8;
-   int nl = 5;
-
-   Hex::Cylinder* cyl  = doc->addCylinder   (orig, vz, rayon, hauteur);
-   doc->makeCylinder (cyl, vx, nr, na, nl);
-   doc ->saveVtk (fic_vtk, nvtk);
-   return HOK;
-}
-// ===================================================== test_xml_cylinder
-int test_xml_cylinder (int nbargs, cpchar tabargs[])
-{
-   int    nvtk    = 0;
-   cpchar fic_vtk = "cylindre";
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex (0, 0,0);
-   Hex::Vertex* orig2 = doc->addVertex (50,0,0);
-   Hex::Vector* vz    = doc->addVector (0,0,1);
-   Hex::Vector* vx    = doc->addVector (1,0,0);
-
-   vx->setName ("vx");
-   vz->setName ("vz");
-   orig1->setName ("orig1");
-   orig2->setName ("orig2");
-
-   int nr  = 4;
-   int nri = 3;
-   int nre = nr;
-   int na = 9;
-   int nl = 5;
-
-   Hex::Cylinder* cyl  = doc->addCylinder   (orig1, vz, nr, nl);
-   Hex::Pipe*     pipe = doc->addPipe       (orig2, vz, nri, nre, nl);
-
-   Hex::Elements* grid = doc->makeCylinder (cyl,  vx, nr, na, nl);
-   doc ->saveVtk (fic_vtk, nvtk);
-
-   Hex::Group* groupe = doc->addGroup ("GroupeAMA", Hex::HexaCell);
-   groupe->addElement (grid->getHexaIJK (0,0,0));
-   groupe->addElement (grid->getHexaIJK (1,0,0));
-   groupe->addElement (grid->getHexaIJK (0,1,0));
-   groupe->addElement (grid->getHexaIJK (1,1,0));
-   groupe->addElement (grid->getHexaIJK (2,1,0));
-
-   grid->getHexaIJK  (0,0,0)->setName ("Hexa0");
-   grid->getQuadIJ   (0,0,0)->setName ("QuadIJ0");
-   grid->getEdgeK    (0,0,0)->setName ("EdgeK0");
-
-   doc->makePipe     (pipe, vx, nr, na, nl);
-   doc ->saveVtk (fic_vtk, nvtk);
-   doc->save ("cylindre");
-
-   return HOK;
-}
-// ===================================================== test_pipe
-int test_pipe (int nbargs, cpchar tabargs[])
-{
-   int    nvtk    = 0;
-   cpchar fic_vtk = "cylindre";
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex (0, 0,0);
-   Hex::Vector* vx    = doc->addVector (1,0,0);
-   Hex::Vector* vy    = doc->addVector (0,1,0);
-
-   int nr  = 1;
-   int nri = 1;
-   int nre = 2;
-   int na = 2;
-   int nl = 1;
-
-   Hex::Pipe*  pipe = doc->addPipe  (orig1, vx, nri, nre, nl);
-   doc->makePipe     (pipe, vy, nr, na, nl);
-   doc ->saveVtk (fic_vtk, nvtk);
-
-   return HOK;
-}
-// ======================================================== del_hexa
-void del_hexa (Hex::CrossElements* gr, int cyl, int ni, int nj, int nk, int dr)
-{
-   Hex::Hexa* hexa = gr->getHexaIJK (cyl, ni, nj, nk);
-   if (hexa!=NULL)
-      {
-      hexa->remove ();
-      if (dr>1)
-          save_vtk ();
-      }
-}
-// ======================================================== del_tranche
-int del_tranche (Hex::CrossElements* grid, int cyl, int ni, int nk, int dr=1)
-{
-   for (int nj = 0 ; nj < 8 ; nj++)
-        del_hexa (grid, cyl, ni, nj, nk, dr);
-
-   if (dr==1)
-      save_vtk ();
-   printf ("del_tranche (g=%d, i=%d, k=%d) : fic = %d\n",
-                         cyl, ni, nk, nbr_vtk-1);
-   return nbr_vtk;
 }
 // ======================================================== test_joint2
 int test_joint2 (int nbargs, cpchar tabargs[])
@@ -1033,21 +592,19 @@ int test_joint2 (int nbargs, cpchar tabargs[])
    Hex::Vertex* hori  = docu->addVertex (0, 0, 0);
 
    double da = 360;
-   double dr = 2;
    double dl = 1;
    int    nr = 1;
    int    na = 8;
    int    nl = 1;
-   bool   fill = true;
 
    Hex::Elements *bgrid=NULL, *hgrid=NULL;
 
-   hgrid = docu->makeCylindrical (hori, vx,vz, dr,da,dl, nr,na,nl, fill);
+   hgrid = docu->makeCylinderUni (hori, vx,vz, 5.0,1.0,da,dl, nr,na,nl);
    docu->dump ();
    save_vtk ();
 
    Hex::Vertex* bori  = docu->addVertex (0, 0, -5);
-   bgrid = docu->makeCylindrical (bori, vx,vz, dr,da,dl, nr,na,nl, fill);
+   bgrid = docu->makeCylinderUni (bori, vx,vz, 5.0,1.0,da,dl, nr,na,nl);
    save_vtk ();
 
    Hex::Quads qsource, qdest;
@@ -1091,238 +648,9 @@ int test_joint2 (int nbargs, cpchar tabargs[])
    Hex::Vertex* vs1 = hgrid->getVertexIJK (0, 0, 0);
    Hex::Vertex* vs2 = hgrid->getVertexIJK (1, 0, 0);
 
-   docu->joinQuads (qsource, cible, vs1, vc1, vs2, vc2, 1);
+   docu->joinQuadsUni (qsource, cible, vs1, vc1, vs2, vc2, 1);
    save_vtk ();
 
-   return HOK;
-}
-// ======================================================== test_croix
-int test_croix (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   case_name = "croix";
-   docu = mon_ex.addDocument (case_name);
-
-   Hex::Vertex* ori1 = docu->addVertex ( 0,0,0);
-   Hex::Vertex* ori2 = docu->addVertex (-5,0,5);
-   Hex::Vector* vz   = docu->addVector ( 0,0,1);
-   Hex::Vector* vx   = docu->addVector ( 1,0,0);
-
-   double r1 = 2;
-   double r2 = 3;
-   double l1 = 10;
-   double l2 = 10;
-
-   Hex::Cylinder*      cyl1 = docu->addCylinder (ori1, vz, r1, l1);
-   Hex::Cylinder*      cyl2 = docu->addCylinder (ori2, vx, r2, l2);
-   Hex::CrossElements* grid = docu->makeCylinders (cyl1, cyl2);
-
-   save_vtk ();
-   PutData ((BadElement (grid)));
-
-
-   Hex::Edge* pipo = docu->addEdge (ori1, ori1);
-   PutData (pipo->isValid());
-   PutData ((BadElement (pipo)));
-   return HOK;
-
-   del_tranche (grid, 0, 1, 0);
-   del_tranche (grid, 0, 1, 5);
-
-   del_tranche (grid, 1, 1, 0);
-   del_tranche (grid, 1, 1, 3);
-
-   del_tranche (grid, 1, 0, 0);
-   del_tranche (grid, 1, 0, 3);
-                                  // Le trognon
-   del_tranche (grid, 0, 0, 0);
-   del_tranche (grid, 0, 0, 5);
-   del_tranche (grid, 0, 0, 1);
-   del_tranche (grid, 0, 0, 2);
-   del_tranche (grid, 0, 0, 3);
-   del_tranche (grid, 0, 0, 4);
-                                  // Partie critique
-
-   del_tranche (grid, 1, 1, 1, 2);
-
-   del_tranche (grid, 0, 1, 1, 2);
-   del_tranche (grid, 0, 1, 4, 2);
-   del_tranche (grid, 0, 1, 3, 2);
-   del_tranche (grid, 0, 1, 2, 2);
-
-   del_tranche (grid, 1, 1, 2, 2);
-   return HOK;
-}
-// ======================================================== test_croix2
-int test_croix2 (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   case_name = "croix";
-   docu = mon_ex.addDocument (case_name);
-
-   Hex::Vertex* pt1 = docu->addVertex ( 0,0,0);
-   Hex::Vertex* pt2 = docu->addVertex (10,0,0);
-
-   Hex::Vector* dx   = docu->addVector ( 1,0,0);
-   Hex::Vector* dy   = docu->addVector ( 0,1,0);
-   Hex::Vector* dz   = docu->addVector ( 0,0,1);
-
-   double r1 = 4;
-   double r2 = 2;
-   double l1 = 20;
-   double l2 = 15;
-
-   Hex::Cylinder*      cyl1 = docu->addCylinder (pt1, dx, r1, l1);
-   Hex::Cylinder*      cyl2 = docu->addCylinder (pt2, dz, r2, l2);
-
-   int nr = 3;
-   int na = 8;
-   int nl = 2;
-   Hex::Elements* grid1 = docu->makeCylinder (cyl1, dy, nr, na, nl);
-   grid1->saveVtk ("cyl_big.vtk");
-   Hex::Elements* grid2 = docu->makeCylinder (cyl2, dy, nr, na, nl);
-   grid2->saveVtk ("cyl_small.vtk");
-
-   PutData ((BadElement (grid1)));
-   PutData ((BadElement (grid2)));
-
-   Hex::CrossElements* grid = docu->makeCylinders (cyl1, cyl2);
-
-   grid->saveVtk ("cyl_all.vtk");
-   return HOK;
-}
-// ======================================================== test_pipes
-int test_pipes (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
-   Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
-   Hex::Vector* vz   = doc->addVector ( 0,0,1);
-   Hex::Vector* vx   = doc->addVector ( 1,0,0);
-
-// double h1  =  5, ri1 = 1, re1 = 2;
-   double h1  = 10, ri1 = 1, re1 = 2;
-   double h2  = 10, ri2 = 2, re2 = 3;
-
-   Hex::Pipe* pipe1  = doc->addPipe (ori1, vz, ri1, re1, h1);
-   Hex::Pipe* pipe2  = doc->addPipe (ori2, vx, ri2, re2, h2);
-   Hex::CrossElements* grid = doc->makePipes (pipe1, pipe2);
-
-   case_name = "pipe";
-   docu      = doc;
-   save_vtk ();
-
-   del_tranche (grid, 0, 1, 0);
-   del_tranche (grid, 0, 1, 5);
-
-   del_tranche (grid, 1, 1, 0);
-   del_tranche (grid, 1, 1, 3);
-                                  // Partie critique
-
-   del_tranche (grid, 1, 1, 1, 2);
-
-   del_tranche (grid, 0, 1, 1, 2);
-   del_tranche (grid, 0, 1, 4, 2);
-   del_tranche (grid, 0, 1, 3, 2);
-   del_tranche (grid, 0, 1, 2, 2);
-
-   del_tranche (grid, 1, 1, 2, 2);
-   /* ***************************************************
-
-   int nbz [2] =  { 8, 4 };
-   int ni = 1;
-   for (int cyl = 0 ; cyl < 2 ; cyl++)
-       for (int nk = 0 ; nk < nbz[cyl] ; nk++)
-       for (int nj = 0 ; nj < 4 ; nj++)
-           {
-           int jj = nj;
-           if (cyl==0) jj = (jj+6) MODULO 8 ;
-           Hex::Hexa* hexa = grid->getHexaIJK (cyl, ni, jj, nk);
-           if (hexa!=NULL)
-              {
-              hexa->remove ();
-              doc->saveVtk (case_name,  nbr_vtk);
-              }
-           }
-      *************************************************** */
-   return HOK;
-}
-// ======================================================== test_lorraine
-int test_lorraine(int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* ori1 = doc->addVertex ( 0,0,0);
-   Hex::Vertex* ori2 = doc->addVertex (-5,0,5);
-   Hex::Vertex* ori3 = doc->addVertex ( 0,0,12);
-   Hex::Vertex* ori4 = doc->addVertex (-5,0,17);
-
-   Hex::Vector* vz   = doc->addVector ( 0,0,1);
-   Hex::Vector* vx   = doc->addVector ( 1,0,0);
-
-   int nl1 = 10;
-   int nl2 = 10;
-
-   double rsmall = 1;
-   double rmoy   = 2;
-   double rbig   = 3;
-
-   Hex::Cylinder* cyl1  = doc->addCylinder (ori1, vz, rmoy,   nl1);
-   Hex::Cylinder* cyl2  = doc->addCylinder (ori2, vx, rsmall, nl2);
-
-   Hex::Cylinder* cyl3  = doc->addCylinder (ori3, vz, rmoy, nl1);
-   Hex::Cylinder* cyl4  = doc->addCylinder (ori4, vx, rbig, nl2);
-
-   Hex::CrossElements* grid1 = doc->makeCylinders (cyl1, cyl2);
-   Hex::CrossElements* grid2 = doc->makeCylinders (cyl4, cyl3);
-
-#define Imprimer(x) printf (#x " = ") ; if (x) x->dump() ; else printf ("NULL\n")
-   const int nx_int = 0;
-   const int nx_ext = 1;
-
-   //           vc2 = grid1->getVertexIJK (Hex::CylBig, 0,0,0);
-   //           vc3 = grid2->getVertexIJK (Hex::CylSmall, 0,0,0);
-                                     //    Cyl     i     j     k
-   Hex::Quad* qb = grid1-> getQuadIJ (Hex::CylBig, nx_ext, Hex::S_E, 4);
-   Hex::Quad* qh = grid2-> getQuadIJ (Hex::CylSmall, nx_ext, Hex::S_N, 0);
-
-   Hex::Vertex* vb0 = qb->getVertex (3);
-   Hex::Vertex* vb1 = qb->getVertex (2);
-   Hex::Vertex* vh0 = qh->getVertex (0);
-   Hex::Vertex* vh1 = qh->getVertex (1);
-
-   vb0 = grid1->getVertexIJK (Hex::CylBig, 2, Hex::S_E,  4);  // cible
-   vb1 = grid1->getVertexIJK (Hex::CylBig, 2, Hex::S_NE, 4);
-   vh0 = grid2->getVertexIJK (Hex::CylSmall, 2, Hex::S_N,  0);   // depart
-   vh1 = grid2->getVertexIJK (Hex::CylSmall, 2, Hex::S_NW, 0);
-
-   Imprimer (vh0);
-   Imprimer (vh1);
-   Imprimer (vb0);
-   Imprimer (vb1);
-
-   // qb->remove ();
-   // qh->remove ();
-   Hex::Quads hliste;
-
-   hliste.push_back (qh);
-   for (int ny=1; ny<Hex::S_MAXI; ny++)
-       {
-       int ns = (ny + Hex::S_N) MODULO Hex::S_MAXI;
-       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_ext, ns, 0));
-       }
-
-   for (int ny=0; ny<4 ;  ny++)
-       hliste.push_back (grid2->getQuadIJ (Hex::CylSmall, nx_int, ny, 0));
-
-   int hauteur = 3;
-   doc->joinQuads  (hliste, qb, vh0, vb0, vh1, vb1, hauteur);
-   doc->saveVtk ("lorraine.vtk");
-
-   // doc->dump ();
    return HOK;
 }
 // ======================================================== test_disconnect2
@@ -1375,11 +703,7 @@ int test_disconnect4 (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex*   orig2 = doc->addVertex (0,0,0);
-   Hex::Vector*   vx    = doc->addVector (1,0,0);
-   Hex::Vector*   vy    = doc->addVector (0,1,0);
-   Hex::Vector*   vz    = doc->addVector (0,0,1);
-   Hex::Elements* grid2 = doc->makeCartesian (orig2, vx,vy,vz, size_x,size_y,size_z);
+   Hex::Elements* grid2 = doc->makeCartesianTop  (size_x,size_y,size_z);
 
    int nvtk = 0;
    doc->setLevel (1);
@@ -1420,9 +744,7 @@ int test_disconnect1 (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
-   Hex::Vector*   dir   = doc->addVector (1,1,1);
-   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, size_x,size_y,size_z);
+   Hex::Elements* grid1 = doc->makeCartesianTop (size_x,size_y,size_z);
 
    int nvtk = 0;
    doc->setLevel (1);
@@ -1457,10 +779,7 @@ int test_disconnect3 (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex*   orig1 = doc->addVertex (0,0,0);
-
-   Hex::Vector*   dir   = doc->addVector (1,1,1);
-   Hex::Elements* grid1 = doc->makeCartesian (orig1, dir, size_x,size_y,size_z);
+   Hex::Elements* grid1 = doc->makeCartesianTop (size_x,size_y,size_z);
 
    int nvtk = 0;
    doc->setLevel (1);
@@ -1584,10 +903,7 @@ int test_propagation ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex*   orig = doc->addVertex (0,0,0);
-   Hex::Vector*   dir  = doc->addVector (1,1,1);
-   //  Hex::Elements* grid =
-   doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   doc->makeCartesianTop (size_x,size_y,size_z);
 
    int nb = doc->countPropagation ();
    for (int nro=0 ; nro<nb ; nro++)
@@ -1630,9 +946,7 @@ int test_move ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* dir  = doc->addVector (1,1,1);
-   Hex::Elements*  grid = doc->makeCartesian (orig, dir, size_x,size_y,size_z);
+   Hex::Elements*  grid = doc->makeCartesianTop (size_x,size_y,size_z);
 
    Hex::Vector*   enhaut  = doc->addVector (0, 0, 5);
    Hex::Vector*   devant  = doc->addVector (5, 0, 0);
@@ -1676,8 +990,7 @@ int test_transfo2 (int nbargs, cpchar tabargs[])
 
    Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* dir  = doc->addVector (1,1,1);
-   Hex::Elements* grid = doc->makeCartesian (orig, dir, size_x, size_y,
-                                                        size_z);
+   Hex::Elements* grid = doc->makeCartesianTop (size_x, size_y, size_z);
    if (grid==NULL)
       return HERR;
 
@@ -1754,40 +1067,6 @@ int test_transfo2 (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
-// ======================================================== test_transfo
-int test_transfo (int nbargs, cpchar tabargs[])
-{
-   int    nvtk    = 0;
-   cpchar fic_vtk = "transfo";
-
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-   doc ->setLevel (1);
-
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-   double dr = 1;
-   double da = 360;
-   double dl = 1;
-   int nr = 3;
-   int na = 8;
-   int nl = 3;
-   Hex::Elements* grid = doc->makeCylindrical (orig, vx,vz, dr, da, dl,
-                                                            nr, na, nl, false);
-   if (grid==NULL)
-      return HERR;
-
-   doc ->saveVtk (fic_vtk, nvtk);
-   Hex::Vector*   devant  = doc->addVector (10, 0, 0);
-
-   Hex::Elements* grid2 = doc->makeTranslation (grid, devant);
-   if (grid2==NULL)
-      return HERR;
-   doc ->saveVtk (fic_vtk, nvtk);
-
-   return HOK;
-}
 // ======================================================== test_copy_document
 int test_copy_document (int nbargs, cpchar tabargs[])
 {
@@ -1810,11 +1089,7 @@ int test_remove ()
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig  = doc->addVertex (0,0,0);
-   Hex::Vertex* orig1 = doc->addVertex (6,0,0);
-   Hex::Vector* dir   = doc->addVector (1,1,1);
-   Hex::Elements* grid  = doc->makeCartesian (orig, dir,  size_x,size_y,size_z);
-   doc->makeCartesian (orig1, dir, 1,1,1);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    doc->saveVtk ("removeConn1.vtk");
 
    Echo ("--------- Avant destruction");
@@ -1870,43 +1145,6 @@ void init_vec (Hex::RealVector& tab, double n0=0, double n1=0, double n2=0,
    if (n15>0.0) tab.push_back (n15);
    if (n16>0.0) tab.push_back (n16);
 }
-// ================================================== test_cylindricals
-int test_cylindricals (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig = doc->addVertex (0, 0, 0);
-   Hex::Vector* vz   = doc->addVector (0, 0, 1);
-   Hex::Vector* vx   = doc->addVector (1 ,0, 0);
-
-   Hex::RealVector tdr, tda, tdl;
-
-   /******************
-   init_vec (tdr, 2, 1, 0.5);
-   init_vec (tda, 40, 35, 30, 25, 20, 15, 10, 5,
-                   5, 10, 15, 20, 25, 30, 35, 40);
-   init_vec (tdl, 1, 2, 3 );
-
-   init_vec (tdr, 1, 1, 1, 1);
-   init_vec (tda, 45,45, 45,45, 45,45, 45,45 );
-   init_vec (tdl, 1, 1, 1 );
-
-    ****************** */
-
-
-   init_vec (tdr, 1, 2, 1, 2);
-   init_vec (tda, 20, 20, 20 );
-   init_vec (tdl, 1 );
-
-   Hex::Elements* grid=doc->makeCylindricals (orig, vx,vz, tdr,tda,tdl, false);
-
-   doc->saveVtk ("cylindricals.vtk");
-   doc->dump();
-   grid->clearAssociation();
-   doc->clearAssociation();
-   return HOK;
-}
 // ======================================================== test_edge
 int test_edge (int nbargs, cpchar tabargs[])
 {
@@ -1935,8 +1173,6 @@ int test_hexa (int nbargs, cpchar tabargs[])
 
 
    goto_workspace ();
-   ier = test_cylindricals (nbargs, tabargs);
-   ier = test_transfo (nbargs, tabargs);
    free_workspace ();
 
    return ier;

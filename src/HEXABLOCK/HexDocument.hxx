@@ -102,7 +102,6 @@ public :
    int performSymmetryPlane (Elements* elts, Vertex* ver, Vector* vec);
 
                                  // ----------------- Modifications
-   Elements* cut (Edge* edge, int nbcuts);
    Elements* disconnectQuad   (Hexa* maille, Quad*   face);
    Elements* disconnectEdge   (Hexa* maille, Edge*   arete);
    Elements* disconnectVertex (Hexa* maille, Vertex* noeud);
@@ -141,9 +140,6 @@ public :
    int countUsedEdge   ();
    int countUsedVertex ();
 
-   int countCylinder ()             { return doc_cylinder.size(); }
-   int countPipe ()                 { return doc_pipe.size(); }
-
                                  // ----------------- get par indice
    Hexa*   getHexa   (int nro);
    Quad*   getQuad   (int nro);
@@ -156,8 +152,6 @@ public :
    Vertex* getUsedVertex (int nro);
 
    Vector*      getVector   (int nro);
-   Cylinder*    getCylinder (int nro);
-   Pipe*        getPipe     (int nro);
    NewShape*    getShape    (int nro);
    Group*       getGroup    (int nro);
    Law*         getLaw      (int nro);
@@ -167,6 +161,7 @@ public :
    Vertex* findVertex (double  vx, double  vy, double vz);
    Edge*   findEdge   (Vertex* va, Vertex* vb);
    Quad*   findQuad   (Vertex* va, Vertex* vb);
+   Quad*   findQuad   (Edge*   ea, Edge*   eb);
    Hexa*   findHexa   (Vertex* va, Vertex* vb);
 
    Group*       findGroup   (cpchar name);
@@ -270,9 +265,6 @@ public :
 
    int  getLevel ()                    { return doc_db ; }
 
-   Elements* makeCartesian   (Vertex* v, Vector* v1,  // Obsolete
-                       int px, int py, int pz, int mx=0, int my=0, int mz=0);
-
    Vertex* findVertex (int id);
 
    int     closeQuads    (Quad* q1, Quad* q2);
@@ -290,66 +282,7 @@ public :
 #ifndef SWIG
                                                         // addShape HorsPython
    NewShape* addShape (TopoDS_Shape& forme, const char* name);
-                                 // ----------------- Perimes Hexav6
-   Cylinder* addCylinder   (Vertex* b, Vector* d, double r,  double h);
-   Pipe*     addPipe  (Vertex* b, Vector* d, double ri, double re, double h);
-   Elements* makeCartesian   (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
-                              int px, int py, int pz);
 
-   Elements* makeCartesian1  (Vertex* v, Vector* v1, Vector* v2, Vector* v3,
-                              int px, int py, int pz, int mx, int my, int mz);
-
-   Elements* makeCylindrical (Vertex* c, Vector* b, Vector* h, double dr,
-                              double da, double dl, int nr, int na, int nl,
-                              bool fill);
-   Elements* makeCylindricals (Vertex* c, Vector* b, Vector* h,
-                            RealVector tdr, RealVector tda, RealVector tdh,
-                            bool fill=false);
-
-   Elements* makeCylinder  (Cylinder* cyl, Vector* vx, int nr, int na, int nl);
-   Elements* makePipe      (Pipe*     pip, Vector* vx, int nr, int na, int nl);
-
-   Elements* makeSpherical   (Vertex* center, double rayon, int nb, double k);
-
-   CrossElements* makeCylinders  (Cylinder* cyl1, Cylinder* cyl2);
-   CrossElements* makePipes      (Pipe*    pipe1, Pipe* pipe2);
-   BiCylinder*    makeBiCylinder (Cylinder* cyl1, Cylinder* cyl2);
-   BiCylinder*    makeBiPipe     (Pipe*    pipe1, Pipe*    pipe2);
-
-   Elements* makeSphere (Vertex* center, Vector* vx, Vector* vz,
-                         double radius, double radhole,
-                         Vertex* plorig,
-                         int nrad, int nang, int nhaut);
-
-   Elements* makePartSphere (Vertex* center, Vector* vx, Vector* vz,
-                             double  radius, double radhole,
-                             Vertex* plorig, double angle,
-                             int nrad, int nang, int nhaut);
-
-   Elements* makeRind (Vertex* center, Vector* vx, Vector* vz,
-                       double  radext, double radint, double radhole,
-                       Vertex* plorig,
-                       int nrad, int nang, int nhaut);
-
-   Elements* makePartRind (Vertex* center, Vector* vx, Vector* vz,
-                           double  radext, double radint, double radhole,
-                           Vertex* plorig, double angle,
-                           int nrad, int nang, int nhaut);
-
-   Elements* prismQuad     (Quad* start, Vector* dv, int nb);
-   Elements* prismQuads    (Quads start, Vector* dv, int nb);
-   Elements* prismQuadsVec (Quads start, Vector* dv, RealVector th, int k);
-
-   Elements* revolutionQuadsVec (Quads start, Vertex* center, Vector* axis,
-                              RealVector angles);
-
-   Elements* joinQuad  (Quad*  start, Quad* dest, Vertex* v1, Vertex* v2,
-                                      Vertex* v3, Vertex* v4, int nb);
-
-   Elements* joinQuads (Quads start, Quad* dest, Vertex* v1, Vertex* v2,
-                                     Vertex* v3, Vertex* v4, int nb);
-
-                                 // ----------------- Perimes (fin)
 public :
    void         dumpPropagation  ();
 
@@ -367,8 +300,6 @@ public :
    void clearAssoVertices ();
    void clearAssoEdges   ();
    void clearAssoQuads   ();
-
-   Quad*   findQuad   (Edge* ea, Edge* eb);
 
 public:
    ~Document ();
@@ -480,10 +411,7 @@ private :
 
    std::vector <Propagation*> doc_propagation;
    std::vector <Group*>       doc_group;
-
    std::vector <Vector*>      doc_vector;
-   std::vector <Cylinder*>    doc_cylinder;
-   std::vector <Pipe*>        doc_pipe;
    XmlWriter*                 doc_xml;
 
    // --------------------------------------------------- Evols Hexa3

@@ -26,7 +26,6 @@
 
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
-#include "HexCrossElements.hxx"
 
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
@@ -45,13 +44,7 @@ int test_hexa_quads_5 (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
 
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_5";
@@ -94,13 +87,7 @@ int test_hexa_quads_ab (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
 
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_ab";
@@ -143,13 +130,7 @@ int test_hexa_quads_ac (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_ac";
    doc->saveVtk (fic_vtk, nvtk);
@@ -196,13 +177,7 @@ int test_hexa_quads_ace (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_ace";
    doc->saveVtk (fic_vtk, nvtk);
@@ -248,13 +223,7 @@ int test_hexa_quads_acd (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_acd";
    doc->saveVtk (fic_vtk, nvtk);
@@ -300,13 +269,7 @@ int test_hexa_quads_abcd (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid  = doc->makeCartesian (orig, vx, vy, vz, 
-                                              size_x,size_y,size_z);
+   Hex::Elements* grid  = doc->makeCartesianTop (size_x,size_y,size_z);
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_abcd";
    doc->saveVtk (fic_vtk, nvtk);
@@ -351,13 +314,7 @@ int test_hexa_quads_abce (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid = doc->makeCartesian (orig, vx, vy, vz, 
-                                            size_x,size_y,size_z);
+   Hex::Elements* grid = doc->makeCartesianTop (size_x,size_y,size_z);
    int nvtk = 0;
    cpchar fic_vtk = "HexaQuad_abce";
    doc->saveVtk (fic_vtk, nvtk);
@@ -472,131 +429,6 @@ int test_hexa_quads_ac1 (int nbargs, cpchar tabargs[])
    doc->saveVtk ("hexa_quads.vtk");
    return HOK;
 }
-// ======================================================== test_part_rind
-int test_part_rind (int& nvtk)
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* center  = doc->addVertex (0,0,0);
-   Hex::Real    radius  = 8;
-   Hex::Real    radint  = 7;
-   Hex::Vertex* orig    = NULL;
-   Hex::Vector* vz      = doc->addVector (0,0,1);
-   Hex::Vector* vx      = doc->addVector (1,0,0);
-   Hex::Real    angle   = 90;
-   Hex::Real    radhole = 1;
-   int nrad  = 3;
-   int nang  = 4;
-   int nhaut = 8;
-
-   Hex::Elements* grid = doc->makePartRind (center, vx, vz, radius, radint, 
-                                      radhole, orig, angle, nrad, nang, nhaut);
-   if (grid!=NULL)
-       doc->saveVtk ("makeSphere", nvtk);
-   return HOK;
-}
-// ======================================================== test_rind
-int test_rind (int& nvtk)
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* center  = doc->addVertex (0,0,0);
-   Hex::Real    radius  = 8;
-   Hex::Real    radint  = 7;
-   Hex::Vertex* orig    = doc->addVertex (0,0,0);
-   Hex::Vector* vz      = doc->addVector (0,1,1);
-   Hex::Vector* vx      = doc->addVector (1,0,0);
-   Hex::Real    radhole = 1;
-   int nrad  = 3;
-   int nang  = 16;
-   int nhaut = 8;
-
-   Hex::Elements* grid = doc->makeRind (center, vx, vz, radius, radint, 
-                                      radhole, orig, nrad, nang, nhaut);
-   if (grid!=NULL)
-       doc->saveVtk ("makeSphere", nvtk);
-   return HOK;
-}
-// ======================================================== test_part_sphere
-int test_part_sphere (int& nvtk)
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* center  = doc->addVertex (0,0,0);
-   Hex::Real    radius  = 8;
-   Hex::Vertex* orig    = doc->addVertex (0,0,-4);
-   Hex::Vector* vz      = doc->addVector (0,0,1);
-   Hex::Vector* vx      = doc->addVector (1,0,0);
-   Hex::Real    angle   = 90;
-   Hex::Real    radhole = 1;
-   int nrad  = 3;
-   int nang  = 4;
-   int nhaut = 8;
-
-   Hex::Elements* grid = doc->makePartSphere (center, vx, vz, radius, 
-                                      radhole, orig, angle, nrad, nang, nhaut);
-   if (grid!=NULL)
-       doc->saveVtk ("makeSphere", nvtk);
-   return HOK;
-}
-// ======================================================== test_sphere
-int test_sphere (int& nvtk)
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* center  = doc->addVertex (0,0,0);
-   Hex::Real    radius  = 8;
-   Hex::Vertex* orig    = doc->addVertex (0,0,0);
-   Hex::Vector* vz      = doc->addVector (0,0,1);
-   Hex::Vector* vx      = doc->addVector (1,0,0);
-   Hex::Real    radhole = 1;
-   int nrad  = 3;
-   int nang  = 16;
-   int nhaut = 8;
-
-   Hex::Elements* grid = doc->makeSphere (center, vx, vz, radius, 
-                                      radhole, orig, nrad, nang, nhaut);
-   if (grid!=NULL)
-       doc->saveVtk ("makeSphere", nvtk);
-   return HOK;
-}
-// ================================================== test_asso_grid
-int test_asso_grid (int nbargs, cpchar tabargs[])
-{
-   Hex::Hex mon_ex;
-   Hex::Document* doc = mon_ex.addDocument ();
-
-   Hex::Vertex* orig1 = doc->addVertex ( 0, 0,0);
-
-   Hex::Vector* vz = doc->addVector (0,0,1);
-   Hex::Vector* vx = doc->addVector (1,0,0);
-
-   double dr = 1;
-   double dl = 1;
-   int    nr = 2;
-   int    nl = 3;
-   int    na = 8;
-
-   Hex::Elements *c1 = NULL;
-
-   c1 = doc->makeCylindrical (orig1, vx,vz,dr, 300, dl, nr, na, nl, false);
-   for (int ned=0 ; ned<na ; ned++)
-       { 
-       Hex::Edge* edge = c1->getEdgeJ (nr, ned, 1);
-       if (edge != NULL)
-          edge->setScalar (5);
-       else 
-          printf (" ... c1->getEdgeJ (nr, %d, 1) = NULL\n", ned);
-       }
-
-   doc->saveVtk ("asso_grid.vtk");
-
-   return HOK;
-}
 // ======================================================== test_piquage
 int test_piquage (int nbargs, cpchar tabargs[])
 {
@@ -607,15 +439,11 @@ int test_piquage (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
    Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
    Hex::Vector* vz   = doc->addVector (0,0,1);
 
-   Hex::Elements* grid    = doc->makeCartesian (orig, vx, vy, vz, 
-                                                size_x,size_y,size_z);
+   Hex::Elements* grid    = doc->makeCartesianTop (size_x,size_y,size_z);
 
-   double dr = 1;
    double dl = 1;
 
    int nr = 1;
@@ -623,8 +451,8 @@ int test_piquage (int nbargs, cpchar tabargs[])
    int nl = 1;
 
    Hex::Vertex*   orig2 = doc->addVertex (0,0,5);
-   Hex::Elements* grid2 = doc->makeCylindrical (orig2, vx,vz,
-                                                dr, 360, dl, nr, na, nl, false);
+   Hex::Elements* grid2 = doc->makeCylinderUni (orig2, vx,vz, 1.0, 5.0, 
+                                                360, dl, nr, na, nl);
 
    Hex::Vertex* c1 = grid->getVertexIJK (1, 2, size_z);
    Hex::Vertex* c2 = grid->getVertexIJK (1, 1, size_z);
@@ -670,13 +498,7 @@ int test_replace (int nbargs, cpchar tabargs[])
    Hex::Hex mon_ex;
    Hex::Document* doc = mon_ex.addDocument ();
 
-   Hex::Vertex* orig = doc->addVertex (0,0,0);
-   Hex::Vector* vx   = doc->addVector (1,0,0);
-   Hex::Vector* vy   = doc->addVector (0,1,0);
-   Hex::Vector* vz   = doc->addVector (0,0,1);
-
-   Hex::Elements* grid    = doc->makeCartesian (orig, vx, vy, vz, 
-                                                size_x,size_y,size_z);
+   Hex::Elements* grid    = doc->makeCartesianTop (size_x,size_y,size_z);
 
    Hex::Vertex* c1 = grid->getVertexIJK (1, 2, size_z);
    Hex::Vertex* c2 = grid->getVertexIJK (1, 1, size_z);
@@ -723,16 +545,6 @@ int test_replace (int nbargs, cpchar tabargs[])
    c3->setScalar (6);
    doc->saveVtk ("replace1.vtk");
 
-   return HOK;
-}
-// ======================================================== test_hemispheres
-int test_hemispheres (int nbargs, cpchar tabargs[])
-{
-   int nvtk = 0;
-   test_sphere      (nvtk);
-   test_rind        (nvtk);
-   test_part_rind   (nvtk);
-   test_part_sphere (nvtk);
    return HOK;
 }
 // ======================================================== test_quads

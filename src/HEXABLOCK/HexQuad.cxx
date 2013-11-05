@@ -75,22 +75,51 @@ Quad::Quad (Edge* ea, Edge* eb, Edge* ec, Edge* ed)
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {
-       int prec = (nro+1) MODULO QUAD4;
-       Vertex* node = NULL;
-
        if (BadElement (q_edge[nro]))
-          setError ();
+          setError (886);
        else
           {
           for (int nv=nro+1 ; nv<QUAD4 ; nv++)
               if (q_edge[nv] == q_edge[nro])
-                  setError ();
-          int nc  = q_edge[nro] -> inter (q_edge[prec]);
-          if (nc>=0)
-             node = q_edge[nro]->getVertex (nc);
-          else
-             setError (888);
+                  setError (887);
           }
+       }
+
+   if (isValid())
+      {
+                // Cond necessaire : ea disjoint de ec (opposes)
+      int nc = ea->inter (ec);
+      if (nc>=0)
+         {
+         nc = ea->inter (eb);
+         if (nc<0)
+            {
+            q_edge [E_C] = eb;
+            q_edge [E_B] = ec;
+            }
+         else
+            {
+            nc = ea->inter (ed);
+            if (nc<0)
+               {
+               q_edge [E_C] = ed;
+               q_edge [E_D] = ec;
+               }
+            else
+               setError (880);
+            }
+         }
+      }
+
+   for (int nro=0 ; nro<QUAD4 ; nro++)
+       {
+       int prec = (nro+1) MODULO QUAD4;
+       Vertex* node = NULL;
+       int nc  = q_edge[nro] -> inter (q_edge[prec]);
+       if (nc>=0)
+          node = q_edge[nro]->getVertex (nc);
+       else
+          setError (888);
        q_vertex [prec] = node;
        }
 

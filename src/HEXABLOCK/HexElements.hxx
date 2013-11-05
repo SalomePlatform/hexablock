@@ -88,34 +88,13 @@ public:
 
    int saveVtk  (cpchar nomfic, int& nro);
 
-   int makeCartesianGrid (Vertex* orig, Vector* v1, Vector* v2, Vector* v3,
-                      int px, int py, int pz, int mx=0, int my=0, int mz=0);
-
-   int makeCylinder (Cylinder* cyl, Vector* base, int nr, int na, int nl);
-   int makePipe     (Cylinder* cyl, Vector* base, int nr, int na, int nl);
-
-   int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h,
-         double dr, double da, double dl, int nr, int na, int nl, bool fill);
-
-   int makeSphericalGrid (Vertex* v, Vector* dv, int nb, double k=1); // perime
-   int makeSphericalGrid (Vertex* v, double rayon, int nb, double k=1); // perime
-
-   int  joinQuads (Quads& q0, int nb, Vertex* v1, Vertex* v2, Vertex* v3,
-                   Vertex* v4, Quad* dest);
    int coupler  (int nro, Quad* other, StrOrient* orient);
-
-   int  prismQuads (Quads& start, Vector* dv, int nb);
-   int  prismQuadsVec (Quads& start, Vector* dv, RealVector& tlen, int crit);
 
    int  cutHexas   (const Edges& edges, int nbcuts);
 
    void setVertex (Vertex* node, int nx, int ny, int nz);
 
    void transfoVertices (double* orig, double* base, double* haut);
-			     // DELETE les 2 suivants 
-   void transfoVertices (Vertex* orig, Vector* vi, Vector* vj, Vector* vk);
-   void transfoVertices (Vertex* orig, Vector* base, Vector* haut);
-
 
    void setVertex (Vertex* node, int nro);
    void setEdge   (Edge*   edge, int nro);
@@ -127,22 +106,12 @@ public:
               // Evols Hexa3
 
    int getCylPoint (int nr, int na, int nh, double& px, double& py, double& pz);
-   int revolutionQuads (Quads& start, Vertex* center, Vector* axis,
-                        RealVector &angles);
-
-   int makeRind (EnumGrid type, Vertex* center, Vector* vx, Vector* vz,
-                 double rext, double rint,  double radhole,
-                 Vertex* plorig, double angle, int nrad, int nang, int nhaut);
 
    static int controlRind (EnumGrid type, Vertex* cx, Vector* vx, Vector* vz,
                            double rext, double rint, double radhole,
                            Vertex* plorig, double angle,
                            int nrad, int nang, int nhaut,
                            double &phi0, double &phi1);
-
-   int makeCylindricalGrid (Vertex* c, Vector* b, Vector* h,
-                            RealVector& tdr, RealVector& tda, RealVector& tdh,
-                            bool fill=false);
 
    int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1,
                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
@@ -278,17 +247,8 @@ protected :
 
    void resize (EnumGrid type, int nx, int ny=0, int nz=0, int nplus=0);
 
-   int makeCartesianNodes (Vertex* orig, Vector* v1, Vector* v2, Vector* v3,
-                      int px, int py, int pz, int mx=0, int my=0, int mz=0);
-
    int makeCylindricalNodes (Vertex* c, Vector* b, Vector* h,
          double dr, double da, double dl, int nr, int na, int nl, bool fill);
-
-   int makeBasicCylinder (double dr, double da, double dl, int nr, int na,
-                                                           int nl, bool fill);
-
-   int addStrate (Quad* i_quad[], Edge* i_edge[], Vertex* i_node[],  // DEL
-                  Vertex* center,  double lambda);
 
    int addStrate (Quad* i_quad[], Edge* i_edge[], Vertex* i_node[],
                   double* center,  double lambda);

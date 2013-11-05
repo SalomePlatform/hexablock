@@ -813,8 +813,6 @@ class Document(EltBase):
     def countUsedQuad(*args): return _hexablock_swig.Document_countUsedQuad(*args)
     def countUsedEdge(*args): return _hexablock_swig.Document_countUsedEdge(*args)
     def countUsedVertex(*args): return _hexablock_swig.Document_countUsedVertex(*args)
-    def countCylinder(*args): return _hexablock_swig.Document_countCylinder(*args)
-    def countPipe(*args): return _hexablock_swig.Document_countPipe(*args)
     def getHexa(*args): return _hexablock_swig.Document_getHexa(*args)
     def getQuad(*args): return _hexablock_swig.Document_getQuad(*args)
     def getEdge(*args): return _hexablock_swig.Document_getEdge(*args)
@@ -824,8 +822,6 @@ class Document(EltBase):
     def getUsedEdge(*args): return _hexablock_swig.Document_getUsedEdge(*args)
     def getUsedVertex(*args): return _hexablock_swig.Document_getUsedVertex(*args)
     def getVector(*args): return _hexablock_swig.Document_getVector(*args)
-    def getCylinder(*args): return _hexablock_swig.Document_getCylinder(*args)
-    def getPipe(*args): return _hexablock_swig.Document_getPipe(*args)
     def getShape(*args): return _hexablock_swig.Document_getShape(*args)
     def getGroup(*args): return _hexablock_swig.Document_getGroup(*args)
     def getLaw(*args): return _hexablock_swig.Document_getLaw(*args)
@@ -844,6 +840,7 @@ class Document(EltBase):
     def removeLaw(*args): return _hexablock_swig.Document_removeLaw(*args)
     def makeCartesianTop(*args): return _hexablock_swig.Document_makeCartesianTop(*args)
     def makeCartesianUni(*args): return _hexablock_swig.Document_makeCartesianUni(*args)
+    def makeCartesian(*args): return _hexablock_swig.Document_makeCartesian(*args)
     def makeCylinderTop(*args): return _hexablock_swig.Document_makeCylinderTop(*args)
     def makeCylinderUni(*args): return _hexablock_swig.Document_makeCylinderUni(*args)
     def makeCylinder(*args): return _hexablock_swig.Document_makeCylinder(*args)
@@ -882,7 +879,6 @@ class Document(EltBase):
     def appendXml(*args): return _hexablock_swig.Document_appendXml(*args)
     def getXml(*args): return _hexablock_swig.Document_getXml(*args)
     def getLevel(*args): return _hexablock_swig.Document_getLevel(*args)
-    def makeCartesian(*args): return _hexablock_swig.Document_makeCartesian(*args)
     def findVertex(*args): return _hexablock_swig.Document_findVertex(*args)
     def closeQuads(*args): return _hexablock_swig.Document_closeQuads(*args)
     def addLaw(*args): return _hexablock_swig.Document_addLaw(*args)
@@ -983,43 +979,6 @@ class Elements(EltBase):
     __del__ = lambda self : None;
 Elements_swigregister = _hexablock_swig.Elements_swigregister
 Elements_swigregister(Elements)
-
-NbrSlices1 = _hexablock_swig.NbrSlices1
-NbrSlices2 = _hexablock_swig.NbrSlices2
-SizeRay = _hexablock_swig.SizeRay
-BiCyl = _hexablock_swig.BiCyl
-NbrVSlices1 = _hexablock_swig.NbrVSlices1
-NbrVSlices2 = _hexablock_swig.NbrVSlices2
-MiddleSlice1 = _hexablock_swig.MiddleSlice1
-Cyl1 = _hexablock_swig.Cyl1
-Cyl2 = _hexablock_swig.Cyl2
-NO_CYL = _hexablock_swig.NO_CYL
-NO_PIPE = _hexablock_swig.NO_PIPE
-IS_HERE = _hexablock_swig.IS_HERE
-class CrossElements(Elements):
-    __swig_setmethods__ = {}
-    for _s in [Elements]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, CrossElements, name, value)
-    __swig_getmethods__ = {}
-    for _s in [Elements]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, CrossElements, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _hexablock_swig.new_CrossElements(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def getHexaIJK(*args): return _hexablock_swig.CrossElements_getHexaIJK(*args)
-    def getQuadIJ(*args): return _hexablock_swig.CrossElements_getQuadIJ(*args)
-    def getQuadJK(*args): return _hexablock_swig.CrossElements_getQuadJK(*args)
-    def getQuadIK(*args): return _hexablock_swig.CrossElements_getQuadIK(*args)
-    def getEdgeI(*args): return _hexablock_swig.CrossElements_getEdgeI(*args)
-    def getEdgeJ(*args): return _hexablock_swig.CrossElements_getEdgeJ(*args)
-    def getEdgeK(*args): return _hexablock_swig.CrossElements_getEdgeK(*args)
-    def getVertexIJK(*args): return _hexablock_swig.CrossElements_getVertexIJK(*args)
-    __swig_destroy__ = _hexablock_swig.delete_CrossElements
-    __del__ = lambda self : None;
-CrossElements_swigregister = _hexablock_swig.CrossElements_swigregister
-CrossElements_swigregister(CrossElements)
 
 class BiCylinder(Elements):
     __swig_setmethods__ = {}

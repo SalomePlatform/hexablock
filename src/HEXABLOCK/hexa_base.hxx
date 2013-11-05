@@ -195,9 +195,6 @@ class XmlWriter;
 class XmlTree;
 
 class  Elements;
-class  GridElements;
-class  SphericalGrid;
-class  CrossElements;
 class  BiCylinder;
 
 struct  StrOrient;

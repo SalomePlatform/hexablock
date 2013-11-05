@@ -28,7 +28,6 @@
 #include "HexHexa.hxx"
 
 #include "HexElements.hxx"
-#include "HexCrossElements.hxx"
 
 #include "HexVector.hxx"
 #include "HexMatrix.hxx"

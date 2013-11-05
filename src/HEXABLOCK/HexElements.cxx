@@ -475,17 +475,6 @@ int Elements::coupler (int nquad, Quad* dest, StrOrient* orient)
        }
    return HOK;
 }
-// ====================================================== makeCylindricalNodes
-int Elements::makeCylindricalNodes (Vertex* orig, Vector* base, Vector* haut,
-            double dr, double da, double dl, int nr, int na, int nl, bool fill)
-{
-   int ier = makeBasicCylinder (dr, da, dl, nr, na, nl, fill);
-   if (ier!=HOK)
-       return ier;
-
-   transfoVertices  (orig,  base, haut);
-   return HOK;
-}
 // ====================================================== transform
 int Elements::transform (Matrix* matrice)
 {

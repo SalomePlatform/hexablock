@@ -194,6 +194,38 @@ void Hexa::controlerFaces  ()
               setError (888);
               }
        }
+   for (int dd=0 ; dd<DIM3 ; dd++)
+       {
+       Quad* qa  = h_quad [2*dd];
+       Quad* qb  = h_quad [2*dd+1];
+       Edge* cut = qa->inter (qb);
+       if (cut != NULL)
+          {
+          bool more = true;
+          for (int nc=2*dd+2 ; more && nc<HQ_MAXI ; nc++)
+              {
+              Edge* cut = qa->inter (h_quad[nc]);
+              if (cut==NULL)
+                 {
+                 more = false;
+                 // cout << " ... le quad oppose au quad " << 2*dd
+                      // << " est le " << nc << endl;
+                 qb             = h_quad[nc];
+                 h_quad[nc]     = h_quad [2*dd+1];
+                 h_quad[2*dd+1] = qb;
+                 }
+              }
+          if (more)
+             {
+             char num [10];
+             sprintf (num, "%d", 2*dd+1);
+             el_root->putError ("addHexa : the %sth quad has no opposed quad",
+                                 num);
+             setError (886);
+             return ;
+             }
+          }
+       }
 }
 // ======================================================== controlerSommets
 void Hexa::controlerSommets  ()

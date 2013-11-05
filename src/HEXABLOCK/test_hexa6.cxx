@@ -26,7 +26,6 @@
 #include "HexDocument.hxx"
 #include "HexElements.hxx"
 #include "HexBiCylinder.hxx"
-// #include "HexCrossElements.hxx"
 
 #include "HexHexa.hxx"
 // #include "HexQuad.hxx"
@@ -108,20 +107,24 @@ int test_cartesian6 (int nbargs, cpchar tabargs[])
 
    Hex::Document* doc  = get_document ();
 
+/***********************
    Hex::Elements* grid1 = doc->makeCartesianTop (size_x, size_y, size_z);
    grid1->saveVtk ("makeCartesianTop.vtk");
    PutData (grid1->isValid());
    return HOK;
+***************************/
 
-   Hex::Vertex*   orig2 = doc->addVertex (10, 0, 0);
+   Hex::Vertex*   orig2 = doc->addVertex (0, 0, 0);
    Hex::Vector*   vx    = doc->addVector (1, 0, 0);
    Hex::Vector*   vy    = doc->addVector (0, 1, 0);
    Hex::Vector*   vz    = doc->addVector (0, 0, 1);
-   double dx =1, dy=1, dz=1;
+   int   nx = 2, ny=1, nz=2;
+   double dx =nx, dy=ny, dz=nz;
    Hex::Elements* grid2 = doc->makeCartesianUni (orig2, vx, vy, vz, dx, dy, dz,
-                                                        size_x, size_y, size_z);
+                                                                    nx, ny, nz);
    grid2->saveVtk ("makeCartesianUni.vtk");
    PutData (grid2->isValid());
+   return HOK;
 
    Hex::Vertex*   orig3 = doc->addVertex (20, 0, 0);
    Hex::RealVector tx, ty, tz;
@@ -183,13 +186,13 @@ int test_cylinder_top (int nbargs, cpchar tabargs[])
 int test_cylinder6 (int nbargs, cpchar tabargs[])
 {
    case_name = "cylinders";
+   Hex::Document* doc   = get_document ();
+
+   /********************
    const int size_x = 3;
    const int size_y = 8;
    const int size_z = 2;
 
-   Hex::Document* doc   = get_document ();
-
-   /********************
    Hex::Elements* grid1 = doc->makeCylinderTop (size_x, size_y, size_z);
    grid1->saveVtk ("makeCylinderTop.vtk");
    PutData (grid1->isValid());
@@ -501,7 +504,7 @@ int test_revolution6 (int nbargs, cpchar tabargs[])
    Hex::Vertex* v4     = doc->addVertex (10, 0, 2);
    Hex::Quad* quad     = doc->addQuadVertices (v1, v2, v3, v4);
 
-   Hex::Elements* grid0 = doc->revolutionQuadUni  (quad, centre, vz, 180, 8);
+   doc->revolutionQuadUni  (quad, centre, vz, 180, 8);
    doc->saveVtk ("revolution1.vtk");
    return HOK;
 
