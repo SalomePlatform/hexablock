@@ -216,6 +216,10 @@ EXPORT(TARGETS ${_${PROJECT_NAME}_exposed_targets}
 SET(GEOM_ROOT_DIR "${GEOM_ROOT_DIR}")
  
 SET(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}/include")
+
+# Build variables that will be expanded when configuring Salome<MODULE>Config.cmake:
+# SALOME_CONFIGURE_PREPARE() #For use in the future
+
 CONFIGURE_PACKAGE_CONFIG_FILE(${PROJECT_NAME}Config.cmake.in
     ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION "${SALOME_INSTALL_CMAKE_LOCAL}"
