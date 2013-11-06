@@ -56,7 +56,13 @@ class gp_Ax2;
 // -----------------------------------------------------------
 #define Standard_True true
 #define Handle(x) int
-enum {TopAbs_VERTEX,  TopAbs_EDGE,  TopAbs_FACE };
+                        // Extrait de TopAbs_ShapeEnum.hxx 
+enum TopAbs_ShapeEnum {
+  TopAbs_COMPOUND, TopAbs_COMPSOLID, TopAbs_SOLID, TopAbs_SHELL,
+  TopAbs_FACE, TopAbs_WIRE, TopAbs_EDGE, TopAbs_VERTEX,
+  TopAbs_SHAPE
+};
+
 // -----------------------------------------------------------
 class gp_Pnt
 {

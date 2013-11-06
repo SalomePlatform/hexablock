@@ -168,6 +168,14 @@ double EdgeShape::getParam (double* coord)
       return -1.0;
 
    GeomAdaptor_Curve  adapt_curve (handle);
+   kind_of   = (EnumKindOfShape) (adapt_curve.GetType() + 1);
+
+/******************
+   enum GeomAbs_CurveType { GeomAbs_Line, GeomAbs_Circle, GeomAbs_Ellipse,
+                            GeomAbs_Hyperbola, GeomAbs_Parabola, GeomAbs_BezierCurve,
+                            GeomAbs_BSplineCurve, GeomAbs_OtherCurve };
+ **********************/
+
    double abscis = GCPnts_AbscissaPoint::Length (adapt_curve, umin, gparam);
    double hparam = abscis/lin_length;
 

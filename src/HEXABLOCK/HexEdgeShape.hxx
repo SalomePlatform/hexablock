@@ -26,6 +26,7 @@ public :
     double  getParam  (double point[]);
     double  getLength ();
     int     onExtremity (double point[]);
+    bool    isLinear    ()                   { return kind_of == KS_Line ; }
 
     static bool samePoints (double point1[], double point2[]);
 

@@ -58,7 +58,6 @@ SET(_link_LIBRARIES
 # header files
 SET(HEXABLOCKEngine_HEADERS
   HexGroup.hxx
-  HexCylinder.hxx
   HexEdge.hxx
   HexGlobale.hxx
   HexPropagation.hxx
@@ -76,7 +75,6 @@ SET(HEXABLOCKEngine_HEADERS
   HexDocument.hxx
   HexEltBase.hxx
   Hex.hxx
-  HexPipe.hxx
   HexShape.hxx
   HexOldShape.hxx
   HexNewShape.hxx
@@ -87,7 +85,6 @@ SET(HEXABLOCKEngine_HEADERS
   HexBiCylinderShape.hxx
   HexAssoEdge.hxx
   HexXmlTree.hxx
-  HexCrossElements.hxx
   HexBiCylinder.hxx
   HexDumpStudy.hxx
   HexAnaQuads.hxx
@@ -117,9 +114,7 @@ SET(HEXABLOCKEngine_SOURCES
   HexElements_piq.cxx
   HexElements_asso.cxx
   HexElements_grid.cxx
-  HexCylinder.cxx
   HexGroup.cxx
-  HexPipe.cxx
   HexLaw.cxx
   HexShape.cxx
   HexNewShape.cxx
@@ -136,18 +131,14 @@ SET(HEXABLOCKEngine_SOURCES
   HexXmlTree.cxx
   HexXmlWriter.cxx
   HexDumpStudy.cxx
-  HexCrossElements.cxx
-  HexCrossElements_build.cxx
   HexBiCylinder.cxx
   Hex.cxx
   HexDocument_asso.cxx
   HexDocument_quads.cxx
-  HexDocument_del.cxx
   HexDocument_skin.cxx
   HexDocument_v6.cxx
   HexElements_v6.cxx
   HexElements_check.cxx
-  HexElements_del.cxx
   HexWitness.cxx
   Hex_salome.cxx
   test_unit.hxx
