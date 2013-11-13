@@ -54,10 +54,13 @@ SET(BUILD_SHARED_LIBS TRUE)
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/adm_local/cmake_files")
 
 # User options
-# (some options have already been defined in KERNEL) 
 # ============
 OPTION(SALOME_BUILD_TESTS "Build SALOME tests" ON)
 OPTION(SALOME_BUILD_DOC "Generate SALOME HEXABLOCK documentation" ON)
+
+IF(SALOME_BUILD_TESTS)
+  ENABLE_TESTING()
+ENDIF()
 
 # Advanced options:
 OPTION(SALOME_BUILD_GUI "Enable GUI" ON)
