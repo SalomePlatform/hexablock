@@ -20,7 +20,7 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
+#include "hexa_base.hxx"
 
 #include <QItemSelectionModel>
 #include <LightApp_SelectionMgr.h>
@@ -30,6 +30,8 @@
 
 #include "klinkitemselectionmodel.hxx"
 
+#include "HEXABLOCKGUI_DocumentModel.hxx"
+
 class OCCViewer_ViewWindow;
 
 
@@ -38,7 +40,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class HEXABLOCK_EXPORT SelectionModel: public QItemSelectionModel
+    class HexaExport SelectionModel: public QItemSelectionModel
     {
         Q_OBJECT
 
@@ -51,11 +53,15 @@ namespace HEXABLOCK
             QModelIndex     indexBy( int role, const QVariant& var );
             QModelIndex     indexOf( const QString& anIOEntry, int role );
             QModelIndexList indexListOf( const QString& anEntry, int role );
+            DocumentModel*  getDocModel() const;
+            void            showEltInfo(QModelIndex& elt);
 
             virtual void geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
             virtual void vtkSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject ) {}
 
             void clearHighlightedItems() { currentHighlightedItems.clear(); }
+
+            void setInfoMode(bool isOn) { infoMode = isOn; }
 
        protected slots:
 
@@ -69,21 +75,21 @@ namespace HEXABLOCK
 
        protected:
             QModelIndexList getSelectionFromModel(const Handle(SALOME_InteractiveObject)& anIObject);
-
             QModelIndexList currentHighlightedItems;
+            static bool infoMode;
     };
 
-    class PatternBuilderSelectionModel: public KLinkItemSelectionModel
-    {
-      public:
-        PatternBuilderSelectionModel( QAbstractItemModel *model, 
-                                      QItemSelectionModel *proxySelector, QObject *parent = 0 ):
-        KLinkItemSelectionModel( model, proxySelector, parent )
-        {
-        }
-    };
+//    class PatternBuilderSelectionModel: public KLinkItemSelectionModel
+//    {
+//      public:
+//        PatternBuilderSelectionModel( QAbstractItemModel *model,
+//                                      QItemSelectionModel *proxySelector, QObject *parent = 0 ):
+//        KLinkItemSelectionModel( model, proxySelector, parent )
+//        {
+//        }
+//    };
 
-    class PatternDataSelectionModel : public SelectionModel
+    class HexaExport PatternDataSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -107,7 +113,7 @@ namespace HEXABLOCK
 
     };
 
-    class PatternGeomSelectionModel : public SelectionModel
+    class HexaExport PatternGeomSelectionModel : public SelectionModel
     {
         Q_OBJECT
 
@@ -128,7 +134,7 @@ namespace HEXABLOCK
     };
 
 
-    class GroupsSelectionModel : public SelectionModel
+    class HexaExport GroupsSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -143,7 +149,7 @@ namespace HEXABLOCK
     };
 
 
-    class MeshSelectionModel : public SelectionModel
+    class HexaExport MeshSelectionModel : public SelectionModel
     {
       Q_OBJECT
 

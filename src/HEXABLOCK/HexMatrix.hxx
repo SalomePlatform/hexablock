@@ -23,7 +23,6 @@
 #ifndef __MATRIX_H
 #define __MATRIX_H
 
-#include "Hex_defines.hxx"
 #include "HexVertex.hxx"
 #include "HexVector.hxx"
 
@@ -31,7 +30,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT Matrix
+class HexaExport Matrix
 {
 public:
     Matrix ();

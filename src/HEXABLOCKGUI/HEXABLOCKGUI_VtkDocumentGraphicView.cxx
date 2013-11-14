@@ -19,88 +19,28 @@
 
 //#define _DEVDEBUG_
 
-#include <sstream>
-
-#include <iostream>
-
-#include <math.h>
-
-#include "utilities.h"
-
-#include <QtGui>
-
-
-#include <LightApp_Application.h>
-
-#include <SUIT_ViewManager.h>
-#include <SUIT_ViewWindow.h>
-#include <SVTK_ViewManager.h>
-#include <SVTK_ViewModel.h>
-#include <SVTK_ViewWindow.h>
-#include <SVTK_Prs.h>
-#include <SALOME_Actor.h>
-#include <VTKViewer_Algorithm.h>
-#include <SalomeApp_Study.h>
-
 // VTK includes
 #include <vtkRenderer.h>
-#include <vtkActorCollection.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
-#include <SVTK_View.h>
-// test tutorial (sphere)
-#include <vtkPolyDataMapper.h>
-#include <vtkSphereSource.h>
-
-// test point (cf. SMESHGUI)
-#include <vtkIdList.h>
-#include <vtkCellArray.h>
-#include <vtkUnsignedCharArray.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkDataSetMapper.h>
-#include <vtkProperty.h>
-#include <vtkLineSource.h>
-
-#include <vtkLine.h>
-#include <vtkQuad.h>
-#include <vtkHexahedron.h>
-
-#include "vtkLookupTable.h"
-#include "vtkPoints.h"
 #include "vtkCellArray.h"
-#include "vtkFloatArray.h"
 #include "vtkPolyData.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkActor.h"
-#include "vtkPointData.h"
-#include "vtkProperty.h"
-
-
-// #include "vtkStructuredGridReader.h"
-#include "vtkUnstructuredGridReader.h"
 
 #include <VTKViewer_CellLocationsArray.h>
+#include <SVTK_ViewModel.h>
 
-
-
-
+#include "HEXABLOCKGUI_Trace.hxx"
+#include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
+#include "HEXABLOCKGUI.hxx"
 
 #ifndef M_PI
 #define M_PI 3.1415927
 #endif
 
-#include "HEXABLOCKGUI_Trace.hxx"
-#include "HEXABLOCKGUI_DocumentModel.hxx"
-#include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
-#include "HEXABLOCKGUI.hxx"
-
-
-
 using namespace std;
 using namespace HEXABLOCK::GUI;
 using namespace HEXA_NS;
-// !!! ceci est ni pipe ni un actor mais un mélange des deux
+
 Document_Actor::Document_Actor( Document* doc, const QString& entry ):
           SALOME_Actor(),
           _doc( doc )
@@ -111,7 +51,8 @@ Document_Actor::Document_Actor( Document* doc, const QString& entry ):
     setIO(anIO);
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInputData(aGrid);
+    aMapper->SetInputData(aGrid); // saclay
+//    aMapper->SetInput(aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
@@ -306,7 +247,8 @@ Associate_Actor::Associate_Actor( Document* doc, const QString& entry)
     vtkUnstructuredGrid* aGrid = getUnstructuredGrid();
 
     vtkDataSetMapper* aMapper = vtkDataSetMapper::New();
-    aMapper->SetInputData(aGrid);
+    aMapper->SetInputData(aGrid); // saclay
+//    aMapper->SetInput (aGrid);
     aGrid->Delete();
 
     SetVisibility( true );//VisibilityOff();
@@ -500,20 +442,17 @@ VtkDocumentGraphicView::VtkDocumentGraphicView( DocumentModel* documentModel,
     //Model
     setModel(documentModel);
     patternDataModel     = new PatternDataModel(parent);
-    patternBuilderModel  = new PatternBuilderModel(parent);
     patternGeomModel     = new PatternGeomModel(parent);
     groupsModel          = new GroupsModel(parent);
     meshModel            = new MeshModel(parent);
 
     patternDataModel->setSourceModel(documentModel);
-    patternBuilderModel->setSourceModel(documentModel);
     patternGeomModel->setSourceModel(documentModel);
     groupsModel->setSourceModel(documentModel);
     meshModel->setSourceModel(documentModel);
 
     //Selection Model
     patternDataSelectionModel    = new PatternDataSelectionModel(patternDataModel);
-    patternBuilderSelectionModel = new PatternBuilderSelectionModel(patternBuilderModel, patternDataSelectionModel);
     patternGeomSelectionModel    = new PatternGeomSelectionModel(patternGeomModel);
     groupsSelectionModel         = new GroupsSelectionModel(groupsModel);
     meshSelectionModel           = new MeshSelectionModel(meshModel );
@@ -550,13 +489,11 @@ VtkDocumentGraphicView::~VtkDocumentGraphicView()
 
     //Delete Model
     delete patternDataModel;
-    delete patternBuilderModel;
     delete groupsModel;
     delete meshModel;
 
     //Delete Selection Model/ Disconnect signals on delete (Qt)
 //    delete patternDataSelectionModel;
-//    delete patternBuilderSelectionModel;
 //    delete groupsSelectionModel;
 //    delete meshSelectionModel;
 }
@@ -606,13 +543,6 @@ void VtkDocumentGraphicView::update()
 void VtkDocumentGraphicView::setVertexSelection()
 {
   setSelectionMode(NodeSelection);
-// //  NodeSelection,
-// //  CellSelection,
-// //  EdgeOfCellSelection,
-// //  EdgeSelection,
-// //  FaceSelection,
-// //  VolumeSelection,
-// //  ActorSelection };
 }
 
 void VtkDocumentGraphicView::setEdgeSelection()
@@ -677,10 +607,6 @@ void VtkDocumentGraphicView::setSelectionMode( const QModelIndex& eltIndex )
     case PROPAGATION_TREE :
     case PROPAGATION_DIR_TREE :   setEdgeSelection(); break;
     default: setAllSelection();
-//  CellSelection,
-//  EdgeOfCellSelection,
-//  VolumeSelection,
-//  ActorSelection
   }
 }
 
@@ -834,11 +760,9 @@ void VtkDocumentGraphicView::highlightPropagation( const QModelIndex& eltIndex )
 /********************************************************************************
  *                   ABSTRACT METHOD ( MUST BE IMPLEMENTED )
  ********************************************************************************/
-
 /*
     Returns the item that covers the coordinate given in the view.
  */
-
 QModelIndex VtkDocumentGraphicView::indexAt(const QPoint &point) const
 {
     return QModelIndex();
@@ -847,7 +771,6 @@ QModelIndex VtkDocumentGraphicView::indexAt(const QPoint &point) const
 void VtkDocumentGraphicView::scrollTo(const QModelIndex &index, ScrollHint)
 {
 }
-
 
 /*
     Returns the position of the item in viewport coordinates.
@@ -955,71 +878,3 @@ void VtkDocumentGraphicView::setModel ( QAbstractItemModel * model )
 //        connect( dm, SIGNAL( nameChanged(const QString&) ), this,  SLOT ( setWindowTitle(const QString&) ) );
     }
 }
-
-// void DocumentGraphicView::loadVTK( const QString&  path ) //CS_TEST
-// {
-//   std::cout << "DocumentGraphicView::loadVTK=>"<<std::endl;
-//   QFile file(path);
-//   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-//     return;
-// //   QByteArray vtkData = file.readAll ();
-//   QString vtkData = file.readAll ();
-//   vtkData.replace(",",".");
-//
-//
-//   SVTK_ViewWindow* myVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>(_suitView);
-//
-//   // vtkStructuredGridReader
-//   vtkUnstructuredGridReader* r = vtkUnstructuredGridReader::New();
-// //   r->SetFileName( path.toLocal8Bit().constData() );
-//   r->SetInputString( vtkData.toLocal8Bit().constData() );
-//   r->SetReadFromInputString( true );
-//   r->Update();
-//
-//   vtkUnstructuredGrid* myGrid = r->GetOutput();//vtkUnstructuredGrid::New();
-//   std::cout << "GetNumberOfCells =>"<< myGrid->GetNumberOfCells();
-//   // Create and display actor
-//
-//   vtkDataSetMapper* myMapper = vtkDataSetMapper::New();
-//   myMapper->SetInputData(myGrid);
-//
-// //   if ( myPreviewActor ){
-// //     myVTKViewWindow->RemoveActor(myPreviewActor);
-// //     myPreviewActor->Delete();
-// //   }
-//
-//   SALOME_Actor* myPreviewActor = SALOME_Actor::New();
-//   myPreviewActor = SALOME_Actor::New();
-//   Handle(SALOME_InteractiveObject) anIO = new SALOME_InteractiveObject(QString::number( reinterpret_cast<intptr_t>(_hexaDocument) ),"HEXABLOCK");//,theName);
-//   myPreviewActor->setIO(anIO);
-//
-// //   myPreviewActor->PickableOff();
-//   myPreviewActor->SetVisibility( true );//VisibilityOff();
-//   myPreviewActor->SetPickable( true );
-//   myPreviewActor->SetMapper(myMapper);
-//
-//   vtkProperty* aProp = vtkProperty::New();
-// //   aProp->SetRepresentationToWireframe();
-//   aProp->SetRepresentationToSurface();
-//   aProp->EdgeVisibilityOn ();
-//
-// //   aProp->SetColor(10, 10, 250);
-//   aProp->SetPointSize(5);
-//   myPreviewActor->SetProperty(aProp);
-//   aProp->Delete();
-//
-//   /*vtkProperty* myBackProp = vtkProperty::New();
-//   GetColor( "SMESH", "backface_color", aBackRGB[0], aBackRGB[1], aBackRGB[2], QColor( 0, 0, 255 ) );
-//   myBackProp->SetColor( aBackRGB[0], aBackRGB[1], aBackRGB[2] );
-//   myPreviewActor->SetBackfaceProperty( myBackProp );
-//   myBackProp->Delete()*/;
-//   myVTKViewWindow->AddActor(myPreviewActor);
-//   myVTKViewWindow->getRenderer()->Render();
-//   myVTKViewWindow->Repaint();
-//   myVTKViewWindow->onFitAll();
-//
-//   myVTKViewWindow->SetSelectionMode( ActorSelection );
-// // myVTKViewWindow->SetSelectionMode( NodeSelection );
-// // myVTKViewWindow->SetSelectionMode( EdgeSelection );
-// // myVTKViewWindow->SetSelectionMode( FaceSelection );
-// }

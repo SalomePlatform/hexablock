@@ -20,8 +20,6 @@
 #ifndef _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 #define _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 // SALOME GUI includes
 #include <LightApp_Displayer.h>
 #include <SUIT_ViewWindow.h>
@@ -55,7 +53,7 @@ namespace HEXABLOCK
 
     namespace GUI
     {
-        class HEXABLOCK_EXPORT Document_Actor : public SALOME_Actor
+        class HexaExport Document_Actor : public SALOME_Actor
         {
           public:
             Document_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -73,7 +71,7 @@ namespace HEXABLOCK
 
         };
                    // Abu
-        class Associate_Actor : public SALOME_Actor
+        class HexaExport Associate_Actor : public SALOME_Actor
         {
           public:
             Associate_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -90,11 +88,10 @@ namespace HEXABLOCK
             HEXA_NS::Document* _doc;
         };
 
-
         /********************************************************************************
          *                          VtkDocumentGraphicView
          ********************************************************************************/
-        class HEXABLOCK_EXPORT VtkDocumentGraphicView : public QAbstractItemView
+        class HexaExport VtkDocumentGraphicView : public QAbstractItemView
         {
             Q_OBJECT
 
@@ -135,9 +132,6 @@ namespace HEXABLOCK
 	        PatternDataSelectionModel* getPatternDataSelectionModel() const
 	        { return patternDataSelectionModel; }
 
-	        PatternBuilderSelectionModel* getPatternBuilderSelectionModel() const
-	        { return patternBuilderSelectionModel; }
-
 	        PatternGeomSelectionModel* getPatternGeomSelectionModel() const
             { return patternGeomSelectionModel;}
 
@@ -148,7 +142,6 @@ namespace HEXABLOCK
 	        { return meshSelectionModel; }
 
 	        PatternDataModel*    getPatternDataModel() const {return patternDataModel;}
-	        PatternBuilderModel* getPatternBuilderModel() const {return patternBuilderModel;}
 	        PatternGeomModel*    getPatternGeomModel() const { return patternGeomModel;}
 	        GroupsModel*         getGroupsModel() const {return groupsModel;}
 	        MeshModel*           getMeshModel() const {return meshModel;}
@@ -191,13 +184,11 @@ namespace HEXABLOCK
             Associate_Actor*  associateActor;
 
             PatternDataSelectionModel*     patternDataSelectionModel;
-            PatternBuilderSelectionModel*  patternBuilderSelectionModel;
             PatternGeomSelectionModel*     patternGeomSelectionModel;
             GroupsSelectionModel*          groupsSelectionModel;
             MeshSelectionModel*            meshSelectionModel;
 
             PatternDataModel*              patternDataModel;
-            PatternBuilderModel*           patternBuilderModel;
             PatternGeomModel*              patternGeomModel;
             GroupsModel*                   groupsModel;
             MeshModel*                     meshModel;

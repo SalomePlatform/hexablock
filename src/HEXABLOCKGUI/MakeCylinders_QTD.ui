@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>275</width>
-    <height>407</height>
+    <width>226</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>5</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Cylinders Construction</string>
@@ -42,7 +48,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="center_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -61,7 +67,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="direction_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -77,6 +83,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="radius_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -90,6 +102,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="height_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -134,7 +152,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="center2_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -153,7 +171,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="direction2_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -169,6 +187,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="radius2_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -182,6 +206,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="height2_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -218,7 +248,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>0</height>
+          <height>16777215</height>
          </size>
         </property>
        </spacer>

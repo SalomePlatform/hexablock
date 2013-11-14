@@ -41,7 +41,6 @@ SubShape::SubShape (NewShape* dad, int id, int dim)
    sub_ident  = id;
    sub_dim    = dim;
    maj_brep   = maj_shape = true;
-   kind_of    = KS_None;
 }
 // ====================================================== getShape
 const TopoDS_Shape& SubShape::getShape ()

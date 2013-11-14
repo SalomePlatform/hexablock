@@ -23,12 +23,11 @@
 #ifndef __BI_CYLINDER_SHAPE_HXX_
 #define __BI_CYLINDER_SHAPE_HXX_
 
-#include "Hex_defines.hxx"
 #include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT BiCylinderShape
+class HexaExport BiCylinderShape
 {
 public :
    BiCylinderShape (Document* doc);

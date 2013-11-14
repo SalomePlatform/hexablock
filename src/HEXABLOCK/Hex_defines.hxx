@@ -29,5 +29,6 @@
 #else
    #define HEXABLOCKENGINE_EXPORT
 #endif
+#define HexaExport HEXABLOCKENGINE_EXPORT
 
 #endif //_HEX_DEFINES_HXX_

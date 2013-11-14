@@ -60,7 +60,8 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
   if (_dw->widget()) _dw->widget()->close();
   if ( !_dw->isVisible() ) _dw->setVisible(true);
 
-  switch ( index.data(HEXA_TREE_ROLE).toInt() ){
+  switch ( index.data(HEXA_TREE_ROLE).toInt() )
+  {
     case VERTEX_TREE :   editor = new VertexDialog(_dw, HexaBaseDialog::INFO_MODE);   break;
     case EDGE_TREE :     editor = new EdgeDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
     case QUAD_TREE :     editor = new QuadDialog(_dw, HexaBaseDialog::INFO_MODE);     break;
@@ -78,7 +79,9 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
     case LAW_TREE         : editor = new LawDialog(_dw, HexaBaseDialog::INFO_MODE); break;
     case PROPAGATION_TREE : editor = new PropagationDialog(_dw, HexaBaseDialog::INFO_MODE); break;
   }
-  if ( editor != NULL ){
+
+  if ( editor != NULL )
+  {
     HEXABLOCKGUI::assocInProgress = false;
 
     //show the editor in the dockwidget
@@ -88,6 +91,7 @@ QWidget *DocumentDelegate::createEditor( QWidget                    *parent,
 	  _dw->close();
 
   _currentEditor = editor;
+
   return editor;
 }
 
@@ -97,7 +101,7 @@ void DocumentDelegate::closeDialog()
 	if (_currentEditor!=NULL)
 	{
 		_currentEditor->close();
-		emit closeEditor(_currentEditor, NoHint);
+		emit closeEditor(_currentEditor, NoHint); //Problem
 		delete _currentEditor;
 		_currentEditor = NULL;
 	}
@@ -186,7 +190,6 @@ void DocumentDelegate::setEditorData( QWidget *editor,
     }
     break;
   }
-
 }
 
 

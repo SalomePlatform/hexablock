@@ -25,26 +25,25 @@
 
 class gp_Pnt;
 
-#include "Hex_defines.hxx"
 #include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-int HEXABLOCKENGINE_EXPORT geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
-                                               double  bray,  double  bhaut,
-                                               double* sorig, double* snorm, double* sbase,
-                                               double  sray,  double  shaut);
-int HEXABLOCKENGINE_EXPORT geom_asso_cylcyl (Edge* edge);
+int HexaExport geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
+                        double  bray,  double  bhaut,
+                        double* sorig, double* snorm, double* sbase,
+                        double  sray,  double  shaut);
+int HexaExport geom_asso_cylcyl (Edge* edge);
 
-bool HEXABLOCKENGINE_EXPORT same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsil2=1e-6);
-void HEXABLOCKENGINE_EXPORT save_brep   (cpchar nom, string brep, int& nro);
-void HEXABLOCKENGINE_EXPORT clean_brep  (string& brep);
+bool HexaExport same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsil2=1e-6);
+void HexaExport save_brep   (cpchar nom, string brep, int& nro);
+void HexaExport clean_brep  (string& brep);
 
-void HEXABLOCKENGINE_EXPORT geom_make_brep  (TopoDS_Shape& shape, string& brep);
-int  HEXABLOCKENGINE_EXPORT geom_brep2point (rcstring brep, double& px, double& py, double& pz);
-int  HEXABLOCKENGINE_EXPORT geom_brep2shape (rcstring brep, TopoDS_Shape& shape);
+void HexaExport geom_make_brep  (TopoDS_Shape& shape, string& brep);
+int  HexaExport geom_brep2point (rcstring brep, double& px, double& py, double& pz);
+int  HexaExport geom_brep2shape (rcstring brep, TopoDS_Shape& shape);
 
-TopoDS_Shape HEXABLOCKENGINE_EXPORT geom_brep2shape (rcstring brep);
+TopoDS_Shape HexaExport geom_brep2shape (rcstring brep);
 
 END_NAMESPACE_HEXA
 #endif

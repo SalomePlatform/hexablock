@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>584</height>
+    <height>712</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>5</width>
-    <height>300</height>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -22,9 +22,21 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QWidget" name="widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QRadioButton" name="revolutionUni_rb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Uniform</string>
         </property>
@@ -35,6 +47,12 @@
       </item>
       <item>
        <widget class="QRadioButton" name="revolution_rb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Custom</string>
         </property>
@@ -45,6 +63,12 @@
    </item>
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -54,7 +78,7 @@
         <x>0</x>
         <y>0</y>
         <width>369</width>
-        <height>518</height>
+        <height>646</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -91,7 +115,7 @@
           <item row="0" column="1">
            <widget class="QLineEdit" name="center_le">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -121,7 +145,7 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="axis_le">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -160,6 +184,12 @@
           </item>
           <item row="0" column="1">
            <widget class="QDoubleSpinBox" name="angle_spb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals">
              <number>6</number>
             </property>
@@ -183,6 +213,12 @@
           </item>
           <item row="1" column="1">
            <widget class="QSpinBox" name="nbre_spb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximum">
              <number>1000000</number>
             </property>
@@ -264,6 +300,19 @@
           </layout>
          </widget>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

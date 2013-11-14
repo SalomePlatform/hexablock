@@ -20,7 +20,7 @@
 #ifndef MYGEOMBASE_SKELETON_H
 #define MYGEOMBASE_SKELETON_H
 
-#include "HEXABLOCKGUI_Export.hxx"
+
 
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"
@@ -43,12 +43,14 @@ class QPushButton;
 #  define DBL_DIGITS_DISPLAY 13
 #endif // COORD_MIN
 
+#include "hexa_base.hxx"
+
 namespace HEXABLOCK
 {
 namespace GUI
 {
 
-class HEXABLOCK_EXPORT MyGEOMBase_Skeleton : public HexaBaseDialog
+class HexaExport MyGEOMBase_Skeleton : public HexaBaseDialog
 {
 	Q_OBJECT
 

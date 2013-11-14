@@ -240,48 +240,57 @@ typedef std::vector <std::string> TabText;
 typedef double Real;
 typedef double Real3 [DIM3];
 
+                                  // a cause de Swig
+#ifndef HEXABLOCKENGINE_EXPORT 
+#define HEXABLOCKENGINE_EXPORT 
+#endif 
+
+#ifndef HexaExport 
+#define HexaExport 
+#endif 
+
                         // Quelques fonctions :
 
-HEXABLOCKENGINE_EXPORT pchar   get_temp_name (cpchar format, pchar nomfic);
-HEXABLOCKENGINE_EXPORT void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
+HexaExport pchar   get_temp_name (cpchar format, pchar nomfic);
+HexaExport void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
 
-HEXABLOCKENGINE_EXPORT double   prod_scalaire  (double v1[], double v2[]);
-HEXABLOCKENGINE_EXPORT double* prod_vectoriel (double v1[], double v2[], double v3[]);
-HEXABLOCKENGINE_EXPORT double  prod_mixte     (double vi[], double vj[], double vk[]);
+HexaExport double   prod_scalaire  (double v1[], double v2[]);
+HexaExport double* prod_vectoriel (double v1[], double v2[], double v3[]);
+HexaExport double  prod_mixte     (double vi[], double vj[], double vk[]);
 
-HEXABLOCKENGINE_EXPORT inline  double deg2radians (double angle) {  return (angle*M_PI/180.0); }
-HEXABLOCKENGINE_EXPORT inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI); }
+HexaExport inline  double deg2radians (double angle) {  return (angle*M_PI/180.0); }
+HexaExport inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI); }
 
-HEXABLOCKENGINE_EXPORT double  calc_norme     (double v1[]);
-HEXABLOCKENGINE_EXPORT double  calc_distance  (double v1[], double v2[]);
-HEXABLOCKENGINE_EXPORT void    calc_vecteur   (double pta[], double ptb[], double vab[]);
-HEXABLOCKENGINE_EXPORT void    copy_vecteur   (double va [], double vb []);
-HEXABLOCKENGINE_EXPORT void    calc_milieu    (double pta[], double ptb[], double milieu[]);
-HEXABLOCKENGINE_EXPORT int     normer_vecteur (double v1[]);
+HexaExport double  calc_norme     (double v1[]);
+HexaExport double  calc_distance  (double v1[], double v2[]);
+HexaExport void    calc_vecteur   (double pta[], double ptb[], double vab[]);
+HexaExport void    copy_vecteur   (double va [], double vb []);
+HexaExport void    calc_milieu    (double pta[], double ptb[], double milieu[]);
+HexaExport int     normer_vecteur (double v1[]);
 
-HEXABLOCKENGINE_EXPORT double  carre       (double val);
-HEXABLOCKENGINE_EXPORT bool    same_coords (double* pa, double* pb, double epsilon=1e-6);
+HexaExport double  carre       (double val);
+HexaExport bool    same_coords (double* pa, double* pb, double epsilon=1e-6);
 
-HEXABLOCKENGINE_EXPORT bool requals (const double  v1, const double  v2);
-HEXABLOCKENGINE_EXPORT bool requals (const double* v1, const double* v2);
+HexaExport bool requals (const double  v1, const double  v2);
+HexaExport bool requals (const double* v1, const double* v2);
 
-HEXABLOCKENGINE_EXPORT bool    on_debug();     // == getenv ("HEXA_DB") > 0
-HEXABLOCKENGINE_EXPORT bool   in_test ();     // == getenv ("HEXA_TEST") > 0
-HEXABLOCKENGINE_EXPORT int    niv_debug();    // Implemente prochainement
+HexaExport bool    on_debug();     // == getenv ("HEXA_DB") > 0
+HexaExport bool   in_test ();     // == getenv ("HEXA_TEST") > 0
+HexaExport int    niv_debug();    // Implemente prochainement
 
-HEXABLOCKENGINE_EXPORT void   set_minus (string& chaine);
+HexaExport void   set_minus (string& chaine);
 
-HEXABLOCKENGINE_EXPORT bool   special_option ();
-HEXABLOCKENGINE_EXPORT void   set_special_option (bool opt);
+HexaExport bool   special_option ();
+HexaExport void   set_special_option (bool opt);
 
-HEXABLOCKENGINE_EXPORT int    sizeof_file (cpchar filename);
-HEXABLOCKENGINE_EXPORT char*  read_file   (cpchar filename, int& size);
-HEXABLOCKENGINE_EXPORT cpchar get_time   (string& buffer);
+HexaExport int    sizeof_file (cpchar filename);
+HexaExport char*  read_file   (cpchar filename, int& size);
+HexaExport cpchar get_time   (string& buffer);
+HexaExport int make_basename (cpchar filename, string& base);
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;
 const double Epsil2  = 1e-12;
-
 
 END_NAMESPACE_HEXA
 

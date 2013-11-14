@@ -122,7 +122,7 @@ QVariant ElementItem::data( int role ) const
 //        case CYLINDERITEM: return QVariant::fromValue( (HEXA_NS::Cylinder*)m_DocElt );
 //        case PIPEITEM: return QVariant::fromValue( (HEXA_NS::Pipe*)m_DocElt );
         case ELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::Elements*)m_DocElt );
-        case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
+//      case CROSSELEMENTSITEM: return QVariant::fromValue( (HEXA_NS::CrossElements*)m_DocElt );
         case GEOMSHAPEITEM: return QVariant::fromValue( (HEXA_NS::NewShape*) m_DocElt );
         case GEOMPOINTITEM: return QVariant::fromValue( (HEXA_NS::VertexShape*) m_DocElt );
         case GEOMEDGEITEM:  return QVariant::fromValue( (HEXA_NS::EdgeShape*) m_DocElt );

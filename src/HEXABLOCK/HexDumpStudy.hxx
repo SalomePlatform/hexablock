@@ -23,7 +23,6 @@
 #ifndef __DUMP_STUDY_H_
 #define __DUMP_STUDY_H_
 
-#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include <map>
 
@@ -31,9 +30,7 @@
 #pragma warning ( disable: 4251 )
 #endif
 
-
 BEGIN_NAMESPACE_HEXA
-
 
 #define DumpStart0(p) bool actif=el_root->glob->dump.start(this, p)
 #define DumpStart(p,args) bool actif=el_root->glob->dump.start(this, p); if (actif)  el_root->glob->dump << args
@@ -44,7 +41,7 @@ BEGIN_NAMESPACE_HEXA
 #define DumpRestore            el_root->glob->dump.restore (actif)
 
 class Witness;
-class HEXABLOCKENGINE_EXPORT DumpStudy
+class HexaExport DumpStudy
 {
 public :
     DumpStudy ();

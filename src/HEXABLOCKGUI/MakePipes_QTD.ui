@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>464</height>
+    <width>253</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>5</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Pipes Construction</string>
@@ -42,7 +48,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="origin_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -59,7 +65,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="dir_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -75,6 +81,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="ext_radius_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -88,6 +100,12 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>hole radius</string>
            </property>
@@ -95,6 +113,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="int_radius_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -115,6 +139,12 @@
          </item>
          <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="height_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -145,7 +175,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="origin2_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -162,7 +192,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="dir2_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -178,6 +208,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="ext_radius2_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -191,6 +227,12 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_9">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>hole radius</string>
            </property>
@@ -198,6 +240,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="int_radius2_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -218,6 +266,12 @@
          </item>
          <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="height2_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -232,21 +286,21 @@
         </layout>
        </widget>
       </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

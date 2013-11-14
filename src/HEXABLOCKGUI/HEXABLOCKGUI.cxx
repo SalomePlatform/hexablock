@@ -92,7 +92,7 @@
 
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
-#include "HEXABLOCKGUI_DocumentDelegate.hxx"
+//#include "HEXABLOCKGUI_DocumentDelegate.hxx"
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
@@ -108,8 +108,12 @@
 
 
 #include <Visual3d_ViewManager.hxx>
+#include <Graphic3d_Structure.hxx>
+#include <Graphic3d_Group.hxx>
 #include <V3d_PerspectiveView.hxx>
 #include <V3d_AmbientLight.hxx>
+#include <Graphic3d_GraphicDevice.hxx>
+#include <Graphic3d_Array1OfVertex.hxx>
 #include <V3d_DirectionalLight.hxx>
 #include <Xw_Window.hxx>
 #include <V3d_TypeOfShadingModel.hxx>
@@ -138,6 +142,7 @@ SalomeApp_Application*  HEXABLOCKGUI::myApplication = NULL;
 
 HEXABLOCKGUI::HEXABLOCKGUI() :
           SalomeApp_Module( "HEXABLOCK" ),
+//          LightApp_Module( "HEXABLOCK" ),
           _menuId(190),
           _dwPattern(0),
           _dwAssociation(0),
@@ -146,11 +151,11 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
           _dwObjectBrowser(0),
           _dwInputPanel(0),
           _patternDataTreeView(0),
-          _patternBuilderTreeView(0),
+//          _patternBuilderTreeView(0),
           _patternGeomTreeView(0),
           _groupsTreeView(0),
           _meshTreeView(0),
-          _treeViewDelegate(0),
+//          _treeViewDelegate(0),
           _isSaved( false ),
           moduleActivatedOnce(false),
           _vertexDiag(0),
@@ -187,6 +192,14 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
           _makeHemiSphereDiag(0),
           _modelInfoDiag(NULL),
           _addShapeDiag(NULL),
+          _vertexInfoDialog(NULL),
+          _edgeInfoDialog(NULL),
+          _quadInfoDialog(NULL),
+          _hexaInfoDialog(NULL),
+          _vectorInfoDialog(NULL),
+          _groupInfoDialog(NULL),
+          _lawInfoDialog(NULL),
+          _propagationInfoDialog(NULL),
           currentDialog(NULL),
           lastOccPrs(NULL),
           lastVtkDocGView(NULL)
@@ -646,7 +659,7 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
         { //HexaBlock Vtk Window has been closed
 
             if (currentDialog != NULL) currentDialog->close();
-            if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
+//            if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
             if (currentDocGView != NULL)
                 currentDocGView->setViewWindow(NULL);
 
@@ -685,7 +698,7 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
         if (_edgeAssocDiag != NULL) _edgeAssocDiag->clear();
         if (_quadAssocDiag != NULL) _quadAssocDiag->clear();
         if (currentDialog != NULL) currentDialog->close();
-        if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
+//        if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
 
         currentOccGView->getViewWindow()->removeEventFilter(this);
 
@@ -744,7 +757,7 @@ void HEXABLOCKGUI::onViewManagerRemoved( SUIT_ViewManager* vm)
             {
                 //close opened dialog
                 if (currentDialog != NULL) currentDialog->close();
-                if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
+//                if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
 
                 initialMenus();
             }
@@ -788,9 +801,11 @@ void HEXABLOCKGUI::onSelectionChanged( const QItemSelection & selected, const QI
     QTreeView* theTree = NULL;
     if ( sender() == currentGraphicView->getPatternDataSelectionModel() ){
         theTree = _patternDataTreeView;
-    } else if ( sender() == currentGraphicView->getPatternBuilderSelectionModel() ){
+    }
+    /*else if ( sender() == currentGraphicView->getPatternBuilderSelectionModel() ){
         theTree = _patternBuilderTreeView;
-    } else if ( sender() == currentGraphicView->getPatternGeomSelectionModel() ) {
+    }*/
+    else if ( sender() == currentGraphicView->getPatternGeomSelectionModel() ) {
         theTree =  _patternGeomTreeView;
     }
     else if ( sender() == currentGraphicView->getGroupsSelectionModel() ){
@@ -929,9 +944,9 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwInputPanel = new QDockWidget(aParent);
     _dwInputPanel->setVisible(false);
     _dwInputPanel->setWindowTitle("Input Panel");
-    _dwInputPanel->setMinimumWidth(DWINPUT_MINIMUM_WIDTH); // --- force a minimum until display
+//    _dwInputPanel->setMinimumWidth(DWINPUT_MINIMUM_WIDTH); // --- force a minimum until display
 
-    _treeViewDelegate = new DocumentDelegate(_dwInputPanel);
+//    _treeViewDelegate = new DocumentDelegate(_dwInputPanel);
 
     //2) ************* document data ( Pattern, Association, Mesh ) in treeview representation
     //      Pattern
@@ -946,20 +961,20 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     patternLayout->setSizeConstraint(QLayout::SetMaximumSize);
     QSplitter *splitter = new QSplitter(Qt::Vertical,patternFrame);
     _patternDataTreeView    = new QTreeView(patternFrame);//_dwPattern);
-    _patternBuilderTreeView = new QTreeView(patternFrame);
+//    _patternBuilderTreeView = new QTreeView(patternFrame);                  // ---> TO REMOVE
     _patternGeomTreeView    = new QTreeView(patternFrame);
     splitter->addWidget(_patternDataTreeView);
-    splitter->addWidget(_patternBuilderTreeView);
+//    splitter->addWidget(_patternBuilderTreeView);                           // ---> TO REMOVE
     splitter->addWidget(_patternGeomTreeView);
     patternLayout->addWidget(splitter);
 
-    _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers/*QAbstractItemView::DoubleClicked*/);
+    _patternDataTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers/*QAbstractItemView::DoubleClicked*/);
     _patternDataTreeView->setSelectionMode(QAbstractItemView::SingleSelection/*QAbstractItemView::MultiSelection*/);
-    _patternDataTreeView->setItemDelegate(_treeViewDelegate);
+//    _patternDataTreeView->setItemDelegate(_treeViewDelegate);
 
 
-    _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    _patternBuilderTreeView->setItemDelegate(_treeViewDelegate);
+//    _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+//    _patternBuilderTreeView->setItemDelegate(_treeViewDelegate);
 
     _patternGeomTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _patternGeomTreeView->setSelectionMode(QAbstractItemView::SingleSelection/*QAbstractItemView::MultiSelection*/);
@@ -974,8 +989,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwGroups->setWindowTitle("Groups");
     _dwGroups->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
     _groupsTreeView = new QTreeView(_dwGroups);
-    _groupsTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
-    _groupsTreeView->setItemDelegate(_treeViewDelegate);
+    _groupsTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//    _groupsTreeView->setItemDelegate(_treeViewDelegate);
     _dwGroups->setWidget(_groupsTreeView);
     _groupsTreeView->show();
 
@@ -985,9 +1000,9 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setWindowTitle("Mesh");
     _dwMesh->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
     _meshTreeView = new QTreeView(_dwMesh);
-    _meshTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _meshTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _meshTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
-    _meshTreeView->setItemDelegate(_treeViewDelegate);
+//    _meshTreeView->setItemDelegate(_treeViewDelegate);
     _dwMesh->setWidget(_meshTreeView);
     _meshTreeView->show();
 
@@ -1003,7 +1018,8 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
     // dock widget position
     aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwObjectBrowser );
-    aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwInputPanel );
+//    aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwInputPanel );
+    aParent->addDockWidget( Qt::RightDockWidgetArea, _dwInputPanel );
 
     aParent->tabifyDockWidget( _dwObjectBrowser, _dwPattern );
     aParent->tabifyDockWidget( _dwPattern, _dwGroups );
@@ -1843,8 +1859,8 @@ void HEXABLOCKGUI::switchOnGraphicView(VtkDocumentGraphicView* dgview)
          dgview->getPatternDataSelectionModel(), SLOT( salomeSelectionChanged() ), Qt::UniqueConnection );
    connect( dgview->getPatternDataSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
          this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
-   connect( dgview->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
+//   connect( dgview->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+//         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
    connect( dgview->getPatternGeomSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
    connect( dgview->getGroupsSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
@@ -1864,8 +1880,8 @@ void HEXABLOCKGUI::switchOffGraphicView(VtkDocumentGraphicView* dgview, bool sav
          dgview->getPatternDataSelectionModel(), SLOT( salomeSelectionChanged() ) );
    disconnect( dgview->getPatternDataSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
          this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
-   disconnect( dgview->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+//   disconnect( dgview->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+//         this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
    disconnect( dgview->getPatternGeomSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
    disconnect( dgview->getGroupsSelectionModel(), SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
@@ -1878,7 +1894,7 @@ void HEXABLOCKGUI::switchOffGraphicView(VtkDocumentGraphicView* dgview, bool sav
 
    //close opened dialog
    if (currentDialog != NULL) currentDialog->close();
-   if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
+//   if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
 
    initialMenus();
 
@@ -1906,25 +1922,25 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     if (currentDocGView != dgview) clearDialogs();
 
     _patternDataTreeView->setModel(dgview->getPatternDataModel());
-    _patternBuilderTreeView->setModel(dgview->getPatternBuilderModel());
+//    _patternBuilderTreeView->setModel(dgview->getPatternBuilderModel());
     _patternGeomTreeView->setModel(dgview->getPatternGeomModel());
     _groupsTreeView->setModel(dgview->getGroupsModel());
     _meshTreeView->setModel(dgview->getMeshModel());
 
     _patternDataTreeView->setSelectionModel(dgview->getPatternDataSelectionModel());
-    _patternDataTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _patternDataTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    _patternBuilderTreeView->setSelectionModel(dgview->getPatternBuilderSelectionModel());
-    _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+//    _patternBuilderTreeView->setSelectionModel(dgview->getPatternBuilderSelectionModel());
+//    _patternBuilderTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     _patternGeomTreeView->setSelectionModel(dgview->getPatternGeomSelectionModel());
     _patternGeomTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     _groupsTreeView->setSelectionModel(dgview->getGroupsSelectionModel());
-    _groupsTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _groupsTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     _meshTreeView->setSelectionModel(dgview->getMeshSelectionModel());
-    _meshTreeView->setEditTriggers(QAbstractItemView::AllEditTriggers);
+    _meshTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 
     // = * init occ view * =
@@ -2207,11 +2223,11 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
     currentModelDialogs.insert(diag);
 
     //close the current dialog box info
-    if (_treeViewDelegate != NULL)
-        _treeViewDelegate->closeDialog();
+//    if (_treeViewDelegate != NULL)
+//        _treeViewDelegate->closeDialog();
 
-    if (_dwInputPanel->widget())
-        _dwInputPanel->widget()->close();
+//    if (_dwInputPanel->widget())
+//        _dwInputPanel->widget()->close();
 
     //Temporary for debugging EdgeAssoc Faked InfoDialog
     if (diag == _edgeAssocDiag)
@@ -2233,6 +2249,113 @@ void HEXABLOCKGUI::_showDialogBox( HexaBaseDialog* diag )
 
     currentDialog = diag;
     diag->setFocus();
+
+    if (currentDocGView != NULL)
+        currentDocGView->getPatternDataSelectionModel()->setInfoMode(false);
+}
+
+void HEXABLOCKGUI::showVertexInfoDialog(HEXA_NS::Vertex* vertex)
+{
+    if (vertex == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_vertexInfoDialog == NULL)
+        _vertexInfoDialog = new VertexDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _vertexInfoDialog->setValue(vertex);
+    _vertexInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _vertexInfoDialog;
+}
+
+void HEXABLOCKGUI::showEdgeInfoDialog(HEXA_NS::Edge* edge)
+{
+    if (edge == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_edgeInfoDialog == NULL)
+        _edgeInfoDialog = new EdgeDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _edgeInfoDialog->setValue(edge);
+    _edgeInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _edgeInfoDialog;
+}
+
+void HEXABLOCKGUI::showQuadInfoDialog(HEXA_NS::Quad* quad)
+{
+    if (quad == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_quadInfoDialog == NULL)
+        _quadInfoDialog = new QuadDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _quadInfoDialog->setValue(quad);
+    _quadInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _quadInfoDialog;
+}
+
+void HEXABLOCKGUI::showHexaInfoDialog(HEXA_NS::Hexa* hexa)
+{
+    if (hexa == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_hexaInfoDialog == NULL)
+        _hexaInfoDialog = new HexaDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _hexaInfoDialog->setValue(hexa);
+    _hexaInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _hexaInfoDialog;
+}
+
+void HEXABLOCKGUI::showVectorInfoDialog(HEXA_NS::Vector* vector)
+{
+    if (vector == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_vectorInfoDialog == NULL)
+        _vectorInfoDialog = new VectorDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _vectorInfoDialog->setValue(vector);
+    _vectorInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _vectorInfoDialog;
+}
+
+void HEXABLOCKGUI::showGroupInfoDialog(HEXA_NS::Group* group)
+{
+    if (group == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_groupInfoDialog == NULL)
+        _groupInfoDialog = new GroupDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _groupInfoDialog->setValue(group);
+    _groupInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _groupInfoDialog;
+}
+
+void HEXABLOCKGUI::showLawInfoDialog(HEXA_NS::Law* law)
+{
+    if (law == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_lawInfoDialog == NULL)
+        _lawInfoDialog = new LawDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _lawInfoDialog->setValue(law);
+    _lawInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _lawInfoDialog;
+}
+
+void HEXABLOCKGUI::showPropagationInfoDialog(HEXA_NS::Propagation* propagation)
+{
+    if (propagation == NULL || _dwInputPanel == NULL)
+        return;
+
+    if (_propagationInfoDialog == NULL)
+        _propagationInfoDialog = new PropagationDialog(_dwInputPanel, HexaBaseDialog::INFO_MODE);
+
+    _propagationInfoDialog->setValue(propagation);
+    _propagationInfoDialog->resetSizeAndShow(_dwInputPanel);
+    currentDialog = _propagationInfoDialog;
 }
 
 void HEXABLOCKGUI::addVertex()
@@ -2301,32 +2424,32 @@ void HEXABLOCKGUI::addVector()
         _vectorDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_VECTOR).c_str());
 }
 
-void HEXABLOCKGUI::addCylinder()
-{
-    if ( !_cylinderDiag ){
-        _cylinderDiag = new CylinderDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
-    }
-    _showDialogBox( _cylinderDiag );
+//void HEXABLOCKGUI::addCylinder()
+//{
+//    if ( !_cylinderDiag ){
+//        _cylinderDiag = new CylinderDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
+//    }
+//    _showDialogBox( _cylinderDiag );
+//
+//    //set default name
+//    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+//    if (_cylinderDiag != NULL && doc != NULL)
+//        _cylinderDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
+//}
 
-    //set default name
-    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
-    if (_cylinderDiag != NULL && doc != NULL)
-        _cylinderDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
-}
 
-
-void HEXABLOCKGUI::addPipe()
-{
-    if ( !_pipeDiag){
-        _pipeDiag = new PipeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
-    }
-    _showDialogBox( _pipeDiag );
-
-    //set default name
-    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
-    if (_pipeDiag != NULL && doc != NULL)
-        _pipeDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
-}
+//void HEXABLOCKGUI::addPipe()
+//{
+//    if ( !_pipeDiag){
+//        _pipeDiag = new PipeDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
+//    }
+//    _showDialogBox( _pipeDiag );
+//
+//    //set default name
+//    HEXA_NS::Document* doc = getCurrentModel() ? getCurrentModel()->getHexaDocument() : NULL;
+//    if (_pipeDiag != NULL && doc != NULL)
+//        _pipeDiag->name_le->setText(doc->getNextName(HEXA_NS::EL_CYLINDER).c_str());
+//}
 
 
 void HEXABLOCKGUI::makeGrid()
@@ -2630,9 +2753,9 @@ void HEXABLOCKGUI::removeLaw()
 
 void HEXABLOCKGUI::setPropagation()
 {
-    if ( !_propagationDiag ){
+    if ( !_propagationDiag )
         _propagationDiag = new PropagationDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
-    }
+
     _showDialogBox( _propagationDiag );
 }
 
@@ -2640,10 +2763,9 @@ void HEXABLOCKGUI::setPropagation()
 // --------------------------------------------
 void HEXABLOCKGUI::computeMesh()
 {
-    if ( !_computeMeshDiag ){
+    if ( !_computeMeshDiag )
         _computeMeshDiag = new ComputeMeshDialog(_dwInputPanel, HexaBaseDialog::NEW_MODE);
-    }
-    _computeMeshDiag->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     _showDialogBox( _computeMeshDiag );
 }
 
@@ -2804,12 +2926,12 @@ QStringList HEXABLOCKGUI::getQuickDirList()
 
 extern "C"
 {
-    HEXABLOCK_EXPORT CAM_Module* createModule()
+    HexaExport CAM_Module* createModule()
     {
         return new HEXABLOCKGUI();
     }
 
-    HEXABLOCK_EXPORT char* getModuleVersion()
+    HexaExport char* getModuleVersion()
     {
         return (char*)HEXABLOCK_VERSION_STR;
     }

@@ -32686,6 +32686,15 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Q_INVERSE",SWIG_From_int(static_cast< int >(Hex::Q_INVERSE)));
   SWIG_Python_SetConstant(d, "Q_UNDEFINED",SWIG_From_int(static_cast< int >(Hex::Q_UNDEFINED)));
   SWIG_Python_SetConstant(d, "Q_WAITING",SWIG_From_int(static_cast< int >(Hex::Q_WAITING)));
+  SWIG_Python_SetConstant(d, "KS_None",SWIG_From_int(static_cast< int >(Hex::KS_None)));
+  SWIG_Python_SetConstant(d, "KS_Line",SWIG_From_int(static_cast< int >(Hex::KS_Line)));
+  SWIG_Python_SetConstant(d, "KS_Circle",SWIG_From_int(static_cast< int >(Hex::KS_Circle)));
+  SWIG_Python_SetConstant(d, "KS_Ellipse",SWIG_From_int(static_cast< int >(Hex::KS_Ellipse)));
+  SWIG_Python_SetConstant(d, "KS_Hyperbola",SWIG_From_int(static_cast< int >(Hex::KS_Hyperbola)));
+  SWIG_Python_SetConstant(d, "KS_Parabola",SWIG_From_int(static_cast< int >(Hex::KS_Parabola)));
+  SWIG_Python_SetConstant(d, "KS_BezierCurve",SWIG_From_int(static_cast< int >(Hex::KS_BezierCurve)));
+  SWIG_Python_SetConstant(d, "KS_BSplineCurve",SWIG_From_int(static_cast< int >(Hex::KS_BSplineCurve)));
+  SWIG_Python_SetConstant(d, "KS_OtherCurve",SWIG_From_int(static_cast< int >(Hex::KS_OtherCurve)));
   SWIG_Python_SetConstant(d, "CylSmall",SWIG_From_int(static_cast< int >(Hex::CylSmall)));
   SWIG_Python_SetConstant(d, "CylBig",SWIG_From_int(static_cast< int >(Hex::CylBig)));
   SWIG_Python_SetConstant(d, "NxInt",SWIG_From_int(static_cast< int >(Hex::NxInt)));

@@ -20,8 +20,6 @@
 #ifndef _HEXABLOCKGUI_HXX_
 #define _HEXABLOCKGUI_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 #include <iostream>
 #include <map>
 #include <set>
@@ -56,15 +54,15 @@ namespace HEXABLOCK
     class VtkDocumentGraphicView;
     class OccGraphicView;
     class GraphicViewsHandler;
-    class DocumentDelegate;
+//    class DocumentDelegate;
     class DocumentModel;
     class PatternDataModel;
-    class PatternBuilderModel;
+//    class PatternBuilderModel;
     class AssociationsModel;
     class GroupsModel;
     class MeshModel;
     class PatternDataSelectionModel;
-    class PatternBuilderSelectionModel;
+//    class PatternBuilderSelectionModel;
     class GroupsSelectionModel;
     class MeshSelectionModel;
 
@@ -115,7 +113,7 @@ class OCCViewer_ViewWindow;
 class LightApp_VTKSelector;
 
 
-class HEXABLOCK_EXPORT HEXABLOCKGUI : public SalomeApp_Module
+class HexaExport HEXABLOCKGUI : public SalomeApp_Module
 {
   Q_OBJECT
 
@@ -192,6 +190,15 @@ public:
   QTreeView* getPatternDataTreeView() const { return _patternDataTreeView; }
   QTreeView* getPatternGeomTreeView() const { return _patternGeomTreeView; }
 
+  void showVertexInfoDialog(HEXA_NS::Vertex* vertex);
+  void showEdgeInfoDialog(HEXA_NS::Edge* edge);
+  void showQuadInfoDialog(HEXA_NS::Quad* quad);
+  void showHexaInfoDialog(HEXA_NS::Hexa* hexa);
+  void showVectorInfoDialog(HEXA_NS::Vector* vector);
+  void showGroupInfoDialog(HEXA_NS::Group* group);
+  void showLawInfoDialog(HEXA_NS::Law* law);
+  void showPropagationInfoDialog(HEXA_NS::Propagation* propagation);
+
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
@@ -248,8 +255,8 @@ private slots:
   void addHexa();
 
   void addVector();
-  void addCylinder();
-  void addPipe();
+//  void addCylinder();
+//  void addPipe();
   void makeGrid();
   void makeCylinder();
   void makePipe();
@@ -327,6 +334,8 @@ private:
   QDockWidget *_dwInputPanel;    // user Input
 
 
+  // ** Elements creation and modification Dialogs **
+
   // Dialog Box ( to keep persistent values )
   HEXABLOCK::GUI::VertexDialog*                 _vertexDiag;
   HEXABLOCK::GUI::EdgeDialog*                   _edgeDiag;
@@ -363,6 +372,16 @@ private:
   HEXABLOCK::GUI::ModelInfoDialog*              _modelInfoDiag;
   HEXABLOCK::GUI::AddShapeDialog*               _addShapeDiag;
 
+  // ** Elements information dialogs **
+  HEXABLOCK::GUI::VertexDialog*                 _vertexInfoDialog;
+  HEXABLOCK::GUI::EdgeDialog*                   _edgeInfoDialog;
+  HEXABLOCK::GUI::QuadDialog*                   _quadInfoDialog;
+  HEXABLOCK::GUI::HexaDialog*                   _hexaInfoDialog;
+  HEXABLOCK::GUI::VectorDialog*                 _vectorInfoDialog;
+  HEXABLOCK::GUI::GroupDialog*                  _groupInfoDialog;
+  HEXABLOCK::GUI::LawDialog*                    _lawInfoDialog;
+  HEXABLOCK::GUI::PropagationDialog*            _propagationInfoDialog;
+
 
   std::set<HEXABLOCK::GUI::HexaBaseDialog*> currentModelDialogs;
   // Actions
@@ -381,8 +400,8 @@ private:
 
   // Pattern Builder
   QAction *_addVector;
-  QAction *_addCylinder;
-  QAction *_addPipe;
+//  QAction *_addCylinder;
+//  QAction *_addPipe;
   QAction *_makeGrid; //Cartesian, Cylindrical, Spherical
   QAction *_makeCylinder;
   QAction *_makePipe;
@@ -425,9 +444,7 @@ private:
 
   // Meshing
   QAction *_computeMesh;
-
   QAction* _showModelInfoAct;
-
   QAction* _addShapeAct;
 
 
@@ -444,14 +461,14 @@ private:
 
   //      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW      VIEW
   QTreeView* _patternDataTreeView;    //  document's pattern : 1 ( only one view )
-  QTreeView* _patternBuilderTreeView; //  document's pattern : 1 ( only one view )
+//  QTreeView* _patternBuilderTreeView; //  document's pattern : 1 ( only one view )
   QTreeView* _patternGeomTreeView; // the geometries' tree view
   QTreeView* _associationTreeView;    //  document's association : 1 ( only one view )
   QTreeView* _groupsTreeView; //  document's groups
   QTreeView* _meshTreeView;   //  document's mesh property: 1 ( only one view )
 
   //      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE      DELEGATE
-  HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree
+//  HEXABLOCK::GUI::DocumentDelegate    *_treeViewDelegate;  // specific editor for each item of the tree
 
   HEXABLOCK::GUI::GraphicViewsHandler*  graphicViewsHandler; //vtk views hanlder (create, close, ...)
 

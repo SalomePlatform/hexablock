@@ -24,8 +24,6 @@
 #ifndef __HEX_H
 #define __HEX_H
 
-#include "Hex_defines.hxx"
-
 #include "hexa_base.hxx"
 
 #if defined WIN32
@@ -34,10 +32,9 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class Hex;
-HEXABLOCKENGINE_EXPORT Hex*  hex_instance ();
+HexaExport Hex*  hex_instance ();
 
-class HEXABLOCKENGINE_EXPORT Hex
+class HexaExport Hex
 {
 public:
    static Hex* getInstance ();
@@ -75,7 +72,7 @@ private:
 #endif    // not SWIG
 };
 
-HEXABLOCKENGINE_EXPORT void what ();
+HexaExport void what ();
 
 END_NAMESPACE_HEXA
 #endif

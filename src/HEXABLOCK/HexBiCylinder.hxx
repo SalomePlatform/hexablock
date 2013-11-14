@@ -23,14 +23,12 @@
 #ifndef __BI_CYLINDER_H_
 #define __BI_CYLINDER_H_
 
-#include "Hex_defines.hxx"
-
 #include "HexElements.hxx"
 #include <map>
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT BiCylinder : public Elements
+class HexaExport BiCylinder : public Elements
 {
 public:
    BiCylinder (Document* doc);

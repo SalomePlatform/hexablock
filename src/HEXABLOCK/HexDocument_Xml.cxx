@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include "HexDocument.hxx"
-#include <Basics_DirUtils.hxx>   
+// #include <Basics_DirUtils.hxx>   
 #include <cstdlib>               // Pour atoi et atof
 
 #include "Hex.hxx"
@@ -121,7 +121,8 @@ int Document::loadXml (cpchar ficname)
 {
    XmlTree xml("");
    string filename = ficname;
-   el_name         = Kernel_Utils::GetBaseName ((pchar)ficname);
+   //el_name         = Kernel_Utils::GetBaseName ((pchar)ficname);
+   make_basename (ficname, el_name);
 
    static const int NbExt = 3;
    static cpchar t_ext [NbExt] = { ".xml", ".XML", ".Xml" };

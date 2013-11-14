@@ -47,7 +47,6 @@
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI_SalomeTools.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
-#include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI.hxx"
 
@@ -87,6 +86,8 @@ using namespace HEXABLOCK::GUI;
 // //===========================================================================
 //                              SelectionModel
 // //===========================================================================
+
+bool SelectionModel::infoMode = true;
 
 SelectionModel::SelectionModel( QAbstractItemModel * model ):
 QItemSelectionModel( model )
@@ -161,14 +162,58 @@ QModelIndexList SelectionModel::indexListOf( const QString& anEntry, int role )
   return theIndexes;
 }
 
+DocumentModel* SelectionModel::getDocModel() const
+{
+    DocumentModel* docModel = NULL;
+    const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
+    if ( pModel != NULL)
+        docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() );
+
+    return docModel;
+}
+
+void SelectionModel::showEltInfo(QModelIndex& elt)
+{
+    DocumentModel* docModel = getDocModel();
+    if (!elt.isValid() || docModel == NULL)
+        return;
+
+    HEXA_NS::Vertex* vertex  = docModel->getHexaPtr<HEXA_NS::Vertex*>(elt);
+    HEXA_NS::Edge*   edge    = docModel->getHexaPtr<HEXA_NS::Edge*>(elt);
+    HEXA_NS::Quad*   quad    = docModel->getHexaPtr<HEXA_NS::Quad*>(elt);
+    HEXA_NS::Hexa*   hexa    = docModel->getHexaPtr<HEXA_NS::Hexa*>(elt);
+    HEXA_NS::Vector* vector  = docModel->getHexaPtr<HEXA_NS::Vector*>(elt);
+    HEXA_NS::Group*  group   = docModel->getHexaPtr<HEXA_NS::Group*>(elt);
+    HEXA_NS::Law*    law     = docModel->getHexaPtr<HEXA_NS::Law*>(elt);
+    HEXA_NS::Propagation* propagation = docModel->getHexaPtr<HEXA_NS::Propagation*>(elt);
+
+    HEXABLOCKGUI*    hexagui = HEXABLOCKGUI::getInstance();
+    if (vertex != NULL)
+        hexagui->showVertexInfoDialog(vertex);
+    else if (edge != NULL)
+        hexagui->showEdgeInfoDialog(edge);
+    else if (quad != NULL)
+        hexagui->showQuadInfoDialog(quad);
+    else if (hexa != NULL)
+        hexagui->showHexaInfoDialog(hexa);
+    else if (vector != NULL)
+        hexagui->showVectorInfoDialog(vector);
+    else if (group != NULL)
+        hexagui->showGroupInfoDialog(group);
+    else if (law != NULL)
+        hexagui->showLawInfoDialog(law);
+    else if (propagation != NULL)
+        hexagui->showPropagationInfoDialog(propagation);
+}
+
 void SelectionModel::salomeSelectionChanged()
 {
     // clear highlights and selections in the trees
     PatternDataSelectionModel* pdsm = HEXABLOCKGUI::currentDocGView->getPatternDataSelectionModel();
-    PatternBuilderSelectionModel* pbsm = HEXABLOCKGUI::currentDocGView->getPatternBuilderSelectionModel();
+//    PatternBuilderSelectionModel* pbsm = HEXABLOCKGUI::currentDocGView->getPatternBuilderSelectionModel();
     PatternGeomSelectionModel* pgsm = HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
     pdsm->clearSelection();
-    pbsm->clearSelection();
+//    pbsm->clearSelection();
     pgsm->clearSelection();
     pdsm->unhighlightTreeItems();
     pgsm->unhighlightTreeItems();
@@ -279,14 +324,12 @@ void PatternDataSelectionModel::highlightTreeItems(QModelIndexList& indexes,
 
     // * highlight item
     QAbstractItemModel* theModel = (QAbstractItemModel*) model();
-    QMap<int, QVariant> roles;
-    roles[Qt::BackgroundRole] = bgColor;
-    roles[Qt::ForegroundRole] = fgColor;
     foreach( const QModelIndex& anItemIndex, indexes )
     {
         if (anItemIndex.isValid())
         {
-            theModel->setItemData(anItemIndex, roles);
+            theModel->setData(anItemIndex, fgColor, Qt::ForegroundRole);
+            theModel->setData(anItemIndex, bgColor, Qt::BackgroundRole);
             currentHighlightedItems << anItemIndex;
         }
     }
@@ -305,13 +348,13 @@ void PatternDataSelectionModel::unhighlightTreeItems(bool clearSelected)
         return;
 
     QAbstractItemModel* theModel = (QAbstractItemModel*) model();
-    QMap<int, QVariant> roles;
-    roles[Qt::BackgroundRole] = Qt::white;
-    roles[Qt::ForegroundRole] = Qt::darkGreen;
     foreach( const QModelIndex& anItemIndex, currentHighlightedItems)
     {
         if (anItemIndex.isValid())
-            theModel->setItemData(anItemIndex, roles);
+        {
+            theModel->setData(anItemIndex, Qt::darkGreen, Qt::ForegroundRole);
+            theModel->setData(anItemIndex, Qt::white, Qt::BackgroundRole);
+        }
     }
     currentHighlightedItems.clear();
 }
@@ -319,16 +362,12 @@ void PatternDataSelectionModel::unhighlightTreeItems(bool clearSelected)
 QModelIndexList PatternDataSelectionModel::getGeomAssociations(const QModelIndex& dataIndex)
 {
     QModelIndexList geomIndexList;
-    DocumentModel               *docModel = NULL;
-    const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
-    PatternGeomSelectionModel* pGSModel = HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
-
-    if ( pModel != NULL)
-        docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() );
-
+    DocumentModel*               docModel = getDocModel();
+    PatternGeomSelectionModel*   pGSModel = HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
     if (docModel == NULL || pGSModel == NULL)
         return geomIndexList;
 
+    const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
     HEXA_NS::Vertex* vertex = docModel->getHexaPtr<HEXA_NS::Vertex*>(dataIndex);
     HEXA_NS::Edge*   edge   = docModel->getHexaPtr<HEXA_NS::Edge*>(dataIndex);
     HEXA_NS::Quad*   quad   = docModel->getHexaPtr<HEXA_NS::Quad*>(dataIndex);
@@ -347,7 +386,8 @@ QModelIndexList PatternDataSelectionModel::getGeomAssociations(const QModelIndex
 void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
     QModelIndexList indexes = selected.indexes();
-    if (indexes.count() == 0)
+    int nbSelected = indexes.count();
+    if (nbSelected == 0)
         return;
 
     // ** unhighlight current highlighted items in the trees
@@ -369,6 +409,12 @@ void PatternDataSelectionModel::onSelectionChanged( const QItemSelection & selec
     // ** highlight association in the occ view
     HEXABLOCKGUI::currentOccGView->highlight(indexes);
 
+    if (!infoMode || nbSelected > 1)
+        return;
+
+    // ** Show informations of the selected element
+    QModelIndex elt = indexes[0];
+    showEltInfo(elt);
 }
 
 void PatternDataSelectionModel::geomSelectionChanged( const Handle(SALOME_InteractiveObject)& anIObject )
@@ -398,29 +444,24 @@ void PatternDataSelectionModel::vtkSelectionChanged( const Handle(SALOME_Interac
     //Temporary Debug for hexa selection ------------------------------
     if (HEXABLOCKGUI::currentDocGView->getSelectionMode() == HEXA_TREE)
     {
-        DocumentModel               *docModel = NULL;
-        const QSortFilterProxyModel *pModel   = dynamic_cast<const QSortFilterProxyModel *>( model() );
+        DocumentModel* docModel = getDocModel();
+        if ( docModel != NULL && anIOIndex.isValid())
+        {
+            //get the selected quad
+            HEXA_NS::Quad* quad = docModel->getHexaPtr<HEXA_NS::Quad*>(anIOIndex);
 
-        if ( pModel != NULL){
-            docModel = dynamic_cast<DocumentModel*>( pModel->sourceModel() );
-            if ( docModel != NULL && anIOIndex.isValid())
+            if (quad != NULL)
             {
-                //get the selected quad
-                HEXA_NS::Quad* quad = docModel->getHexaPtr<HEXA_NS::Quad*>(anIOIndex);
-
-                if (quad != NULL)
+                //get the hexa the quad belongs to
+                HEXA_NS::Hexa* hexa = docModel->getQuadHexa(quad);
+                if (hexa != NULL) //convert the hexa to a QModelIndex so we can select it in the model
+                    anIOIndex = indexBy( HEXA_DATA_ROLE, QVariant::fromValue(hexa));
+                else
                 {
-                    //get the hexa the quad belongs to
-                    HEXA_NS::Hexa* hexa = docModel->getQuadHexa(quad);
-                    if (hexa != NULL) //convert the hexa to a QModelIndex so we can select it in the model
-                        anIOIndex = indexBy( HEXA_DATA_ROLE, QVariant::fromValue(hexa));
-                    else
-                    {
-                        SUIT_MessageBox::critical( 0,
-                                tr("HexaBlock"),
-                                tr("The Hexahedron this quad belongs to has been deleted!"));
-                        return;
-                    }
+                    SUIT_MessageBox::critical( 0,
+                            tr("HexaBlock"),
+                            tr("The Hexahedron this quad belongs to has been deleted!"));
+                    return;
                 }
             }
         }
@@ -548,14 +589,12 @@ void PatternGeomSelectionModel::highlightTreeItems(QModelIndexList& indexes,
 
     // * highlight items
     QAbstractItemModel* theModel = (QAbstractItemModel*) model();
-    QMap<int, QVariant> roles;
-    roles[Qt::BackgroundRole] = bgColor;
-    roles[Qt::ForegroundRole] = fgColor;
     foreach( const QModelIndex& anItemIndex, indexes )
     {
         if (anItemIndex.isValid())
         {
-            theModel->setItemData(anItemIndex, roles);
+            theModel->setData(anItemIndex, fgColor, Qt::ForegroundRole);
+            theModel->setData(anItemIndex, bgColor, Qt::BackgroundRole);
             currentHighlightedItems << anItemIndex;
         }
     }
@@ -573,13 +612,13 @@ void PatternGeomSelectionModel::unhighlightTreeItems(bool clearSelected)
     if (currentHighlightedItems.count() == 0)
         return;
     QAbstractItemModel* theModel = (QAbstractItemModel*) model();
-    QMap<int, QVariant> roles;
-    roles[Qt::BackgroundRole] = Qt::white;
-    roles[Qt::ForegroundRole] = Qt::darkGreen;
     foreach( const QModelIndex& anItemIndex, currentHighlightedItems)
     {
         if (anItemIndex.isValid())
-            theModel->setItemData(anItemIndex, roles);
+        {
+            theModel->setData(anItemIndex, Qt::darkGreen, Qt::ForegroundRole);
+            theModel->setData(anItemIndex, Qt::white, Qt::BackgroundRole);
+        }
     }
     currentHighlightedItems.clear();
 }
@@ -604,51 +643,71 @@ GroupsSelectionModel::~GroupsSelectionModel()
           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
 }
 
-
 void GroupsSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  try {
     QModelIndexList indexes = selected.indexes();
-    for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-      HEXABLOCKGUI::currentDocGView->highlightGroups( *i_index );
+    int nbSelected = indexes.count();
+    if (nbSelected == 0)
+        return;
+
+    // ** Highlight the group in the vtk view **/
+    try {
+        for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
+            HEXABLOCKGUI::currentDocGView->highlightGroups( *i_index );
+        }
+    } catch ( ... ) {
+        MESSAGE("Unknown exception was cought !!!");
     }
-  } catch ( ... ) {
-    MESSAGE("Unknown exception was cought !!!");
-  }
+
+    if (!infoMode || nbSelected > 1)
+        return;
+
+    // ** Show informations of the selected element **/
+    QModelIndex elt = indexes[0];
+    showEltInfo(elt);
 }
 
 // //===========================================================================
 //                              MeshSelectionModel
 // //===========================================================================
 MeshSelectionModel::MeshSelectionModel( QAbstractItemModel * model ):
-SelectionModel( model )
+        SelectionModel( model )
 {
-  connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
-           this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ), Qt::UniqueConnection );
-  connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
-           this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ), Qt::UniqueConnection );
+    connect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+            this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ), Qt::UniqueConnection );
+    connect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+            this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ), Qt::UniqueConnection );
 }
-
 
 MeshSelectionModel::~MeshSelectionModel()
 {
-  disconnect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
-          this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
-  disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
+    disconnect( this, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
+            this, SLOT( onCurrentChanged( const QModelIndex & , const QModelIndex & ) ) );
+    disconnect( this, SIGNAL( selectionChanged( const QItemSelection & , const QItemSelection & ) ),
+            this, SLOT( onSelectionChanged( const QItemSelection & , const QItemSelection & ) ) );
 }
 
 
 void MeshSelectionModel::onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
 {
-  try {
-
     QModelIndexList indexes = selected.indexes();
-    for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
-      HEXABLOCKGUI::currentDocGView->highlightPropagation( *i_index );
+    int nbSelected = indexes.count();
+    if (nbSelected == 0)
+        return;
+
+    try {
+        for( QModelIndexList::const_iterator i_index = indexes.begin(); i_index != indexes.end(); ++i_index ){
+            HEXABLOCKGUI::currentDocGView->highlightPropagation( *i_index );
+        }
+    } catch ( ... ) {
+        MESSAGE("Unknown exception was cought !!!");
     }
-  } catch ( ... ) {
-    MESSAGE("Unknown exception was cought !!!");
-  }
+
+    if (!infoMode || nbSelected > 1)
+        return;
+
+    // ** Show informations of the selected element **/
+    QModelIndex elt = indexes[0];
+    showEltInfo(elt);
 }
 

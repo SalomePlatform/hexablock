@@ -22,8 +22,6 @@
 #ifndef KLINKITEMSELECTIONMODEL_H
 #define KLINKITEMSELECTIONMODEL_H
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 #include <QtCore/QObject>
 #include <QtGui/QItemSelectionModel>
 #include <QtGui/QAbstractProxyModel>
@@ -33,11 +31,12 @@
 // #include "kdeui_export.h"
 // #include "klinkitemselectionmodel_p.hxx"
 
+#include "hexa_base.hxx"
 #include "kmodelindexproxymapper.hxx"
 
 class KLinkItemSelectionModelPrivate;
 
-class HEXABLOCK_EXPORT KLinkItemSelectionModel : public QItemSelectionModel
+class HexaExport KLinkItemSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
 public:
@@ -86,7 +85,7 @@ static QItemSelection klink_removeInvalidRanges(const QItemSelection &selection)
 #endif
 
 
-class HEXABLOCK_EXPORT KLinkItemSelectionModelPrivate
+class KLinkItemSelectionModelPrivate
 {
 public:
     KLinkItemSelectionModelPrivate(KLinkItemSelectionModel *proxySelectionModel, QAbstractItemModel *model,

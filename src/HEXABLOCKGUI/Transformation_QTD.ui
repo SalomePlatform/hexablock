@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
+    <width>266</width>
     <height>475</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>5</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Transform Operation</string>
@@ -37,6 +43,12 @@
        <height>0</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>50</height>
+      </size>
+     </property>
      <property name="title">
       <string/>
      </property>
@@ -44,7 +56,7 @@
       <item>
        <widget class="QRadioButton" name="rb0">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -60,7 +72,7 @@
       <item>
        <widget class="QRadioButton" name="rb1">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -73,7 +85,7 @@
       <item>
        <widget class="QRadioButton" name="rb2">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -95,6 +107,9 @@
       <item>
        <widget class="QWidget" name="widget" native="true">
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
@@ -104,6 +119,12 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -147,8 +168,24 @@
       <item>
        <widget class="QWidget" name="widget_2" native="true">
         <layout class="QFormLayout" name="formLayout_2">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>elements</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="elts_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -169,6 +206,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="vex_le_rb1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -189,6 +232,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="k_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="decimals">
             <number>6</number>
            </property>
@@ -200,21 +249,30 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>elements</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QFormLayout" name="formLayout_3">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>elements</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="elts_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -235,6 +293,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="vex_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -255,6 +319,12 @@
          </item>
          <item row="3" column="1">
           <widget class="QLineEdit" name="vec_le_rb2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>16777215</width>
@@ -275,6 +345,12 @@
          </item>
          <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="angle_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="wrapping">
             <bool>false</bool>
            </property>
@@ -292,13 +368,6 @@
            </property>
            <property name="value">
             <double>360.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>elements</string>
            </property>
           </widget>
          </item>

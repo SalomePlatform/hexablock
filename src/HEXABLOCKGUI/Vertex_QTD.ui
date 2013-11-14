@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>246</width>
-    <height>216</height>
+    <width>228</width>
+    <height>248</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>5</width>
     <height>0</height>
    </size>
   </property>
@@ -54,7 +54,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="name_le">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -114,6 +114,12 @@
          </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="x_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -121,6 +127,12 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="y_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -128,6 +140,12 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="z_spb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -135,6 +153,19 @@
          </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>

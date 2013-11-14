@@ -176,37 +176,23 @@ QModelIndexList HexaBaseDialog::getIndexList(QListWidget* itemsList, bool mapToS
     return iItems;
 }
 
-// ============================================================= lockSizeToSizeHint
-void HexaBaseDialog::lockSizeToSizeHint()
-{
-    setMaximumHeight(sizeHint().height());
-    //   setMaximumWidth(sizeHint().width());
-    //	setMinimumHeight(sizeHint().height());
-    //	setMinimumWidth(sizeHint().width());
-}
-
-// ============================================================= unlockSizeModification
-void HexaBaseDialog::unlockSizeModification()
-{
-    setMaximumHeight(MAX_HEIGHT);
-    //   setMaximumWidth(MAX_WIDTH);
-    //	setMinimumHeight(MIN_HEIGHT);
-    //	setMinimumWidth(MIN_WIDTH);
-}
-
 // ============================================================= resetSizeAndShow
 void HexaBaseDialog::resetSizeAndShow(QDockWidget* parent)
 {
+    if (parent == NULL)
+        return;
+
     //force the dialog to fit its contain
-    lockSizeToSizeHint();
+//    setMinimumWidth(sizeHint().width());
 
     //set the dialog in the dockwidget
+    if (parent->widget())
+        parent->widget()->close();
     parent->setWidget(this);
     parent->setWindowTitle(windowTitle());
-    parent->setVisible(true);
-    show();
+    parent->show();
 
-    unlockSizeModification();
+//    setMinimumWidth(MIN_WIDTH);
 }
 
 QString HexaBaseDialog::getErrorMsg()
@@ -252,8 +238,8 @@ void HexaBaseDialog::connectDocumentGraphicView(VtkDocumentGraphicView* docGView
     //Connect the graphic view and its model to the dialog box
     connect( docGView->getPatternDataSelectionModel(), SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
-    connect( docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
+//    connect( docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
     connect( docGView->getPatternGeomSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ), Qt::UniqueConnection );
     connect( docGView->getGroupsSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
@@ -273,8 +259,8 @@ void HexaBaseDialog::disconnectDocumentGraphicView(VtkDocumentGraphicView* docGV
     disconnect(docGView->getPatternDataSelectionModel(), SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
 
-    disconnect(docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
-            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
+//    disconnect(docGView->getPatternBuilderSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
+//            this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
 
     disconnect(docGView->getPatternGeomSelectionModel(), SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection &) ),
             this, SLOT( onSelectionChanged(const QItemSelection &, const QItemSelection &) ) );
@@ -380,7 +366,7 @@ void HexaBaseDialog::close()
 {
     //reset the data selection pattern (forget all selections of the current context)
     getPatternDataSelectionModel()->reset();
-    getPatternBuilderSelectionModel()->reset();
+//    getPatternBuilderSelectionModel()->reset();
     getPatternGeomSelectionModel()->reset();
 
     //Clear vtk selection
@@ -392,6 +378,8 @@ void HexaBaseDialog::close()
     //Close the dialog box
     if (parentWidget())
     	parentWidget()->close();
+
+    getPatternDataSelectionModel()->setInfoMode(true);
 }
 
 // ============================================================== onHelpRequested
@@ -533,12 +521,12 @@ QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
     case VERTEX_TREE:
     case EDGE_TREE:
     case QUAD_TREE:
-    case HEXA_TREE: selector = getPatternDataSelectionModel(); break;
-    case VECTOR_TREE:
+    case HEXA_TREE:
+    case VECTOR_TREE: selector = getPatternDataSelectionModel(); break;
 //    case CYLINDER_TREE:
 //    case PIPE_TREE:
-    case ELEMENTS_TREE:
-    case CROSSELEMENTS_TREE: selector = getPatternBuilderSelectionModel(); break;
+//    case ELEMENTS_TREE:
+//    case CROSSELEMENTS_TREE: selector = getPatternBuilderSelectionModel(); break;
     case GEOMPOINT_TREE:
     case GEOMEDGE_TREE:
     case GEOMFACE_TREE: selector = getPatternGeomSelectionModel(); break;
@@ -1209,8 +1197,8 @@ bool EdgeDialog::apply(QModelIndex& result)
 
     if ( !getDocumentModel() ) return false;
     const PatternDataModel*    patternDataModel = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel ) return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/ ) return false;
 
     QModelIndex iEdge;
 
@@ -1222,7 +1210,8 @@ bool EdgeDialog::apply(QModelIndex& result)
         }
     } else if ( rb1->isChecked() ){
         QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-        QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+        QModelIndex ivec = patternDataModel->mapToSource( _index[vec_le_rb1] );
+//        QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
         if ( ivex.isValid() && ivec.isValid() ){
             iEdge = getDocumentModel()->addEdgeVector( ivex, ivec );
         }
@@ -1499,6 +1488,8 @@ HexaDialog::HexaDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
 
     if  ( editmode == INFO_MODE ){
         setWindowTitle( tr("Hexahedron Information") );
+        quads_lw->viewport()->setAttribute( Qt::WA_TransparentForMouseEvents );
+        vertices_lw->viewport()->setAttribute( Qt::WA_TransparentForMouseEvents );
     }
 }
 
@@ -1520,7 +1511,6 @@ void HexaDialog::_initInputWidget( Mode editmode )
 
     vertices_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
     vertices_lw->installEventFilter(this);
-
 
     if ( editmode != INFO_MODE ) {
         // delete item from listwidget
@@ -1728,9 +1718,9 @@ bool HexaDialog::apply(QModelIndex& result)
     }
 
     nbItems = iElts.count();
-    if ( quads_rb->isChecked() && (nbItems>=2 && nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
+    if ( quads_rb->isChecked() and (nbItems>=2 and nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
         iHexa = getDocumentModel()->addHexaQuads( iElts );
-    } else if ( vertices_rb->isChecked() && nbItems== 8 ){ // build from vertices
+    } else if ( vertices_rb->isChecked() and nbItems== 8 ){ // build from vertices
         iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
                 iElts[4], iElts[5], iElts[6], iElts[7] );
     }
@@ -1851,8 +1841,8 @@ bool VectorDialog::apply(QModelIndex& result)
 
     if ( !getDocumentModel() ) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel) return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/) return false;
 
     QModelIndex iVector;
 
@@ -1888,7 +1878,8 @@ bool VectorDialog::apply(QModelIndex& result)
         updateDefaultName(name_le, _value->getType());
 
     // to select/highlight result
-    result = patternBuilderModel->mapFromSource(iVector);
+    result = patternDataModel->mapFromSource(iVector);
+//    result = patternBuilderModel->mapFromSource(iVector);
 
     return true;
 }
@@ -2061,7 +2052,7 @@ bool MakeGridDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel*    patternDataModel    = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iNewElts;
     if ( rb0->isChecked() )
@@ -2074,9 +2065,12 @@ bool MakeGridDialog::apply(QModelIndex& result)
     else if ( rb1->isChecked() )
     {
         QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
-        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
-        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
-        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
+        QModelIndex iaxis   = patternDataModel->mapToSource( _index[axis_le] );
+        QModelIndex ibase   = patternDataModel->mapToSource( _index[base_le] );
+        QModelIndex ivec    = patternDataModel->mapToSource( _index[vec_le] );
+//        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+//        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
+//        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
 
         if ( icenter.isValid() && iaxis.isValid() && ibase.isValid() && ivec.isValid() )
         {
@@ -2094,9 +2088,12 @@ bool MakeGridDialog::apply(QModelIndex& result)
     } else if ( rb2->isChecked() )
     {
         QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
-        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
-        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
-        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
+        QModelIndex iaxis   = patternDataModel->mapToSource( _index[axis_le] );
+        QModelIndex ibase   = patternDataModel->mapToSource( _index[base_le] );
+        QModelIndex ivec    = patternDataModel->mapToSource( _index[vec_le] );
+//        QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+//        QModelIndex ibase   = patternBuilderModel->mapToSource( _index[base_le] );
+//        QModelIndex ivec    = patternBuilderModel->mapToSource( _index[vec_le] );
 
         if ( icenter.isValid() && iaxis.isValid() && ibase.isValid() && ivec.isValid() )
         {
@@ -2146,7 +2143,8 @@ bool MakeGridDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource( iNewElts );
+    result = patternDataModel->mapFromSource(iNewElts);
+//    result = patternBuilderModel->mapFromSource( iNewElts );
 
     return true;
 }
@@ -2303,11 +2301,13 @@ bool MakeCylinderDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iorigin = patternDataModel->mapToSource( _index[origin_le] );
-    QModelIndex iaxis = patternBuilderModel->mapToSource( _index[axis_le] );
-    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
+    QModelIndex iaxis = patternDataModel->mapToSource( _index[axis_le] );
+    QModelIndex ibase = patternDataModel->mapToSource( _index[base_le] );
+//    QModelIndex iaxis = patternBuilderModel->mapToSource( _index[axis_le] );
+//    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
     double rext = ext_radius_spb->value();
     double rint = int_radius_spb->value();
     double angle = angle_spb->value();
@@ -2371,7 +2371,8 @@ bool MakeCylinderDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -2530,11 +2531,13 @@ bool MakePipeDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iorigin = patternDataModel->mapToSource( _index[origin_le] );
-    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
-    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
+    QModelIndex iaxis = patternDataModel->mapToSource( _index[axis_le] );
+    QModelIndex ibase = patternDataModel->mapToSource( _index[base_le] );
+//    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
+//    QModelIndex ibase = patternBuilderModel->mapToSource( _index[base_le] );
     double rext = ext_radius_spb->value();
     double rint = int_radius_spb->value();
     double angle = angle_spb->value();
@@ -2598,7 +2601,8 @@ bool MakePipeDialog::apply(QModelIndex& result)
     }
 
     // to select/highlight result
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -2664,13 +2668,15 @@ bool MakeCylindersDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iElts;
     QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
     QModelIndex icenter2 = patternDataModel->mapToSource( _index[center2_le] );
-    QModelIndex idir = patternBuilderModel->mapToSource( _index[direction_le] );
-    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[direction2_le] );
+    QModelIndex idir = patternDataModel->mapToSource( _index[direction_le] );
+    QModelIndex idir2 = patternDataModel->mapToSource( _index[direction2_le] );
+//    QModelIndex idir = patternBuilderModel->mapToSource( _index[direction_le] );
+//    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[direction2_le] );
 
     if ( icenter.isValid() && icenter2.isValid() && idir.isValid() && idir2.isValid()){
         double r1 = radius_spb->value();
@@ -2685,7 +2691,8 @@ bool MakeCylindersDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -2752,12 +2759,14 @@ bool MakePipesDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iorigin1 = patternDataModel->mapToSource( _index[origin_le] );
     QModelIndex iorigin2 = patternDataModel->mapToSource( _index[origin2_le] );
-    QModelIndex idir1 = patternBuilderModel->mapToSource( _index[dir_le] );
-    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[dir2_le] );
+    QModelIndex idir1 = patternDataModel->mapToSource( _index[dir_le] );
+    QModelIndex idir2 = patternDataModel->mapToSource( _index[dir2_le] );
+//    QModelIndex idir1 = patternBuilderModel->mapToSource( _index[dir_le] );
+//    QModelIndex idir2 = patternBuilderModel->mapToSource( _index[dir2_le] );
     double rint1 = int_radius_spb->value();
     double rext1 = ext_radius_spb->value();
     double height1 = height_spb->value();
@@ -2776,7 +2785,8 @@ bool MakePipesDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -2980,10 +2990,12 @@ bool PrismQuadDialog::apply(QModelIndex& result)
     _currentObj = NULL;
 
     DocumentModel* docModel = getDocumentModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    PatternDataModel* patternDataModel = getPatternDataModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndexList iquads = getIndexList(quads_lw);
-    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
+    QModelIndex iaxis = patternDataModel->mapToSource( _index[axis_le] );
+//    QModelIndex iaxis  = patternBuilderModel->mapToSource( _index[axis_le] );
     double length = length_spb->value();
     int nb = nb_spb->value();
 
@@ -3023,7 +3035,8 @@ bool PrismQuadDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -3185,7 +3198,7 @@ bool JoinQuadDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel*    patternDataModel    = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndexList iquads;
     QModelIndex     iquad;
@@ -3233,7 +3246,8 @@ bool JoinQuadDialog::apply(QModelIndex& result)
         SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT JOIN QUAD(S)" ) + "\n" + getErrorMsg() );
         return false;
     }
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -3643,8 +3657,8 @@ bool DisconnectDialog::apply(QModelIndex& result)
     _currentObj = NULL;
     if (getDocumentModel() == NULL) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     QModelIndex iElts;
 
@@ -3704,7 +3718,8 @@ bool DisconnectDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -3795,7 +3810,7 @@ bool CutEdgeDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel*    patternDataModel    = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iElts;
     QModelIndex iedge = patternDataModel->mapToSource( _index[e_le] );
@@ -3824,7 +3839,8 @@ bool CutEdgeDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     //Update the line edit
     QVariant invalid;
@@ -3951,21 +3967,24 @@ bool MakeTransformationDialog::apply(QModelIndex& result)
 
     if (getDocumentModel() == NULL) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     QModelIndex iNewElts;
 
     if ( rb0->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+        QModelIndex ielts = patternDataModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex ivec = patternDataModel->mapToSource( _index[vec_le_rb0] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
 
         if ( ielts.isValid()
                 && ivec.isValid() )
             iNewElts = getDocumentModel()->makeTranslation( ielts, ivec );
 
     } else if ( rb1->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex ielts = patternDataModel->mapToSource( _index[elts_le_rb1] );
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
         double          k = k_spb->value();
 
@@ -3974,9 +3993,11 @@ bool MakeTransformationDialog::apply(QModelIndex& result)
             iNewElts = getDocumentModel()->makeScale( ielts, ivex, k );
 
     } else if ( rb2->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex ielts = patternDataModel->mapToSource( _index[elts_le_rb2] );
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        QModelIndex ivec = patternDataModel->mapToSource( _index[vec_le_rb2] );
         double      angle = angle_spb->value();
 
         if ( ielts.isValid()
@@ -3990,7 +4011,8 @@ bool MakeTransformationDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iNewElts);
+    result = patternDataModel->mapFromSource(iNewElts);
+//    result = patternBuilderModel->mapFromSource(iNewElts);
 
     return true;
 }
@@ -4110,13 +4132,14 @@ bool MakeSymmetryDialog::apply(QModelIndex& result)
     _currentObj = NULL;
     if (getDocumentModel() == NULL) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     QModelIndex iNewElts;
 
     if ( rb0->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex ielts = patternDataModel->mapToSource( _index[elts_le_rb0] );
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
 
         if ( ielts.isValid()
@@ -4125,9 +4148,11 @@ bool MakeSymmetryDialog::apply(QModelIndex& result)
 
 
     } else if ( rb1->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex ielts = patternDataModel->mapToSource( _index[elts_le_rb1] );
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+        QModelIndex ivec = patternDataModel->mapToSource( _index[vec_le_rb1] );
 
         if ( ielts.isValid()
                 && ivex.isValid()
@@ -4135,9 +4160,11 @@ bool MakeSymmetryDialog::apply(QModelIndex& result)
             iNewElts = getDocumentModel()->makeSymmetryLine( ielts, ivex, ivec );
 
     } else if ( rb2->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb2]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        QModelIndex ivec = patternDataModel->mapToSource(_index[vec_le_rb2]);
 
         if ( ielts.isValid()
                 && ivex.isValid()
@@ -4150,7 +4177,8 @@ bool MakeSymmetryDialog::apply(QModelIndex& result)
         return false;
     }
 
-    result = patternBuilderModel->mapFromSource(iNewElts);
+//    result = patternBuilderModel->mapFromSource(iNewElts);
+    result = patternDataModel->mapFromSource(iNewElts);
 
     return true;
 }
@@ -4263,21 +4291,24 @@ bool PerformTransformationDialog::apply(QModelIndex& result)
 
     if (getDocumentModel() == NULL) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     bool performed = false;
 
     if ( rb0->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb0]);
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb0] );
+        QModelIndex ivec = patternDataModel->mapToSource(_index[vec_le_rb0]);
 
         if ( ielts.isValid()
                 && ivec.isValid() )
             performed = getDocumentModel()->performTranslation( ielts, ivec );
 
     } else if ( rb1->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb1]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
         double          k = k_spb->value();
 
@@ -4286,9 +4317,11 @@ bool PerformTransformationDialog::apply(QModelIndex& result)
             performed = getDocumentModel()->performScale( ielts, ivex, k );
 
     } else if ( rb2->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb2]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        QModelIndex ivec = patternDataModel->mapToSource(_index[vec_le_rb2]);
         double      angle = angle_spb->value();
 
         if ( ielts.isValid()
@@ -4419,13 +4452,14 @@ bool PerformSymmetryDialog::apply(QModelIndex& result)
 
     if (getDocumentModel() == NULL) return false;
     const PatternDataModel*    patternDataModel    = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     bool performed = false;
 
     if ( rb0->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb0] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb0]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb0] );
 
         if ( ielts.isValid()
@@ -4433,9 +4467,11 @@ bool PerformSymmetryDialog::apply(QModelIndex& result)
             performed = getDocumentModel()->performSymmetryPoint( ielts, ivex );
 
     } else if ( rb1->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb1] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb1]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb1] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb1] );
+        QModelIndex ivec = patternDataModel->mapToSource(_index[vec_le_rb1]);
 
         if ( ielts.isValid()
                 && ivex.isValid()
@@ -4443,9 +4479,11 @@ bool PerformSymmetryDialog::apply(QModelIndex& result)
             performed = getDocumentModel()->performSymmetryLine( ielts, ivex, ivec );
 
     } else if ( rb2->isChecked() ){
-        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+//        QModelIndex ielts = patternBuilderModel->mapToSource( _index[elts_le_rb2] );
+        QModelIndex ielts = patternDataModel->mapToSource(_index[elts_le_rb2]);
         QModelIndex  ivex = patternDataModel->mapToSource( _index[vex_le_rb2] );
-        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+//        QModelIndex  ivec = patternBuilderModel->mapToSource( _index[vec_le_rb2] );
+        QModelIndex ivec = patternDataModel->mapToSource(_index[vec_le_rb2]);
 
         if ( ielts.isValid()
                 && ivex.isValid()
@@ -5055,6 +5093,7 @@ void GroupDialog::_initInputWidget( Mode editmode )
     {
         name_le->setReadOnly(true);
         kind_cb->setEnabled(false);
+        eltBase_lw->viewport()->setAttribute( Qt::WA_TransparentForMouseEvents );
     }
 
     connect(eltBase_lw,    SIGNAL(itemSelectionChanged()), this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
@@ -5544,36 +5583,7 @@ HexaBaseDialog(parent, editmode, f)
 {
     _helpFileName = "gui_mesh.html";
     setWindowTitle( tr("Compute mesh") );
-    QVBoxLayout* layout = new QVBoxLayout;
-    setLayout(layout);
-
-    QHBoxLayout* up   = new QHBoxLayout;
-    QHBoxLayout* down = new QHBoxLayout;
-
-    layout->addLayout(up);
-    layout->addLayout(down);
-
-    QVBoxLayout* vlg = new QVBoxLayout;
-    QVBoxLayout* vld = new QVBoxLayout;
-
-    up->addLayout(vlg);
-    up->addLayout(vld);
-
-    vlg->addWidget(new QLabel("Name"));
-    vlg->addWidget(new QLabel("Dimension"));
-    vlg->addWidget(new QLabel("Container"));
-
-    _name = new QLineEdit("Mesh");
-    _dim  = new QSpinBox();
-    _fact = new QLineEdit("FactoryServer");
-
-    vld->addWidget(_name);
-    vld->addWidget(_dim);
-    vld->addWidget(_fact);
-
-    _dim->setRange(1, 3);
-    _dim->setValue(3);
-
+    setupUi( this );
     _initWidget(editmode);
 }
 
@@ -5762,8 +5772,8 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
 
     if ( !getDocumentModel() ) return false;
     const PatternDataModel* patternDataModel = getPatternDataModel();
-    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-    if ( !patternDataModel || !patternBuilderModel)    return false;
+//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+    if ( !patternDataModel /*|| !patternBuilderModel*/)    return false;
 
     QModelIndex ielts; //result
 
@@ -5799,7 +5809,8 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
         return false;
     }
     _value  = ielts.model()->data(ielts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
-    result = patternBuilderModel->mapFromSource(ielts);
+//    result = patternBuilderModel->mapFromSource(ielts);
+    result = patternDataModel->mapFromSource(ielts);
 
     //update the list (indexes)
     for ( int r = 0; r < nbQuads; ++r ){
@@ -5946,7 +5957,7 @@ bool QuadRevolutionDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QListWidgetItem* item = NULL;
 
@@ -5961,7 +5972,8 @@ bool QuadRevolutionDialog::apply(QModelIndex& result)
     }
 
     QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
-    QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
+    QModelIndex iaxis = patternDataModel->mapToSource(_index[axis_le]);
+//    QModelIndex iaxis   = patternBuilderModel->mapToSource( _index[axis_le] );
     int angle = angle_spb->value();
     int nbre = nbre_spb->value();
 
@@ -5993,7 +6005,8 @@ bool QuadRevolutionDialog::apply(QModelIndex& result)
         return false;
     }
     _value  = iElts.model()->data(iElts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -6208,13 +6221,15 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
 
     DocumentModel* docModel = getDocumentModel();
     PatternDataModel* patternDataModel = getPatternDataModel();
-    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
+//    PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
 
     QModelIndex iElts;
     QModelIndex icenter = patternDataModel->mapToSource( _index[center_le] );
     QModelIndex ivplan  = patternDataModel->mapToSource( _index[vplan_le] );
-    QModelIndex ivecx   = patternBuilderModel->mapToSource( _index[base_le] );
-    QModelIndex ivecz   = patternBuilderModel->mapToSource( _index[hole_axis_le] );
+    QModelIndex ivecx = patternDataModel->mapToSource(_index[base_le]);
+    QModelIndex ivecz = patternDataModel->mapToSource(_index[hole_axis_le]);
+//    QModelIndex ivecx   = patternBuilderModel->mapToSource( _index[base_le] );
+//    QModelIndex ivecz   = patternBuilderModel->mapToSource( _index[hole_axis_le] );
 
     double radhole  = hole_rad_spb->value();
     double radext   = sphere_radext_spb->value();
@@ -6334,7 +6349,8 @@ bool MakeHemiSphereDialog::apply(QModelIndex& result)
         return false;
     }
     _value  = iElts.model()->data(iElts, HEXA_DATA_ROLE).value<HEXA_NS::Elements*>();
-    result = patternBuilderModel->mapFromSource(iElts);
+    result = patternDataModel->mapFromSource(iElts);
+//    result = patternBuilderModel->mapFromSource(iElts);
 
     return true;
 }
@@ -6479,308 +6495,3 @@ bool AddShapeDialog::apply(QModelIndex& result)
 
     return true;
 }
-
-
-
-
-
-
-//*****************************  OBSOLETE: A SUPPRIMER !!!!  ************************************//
-
-// ============================================================== Constructeur
-CylinderDialog::CylinderDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, editmode, f),
-  _value(0)
-{
-    _helpFileName = "gui_cyl.html";
-    setupUi( this );
-    _initWidget(editmode);
-
-    if ( editmode == INFO_MODE ){
-        setWindowTitle( tr("Cylinder Information") );
-    }
-}
-
-// ============================================================== Destructeur
-CylinderDialog::~CylinderDialog()
-{
-}
-
-// ============================================================== _initInputWidget
-void CylinderDialog::_initInputWidget( Mode editmode )
-{
-    QRegExp rx("");
-    QValidator *validator = new QRegExpValidator(rx, this);
-
-    installEventFilter(this);
-    name_le->installEventFilter(this);
-
-    vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-    vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-
-    vex_le->setValidator( validator );
-    vec_le->setValidator( validator );
-
-    vex_le->installEventFilter(this);
-    vec_le->installEventFilter(this);
-
-    vex_le->setReadOnly(true);
-    vec_le->setReadOnly(true);
-
-    if (editmode == INFO_MODE)
-    {
-        name_le->setReadOnly(true);
-        r_spb->setReadOnly(true);
-        h_spb->setReadOnly(true);
-    }
-
-}
-
-// ============================================================== clear
-void CylinderDialog::clear()
-{
-    name_le->clear();
-
-    vex_le->clear();
-    modelUnregister(vex_le);
-
-    vec_le->clear();
-    modelUnregister(vec_le);
-
-    r_spb->clear();
-    h_spb->clear();
-
-    modelUnregister(this);
-
-}
-
-// ============================================================== setValue
-void CylinderDialog::setValue(HEXA_NS::Cylinder* c)
-{
-    HEXA_NS::Vertex* base      = c->getBase();
-    HEXA_NS::Vector* direction = c->getDirection();
-    double  r = c->getRadius();
-    double  h = c->getHeight();
-
-    name_le->setText( c->getName() );
-    vex_le->setText( base->getName() );
-    vec_le->setText( direction->getName() );
-    r_spb->setValue(r);
-    h_spb->setValue(h);
-
-    if ( getPatternDataSelectionModel() ){
-        QModelIndex iCyl       = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(c) );
-        QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
-        QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
-
-        name_le->setProperty( "QModelIndex",  QVariant::fromValue(iCyl) );
-        vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
-        vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
-    }
-    _value = c;
-}
-
-// ============================================================== getValue
-HEXA_NS::Cylinder* CylinderDialog::getValue()
-{
-    return _value;
-}
-
-// ============================================================== apply
-bool CylinderDialog::apply(QModelIndex& result)
-{
-//    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-//    _currentObj = NULL;
-//
-//    if ( !getDocumentModel() ) return false;
-//    const PatternDataModel*    patternDataModel    = getPatternDataModel();
-//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-//    if ( !patternDataModel || !patternBuilderModel) return false;
-//
-//    QModelIndex iCyl;
-//    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-//    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-//    double r = r_spb->value();
-//    double h = h_spb->value();
-//
-//    if ( ivex.isValid()
-//            && ivec.isValid() ){
-//        iCyl = getDocumentModel()->addCylinder( ivex, ivec, r,  h );
-//    }
-//
-//    if ( !iCyl.isValid() ){
-//        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD CYLINDER" ) );
-//        return false;
-//    }
-//
-//    _value  = iCyl.model()->data(iCyl, HEXA_DATA_ROLE).value<HEXA_NS::Cylinder *>();
-//
-//    QString newName = name_le->text();
-//    if (!newName.isEmpty()) /*{*/
-//        getDocumentModel()->setName( iCyl, newName );
-//
-//    //update the default name in the dialog box
-//    if (_value != NULL)
-//        updateDefaultName(name_le, _value->getType());
-//
-//    // to select/highlight result
-//    result = patternBuilderModel->mapFromSource(iCyl);
-
-    return true;
-}
-
-//------------------------------- PipeDialog -----------------------------------
-
-// ============================================================== Constructeur
-
-PipeDialog::PipeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f )
-: HexaBaseDialog(parent, editmode, f),
-  _value(0)
-{
-    _helpFileName = "gui_pipe.html";
-    setupUi( this );
-    _initWidget(editmode);
-    //   setFocusProxy( vex_le );
-
-    if ( editmode == INFO_MODE ){
-        setWindowTitle( tr("Pipe Information") );
-    }
-
-}
-
-// ============================================================== Destructeur
-PipeDialog::~PipeDialog()
-{
-}
-
-// ============================================================== _initInputWidget
-void PipeDialog::_initInputWidget( Mode editmode )
-{
-    QRegExp rx("");
-    QValidator *validator = new QRegExpValidator(rx, this);
-
-    installEventFilter(this);
-    name_le->installEventFilter(this);
-
-    //Vertex Field config
-    vex_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-    vex_le->installEventFilter(this);
-    vex_le->setValidator( validator );
-
-    //Vector Field config
-    vec_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-    vec_le->installEventFilter(this);
-    vec_le->setValidator( validator );
-
-
-    if ( editmode == INFO_MODE ){
-        name_le->setReadOnly(true);
-        ir_spb->setReadOnly(true);
-        er_spb->setReadOnly(true);
-        h_spb->setReadOnly(true);
-    }
-
-    vex_le->setReadOnly(true);
-    vec_le->setReadOnly(true);
-
-    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()));
-}
-
-// ============================================================== clear
-void PipeDialog::clear()
-{
-    name_le->clear();
-
-    vex_le->clear();
-    modelUnregister(vex_le);
-
-    vec_le->clear();
-    modelUnregister(vec_le);
-
-    modelUnregister(this);
-}
-
-// ============================================================== setValue
-void PipeDialog::setValue(HEXA_NS::Pipe* p)
-{
-    HEXA_NS::Vertex* base      = p->getBase();
-    HEXA_NS::Vector* direction = p->getDirection();
-    double  ir = p->getInternalRadius();
-    double  er = p->getRadius();
-    double  h  = p->getHeight();
-
-    name_le->setText( p->getName() );
-    vex_le->setText( base->getName() );
-    vec_le->setText( direction->getName() );
-    ir_spb->setValue(ir);
-    er_spb->setValue(er);
-    h_spb->setValue(h);
-
-    if ( getPatternDataSelectionModel() ){
-        QModelIndex iPipe      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(p) );
-        QModelIndex iBase      = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(base) );
-        QModelIndex iDirection = getPatternDataSelectionModel()->indexBy( HEXA_DATA_ROLE, QVariant::fromValue(direction) );
-
-        name_le->setProperty( "QModelIndex",  QVariant::fromValue(iPipe) );
-        vex_le->setProperty( "QModelIndex",  QVariant::fromValue(iBase) );
-        vec_le->setProperty( "QModelIndex",  QVariant::fromValue(iDirection) );
-    }
-    _value = p;
-}
-
-// ============================================================== getValue
-HEXA_NS::Pipe* PipeDialog::getValue()
-{
-    return _value;
-}
-
-// ============================================================== apply
-bool PipeDialog::apply(QModelIndex& result)
-{
-//    if (_currentObj != NULL) _highlightWidget(_currentObj, Qt::white);
-//    _currentObj = NULL;
-//
-//    if ( !getDocumentModel() ) return false;
-//    const PatternDataModel*    patternDataModel    = getPatternDataModel();
-//    const PatternBuilderModel* patternBuilderModel = getPatternBuilderModel();
-//    if ( !patternDataModel || !patternBuilderModel)    return false;
-//
-//    QModelIndex iPipe;
-//    QModelIndex ivex = patternDataModel->mapToSource( _index[vex_le] );
-//    QModelIndex ivec = patternBuilderModel->mapToSource( _index[vec_le] );
-//    double ir = ir_spb->value();
-//    double er = er_spb->value();
-//    double h  = h_spb->value();
-//
-//    if (ir >= er) {
-//        SUIT_MessageBox::information( this, tr( "CANNOT ADD PIPE" ), tr( "External radius must be greather than Internal radius!" ) );
-//        return false;
-//    }
-//
-//
-//    if ( ivex.isValid()
-//            && ivec.isValid() ){
-//        iPipe = getDocumentModel()->addPipe( ivex, ivec, ir, er, h );
-//    }
-//
-//    if ( !iPipe.isValid() ){
-//        SUIT_MessageBox::critical( this, tr( "ERR_ERROR" ), tr( "CANNOT ADD PIPE" ) );
-//        return false;
-//    }
-//    _value  = iPipe.model()->data(iPipe, HEXA_DATA_ROLE).value<HEXA_NS::Pipe *>();
-//
-//    QString newName = name_le->text();
-//    if ( !newName.isEmpty() )/*{*/
-//        getDocumentModel()->setName( iPipe, newName );
-//
-//    //update the default name in the dialog box
-//    if (_value != NULL)
-//        updateDefaultName(name_le, _value->getType());
-//
-//    // to select/highlight result
-//    result = patternBuilderModel->mapFromSource(iPipe);
-
-    return true;
-}
-// ************************************** FIN A SUPPRIMER ******************************************//
-

@@ -10,6 +10,12 @@
     <height>198</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>5</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Merge Operation</string>
   </property>
@@ -36,7 +42,7 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="e0_le">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -54,6 +60,12 @@
       </item>
       <item row="2" column="1">
        <widget class="QLineEdit" name="e1_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -67,6 +79,12 @@
       </item>
       <item row="4" column="1">
        <widget class="QLineEdit" name="v0_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -80,6 +98,12 @@
       </item>
       <item row="6" column="1">
        <widget class="QLineEdit" name="v1_le">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>127</width>

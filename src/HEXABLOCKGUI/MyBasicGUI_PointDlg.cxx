@@ -99,8 +99,8 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     QPixmap image7 (aResMgr->loadPixmap("GEOM", tr("ICO_WIRE")));
 
     setWindowTitle( tr("Vertex Association") );
-    setMinimumWidth(260);
-    setMinimumHeight(400);
+//    setMinimumWidth(260);
+//    setMinimumHeight(400);
 
     mainFrame()->GroupConstructors->setTitle(tr("GEOM_POINTS"));
     mainFrame()->RadioButton1->setIcon(image0);

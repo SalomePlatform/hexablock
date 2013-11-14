@@ -4,21 +4,20 @@
 #ifndef __SUB_SHAPE_H_
 #define __SUB_SHAPE_H_
 
-#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #include <TopoDS_Shape.hxx>
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT SubShape : public EltBase
+class HexaExport SubShape : public EltBase
 {
 public :
     SubShape (NewShape* dad, int id, int dim);
-    NewShape*       getParentShape() const  { return ss_parent; }
-    cpchar          getParentName () const;
-    int             getIdent ()             { return sub_ident ; }
-    int             getDim   ()             { return sub_dim ; }
+    NewShape*   getParentShape() const  { return ss_parent; }
+    cpchar      getParentName () const;
+    int         getIdent ()             { return sub_ident ; }
+    int         getDim   ()             { return sub_dim ; }
     EnumKindOfShape kindOf   ()             { return kind_of ; }
 
     const string&       getBrep  ();

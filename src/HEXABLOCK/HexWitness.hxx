@@ -23,8 +23,6 @@
 #ifndef __WITNESS_H_
 #define __WITNESS_H_
 
-#include "Hex_defines.hxx"
-
 #define  Mess   el_root->glob->mess << Begin
 #define  Follow el_root->glob->mess
 
@@ -39,7 +37,7 @@ BEGIN_NAMESPACE_HEXA
 const std::string Begin (" **** ");
 
 class DumpStudy;
-class HEXABLOCKENGINE_EXPORT Witness
+class HexaExport Witness
 {
 public :
    Witness ();

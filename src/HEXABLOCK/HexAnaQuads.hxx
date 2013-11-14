@@ -22,13 +22,12 @@
 #ifndef __ANA_QUADS_H
 #define __ANA_QUADS_H
 
-#include "Hex_defines.hxx"
 #include "HexQuad.hxx"
 // #include "HexEdge.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT AnaQuads
+class HexaExport AnaQuads
 {
 public:
     AnaQuads (Quad* q1, Quad* q2, Quad* q3=NULL, Quad* q4=NULL, Quad* q5=NULL);

@@ -20,20 +20,8 @@
 
 
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
-#include "utilities.h"
 #include "HEXABLOCKGUI.hxx"
-#include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
-#include "HexNewShape.hxx"
-#include "HexVertexShape.hxx"
-#include "HexEdgeShape.hxx"
-#include "HexFaceShape.hxx"
-
-#include <SelectMgr_Selection.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-#include <SelectBasics_SensitiveEntity.hxx>
-#include <StdSelect_BRepOwner.hxx>
-#include <TopExp.hxx>
 
 #include <SOCC_ViewModel.h>
 #include <SUIT_ViewManager.h>
@@ -206,7 +194,7 @@ void OccGraphicView::highlight( const QModelIndexList & indexList, bool only )
     }
     highlight( assocEntrySubIDs, only );
 }
-#include <SUIT_Session.h>
+
 void OccGraphicView::highlightSubShapes(const Handle(AIS_Shape)& anObj,
                                 const TColStd_IndexedMapOfInteger& aIndexMap, bool only)
 {

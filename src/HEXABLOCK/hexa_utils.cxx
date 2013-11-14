@@ -269,4 +269,40 @@ bool requals (const double* lun, const double* lautre)
    return    lun!=NULL && lautre!=NULL     && requals (lun [0], lautre [0])
           && requals (lun [1], lautre [1]) && requals (lun [2], lautre [2]) ;
 }
+// ======================================================== make_basename
+int make_basename (cpchar filename, string& base)
+{
+   const char slash = '/';
+   const char antis = '\\';
+   int  lg   = strlen (filename);
+   int  ifin = -1;
+   int  ideb = 0;
+   bool more = true;
+
+   for (int nc = lg-1 ; more && nc>=0 ; --nc)
+       {
+       char car = filename[nc];
+       if (car==slash || car==antis)
+          {
+          if (ifin >0) 
+             {
+             ideb = nc + 1;
+             more = false;
+             }
+          }
+       else if (ifin<0)
+          ifin = nc;
+       } 
+
+   if (ifin  <0)
+      {
+      base = "undefined";
+      return HERR;
+      }
+
+   base = "";
+   for (int nc=ideb ; nc <= ifin ; ++nc)
+       base += filename[nc];
+   return HOK;
+}
 END_NAMESPACE_HEXA

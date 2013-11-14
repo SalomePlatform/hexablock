@@ -23,7 +23,6 @@
 #ifndef __ELT_BASE_H
 #define __ELT_BASE_H
 
-#include "Hex_defines.hxx"
 #include "hexa_base.hxx"
 #include <vector>
 
@@ -41,7 +40,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT EltBase
+class HexaExport EltBase
 {
 public :
    virtual int     countHexa   ()  { return 0; }

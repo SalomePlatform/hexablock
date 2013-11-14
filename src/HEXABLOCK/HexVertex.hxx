@@ -23,12 +23,11 @@
 #ifndef __VERTEX_H_
 #define __VERTEX_H_
 
-#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT Vertex : public EltBase
+class HexaExport Vertex : public EltBase
 {
 public :
    double getX()   { return v_x; }

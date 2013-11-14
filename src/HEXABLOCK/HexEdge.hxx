@@ -22,12 +22,11 @@
 #ifndef __EDGE_H
 #define __EDGE_H
 
-#include "Hex_defines.hxx"
 #include "HexVertex.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT Edge : public EltBase
+class HexaExport Edge : public EltBase
 {
 public:
     virtual Vertex* getVertex (int  nro);

@@ -22,14 +22,13 @@
 #ifndef __VECTOR_H
 #define __VECTOR_H
 
-#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 #include <cmath>
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT Vector : public EltBase
+class HexaExport Vector : public EltBase
 {
 public:
     double getDx ()    { return v_dx ; }

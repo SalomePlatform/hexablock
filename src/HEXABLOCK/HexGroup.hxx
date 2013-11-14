@@ -23,12 +23,11 @@
 #ifndef __GROUP_H
 #define __GROUP_H
 
-#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
-class HEXABLOCKENGINE_EXPORT Group : public EltBase 
+class HexaExport Group : public EltBase 
 {
 public :
    int       addElement    (EltBase* elt);

@@ -168,7 +168,7 @@ HEXA_NS::EltBase* DocumentModel::getHexaPtr(const QModelIndex& iElt)
     case HEXA_TREE : elt = getHexaPtr<HEXA_NS::Hexa*>(iElt); break;
     case VECTOR_TREE : elt = getHexaPtr<HEXA_NS::Vector*>(iElt); break;
     case ELEMENTS_TREE : elt = getHexaPtr<HEXA_NS::Elements*>(iElt); break;
-    case CROSSELEMENTS_TREE : elt = getHexaPtr<HEXA_NS::CrossElements*>(iElt); break;
+//  case CROSSELEMENTS_TREE : elt = getHexaPtr<HEXA_NS::CrossElements*>(iElt); break;
     case GEOMSHAPE_TREE: elt = getHexaPtr<HEXA_NS::NewShape*>(iElt); break;
     case GEOMPOINT_TREE: elt = getHexaPtr<HEXA_NS::VertexShape*>(iElt); break;
     case GEOMEDGE_TREE:  elt = getHexaPtr<HEXA_NS::EdgeShape*>(iElt); break;
@@ -255,7 +255,7 @@ void DocumentModel::load( const QString& xmlFileName ) // Fill Data
     clearAll();
 
     fillData();
-    fillBuilder();
+//    fillBuilder();
     fillGeometry();
     fillAssociation();
     fillGroups();
@@ -313,7 +313,7 @@ void DocumentModel::refresh()
     clearAll();
 
     fillData();
-    fillBuilder();
+//    fillBuilder();
     fillGeometry();
     fillAssociation();
     fillGroups();
@@ -325,7 +325,7 @@ void DocumentModel::refresh()
 void DocumentModel::clearAll()
 {
     clearData();
-    clearBuilder();
+//    clearBuilder();
     clearGeometry();
     clearAssociation();
     clearGroups();
@@ -338,15 +338,19 @@ void DocumentModel::clearData()
     _edgeDirItem->removeRows(0, _edgeDirItem->rowCount() );
     _quadDirItem->removeRows(0, _quadDirItem->rowCount() );
     _hexaDirItem->removeRows(0, _hexaDirItem->rowCount() );
-}
 
-
-void DocumentModel::clearBuilder()
-{
     _vectorDirItem->removeRows(0, _vectorDirItem->rowCount() );
     _elementsDirItem->removeRows(0, _elementsDirItem->rowCount() );
     _crossElementsDirItem->removeRows(0, _crossElementsDirItem->rowCount() );
 }
+
+
+//void DocumentModel::clearBuilder()
+//{
+//    _vectorDirItem->removeRows(0, _vectorDirItem->rowCount() );
+//    _elementsDirItem->removeRows(0, _elementsDirItem->rowCount() );
+//    _crossElementsDirItem->removeRows(0, _crossElementsDirItem->rowCount() );
+//}
 
 void DocumentModel::clearGeometry()
 {
@@ -415,52 +419,95 @@ void DocumentModel::fillData()
         hItem = new HexaItem(h, _entry);
         _hexaDirItem->appendRow(hItem);
     }
-}
 
+    // +++++ Builder ++++++++++++++++++++++++++++++
 
-void DocumentModel::fillBuilder()
-{
-    HEXA_NS::Vector *v     = NULL;
-    VectorItem      *vItem = NULL;
+    HEXA_NS::Vector *vec     = NULL;
+    VectorItem      *vecItem = NULL;
     int nbVector = _hexaDocument->countVector();
     for ( int i=0; i<nbVector; ++i ){
-        v = _hexaDocument->getVector(i);
-        vItem = new VectorItem(v);
-        _vectorDirItem->appendRow(vItem);
+        vec = _hexaDocument->getVector(i);
+        vecItem = new VectorItem(vec);
+        _vectorDirItem->appendRow(vecItem);
     }
 
     //******* A VOIR AVEC ALAIN POUR LE REMPLISSAGE DE L'ARBRE ELEMENTS ET CROSSELEMENTS (ByCylinder) *******/
     //******* OU SONT STOCKES LES ELEMENTS ET LES CROSSELEMENTS DANS LE DOCUMENT?                     ******/
 
     //   _cylinderDirItem
-//    HEXA_NS::Cylinder *c     = NULL;
-//    HEXA_NS::Elements* c = NULL;
-//    CylinderItem      *cItem = NULL;
-//    ElementsItem* cItem = NULL;
-//    int nbCylinder = _hexaDocument->countCylinder();
-//    for ( int i=0; i<nbCylinder; ++i ){
-//        c = _hexaDocument->getCylinder(i);
-//        cItem = new CylinderItem(c, _entry);
-//        cItem = new ElementsItem(c, _entry);
-//        _cylinderDirItem->appendRow(cItem);
-//        _elementsDirItem->appendRow(cItem);
-//    }
+    //    HEXA_NS::Cylinder *c     = NULL;
+    //    HEXA_NS::Elements* c = NULL;
+    //    CylinderItem      *cItem = NULL;
+    //    ElementsItem* cItem = NULL;
+    //    int nbCylinder = _hexaDocument->countCylinder();
+    //    for ( int i=0; i<nbCylinder; ++i ){
+    //        c = _hexaDocument->getCylinder(i);
+    //        cItem = new CylinderItem(c, _entry);
+    //        cItem = new ElementsItem(c, _entry);
+    //        _cylinderDirItem->appendRow(cItem);
+    //        _elementsDirItem->appendRow(cItem);
+    //    }
 
     //   _pipeDirItem
-//    HEXA_NS::Pipe *p     = NULL;
-//    HEXA_NS::Elements* p = NULL;
-//    PipeItem      *pItem = NULL;
-//    ElementsItem* pItem = NULL;
-//    int nbPipe = _hexaDocument->countPipe();
-//    for ( int i=0; i<nbPipe; ++i ){
-//        p = _hexaDocument->getPipe(i);
-//        pItem = new PipeItem(p);
-//        pItem = new ElementsItem(p, _entry);
-//        _pipeDirItem->appendRow(pItem);
-//        _elementsDirItem->appendRow(pItem);
-//    }
+    //    HEXA_NS::Pipe *p     = NULL;
+    //    HEXA_NS::Elements* p = NULL;
+    //    PipeItem      *pItem = NULL;
+    //    ElementsItem* pItem = NULL;
+    //    int nbPipe = _hexaDocument->countPipe();
+    //    for ( int i=0; i<nbPipe; ++i ){
+    //        p = _hexaDocument->getPipe(i);
+    //        pItem = new PipeItem(p);
+    //        pItem = new ElementsItem(p, _entry);
+    //        _pipeDirItem->appendRow(pItem);
+    //        _elementsDirItem->appendRow(pItem);
+    //    }
     //********************************************************************************************************
 }
+
+
+//void DocumentModel::fillBuilder()
+//{
+//    HEXA_NS::Vector *v     = NULL;
+//    VectorItem      *vItem = NULL;
+//    int nbVector = _hexaDocument->countVector();
+//    for ( int i=0; i<nbVector; ++i ){
+//        v = _hexaDocument->getVector(i);
+//        vItem = new VectorItem(v);
+//        _vectorDirItem->appendRow(vItem);
+//    }
+//
+//    //******* A VOIR AVEC ALAIN POUR LE REMPLISSAGE DE L'ARBRE ELEMENTS ET CROSSELEMENTS (ByCylinder) *******/
+//    //******* OU SONT STOCKES LES ELEMENTS ET LES CROSSELEMENTS DANS LE DOCUMENT?                     ******/
+//
+//    //   _cylinderDirItem
+////    HEXA_NS::Cylinder *c     = NULL;
+////    HEXA_NS::Elements* c = NULL;
+////    CylinderItem      *cItem = NULL;
+////    ElementsItem* cItem = NULL;
+////    int nbCylinder = _hexaDocument->countCylinder();
+////    for ( int i=0; i<nbCylinder; ++i ){
+////        c = _hexaDocument->getCylinder(i);
+////        cItem = new CylinderItem(c, _entry);
+////        cItem = new ElementsItem(c, _entry);
+////        _cylinderDirItem->appendRow(cItem);
+////        _elementsDirItem->appendRow(cItem);
+////    }
+//
+//    //   _pipeDirItem
+////    HEXA_NS::Pipe *p     = NULL;
+////    HEXA_NS::Elements* p = NULL;
+////    PipeItem      *pItem = NULL;
+////    ElementsItem* pItem = NULL;
+////    int nbPipe = _hexaDocument->countPipe();
+////    for ( int i=0; i<nbPipe; ++i ){
+////        p = _hexaDocument->getPipe(i);
+////        pItem = new PipeItem(p);
+////        pItem = new ElementsItem(p, _entry);
+////        _pipeDirItem->appendRow(pItem);
+////        _elementsDirItem->appendRow(pItem);
+////    }
+//    //********************************************************************************************************
+//}
 
 void DocumentModel::fillGeometry()
 {
@@ -828,6 +875,7 @@ void DocumentModel::allowElementsSelectionOnly()
     _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
 
+/**********************************************************
 void DocumentModel::allowCrossElementsSelectionOnly()
 {
     _vertexItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
@@ -843,6 +891,7 @@ void DocumentModel::allowCrossElementsSelectionOnly()
     _lawItemFlags   = Qt::ItemFlags( ~Qt::ItemIsEnabled );
     _propagationItemFlags = Qt::ItemFlags( ~Qt::ItemIsEnabled );
 }
+ ********************************************************** */
 
 void DocumentModel::allowLawSelectionOnly()
 {
@@ -987,19 +1036,30 @@ QModelIndex DocumentModel::addEdgeVertices (const QModelIndex &i_v0, const QMode
     return edgeIndex;
 }
 
-QModelIndex DocumentModel::addEdgeVector ( const QModelIndex &i_v, const QModelIndex &i_vec )
+QModelIndex DocumentModel::addEdgeVector( const QModelIndex &i_v, const QModelIndex &i_vec )
 {
     QModelIndex edgeIndex;
 
-    HEXA_NS::Vertex* hv0 = getHexaPtr<HEXA_NS::Vertex*>(i_v);
+    HEXA_NS::Vertex* hv   = getHexaPtr<HEXA_NS::Vertex*>(i_v);
     HEXA_NS::Vector* hvec = getHexaPtr<HEXA_NS::Vector*>(i_vec);
 
-    HEXA_NS::Edge* he = _hexaDocument->addEdgeVector( hv0, hvec );
+    if (hv == NULL || hvec == NULL) return edgeIndex;
+
+    HEXA_NS::Edge* he = _hexaDocument->addEdgeVector( hv, hvec );
     if ( BadElement(he) ) return edgeIndex;
 
+    HEXA_NS::Vertex* hv2 = he->getAval(); //the new vertex resulting from the creation of the edge
+    if (hv2 == NULL) return edgeIndex;
+
+    //ADD the edge in the treeview
     EdgeItem* e = new EdgeItem(he, _entry);
-    _vectorDirItem->appendRow(e);
+    _edgeDirItem->appendRow(e);
     edgeIndex = e->index();
+
+    //The resulting Vertex
+    VertexItem* v = new VertexItem(hv2, _entry);
+    _vertexDirItem->appendRow(v);
+
     emit patternDataChanged();
 
     return edgeIndex;
@@ -1015,7 +1075,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
     HEXA_NS::Vertex* hv2 = getHexaPtr<HEXA_NS::Vertex*>(i_v2);
     HEXA_NS::Vertex* hv3 = getHexaPtr<HEXA_NS::Vertex*>(i_v3);
 
-    if ( hv0 && hv1 && hv2 && hv3 ){
+    if ( hv0 and hv1 and hv2 and hv3 ){
         HEXA_NS::Quad* hq = _hexaDocument->addQuadVertices( hv0, hv1, hv2, hv3 );
         if ( BadElement(hq) ) return quadIndex;
 
@@ -1038,7 +1098,7 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
     HEXA_NS::Edge* he2 = getHexaPtr<HEXA_NS::Edge*>(e2);
     HEXA_NS::Edge* he3 = getHexaPtr<HEXA_NS::Edge*>(e3);
 
-    if ( he0 && he1 && he2 && he3 ){
+    if ( he0 and he1 and he2 and he3 ){
 
         HEXA_NS::Quad* hq = _hexaDocument->addQuad( he0, he1, he2, he3 );
         if ( BadElement(hq) ) return quadIndex;
@@ -2125,9 +2185,10 @@ QString DocumentModel::documentEntry()
 PatternDataModel::PatternDataModel( QObject * parent ) :
                               QSortFilterProxyModel( parent )
 {
-    QString dataRegExp = QString("(%1|%2|%3|%4|%5|%6|%7|%8)").
-            arg(VERTEX_TREE).arg(EDGE_TREE).arg(QUAD_TREE).arg(HEXA_TREE).
-            arg(VERTEX_DIR_TREE).arg(EDGE_DIR_TREE).arg(QUAD_DIR_TREE).arg(HEXA_DIR_TREE);
+    QString dataRegExp = QString("(%1|%2|%3|%4|%5|%6|%7|%8|%9|%10|%11|%12)").
+            arg(VERTEX_TREE).arg(EDGE_TREE).arg(QUAD_TREE).arg(HEXA_TREE).arg(VECTOR_TREE).arg(ELEMENTS_TREE).
+            arg(VERTEX_DIR_TREE).arg(EDGE_DIR_TREE).arg(QUAD_DIR_TREE).arg(HEXA_DIR_TREE).arg(VECTOR_DIR_TREE).
+            arg(ELEMENTS_DIR_TREE);
 
     setFilterRole(HEXA_TREE_ROLE);
     setFilterRegExp ( QRegExp(dataRegExp) );
@@ -2188,7 +2249,7 @@ Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const
 
 QVariant PatternDataModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
+    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
         return QVariant( "Data" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2206,50 +2267,50 @@ QStandardItem* PatternDataModel::itemFromIndex ( const QModelIndex & index ) con
     return item;
 }
 
-PatternBuilderModel::PatternBuilderModel( QObject * parent ) :
-                              QSortFilterProxyModel( parent )
-{
-    QString builderRegExp =QString("(%1|%2|%3|%4|%5|%6)").
-            arg(VECTOR_TREE).arg(ELEMENTS_TREE).
-            arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
+//PatternBuilderModel::PatternBuilderModel( QObject * parent ) :
+//                              QSortFilterProxyModel( parent )
+//{
+//    QString builderRegExp =QString("(%1|%2|%3|%4|%5|%6)").
+//            arg(VECTOR_TREE).arg(ELEMENTS_TREE).
+//            arg(CROSSELEMENTS_TREE).arg(VECTOR_DIR_TREE).arg(ELEMENTS_DIR_TREE).arg(CROSSELEMENTS_DIR_TREE);
+//
+//    setFilterRole( HEXA_TREE_ROLE );
+//    setFilterRegExp ( QRegExp( builderRegExp ) );
+//}
 
-    setFilterRole( HEXA_TREE_ROLE );
-    setFilterRegExp ( QRegExp( builderRegExp ) );
-}
+//PatternBuilderModel::~PatternBuilderModel()
+//{
+//}
 
-PatternBuilderModel::~PatternBuilderModel()
-{
-}
+//Qt::ItemFlags PatternBuilderModel::flags(const QModelIndex &index) const
+//{
+//    Qt::ItemFlags flags;
+//
+//    DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+//    if ( m != NULL ){
+//        flags = m->flags( mapToSource(index) );
+//    }
+//    return flags;
+//}
 
-Qt::ItemFlags PatternBuilderModel::flags(const QModelIndex &index) const
-{
-    Qt::ItemFlags flags;
+//QVariant PatternBuilderModel::headerData ( int section, Qt::Orientation orientation, int role ) const
+//{
+//    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+//        return QVariant( "Builder" );
+//    } else {
+//        return QSortFilterProxyModel::headerData ( section, orientation, role );
+//    }
+//}
 
-    DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
-    if ( m != NULL ){
-        flags = m->flags( mapToSource(index) );
-    }
-    return flags;
-}
-
-QVariant PatternBuilderModel::headerData ( int section, Qt::Orientation orientation, int role ) const
-{
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
-        return QVariant( "Builder" );
-    } else {
-        return QSortFilterProxyModel::headerData ( section, orientation, role );
-    }
-}
-
-QStandardItem* PatternBuilderModel::itemFromIndex ( const QModelIndex & index ) const
-{
-    QStandardItem *item = NULL;
-    DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
-    if ( m != NULL ){
-        item = m->itemFromIndex( mapToSource(index) );
-    }
-    return item;
-}
+//QStandardItem* PatternBuilderModel::itemFromIndex ( const QModelIndex & index ) const
+//{
+//    QStandardItem *item = NULL;
+//    DocumentModel *m = dynamic_cast<DocumentModel *>( sourceModel() );
+//    if ( m != NULL ){
+//        item = m->itemFromIndex( mapToSource(index) );
+//    }
+//    return item;
+//}
 
 //====================================================================
 //              PatternGeomModel
@@ -2284,7 +2345,7 @@ Qt::ItemFlags PatternGeomModel::flags(const QModelIndex &index) const
 
 QVariant PatternGeomModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
+    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
         return QVariant( "Geometry" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2329,7 +2390,7 @@ Qt::ItemFlags AssociationsModel::flags(const QModelIndex &index) const
 
 QVariant AssociationsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
+    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
         return QVariant( "Associations" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2372,7 +2433,7 @@ Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 
 QVariant GroupsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
+    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
         return QVariant( "Groups" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2425,7 +2486,7 @@ Qt::ItemFlags MeshModel::flags(const QModelIndex &index) const
 
 QVariant MeshModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
+    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
         return QVariant( "Mesh" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );

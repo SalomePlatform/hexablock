@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>234</width>
+    <width>280</width>
     <height>422</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -39,8 +39,8 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>5</width>
-       <height>50</height>
+       <width>1</width>
+       <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -56,7 +56,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="rb0">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -72,7 +72,7 @@
       <item row="0" column="1">
        <widget class="QRadioButton" name="rb1">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -84,6 +84,12 @@
       </item>
       <item row="0" column="2">
        <widget class="QRadioButton" name="rb2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Plane</string>
         </property>
@@ -96,7 +102,7 @@
     <widget class="QGroupBox" name="groupBox_2">
      <property name="minimumSize">
       <size>
-       <width>5</width>
+       <width>1</width>
        <height>0</height>
       </size>
      </property>
@@ -117,7 +123,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb0">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -141,7 +147,14 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="vex_le_rb0"/>
+          <widget class="QLineEdit" name="vex_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -159,7 +172,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -185,7 +198,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="vex_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -211,7 +224,7 @@
          <item row="2" column="1">
           <widget class="QLineEdit" name="vec_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -243,7 +256,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="elts_le_rb2">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -269,7 +282,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="vex_le_rb2">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -295,7 +308,7 @@
          <item row="2" column="1">
           <widget class="QLineEdit" name="vec_le_rb2">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>

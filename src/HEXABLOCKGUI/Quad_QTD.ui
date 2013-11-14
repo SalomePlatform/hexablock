@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>216</width>
-    <height>463</height>
+    <width>232</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>5</width>
     <height>0</height>
    </size>
   </property>
@@ -32,14 +32,14 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>5</width>
+       <width>1</width>
        <height>0</height>
       </size>
      </property>
@@ -50,7 +50,7 @@
       <item>
        <widget class="QRadioButton" name="rb0">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -66,7 +66,7 @@
       <item>
        <widget class="QRadioButton" name="rb1">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -82,14 +82,14 @@
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>5</width>
+       <width>1</width>
        <height>0</height>
       </size>
      </property>
@@ -99,6 +99,12 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QWidget" name="widget_3" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <layout class="QFormLayout" name="formLayout_3">
          <item row="0" column="0">
           <widget class="QLabel" name="label_9">
@@ -129,35 +135,19 @@
       <item>
        <widget class="QWidget" name="widget" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Vertex 1</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="v0_le_rb0">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="readOnly">
-            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -245,13 +235,32 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="v0_le_rb0">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
        <widget class="QWidget" name="widget_2" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -267,7 +276,7 @@
          <item row="0" column="1">
           <widget class="QLineEdit" name="e0_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -293,7 +302,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="e1_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -319,7 +328,7 @@
          <item row="2" column="1">
           <widget class="QLineEdit" name="e2_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -345,7 +354,7 @@
          <item row="3" column="1">
           <widget class="QLineEdit" name="e3_le_rb1">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -369,6 +378,19 @@
          </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -425,22 +447,6 @@
   <connection>
    <sender>rb1</sender>
    <signal>clicked()</signal>
-   <receiver>widget_2</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>297</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>310</x>
-     <y>264</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rb1</sender>
-   <signal>clicked()</signal>
    <receiver>widget</receiver>
    <slot>hide()</slot>
    <hints>
@@ -451,6 +457,22 @@
     <hint type="destinationlabel">
      <x>351</x>
      <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rb1</sender>
+   <signal>clicked()</signal>
+   <receiver>widget_2</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>264</y>
     </hint>
    </hints>
   </connection>

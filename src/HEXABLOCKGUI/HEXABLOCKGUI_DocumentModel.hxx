@@ -21,8 +21,6 @@
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 #include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
@@ -37,7 +35,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HEXABLOCK_EXPORT DocumentModel : public QStandardItemModel
+    class HexaExport DocumentModel : public QStandardItemModel
     {
       Q_OBJECT
     public:
@@ -77,14 +75,14 @@ namespace HEXABLOCK
 
       void clearAll();
       void clearData();
-      void clearBuilder();
+//      void clearBuilder();
       void clearGeometry();
       void clearAssociation();
       void clearGroups();
       void clearMesh();
 
       void fillData();
-      void fillBuilder();
+//      void fillBuilder();
       void fillGeometry();
       void fillAssociation();
       void fillGroups();
@@ -498,7 +496,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCK_EXPORT PatternDataModel : public QSortFilterProxyModel
+    class  PatternDataModel : public QSortFilterProxyModel
     {
     public:
       PatternDataModel( QObject * parent = 0 );
@@ -514,16 +512,16 @@ namespace HEXABLOCK
     };
 
 
-    class  PatternBuilderModel : public QSortFilterProxyModel
-    {
-    public:
-      PatternBuilderModel( QObject * parent = 0 );
-      virtual ~PatternBuilderModel();
-
-      virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-      virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-      QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
-    };
+//    class  PatternBuilderModel : public QSortFilterProxyModel
+//    {
+//    public:
+//      PatternBuilderModel( QObject * parent = 0 );
+//      virtual ~PatternBuilderModel();
+//
+//      virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+//      virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
+//      QStandardItem * itemFromIndex ( const QModelIndex & index ) const;
+//    };
 
     class PatternGeomModel : public QSortFilterProxyModel
     {

@@ -22,9 +22,9 @@
 #ifndef KMODELINDEXPROXYMAPPER_H
 #define KMODELINDEXPROXYMAPPER_H
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 #include <QObject>
+
+#include "hexa_base.hxx"
 
 // #include "kdeui_export.h"
 
@@ -33,7 +33,7 @@ class QModelIndex;
 class QItemSelection;
 class KModelIndexProxyMapperPrivate;
 
-class HEXABLOCK_EXPORT KModelIndexProxyMapper : public QObject
+class HexaExport KModelIndexProxyMapper : public QObject
 {
   Q_OBJECT
 public:

@@ -24,7 +24,7 @@
     <!-- Major module parameters -->
     <parameter name="name"          value="HexaBlock"/>
     <parameter name="icon"          value="ModuleHexablock.png"/>
-    <parameter name="version"       value="@SALOMEHEXABLOCK_VERSION@"/>	
+    <parameter name="version"       value="@VERSION@"/>	
     <parameter name="documentation" value="hexablock_help"/>
   </section>
   <section name="hexablock_help" >
