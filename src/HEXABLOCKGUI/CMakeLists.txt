@@ -169,6 +169,7 @@ SET(_pyuic_files
   MakeHemiSphere_QTD.ui
   ModelInfo_QTD.ui
   AddShapeDialog_QTD.ui
+  ComputeMesh_QTD.ui
 )
 
 # scripts / pyuic wrappings
