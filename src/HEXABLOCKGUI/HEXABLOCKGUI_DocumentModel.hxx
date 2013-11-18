@@ -20,6 +20,7 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QTemporaryFile>
 #include <QStandardItemModel>
@@ -35,7 +36,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HexaExport DocumentModel : public QStandardItemModel
+    class HEXABLOCK_EXPORT DocumentModel : public QStandardItemModel
     {
       Q_OBJECT
     public:

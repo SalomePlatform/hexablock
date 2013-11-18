@@ -19,7 +19,7 @@
 #ifndef __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 #define __HEXABLOCKGUI_DOCUMENTDELEGATE_HXX_
 
-
+#include "HEXABLOCKGUI_Export.hxx"
 // QEvent * event, QAbstractItemModel 
 
 #include <QEvent>
@@ -31,19 +31,16 @@
 
 #include <QDockWidget>
 
-
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HEXABLOCKGUI_DocumentPanel.hxx"
 
-#include "hexa_base.hxx"
-
 namespace HEXABLOCK
 {
   namespace GUI
   {
-      class HexaExport DocumentDelegate : public QItemDelegate
+      class HEXABLOCK_EXPORT DocumentDelegate : public QItemDelegate
       {
           Q_OBJECT
       
@@ -81,7 +78,7 @@ namespace HEXABLOCK
           QDockWidget* _dw; // creator's container
 
       private slots:
-          void commitEditor();
+         // void commitEditor();
 
       };
   }

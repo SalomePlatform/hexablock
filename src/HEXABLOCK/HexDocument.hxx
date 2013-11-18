@@ -23,14 +23,21 @@
 #ifndef __DOCUMENT_H_
 #define __DOCUMENT_H_
 
+#include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
+
+#ifdef WIN32
+ #ifdef max
+  #undef max
+#endif
+#endif
 
 
 BEGIN_NAMESPACE_HEXA
 
-class HexaExport NewShape;
+class NewShape;
 
-class Document : public EltBase
+class HexaExport Document : public EltBase
 {
                                    // Fonctions utilisateur
 public :

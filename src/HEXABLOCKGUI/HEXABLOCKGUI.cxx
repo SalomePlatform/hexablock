@@ -2922,12 +2922,12 @@ QStringList HEXABLOCKGUI::getQuickDirList()
 
 extern "C"
 {
-    HexaExport CAM_Module* createModule()
+    HEXABLOCK_EXPORT CAM_Module* createModule()
     {
         return new HEXABLOCKGUI();
     }
 
-    HexaExport char* getModuleVersion()
+    HEXABLOCK_EXPORT char* getModuleVersion()
     {
         return (char*)HEXABLOCK_VERSION_STR;
     }

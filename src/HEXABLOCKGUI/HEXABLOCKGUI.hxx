@@ -20,6 +20,8 @@
 #ifndef _HEXABLOCKGUI_HXX_
 #define _HEXABLOCKGUI_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <iostream>
 #include <map>
 #include <set>
@@ -113,7 +115,7 @@ class OCCViewer_ViewWindow;
 class LightApp_VTKSelector;
 
 
-class HexaExport HEXABLOCKGUI : public SalomeApp_Module
+class HEXABLOCK_EXPORT HEXABLOCKGUI : public SalomeApp_Module
 {
   Q_OBJECT
 

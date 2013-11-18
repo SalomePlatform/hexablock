@@ -1075,7 +1075,7 @@ QModelIndex DocumentModel::addQuadVertices( const QModelIndex &i_v0, const QMode
     HEXA_NS::Vertex* hv2 = getHexaPtr<HEXA_NS::Vertex*>(i_v2);
     HEXA_NS::Vertex* hv3 = getHexaPtr<HEXA_NS::Vertex*>(i_v3);
 
-    if ( hv0 and hv1 and hv2 and hv3 ){
+    if ( hv0 && hv1 && hv2 && hv3 ){
         HEXA_NS::Quad* hq = _hexaDocument->addQuadVertices( hv0, hv1, hv2, hv3 );
         if ( BadElement(hq) ) return quadIndex;
 
@@ -1098,7 +1098,7 @@ QModelIndex DocumentModel::addQuadEdges( const QModelIndex &e0, const QModelInde
     HEXA_NS::Edge* he2 = getHexaPtr<HEXA_NS::Edge*>(e2);
     HEXA_NS::Edge* he3 = getHexaPtr<HEXA_NS::Edge*>(e3);
 
-    if ( he0 and he1 and he2 and he3 ){
+    if ( he0 && he1 && he2 && he3 ){
 
         HEXA_NS::Quad* hq = _hexaDocument->addQuad( he0, he1, he2, he3 );
         if ( BadElement(hq) ) return quadIndex;
@@ -2249,7 +2249,7 @@ Qt::ItemFlags PatternDataModel::flags(const QModelIndex &index) const
 
 QVariant PatternDataModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
         return QVariant( "Data" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2345,7 +2345,7 @@ Qt::ItemFlags PatternGeomModel::flags(const QModelIndex &index) const
 
 QVariant PatternGeomModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
         return QVariant( "Geometry" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2390,7 +2390,7 @@ Qt::ItemFlags AssociationsModel::flags(const QModelIndex &index) const
 
 QVariant AssociationsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
         return QVariant( "Associations" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2433,7 +2433,7 @@ Qt::ItemFlags GroupsModel::flags(const QModelIndex &index) const
 
 QVariant GroupsModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
         return QVariant( "Groups" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );
@@ -2486,7 +2486,7 @@ Qt::ItemFlags MeshModel::flags(const QModelIndex &index) const
 
 QVariant MeshModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
         return QVariant( "Mesh" );
     } else {
         return QSortFilterProxyModel::headerData ( section, orientation, role );

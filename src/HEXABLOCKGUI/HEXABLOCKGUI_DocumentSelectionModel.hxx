@@ -20,7 +20,7 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
-#include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QItemSelectionModel>
 #include <LightApp_SelectionMgr.h>
@@ -40,7 +40,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class HexaExport SelectionModel: public QItemSelectionModel
+    class HEXABLOCK_EXPORT SelectionModel: public QItemSelectionModel
     {
         Q_OBJECT
 
@@ -89,7 +89,7 @@ namespace HEXABLOCK
 //        }
 //    };
 
-    class HexaExport PatternDataSelectionModel : public SelectionModel
+    class HEXABLOCK_EXPORT PatternDataSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -113,7 +113,7 @@ namespace HEXABLOCK
 
     };
 
-    class HexaExport PatternGeomSelectionModel : public SelectionModel
+    class HEXABLOCK_EXPORT PatternGeomSelectionModel : public SelectionModel
     {
         Q_OBJECT
 
@@ -134,7 +134,7 @@ namespace HEXABLOCK
     };
 
 
-    class HexaExport GroupsSelectionModel : public SelectionModel
+    class HEXABLOCK_EXPORT GroupsSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -149,7 +149,7 @@ namespace HEXABLOCK
     };
 
 
-    class HexaExport MeshSelectionModel : public SelectionModel
+    class HEXABLOCK_EXPORT MeshSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
