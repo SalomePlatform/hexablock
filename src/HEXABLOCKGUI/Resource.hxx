@@ -20,7 +20,7 @@
 #ifndef _RESOURCE_HXX_
 #define _RESOURCE_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
+#include "hexa_base.hxx"
 
 #include <QColor>
 #include <QFont>
@@ -183,7 +183,7 @@
 
 namespace HEXABLOCK {
   namespace GUI {
-    class HEXABLOCK_EXPORT Resource {
+    class HexaExport Resource {
       public:
         Resource();
 

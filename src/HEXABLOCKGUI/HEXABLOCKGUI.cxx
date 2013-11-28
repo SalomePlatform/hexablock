@@ -108,8 +108,12 @@
 
 
 #include <Visual3d_ViewManager.hxx>
+#include <Graphic3d_Structure.hxx>
+#include <Graphic3d_Group.hxx>
 #include <V3d_PerspectiveView.hxx>
 #include <V3d_AmbientLight.hxx>
+#include <Graphic3d_GraphicDevice.hxx>
+#include <Graphic3d_Array1OfVertex.hxx>
 #include <V3d_DirectionalLight.hxx>
 #include <Xw_Window.hxx>
 #include <V3d_TypeOfShadingModel.hxx>
@@ -617,6 +621,7 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
         {
             docGView->setViewWindow(graphicViewsHandler->createVtkWindow());
             docGView->getViewWindow()->installEventFilter(this);
+            showAllMenus();
         }
         else
             docGView->setViewWindow(currentDocGView->getViewWindow());
@@ -649,7 +654,6 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
     SVTK_ViewWindow* window = dynamic_cast<SVTK_ViewWindow*>(svw);
     if (window != NULL)
     {
-
         //VTK clean close
         if (currentDocGView != NULL && currentDocGView->getViewWindow() == window)
         { //HexaBlock Vtk Window has been closed
@@ -697,7 +701,6 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
 //        if (_treeViewDelegate != NULL) _treeViewDelegate->closeDialog();
 
         currentOccGView->getViewWindow()->removeEventFilter(this);
-
         currentOccGView->setViewWindow(NULL);
     }
 }
@@ -1689,35 +1692,13 @@ void HEXABLOCKGUI::showMeshMenus(bool show)
     setToolShown( _computeMesh, show);
 }
 
-void HEXABLOCKGUI::showActor()
-{
-    VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
-    if (currentVtkGView == NULL || currentVtkGView->getViewWindow() == NULL ||
-                currentVtkGView->isEmpty() || currentVtkGView->getDocumentActor() == NULL)
-        return;
-
-    currentVtkGView->getViewWindow()->setFocus();
-    currentVtkGView->getViewWindow()->Display(currentVtkGView->getDocumentActor()->getIO());
-    currentVtkGView->update();
-    currentVtkGView->getViewWindow()->onFitAll();
-
-    //update the visibility state now
-    SalomeApp_Study* aStudy = HEXABLOCKGUI::activeStudy();
-    SUIT_ViewManager* vman = currentVtkGView->getViewWindow()->getViewManager();
-    if (aStudy == NULL || vman == NULL) return;
-
-    Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
-    aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),  "Visibility", 1 );
-    displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
-}
-
-//SOCC_Prs* currentPrs = NULL;
-void HEXABLOCKGUI::showOnlyActor()
+void HEXABLOCKGUI::showVtkActor()
 {
     VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
     if (currentVtkGView == NULL || currentVtkGView->isEmpty() ||
             currentVtkGView->getDocumentActor() == NULL)
         return;
+
     SVTK_ViewWindow* vtkView = currentVtkGView->getViewWindow();
     if (vtkView == NULL)
         return;
@@ -1727,8 +1708,8 @@ void HEXABLOCKGUI::showOnlyActor()
 
     //show only the current actor -----------------
     vtkView->setFocus();
-//    vtkView->DisplayOnly(currentVtkGView->getDocumentActor()->getIO());
-    Document_Actor *lastDocActor, *currentDocActor = currentVtkGView->getDocumentActor();
+    //    vtkView->DisplayOnly(currentVtkGView->getDocumentActor()->getIO());
+    Document_Actor *lastDocActor;
     if (lastVtkDocGView != NULL)
     {
         lastDocActor = lastVtkDocGView->getDocumentActor();
@@ -1749,11 +1730,12 @@ void HEXABLOCKGUI::showOnlyActor()
         displayer()->setVisibilityState(anIO->getEntry(), Qtx::ShownState);
     }
     vtkView->onFitAll();
+}
 
-//    //showOnly in occ viewer -------------
-
+void HEXABLOCKGUI::showOccActor()
+{
     if (currentOccGView == NULL)
-    	return;
+        return;
     OCCViewer_ViewWindow* occView = currentOccGView->getViewWindow();
     if (occView == NULL)
         return;
@@ -1761,7 +1743,6 @@ void HEXABLOCKGUI::showOnlyActor()
     if (vf == NULL)
         return;
 
-//    vf->EraseAll();
     if (lastOccPrs != NULL)
         vf->Erase(lastOccPrs);
     currentOccGView->globalSelection();
@@ -1772,13 +1753,12 @@ void HEXABLOCKGUI::showOnlyActor()
     occView->onFitAll();
 }
 
-void HEXABLOCKGUI::hideActor()
+void HEXABLOCKGUI::hideVtkActor()
 {
-    // * vtk --
     VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
     if (currentVtkGView == NULL || currentVtkGView->isEmpty() ||
-          currentVtkGView->getViewWindow() == NULL ||
-          currentVtkGView->getDocumentActor() == NULL) return;
+        currentVtkGView->getViewWindow() == NULL ||
+        currentVtkGView->getDocumentActor() == NULL) return;
 
     currentVtkGView->getViewWindow()->Erase(currentVtkGView->getDocumentActor()->getIO());
     currentVtkGView->getViewWindow()->onResetView();
@@ -1791,22 +1771,36 @@ void HEXABLOCKGUI::hideActor()
     Handle(SALOME_InteractiveObject) anIO = currentVtkGView->getDocumentActor()->getIO();
     aStudy->setObjectProperty(vman->getId(), anIO->getEntry(),  "Visibility", 0 );
     displayer()->setVisibilityState(anIO->getEntry(), Qtx::HiddenState);
+}
 
-    // * occ --
+void HEXABLOCKGUI::hideOccActor()
+{
     OCCViewer_ViewWindow* occView = currentOccGView == NULL ? NULL : currentOccGView->getViewWindow();
-    DocumentModel* docModel = currentVtkGView->getDocumentModel();
+    VtkDocumentGraphicView* currentVtkGView = getCurrentVtkGraphicView();
+    DocumentModel* docModel = (currentVtkGView == NULL ? NULL : currentVtkGView->getDocumentModel());
     if (occView == NULL || docModel == NULL)
         return;
     SALOME_View* vf = dynamic_cast<SALOME_View*>(occView->getViewManager()->getViewModel());
     if (vf == NULL)
         return;
 
-//    vf->EraseAll();
     SOCC_Prs* currentOccPrs = getOccPrs(currentDocGView);
     if (currentOccPrs != NULL)
         vf->Erase(currentOccPrs);
     vf->Repaint();
     occView->onResetView();
+}
+
+void HEXABLOCKGUI::showOnlyActor()
+{
+    showVtkActor();
+    showOccActor();
+}
+
+void HEXABLOCKGUI::hideActor()
+{
+    hideVtkActor();
+    hideOccActor();
 }
 
 
@@ -2922,12 +2916,12 @@ QStringList HEXABLOCKGUI::getQuickDirList()
 
 extern "C"
 {
-    HEXABLOCK_EXPORT CAM_Module* createModule()
+    HexaExport CAM_Module* createModule()
     {
         return new HEXABLOCKGUI();
     }
 
-    HEXABLOCK_EXPORT char* getModuleVersion()
+    HexaExport char* getModuleVersion()
     {
         return (char*)HEXABLOCK_VERSION_STR;
     }

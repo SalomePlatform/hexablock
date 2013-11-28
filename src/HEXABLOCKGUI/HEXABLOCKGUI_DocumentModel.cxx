@@ -49,7 +49,10 @@
 
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
-
+#include <Geom_Circle.hxx>
+#include <gp_Circ.hxx>
+#include <BRep_Tool.hxx>
+#include <TopoDS_Edge.hxx>
 //#define _DEVDEBUG_
 
 
@@ -238,6 +241,44 @@ int DocumentModel::getNbrUnusedElt(HEXA_NS::EnumElt eltType)
     return getNbrElt(eltType) - getNbrUsedElt(eltType);
 }
 
+// compute the length of the given edge
+double DocumentModel::getLength(const QModelIndex& iEdge)
+{
+    // * Get the pointer to the edge
+    HEXA_NS::Edge*        edge     = getHexaPtr<HEXA_NS::Edge*>(iEdge);
+    HEXA_NS::EdgeShape*   geomEdge = getHexaPtr<HEXA_NS::EdgeShape*>(iEdge);
+
+    // * The edge can be from VTK or OCC View
+    if (edge != NULL)
+        return edge->getLength();
+    else if (geomEdge != NULL)
+        return geomEdge->getLength();
+    else
+        return 0.;
+}
+
+// Compute the radius of the given edge
+double DocumentModel::getRadius(const QModelIndex& iEdge)
+{
+    // * Get the pointer to the edge
+    // * In our case only an OCC edge can have a radius
+    HEXA_NS::EdgeShape* edge = getHexaPtr<HEXA_NS::EdgeShape*>(iEdge);
+    if (edge == NULL)
+        return 0.;
+
+    return edge->getRadius();
+}
+
+// Compute the angle of the given edge (internal angle)
+double DocumentModel::getAngle(const QModelIndex& iEdge)
+{
+    // * Get the pointer to the edge
+    HEXA_NS::EdgeShape* edge = getHexaPtr<HEXA_NS::EdgeShape*>(iEdge);
+    if (edge == NULL)
+        return 0.;
+
+    return edge->getAngle();
+}
 
 //Load the current Document
 void DocumentModel::load()
@@ -512,7 +553,7 @@ void DocumentModel::fillData()
 void DocumentModel::fillGeometry()
 {
     PatternGeomSelectionModel* pgsm = HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
-    if (_hexaDocument == NULL || isEmpty() || pgsm == NULL)
+    if (_hexaDocument == NULL /*|| isEmpty()*/ || pgsm == NULL)
         return;
 
     HEXA_NS::NewShape* shape;
@@ -1462,8 +1503,6 @@ QModelIndex DocumentModel::makeScale( const QModelIndex& ielts, const QModelInde
     return iElts;
 }
 
-
-
 QModelIndex DocumentModel::makeRotation( const QModelIndex& ielts,
         const QModelIndex& iv,
         const QModelIndex& ivec, double angle )
@@ -1666,8 +1705,49 @@ QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
     }
 
     HEXA_NS::Elements* helts = _hexaDocument->replace( hquads,
-            hp1, hc1, hp2, hc2, hp3, hc3 );
+                                                       hp1, hc1, hp2, hc2, hp3, hc3 );
     if ( BadElement(helts) ) return ielts;
+
+    updateData();
+    ElementsItem* eltsItem = new ElementsItem(helts);
+    _elementsDirItem->appendRow(eltsItem);
+    ielts = eltsItem->index();
+
+    return ielts;
+}
+
+QModelIndex DocumentModel::replace( const QModelIndexList& iquads_source,
+                                    const QModelIndexList& iquads_dest,
+                                    const QModelIndex& ip1_source, const QModelIndex& ic1_dest,
+                                    const QModelIndex& ip2_source, const QModelIndex& ic2_dest,
+                                    const QModelIndex& ip3_source, const QModelIndex& ic3_dest)
+{
+    QModelIndex ielts;
+
+    HEXA_NS::Vertex* hp1 = getHexaPtr<HEXA_NS::Vertex*>(ip1_source);
+    HEXA_NS::Vertex* hp2 = getHexaPtr<HEXA_NS::Vertex*>(ip2_source);
+    HEXA_NS::Vertex* hp3 = getHexaPtr<HEXA_NS::Vertex*>(ip3_source);
+    HEXA_NS::Vertex* hc1 = getHexaPtr<HEXA_NS::Vertex*>(ic1_dest);
+    HEXA_NS::Vertex* hc2 = getHexaPtr<HEXA_NS::Vertex*>(ic2_dest);
+    HEXA_NS::Vertex* hc3 = getHexaPtr<HEXA_NS::Vertex*>(ic3_dest);
+
+    HEXA_NS::Quads   hquads_source, hquads_dest;
+    HEXA_NS::Quad*   hquad = NULL;
+    foreach( const QModelIndex& iquad, iquads_source ){
+        hquad = getHexaPtr<HEXA_NS::Quad*>(iquad);
+        hquads_source.push_back( hquad );
+    }
+
+    foreach( const QModelIndex& iquad, iquads_dest) {
+        hquad = getHexaPtr<HEXA_NS::Quad*>(iquad);
+        hquads_dest.push_back(hquad);
+    }
+
+    HEXA_NS::Elements* helts = _hexaDocument->replaceHexas( hquads_source,
+                                                            hquads_dest,
+                                                            hp1, hc1, hp2, hc2, hp3, hc3);
+    if ( BadElement(helts) )
+        return ielts;
 
     updateData();
     ElementsItem* eltsItem = new ElementsItem(helts);
@@ -2295,7 +2375,7 @@ QStandardItem* PatternDataModel::itemFromIndex ( const QModelIndex & index ) con
 
 //QVariant PatternBuilderModel::headerData ( int section, Qt::Orientation orientation, int role ) const
 //{
-//    if ( section == 0 and orientation == Qt::Horizontal and role == Qt::DisplayRole ){
+//    if ( section == 0 && orientation == Qt::Horizontal && role == Qt::DisplayRole ){
 //        return QVariant( "Builder" );
 //    } else {
 //        return QSortFilterProxyModel::headerData ( section, orientation, role );

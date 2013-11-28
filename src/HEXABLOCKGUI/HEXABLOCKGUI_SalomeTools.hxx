@@ -20,7 +20,7 @@
 #ifndef _HEXABLOCKGUI_SALOMETOOLS_HXX_
 #define _HEXABLOCKGUI_SALOMETOOLS_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
+#include "hexa_base.hxx"
 
 #include <SalomeApp_Application.h>
 #include <SALOME_Actor.h>
@@ -41,48 +41,48 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-HEXABLOCK_EXPORT  SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry );
+HexaExport  SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry );
   _PTR(Study)   GetActiveStudyDocument();
 
-HEXABLOCK_EXPORT int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,/* SVTK_Selector* theSelector,*/
+HexaExport int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,/* SVTK_Selector* theSelector,*/
                                  const Handle(SALOME_InteractiveObject)& theIO,
                                  QString& theName );
 
-HEXABLOCK_EXPORT std::string shape2string( const TopoDS_Shape& aShape );
+HexaExport std::string shape2string( const TopoDS_Shape& aShape );
 
-HEXABLOCK_EXPORT void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
+HexaExport void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
                                const Handle(AIS_InteractiveContext)& theIC,
                                SelectMgr_IndexedMapOfOwner& theMap );
 
-HEXABLOCK_EXPORT void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
+HexaExport void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
                                const TopoDS_Shape& aMainShape,
                                const SelectMgr_IndexedMapOfOwner& anAllMap,
                                SelectMgr_IndexedMapOfOwner& aToHiliteMap );
 
-HEXABLOCK_EXPORT TopoDS_Shape getSubShape(const TopoDS_Shape& theShape, const int theIndex);
-HEXABLOCK_EXPORT int getSubId(const TopoDS_Shape& theShape, const TopoDS_Shape& theSubShape);
+HexaExport TopoDS_Shape getSubShape(const TopoDS_Shape& theShape, const int theIndex);
+HexaExport int getSubId(const TopoDS_Shape& theShape, const TopoDS_Shape& theSubShape);
 
-HEXABLOCK_EXPORT Standard_Boolean getExtremaSolution(const gp_Pnt& theInitPnt,
+HexaExport Standard_Boolean getExtremaSolution(const gp_Pnt& theInitPnt,
   									  const TopoDS_Shape& theRefShape,
   									  gp_Pnt& thePnt);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePoint(const double x, const double y, const double z);
+HexaExport TopoDS_Vertex makePoint(const double x, const double y, const double z);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointWithReference(const TopoDS_Shape& point, const double dx,
+HexaExport TopoDS_Vertex makePointWithReference(const TopoDS_Shape& point, const double dx,
                                                            const double dy,
                                                            const double dz);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointOnCurve(const TopoDS_Shape& edge, const double param);
+HexaExport TopoDS_Vertex makePointOnCurve(const TopoDS_Shape& edge, const double param);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointOnCurveByLength(const TopoDS_Shape& edge, const TopoDS_Shape& point, const double length);
+HexaExport TopoDS_Vertex makePointOnCurveByLength(const TopoDS_Shape& edge, const TopoDS_Shape& point, const double length);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointOnCurveByCoord(const TopoDS_Shape& edge, const double x, const double y, const double z);
+HexaExport TopoDS_Vertex makePointOnCurveByCoord(const TopoDS_Shape& edge, const double x, const double y, const double z);
 
   TopoDS_Vertex makePointOnLinesIntersection(const TopoDS_Shape& line1, const TopoDS_Shape& line2);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointOnSurface(const TopoDS_Shape& face, const double param_u, const double param_v);
+HexaExport TopoDS_Vertex makePointOnSurface(const TopoDS_Shape& face, const double param_u, const double param_v);
 
-HEXABLOCK_EXPORT TopoDS_Vertex makePointOnSurfaceByCoord(const TopoDS_Shape& face, const double x, const double y, const double z);
+HexaExport TopoDS_Vertex makePointOnSurfaceByCoord(const TopoDS_Shape& face, const double x, const double y, const double z);
 
   }
 }

@@ -173,9 +173,9 @@ enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF,
 
 enum EnumQDirection {Q_INSIDE, Q_DIRECT, Q_INVERSE, Q_UNDEFINED, Q_WAITING };
 
-enum EnumKindOfShape {KS_None, KS_Line, KS_Circle, KS_Ellipse, KS_Hyperbola,
+enum EnumKindOfShape {KS_Line, KS_Circle, KS_Ellipse, KS_Hyperbola,
                       KS_Parabola, KS_BezierCurve, KS_BSplineCurve,
-                      KS_OtherCurve };
+                      KS_OtherCurve, KS_None=-1 };
 
 enum { CylSmall=0, CylBig=1, NxInt=1, NxExt=2 };
 

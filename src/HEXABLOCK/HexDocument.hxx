@@ -110,6 +110,9 @@ public :
    Elements* replace (Quads pattern, Vertex* p1, Vertex* c1,
                       Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
 
+   Elements* replaceHexas (Quads pattern, Quads cible,  Vertex* p1, Vertex* c1,
+                           Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+
    int     mergeVertices (Vertex* v1, Vertex* v2);
    int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
    int     mergeQuads    (Quad* q1, Quad* q2, Vertex* v1, Vertex* v2,

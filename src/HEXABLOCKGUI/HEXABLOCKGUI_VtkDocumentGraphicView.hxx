@@ -20,8 +20,6 @@
 #ifndef _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 #define _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 // SALOME GUI includes
 #include <LightApp_Displayer.h>
 #include <SUIT_ViewWindow.h>
@@ -55,7 +53,7 @@ namespace HEXABLOCK
 
     namespace GUI
     {
-        class HEXABLOCK_EXPORT Document_Actor : public SALOME_Actor
+        class HexaExport Document_Actor : public SALOME_Actor
         {
           public:
             Document_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -73,7 +71,7 @@ namespace HEXABLOCK
 
         };
                    // Abu
-        class HEXABLOCK_EXPORT Associate_Actor : public SALOME_Actor
+        class HexaExport Associate_Actor : public SALOME_Actor
         {
           public:
             Associate_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -93,7 +91,7 @@ namespace HEXABLOCK
         /********************************************************************************
          *                          VtkDocumentGraphicView
          ********************************************************************************/
-        class HEXABLOCK_EXPORT VtkDocumentGraphicView : public QAbstractItemView
+        class HexaExport VtkDocumentGraphicView : public QAbstractItemView
         {
             Q_OBJECT
 

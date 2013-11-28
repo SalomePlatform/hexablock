@@ -21,7 +21,8 @@
 #ifndef MYBASICGUI_POINTDLG_H
 #define MYBASICGUI_POINTDLG_H
 
-#include "HEXABLOCKGUI_Export.hxx"
+
+
 
 #include "MyGEOMBase_Skeleton.hxx"
 #include <QMap>
@@ -62,7 +63,8 @@ namespace HEXABLOCK
 // class    : MyBasicGUI_PointDlg
 // purpose  :
 //=================================================================================
-typedef class HEXABLOCK_EXPORT MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
+#include "hexa_base.hxx"
+typedef class HexaExport MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
 {
   Q_OBJECT
 
@@ -111,8 +113,8 @@ private slots:
   void                               ClickParamCoord( int );
   void                               onBtnPopup( QAction* );
   void                               updateSize();
- // void                               onRefPointChanged(const QString& pointName);
- // void                               onStartPointSelected(const QString& pointName);
+  void                               onRefPointChanged(const QString& pointName);
+  void                               onStartPointSelected(const QString& pointName);
   void                               onParamValueChanged(double newValue);
   void                               onXCoordChanged(double newValue);
   void                               onYCoordChanged(double newValue);

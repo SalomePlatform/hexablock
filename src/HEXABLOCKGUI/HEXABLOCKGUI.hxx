@@ -20,8 +20,6 @@
 #ifndef _HEXABLOCKGUI_HXX_
 #define _HEXABLOCKGUI_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
-
 #include <iostream>
 #include <map>
 #include <set>
@@ -115,7 +113,7 @@ class OCCViewer_ViewWindow;
 class LightApp_VTKSelector;
 
 
-class HEXABLOCK_EXPORT HEXABLOCKGUI : public SalomeApp_Module
+class HexaExport HEXABLOCKGUI : public SalomeApp_Module
 {
   Q_OBJECT
 
@@ -128,6 +126,7 @@ public:
   enum ViewType {
       VTK,
       OCC,
+      VTK_OCC,
       UNKNOWN
   };
 
@@ -201,6 +200,11 @@ public:
   void showLawInfoDialog(HEXA_NS::Law* law);
   void showPropagationInfoDialog(HEXA_NS::Propagation* propagation);
 
+  void showVtkActor();
+  void showOccActor();
+  void hideVtkActor();
+  void hideOccActor();
+
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
@@ -220,7 +224,6 @@ protected slots:
   virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
 
   void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-  void showActor();
   void hideActor();
   void showOnlyActor();
 

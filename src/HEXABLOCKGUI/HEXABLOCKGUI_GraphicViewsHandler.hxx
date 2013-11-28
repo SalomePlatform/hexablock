@@ -28,7 +28,7 @@
 #include <QMap>
 
 //HEXABLOCK Includes
-#include "HEXABLOCKGUI_Export.hxx"
+#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
 namespace HEXABLOCK
@@ -36,7 +36,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-      class HEXABLOCK_EXPORT GraphicViewsHandler
+      class HexaExport GraphicViewsHandler
       {
 
       public:

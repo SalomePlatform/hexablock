@@ -49,3 +49,13 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
 def dump (doc, mesh=None, full=False) :
    return  [ 36, 15, 36, 17]
 
+# ======================================================= printMessage
+def printMessage () :
+
+    nl = hexa.sizeofMessage()
+    if nl == 0 : 
+       return
+    for ni in range (nl) :
+        mess = hexa.getMessageLine (ni)
+        print mess
+

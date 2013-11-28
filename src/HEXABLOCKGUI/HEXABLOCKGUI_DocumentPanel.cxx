@@ -115,7 +115,6 @@ public:
             const QModelIndex &index) const{
         QDoubleSpinBox *sb = new QDoubleSpinBox( parent );
         sb->setMinimum(SPINBOX_POSITIVE_DOUBLE_MIN);
-        /////// sb->setMaximum(1000000000000000); //10e15   Abu : Pb en 32 bits
         sb->setMaximum(SPINBOX_DOUBLE_MAX);       //10e9
         sb->setDecimals(NB_DECIMALS);
         return sb;
@@ -148,7 +147,6 @@ HexaBaseDialog::HexaBaseDialog( QWidget * parent, Mode editmode, Qt::WindowFlags
     _strHexaWidgetType[GEOMEDGE_TREE]   = tr( "GEOMEDGE" );
     _strHexaWidgetType[GEOMFACE_TREE]   = tr( "GEOMFACE" );
 
-
     _strHexaWidgetType[GROUP_TREE]      = tr( "GROUP" );
     _strHexaWidgetType[LAW_TREE]        = tr( "LAW" );
     _strHexaWidgetType[PROPAGATION_TREE]= tr( "PROPAGATION" );
@@ -174,6 +172,59 @@ QModelIndexList HexaBaseDialog::getIndexList(QListWidget* itemsList, bool mapToS
         iItems << iItem;
     }
     return iItems;
+}
+
+
+// ================================================================ computeAndSetDimension
+void HexaBaseDialog::computeAndSetDimension(const QModelIndex& elt)
+{
+    // * Check if everything is OK for the computing
+    DocumentModel* docModel = getDocumentModel();
+    if (docModel == NULL || _currentObj == NULL)
+        return;
+
+    int selectedType = elt.data(HEXA_TREE_ROLE).toInt();
+    if (selectedType != EDGE_TREE && selectedType != GEOMEDGE_TREE)
+        return;
+
+    QListWidget*    list = dynamic_cast<QListWidget*>(_currentObj);
+    QDoubleSpinBox* spb  = dynamic_cast<QDoubleSpinBox*>(_currentObj);
+
+    if (list == NULL && spb == NULL)
+        return;
+
+    // * Compute the value of the dimension
+    double value = 0.;
+
+    if (_currentObj->property("Radius").isValid())
+        value = docModel->getRadius(elt);
+    else if (_currentObj->property("Angle").isValid())
+        value = docModel->getAngle(elt);
+    else if (_currentObj->property("Length").isValid())
+        value = docModel->getLength(elt);
+
+    if (value == 0.)
+        return;
+
+    // * Set the value to the field (radius, length or height)
+    if (list != NULL)
+    {
+        QListWidgetItem* item = list->currentItem();
+        if (item != NULL)
+        {
+            if (value != 0.)
+            {
+                item->setText(QString::number(value));
+                list->editItem(item);
+            }
+        }
+    }
+    else if (spb != NULL)
+    {
+        spb->setValue(value);
+        spb->setFocus();
+        spb->selectAll();
+    }
 }
 
 // ============================================================= resetSizeAndShow
@@ -278,6 +329,7 @@ void HexaBaseDialog::onCurrentSelectionChanged()
     highlightSelectedAssocs();
 }
 
+// ============================================================= clearCurrentObjectFocus
 void HexaBaseDialog::clearCurrentObjectFocus()
 {
     QWidget* currentWidget = dynamic_cast<QWidget*>(_currentObj);
@@ -426,21 +478,33 @@ void HexaBaseDialog::refreshHighlight()
     highlightSelectedAssocs();
 }
 
+bool HexaBaseDialog::isDimensionType(const QObject* obj)
+{
+    if (obj == NULL)
+        return false;
+
+    return (obj->property("Radius").isValid()) ||
+            (obj->property("Angle").isValid()) ||
+            (obj->property("Length").isValid());
+}
+
 // ============================================================== getObjectViewType
 HEXABLOCKGUI::ViewType HexaBaseDialog::getObjectViewType(QObject* obj)
 {
     if (obj == NULL)
         return HEXABLOCKGUI::UNKNOWN;
 
-    QVariant v = obj->property("GeomWidgetType");
-    if ( v.isValid() )
+    QVariant v1 = obj->property("GeomWidgetType");
+    QVariant v2 = obj->property("HexaWidgetType");
+
+    if (v1.isValid() && v2.isValid() && isDimensionType(obj))
+        return HEXABLOCKGUI::VTK_OCC;
+    else if (v1.isValid())
         return HEXABLOCKGUI::OCC;
-
-    v  = obj->property("HexaWidgetType");
-    if ( v.isValid() )
+    else if (v2.isValid())
         return HEXABLOCKGUI::VTK;
-
-    return HEXABLOCKGUI::UNKNOWN;
+    else
+        return HEXABLOCKGUI::UNKNOWN;
 }
 
 // ============================================================== _selectAndHighlight
@@ -470,7 +534,6 @@ void HexaBaseDialog::_disallowSelection()
 // ============================================================== _allowVTKSelection
 bool HexaBaseDialog::_allowVTKSelection( QObject* obj )
 {
-
     bool isOk = false;
 
     QVariant v  = obj->property("HexaWidgetType");
@@ -507,13 +570,16 @@ bool HexaBaseDialog::_allowOCCSelection( QObject* obj )
 // ============================================================== _getSelector
 QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
 {
+    if (obj == NULL)
+        return NULL;
+
     QItemSelectionModel* selector = NULL;
 
     HexaWidgetType wtype;
     QVariant v  = obj->property("HexaWidgetType");
-    if ( !v.isValid() ) {
+    QVariant v2 = obj->property("GeomWidgetType");
+    if ( !v.isValid() || (v2.isValid() && isDimensionType(obj)) )
         return NULL;
-    }
 
     wtype = v.value<HexaWidgetType>();
 
@@ -539,6 +605,7 @@ QItemSelectionModel* HexaBaseDialog::_getSelector( QObject* obj )
     return selector;
 }
 
+// ============================================================== getGeomObj
 DocumentModel::GeomObj* HexaBaseDialog::getGeomObj(const QModelIndex& index)
 {
     HEXA_NS::NewShape* aSh  = getDocumentModel()->getHexaPtr<HEXA_NS::NewShape*>(index);
@@ -688,15 +755,29 @@ bool HexaBaseDialog::_onSelectionChanged( const QItemSelection& sel, QListWidget
  */
 void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemSelection& unsel )
 {
+    QModelIndexList l = sel.indexes();
+
+    if ( l.count() == 0 )
+        return;
+    QModelIndex selected = l[0];
+
     // * no edition for Info Dialogs
-    if ( _editMode == INFO_MODE )
+    if ( _editMode == INFO_MODE || _currentObj == NULL || !selected.isValid())
         return;
 
-    QLineEdit*   aLineEdit   = NULL;
-    QListWidget* aListWidget = NULL;
+    if (isDimensionType(_currentObj))
+    {
+        // ** set the dimension of the selected object in the editor **/
+        int selectedType = selected.data(HEXA_TREE_ROLE).toInt();
+        if (selectedType == EDGE_TREE || selectedType == GEOMEDGE_TREE)
+            computeAndSetDimension(selected);
+        return;
+    }
+
+    QLineEdit*   aLineEdit   = dynamic_cast<QLineEdit*>(_currentObj);
+    QListWidget* aListWidget = dynamic_cast<QListWidget*>(_currentObj);
 
     // * fill the lineedit with selection
-    aLineEdit = dynamic_cast<QLineEdit*>(_currentObj);
     if ( aLineEdit)
     {
         _onSelectionChanged( sel, aLineEdit );
@@ -704,8 +785,7 @@ void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
     }
 
     // * fill the listWidget with selection
-    aListWidget = dynamic_cast<QListWidget*>(_currentObj);
-    if ( aListWidget)
+    if (aListWidget)
         _onSelectionChanged( sel, aListWidget );
 }
 
@@ -736,10 +816,8 @@ void HexaBaseDialog::hideEvent ( QHideEvent * event )
 {
     //Disconnection salome selection signals
     if (HEXABLOCKGUI::selectionMgr() != NULL)
-    {
         disconnect(  HEXABLOCKGUI::selectionMgr() , SIGNAL(currentSelectionChanged()),
                 this, SLOT(onCurrentSelectionChanged()) );
-    }
 
     //Disconnect vtk window activation signals
 //    if (HEXABLOCKGUI::currentDocGView->getViewWindow() != NULL)
@@ -755,7 +833,6 @@ void HexaBaseDialog::hideEvent ( QHideEvent * event )
 
     //Disconnect model selection signals
     disconnectDocumentGraphicView();
-
     getDocumentModel()->allowEdition();
 
     QDialog::hideEvent( event );
@@ -838,13 +915,14 @@ bool HexaBaseDialog::_isLineOrListWidget(QObject *widget)
  */
 void HexaBaseDialog::_highlightWidget(QObject *obj, Qt::GlobalColor clr)
 {
-    if (!_isLineOrListWidget(obj)) return;
+    QDoubleSpinBox* spb = dynamic_cast<QDoubleSpinBox*>(obj);
+    if (!_isLineOrListWidget(obj) && spb == NULL)
+        return;
 
-    QWidget *widget = dynamic_cast<QWidget*>(obj); //sure it's not NULL (_isLineOrListWidget(obj))
+    QWidget *widget = dynamic_cast<QWidget*>(obj);
     QPalette palette1 = widget->palette();
-    palette1.setColor(widget->backgroundRole(), clr);
+    palette1.setColor(QPalette::Active, widget->backgroundRole(), clr);
     widget->setPalette(palette1);
-
 }//_highlightWidget
 
 
@@ -884,13 +962,15 @@ bool HexaBaseDialog::eventFilter(QObject *obj, QEvent *event)
         return false;
 
     // * Focus In ------
-
-    // allow vtk selection
-    if (getObjectViewType(obj) == HEXABLOCKGUI::VTK)
+    HEXABLOCKGUI::ViewType vtype = getObjectViewType(obj);
+    if (vtype == HEXABLOCKGUI::VTK_OCC)
+    {
+        _allowVTKSelection(obj);
+        _allowOCCSelection(obj);
+    }
+    else if (vtype == HEXABLOCKGUI::VTK)
         _allowVTKSelection( obj );
-
-    //allow occ selection
-    if (getObjectViewType(obj) == HEXABLOCKGUI::OCC)
+    else if (vtype == HEXABLOCKGUI::OCC)
         _allowOCCSelection( obj );
 
     //Depending on the focused widget type, get the right selector for it
@@ -930,7 +1010,6 @@ VertexDialog::VertexDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
     _helpFileName = "gui_vertex.html";
     setupUi( this );
     _initWidget(editmode);
-    //   setFocusProxy( name_le );
 
     if ( editmode  == NEW_MODE ){
         setWindowTitle( tr("Vertex Construction") );
@@ -1056,7 +1135,7 @@ bool VertexDialog::apply(QModelIndex& result)
     }
 
     QString newName = name_le->text();
-    if ( !newName.isEmpty() )/*{*/
+    if ( !newName.isEmpty() )
         getDocumentModel()->setName( iVertex, newName );
 
     //the default name in the dialog box
@@ -1067,8 +1146,6 @@ bool VertexDialog::apply(QModelIndex& result)
     // to select/highlight result
     result = patternDataModel->mapFromSource(iVertex);
 
-    //	updateDialogBoxName(name_le, result);
-    //	const char *defaultName = getDocumentModel()->getHexaPtr(last)->getName();
     return isOk;
 }
 
@@ -1082,9 +1159,6 @@ EdgeDialog::EdgeDialog( QWidget* parent, Mode editmode, Qt::WindowFlags f ):
     _helpFileName = "gui_edge.html";
     setupUi( this );
     _initWidget(editmode);
-
-    //	rb0->setFocusProxy( v0_le_rb0 );
-    //	rb1->setFocusProxy( vex_le_rb1 );
 
     if  ( editmode == INFO_MODE ){
         setWindowTitle( tr("Edge Information") );
@@ -1136,8 +1210,6 @@ void EdgeDialog::_initInputWidget( Mode editmode )
 
     if (editmode == INFO_MODE)
         name_le->setReadOnly(true);
-
-    //connect( name_le, SIGNAL(returnPressed()), this, SLOT(updateName()) );
 
 }
 
@@ -1536,7 +1608,6 @@ void HexaDialog::_initInputWidget( Mode editmode )
 
     if (editmode == INFO_MODE)
         name_le->setReadOnly(true);
-
 }
 
 // ============================================================== clear
@@ -1718,9 +1789,9 @@ bool HexaDialog::apply(QModelIndex& result)
     }
 
     nbItems = iElts.count();
-    if ( quads_rb->isChecked() && (nbItems>=2 && nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
+    if ( quads_rb->isChecked() and (nbItems>=2 and nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
         iHexa = getDocumentModel()->addHexaQuads( iElts );
-    } else if ( vertices_rb->isChecked() && nbItems== 8 ){ // build from vertices
+    } else if ( vertices_rb->isChecked() and nbItems== 8 ){ // build from vertices
         iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
                 iElts[4], iElts[5], iElts[6], iElts[7] );
     }
@@ -2134,7 +2205,6 @@ bool MakeGridDialog::apply(QModelIndex& result)
             iNewElts =  docModel->makeCartesian( icenter, ibase, ivec, iaxis,
                                                  radius, angles, heights);
         }
-
     }
 
     if ( !iNewElts.isValid() )
@@ -2171,18 +2241,59 @@ MakeCylinderDialog::~MakeCylinderDialog()
 
 void MakeCylinderDialog::_initInputWidget( Mode editmode )
 {
-    origin_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE));
-    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
-    base_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE));
-
     installEventFilter(this);
-    origin_le->installEventFilter(this);
-    axis_le->installEventFilter(this);
-    base_le->installEventFilter(this);
 
+    rb0->installEventFilter(this);
+    rb1->installEventFilter(this);
+    rb2->installEventFilter(this);
+
+    origin_le->setProperty( "HexaWidgetType", QVariant::fromValue(VERTEX_TREE));
+    origin_le->installEventFilter(this);
     origin_le->setReadOnly(true);
+
+    axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
+    axis_le->installEventFilter(this);
     axis_le->setReadOnly(true);
+
+    base_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE));
+    base_le->installEventFilter(this);
     base_le->setReadOnly(true);
+
+    ext_radius_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    ext_radius_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    ext_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    ext_radius_spb->installEventFilter(this);
+
+    int_radius_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    int_radius_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    int_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    int_radius_spb->installEventFilter(this);
+
+    angle_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_spb->setProperty("Angle", QVariant::fromValue(true));
+    angle_spb->installEventFilter(this);
+
+    height_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_spb->setProperty("Length", QVariant::fromValue(true));
+    height_spb->installEventFilter(this);
+
+    radius_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    radius_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    radius_lw->setProperty("Radius", QVariant::fromValue(true));
+    radius_lw->installEventFilter(this);
+
+
+    angle_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_lw->setProperty("Angle", QVariant::fromValue(true));
+    angle_lw->installEventFilter(this);
+
+    height_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+    height_lw->installEventFilter(this);
 
     radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
     radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -2409,9 +2520,48 @@ void MakePipeDialog::_initInputWidget( Mode editmode )
     axis_le->installEventFilter(this);
     base_le->installEventFilter(this);
 
+    rb0->installEventFilter(this);
+    rb1->installEventFilter(this);
+    rb2->installEventFilter(this);
+
     origin_le->setReadOnly(true);
     axis_le->setReadOnly(true);
     base_le->setReadOnly(true);
+
+    ext_radius_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    ext_radius_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    ext_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    ext_radius_spb->installEventFilter(this);
+
+    int_radius_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    int_radius_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    int_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    int_radius_spb->installEventFilter(this);
+
+    angle_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_spb->setProperty("Angle", QVariant::fromValue(true));
+    angle_spb->installEventFilter(this);
+
+    height_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_spb->setProperty("Length", QVariant::fromValue(true));
+    height_spb->installEventFilter(this);
+
+    radius_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    radius_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    radius_lw->setProperty("Radius", QVariant::fromValue(true));
+    radius_lw->installEventFilter(this);
+
+    angle_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_lw->setProperty("Angle", QVariant::fromValue(true));
+    angle_lw->installEventFilter(this);
+
+    height_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+    height_lw->installEventFilter(this);
 
     radius_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(radius_lw));
     radius_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -2630,6 +2780,26 @@ void MakeCylindersDialog::_initInputWidget( Mode editmode )
     direction_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
     direction2_le->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
 
+    radius_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    radius_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    radius_spb->installEventFilter(this);
+
+    height_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_spb->setProperty("Length", QVariant::fromValue(true));
+    height_spb->installEventFilter(this);
+
+    radius2_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    radius2_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    radius2_spb->setProperty("Radius", QVariant::fromValue(true));
+    radius2_spb->installEventFilter(this);
+
+    height2_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height2_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height2_spb->setProperty("Length", QVariant::fromValue(true));
+    height2_spb->installEventFilter(this);
+
     installEventFilter(this);
     center_le->installEventFilter(this);
     center2_le->installEventFilter(this);
@@ -2721,7 +2891,36 @@ void MakePipesDialog::_initInputWidget( Mode editmode )
     dir_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
     dir2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
-    installEventFilter(this);
+    ext_radius_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    ext_radius_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    ext_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    ext_radius_spb->installEventFilter(this);
+
+    int_radius_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    int_radius_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    int_radius_spb->setProperty("Radius", QVariant::fromValue(true));
+    int_radius_spb->installEventFilter(this);
+
+    height_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_spb->setProperty("Length", QVariant::fromValue(true));
+    height_spb->installEventFilter(this);
+
+    ext_radius2_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    ext_radius2_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    ext_radius2_spb->setProperty("Radius", QVariant::fromValue(true));
+    ext_radius2_spb->installEventFilter(this);
+
+    int_radius2_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    int_radius2_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    int_radius2_spb->setProperty("Radius", QVariant::fromValue(true));
+    int_radius2_spb->installEventFilter(this);
+
+    height2_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height2_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height2_spb->setProperty("Length", QVariant::fromValue(true));
+    height2_spb->installEventFilter(this);
+
     origin_le->installEventFilter(this);
     origin2_le->installEventFilter(this);
     dir_le->installEventFilter(this);
@@ -2909,9 +3108,24 @@ void PrismQuadDialog::_initInputWidget( Mode editmode )
     quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
     axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
+    length_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    length_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    length_spb->setProperty("Length", QVariant::fromValue(true));
+    length_spb->installEventFilter(this);
+
+
+    height_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_lw->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+    height_lw->installEventFilter(this);
+
     installEventFilter(this);
     quads_lw->installEventFilter(this);
     axis_le->installEventFilter(this);
+
+    extrudeTop_rb->installEventFilter(this);
+    extrudeUni_rb->installEventFilter(this);
+    extrude_rb->installEventFilter(this);
 
     axis_le->setReadOnly(true);
 
@@ -3095,6 +3309,11 @@ void JoinQuadDialog::_initInputWidget( Mode editmode )
     vex2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
     vex3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
+    height_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_lw->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+    height_lw->installEventFilter(this);
+
     installEventFilter(this);
     quad_dest_le->installEventFilter(this);
     quads_lw->installEventFilter(this);
@@ -3102,6 +3321,9 @@ void JoinQuadDialog::_initInputWidget( Mode editmode )
     vex1_le->installEventFilter(this);
     vex2_le->installEventFilter(this);
     vex3_le->installEventFilter(this);
+
+    joinUni_rb->installEventFilter(this);
+    join_rb->installEventFilter(this);
 
     QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
     delQuadShortcut->setContext( Qt::WidgetShortcut );
@@ -3753,7 +3975,15 @@ void CutEdgeDialog::_initInputWidget( Mode editmode )
     e_le->setProperty( "HexaWidgetType",  QVariant::fromValue(EDGE_TREE) );
     e_le->installEventFilter(this);
 
+    cutUni_rb->installEventFilter(this);
+    cut_rb->installEventFilter(this);
+
     e_le->setReadOnly(true);
+
+    height_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    height_lw->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+    height_lw->installEventFilter(this);
 
     height_lw->setItemDelegate(new HexaPositiveDoubleSpinBoxDelegate(height_lw));
     height_lw->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -3882,6 +4112,9 @@ void MakeTransformationDialog::_initInputWidget( Mode editmode )
     QValidator *validator = new QRegExpValidator(rx, this);
 
     installEventFilter(this);
+    rb0->installEventFilter(this);
+    rb1->installEventFilter(this);
+    rb2->installEventFilter(this);
 
     vec_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(VECTOR_TREE) );
     elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
@@ -3907,6 +4140,11 @@ void MakeTransformationDialog::_initInputWidget( Mode editmode )
     vex_le_rb2->installEventFilter(this);
     vec_le_rb2->installEventFilter(this);
     elts_le_rb2->installEventFilter(this);
+
+    angle_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_spb->setProperty("Angle", QVariant::fromValue(true));
+    angle_spb->installEventFilter(this);
 
     vec_le_rb0->setReadOnly(true);
     elts_le_rb0->setReadOnly(true);
@@ -4012,6 +4250,16 @@ bool MakeTransformationDialog::apply(QModelIndex& result)
     }
 
     result = patternDataModel->mapFromSource(iNewElts);
+    if (result.isValid())
+    {
+        MESSAGE("======> Result is valid!");
+        HEXA_NS::Elements* elts = getDocumentModel()->getHexaPtr<HEXA_NS::Elements*>(result);
+        MESSAGE("======>   " << elts->getName());
+    }
+    else
+    {
+        MESSAGE("======> Result is not valid!");
+    }
 //    result = patternBuilderModel->mapFromSource(iNewElts);
 
     return true;
@@ -4209,6 +4457,11 @@ void PerformTransformationDialog::_initInputWidget( Mode editmode )
     QRegExp rx("");
     QValidator *validator = new QRegExpValidator(rx, this);
 
+    installEventFilter(this);
+    rb0->installEventFilter(this);
+    rb1->installEventFilter(this);
+    rb2->installEventFilter(this);
+
     vec_le_rb0->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
     elts_le_rb0->setProperty( "HexaWidgetType", QVariant::fromValue(ELEMENTS_TREE) );
     vec_le_rb0->setValidator( validator );
@@ -4233,6 +4486,11 @@ void PerformTransformationDialog::_initInputWidget( Mode editmode )
     vex_le_rb2->installEventFilter(this);
     vec_le_rb2->installEventFilter(this);
     elts_le_rb2->installEventFilter(this);
+
+    angle_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_spb->setProperty("Angle", QVariant::fromValue(true));
+    angle_spb->installEventFilter(this);
 
     vec_le_rb0->setReadOnly(true);
     elts_le_rb0->setReadOnly(true);
@@ -4853,7 +5111,6 @@ void QuadAssocDialog::_initInputWidget( Mode editmode )
     quad_le->setProperty( "HexaWidgetType", QVariant::fromValue(QUAD_TREE) );
     quad_le->installEventFilter(this);
     quad_le->setValidator( validator );
-
 
     faces_lw->setProperty( "HexaWidgetType", QVariant::fromValue(GEOMFACE_TREE) );
     faces_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_FACE) );
@@ -5642,6 +5899,8 @@ HexaBaseDialog(parent, editmode, f)
     _helpFileName = "gui_replace_hexa.html";
     setupUi( this );
     _initWidget(editmode);
+
+    radioButton->click();
 }
 
 // ============================================================== Destructeur
@@ -5660,15 +5919,27 @@ QModelIndexList ReplaceHexaDialog::getAssocsVTK()
     QListWidgetItem* item = NULL;
 
     //ListWidget content
-    const PatternDataModel* patternDataModel = getPatternDataModel();
-    if ( !patternDataModel ) return assocs;
     int nbQuads = quads_lw->count();
     for ( int r = 0; r < nbQuads; ++r ){
         item = quads_lw->item(r);
-        //		iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
+        //iQuad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() ); //unsafe
         iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-        if ( iQuad.isValid() ) assocs << iQuad;
+        if ( iQuad.isValid() )
+            assocs << iQuad;
     }
+
+    if (radioButton_2->isChecked())
+    {
+        nbQuads = quads_lw_2->count();
+        for( int i = 0; i < nbQuads; ++i)
+        {
+            item = quads_lw_2->item(i);
+            iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+            if (iQuad.isValid())
+                assocs << iQuad;
+        }
+    }
+
     return assocs;
 }
 
@@ -5698,12 +5969,18 @@ void ReplaceHexaDialog::_initInputWidget( Mode editmode )
     quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
     quads_lw->installEventFilter(this);
 
+    quads_lw_2->setProperty("HexaWidgetType", QVariant::fromValue(QUAD_TREE));
+    quads_lw_2->installEventFilter(this);
+
     if ( editmode == NEW_MODE ){
         QShortcut* delQuadShortcut = new QShortcut( QKeySequence(Qt::Key_X), quads_lw );
+        QShortcut* delQuadShortcut2 = new QShortcut( QKeySequence(Qt::Key_X), quads_lw_2 );
         delQuadShortcut->setContext( Qt::WidgetShortcut );
-
+        delQuadShortcut2->setContext( Qt::WidgetShortcut );
         connect( delQuadShortcut, SIGNAL(activated()), this, SLOT(deleteQuadItem()) );
         connect( quads_lw, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
+        connect( delQuadShortcut2, SIGNAL(activated()), this, SLOT(deleteQuadItem2()));
+        connect( quads_lw_2, SIGNAL(currentRowChanged(int)), this, SLOT(updateButtonBox(int)) );
     }
 
     c1_le->setReadOnly(true);
@@ -5715,6 +5992,9 @@ void ReplaceHexaDialog::_initInputWidget( Mode editmode )
     p3_le->setReadOnly(true);
 
     connect(quads_lw,    SIGNAL(itemSelectionChanged()),
+            this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
+
+    connect(quads_lw_2, SIGNAL(itemSelectionChanged()),
             this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
 }
 
@@ -5764,6 +6044,13 @@ void ReplaceHexaDialog::deleteQuadItem()
     updateButtonBox();
 }
 
+// ============================================================== deleteQuadItem2
+void ReplaceHexaDialog::deleteQuadItem2()
+{
+    delete quads_lw_2->currentItem();
+    updateButtonBox();
+}
+
 // ============================================================== apply
 bool ReplaceHexaDialog::apply(QModelIndex& result)
 {
@@ -5778,30 +6065,53 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
     QModelIndex ielts; //result
 
     QListWidgetItem* item = NULL;
-    QModelIndexList iquads;
+    QModelIndexList iquads_source;
     QModelIndex     iquad;
     int nbQuads = quads_lw->count();
     for ( int r = 0; r < nbQuads; ++r){
         item = quads_lw->item(r);
         iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
         if ( iquad.isValid() )
-            iquads << iquad;
+            iquads_source << iquad;
     }
 
-    QModelIndex ic1 = patternDataModel->mapToSource( _index[c1_le] );
-    QModelIndex ic2 = patternDataModel->mapToSource( _index[c2_le] );
-    QModelIndex ic3 = patternDataModel->mapToSource( _index[c3_le] );
+    QModelIndex ip1_source = patternDataModel->mapToSource( _index[p1_le] );
+    QModelIndex ip2_source = patternDataModel->mapToSource( _index[p2_le] );
+    QModelIndex ip3_source = patternDataModel->mapToSource( _index[p3_le] );
 
-    QModelIndex ip1 = patternDataModel->mapToSource( _index[p1_le] );
-    QModelIndex ip2 = patternDataModel->mapToSource( _index[p2_le] );
-    QModelIndex ip3 = patternDataModel->mapToSource( _index[p3_le] );
+    QModelIndex ic1_dest = patternDataModel->mapToSource( _index[c1_le] );
+    QModelIndex ic2_dest = patternDataModel->mapToSource( _index[c2_le] );
+    QModelIndex ic3_dest = patternDataModel->mapToSource( _index[c3_le] );
 
-    if ( ic1.isValid() && ic2.isValid() && ic3.isValid()
-            && ip1.isValid() && ip2.isValid() && ip3.isValid() ){
-        ielts = getDocumentModel()->replace( iquads,
-                ip1, ic1,
-                ip2, ic2,
-                ip3, ic3 );
+    bool ipts_ok = ip1_source.isValid() && ip2_source.isValid() && ip3_source.isValid() &&
+                      ic1_dest.isValid() && ic2_dest.isValid() && ic3_dest.isValid();
+
+    if (ipts_ok)
+    {
+        if (radioButton->isChecked())
+        {
+            ielts = getDocumentModel()->replace( iquads_source,
+                                                 ip1_source, ic1_dest,
+                                                 ip2_source, ic2_dest,
+                                                 ip3_source, ic3_dest );
+        }
+        else if (radioButton_2->isChecked())
+        {
+            QModelIndexList iquads_dest;
+            nbQuads = quads_lw_2->count();
+            for (int i = 0; i < nbQuads; ++i)
+            {
+                item = quads_lw_2->item(i);
+                iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+                if (iquad.isValid())
+                    iquads_dest << iquad;
+            }
+
+            ielts = getDocumentModel()->replace( iquads_source, iquads_dest,
+                                                 ip1_source, ic1_dest,
+                                                 ip2_source, ic2_dest,
+                                                 ip3_source, ic3_dest);
+        }
     }
 
     if ( !ielts.isValid() ){
@@ -5873,7 +6183,20 @@ void QuadRevolutionDialog::_initInputWidget( Mode editmode )
     center_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
     axis_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
 
+    angle_spb->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angle_spb->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angle_spb->setProperty("Angle", QVariant::fromValue(true));
+    angle_spb->installEventFilter(this);
+
+    angles_lw->setProperty("HexaWidgetType", QVariant::fromValue(EDGE_TREE));
+    angles_lw->setProperty("GeomWidgetType", QVariant::fromValue(TopAbs_EDGE));
+    angles_lw->setProperty("Angle", QVariant::fromValue(true));
+    angles_lw->installEventFilter(this);
+
     installEventFilter(this);
+    revolutionUni_rb->installEventFilter(this);
+    revolution_rb->installEventFilter(this);
+
     quads_lw->installEventFilter(this);
     center_le->installEventFilter(this);
     axis_le->installEventFilter(this);
@@ -6023,21 +6346,21 @@ MakeHemiSphereDialog::MakeHemiSphereDialog( QWidget* parent, Mode editmode, Qt::
 
     connect( sphereTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     connect( sphereUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( sphere2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( sphere_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-    connect( sphere_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( sphere2_rb,   SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( sphere_rb,    SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( sphere_rb,    SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
     connect( sphericalTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     connect( sphericalUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( spherical2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( spherical_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-    connect( spherical_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( spherical2_rb,   SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( spherical_rb,    SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( spherical_rb,    SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 
     connect( rindTop_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
     connect( rindUni_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( rind2_rb, SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
-    connect( rind_rb, SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
-    connect( rind_rb, SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
+    connect( rind2_rb,   SIGNAL(clicked()), this, SLOT(updateHelpFileName()) );
+    connect( rind_rb,    SIGNAL(clicked()), this, SLOT(clearVTKSelection()) );
+    connect( rind_rb,    SIGNAL(clicked()), this, SLOT(clearCurrentObjectFocus()) );
 }
 
 // ============================================================== Destructeur
@@ -6053,11 +6376,65 @@ void MakeHemiSphereDialog::_initInputWidget( Mode editmode )
     base_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VECTOR_TREE) );
     vplan_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
+    sphere_radext_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    sphere_radext_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    sphere_radext_spb->setProperty("Radius", QVariant::fromValue(true));
+
+    sphere_radint_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    sphere_radint_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    sphere_radint_spb->setProperty("Radius", QVariant::fromValue(true));
+
+    hole_rad_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    hole_rad_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    hole_rad_spb->setProperty("Radius", QVariant::fromValue(true));
+
+    radial_angle_spb->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    radial_angle_spb->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    radial_angle_spb->setProperty("Angle", QVariant::fromValue(true));
+
+    radius_lw_1->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    radius_lw_1->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    radius_lw_1->setProperty("Radius", QVariant::fromValue(true));
+
+    radius_lw_2->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    radius_lw_2->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    radius_lw_2->setProperty("Radius", QVariant::fromValue(true));
+
+    height_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    height_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    height_lw->setProperty("Length", QVariant::fromValue(true));
+
+    angle_lw->setProperty( "HexaWidgetType", QVariant::fromValue(EDGE_TREE) );
+    angle_lw->setProperty( "GeomWidgetType", QVariant::fromValue(TopAbs_EDGE) );
+    angle_lw->setProperty("Angle", QVariant::fromValue(true));
+
     installEventFilter(this);
     center_le->installEventFilter(this);
     hole_axis_le->installEventFilter(this);
     base_le->installEventFilter(this);
     vplan_le->installEventFilter(this);
+
+    sphere_radext_spb->installEventFilter(this);
+    sphere_radint_spb->installEventFilter(this);
+    hole_rad_spb->installEventFilter(this);
+    radial_angle_spb->installEventFilter(this);
+    radius_lw_1->installEventFilter(this);
+    radius_lw_2->installEventFilter(this);
+    height_lw->installEventFilter(this);
+    angle_lw->installEventFilter(this);
+
+    sphere_rb->installEventFilter(this);
+    sphereTop_rb->installEventFilter(this);
+    sphereUni_rb->installEventFilter(this);
+    sphere2_rb->installEventFilter(this);
+    rind_rb->installEventFilter(this);
+    rindTop_rb->installEventFilter(this);
+    rindUni_rb->installEventFilter(this);
+    rind2_rb->installEventFilter(this);
+    spherical_rb->installEventFilter(this);
+    sphericalTop_rb->installEventFilter(this);
+    sphericalUni_rb->installEventFilter(this);
+    spherical2_rb->installEventFilter(this);
 
     center_le->setReadOnly(true);
     hole_axis_le->setReadOnly(true);

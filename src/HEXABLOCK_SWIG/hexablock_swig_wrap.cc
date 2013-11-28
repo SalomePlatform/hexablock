@@ -17703,6 +17703,43 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_make_basename(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  cpchar arg1 = (cpchar) 0 ;
+  string *arg2 = 0 ;
+  int result;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:make_basename",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "make_basename" "', argument " "1"" of type '" "cpchar""'");
+  }
+  arg1 = reinterpret_cast< cpchar >(buf1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_string,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "make_basename" "', argument " "2"" of type '" "string &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "make_basename" "', argument " "2"" of type '" "string &""'"); 
+  }
+  arg2 = reinterpret_cast< string * >(argp2);
+  result = (int)Hex::make_basename((char const *)arg1,*arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
 SWIGINTERN int Epsil_set(PyObject *) {
   SWIG_Error(SWIG_AttributeError,"Variable Epsil is read-only.");
   return 1;
@@ -19846,6 +19883,28 @@ SWIGINTERN PyObject *_wrap_Edge_getWay(PyObject *SWIGUNUSEDPARM(self), PyObject 
   arg1 = reinterpret_cast< Hex::Edge * >(argp1);
   result = (bool)(arg1)->getWay();
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Edge_getLength(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Edge *arg1 = (Hex::Edge *) 0 ;
+  double result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Edge_getLength",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Edge, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Edge_getLength" "', argument " "1"" of type '" "Hex::Edge *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Edge * >(argp1);
+  result = (double)(arg1)->getLength();
+  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
   return NULL;
@@ -31444,6 +31503,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"sizeof_file", _wrap_sizeof_file, METH_VARARGS, NULL},
 	 { (char *)"read_file", _wrap_read_file, METH_VARARGS, NULL},
 	 { (char *)"get_time", _wrap_get_time, METH_VARARGS, NULL},
+	 { (char *)"make_basename", _wrap_make_basename, METH_VARARGS, NULL},
 	 { (char *)"EltBase_countHexa", _wrap_EltBase_countHexa, METH_VARARGS, NULL},
 	 { (char *)"EltBase_countQuad", _wrap_EltBase_countQuad, METH_VARARGS, NULL},
 	 { (char *)"EltBase_countEdge", _wrap_EltBase_countEdge, METH_VARARGS, NULL},
@@ -31508,6 +31568,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Edge_clearAssociation", _wrap_Edge_clearAssociation, METH_VARARGS, NULL},
 	 { (char *)"Edge_setColor", _wrap_Edge_setColor, METH_VARARGS, NULL},
 	 { (char *)"Edge_getWay", _wrap_Edge_getWay, METH_VARARGS, NULL},
+	 { (char *)"Edge_getLength", _wrap_Edge_getLength, METH_VARARGS, NULL},
 	 { (char *)"new_Edge", _wrap_new_Edge, METH_VARARGS, NULL},
 	 { (char *)"delete_Edge", _wrap_delete_Edge, METH_VARARGS, NULL},
 	 { (char *)"Edge_swigregister", Edge_swigregister, METH_VARARGS, NULL},
@@ -32686,7 +32747,6 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Q_INVERSE",SWIG_From_int(static_cast< int >(Hex::Q_INVERSE)));
   SWIG_Python_SetConstant(d, "Q_UNDEFINED",SWIG_From_int(static_cast< int >(Hex::Q_UNDEFINED)));
   SWIG_Python_SetConstant(d, "Q_WAITING",SWIG_From_int(static_cast< int >(Hex::Q_WAITING)));
-  SWIG_Python_SetConstant(d, "KS_None",SWIG_From_int(static_cast< int >(Hex::KS_None)));
   SWIG_Python_SetConstant(d, "KS_Line",SWIG_From_int(static_cast< int >(Hex::KS_Line)));
   SWIG_Python_SetConstant(d, "KS_Circle",SWIG_From_int(static_cast< int >(Hex::KS_Circle)));
   SWIG_Python_SetConstant(d, "KS_Ellipse",SWIG_From_int(static_cast< int >(Hex::KS_Ellipse)));
@@ -32695,6 +32755,7 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "KS_BezierCurve",SWIG_From_int(static_cast< int >(Hex::KS_BezierCurve)));
   SWIG_Python_SetConstant(d, "KS_BSplineCurve",SWIG_From_int(static_cast< int >(Hex::KS_BSplineCurve)));
   SWIG_Python_SetConstant(d, "KS_OtherCurve",SWIG_From_int(static_cast< int >(Hex::KS_OtherCurve)));
+  SWIG_Python_SetConstant(d, "KS_None",SWIG_From_int(static_cast< int >(Hex::KS_None)));
   SWIG_Python_SetConstant(d, "CylSmall",SWIG_From_int(static_cast< int >(Hex::CylSmall)));
   SWIG_Python_SetConstant(d, "CylBig",SWIG_From_int(static_cast< int >(Hex::CylBig)));
   SWIG_Python_SetConstant(d, "NxInt",SWIG_From_int(static_cast< int >(Hex::NxInt)));

@@ -35,6 +35,7 @@ public:
     virtual void clearAssociation ();
     void setColor  (double valeur);
     bool    getWay ()              { return e_way ; }
+    double  getLength ();
 
     Edge (Vertex* va, Vertex* vb);
 

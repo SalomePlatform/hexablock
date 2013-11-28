@@ -20,15 +20,15 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
-#include "HEXABLOCKGUI_Export.hxx"
+#include "hexa_base.hxx"
 
 #include <QItemSelectionModel>
-#include <LightApp_SelectionMgr.h>
+//#include <LightApp_SelectionMgr.h>
 
-#include <SVTK_ViewWindow.h>
+//#include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
 
-#include "klinkitemselectionmodel.hxx"
+//#include "klinkitemselectionmodel.hxx"
 
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 
@@ -40,7 +40,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-    class HEXABLOCK_EXPORT SelectionModel: public QItemSelectionModel
+    class HexaExport SelectionModel: public QItemSelectionModel
     {
         Q_OBJECT
 
@@ -89,7 +89,7 @@ namespace HEXABLOCK
 //        }
 //    };
 
-    class HEXABLOCK_EXPORT PatternDataSelectionModel : public SelectionModel
+    class HexaExport PatternDataSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -113,7 +113,7 @@ namespace HEXABLOCK
 
     };
 
-    class HEXABLOCK_EXPORT PatternGeomSelectionModel : public SelectionModel
+    class HexaExport PatternGeomSelectionModel : public SelectionModel
     {
         Q_OBJECT
 
@@ -134,7 +134,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCK_EXPORT GroupsSelectionModel : public SelectionModel
+    class HexaExport GroupsSelectionModel : public SelectionModel
     {
       Q_OBJECT
 
@@ -149,7 +149,7 @@ namespace HEXABLOCK
     };
 
 
-    class HEXABLOCK_EXPORT MeshSelectionModel : public SelectionModel
+    class HexaExport MeshSelectionModel : public SelectionModel
     {
       Q_OBJECT
 

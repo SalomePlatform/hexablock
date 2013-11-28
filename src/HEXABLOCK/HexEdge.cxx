@@ -517,4 +517,13 @@ double Edge::getAssoLen ()
 
    return longueur;
 }
+// ========================================================= getLength
+double Edge::getLength ()
+{
+   Real3 p1, p2;
+   e_vertex [V_AMONT]-> getAssoCoord (p1);
+   e_vertex [V_AVAL ]-> getAssoCoord (p2);
+   double longueur = calc_distance (p1, p2);
+   return longueur;
+}
 END_NAMESPACE_HEXA
