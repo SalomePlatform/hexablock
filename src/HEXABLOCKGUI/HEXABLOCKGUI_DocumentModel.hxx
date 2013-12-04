@@ -74,6 +74,10 @@ namespace HEXABLOCK
       void refresh(); //refresh data
       bool isEmpty() const;
 
+      double getLength(const QModelIndex& iEdge);
+      double getRadius(const QModelIndex& iEdge);
+      double getAngle(const QModelIndex& iEdge);
+
       void clearAll();
       void clearData();
 //      void clearBuilder();
@@ -363,9 +367,14 @@ namespace HEXABLOCK
       bool performSymmetryPlane( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
 
       QModelIndex replace( const QModelIndexList& quadsPattern,
-          const QModelIndex& p1, const QModelIndex& c1,
-          const QModelIndex& p2, const QModelIndex& c2,
-          const QModelIndex& p3, const QModelIndex& c3 ); //NEW HEXA3
+                           const QModelIndex& ip1, const QModelIndex& ic1,
+                           const QModelIndex& ip2, const QModelIndex& ic2,
+                           const QModelIndex& ip3, const QModelIndex& ic3 ); //NEW HEXA3
+
+      QModelIndex replace( const QModelIndexList& iquads_source, const QModelIndexList& iquads_dest,
+                           const QModelIndex& ip1_source, const QModelIndex& ic1_dest,
+                           const QModelIndex& ip2_source, const QModelIndex& ic2_dest,
+                           const QModelIndex& ip3_source, const QModelIndex& ic3_dest );
 
 
       // ************  ASSOCIATION ************
@@ -480,7 +489,6 @@ namespace HEXABLOCK
       QStandardItem     *_lawDirItem;
       QStandardItem     *_propagationDirItem;
 
-
       Qt::ItemFlags     _vertexItemFlags;
       Qt::ItemFlags     _edgeItemFlags;
       Qt::ItemFlags     _quadItemFlags;
@@ -493,7 +501,6 @@ namespace HEXABLOCK
       Qt::ItemFlags     _groupItemFlags;
       Qt::ItemFlags     _lawItemFlags;
       Qt::ItemFlags     _propagationItemFlags;
-
     };
 
 

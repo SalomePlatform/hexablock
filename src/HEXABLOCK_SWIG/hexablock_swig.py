@@ -526,7 +526,6 @@ Q_DIRECT = _hexablock_swig.Q_DIRECT
 Q_INVERSE = _hexablock_swig.Q_INVERSE
 Q_UNDEFINED = _hexablock_swig.Q_UNDEFINED
 Q_WAITING = _hexablock_swig.Q_WAITING
-KS_None = _hexablock_swig.KS_None
 KS_Line = _hexablock_swig.KS_Line
 KS_Circle = _hexablock_swig.KS_Circle
 KS_Ellipse = _hexablock_swig.KS_Ellipse
@@ -535,6 +534,7 @@ KS_Parabola = _hexablock_swig.KS_Parabola
 KS_BezierCurve = _hexablock_swig.KS_BezierCurve
 KS_BSplineCurve = _hexablock_swig.KS_BSplineCurve
 KS_OtherCurve = _hexablock_swig.KS_OtherCurve
+KS_None = _hexablock_swig.KS_None
 CylSmall = _hexablock_swig.CylSmall
 CylBig = _hexablock_swig.CylBig
 NxInt = _hexablock_swig.NxInt
@@ -547,6 +547,7 @@ deg2radians = _hexablock_swig.deg2radians
 rad2degres = _hexablock_swig.rad2degres
 calc_norme = _hexablock_swig.calc_norme
 calc_distance = _hexablock_swig.calc_distance
+calc_d2 = _hexablock_swig.calc_d2
 calc_vecteur = _hexablock_swig.calc_vecteur
 copy_vecteur = _hexablock_swig.copy_vecteur
 calc_milieu = _hexablock_swig.calc_milieu
@@ -561,6 +562,7 @@ set_special_option = _hexablock_swig.set_special_option
 sizeof_file = _hexablock_swig.sizeof_file
 read_file = _hexablock_swig.read_file
 get_time = _hexablock_swig.get_time
+make_basename = _hexablock_swig.make_basename
 class EltBase(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, EltBase, name, value)
@@ -666,9 +668,12 @@ class Edge(EltBase):
     __repr__ = _swig_repr
     def getVertex(*args): return _hexablock_swig.Edge_getVertex(*args)
     def addAssociation(*args): return _hexablock_swig.Edge_addAssociation(*args)
+    def setAssociation(*args): return _hexablock_swig.Edge_setAssociation(*args)
+    def findAssociation(*args): return _hexablock_swig.Edge_findAssociation(*args)
     def clearAssociation(*args): return _hexablock_swig.Edge_clearAssociation(*args)
     def setColor(*args): return _hexablock_swig.Edge_setColor(*args)
     def getWay(*args): return _hexablock_swig.Edge_getWay(*args)
+    def getLength(*args): return _hexablock_swig.Edge_getLength(*args)
     def __init__(self, *args): 
         this = _hexablock_swig.new_Edge(*args)
         try: self.this.append(this)

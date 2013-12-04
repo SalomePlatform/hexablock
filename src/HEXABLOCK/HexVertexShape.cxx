@@ -83,6 +83,7 @@ void VertexShape::getCoords (double& px, double& py, double& pz)
    py = ss_coord[dir_y];
    pz = ss_coord[dir_z];
 }
+#if 0
 // ====================================================== getShape
 const TopoDS_Shape& VertexShape::getShape()
 {
@@ -97,6 +98,7 @@ const TopoDS_Shape& VertexShape::getShape()
 
     return SubShape::getShape ();
 }
+#endif
 // ====================================================== addAssociation
 void VertexShape::addAssociation (Vertex* elt)
 {
@@ -110,6 +112,16 @@ Vertex* VertexShape::getAssociation (int nro)
       return tab_assoc[nro];
    else
       return NULL;
+}
+// ====================================================== definedBy 
+bool VertexShape::definedBy (double point[])
+{
+   if (maj_coords)
+       updateCoords ();
+
+   const double Epsilon2 = 1e-4;
+   bool   rep = same_coords (point, ss_coord, Epsilon2);
+   return rep; 
 }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // ====================================================== saveXml

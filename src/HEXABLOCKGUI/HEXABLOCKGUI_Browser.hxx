@@ -17,25 +17,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef _HEXABLOCKGUI_MODEL_HXX_
-#define _HEXABLOCKGUI_MODEL_HXX_
+#ifndef _HEXABLOCKGUI_BROWSER_HXX_
+#define _HEXABLOCKGUI_BROWSER_HXX_
 
+//--+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
+
+#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
-#include <SalomeApp_DataModel.h>
+using namespace Hex;
 
-class HEXABLOCK_EXPORT HEXABLOCKGUI_Model : public SalomeApp_DataModel
+class HEXABLOCKGUI;
+class SalModel;
+
+class HEXABLOCK_EXPORT HEXABLOCKGUI_Browser 
 {
-    public:
-      HEXABLOCKGUI_Model(CAM_Module* theModule);
-      virtual ~HEXABLOCKGUI_Model();
-      
-      virtual bool open(const QString& fileName, CAM_Study* study, QStringList listOfFiles);
-      virtual bool save(QStringList& listOfFiles);
-      virtual bool saveAs(const QString& fileName, CAM_Study* study, QStringList& listOfFiles);
+public :
+    HEXABLOCKGUI_Browser (HEXABLOCKGUI* dad);
+    void rebuildTree ();
 
-    protected:
 
+private :
+    Hex::Hex*     hexa_root;
+    SalModel*     data_model; 
+    HEXABLOCKGUI* hexa_gui; 
 };
-
 #endif

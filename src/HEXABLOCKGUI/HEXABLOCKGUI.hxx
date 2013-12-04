@@ -30,7 +30,6 @@
 #include <QModelIndex>
 #include <QDockWidget>
 
-
 #include "klinkitemselectionmodel.hxx"
 
 #include <OB_Browser.h>
@@ -128,6 +127,7 @@ public:
   enum ViewType {
       VTK,
       OCC,
+      VTK_OCC,
       UNKNOWN
   };
 
@@ -201,6 +201,11 @@ public:
   void showLawInfoDialog(HEXA_NS::Law* law);
   void showPropagationInfoDialog(HEXA_NS::Propagation* propagation);
 
+  void showVtkActor();
+  void showOccActor();
+  void hideVtkActor();
+  void hideOccActor();
+
 public slots:
   bool deactivateModule( SUIT_Study* theStudy);
   bool activateModule( SUIT_Study* theStudy);
@@ -220,7 +225,6 @@ protected slots:
   virtual void                        onViewManagerRemoved( SUIT_ViewManager* );
 
   void onSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
-  void showActor();
   void hideActor();
   void showOnlyActor();
 

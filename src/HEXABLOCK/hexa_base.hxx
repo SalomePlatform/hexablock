@@ -173,9 +173,9 @@ enum EnumHVertex {V_ACE, V_ACF, V_ADE, V_ADF, V_BCE, V_BCF, V_BDE, V_BDF,
 
 enum EnumQDirection {Q_INSIDE, Q_DIRECT, Q_INVERSE, Q_UNDEFINED, Q_WAITING };
 
-enum EnumKindOfShape {KS_None, KS_Line, KS_Circle, KS_Ellipse, KS_Hyperbola,
+enum EnumKindOfShape {KS_Line, KS_Circle, KS_Ellipse, KS_Hyperbola,
                       KS_Parabola, KS_BezierCurve, KS_BSplineCurve,
-                      KS_OtherCurve };
+                      KS_OtherCurve, KS_None=-1 };
 
 enum { CylSmall=0, CylBig=1, NxInt=1, NxExt=2 };
 
@@ -263,6 +263,7 @@ HexaExport inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI
 
 HexaExport double  calc_norme     (double v1[]);
 HexaExport double  calc_distance  (double v1[], double v2[]);
+HexaExport double  calc_d2        (double v1[], double v2[]);
 HexaExport void    calc_vecteur   (double pta[], double ptb[], double vab[]);
 HexaExport void    copy_vecteur   (double va [], double vb []);
 HexaExport void    calc_milieu    (double pta[], double ptb[], double milieu[]);

@@ -23,12 +23,12 @@
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <QItemSelectionModel>
-#include <LightApp_SelectionMgr.h>
+//#include <LightApp_SelectionMgr.h>
 
-#include <SVTK_ViewWindow.h>
+//#include <SVTK_ViewWindow.h>
 #include <SVTK_Selector.h>
 
-#include "klinkitemselectionmodel.hxx"
+//#include "klinkitemselectionmodel.hxx"
 
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 

@@ -21,7 +21,8 @@ public :
     void getCoords (double& px, double& py, double& pz);
     void saveXml (XmlWriter* xml);
 
-    virtual const TopoDS_Shape& getShape(); // #mbarry
+    // virtual const TopoDS_Shape& getShape(); // #mbarry
+    bool definedBy (double point[]);
 
 private :
     void updateCoords ();

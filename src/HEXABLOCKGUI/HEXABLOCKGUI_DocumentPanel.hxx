@@ -134,10 +134,6 @@ namespace HEXABLOCK
           return HEXABLOCKGUI::currentDocGView->getPatternGeomModel();
       }
 
-//      PatternBuilderModel* getPatternBuilderModel() const {
-//          return HEXABLOCKGUI::currentDocGView->getPatternBuilderModel();
-//      }
-
       GroupsModel* getGroupsModel() const {
           return HEXABLOCKGUI::currentDocGView->getGroupsModel();
       }
@@ -150,10 +146,6 @@ namespace HEXABLOCK
       PatternDataSelectionModel* getPatternDataSelectionModel() const {
          return HEXABLOCKGUI::currentDocGView->getPatternDataSelectionModel();
       }
-
-//      PatternBuilderSelectionModel* getPatternBuilderSelectionModel() const {
-//         return HEXABLOCKGUI::currentDocGView->getPatternBuilderSelectionModel();
-//      }
 
       PatternGeomSelectionModel* getPatternGeomSelectionModel() const {
           return HEXABLOCKGUI::currentDocGView->getPatternGeomSelectionModel();
@@ -183,6 +175,7 @@ namespace HEXABLOCK
         return assocs;
       }
       virtual void setCurrentGeomObj(DocumentModel::GeomObj* geomObj) {}
+      virtual void computeAndSetDimension(const QModelIndex& elt);
 
       bool debugEdgeAssoc; //Temporary
       bool autoFocusSwitch;
@@ -229,13 +222,15 @@ namespace HEXABLOCK
 
     void _updateCurrentObject(QObject*);
 
+    bool isDimensionType(const QObject* obj);
+
     Mode _editMode;
 
-    QMap<QObject*, QModelIndex>   _index;
-    QObject*                      _currentObj;
+    QMap<QObject*, QModelIndex>    _index;
+    QObject*                       _currentObj;
     QMap<HexaWidgetType, QString>  _strHexaWidgetType;
-    QPushButton* _applyButton;
-    QString  _helpFileName;
+    QPushButton*                   _applyButton;
+    QString                        _helpFileName;
 
     private:
     bool _isLineOrListWidget(QObject*);
@@ -250,8 +245,6 @@ namespace HEXABLOCK
     virtual void selectElementOfModel();
 
     };
-
-
 
     class HEXABLOCK_EXPORT VertexDialog : public HexaBaseDialog,
     public Ui::VertexDialog
@@ -560,9 +553,9 @@ namespace HEXABLOCK
     void updateHelpFileName();
 
     private slots:
-    //void addQuad();
+    void addQuad();
     void removeQuad();
-    //void clearQuads();
+    void clearQuads();
 
     };
 
@@ -590,9 +583,9 @@ namespace HEXABLOCK
     void updateHelpFileName();
 
     private slots:
-    //void addQuad();
+    void addQuad();
     void removeQuad();
-    //void clearQuads();
+    void clearQuads();
 
     };
 
@@ -909,7 +902,7 @@ class HEXABLOCK_EXPORT EdgeAssocDialog : public HexaBaseDialog,
     void _initInputWidget( Mode editmode );
 
     protected slots:
-    //void updateHelpFileName();
+    void updateHelpFileName();
     void deletePropagationItem();
     virtual void selectElementOfModel();
 
@@ -963,7 +956,9 @@ class HEXABLOCK_EXPORT EdgeAssocDialog : public HexaBaseDialog,
 
     protected slots:
     void deleteQuadItem();
+    void deleteQuadItem2();
     void updateButtonBox();
+    void updateHelpFileName();
 
     private:
     HEXA_NS::Elements *_value;

@@ -104,6 +104,13 @@ double calc_distance  (double v1[], double v2[])
    Real3 vv = { v2[dir_x]-v1[dir_x], v2[dir_y]-v1[dir_y], v2[dir_z]-v1[dir_z] };
    return calc_norme (vv);
 }
+// ======================================================== calc_d2
+double calc_d2  (double v1[], double v2[])
+{
+   double dd = carre (v2[dir_x]-v1[dir_x]) + carre (v2[dir_y]-v1[dir_y]) 
+             + carre (v2[dir_z]-v1[dir_z]);
+   return dd;
+}
 // ========================================================= calc_vecteur
 void calc_vecteur  (double pta[], double ptb[], double vab[])
 {

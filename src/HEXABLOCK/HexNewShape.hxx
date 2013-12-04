@@ -51,10 +51,13 @@ public :         // for Others
    void  addAssociation (Quad*   elt, int subid);
 
    VertexShape* findVertex   (int subid);
+   VertexShape* findVertex   (double point[]);
    EdgeShape*   findEdge     (int subid);
+   EdgeShape*   findEdge     (double p1[], double p2[]);
    FaceShape*   findFace     (int subid);
 
    SubShape*    findSubShape (int subid);
+
 
    const TopoDS_Shape& getGeoShape (int subid);
 

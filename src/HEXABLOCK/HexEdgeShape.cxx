@@ -34,6 +34,19 @@
 #include <GCPnts_AbscissaPoint.hxx>
 
 #include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <Geom_Circle.hxx>
+
+/****************
+#include <Standard_Stream.hxx>
+#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMImpl_Types.hxx>
+#include <GEOMImpl_MeasureDriver.hxx>
+#include <GEOMImpl_IMeasure.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMUtils.hxx>
+#include <GEOMAlgo_ShapeInfo.hxx>
+#include <GEOMAlgo_ShapeInfoFiller.hxx>
+*********************************/
 
 BEGIN_NAMESPACE_HEXA
 
@@ -50,6 +63,8 @@ EdgeShape::EdgeShape (NewShape* dad, int id)
    lin_end   [dir_x] = lin_end   [dir_y] = lin_end   [dir_z] = 0;
    par_mini   = 0;
    par_maxi   = 0;
+   lin_radius = 0;
+   lin_angle  = 0;
 }
 // ====================================================== getCurve
 BRepAdaptor_Curve* EdgeShape::getCurve ()
@@ -119,7 +134,7 @@ int EdgeShape::getPoint (double param, double* point)
 // ========================================================= samePoints
 bool EdgeShape::samePoints (double* point1, double* point2)
 {
-   const double Epsilon2 = 1e-6;
+   const double Epsilon2 = 1e-4;
    bool   rep = same_coords (point1, point2, Epsilon2);
    return rep;
 }
@@ -135,6 +150,19 @@ int EdgeShape::onExtremity (double* point)
       return V_AVAL;
    else
       return NOTHING;
+}
+// ========================================================= definedBy
+bool EdgeShape::definedBy (double p1[], double p2[])
+{
+   if (maj_curve)
+      updateCurve ();
+
+   bool rep = false;
+   if (samePoints  (p1, lin_start))
+      rep = samePoints  (p2, lin_end);
+   else if (samePoints  (p1, lin_end))
+      rep = samePoints  (p2, lin_start);
+   return rep;
 }
 // ========================================================= getParam
 double EdgeShape::getParam (double* coord)
@@ -168,7 +196,6 @@ double EdgeShape::getParam (double* coord)
       return -1.0;
 
    GeomAdaptor_Curve  adapt_curve (handle);
-   kind_of   = (EnumKindOfShape) (adapt_curve.GetType() + 1);
 
 /******************
    enum GeomAbs_CurveType { GeomAbs_Line, GeomAbs_Circle, GeomAbs_Ellipse,
@@ -197,6 +224,9 @@ void EdgeShape::addAssociation (Edge* edge)
    is_associated = true;
 }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ // ------- Cf GEOMImpl_IMeasureOperations.cxx
+
 // ====================================================== updateCurve
 void EdgeShape::updateCurve ()
 {
@@ -224,5 +254,40 @@ void EdgeShape::updateCurve ()
                                // Extremites
    getPoint (0, lin_start);
    getPoint (1, lin_end);
+
+   lin_radius = lin_angle = 0;
+   kind_of    = (EnumKindOfShape) adapt_curve.GetType();
+#ifndef NO_CASCADE
+   if (kind_of==KS_Circle)
+      {
+      Handle(Geom_Circle) hgc = Handle(Geom_Circle)::DownCast (handle);
+      lin_radius = hgc->Radius ();
+      lin_angle  = (par_maxi-par_mini)*180/M_PI;
+      }
+#endif
+}
+// ====================================================== getAngle
+double EdgeShape::getAngle ()
+{
+   if (maj_curve)
+      updateCurve ();
+
+   return lin_angle;
+}
+// ====================================================== getRadius
+double EdgeShape::getRadius ()
+{
+   if (maj_curve)
+      updateCurve ();
+
+   return lin_radius;
+}
+// ====================================================== getRadius
+EnumKindOfShape EdgeShape::kindOf ()
+{
+   if (maj_curve)
+      updateCurve ();
+
+   return kind_of;
 }
 END_NAMESPACE_HEXA

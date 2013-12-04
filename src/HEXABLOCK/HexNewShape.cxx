@@ -291,6 +291,18 @@ VertexShape* NewShape::findVertex (int shid)
        }
    return NULL;
 }
+// ====================================================== findVertex
+VertexShape* NewShape::findVertex (double point[])
+{
+   int nbre = tab_vertex.size ();
+   for (int nro=0 ; nro < nbre ; nro++)
+       {
+       VertexShape* shape = tab_vertex [nro];
+       if (shape->definedBy (point))
+          return shape;
+       }
+   return NULL;
+}
 // ====================================================== findEdge
 EdgeShape* NewShape::findEdge (int shid)
 {
@@ -299,6 +311,18 @@ EdgeShape* NewShape::findEdge (int shid)
        {
        EdgeShape* shape = tab_edge [nro];
        if (shape->getIdent() == shid)
+          return shape;
+       }
+   return NULL;
+}
+// ====================================================== findEdge
+EdgeShape* NewShape::findEdge (double p1[], double p2[])
+{
+   int nbre = tab_edge.size ();
+   for (int nro=0 ; nro < nbre ; nro++)
+       {
+       EdgeShape* shape = tab_edge [nro];
+       if (shape->definedBy (p1, p2))
           return shape;
        }
    return NULL;

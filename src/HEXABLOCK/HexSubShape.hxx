@@ -18,7 +18,7 @@ public :
     cpchar      getParentName () const;
     int         getIdent ()             { return sub_ident ; }
     int         getDim   ()             { return sub_dim ; }
-    EnumKindOfShape kindOf   ()             { return kind_of ; }
+    virtual EnumKindOfShape kindOf ()   { return kind_of ; }
 
     const string&       getBrep  ();
     virtual const TopoDS_Shape& getShape ();
