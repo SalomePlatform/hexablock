@@ -27,6 +27,7 @@ public :
     double  getRadius ();
     double  getAngle  ();
     int     onExtremity (double point[]);
+    bool    definedBy   (double p1[], double p2[]);
     bool    isLinear    ()                   { return kind_of == KS_Line ; }
 
     static bool samePoints (double point1[], double point2[]);

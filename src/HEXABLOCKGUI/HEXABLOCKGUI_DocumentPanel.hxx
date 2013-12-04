@@ -957,6 +957,7 @@ class HexaExport EdgeAssocDialog : public HexaBaseDialog,
     void deleteQuadItem();
     void deleteQuadItem2();
     void updateButtonBox();
+    void updateHelpFileName();
 
     private:
     HEXA_NS::Elements *_value;

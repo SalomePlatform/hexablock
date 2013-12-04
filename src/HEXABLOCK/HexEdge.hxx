@@ -31,7 +31,9 @@ class HexaExport Edge : public EltBase
 public:
     virtual Vertex* getVertex (int  nro);
 
-    int addAssociation (NewShape* geom, int subid, double deb, double fin);
+    int addAssociation  (NewShape* geom, int subid, double deb, double fin);
+    int setAssociation  (NewShape* geom, int subid);
+    int findAssociation (NewShape* geom);
     virtual void clearAssociation ();
     void setColor  (double valeur);
     bool    getWay ()              { return e_way ; }

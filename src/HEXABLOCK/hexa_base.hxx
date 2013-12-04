@@ -263,6 +263,7 @@ HexaExport inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI
 
 HexaExport double  calc_norme     (double v1[]);
 HexaExport double  calc_distance  (double v1[], double v2[]);
+HexaExport double  calc_d2        (double v1[], double v2[]);
 HexaExport void    calc_vecteur   (double pta[], double ptb[], double vab[]);
 HexaExport void    copy_vecteur   (double va [], double vb []);
 HexaExport void    calc_milieu    (double pta[], double ptb[], double milieu[]);

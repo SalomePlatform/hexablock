@@ -1144,22 +1144,4 @@ Elements* Document::cut (Edge* edge, RealVector& tlen)
    DumpReturn (grid);
    return grid;
 }
-// ========================================================= replaceHexas
-Elements* Document::replaceHexas (Quads pattern, Quads cible, Vertex* p1, 
-                                  Vertex* c1, Vertex* p2,     Vertex* c2, 
-                                  Vertex* p3, Vertex* c3)
-{
-   DumpStart ("replace", pattern << cible << p1 << c1 << p2 << c2 << p3 << c3);
-
-   Elements* t_hexas = new Elements (this);
-
-   //if (BadElement (edge))
-      {
-      t_hexas->setError (HERR);
-      Mess << "This function is not yet implemented";
-      }
-
-   DumpReturn (t_hexas);
-   return t_hexas;
-}
 END_NAMESPACE_HEXA

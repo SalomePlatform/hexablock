@@ -547,6 +547,7 @@ deg2radians = _hexablock_swig.deg2radians
 rad2degres = _hexablock_swig.rad2degres
 calc_norme = _hexablock_swig.calc_norme
 calc_distance = _hexablock_swig.calc_distance
+calc_d2 = _hexablock_swig.calc_d2
 calc_vecteur = _hexablock_swig.calc_vecteur
 copy_vecteur = _hexablock_swig.copy_vecteur
 calc_milieu = _hexablock_swig.calc_milieu
@@ -667,6 +668,8 @@ class Edge(EltBase):
     __repr__ = _swig_repr
     def getVertex(*args): return _hexablock_swig.Edge_getVertex(*args)
     def addAssociation(*args): return _hexablock_swig.Edge_addAssociation(*args)
+    def setAssociation(*args): return _hexablock_swig.Edge_setAssociation(*args)
+    def findAssociation(*args): return _hexablock_swig.Edge_findAssociation(*args)
     def clearAssociation(*args): return _hexablock_swig.Edge_clearAssociation(*args)
     def setColor(*args): return _hexablock_swig.Edge_setColor(*args)
     def getWay(*args): return _hexablock_swig.Edge_getWay(*args)

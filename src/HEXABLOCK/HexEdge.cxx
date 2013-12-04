@@ -28,6 +28,7 @@
 #include "HexXmlWriter.hxx"
 #include "HexNewShape.hxx"
 #include "HexAssoEdge.hxx"
+#include "HexVertexShape.hxx"
 
 static int niveau = 0;
 
@@ -525,5 +526,89 @@ double Edge::getLength ()
    e_vertex [V_AVAL ]-> getAssoCoord (p2);
    double longueur = calc_distance (p1, p2);
    return longueur;
+}
+// ========================================================= findAssociation
+int Edge::findAssociation (NewShape* geom)
+{
+   Real3 point, p2;
+   if (geom==NULL)
+      return NOTHING;
+
+   e_vertex [V_AMONT]-> getAssoCoord (point);
+   e_vertex [V_AVAL ]-> getAssoCoord (p2);
+
+   EdgeShape*  gline = geom->findEdge (point, p2);
+   if (gline==NULL)
+      { 
+      cout << " *** FindAssociation "  << el_name << endl;
+      for (int nv=0 ; nv < V_TWO ; ++nv)
+          {
+          e_vertex [nv]-> getAssoCoord (point);
+          VertexShape* shape = geom->findVertex (point);
+          cout << " *** Vertex nro "  << nv;
+          if (shape==NULL)
+             {
+             cout << " absent : ";
+             PutCoord (point);
+             }
+          else
+             {
+             cout << " : Subid = " << shape->getIdent() << endl;
+             }
+          }
+      return NOTHING;
+      }
+   
+   clearAssociation ();
+   addAssociation   (gline, 0, 1); 
+   return gline->getIdent();
+}
+// ========================================================= setAssociation
+int Edge::setAssociation (NewShape* geom, int subid)
+{
+   if (geom == NULL)
+      {
+      if (el_root->debug ())
+          cout << "  Edge " << el_name << " addAssociation of NULL ignored"
+               << endl;
+      return HERR;
+      }
+
+   EdgeShape* gline = geom->findEdge (subid);
+   if (gline == NULL)
+      {
+      if (el_root->debug ())
+          cout << "  Edge " << el_name << " addAssociation bad subid : "
+               << subid << endl;
+      return HERR;
+      }
+
+   Real3 p1, p2, pa, pb;
+   gline->getCoords (p1, p2);
+   e_vertex [V_AMONT]-> getAssoCoord (pa);
+   e_vertex [V_AVAL ]-> getAssoCoord (pb);
+
+   double da1 = calc_d2 (pa, p1);
+   double da2 = calc_d2 (pa, p2);
+   double db1 = calc_d2 (pb, p1);
+   double db2 = calc_d2 (pb, p2);
+   
+   cout << "setAssociation " << el_name << " :" <<endl;
+
+   if (da2 < da1 && db1 < db2) 
+      {
+      e_vertex [V_AMONT]->setAssociation (p2);
+      e_vertex [V_AVAL ]->setAssociation (p1);
+      }
+   else
+      {
+      e_vertex [V_AMONT]->setAssociation (p1);
+      e_vertex [V_AVAL ]->setAssociation (p2);
+      }
+
+   
+   clearAssociation ();
+   int ier = addAssociation   (gline, 0, 1); 
+   return ier;
 }
 END_NAMESPACE_HEXA

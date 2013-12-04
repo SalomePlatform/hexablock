@@ -591,11 +591,11 @@ Hexa* Document::addHexaQuadsACDE (AnaQuads& strquads)
    Hexa*  hexa = new Hexa (q_a, q_b, q_c, q_d, q_e, q_f);
    return hexa;
 }
-// ========================================================= replace
-Elements* Document::replace (Quads pattern, Vertex* p1, Vertex* c1, 
+// ========================================================= replaceHexa
+Elements* Document::replaceHexa (Quads pattern, Vertex* p1, Vertex* c1, 
                              Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
 {
-   DumpStart ("replace", pattern << p1 << c1 << p2 << c2 << p3 << c3);
+   DumpStart ("replaceHexa", pattern << p1 << c1 << p2 << c2 << p3 << c3);
 
    Elements* t_hexas = new Elements (this);
    int ier = t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
@@ -607,6 +607,22 @@ Elements* Document::replace (Quads pattern, Vertex* p1, Vertex* c1,
 
    DumpReturn (t_hexas);
    return      t_hexas;
+}
+// ========================================================= repla
+Elements* Document::replace (Quads motif, Quads cible, Vertex* p1, Vertex* c1,                               Vertex* p2, Vertex* c2)
+{
+   DumpStart ("replace", motif << cible << p1 << c1 << p2 << c2);
+
+   Elements* t_hexas = new Elements (this);
+
+   //if (BadElement (edge))
+      {
+      t_hexas->setError (HERR);
+      Mess << "This function is not yet implemented";
+      }
+
+   DumpReturn (t_hexas);
+   return t_hexas;
 }
 // ========================================================= print_replace
 void print_replace (Edge* zig, Edge*  zag)

@@ -107,11 +107,8 @@ public :
    Elements* disconnectVertex (Hexa* maille, Vertex* noeud);
    Elements* disconnectEdges  (Hexas thexas, Edges   edges);
 
-   Elements* replace (Quads pattern, Vertex* p1, Vertex* c1,
-                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
-
-   Elements* replaceHexas (Quads pattern, Quads cible,  Vertex* p1, Vertex* c1,
-                           Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+   Elements* replace (Quads pattern, Quads cible, Vertex* p1, Vertex* c1,
+                                                  Vertex* p2, Vertex* c2);
 
    int     mergeVertices (Vertex* v1, Vertex* v2);
    int     mergeEdges    (Edge* e1, Edge* e2, Vertex* v1, Vertex* v2);
@@ -303,6 +300,18 @@ public :
    void clearAssoVertices ();
    void clearAssoEdges   ();
    void clearAssoQuads   ();
+
+                               // PERIMES
+   Elements* replaceHexa (Quads pattern, Vertex* p1, Vertex* c1, Vertex* p2,
+                          Vertex* c2,  Vertex* p3, Vertex* c3);
+   Elements* replace (Quads pattern, Vertex* p1, Vertex* c1, Vertex* p2,
+                      Vertex* c2,  Vertex* p3, Vertex* c3)
+   { return  replaceHexa (pattern, p1, c1, p2, c2, p3, c3);  }
+
+   Elements* replaceHexas (Quads pattern, Quads cible, Vertex* p1, Vertex* c1,
+                           Vertex* p2, Vertex* c2, Vertex* p3, Vertex* c3)
+   { return  replace (pattern, cible, p1, c1, p2, c2); }
+
 
 public:
    ~Document ();

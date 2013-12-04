@@ -134,7 +134,7 @@ int EdgeShape::getPoint (double param, double* point)
 // ========================================================= samePoints
 bool EdgeShape::samePoints (double* point1, double* point2)
 {
-   const double Epsilon2 = 1e-6;
+   const double Epsilon2 = 1e-4;
    bool   rep = same_coords (point1, point2, Epsilon2);
    return rep;
 }
@@ -150,6 +150,19 @@ int EdgeShape::onExtremity (double* point)
       return V_AVAL;
    else
       return NOTHING;
+}
+// ========================================================= definedBy
+bool EdgeShape::definedBy (double p1[], double p2[])
+{
+   if (maj_curve)
+      updateCurve ();
+
+   bool rep = false;
+   if (samePoints  (p1, lin_start))
+      rep = samePoints  (p2, lin_end);
+   else if (samePoints  (p1, lin_end))
+      rep = samePoints  (p2, lin_start);
+   return rep;
 }
 // ========================================================= getParam
 double EdgeShape::getParam (double* coord)
@@ -244,14 +257,14 @@ void EdgeShape::updateCurve ()
 
    lin_radius = lin_angle = 0;
    kind_of    = (EnumKindOfShape) adapt_curve.GetType();
+#ifndef NO_CASCADE
    if (kind_of==KS_Circle)
       {
       Handle(Geom_Circle) hgc = Handle(Geom_Circle)::DownCast (handle);
       lin_radius = hgc->Radius ();
       lin_angle  = (par_maxi-par_mini)*180/M_PI;
-      PutData (lin_radius);
-      PutData (lin_angle);
       }
+#endif
 }
 // ====================================================== getAngle
 double EdgeShape::getAngle ()
