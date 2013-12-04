@@ -29,6 +29,7 @@
 #include <QDockWidget>
 
 
+#include "HEXABLOCKGUI_Export.hxx"
 #include "klinkitemselectionmodel.hxx"
 
 #include <OB_Browser.h>
@@ -113,7 +114,7 @@ class OCCViewer_ViewWindow;
 class LightApp_VTKSelector;
 
 
-class HexaExport HEXABLOCKGUI : public SalomeApp_Module
+class HEXABLOCK_EXPORT HEXABLOCKGUI : public SalomeApp_Module
 {
   Q_OBJECT
 

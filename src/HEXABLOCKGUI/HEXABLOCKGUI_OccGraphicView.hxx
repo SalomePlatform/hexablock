@@ -33,6 +33,7 @@
 #include <QModelIndexList>
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 namespace HEXABLOCK
 {
 
@@ -43,7 +44,7 @@ namespace HEXABLOCK
          *                          OccGraphicView
          ********************************************************************************/
 
-        class HexaExport OccGraphicView
+        class HEXABLOCK_EXPORT OccGraphicView
         {
 
          public:

@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_Exception.hxx"
 
 #ifdef _DEVDEBUG_
@@ -34,7 +35,7 @@
 
 namespace HEXABLOCK {
   namespace GUI {
-    extern HexaExport int traceLevel;
+    extern HEXABLOCK_EXPORT int traceLevel;
   }
 }
 

@@ -23,8 +23,9 @@
 #include <SalomeApp_DataModel.h>
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
-class HexaExport HEXABLOCKGUI_Model : public SalomeApp_DataModel
+class HEXABLOCK_EXPORT HEXABLOCKGUI_Model : public SalomeApp_DataModel
 {
     public:
       HEXABLOCKGUI_Model(CAM_Module* theModule);

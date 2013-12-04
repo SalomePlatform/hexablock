@@ -32,11 +32,12 @@
 // #include "klinkitemselectionmodel_p.hxx"
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 #include "kmodelindexproxymapper.hxx"
 
 class KLinkItemSelectionModelPrivate;
 
-class HexaExport KLinkItemSelectionModel : public QItemSelectionModel
+class HEXABLOCK_EXPORT KLinkItemSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
 public:

@@ -25,6 +25,7 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
+#include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexDocument.hxx"
 #include "HexNewShape.hxx"
@@ -35,7 +36,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HexaExport DocumentModel : public QStandardItemModel
+    class HEXABLOCK_EXPORT DocumentModel : public QStandardItemModel
     {
       Q_OBJECT
     public:

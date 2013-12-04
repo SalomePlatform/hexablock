@@ -29,6 +29,7 @@
 
 //HEXABLOCK Includes
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
 namespace HEXABLOCK
@@ -36,7 +37,7 @@ namespace HEXABLOCK
   namespace GUI
   {
 
-      class HexaExport GraphicViewsHandler
+      class HEXABLOCK_EXPORT GraphicViewsHandler
       {
 
       public:

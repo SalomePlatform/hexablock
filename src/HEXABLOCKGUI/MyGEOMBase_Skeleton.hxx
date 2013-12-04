@@ -21,6 +21,7 @@
 #define MYGEOMBASE_SKELETON_H
 
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"
@@ -50,7 +51,7 @@ namespace HEXABLOCK
 namespace GUI
 {
 
-class HexaExport MyGEOMBase_Skeleton : public HexaBaseDialog
+class HEXABLOCK_EXPORT MyGEOMBase_Skeleton : public HexaBaseDialog
 {
 	Q_OBJECT
 

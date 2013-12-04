@@ -28,6 +28,7 @@
 #include <QAbstractItemView>
 #include <QMap>
 
+#include "HEXABLOCKGUI_Export.hxx"
 #include <HexVertex.hxx>
 #include <HexQuad.hxx>
 #include <HexEdge.hxx>
@@ -53,7 +54,7 @@ namespace HEXABLOCK
 
     namespace GUI
     {
-        class HexaExport Document_Actor : public SALOME_Actor
+        class HEXABLOCK_EXPORT Document_Actor : public SALOME_Actor
         {
           public:
             Document_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -71,7 +72,7 @@ namespace HEXABLOCK
 
         };
                    // Abu
-        class HexaExport Associate_Actor : public SALOME_Actor
+        class HEXABLOCK_EXPORT Associate_Actor : public SALOME_Actor
         {
           public:
             Associate_Actor(HEXA_NS::Document* doc, const QString& entry);
@@ -91,7 +92,7 @@ namespace HEXABLOCK
         /********************************************************************************
          *                          VtkDocumentGraphicView
          ********************************************************************************/
-        class HexaExport VtkDocumentGraphicView : public QAbstractItemView
+        class HEXABLOCK_EXPORT VtkDocumentGraphicView : public QAbstractItemView
         {
             Q_OBJECT
 

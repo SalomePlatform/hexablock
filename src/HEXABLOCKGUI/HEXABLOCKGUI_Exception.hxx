@@ -21,6 +21,7 @@
 #define __HEXABLOCKGUI_EXCEPTION_HXX__
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <string>
 #include <exception>
@@ -29,7 +30,7 @@ namespace HEXABLOCK
 {
   namespace GUI
   {
-    class HexaExport Exception : public std::exception
+    class HEXABLOCK_EXPORT Exception : public std::exception
     {
     protected:
       std::string _what;

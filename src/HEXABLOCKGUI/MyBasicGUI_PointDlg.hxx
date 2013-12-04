@@ -64,7 +64,8 @@ namespace HEXABLOCK
 // purpose  :
 //=================================================================================
 #include "hexa_base.hxx"
-typedef class HexaExport MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
+#include "HEXABLOCKGUI_Export.hxx"
+typedef class HEXABLOCK_EXPORT MyBasicGUI_PointDlg : public MyGEOMBase_Skeleton
 {
   Q_OBJECT
 

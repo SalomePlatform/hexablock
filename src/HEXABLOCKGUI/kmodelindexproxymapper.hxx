@@ -25,6 +25,7 @@
 #include <QObject>
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
 // #include "kdeui_export.h"
 
@@ -33,7 +34,7 @@ class QModelIndex;
 class QItemSelection;
 class KModelIndexProxyMapperPrivate;
 
-class HexaExport KModelIndexProxyMapper : public QObject
+class HEXABLOCK_EXPORT KModelIndexProxyMapper : public QObject
 {
   Q_OBJECT
 public:

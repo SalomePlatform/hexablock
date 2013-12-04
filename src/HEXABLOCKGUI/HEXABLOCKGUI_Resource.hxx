@@ -21,6 +21,7 @@
 #define _HEXABLOCKGUI_RESOURCE_HXX_
 
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QtGui>
 
@@ -29,7 +30,7 @@ class SUIT_ResourceMgr;
 
 
 
-class HexaExport HEXABLOCKGUI_Resource 
+class HEXABLOCK_EXPORT HEXABLOCKGUI_Resource 
 {
   public:
     HEXABLOCKGUI_Resource(SUIT_ResourceMgr* r);
