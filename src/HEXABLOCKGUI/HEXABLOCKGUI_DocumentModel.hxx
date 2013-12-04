@@ -20,12 +20,12 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTMODEL_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QTemporaryFile>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 
-#include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_DocumentItem.hxx"
 #include "HexDocument.hxx"
 #include "HexNewShape.hxx"

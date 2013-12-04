@@ -20,7 +20,6 @@
 #ifndef _HEXABLOCKGUI_SALOMETOOLS_HXX_
 #define _HEXABLOCKGUI_SALOMETOOLS_HXX_
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <SalomeApp_Application.h>

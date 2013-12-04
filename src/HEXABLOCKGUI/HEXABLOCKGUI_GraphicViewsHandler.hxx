@@ -28,7 +28,6 @@
 #include <QMap>
 
 //HEXABLOCK Includes
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 

@@ -20,10 +20,9 @@
 #ifndef _HEXABLOCKGUI_MODEL_HXX_
 #define _HEXABLOCKGUI_MODEL_HXX_
 
-#include <SalomeApp_DataModel.h>
-
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
+
+#include <SalomeApp_DataModel.h>
 
 class HEXABLOCK_EXPORT HEXABLOCKGUI_Model : public SalomeApp_DataModel
 {

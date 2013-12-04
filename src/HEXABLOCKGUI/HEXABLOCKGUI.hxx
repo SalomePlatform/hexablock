@@ -20,6 +20,8 @@
 #ifndef _HEXABLOCKGUI_HXX_
 #define _HEXABLOCKGUI_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <iostream>
 #include <map>
 #include <set>
@@ -28,8 +30,6 @@
 #include <QModelIndex>
 #include <QDockWidget>
 
-
-#include "HEXABLOCKGUI_Export.hxx"
 #include "klinkitemselectionmodel.hxx"
 
 #include <OB_Browser.h>

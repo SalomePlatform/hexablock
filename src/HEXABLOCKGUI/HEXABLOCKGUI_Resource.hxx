@@ -20,7 +20,6 @@
 #ifndef _HEXABLOCKGUI_RESOURCE_HXX_
 #define _HEXABLOCKGUI_RESOURCE_HXX_
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <QtGui>

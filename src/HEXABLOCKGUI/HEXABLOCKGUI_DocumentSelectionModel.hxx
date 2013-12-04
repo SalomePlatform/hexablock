@@ -20,7 +20,6 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 #define _HEXABLOCKGUI_DOCUMENTSELECTIONMODEL_HXX_
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <QItemSelectionModel>

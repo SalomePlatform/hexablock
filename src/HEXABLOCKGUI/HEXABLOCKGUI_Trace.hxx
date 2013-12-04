@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_Exception.hxx"
 

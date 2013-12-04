@@ -22,6 +22,8 @@
 #ifndef KLINKITEMSELECTIONMODEL_H
 #define KLINKITEMSELECTIONMODEL_H
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <QtCore/QObject>
 #include <QtGui/QItemSelectionModel>
 #include <QtGui/QAbstractProxyModel>
@@ -32,7 +34,6 @@
 // #include "klinkitemselectionmodel_p.hxx"
 
 #include "hexa_base.hxx"
-#include "HEXABLOCKGUI_Export.hxx"
 #include "kmodelindexproxymapper.hxx"
 
 class KLinkItemSelectionModelPrivate;

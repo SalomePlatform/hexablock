@@ -20,7 +20,6 @@
 #ifndef __HEXABLOCKGUI_EXCEPTION_HXX__
 #define __HEXABLOCKGUI_EXCEPTION_HXX__
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <string>

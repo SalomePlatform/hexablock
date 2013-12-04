@@ -22,6 +22,8 @@
 #ifndef _HEXABLOCKGUI_OCCGRAPHICVIEW_HXX_
 #define _HEXABLOCKGUI_OCCGRAPHICVIEW_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #include <OCCViewer_ViewWindow.h>
 #include "HEXABLOCKGUI_SalomeTools.hxx"
 
@@ -32,8 +34,6 @@
 #include <QModelIndex>
 #include <QModelIndexList>
 
-#include "hexa_base.hxx"
-#include "HEXABLOCKGUI_Export.hxx"
 namespace HEXABLOCK
 {
 

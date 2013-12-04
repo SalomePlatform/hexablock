@@ -20,10 +20,10 @@
 #ifndef _HEXABLOCKGUI_DOCUMENTITEM_HXX_
 #define _HEXABLOCKGUI_DOCUMENTITEM_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
 
 #include <QStandardItem>
 
-#include "HEXABLOCKGUI_Export.hxx"
 #include "HexVertex.hxx"
 #include "HexEdge.hxx"
 #include "HexQuad.hxx"

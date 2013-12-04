@@ -19,6 +19,8 @@
 #ifndef __HEXABLOCKGUI_DOCUMENTPANEL_HXX_
 #define __HEXABLOCKGUI_DOCUMENTPANEL_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 #define MAX_WIDTH 16777215
 #define MAX_HEIGHT 16777215
 #define MIN_WIDTH 5
@@ -70,14 +72,12 @@
 #include "HexHexa.hxx"
 
 
-#include "HEXABLOCKGUI_Export.hxx"
 #include "HEXABLOCKGUI_DocumentSelectionModel.hxx"
 #include "HEXABLOCKGUI_DocumentModel.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"
 
 #include "klinkitemselectionmodel.hxx"
-
 
 Q_DECLARE_METATYPE(QModelIndex);
 

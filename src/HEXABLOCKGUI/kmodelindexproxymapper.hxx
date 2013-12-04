@@ -22,10 +22,9 @@
 #ifndef KMODELINDEXPROXYMAPPER_H
 #define KMODELINDEXPROXYMAPPER_H
 
-#include <QObject>
-
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
+
+#include <QObject>
 
 // #include "kdeui_export.h"
 

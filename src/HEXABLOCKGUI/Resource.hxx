@@ -20,7 +20,6 @@
 #ifndef _RESOURCE_HXX_
 #define _RESOURCE_HXX_
 
-#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <QColor>

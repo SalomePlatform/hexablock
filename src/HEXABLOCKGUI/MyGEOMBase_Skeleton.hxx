@@ -20,7 +20,6 @@
 #ifndef MYGEOMBASE_SKELETON_H
 #define MYGEOMBASE_SKELETON_H
 
-
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
@@ -43,8 +42,6 @@ class QPushButton;
 #  define MAX_NUMBER 100000
 #  define DBL_DIGITS_DISPLAY 13
 #endif // COORD_MIN
-
-#include "hexa_base.hxx"
 
 namespace HEXABLOCK
 {

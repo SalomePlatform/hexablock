@@ -20,6 +20,8 @@
 #ifndef _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 #define _HEXABLOCKGUI_VTKDOCUMENTGRAPHICVIEW_HXX_
 
+#include "HEXABLOCKGUI_Export.hxx"
+
 // SALOME GUI includes
 #include <LightApp_Displayer.h>
 #include <SUIT_ViewWindow.h>
@@ -28,7 +30,6 @@
 #include <QAbstractItemView>
 #include <QMap>
 
-#include "HEXABLOCKGUI_Export.hxx"
 #include <HexVertex.hxx>
 #include <HexQuad.hxx>
 #include <HexEdge.hxx>
