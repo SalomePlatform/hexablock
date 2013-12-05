@@ -108,12 +108,8 @@
 
 
 #include <Visual3d_ViewManager.hxx>
-#include <Graphic3d_Structure.hxx>
-#include <Graphic3d_Group.hxx>
 #include <V3d_PerspectiveView.hxx>
 #include <V3d_AmbientLight.hxx>
-#include <Graphic3d_GraphicDevice.hxx>
-#include <Graphic3d_Array1OfVertex.hxx>
 #include <V3d_DirectionalLight.hxx>
 #include <Xw_Window.hxx>
 #include <V3d_TypeOfShadingModel.hxx>
@@ -2916,12 +2912,12 @@ QStringList HEXABLOCKGUI::getQuickDirList()
 
 extern "C"
 {
-    HexaExport CAM_Module* createModule()
+    HEXABLOCK_EXPORT CAM_Module* createModule()
     {
         return new HEXABLOCKGUI();
     }
 
-    HexaExport char* getModuleVersion()
+    HEXABLOCK_EXPORT char* getModuleVersion()
     {
         return (char*)HEXABLOCK_VERSION_STR;
     }

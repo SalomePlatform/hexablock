@@ -74,7 +74,6 @@ SET(_moc_HEADERS
   HEXABLOCKGUI.hxx
   HEXABLOCKGUI_VtkDocumentGraphicView.hxx
   HEXABLOCKGUI_DocumentPanel.hxx
-  HEXABLOCKGUI_DocumentDelegate.hxx
   HEXABLOCKGUI_DocumentSelectionModel.hxx
   HEXABLOCKGUI_DocumentModel.hxx
   kmodelindexproxymapper.hxx
@@ -118,8 +117,6 @@ SET(_other_SOURCES
   HEXABLOCKGUI_DocumentSelectionModel.cxx
   HEXABLOCKGUI_DocumentItem.hxx
   HEXABLOCKGUI_DocumentItem.cxx
-  HEXABLOCKGUI_DocumentDelegate.hxx
-  HEXABLOCKGUI_DocumentDelegate.cxx
   HEXABLOCKGUI_DocumentPanel.hxx
   HEXABLOCKGUI_DocumentPanel.cxx
   HEXABLOCKGUI_SalomeTools.hxx
