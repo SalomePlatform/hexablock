@@ -1789,9 +1789,9 @@ bool HexaDialog::apply(QModelIndex& result)
     }
 
     nbItems = iElts.count();
-    if ( quads_rb->isChecked() and (nbItems>=2 and nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
+    if ( quads_rb->isChecked() && (nbItems>=2 && nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
         iHexa = getDocumentModel()->addHexaQuads( iElts );
-    } else if ( vertices_rb->isChecked() and nbItems== 8 ){ // build from vertices
+    } else if ( vertices_rb->isChecked() && nbItems== 8 ){ // build from vertices
         iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
                 iElts[4], iElts[5], iElts[6], iElts[7] );
     }
