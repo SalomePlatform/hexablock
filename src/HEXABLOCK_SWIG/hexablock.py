@@ -116,7 +116,7 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
     comp_smesh.init_smesh(study, geompy.geom)
     meshexa = comp_smesh.Mesh(shape)
 
-    so = "libHexaBlockEngine.so"
+    so = "libHexaBlockPluginEngine.so"
 
     algo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
     meshexa.mesh.AddHypothesis(shape, algo)
