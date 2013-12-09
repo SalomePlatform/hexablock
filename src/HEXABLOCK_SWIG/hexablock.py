@@ -2,12 +2,20 @@
 # HexaBlock : Module principal
 
 import hexablock_swig
-import salome
-import smesh
 
 import HEXABLOCKPlugin
 
-geompy    = smesh.geompy
+import salome
+salome.salome_init()
+
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
+
+import SMESH
+from salome.smesh import smeshBuilder
+smesh = smeshBuilder.New(salome.myStudy)
+
 component = hexablock_swig.hex_instance ()
 
 # ======================================================== moduleName
@@ -113,15 +121,15 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
 
     geompy.addToStudy(shape, name)
     comp_smesh = salome.lcc.FindOrLoadComponent(container, "SMESH")
-    comp_smesh.init_smesh(study, geompy.geom)
+    comp_smesh.init_smesh(study, geomBuilder.geom)
     meshexa = comp_smesh.Mesh(shape)
 
     so = "libHexaBlockPluginEngine.so"
 
-    algo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
+    algo = SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
     meshexa.mesh.AddHypothesis(shape, algo)
 
-    hypo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_Parameters", so)
+    hypo = SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_Parameters", so)
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     ### hypo.SetDocument(doc.getXml())   ## Hexa6 TODO et a verifier
