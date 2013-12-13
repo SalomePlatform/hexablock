@@ -521,7 +521,7 @@ bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
             docModel->setName( name );
             aName->SetValue( name.toLatin1().data() );
             getApp()->updateObjectBrowser();
-            _dwPattern->setWindowTitle( name );
+//            _dwPattern->setWindowTitle( name );
             result = true;
         }
     }
@@ -1971,7 +1971,7 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     currentDocGView = dgview;
     showOnlyActor();
     currentDocGView->getDocumentModel()->refresh();
-    _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());
+//    _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());
     showAllMenus();
 }
 
