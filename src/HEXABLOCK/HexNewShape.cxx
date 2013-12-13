@@ -463,6 +463,14 @@ int NewShape::saveBrep ()
    fclose  (fic);
    return HOK;
 }
+// ===================================================== getBrep
+cpchar NewShape::getBrep ()
+{
+   int ier   = updateBrep ();
+   if (ier != HOK)
+      return NULL;
+   return geo_brep.c_str();
+}
 // ====================================================== saveXml
 void NewShape::saveXml (XmlWriter* xml)
 {

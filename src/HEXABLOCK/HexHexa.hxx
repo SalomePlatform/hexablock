@@ -115,8 +115,11 @@ public:
     virtual void   duplicate ();
     Hexa* getClone ()               {  return h_clone ; }
     Quad*   getOpposedQuad   (Quad* face);
-    // Vertex* getOpposedVertex (Quad* face, Vertex* vertex);
-    Edge* getPerpendicularEdge (Quad* face, Vertex* vertex);
+    Vertex* opposedVertex     (Quad* face, Vertex* vertex);
+    Edge*   perpendicularEdge (Quad* face, Vertex* vertex);
+    Quad*   perpendicularQuad (Quad* face, Edge* edge);
+    Edge*   getPerpendicularEdge (Quad* face, Vertex* vertex)
+          { return perpendicularEdge (face, vertex); }
     // Edge* getParallelEdge      (Quad* face, Edge*   edge);
     Quad* findQuad             (Edge* e1, Edge* e2);
     Edge* findEdge             (Vertex* v1, Vertex* v2);

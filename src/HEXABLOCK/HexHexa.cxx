@@ -1106,8 +1106,29 @@ Edge* Hexa::findEdge (Vertex* v1, Vertex* v2)
 
    return NULL;
 }
-// ====================================================== getPerpendicularEdge
-Edge* Hexa::getPerpendicularEdge (Quad* quad, Vertex* vertex)
+// ====================================================== opposedVertex
+Vertex* Hexa::opposedVertex (Quad* quad, Vertex* vertex)
+{
+   if (quad==NULL || vertex==NULL)
+      return NULL;
+
+   int nv = quad->indexVertex (vertex);
+   int nq = findQuad (quad);
+   if (nv<0 || nq<0)
+      return NULL;
+
+   for (int nro=0 ; nro<HE_MAXI ; nro++)
+       {
+       Edge* edge = h_edge [nro];
+       int   nv   = edge->index (vertex);
+       if (nv>=0 && quad->indexEdge(edge) <0)
+          return edge->getVertex (1-nv);
+       }
+
+   return NULL;
+}
+// ====================================================== perpendicularEdge
+Edge* Hexa::perpendicularEdge (Quad* quad, Vertex* vertex)
 {
    if (quad==NULL || vertex==NULL)
       return NULL;
@@ -1123,6 +1144,29 @@ Edge* Hexa::getPerpendicularEdge (Quad* quad, Vertex* vertex)
           return h_edge [nro];
        }
 
+   return NULL;
+}
+// ====================================================== perpendicularQuad
+Quad* Hexa::perpendicularQuad (Quad* quad, Edge* edge)
+{
+   if (BadElement (quad) || BadElement (edge))
+      return NULL;
+
+   int qed = quad->indexEdge (edge);
+   int ned = findEdge (edge);
+   int nq  = findQuad (quad);
+   if (qed <0 || ned<0 || nq<0)
+      return NULL;
+
+   for (int nro=0 ; nro<HQ_MAXI ; nro++)
+       {
+       if (nro != nq)
+          {   
+          Quad* face = h_quad[nro];
+          if (EltIsValid(face) && face->indexEdge (edge)>=0)
+             return face;
+          }
+       }
    return NULL;
 }
 // ============================================================  getQuad

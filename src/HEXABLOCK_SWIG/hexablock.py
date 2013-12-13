@@ -115,8 +115,17 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
     ####  else :
        ####  shape = doc.getShape (0)
 
-    shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
-    if (name == None) or (name == ""):
+    ###   shape = doc.getFirstExplicitShape_else_box(1)
+    ###   the_stream = shape.getBREP() # sort une chaine de caractère
+    ###   geom_object = geompy.RestoreShape(the_stream)
+
+    stream = doc.getFirstExplicitShape ()
+    if stream != None :
+       shape = geompy.RestoreShape (stream)
+    else :
+       shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
+
+    if (name == None) or (name == "") :
         name = docname
 
     geompy.addToStudy(shape, name)
@@ -133,7 +142,6 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     ### hypo.SetDocument(doc.getXml())   ## Hexa6 TODO et a verifier
-    print " Maillage du document "
     print " Maillage du document ", docname
     hypo.SetDocument (docname);
     hypo.SetDimension(dim)

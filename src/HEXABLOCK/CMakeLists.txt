@@ -69,6 +69,7 @@ SET(HEXABLOCKEngine_HEADERS
   HexHexa.hxx
   HexMatrix.hxx
   HexQuad.hxx
+  HexQpattern.hxx
   HexVertex.hxx
   HexLaw.hxx
   HexCloner.hxx
@@ -105,6 +106,7 @@ SET(HEXABLOCKEngine_SOURCES
   HexVertex.cxx
   HexEdge.cxx
   HexQuad.cxx
+  HexQpattern.cxx
   HexHexa.cxx
   HexHexa_disco.cxx
   HexVector.cxx

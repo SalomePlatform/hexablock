@@ -151,6 +151,19 @@ NewShape* Document::getShape (int nro)
 
    return doc_tab_shape [nro];
 }
+// ====================================================== getFirstExplicitShape
+cpchar Document::getFirstExplicitShape()
+{
+   int nbre = doc_tab_shape.size ();
+   for (int nro=0 ; nro < nbre ; ++nro)
+       {
+       NewShape* shape = doc_tab_shape [nro];
+       if (shape!= NULL && shape->getOrigin()==SH_IMPORT)
+          return shape->getBrep ();
+       }
+
+   return NULL;
+}
 // ====================================================== findShape
 NewShape* Document::findShape (rcstring nom)
 {

@@ -66,6 +66,8 @@ public :
    void   getAssoCoord (double &x, double &y, double &z);
    void   getAssoCoord (double* point);
 
+   static void anaVertices (Vertices& cont, double tmin[], double tmax[], double center[]);
+
 public :
    Vertex (Vertex* other);
    virtual ~Vertex () {}

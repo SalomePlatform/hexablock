@@ -20,9 +20,9 @@
 //  See http://www.salome-platform.org/
 //  or email : webmaster.salome@opencascade.com
 
-#include "HexDocument.hxx"
-
 #include "HexElements.hxx"
+
+#include "HexDocument.hxx"
 #include "HexVector.hxx"
 #include "HexHexa.hxx"
 #include "HexQuad.hxx"
@@ -544,6 +544,172 @@ void Elements::checkDisco (Hexas& thexas, Edges& tedges)
              }
           }
        }
+}
+// ====================================================== checkContour 
+void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
+                             Edges& tedge)
+{
+   tedge.clear ();
+   cpchar who    = target ? "Target" : "Pattern";
+   string nmedge = target ? "Vertices of target (args 5 and 6)" 
+                          : "Vertices of pattern (args 3 and 4)" ;
+   nmedge += "don't define an edge" ;
+
+   Edge*  edge1 = el_root->findEdge (v1, v2);
+   if (BadElement (edge1))
+      {
+      setError (HERR);
+      Mess << nmedge;
+      return;
+      }
+
+   map <Edge*, int> edge_count;
+   map <Edge*, int> :: iterator iter;
+   int nbre = tquad.size();
+   for (int nq=0 ; nq<nbre ; ++nq)
+        {
+        Quad* quad = tquad [nq];
+        if (BadElement (quad)) 
+           {
+           setError (HERR);
+           Mess << who << " quad nr " << nq+1 << " is not valid";
+           return;
+           }
+         else if (target && quad->getNbrParents() != 1)
+           {
+           setError (HERR);
+           Mess << " Target quad nr " << nq+1 
+                << " must be an external face";
+           return;
+           }
+       
+        for (int ned=0 ; ned<QUAD4 ; ++ned)
+            {
+            Edge* edge = quad->getEdge (ned);
+            edge_count [edge] += 1;
+            }
+        }
+   
+   int pos1 = edge_count [edge1];
+   if (pos1==0)
+       {
+       setError (HERR);
+       Mess << nmedge << " of the " << who << " quads";
+       return;
+       }
+   else if (pos1==2)
+       {
+       setError (HERR);
+       Mess << nmedge << " of the " << who << " contour";
+       return;
+       }
+
+   tedge.push_back (edge1);
+   Vertex* vlast = v2;
+   Edge*   elast = edge1;
+   while (vlast != v1)
+         {
+         int   nbre  = vlast->getNbrParents(); 
+         Edge* enext = NULL;
+         for (int ned=0 ; ned<nbre && enext == NULL; ++ned)
+             {
+             Edge* edge = vlast->getParent(ned);
+             if (edge != elast && edge_count [edge]==1)
+                 enext = edge;
+             }
+         if (enext==NULL)
+            {
+            setError (HERR);
+            Mess << who << " as an unclosed contour";
+            return;
+            }
+         tedge.push_back (enext);
+         vlast = enext->opposedVertex (vlast);
+         elast = enext;
+         }
+}
+// ====================================================== checkContour 
+void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
+                             Vertices& tvertex)
+{
+   tvertex.clear ();
+   cpchar who    = target ? "Target" : "Pattern";
+   string nmedge = target ? "Vertices of target (args 4 and 6)" 
+                          : "Vertices of pattern (args 3 and 5)" ;
+   nmedge += "don't define an edge" ;
+
+   Edge*  edge1 = el_root->findEdge (v1, v2);
+   if (BadElement (edge1))
+      {
+      setError (HERR);
+      Mess << nmedge;
+      return;
+      }
+
+   map <Edge*, int> edge_count;
+   map <Edge*, int> :: iterator iter;
+   int nbre = tquad.size();
+   for (int nq=0 ; nq<nbre ; ++nq)
+        {
+        Quad* quad = tquad [nq];
+        if (BadElement (quad)) 
+           {
+           setError (HERR);
+           Mess << who << " quad nr " << nq+1 << " is not valid";
+           return;
+           }
+         else if (target && quad->getNbrParents() != 1)
+           {
+           setError (HERR);
+           Mess << " Target quad nr " << nq+1 
+                << " must be an external face";
+           return;
+           }
+       
+        for (int ned=0 ; ned<QUAD4 ; ++ned)
+            {
+            Edge* edge = quad->getEdge (ned);
+            edge_count [edge] += 1;
+            }
+        }
+   
+   int pos1 = edge_count [edge1];
+   if (pos1==0)
+       {
+       setError (HERR);
+       Mess << nmedge << " of the " << who << " quads";
+       return;
+       }
+   else if (pos1==2)
+       {
+       setError (HERR);
+       Mess << nmedge << " of the " << who << " contour";
+       return;
+       }
+
+   tvertex.push_back (v1);
+   Vertex* vlast = v2;
+   Edge*   elast = edge1;
+   while (vlast != v1)
+         {
+         tvertex.push_back (vlast);
+         int   nbre  = vlast->getNbrParents(); 
+         Edge* enext = NULL;
+         for (int ned=0 ; ned<nbre && enext == NULL; ++ned)
+             {
+             Edge* edge = vlast->getParent(ned);
+             if (edge != elast && edge_count [edge]==1)
+                 enext = edge;
+             }
+         if (enext==NULL)
+            {
+            setError (HERR);
+            Mess << who << " as an unclosed contour";
+            return;
+            }
+         vlast = enext->opposedVertex (vlast);
+         elast = enext;
+         }
 }
 // ======================================================== calcul_phimax
 double calcul_phimax (double radhole, double radext, bool sphere)

@@ -598,27 +598,24 @@ Elements* Document::replaceHexa (Quads pattern, Vertex* p1, Vertex* c1,
    DumpStart ("replaceHexa", pattern << p1 << c1 << p2 << c2 << p3 << c3);
 
    Elements* t_hexas = new Elements (this);
-   int ier = t_hexas->replaceHexas (pattern, p1, c1, p2, c2, p3, c3);
-   if (ier!=HOK)
-      {
-      Mess << " **** Error in Document::replace" ;
-      t_hexas->setError (ier);
-      }
+   Mess << " **** This syntax is deprecated" ;
+   t_hexas->setError (HERR);
 
    DumpReturn (t_hexas);
    return      t_hexas;
 }
-// ========================================================= repla
-Elements* Document::replace (Quads motif, Quads cible, Vertex* p1, Vertex* c1,                               Vertex* p2, Vertex* c2)
+// ========================================================= replace
+Elements* Document::replace (Quads motif, Quads cible, Vertex* p1, Vertex* c1,                             Vertex* p2, Vertex* c2)
 {
    DumpStart ("replace", motif << cible << p1 << c1 << p2 << c2);
 
    Elements* t_hexas = new Elements (this);
+   int ier = t_hexas->replaceHexas (motif, cible, p1, c1, p2, c2);
 
-   //if (BadElement (edge))
+   if (ier!=HOK)
       {
+      Mess << " **** Error in Document::replace" ;
       t_hexas->setError (HERR);
-      Mess << "This function is not yet implemented";
       }
 
    DumpReturn (t_hexas);

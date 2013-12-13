@@ -1683,53 +1683,17 @@ bool DocumentModel::performSymmetryPlane( const QModelIndex& ielts,
     return false;
 }
 
-QModelIndex DocumentModel::replace( const QModelIndexList& iquadsPattern,
-        const QModelIndex& ip1, const QModelIndex& ic1,
-        const QModelIndex& ip2, const QModelIndex& ic2,
-        const QModelIndex& ip3, const QModelIndex& ic3 )
-{
-    QModelIndex ielts;
-
-    HEXA_NS::Vertex* hp1 = getHexaPtr<HEXA_NS::Vertex*>(ip1);
-    HEXA_NS::Vertex* hc1 = getHexaPtr<HEXA_NS::Vertex*>(ic1);
-    HEXA_NS::Vertex* hp2 = getHexaPtr<HEXA_NS::Vertex*>(ip2);
-    HEXA_NS::Vertex* hc2 = getHexaPtr<HEXA_NS::Vertex*>(ic2);
-    HEXA_NS::Vertex* hp3 = getHexaPtr<HEXA_NS::Vertex*>(ip3);
-    HEXA_NS::Vertex* hc3 = getHexaPtr<HEXA_NS::Vertex*>(ic3);
-
-    HEXA_NS::Quads   hquads;
-    HEXA_NS::Quad*   hquad = NULL;
-    foreach( const QModelIndex& iquad, iquadsPattern ){
-        hquad = getHexaPtr<HEXA_NS::Quad*>(iquad);
-        hquads.push_back( hquad );
-    }
-
-    HEXA_NS::Elements* helts = _hexaDocument->replace( hquads,
-                                                       hp1, hc1, hp2, hc2, hp3, hc3 );
-    if ( BadElement(helts) ) return ielts;
-
-    updateData();
-    ElementsItem* eltsItem = new ElementsItem(helts);
-    _elementsDirItem->appendRow(eltsItem);
-    ielts = eltsItem->index();
-
-    return ielts;
-}
-
 QModelIndex DocumentModel::replace( const QModelIndexList& iquads_source,
                                     const QModelIndexList& iquads_dest,
                                     const QModelIndex& ip1_source, const QModelIndex& ic1_dest,
-                                    const QModelIndex& ip2_source, const QModelIndex& ic2_dest,
-                                    const QModelIndex& ip3_source, const QModelIndex& ic3_dest)
+                                    const QModelIndex& ip2_source, const QModelIndex& ic2_dest)
 {
     QModelIndex ielts;
 
     HEXA_NS::Vertex* hp1 = getHexaPtr<HEXA_NS::Vertex*>(ip1_source);
     HEXA_NS::Vertex* hp2 = getHexaPtr<HEXA_NS::Vertex*>(ip2_source);
-    HEXA_NS::Vertex* hp3 = getHexaPtr<HEXA_NS::Vertex*>(ip3_source);
     HEXA_NS::Vertex* hc1 = getHexaPtr<HEXA_NS::Vertex*>(ic1_dest);
     HEXA_NS::Vertex* hc2 = getHexaPtr<HEXA_NS::Vertex*>(ic2_dest);
-    HEXA_NS::Vertex* hc3 = getHexaPtr<HEXA_NS::Vertex*>(ic3_dest);
 
     HEXA_NS::Quads   hquads_source, hquads_dest;
     HEXA_NS::Quad*   hquad = NULL;
@@ -1743,9 +1707,9 @@ QModelIndex DocumentModel::replace( const QModelIndexList& iquads_source,
         hquads_dest.push_back(hquad);
     }
 
-    HEXA_NS::Elements* helts = _hexaDocument->replaceHexas( hquads_source,
+    HEXA_NS::Elements* helts = _hexaDocument->replace( hquads_source,
                                                             hquads_dest,
-                                                            hp1, hc1, hp2, hc2, hp3, hc3);
+                                                            hp1, hc1, hp2, hc2);
     if ( BadElement(helts) )
         return ielts;
 
