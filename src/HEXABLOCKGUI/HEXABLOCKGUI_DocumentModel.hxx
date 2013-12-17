@@ -366,15 +366,9 @@ namespace HEXABLOCK
       bool performSymmetryLine( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
       bool performSymmetryPlane( const QModelIndex& elts, const QModelIndex& v, const QModelIndex& vec );
 
-      QModelIndex replace( const QModelIndexList& quadsPattern,
-                           const QModelIndex& ip1, const QModelIndex& ic1,
-                           const QModelIndex& ip2, const QModelIndex& ic2,
-                           const QModelIndex& ip3, const QModelIndex& ic3 ); //NEW HEXA3
-
       QModelIndex replace( const QModelIndexList& iquads_source, const QModelIndexList& iquads_dest,
                            const QModelIndex& ip1_source, const QModelIndex& ic1_dest,
-                           const QModelIndex& ip2_source, const QModelIndex& ic2_dest,
-                           const QModelIndex& ip3_source, const QModelIndex& ic3_dest );
+                           const QModelIndex& ip2_source, const QModelIndex& ic2_dest);
 
 
       // ************  ASSOCIATION ************

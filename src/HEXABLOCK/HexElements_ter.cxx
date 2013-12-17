@@ -37,7 +37,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-// static bool db=false;
+static bool db=false;
 
 // ====================================================== getCylPoint
 int Elements::getCylPoint (int nr, int na, int nh, double& px, double& py,
@@ -203,8 +203,9 @@ void Elements::assoCylinders (double* ori, double* vk, double angle,
                double pmax = t_angles [ny+1]/360;
                Edge*  edge = getEdgeJ (nx, ny, nz);
                geom->addAssociation (edge, subid, pmin, pmax);
-               cout << " assoCylinders : ny= " << ny << ", nz= " << nz 
-                    << " param = (" << pmin << ", " << pmax  << ")\n";
+               if (db) cout << " assoCylinders : ny= " << ny 
+                            << ", nz= " << nz << " param = (" 
+                            << pmin << ", " << pmax  << ")\n";
                }
            }
        }

@@ -127,7 +127,7 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     myParamCoord->setExclusive(true);
     myParamCoord->button(PARAM_VALUE)->setChecked(true);
 
-    GroupXYZ = new DlgRef_3Spin(centralWidget());
+    GroupXYZ = new MyDlgRef_3Spin(centralWidget());
     GroupXYZ->GroupBox1->setTitle(tr("GEOM_COORDINATES"));
     GroupXYZ->TextLabel1->setText(tr("GEOM_X"));
     GroupXYZ->TextLabel2->setText(tr("GEOM_Y"));
@@ -136,7 +136,7 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     coordsInputValue[GEOM_POINT_EDGE] = new QVector3D(0, 0, 0);
     coordsInputValue[GEOM_POINT_SURF] = new QVector3D(0, 0, 0);
 
-    GroupOnCurve = new DlgRef_2Sel1Spin(centralWidget());
+    GroupOnCurve = new MyDlgRef_2Sel1Spin(centralWidget());
     GroupOnCurve->GroupBox1->setTitle(tr("GEOM_POINT_ON_EDGE"));
     GroupOnCurve->TextLabel1->setText(tr("GEOM_EDGE"));
     GroupOnCurve->TextLabel2->setText(tr("GEOM_START_POINT"));
@@ -144,13 +144,13 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     paramInputValue[PARAM_VALUE] = 0.5;
     paramInputValue[LENGTH_VALUE] = 0.5;
 
-    GroupOnSurface = new DlgRef_1Sel2Spin(centralWidget());
+    GroupOnSurface = new MyDlgRef_1Sel2Spin(centralWidget());
     GroupOnSurface->GroupBox1->setTitle(tr("GEOM_POINT_ON_FACE"));
     GroupOnSurface->TextLabel1->setText(tr("GEOM_FACE"));
     GroupOnSurface->TextLabel2->setText(tr("GEOM_UPARAMETER"));
     GroupOnSurface->TextLabel3->setText(tr("GEOM_VPARAMETER"));
 
-    GroupRefPoint = new DlgRef_1Sel3Spin(centralWidget());
+    GroupRefPoint = new MyDlgRef_1Sel3Spin(centralWidget());
     GroupRefPoint->GroupBox1->setTitle(tr("GEOM_REF_POINT"));
     GroupRefPoint->TextLabel1->setText(tr("GEOM_POINT"));
     GroupRefPoint->TextLabel2->setText(tr("GEOM_DX"));
@@ -170,7 +170,7 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     action_line2_edge = myBtnPopup2->addAction(ico_line, tr("GEOM_EDGE"));
     action_line2_wire = myBtnPopup2->addAction(ico_wire, tr("GEOM_WIRE"));
 
-    GroupLineIntersection = new DlgRef_2Sel(centralWidget());
+    GroupLineIntersection = new MyDlgRef_2Sel(centralWidget());
     GroupLineIntersection->GroupBox1->setTitle(tr("GEOM_LINE_INTERSECTION"));
     GroupLineIntersection->TextLabel1->setText(tr("GEOM_LINE1"));
     GroupLineIntersection->TextLabel2->setText(tr("GEOM_LINE2"));
@@ -671,9 +671,9 @@ void MyBasicGUI_PointDlg::onUpdateResults(const QString& data)
         return;
     }
     gp_Pnt pnt = BRep_Tool::Pnt(vertex);
-    myX->setText(DlgRef::PrintDoubleValue(pnt.X(), 6));
-    myY->setText(DlgRef::PrintDoubleValue(pnt.Y(), 6));
-    myZ->setText(DlgRef::PrintDoubleValue(pnt.Z(), 6));
+    myX->setText(MyDlgRef::PrintDoubleValue(pnt.X(), 6));
+    myY->setText(MyDlgRef::PrintDoubleValue(pnt.Y(), 6));
+    myZ->setText(MyDlgRef::PrintDoubleValue(pnt.Z(), 6));
 }
 
 TopoDS_Vertex MyBasicGUI_PointDlg::computeGeomVertex(bool preview)

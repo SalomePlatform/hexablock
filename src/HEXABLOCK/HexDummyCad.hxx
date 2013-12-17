@@ -163,6 +163,7 @@ class GeomAdaptor_Curve
 {
 public :
 GeomAdaptor_Curve (int)   {}
+int GetType ()   { return 0 ;}
 };
 // -----------------------------------------------------------
 class BRepPrimAPI_MakeCylinder

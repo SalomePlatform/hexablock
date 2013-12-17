@@ -858,4 +858,16 @@ double Quad::dist2 (double* point)
              + carre (point[dir_z] - center[dir_z]) ;
    return d2;
 }
+// =============================================================== getCenter
+Hexa* Quad::opposedHexa (Hexa* hexa)
+{
+   int nbre = getNbrParents ();
+   for (int nro=0 ; nro <nbre ; ++nro)
+       { 
+       Hexa* dad = getParent (nro);
+       if (dad!= NULL && dad->isValid() && dad != hexa)
+           return dad;
+       }
+   return NULL;
+}
 END_NAMESPACE_HEXA

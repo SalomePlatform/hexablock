@@ -59,7 +59,7 @@ int test_hexa_quads_5 (int nbargs, cpchar tabargs[])
    Hex::Quad* qe = hexa->getQuad (Hex::Q_E);
    Hex::Quad* qf = hexa->getQuad (Hex::Q_F);
 
-   qb->setScalar (5);
+   qb->setColor (5);
    doc->saveVtk (fic_vtk, nvtk);
 
    qb->remove ();
@@ -462,13 +462,13 @@ int test_piquage (int nbargs, cpchar tabargs[])
    Hex::Vertex* p2 = grid2->getVertexIJK (1, 1, 1);
    Hex::Vertex* p3 = grid2->getVertexIJK (1, 2, 1);
 
-   c1->setScalar (4);
-   c2->setScalar (6);
-   c3->setScalar (6);
+   c1->setColor (4);
+   c2->setColor (6);
+   c3->setColor (6);
 
-   p1->setScalar (4);
-   p2->setScalar (6);
-   p3->setScalar (6);
+   p1->setColor (4);
+   p2->setColor (6);
+   p3->setColor (6);
 
    int nvtk=0;
    doc->saveVtk ("piquage", nvtk);
@@ -477,7 +477,7 @@ int test_piquage (int nbargs, cpchar tabargs[])
    for (int ny=0; ny<4 ; ny++)
        {
        Hex::Quad* quad = grid2->getQuadIJ (0, ny, 1);
-       quad->setScalar(5);
+       quad->setColor(5);
        qpattern.push_back (quad);
        }
    
@@ -488,8 +488,8 @@ int test_piquage (int nbargs, cpchar tabargs[])
 
    return HOK;
 }
-// ======================================================== test_replace
-int test_replace (int nbargs, cpchar tabargs[])
+// ======================================================== test_replace0
+int test_replace0 (int nbargs, cpchar tabargs[])
 {
    const int size_x = 3;
    const int size_y = 3;
@@ -540,11 +540,131 @@ int test_replace (int nbargs, cpchar tabargs[])
 
    doc->replace (qpattern, pd2,c1, pa2,c2, pb2,c3);
 
-   c1->setScalar (4);
-   c2->setScalar (6);
-   c3->setScalar (6);
+   c1->setColor (4);
+   c2->setColor (6);
+   c3->setColor (6);
    doc->saveVtk ("replace1.vtk");
 
+   return HOK;
+}
+// ======================================================== test_replace1
+int test_replace1 (int nbargs, cpchar tabargs[])
+{
+   const int size_x   = 3;
+   const int size_y   = 3;
+   const int size_z   = 3;
+   const int size_cyl = 4;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Vector*   vx  = doc->addVector (1, 0, 0);
+   Hex::Vector*   vz  = doc->addVector (0, 0, 1);
+   Hex::Vertex*   ori = doc->addVertex (8, 0, 0);
+   const double   rint  = 1;
+   const double   rext  = 3;
+   const double   angle = 360;
+   const double   haut  = 1;
+   const int      nr    = 1;
+   const int      nh    = 1;
+
+   Hex::Elements* grid = doc->makeCartesianTop (size_x,size_y,size_z);
+   Hex::Elements* pipe = doc->makePipeUni  (ori, vx, vz, rint, rext, angle,
+                                            haut, nr, size_cyl, nh); 
+
+   Hex::Vertex* c1 = grid->getVertexIJK (1, 2, size_z);
+   Hex::Vertex* c2 = grid->getVertexIJK (1, 1, size_z);
+   Hex::Vertex* c3 = grid->getVertexIJK (2, 1, size_z);
+
+   Hex::Vertex* p1 = pipe->getVertexIJK (1, 1, 1);
+   Hex::Vertex* p2 = pipe->getVertexIJK (1, 2, 1);
+   Hex::Vertex* p3 = pipe->getVertexIJK (1, 3, 1);
+
+   Hex::Quads qpattern;
+   for (int na=0; na<size_cyl;  ++na)
+       {
+       Hex::Quad* quad =pipe->getQuadIJ (0, na, 1);
+       quad->setColor (2);
+       qpattern.push_back (quad);
+       }
+
+   c1->setColor (6);
+   c2->setColor (4);
+   c3->setColor (2);
+
+   p1->setColor (6);
+   p2->setColor (5);
+   p3->setColor (4);
+   doc->saveVtk ("replace0.vtk");
+
+   Hex::Elements* rep = doc->replaceHexa (qpattern, p1,c1, p2,c2, p3,c3);
+   HexDisplay (rep->isValid());
+   Hex::what ();
+
+   doc->saveVtk ("replace1.vtk");
+   doc->saveVtk ("replace2.vtk");
+   doc->saveVtk ("replace3.vtk");
+   return HOK;
+}
+// ======================================================== test_replace
+int test_replace (int nbargs, cpchar tabargs[])
+{
+   const int size_x   = 5;
+   const int size_y   = 5;
+   const int size_z   = 3;
+   const int size_cyl = 12;
+
+   Hex::Hex mon_ex;
+   Hex::Document* doc = mon_ex.addDocument ();
+   Hex::Vector*   vx  = doc->addVector (1, 0, 0);
+   Hex::Vector*   vz  = doc->addVector (0, 0, 1);
+   Hex::Vertex*   ori = doc->addVertex (8, 0, 0);
+   const double   rint  = 2;
+   const double   rext  = 3;
+   const double   angle = 360;
+   const double   haut  = 1;
+   const int      nr    = 1;
+   const int      nh    = 1;
+
+   Hex::Elements* grid = doc->makeCartesianTop (size_x,size_y,size_z);
+   Hex::Elements* pipe = doc->makePipeUni  (ori, vx, vz, rint, rext, angle,
+                                            haut, nr, size_cyl, nh); 
+
+   Hex::Vertex* c1 = grid->getVertexIJK (2, 1, size_z);
+   Hex::Vertex* c2 = grid->getVertexIJK (3, 1, size_z);
+
+   Hex::Vertex* p1 = pipe->getVertexIJK (1, 7, 1);
+   Hex::Vertex* p2 = pipe->getVertexIJK (1, 8, 1);
+
+   Hex::Quads qpattern, qtarget;
+   for (int na=0; na<size_cyl;  ++na)
+       {
+       Hex::Quad* quad =pipe->getQuadIJ (0, na, 1);
+       quad->setColor (2);
+       qpattern.push_back (quad);
+       }
+
+   for (int ni=1; ni<size_x-1;  ++ni)
+       for (int nj=1; nj<size_y-1;  ++nj)
+           {
+           cout << " grid->getQuad (" << ni << "," << nj << ")\n";
+           Hex::Quad* quad = grid->getQuadIJ (ni, nj, size_z);
+           quad->setColor (2);
+           qtarget.push_back (quad);
+           }
+
+   c1->setColor (6);
+   c2->setColor (4);
+
+   p1->setColor (6);
+   p2->setColor (4);
+   doc->saveVtk ("replace0.vtk");
+
+   Hex::Elements* rep = doc->replace (qpattern, qtarget, p1,c1, p2,c2);
+   HexDisplay (rep->isValid());
+   Hex::what ();
+
+   doc->saveVtk ("replace1.vtk");
+   doc->saveVtk ("replace2.vtk");
    return HOK;
 }
 // ======================================================== test_quads

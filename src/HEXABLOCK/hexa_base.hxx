@@ -254,7 +254,7 @@ typedef double Real3 [DIM3];
 HexaExport pchar   get_temp_name (cpchar format, pchar nomfic);
 HexaExport void    fatal_error   (cpchar format, cpchar info1=NULL, cpchar info2=NULL);
 
-HexaExport double   prod_scalaire  (double v1[], double v2[]);
+HexaExport double  prod_scalaire  (double v1[], double v2[]);
 HexaExport double* prod_vectoriel (double v1[], double v2[], double v3[]);
 HexaExport double  prod_mixte     (double vi[], double vj[], double vk[]);
 
@@ -262,7 +262,8 @@ HexaExport inline  double deg2radians (double angle) {  return (angle*M_PI/180.0
 HexaExport inline  double rad2degres  (double angle) {  return (angle*180.0/M_PI); }
 
 HexaExport double  calc_norme     (double v1[]);
-HexaExport double  calc_distance  (double v1[], double v2[]);
+HexaExport double  calc_distance  (double v1[],  double v2[]);
+HexaExport double  calc_d2        (double v1[],  double v2[]);
 HexaExport double  calc_d2        (double v1[], double v2[]);
 HexaExport void    calc_vecteur   (double pta[], double ptb[], double vab[]);
 HexaExport void    copy_vecteur   (double va [], double vb []);
@@ -275,7 +276,7 @@ HexaExport bool    same_coords (double* pa, double* pb, double epsilon=1e-6);
 HexaExport bool requals (const double  v1, const double  v2);
 HexaExport bool requals (const double* v1, const double* v2);
 
-HexaExport bool    on_debug();     // == getenv ("HEXA_DB") > 0
+HexaExport bool   on_debug();     // == getenv ("HEXA_DB") > 0
 HexaExport bool   in_test ();     // == getenv ("HEXA_TEST") > 0
 HexaExport int    niv_debug();    // Implemente prochainement
 

@@ -98,7 +98,7 @@
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI_GraphicViewsHandler.hxx"
 
-#include <HEXABLOCK_version.h>
+#include "HEXABLOCK_version.h"
 
 #include "MyBasicGUI_PointDlg.hxx"
 

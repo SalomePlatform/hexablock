@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DlgRef_3Spin_QTD</class>
- <widget class="QWidget" name="DlgRef_3Spin_QTD">
+ <class>MyDlgRef_3Spin_QTD</class>
+ <widget class="QWidget" name="MyDlgRef_3Spin_QTD">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>114</width>
-    <height>97</height>
+    <width>213</width>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">

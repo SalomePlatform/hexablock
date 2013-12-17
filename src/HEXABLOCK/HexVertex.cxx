@@ -268,4 +268,32 @@ double Vertex::dist2 (Vertex* other)
                                         + carre (v_z-other->v_z);
    return dist;
 }
+// ========================================================= anaVertices
+void Vertex::anaVertices (Vertices& cont, double pmin[], double pmax[], 
+                                                         double center[])
+{
+    Real3 point;
+    int nbre = cont.size();
+    if (nbre==0)
+       {
+       for (int nc=0 ; nc<DIM3 ; nc++)
+            pmin [nc] = pmax[nc] =  center[nc] = 0;
+       return;
+       }
+
+    cont[0]->getPoint (pmin);
+    cont[0]->getPoint (pmax);
+    for (int nro=1 ; nro<nbre ; ++nro)
+        {
+        cont[nro]->getPoint (point);
+        for (int nc=0 ; nc<DIM3 ; nc++)
+            {
+            pmin [nc] = std::min (pmin[nc], point[nc]);
+            pmax [nc] = std::max (pmax[nc], point[nc]);
+            }
+        }
+
+    for (int nc=0 ; nc<DIM3 ; nc++)
+        center [nc] = (pmin[nc] + pmax[nc])/2;
+}
 END_NAMESPACE_HEXA

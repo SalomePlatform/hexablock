@@ -26,11 +26,11 @@
 #include "MyGEOMBase_Skeleton.hxx"
 #include <QMap>
 
-class DlgRef_2Sel1Spin;
-class DlgRef_3Spin;
-class DlgRef_2Sel;
-class DlgRef_1Sel3Spin;
-class DlgRef_1Sel2Spin;
+class MyDlgRef_2Sel1Spin;
+class MyDlgRef_3Spin;
+class MyDlgRef_2Sel;
+class MyDlgRef_1Sel3Spin;
+class MyDlgRef_1Sel2Spin;
 
 class QLineEdit;
 class QGroupBox;
@@ -82,11 +82,11 @@ private:
 private:
   bool                               myBusy;
 
-  DlgRef_3Spin*                      GroupXYZ;
-  DlgRef_1Sel3Spin*                  GroupRefPoint;
-  DlgRef_2Sel1Spin*                  GroupOnCurve;
-  DlgRef_2Sel*                       GroupLineIntersection;
-  DlgRef_1Sel2Spin*                  GroupOnSurface;
+  MyDlgRef_3Spin*                      GroupXYZ;
+  MyDlgRef_1Sel3Spin*                  GroupRefPoint;
+  MyDlgRef_2Sel1Spin*                  GroupOnCurve;
+  MyDlgRef_2Sel*                       GroupLineIntersection;
+  MyDlgRef_1Sel2Spin*                  GroupOnSurface;
 
   QGroupBox*                         myCoordGrp;
   QLineEdit*                         myX;

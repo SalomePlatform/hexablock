@@ -34,7 +34,7 @@ public :         // for TUI
 
 #ifndef SWIG
 public :         // for GUI
-   const string&       getBrep ();
+   cpchar              getBrep ();
    const TopoDS_Shape& getShape ();
 
    EnumShape    getOrigin ()        { return sh_origin ; }

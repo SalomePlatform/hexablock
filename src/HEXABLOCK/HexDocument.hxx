@@ -156,6 +156,7 @@ public :
    Group*       getGroup    (int nro);
    Law*         getLaw      (int nro);
    Propagation* getPropagation   (int nro);
+   cpchar       getFirstExplicitShape();
 
                                  // ----------------- find
    Vertex* findVertex (double  vx, double  vy, double vz);

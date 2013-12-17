@@ -89,6 +89,7 @@ public:
 
     Edge*   getOpposEdge   (Edge* arete, int &sens);
     Vertex* getOpposVertex (Vertex* sommet);
+    Hexa*   opposedHexa (Hexa* hexa);
 
     virtual void majReferences();            // M.A.J relation "utilise par"
     virtual void dump ();

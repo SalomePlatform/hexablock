@@ -1789,9 +1789,9 @@ bool HexaDialog::apply(QModelIndex& result)
     }
 
     nbItems = iElts.count();
-    if ( quads_rb->isChecked() and (nbItems>=2 and nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
+    if ( quads_rb->isChecked() && (nbItems>=2 && nbItems<=6) ){ // build from quads iElts.count() should be between [2,6]
         iHexa = getDocumentModel()->addHexaQuads( iElts );
-    } else if ( vertices_rb->isChecked() and nbItems== 8 ){ // build from vertices
+    } else if ( vertices_rb->isChecked() && nbItems== 8 ){ // build from vertices
         iHexa = getDocumentModel()->addHexaVertices( iElts[0], iElts[1], iElts[2], iElts[3],
                 iElts[4], iElts[5], iElts[6], iElts[7] );
     }
@@ -5899,8 +5899,6 @@ HexaBaseDialog(parent, editmode, f)
     _helpFileName = "gui_replace_hexa.html";
     setupUi( this );
     _initWidget(editmode);
-
-    radioButton->click();
 }
 
 // ============================================================== Destructeur
@@ -5928,16 +5926,13 @@ QModelIndexList ReplaceHexaDialog::getAssocsVTK()
             assocs << iQuad;
     }
 
-    if (radioButton_2->isChecked())
+    nbQuads = quads_lw_2->count();
+    for( int i = 0; i < nbQuads; ++i)
     {
-        nbQuads = quads_lw_2->count();
-        for( int i = 0; i < nbQuads; ++i)
-        {
-            item = quads_lw_2->item(i);
-            iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
-            if (iQuad.isValid())
-                assocs << iQuad;
-        }
+        item = quads_lw_2->item(i);
+        iQuad = getPatternDataSelectionModel()->indexBy(HEXA_DATA_ROLE, item->data(LW_DATA_ROLE));
+        if (iQuad.isValid())
+            assocs << iQuad;
     }
 
     return assocs;
@@ -5952,19 +5947,15 @@ void ReplaceHexaDialog::_initInputWidget( Mode editmode )
 
     c1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
     c2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-    c3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
     p1_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
     p2_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
-    p3_le->setProperty( "HexaWidgetType",  QVariant::fromValue(VERTEX_TREE) );
 
     c1_le->installEventFilter(this);
     c2_le->installEventFilter(this);
-    c3_le->installEventFilter(this);
 
     p1_le->installEventFilter(this);
     p2_le->installEventFilter(this);
-    p3_le->installEventFilter(this);
 
     quads_lw->setProperty( "HexaWidgetType",  QVariant::fromValue(QUAD_TREE) );
     quads_lw->installEventFilter(this);
@@ -5985,11 +5976,9 @@ void ReplaceHexaDialog::_initInputWidget( Mode editmode )
 
     c1_le->setReadOnly(true);
     c2_le->setReadOnly(true);
-    c3_le->setReadOnly(true);
 
     p1_le->setReadOnly(true);
     p2_le->setReadOnly(true);
-    p3_le->setReadOnly(true);
 
     connect(quads_lw,    SIGNAL(itemSelectionChanged()),
             this, SLOT(selectElementOfModel()), Qt::UniqueConnection);
@@ -6004,23 +5993,20 @@ void ReplaceHexaDialog::clear()
     quads_lw->clear();
     modelUnregister(quads_lw);
 
+    quads_lw_2->clear();
+    modelUnregister(quads_lw_2);
+
     p1_le->clear();
     modelUnregister(p1_le);
 
     p2_le->clear();
     modelUnregister(p2_le);
 
-    p3_le->clear();
-    modelUnregister(p3_le);
-
     c1_le->clear();
     modelUnregister(c1_le);
 
     c2_le->clear();
     modelUnregister(c2_le);
-
-    c3_le->clear();
-    modelUnregister(c3_le);
 
     modelUnregister(this);
 }
@@ -6075,43 +6061,30 @@ bool ReplaceHexaDialog::apply(QModelIndex& result)
             iquads_source << iquad;
     }
 
+    QModelIndexList iquads_dest;
+    nbQuads = quads_lw_2->count();
+    for (int i = 0; i < nbQuads; ++i)
+    {
+        item = quads_lw_2->item(i);
+        iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
+        if (iquad.isValid())
+            iquads_dest << iquad;
+    }
+
     QModelIndex ip1_source = patternDataModel->mapToSource( _index[p1_le] );
     QModelIndex ip2_source = patternDataModel->mapToSource( _index[p2_le] );
-    QModelIndex ip3_source = patternDataModel->mapToSource( _index[p3_le] );
 
     QModelIndex ic1_dest = patternDataModel->mapToSource( _index[c1_le] );
     QModelIndex ic2_dest = patternDataModel->mapToSource( _index[c2_le] );
-    QModelIndex ic3_dest = patternDataModel->mapToSource( _index[c3_le] );
 
-    bool ipts_ok = ip1_source.isValid() && ip2_source.isValid() && ip3_source.isValid() &&
-                      ic1_dest.isValid() && ic2_dest.isValid() && ic3_dest.isValid();
+    bool ipts_ok = ip1_source.isValid() && ip2_source.isValid() &&
+                      ic1_dest.isValid() && ic2_dest.isValid();
 
     if (ipts_ok)
     {
-        if (radioButton->isChecked())
-        {
-            ielts = getDocumentModel()->replace( iquads_source,
-                                                 ip1_source, ic1_dest,
-                                                 ip2_source, ic2_dest,
-                                                 ip3_source, ic3_dest );
-        }
-        else if (radioButton_2->isChecked())
-        {
-            QModelIndexList iquads_dest;
-            nbQuads = quads_lw_2->count();
-            for (int i = 0; i < nbQuads; ++i)
-            {
-                item = quads_lw_2->item(i);
-                iquad = patternDataModel->mapToSource( item->data(LW_QMODELINDEX_ROLE).value<QModelIndex>() );
-                if (iquad.isValid())
-                    iquads_dest << iquad;
-            }
-
             ielts = getDocumentModel()->replace( iquads_source, iquads_dest,
                                                  ip1_source, ic1_dest,
-                                                 ip2_source, ic2_dest,
-                                                 ip3_source, ic3_dest);
-        }
+                                                 ip2_source, ic2_dest );
     }
 
     if ( !ielts.isValid() ){

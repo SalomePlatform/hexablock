@@ -30,6 +30,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
+class Qpattern;
 class HexaExport Elements : public EltBase
 {
 public:
@@ -112,12 +113,19 @@ public:
                            int nrad, int nang, int nhaut,
                            double &phi0, double &phi1);
 
-   int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1,
+   int replaceHexas (Quads& pattern, Vertex* p1, Vertex* c1, // To Delete
                      Vertex* p2, Vertex* c2,  Vertex* p3, Vertex* c3);
+
+   int replaceHexas (Quads& pattern, Quads& target, Vertex* p1, Vertex* c1,
+                     Vertex* p2, Vertex* c2);
 
    int replaceHexa  (int nh, Pattern* pat, Hexa* hexa);
    int replaceQuad  (int nh, Pattern* pat, Quad* quad, Vertex* tvert[]);
    int extrudeQuad  (Pattern* pat);
+
+   int replaceHexa  (int nh, Qpattern* pat);
+   int replaceQuad  (int nh, Qpattern* pat);
+   int extrudeQuad  (Qpattern* pat);
 
    void repVertex (int nh, int nro, Vertex* node);
    void repEdgeH  (int nh, int nro, Edge* node);
@@ -194,6 +202,10 @@ public:
    void checkDisco  (Hexa* cell,    Quad*   element);
    void checkDisco  (Hexa* cell,    Edge*   element);
    void checkDisco  (Hexa* cell,    Vertex* element);
+   void checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target, 
+                      Edges& tedge);
+   void checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target, 
+                      Vertices& tvertex);
 
 protected :
                                         // Evols Hexa3

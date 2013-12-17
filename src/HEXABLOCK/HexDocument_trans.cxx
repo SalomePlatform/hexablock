@@ -220,13 +220,29 @@ int Document::removeHexa (Hexa* cell)
    DumpStart ("removeHexa", cell);
 
    int ier = HOK;
-   if (cell==NULL)
+   if (BadElement (cell))
+      {
       ier = HERR;
-   else
-      cell->remove ();
+      DumpReturn (ier);
+      return ier;
+      }
 
-   DumpReturn (ier);
-   return ier;
+   update ();
+   Quads menage;
+   for (int nro = 0 ; nro < HQ_MAXI ; ++nro)
+       {
+       Quad* quad = cell->getQuad (nro);
+       if (EltIsValid(quad) && quad->getNbrParents()<=1)
+          menage.push_back (quad);
+       }
+
+   cell->remove ();
+   int nbdel = menage.size();
+   for (int nro = 0 ; nro < nbdel ; ++nro)
+       menage[nro]->remove();
+
+   DumpReturn (HOK);
+   return HOK;
 }
 // ========================================================= removeQuad
 int Document::removeQuad (Quad* cell)
