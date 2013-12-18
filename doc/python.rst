@@ -32,6 +32,7 @@ By the links below you can find sample scripts for all operations provided by He
    tui_modify_elmts.rst
    tui_quad_revolution.rst
    tui_association.rst
+   tui_add_geometry.rst
    tui_asso_quad_to_geom.rst
    tui_asso_vertex_to_geom.rst
    tui_groups.rst

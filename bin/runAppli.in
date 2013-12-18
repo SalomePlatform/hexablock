@@ -21,8 +21,8 @@
 if [ -z "${KERNEL_ROOT_DIR}" ] ; then 
 export KERNEL_ROOT_DIR=@KERNEL_ROOT_DIR@
 fi
-if [ -z "${HEXA_ROOT_DIR}" ] ; then 
-export HEXA_ROOT_DIR=@prefix@
+if [ -z "${HEXABLOCK_ROOT_DIR}" ] ; then 
+export HEXABLOCK_ROOT_DIR=@CMAKE_INSTALL_PREFIX@
 fi
 
 searchFreePort() {
