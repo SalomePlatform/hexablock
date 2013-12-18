@@ -24618,6 +24618,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Document_getFirstExplicitShape(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Hex::Document *arg1 = (Hex::Document *) 0 ;
+  cpchar result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Document_getFirstExplicitShape",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__Document, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Document_getFirstExplicitShape" "', argument " "1"" of type '" "Hex::Document *""'"); 
+  }
+  arg1 = reinterpret_cast< Hex::Document * >(argp1);
+  result = (cpchar)(arg1)->getFirstExplicitShape();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Document_findVertex__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Document *arg1 = (Hex::Document *) 0 ;
@@ -31774,6 +31796,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Document_getGroup", _wrap_Document_getGroup, METH_VARARGS, NULL},
 	 { (char *)"Document_getLaw", _wrap_Document_getLaw, METH_VARARGS, NULL},
 	 { (char *)"Document_getPropagation", _wrap_Document_getPropagation, METH_VARARGS, NULL},
+	 { (char *)"Document_getFirstExplicitShape", _wrap_Document_getFirstExplicitShape, METH_VARARGS, NULL},
 	 { (char *)"Document_findEdge", _wrap_Document_findEdge, METH_VARARGS, NULL},
 	 { (char *)"Document_findQuad", _wrap_Document_findQuad, METH_VARARGS, NULL},
 	 { (char *)"Document_findHexa", _wrap_Document_findHexa, METH_VARARGS, NULL},

@@ -21,8 +21,8 @@
 # Francis KLOSS - 2011 - CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
 # ========================================================================================
 
-import geompy
 import hexablock
+geompy = hexablock.geompy
 
 # Construire le modèle de blocs
 # =============================

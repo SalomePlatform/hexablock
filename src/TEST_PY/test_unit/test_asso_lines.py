@@ -20,9 +20,9 @@
 
 # Hexa : Association par lignes
 
-import hexablock
 import os
-import geompy
+import hexablock
+geompy = hexablock.geompy
 
 #---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 #

@@ -840,6 +840,7 @@ class Document(EltBase):
     def getGroup(*args): return _hexablock_swig.Document_getGroup(*args)
     def getLaw(*args): return _hexablock_swig.Document_getLaw(*args)
     def getPropagation(*args): return _hexablock_swig.Document_getPropagation(*args)
+    def getFirstExplicitShape(*args): return _hexablock_swig.Document_getFirstExplicitShape(*args)
     def findEdge(*args): return _hexablock_swig.Document_findEdge(*args)
     def findQuad(*args): return _hexablock_swig.Document_findQuad(*args)
     def findHexa(*args): return _hexablock_swig.Document_findHexa(*args)

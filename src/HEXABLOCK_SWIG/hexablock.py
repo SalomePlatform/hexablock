@@ -2,12 +2,20 @@
 # HexaBlock : Module principal
 
 import hexablock_swig
-import salome
-import smesh
 
 import HEXABLOCKPlugin
 
-geompy    = smesh.geompy
+import salome
+salome.salome_init()
+
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
+
+import SMESH
+from salome.smesh import smeshBuilder
+smesh = smeshBuilder.New(salome.myStudy)
+
 component = hexablock_swig.hex_instance ()
 
 # ======================================================== moduleName
@@ -106,28 +114,31 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
        ####  shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
     ####  else :
        ####  shape = doc.getShape (0)
-    ###   shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
 
-    ###  stream = doc.getFirstExplicitShape ()
-    ###  if stream != None :
-       ###  shape = geompy.RestoreShape (stream)
-    ###  else :
-    shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
+    ###   shape = doc.getFirstExplicitShape_else_box(1)
+    ###   the_stream = shape.getBREP() # sort une chaine de caractère
+    ###   geom_object = geompy.RestoreShape(the_stream)
 
-    if (name == None) or (name == ""):
+    stream = doc.getFirstExplicitShape ()
+    if stream != None :
+       shape = geompy.RestoreShape (stream)
+    else :
+       shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
+
+    if (name == None) or (name == "") :
         name = docname
 
     geompy.addToStudy(shape, name)
     comp_smesh = salome.lcc.FindOrLoadComponent(container, "SMESH")
-    comp_smesh.init_smesh(study, geompy.geom)
+    comp_smesh.init_smesh(study, geomBuilder.geom)
     meshexa = comp_smesh.Mesh(shape)
 
-    so = "libHexaBlockEngine.so"
+    so = "libHexaBlockPluginEngine.so"
 
-    algo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
+    algo = SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_3D", so)
     meshexa.mesh.AddHypothesis(shape, algo)
 
-    hypo = smesh.SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_Parameters", so)
+    hypo = SMESH._objref_SMESH_Gen.CreateHypothesis(comp_smesh, "HEXABLOCK_Parameters", so)
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     ### hypo.SetDocument(doc.getXml())   ## Hexa6 TODO et a verifier

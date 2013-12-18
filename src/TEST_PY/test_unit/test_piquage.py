@@ -20,80 +20,81 @@
 
 # Hexa : Creation d'hexaedres 
 
+#### import os
 import hexablock
-import os
-import geompy
+geompy = hexablock.geompy
 
 #---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 
+use_paraview = False
 
 # ======================================================= test_pipes
 def test_piquage () :
 
-    doc  = hexablock.addDocument ("default")
+    name = "piquage"
+    doc  = hexablock.addDocument (name)
 
-    orig = doc.addVertex ( 0, 0, 0)
+    orig = doc.addVertex ( 8, 0, 0)
     vx   = doc.addVector ( 1 ,0, 0)
     vy   = doc.addVector ( 0, 1, 0)
     vz   = doc.addVector ( 0, 0, 1)
 
-    size_x = 3
-    size_y = 3
-    size_z = 3
+    size_x   = 5
+    size_y   = 5
+    size_z   = 3
+    size_cyl = 12
 
-    grid = doc.makeCartesian (orig, vx, vy, vz, size_x, size_y, size_z)
+    rint     = 2
+    rext     = 3
+    angle    = 360
+    haut     = 1
+    nr       = 1
+    nh       = 1
 
-    c1 = grid.getVertexIJK (1, 2, size_z)
-    c2 = grid.getVertexIJK (1, 1, size_z)
-    c3 = grid.getVertexIJK (2, 1, size_z)
+    grid = doc.makeCartesianTop (size_x, size_y, size_z)
+    pipe = doc.makePipeUni  (orig, vx, vz, rint, rext, angle,
+                             haut, nr, size_cyl, nh) 
 
-    pa1 = doc.addVertex (-1, -1, 0)
-    pb1 = doc.addVertex ( 1, -1, 0)
-    pc1 = doc.addVertex ( 1,  1, 0)
-    pd1 = doc.addVertex (-1,  1, 0)
+    c1 = grid.getVertexIJK (2, 1, size_z)
+    c2 = grid.getVertexIJK (3, 1, size_z)
 
-    pa2 = doc.addVertex (-2, -2, 0)
-    pb2 = doc.addVertex ( 2, -2, 0)
-    pc2 = doc.addVertex ( 2,  2, 0)
-    pd2 = doc.addVertex (-2,  2, 0)
-
-    edab1 = doc.addEdge (pa1, pb1)
-    edbc1 = doc.addEdge (pb1, pc1)
-    edcd1 = doc.addEdge (pc1, pd1)
-    edda1 = doc.addEdge (pd1, pa1)
-
-    edab2 = doc.addEdge (pa2, pb2)
-    edbc2 = doc.addEdge (pb2, pc2)
-    edcd2 = doc.addEdge (pc2, pd2)
-    edda2 = doc.addEdge (pd2, pa2)
-
-    edaa = doc.addEdge (pa1, pa2)
-    edbb = doc.addEdge (pb1, pb2)
-    edcc = doc.addEdge (pc1, pc2)
-    eddd = doc.addEdge (pd1, pd2)
+    p1 = pipe.getVertexIJK (1, 7, 1)
+    p2 = pipe.getVertexIJK (1, 8, 1)
 
     qpattern = []
-    qpattern.append (doc.addQuad (edab1, edbc1, edcd1, edda1))
-    qpattern.append (doc.addQuad (edab1, edbb,  edab2, edaa))
-    qpattern.append (doc.addQuad (edbc1, edcc,  edbc2, edbb))
-    qpattern.append (doc.addQuad (edcd1, eddd,  edcd2, edcc))
-    qpattern.append (doc.addQuad (edda1, edaa,  edda2, eddd))
+    qtarget  = []
+    for na in range (size_cyl) :
+       quad = pipe.getQuadIJ (0, na, 1)
+       quad.setColor (2)
+       qpattern.append (quad)
 
-    doc.saveVtk ("replace0.vtk")
+    for ni in range (1, size_x-1) :
+        for nj in range (1, size_y-1) :
+            quad = grid.getQuadIJ (ni, nj, size_z)
+            quad.setColor (2)
+            qtarget.append (quad)
 
-    doc.replace (qpattern, pd2,c1, pa2,c2, pb2,c3)
+    c1.setColor (6)
+    c2.setColor (4)
 
-    doc.saveVtk ("replace1.vtk")
+    p1.setColor (6)
+    p2.setColor (4)
+    if use_paraview :
+       doc.saveVtk ("replace0.vtk")
+
+    doc.replace (qpattern, qtarget, p1,c1, p2,c2)
+    if use_paraview :
+       doc.saveVtk ("replace1.vtk")
+
+    pipe.remove()
+    if use_paraview :
+       doc.saveVtk ("replace2.vtk")
     return doc
 
 # ================================================================= Begin
 
 doc = test_piquage  ()
 
-law = doc.addLaw("Uniform", 0)
+doc.addLaws (0.9, True)
 
-for j in range(doc.countPropagation()):
-    propa = doc.getPropagation(j)
-    propa.setLaw(law) 
-
-mesh_hexas = hexablock.mesh(doc, "maillage:hexas")
+mesh_hexas = hexablock.mesh (doc, "maillage:hexas")

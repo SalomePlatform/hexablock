@@ -22,9 +22,8 @@
 # =============================================================================================
 
 import math
-
-import geompy
 import hexablock
+geompy = hexablock.geompy
 
 # Construire le modèle de bloc
 # ============================

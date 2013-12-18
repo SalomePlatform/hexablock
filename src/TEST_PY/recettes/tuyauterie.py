@@ -22,9 +22,9 @@
 # ========================================================================================
 
 import math
-
-import geompy
 import hexablock
+### import geompy
+geompy = hexablock.geompy
 
 # Charger la géométrie
 # ====================

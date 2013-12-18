@@ -20,7 +20,6 @@
 #
 
 import os
-import geompy
 import hexablock
 import math
 

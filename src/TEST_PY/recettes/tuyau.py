@@ -21,8 +21,9 @@
 # Francis KLOSS : 2012 : CEA-Saclay, DEN, DM2S, SFME, LGLS, F-91191 Gif-sur-Yvette, France
 # ========================================================================================
 
-import geompy
 import hexablock
+### import geompy
+geompy = hexablock.geompy
 
 # Charger la geometrie
 # ====================

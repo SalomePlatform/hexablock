@@ -236,6 +236,7 @@ HEXABLOCK_ORB::HEXABLOCK_Gen_ptr HEXABLOCKGUI::InitHEXABLOCKGen( SalomeApp_Appli
 
 void HEXABLOCKGUI::initialize( CAM_Application* app )
 {
+	MESSAGE("HEXABLOCKGUI::initialize");
     DEBTRACE("HEXABLOCKGUI::initialize");
     SalomeApp_Module::initialize( app );
 
@@ -520,7 +521,7 @@ bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
             docModel->setName( name );
             aName->SetValue( name.toLatin1().data() );
             getApp()->updateObjectBrowser();
-            _dwPattern->setWindowTitle( name );
+//            _dwPattern->setWindowTitle( name );
             result = true;
         }
     }
@@ -931,6 +932,7 @@ void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
 
 void HEXABLOCKGUI::createAndFillDockWidget()
 {
+
     QMainWindow *aParent = application()->desktop();
 
     // Create dock widget (3 dock)
@@ -1001,7 +1003,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setWidget(_meshTreeView);
     _meshTreeView->show();
 
-    QDockWidget *_dwObjectBrowser = 0;
+//    QDockWidget *_dwObjectBrowser = 0;
     QWidget* wid = getApp()->objectBrowser()->treeView();
     QWidget *w   = wid->parentWidget();
     while ( w && !_dwObjectBrowser ) {
@@ -1013,18 +1015,19 @@ void HEXABLOCKGUI::createAndFillDockWidget()
 
     // dock widget position
     aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwObjectBrowser );
-//    aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwInputPanel );
     aParent->addDockWidget( Qt::RightDockWidgetArea, _dwInputPanel );
+
+//    aParent->tabifyDockWidget( _dwPattern, _dwObjectBrowser );
+//    aParent->tabifyDockWidget( _dwGroups, _dwPattern );
+//    aParent->tabifyDockWidget( _dwMesh, _dwGroups );
 
     aParent->tabifyDockWidget( _dwObjectBrowser, _dwPattern );
     aParent->tabifyDockWidget( _dwPattern, _dwGroups );
     aParent->tabifyDockWidget( _dwGroups, _dwMesh );
 
-
 #if QT_VERSION >= 0x040500
     aParent->setTabPosition(Qt::AllDockWidgetAreas, Resource::tabPanelsUp? QTabWidget::North: QTabWidget::South);
 #endif
-
 
     // popup menu on data tree view
     _patternDataTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -1968,7 +1971,7 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     currentDocGView = dgview;
     showOnlyActor();
     currentDocGView->getDocumentModel()->refresh();
-    _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());
+//    _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());
     showAllMenus();
 }
 

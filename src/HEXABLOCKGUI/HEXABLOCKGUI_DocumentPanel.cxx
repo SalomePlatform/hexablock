@@ -6756,7 +6756,7 @@ void ModelInfoDialog::hideEvent ( QHideEvent * event )
 AddShapeDialog::AddShapeDialog(QWidget* parent, Mode editmode, Qt::WindowFlags wf):
                  HexaBaseDialog(parent, editmode, wf)
 {
-    _helpFileName = "";
+    _helpFileName = "gui_add_geometry.html#guiaddgeometry";
     setupUi( this );
     _initWidget(editmode);
     setWindowTitle(HEXABLOCKGUI::tr("ADD_SHAPE"));

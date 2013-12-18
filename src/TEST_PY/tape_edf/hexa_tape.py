@@ -2,7 +2,8 @@
 # Hexa : Utilitaires de creation de la tape
 
 import hexablock
-import geompy
+###  import geompy
+geompy = hexablock.geompy
 
 nbr_points = 0
 
