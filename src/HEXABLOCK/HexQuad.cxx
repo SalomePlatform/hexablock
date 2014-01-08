@@ -32,7 +32,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-bool db = false;
+bool db = on_debug();
 
 // ======================================================== Constructeur
 Quad::Quad (Vertex* va, Vertex* vb, Vertex* vc, Vertex* vd)
@@ -328,7 +328,7 @@ Quad* Quad::getBrother (StrOrient* orient)
           int   mark  = next->getMark();
           int   mark2 = dad ? dad->getMark() : IS_NONE;
 
-          if (nbp  <= 1  && mark2 != IS_MARRIED && mark == IS_NONE)
+          if (nbp  == 1  && mark2 != IS_MARRIED && mark == IS_NONE)
              return next;
           // if (nbp  <= 1  && mark == IS_NONE)
              // return next;
@@ -341,6 +341,11 @@ int Quad::coupler (Quad* other, StrOrient* orient, Elements* table)
 {
    if (other==NULL)
       return HERR;
+   if (db)
+      {
+      cout << " Quads::coupler " << el_name << " -> " << other->getName () 
+           << endl;
+      }
 
    Hexa* hexa = other->getParent(0);
 
@@ -543,6 +548,8 @@ void Quad::dump ()
    printf (")");
 
    dumpRef ();
+   getCenter (cg);
+   printf ("     -> (%g, %g, %g)\n", cg[dir_x], cg[dir_y], cg[dir_z]);
 }
 // ======================================================== dumpPlus
 void Quad::dumpPlus ()
@@ -842,13 +849,13 @@ double* Quad::getCenter (double* center)
        {
        if (BadElement (q_vertex [nv]))
            return NULL;
-       center [dir_x] += q_vertex[nv]->getX();
-       center [dir_y] += q_vertex[nv]->getY();
-       center [dir_z] += q_vertex[nv]->getZ();
+       center [dir_x] += q_vertex[nv]->getX()/4;
+       center [dir_y] += q_vertex[nv]->getY()/4;
+       center [dir_z] += q_vertex[nv]->getZ()/4;
        }
     return center;
 }
-// =============================================================== getCenter
+// =============================================================== dist2
 double Quad::dist2 (double* point)
 {
    Real3 center;
@@ -858,7 +865,7 @@ double Quad::dist2 (double* point)
              + carre (point[dir_z] - center[dir_z]) ;
    return d2;
 }
-// =============================================================== getCenter
+// =============================================================== opposedHexa
 Hexa* Quad::opposedHexa (Hexa* hexa)
 {
    int nbre = getNbrParents ();

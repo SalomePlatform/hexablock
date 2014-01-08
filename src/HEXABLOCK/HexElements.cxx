@@ -31,9 +31,9 @@
 #include <cmath>
 #include <map>
 
-static bool db=false;
-
 BEGIN_NAMESPACE_HEXA
+
+static bool db=on_debug();
 
 // ====================================================== Constructeur
 Elements::Elements (Document* doc) : EltBase (doc, EL_GRID)

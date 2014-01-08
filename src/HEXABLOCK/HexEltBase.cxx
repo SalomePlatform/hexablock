@@ -128,13 +128,8 @@ void EltBase::printName  (cpchar sep)
 // ========================================================= dumpRef
 void EltBase::dumpRef ()
 {
-   int nbp = el_parent.size();
+   int  nbp   = el_parent.size();
    bool prems = true;
-
-   if (nbp==0)
-      {
-      printf ("\n");
-      }
 
    for (int nro=0 ; nro<nbp ; nro++)
        {
