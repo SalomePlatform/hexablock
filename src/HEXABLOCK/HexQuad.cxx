@@ -548,6 +548,7 @@ void Quad::dump ()
    printf (")");
 
    dumpRef ();
+   Real3 cg;
    getCenter (cg);
    printf ("     -> (%g, %g, %g)\n", cg[dir_x], cg[dir_y], cg[dir_z]);
 }
