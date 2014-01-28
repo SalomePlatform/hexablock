@@ -115,15 +115,19 @@ MyBasicGUI_PointDlg::MyBasicGUI_PointDlg(QWidget* parent, Qt::WindowFlags fl)
     myParamCoord = new QButtonGroup(myParamGroup);
     QHBoxLayout* boxLayout = new QHBoxLayout(myParamGroup);
     boxLayout->setMargin(MARGIN); boxLayout->setSpacing(SPACING);
+
     QRadioButton* btn = new QRadioButton(tr("By Param"), myParamGroup);
     myParamCoord->addButton(btn, PARAM_VALUE);
     boxLayout->addWidget(btn);
+
     btn = new QRadioButton(tr("By Length"), myParamGroup);
     myParamCoord->addButton(btn, LENGTH_VALUE);
     boxLayout->addWidget(btn);
+
     btn = new QRadioButton(tr("By Coords"), myParamGroup);
     myParamCoord->addButton(btn, COORD_VALUE);
     boxLayout->addWidget(btn);
+
     myParamCoord->setExclusive(true);
     myParamCoord->button(PARAM_VALUE)->setChecked(true);
 
@@ -1058,9 +1062,20 @@ void MyBasicGUI_PointDlg::clear()
 void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
 {
     QString vmType = vm->getType();
-    if ( (vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type()) ){
+    if ( ((vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type())) &&
+            !mainFrame()->RadioButton4->isChecked() &&
+            !myParamCoord->button(LENGTH_VALUE)->isChecked() )
         mainFrame()->_vertex_le->setFocus();
-    } else if ( vmType == OCCViewer_Viewer::Type() ){
-        // ...
+    else if ( vmType == OCCViewer_Viewer::Type() ){
+        if (mainFrame()->RadioButton1->isChecked())
+            // Make the field "Vertex of the model" lose the focus
+            mainFrame()->RadioButton1->click();
+        else if (mainFrame()->RadioButton2->isChecked())
+            GroupRefPoint->LineEdit1->setFocus();
+        else if (mainFrame()->RadioButton3->isChecked() &&
+                !myParamCoord->button(LENGTH_VALUE)->isChecked())
+            GroupOnCurve->LineEdit1->setFocus();
+        else if (mainFrame()->RadioButton5->isChecked())
+            GroupOnSurface->LineEdit1->setFocus();
     }
 }

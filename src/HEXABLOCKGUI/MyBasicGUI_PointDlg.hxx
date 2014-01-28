@@ -78,8 +78,6 @@ private:
   double                             getUParameter() const;
   double                             getVParameter() const;
   void                               updateParamCoord(bool theIsUpdate);
-
-private:
   bool                               myBusy;
 
   MyDlgRef_3Spin*                      GroupXYZ;

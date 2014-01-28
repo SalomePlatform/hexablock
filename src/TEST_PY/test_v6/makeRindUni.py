@@ -21,3 +21,5 @@ vplan = doc.addVertex (0, 0, -rext*0.7)
 doc.makeRindUni (center,vx,vz, rhole,rint,rext, angle,vplan,nr,na,nh)
 
 ## doc.saveVtk ("model1.vtk")
+doc.addLaws (1, True)
+mesh_hexas = hexablock.mesh(doc)

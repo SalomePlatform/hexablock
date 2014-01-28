@@ -154,6 +154,7 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
 //          _treeViewDelegate(0),
           _isSaved( false ),
           moduleActivatedOnce(false),
+          menusEnabled(true),
           _vertexDiag(0),
           _edgeDiag(0),
           _quadDiag(0),
@@ -360,7 +361,10 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
             currentDocGView->getViewWindow()->installEventFilter(this);
     }
     else
-        initialMenus();
+    {
+        newDocument();
+//        initialMenus();
+    }
 
     return bOk;
 }
@@ -619,6 +623,8 @@ void HEXABLOCKGUI::onObjectBrowserClick(const QModelIndex& index)
             docGView->setViewWindow(graphicViewsHandler->createVtkWindow());
             docGView->getViewWindow()->installEventFilter(this);
             showAllMenus();
+            if (!menusEnabled)
+                setAllMenusEnabled(true);
         }
         else
             docGView->setViewWindow(currentDocGView->getViewWindow());
@@ -660,7 +666,10 @@ void HEXABLOCKGUI::onWindowClosed( SUIT_ViewWindow* svw)
             if (currentDocGView != NULL)
                 currentDocGView->setViewWindow(NULL);
 
-            initialMenus();
+//            initialMenus();
+            setAllMenusEnabled(false);
+            enableDocumentMenus(true);
+
             return;
         }
 
@@ -941,7 +950,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwInputPanel = new QDockWidget(aParent);
     _dwInputPanel->setVisible(false);
     _dwInputPanel->setWindowTitle("Input Panel");
-    _dwInputPanel->setObjectName("InputPanelDockWidget");
 //    _dwInputPanel->setMinimumWidth(DWINPUT_MINIMUM_WIDTH); // --- force a minimum until display
 
 //    _treeViewDelegate = new DocumentDelegate(_dwInputPanel);
@@ -952,7 +960,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwPattern->setVisible(false);
     _dwPattern->setWindowTitle("Model");
     _dwPattern->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-    _dwPattern->setObjectName("ModelDockWidget");
 
     QFrame*      patternFrame  = new QFrame(_dwPattern);
     patternFrame->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -987,7 +994,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwGroups->setVisible(false);
     _dwGroups->setWindowTitle("Groups");
     _dwGroups->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-    _dwGroups->setObjectName("GroupsDockWidget");
     _groupsTreeView = new QTreeView(_dwGroups);
     _groupsTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 //    _groupsTreeView->setItemDelegate(_treeViewDelegate);
@@ -999,7 +1005,6 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setVisible(false);
     _dwMesh->setWindowTitle("Mesh");
     _dwMesh->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-    _dwMesh->setObjectName("MeshDockWidget");
     _meshTreeView = new QTreeView(_dwMesh);
     _meshTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _meshTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -1563,6 +1568,16 @@ void HEXABLOCKGUI::showAllMenus()
     showMeshMenus( true );
 }
 
+void HEXABLOCKGUI::setAllMenusEnabled(bool enable)
+{
+    enableDocumentMenus( enable );
+    enablePatternMenus( enable );
+    enableAssociationMenus( enable );
+    enableGroupsMenus( enable );
+    enableMeshMenus( enable );
+
+    menusEnabled = enable;
+}
 
 void HEXABLOCKGUI::showDocumentMenus(bool show)
 {
@@ -1577,6 +1592,22 @@ void HEXABLOCKGUI::showDocumentMenus(bool show)
     setMenuShown(_saveAct, show);
     setToolShown(_saveAct, show);
 }
+
+void HEXABLOCKGUI::enableDocumentMenus(bool enable)
+{
+    _newAct->setEnabled(enable);
+//    setToolShown(_newAct, enable);
+
+    _importAct->setEnabled(enable);
+//    setToolShown(_importAct, enable);
+
+    _showModelInfoAct->setEnabled(enable);
+//    setToolShown(_showModelInfoAct, enable);
+
+    _saveAct->setEnabled(enable);
+//    setToolShown(_saveAct, enable);
+}
+
 
 void HEXABLOCKGUI::showPatternMenus(bool show)
 {
@@ -1653,6 +1684,93 @@ void HEXABLOCKGUI::showPatternMenus(bool show)
     setMenuShown( _showModelInfoAct, show );
 }
 
+void HEXABLOCKGUI::enablePatternMenus(bool enable)
+{
+    if ( enable && !getCurrentModel() ) return;
+
+    _addVertex->setEnabled(enable);
+//    setToolShown(_addVertex, enable);
+
+    _addEdge->setEnabled(enable);
+//    setToolShown(_addEdge, enable);
+
+    _addQuad->setEnabled(enable);
+//    setToolShown(_addQuad, enable);
+
+    _addHexa->setEnabled(enable);
+//    setToolShown(_addHexa, enable);
+
+//    setMenuShown(_sep1, enable );
+//    setToolShown(_sep1, enable);
+
+    _addVector->setEnabled(enable);
+//    setToolShown( _addVector, enable);
+
+//    setMenuShown(_sep2, enable );
+//    setToolShown(_sep2, enable);
+
+    _makeGrid->setEnabled(enable);
+//    setToolShown( _makeGrid, enable);
+
+    _makePipe->setEnabled(enable);
+//    setToolShown( _makePipe, enable);
+
+//    setMenuShown(_sep3, enable );
+//    setToolShown(_sep3, enable);
+
+    _makeCylinder->setEnabled(enable);
+//    setToolShown( _makeCylinder, enable);
+
+    _makeCylinders->setEnabled(enable);
+//    setToolShown( _makeCylinders, enable);
+
+    _makePipes->setEnabled(enable);
+//    setToolShown( _makePipes, enable);
+
+    _makeHemiSphere->setEnabled(enable);
+//    setToolShown( _makeHemiSphere, enable);
+
+    // Pattern Data Edition
+    _removeHexa->setEnabled(enable);
+//    setToolShown( _removeHexa, enable);
+
+    _prismQuad->setEnabled(enable);
+//    setToolShown( _prismQuad, enable);
+
+    _joinQuad->setEnabled(enable);
+//    setToolShown( _joinQuad, enable);
+
+    _merge->setEnabled(enable);
+//    setToolShown( _merge, enable);
+
+    _disconnect->setEnabled(enable);
+//    setToolShown( _disconnect, enable);
+
+    _cutEdge->setEnabled(enable);
+//    setToolShown( _cutEdge, enable);
+
+    _makeTransformation->setEnabled(enable);
+//    setToolShown( _makeTransformation, enable);
+
+    _makeSymmetry->setEnabled(enable);
+//    setToolShown( _makeSymmetry, enable);
+
+    _performTransformation->setEnabled(enable);
+//    setToolShown( _performTransformation, enable);
+
+    _performSymmetry->setEnabled(enable);
+//    setToolShown( _performSymmetry, enable);
+
+    _replaceHexa->setEnabled(enable);
+//    setToolShown( _replaceHexa, enable);
+
+    _quadRevolution->setEnabled(enable);
+//    setToolShown( _quadRevolution, enable);
+
+//    setMenuShown( _sep4, enable );
+    _showModelInfoAct->setEnabled(enable);
+}
+
 
 void HEXABLOCKGUI::showAssociationMenus(bool show)
 {
@@ -1662,13 +1780,34 @@ void HEXABLOCKGUI::showAssociationMenus(bool show)
     // Association Edition
     setMenuShown( _assocVertex,  show );
     setToolShown( _assocVertex, show );
+
     setMenuShown( _assocEdge,  show );
     setToolShown( _assocEdge, show );
+
     setMenuShown( _assocQuad,  show );
     setToolShown( _assocQuad, show );
+
     setMenuShown( _addShapeAct, show );
     setToolShown( _addShapeAct, show );
+}
 
+void HEXABLOCKGUI::enableAssociationMenus(bool enable)
+{
+    if ( enable && !getCurrentModel() )
+        return;
+
+    // Association Edition
+     _assocVertex->setEnabled(enable);
+ //    setToolShown( _assocVertex, enable );
+
+     _assocEdge->setEnabled(enable);
+ //    setToolShown( _assocEdge, enable );
+
+     _assocQuad->setEnabled(enable);
+ //    setToolShown( _assocQuad, enable );
+
+     _addShapeAct->setEnabled(enable);
+ //    setToolShown( _addShapeAct, enable );
 }
 
 void HEXABLOCKGUI::showGroupsMenus(bool show)
@@ -1679,6 +1818,18 @@ void HEXABLOCKGUI::showGroupsMenus(bool show)
     setToolShown( _addGroup, show);
     setMenuShown( _removeGroup ,  show );
     setToolShown( _removeGroup , show);
+}
+
+void HEXABLOCKGUI::enableGroupsMenus(bool enable)
+{
+    if ( enable && !getCurrentModel() )
+        return;
+
+    _addGroup->setEnabled(enable);
+//    setToolShown( _addGroup, enable);
+
+    _removeGroup->setEnabled(enable);
+//    setToolShown( _removeGroup , enable);
 }
 
 void HEXABLOCKGUI::showMeshMenus(bool show)
@@ -1693,6 +1844,24 @@ void HEXABLOCKGUI::showMeshMenus(bool show)
     setToolShown( _setPropagation, show);
     setMenuShown( _computeMesh, show);
     setToolShown( _computeMesh, show);
+}
+
+void HEXABLOCKGUI::enableMeshMenus(bool enable)
+{
+    if ( enable && !getCurrentModel() )
+        return;
+
+    _addLaw->setEnabled(enable);
+//    setToolShown( _addLaw, enable);
+
+    _removeLaw->setEnabled(enable);
+//    setToolShown( _removeLaw, enable);
+
+    _setPropagation->setEnabled(enable);
+//    setToolShown( _setPropagation, enable);
+
+    _computeMesh->setEnabled(enable);
+//    setToolShown( _computeMesh, enable);
 }
 
 void HEXABLOCKGUI::showVtkActor()
@@ -1977,6 +2146,8 @@ void HEXABLOCKGUI::switchModel(VtkDocumentGraphicView* dgview)
     currentDocGView->getDocumentModel()->refresh();
 //    _dwPattern->setWindowTitle(currentDocGView->getDocumentModel()->getName());
     showAllMenus();
+    if (!menusEnabled)
+        setAllMenusEnabled(true);
 }
 
 DocumentModel* HEXABLOCKGUI::getCurrentModel()

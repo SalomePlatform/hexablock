@@ -18,3 +18,5 @@ tphi    = [ -30, -10, 0, 10, 30, 45, 60, 75, 80 ]
 doc.makeSphere (center,vx,vz, trayons, tangles, tphi)
 
 doc.saveVtk ("model1.vtk")
+doc.addLaws (0.5, True)
+mesh_hexas = hexablock.mesh(doc)

@@ -173,6 +173,7 @@ public:
 
   void initialMenus();
   void showAllMenus();
+  void setAllMenusEnabled(bool enable);
   void updateSelectors();
 
   void switchModel(HEXABLOCK::GUI::VtkDocumentGraphicView* dgview);
@@ -216,6 +217,12 @@ public slots:
   void showAssociationMenus(bool show);
   void showGroupsMenus(bool show);
   void showMeshMenus(bool show);
+
+  void enableDocumentMenus(bool enable);
+  void enablePatternMenus(bool enable);
+  void enableAssociationMenus(bool enable);
+  void enableGroupsMenus(bool enable);
+  void enableMeshMenus(bool enable);
 
 protected slots:
   void onWindowActivated( SUIT_ViewWindow* svw);
@@ -485,6 +492,7 @@ private:
 
   bool _isSaved;
   bool moduleActivatedOnce;
+  bool menusEnabled;
 
   QDir* loadDocLastPath;
   QDir* saveDocLastPath;
