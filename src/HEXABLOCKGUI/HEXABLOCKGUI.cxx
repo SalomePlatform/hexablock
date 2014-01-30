@@ -108,7 +108,7 @@
 
 
 #include <Visual3d_ViewManager.hxx>
-#include <V3d_PerspectiveView.hxx>
+//#include <V3d_PerspectiveView.hxx>
 #include <V3d_AmbientLight.hxx>
 #include <V3d_DirectionalLight.hxx>
 #include <Xw_Window.hxx>
