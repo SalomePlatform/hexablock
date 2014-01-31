@@ -26,12 +26,46 @@
 #include "HexBiCylinder.hxx"
 #include "HexVector.hxx"
 #include "HexQuad.hxx"
+#include "HexHexa.hxx"
 
 #include "HexGlobale.hxx"
 
 BEGIN_NAMESPACE_HEXA
 
 
+// ======================================================== make_normale
+int make_normale (Quads& tquads, double axe[], double& largeur)
+{
+   double lgmoy = 0;
+   Real3  cf, cg, vn;
+   int    nbre = tquads.size();
+   if (nbre==0)
+       return HERR;
+
+   double coeff = 0;
+   for (int nro=0 ; nro<nbre ; ++nro)
+       {
+       Quad* quad = tquads[nro];
+       int nbp    = quad->getNbrParents();
+       if (nbp!=1)
+          return HERR;
+                        // Calcul des cotes
+       for (int nc=0 ; nc<QUAD4 ; ++nc) 
+           lgmoy += quad->getEdge(nc)->getLength ();
+                        // Calcul de la normale sortante
+       Hexa* hexa = quad->getParent (0);
+       hexa->getCenter (cg);
+       quad->getCenter (cf);
+       calc_vecteur (cg, cf, vn);
+       for (int nc=0 ; nc<DIM3 ; ++nc) 
+           axe[nc] = coeff*axe[nc] + vn[nc];
+       coeff = 1;
+       }
+   
+   normer_vecteur (axe);
+   largeur = lgmoy / (4*nbre);
+   return HOK;
+}
 // ======================================================== makeCartesianTop
 Elements* Document::makeCartesianTop (int nx, int ny, int nz)
 {
@@ -749,10 +783,9 @@ Elements* Document::extrudeQuadTop (Quad* start, int nbre)
    double     larg = 1;
    Elements*  grid = new Elements (this);
 
-   tstart.push_back (start);
-
+   tstart.push_back  (start);
    grid->checkQuad   (start);
-   grid->makeNormale (tstart, axe, larg);
+   make_normale (tstart, axe, larg);
    for (int nro=0 ; nro<nbre; ++nro) tlen.push_back ((nro+1)*larg);
 
    if (grid->isValid())
@@ -823,8 +856,8 @@ Elements* Document::extrudeQuadsTop (Quads tstart, int nbre)
    double     larg = 1;
    Elements* grid = new Elements (this);
 
-   grid->checkQuads  (tstart);
-   grid->makeNormale (tstart, axe, larg);
+   grid->checkQuads (tstart);
+   make_normale     (tstart, axe, larg);
    for (int nro=0 ; nro<nbre; ++nro) tlen.push_back ((nro+1)*larg);
 
    if (grid->isValid())

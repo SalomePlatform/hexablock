@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#include "hexa_base.hxx"
 #include "HEXABLOCKGUI_Model.hxx"
 
 //#define _DEVDEBUG_
@@ -28,6 +29,7 @@ HEXABLOCKGUI_Model::HEXABLOCKGUI_Model(CAM_Module* theModule)
   : SalomeApp_DataModel(theModule)
 {
   DEBTRACE("HEXABLOCKGUI_Model::HEXABLOCKGUI_Model");
+  std::cout <<  "HEXABLOCKGUI_Model::HEXABLOCKGUI_Model" << std::endl;
 }
 
 HEXABLOCKGUI_Model::~HEXABLOCKGUI_Model()
@@ -44,12 +46,13 @@ bool HEXABLOCKGUI_Model::open(const QString& fileName, CAM_Study* study, QString
 bool HEXABLOCKGUI_Model::save(QStringList& listOfFiles)
 {
   DEBTRACE("HEXABLOCKGUI_Model::save");
+  std::cout <<  "HEXABLOCKGUI_Model::save" << std::endl;
   return SalomeApp_DataModel::save(listOfFiles);
 }
 
 bool HEXABLOCKGUI_Model::saveAs(const QString& fileName, CAM_Study* study, QStringList& listOfFiles)
 {
   DEBTRACE("HEXABLOCKGUI_Model::saveAs");
+  std::cout <<  "HEXABLOCKGUI_Model::saveAs" << std::endl;
   return SalomeApp_DataModel::saveAs(fileName, study, listOfFiles);
 }
-

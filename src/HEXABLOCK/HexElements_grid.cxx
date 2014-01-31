@@ -421,9 +421,7 @@ void Elements::fillCenterOdd ()
 int Elements::makeBasicCylinder (RealVector& tdr, RealVector& tda, 
                                  RealVector& tdh, bool fill)
 {
-   int na = tda.size()-1;
-   PutData (na);
-
+   int na    = tda.size()-1;
    cyl_dispo = CYL_NOFILL;
    if (fill && na > 3)
       {

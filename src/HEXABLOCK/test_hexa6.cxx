@@ -101,13 +101,13 @@ void eplucher (Hex::Document* doc, Hex::Elements* grid, string& radical)
 int test_cartesian6 (int nbargs, cpchar tabargs[])
 {
    case_name = "cartesian_top";
+   Hex::Document* doc  = get_document ();
+
+/***********************
    const int size_x = 3;
    const int size_y = 4;
    const int size_z = 5;
 
-   Hex::Document* doc  = get_document ();
-
-/***********************
    Hex::Elements* grid1 = doc->makeCartesianTop (size_x, size_y, size_z);
    grid1->saveVtk ("makeCartesianTop.vtk");
    PutData (grid1->isValid());
@@ -488,6 +488,29 @@ int test_extrude6 (int nbargs, cpchar tabargs[])
        }
 
    doc->saveVtk ("prisme3.vtk");
+   return HOK;
+}
+// ======================================================== test_extrude7
+int test_extrude7 (int nbargs, cpchar tabargs[])
+{
+   const int nr = 2;
+   const int na = 8;
+   const int nh = 3;
+
+   Hex::Document* doc   = get_document ();
+   Hex::Elements* grid1 = doc->makeCylinderTop (nr, na, nh);
+
+   Hex::Quads tquads;
+   for (int k=0 ; k<nh ; k++)
+       {
+       Hex::Quad* quad = grid1->getQuadJK (nr, 0, k);
+       quad->setColor   (5);
+       tquads.push_back (quad);
+       }
+
+   doc->saveVtk ("grid0.vtk");
+   Hex::Elements* grid2 = doc->extrudeQuadsTop (tquads, 4);
+   doc->saveVtk ("grid1.vtk");
    return HOK;
 }
 // ======================================================== test_revolution6

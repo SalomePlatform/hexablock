@@ -1012,7 +1012,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setWidget(_meshTreeView);
     _meshTreeView->show();
 
-//    QDockWidget *_dwObjectBrowser = 0;
+    QDockWidget *_dwObjectBrowser = 0;
     QWidget* wid = getApp()->objectBrowser()->treeView();
     QWidget *w   = wid->parentWidget();
     while ( w && !_dwObjectBrowser ) {
