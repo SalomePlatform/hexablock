@@ -199,12 +199,12 @@ INCLUDE(CMakePackageConfigHelpers)
 # List of targets in this project we want to make visible to the rest of the world.
 # They all have to be INSTALL'd with the option "EXPORT ${PROJECT_NAME}TargetGroup"
 SET(_${PROJECT_NAME}_exposed_targets 
-  HEXABLOCKEngine _hexablock_swig MyDlgRef
+  HEXABLOCKEngine _hexablock_swig
 )
 
 IF(SALOME_BUILD_GUI)
   LIST(APPEND _${PROJECT_NAME}_exposed_targets 
-    HEXABLOCK
+    MyDlgRef HEXABLOCK
   )
 ENDIF(SALOME_BUILD_GUI)
 
