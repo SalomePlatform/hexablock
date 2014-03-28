@@ -27,8 +27,9 @@
 
 #include <LightApp_OCCSelector.h>
 #include "hexa_base.hxx"
+#include "HEXABLOCKGUI_Export.hxx"
 
-class HexaExport HEXABLOCKGUI_OCCSelector : public LightApp_OCCSelector
+class HEXABLOCK_EXPORT HEXABLOCKGUI_OCCSelector : public LightApp_OCCSelector
 {
 public:
     HEXABLOCKGUI_OCCSelector( OCCViewer_Viewer*, SUIT_SelectionMgr* );
