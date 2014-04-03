@@ -950,6 +950,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwInputPanel = new QDockWidget(aParent);
     _dwInputPanel->setVisible(false);
     _dwInputPanel->setWindowTitle("Input Panel");
+    _dwInputPanel->setObjectName("InputPanelDockWidget");
 //    _dwInputPanel->setMinimumWidth(DWINPUT_MINIMUM_WIDTH); // --- force a minimum until display
 
 //    _treeViewDelegate = new DocumentDelegate(_dwInputPanel);
@@ -960,6 +961,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwPattern->setVisible(false);
     _dwPattern->setWindowTitle("Model");
     _dwPattern->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+    _dwPattern->setObjectName("ModelDockWidget");
 
     QFrame*      patternFrame  = new QFrame(_dwPattern);
     patternFrame->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -994,6 +996,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwGroups->setVisible(false);
     _dwGroups->setWindowTitle("Groups");
     _dwGroups->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+    _dwGroups->setObjectName("GroupsDockWidget");
     _groupsTreeView = new QTreeView(_dwGroups);
     _groupsTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 //    _groupsTreeView->setItemDelegate(_treeViewDelegate);
@@ -1005,6 +1008,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setVisible(false);
     _dwMesh->setWindowTitle("Mesh");
     _dwMesh->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+    _dwMesh->setObjectName("MeshDockWidget");
     _meshTreeView = new QTreeView(_dwMesh);
     _meshTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _meshTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -1012,7 +1016,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _dwMesh->setWidget(_meshTreeView);
     _meshTreeView->show();
 
-    QDockWidget *_dwObjectBrowser = 0;
+//    QDockWidget *_dwObjectBrowser = 0;
     QWidget* wid = getApp()->objectBrowser()->treeView();
     QWidget *w   = wid->parentWidget();
     while ( w && !_dwObjectBrowser ) {
