@@ -1484,7 +1484,7 @@ void HEXABLOCKGUI::createTools()
 {
     int aToolId;
 
-    aToolId = createTool ( tr( "HexaBlock Toolbar" ) );
+    aToolId = createTool ( tr( "HexaBlock Toolbar" ), QString( "HexaBlockMain" ) );
     createTool( _newAct, aToolId );
     createTool( _importAct, aToolId );
     createTool( _saveAct, aToolId );
@@ -1493,7 +1493,7 @@ void HEXABLOCKGUI::createTools()
     //createTool( separator(), aToolId );
 
     // Pattern Data
-    aToolId = createTool ( tr( "Construction" ) );
+    aToolId = createTool ( tr( "Construction" ), QString( "HexaBlockConstruction" ) );
     createTool( _addVertex, aToolId );
     createTool( _addEdge, aToolId );
     createTool( _addQuad, aToolId );
@@ -1519,7 +1519,7 @@ void HEXABLOCKGUI::createTools()
     createTool( _makePipes,    aToolId );
 
     // Pattern Data Edition
-    aToolId = createTool ( tr( "Operation" ) );
+    aToolId = createTool ( tr( "Operation" ), QString( "HexaBlockOperation" ) );
     createTool( _removeHexa, aToolId );
     createTool( _prismQuad,  aToolId );
     createTool( _joinQuad,   aToolId );
@@ -1534,19 +1534,19 @@ void HEXABLOCKGUI::createTools()
     createTool( _quadRevolution, aToolId );
 
     // Association
-    aToolId = createTool ( tr( "Association" ) );
+    aToolId = createTool ( tr( "Association" ), QString( "HexaBlockAssociation" ) );
     createTool( _assocVertex, aToolId );
     createTool( _assocEdge, aToolId );
     createTool( _assocQuad, aToolId );
     createTool( _addShapeAct, aToolId );
 
     // Group
-    aToolId = createTool ( tr( "Group" ) );
+    aToolId = createTool ( tr( "Group" ), QString( "HexaBlockGroup" ) );
     createTool( _addGroup,    aToolId );
     createTool( _removeGroup, aToolId ); //CS_TODO
 
     // Law
-    aToolId = createTool ( tr( "Mesh" ) );
+    aToolId = createTool ( tr( "Mesh" ), QString( "HexaBlockMesh" ) );
     createTool( _addLaw,    aToolId );
     createTool( _removeLaw, aToolId );
     createTool( _setPropagation, aToolId );
