@@ -55,6 +55,7 @@
 #include <gp_Lin.hxx>
 #include <gp_Circ.hxx>
 
+#include <Basics_OCCTVersion.hxx>
 
 BEGIN_NAMESPACE_HEXA
 
@@ -178,8 +179,12 @@ int NewShape::transfoShape (Matrix& matrice, SubShape* shape)
    gp_Trsf transfo;
    double             a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34;
    matrice.getCoeff  (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
+#if OCC_VERSION_LARGE > 0x06070100
+   transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34);
+#else
    transfo.SetValues (a11,a12,a13,a14, a21,a22,a23,a24, a31,a32,a33,a34,
                       Epsil2, Epsil2);
+#endif
 
    TopoDS_Shape shape_orig = shape->getShape ();
    BRepBuilderAPI_Transform builder (shape_orig, transfo, Standard_True);
