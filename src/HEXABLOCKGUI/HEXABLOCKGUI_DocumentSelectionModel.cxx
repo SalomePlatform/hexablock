@@ -59,7 +59,6 @@
 #include <SalomeApp_Application.h>
 #include <SALOME_Actor.h>
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
 #include <QMultiMap>
@@ -69,7 +68,6 @@
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
-#include <SALOME_ListIteratorOfListIO.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Iterator.hxx>

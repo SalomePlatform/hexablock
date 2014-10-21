@@ -72,7 +72,6 @@
 
 
 #include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
 
 
 #include <SALOME_LifeCycleCORBA.hxx>
