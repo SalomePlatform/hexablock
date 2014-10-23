@@ -452,7 +452,7 @@ void HEXABLOCKGUI::addInStudy(QMap<QString, TopoDS_Shape>& topo_shapes,
     SOCC_Prs* prs = getOccPrs(currentDocGView);
     if (prs == NULL)
     {
-        prs = new SOCC_Prs();
+        prs = new SOCC_Prs(0);
         isNewPrs = true;
     }
 

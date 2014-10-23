@@ -332,7 +332,7 @@ private:
       if (docGView == NULL)
           return NULL;
       if (!occPrs.contains(docGView))
-          occPrs[docGView] = new SOCC_Prs();
+          occPrs[docGView] = new SOCC_Prs(0);
       return occPrs[docGView];
   }
 
