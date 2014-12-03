@@ -21,6 +21,9 @@
 if [ -z "${KERNEL_ROOT_DIR}" ] ; then 
 export KERNEL_ROOT_DIR=@KERNEL_ROOT_DIR@
 fi
+if [ -z "${GEOM_ROOT_DIR}" ] ; then 
+export GEOM_ROOT_DIR=@GEOM_ROOT_DIR@
+fi
 if [ -z "${HEXABLOCK_ROOT_DIR}" ] ; then 
 export HEXABLOCK_ROOT_DIR=@CMAKE_INSTALL_PREFIX@
 fi
@@ -59,4 +62,4 @@ searchFreePort() {
 searchFreePort
 
 
-${KERNEL_ROOT_DIR}/bin/salome/envSalome.py python -i $HEXA_ROOT_DIR/bin/salome/myrunSalome.py --modules=HEXA --killall
+${KERNEL_ROOT_DIR}/bin/salome/envSalome.py python -i $HEXABLOCK_ROOT_DIR/bin/salome/runHEXABLOCK.py --modules=GEOM,HEXABLOCK --killall

@@ -18,14 +18,14 @@
 #
 
 SALOME_CONFIGURE_FILE(VERSION.in VERSION INSTALL ${SALOME_INSTALL_BINS})
-SALOME_CONFIGURE_FILE(runAppli.in runAppli INSTALL ${SALOME_INSTALL_BINS})
+SALOME_CONFIGURE_FILE(runHEXABLOCK.in runHEXABLOCK INSTALL ${SALOME_INSTALL_BINS})
 
 # ===============================================================
 # Files to be installed
 # ===============================================================
 
 SET(_bin_scripts
-  myrunSalome.py
+  runHEXABLOCK.py
 )
 
 SALOME_INSTALL_SCRIPTS("${_bin_scripts}" ${SALOME_INSTALL_SCRIPT_SCRIPTS})
