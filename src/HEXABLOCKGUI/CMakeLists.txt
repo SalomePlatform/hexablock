@@ -181,6 +181,7 @@ SET(HEXABLOCK_SOURCES ${_other_SOURCES} ${_moc_SOURCES} ${_uic_HEADERS})
 SET(_ts_RESOURCES
   resources/HEXABLOCK_msg_en.ts
   resources/HEXABLOCK_msg_fr.ts
+  resources/HEXABLOCK_msg_ja.ts
   resources/HEXABLOCK_icons.ts
 ) 
 
