@@ -118,6 +118,7 @@
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
+#include <utilities.h>
 
 #define DW_MINIMUM_WIDTH       50
 #define DWINPUT_MINIMUM_HEIGHT 50

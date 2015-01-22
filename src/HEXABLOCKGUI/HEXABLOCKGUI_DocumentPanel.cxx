@@ -59,6 +59,8 @@
 
 #include <GEOMBase.h>
 
+#include <utilities.h>
+
 #define BUTTON_BOX_MIN_WIDTH 5
 #define VERTEX_COORD_MIN -1000000
 #define VERTEX_COORD_MAX  1000000
