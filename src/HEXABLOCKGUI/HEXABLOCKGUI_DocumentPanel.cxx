@@ -30,7 +30,9 @@
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#ifndef DISABLE_PYCONSOLE
 #include <PyConsole_Console.h>
+#endif
 #include <SalomeApp_Tools.h>
 
 #include <Standard_GUID.hxx>
@@ -5876,6 +5878,7 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
     _currentObj = NULL;
 
     if (getDocumentModel() == NULL) return false;
+#ifndef DISABLE_PYCONSOLE
     QString command = QString("import hexablock ; %1 = hexablock.mesh(\"%2\", \"%1\", %3, \"%4\")")
     								                                          .arg( _name->text() )
     								                                          .arg( getDocumentModel()->getName() )
@@ -5889,6 +5892,9 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
         pyConsole->exec( command );
     else
         return false;
+#else
+    return false;
+#endif
 
     return true;
 }

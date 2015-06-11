@@ -538,7 +538,9 @@ void HEXABLOCKGUI::windows( QMap<int, int>& theMap ) const
     DEBTRACE("HEXABLOCKGUI::windows");
     theMap.clear();
     theMap.insert( SalomeApp_Application::WT_ObjectBrowser, Qt::LeftDockWidgetArea );
+#ifndef DISABLE_PYCONSOLE
     theMap.insert( SalomeApp_Application::WT_PyConsole,     Qt::BottomDockWidgetArea );
+#endif
 }
 
 QString  HEXABLOCKGUI::engineIOR() const
