@@ -56,7 +56,7 @@ copyright = u'2009-2015  CEA/DEN, EDF R&D'
 # built documents.
 #
 # The short X.Y version.
-version = '@SHORT_VERSION@'
+version = '@SALOMEHEXABLOCK_VERSION@'
 # The full version, including alpha/beta/rc tags.
 release = '@SALOMEHEXABLOCK_VERSION@'
 
@@ -103,10 +103,14 @@ pygments_style = 'sphinx'
 # Options for HTML output
 # -----------------------
 
+# The theme to use for HTML and HTML Help pages.  Major themes that come with
+# Sphinx are currently 'default' and 'sphinxdoc'.
+html_theme = 'default'
+
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
 # given in html_static_path.
-html_style = 'default.css'
+#html_style = 'default.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
