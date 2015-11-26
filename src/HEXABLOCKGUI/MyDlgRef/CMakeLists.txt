@@ -17,6 +17,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+INCLUDE(UseQtExt)
+
 # --- options ---
 # additional include directories
 INCLUDE_DIRECTORIES(
@@ -41,7 +43,7 @@ SET(MyDlgRef_HEADERS
 # --- sources ---
 
 # sources / moc wrappings
-QT4_WRAP_CPP(_moc_SOURCES ${MyDlgRef_HEADERS})
+QT_WRAP_MOC(_moc_SOURCES ${MyDlgRef_HEADERS})
 
 # sources / static
 SET(_other_SOURCES
@@ -60,7 +62,7 @@ SET(_pyuic_files
 )
 
 # scripts / pyuic wrappings
-QT4_WRAP_UI(_uic_HEADERS ${_pyuic_files})
+QT_WRAP_UIC(_uic_HEADERS ${_pyuic_files})
 
 # sources / to compile
 SET(MyDlgRef_SOURCES ${_other_SOURCES} ${_moc_SOURCES} ${_uic_HEADERS})

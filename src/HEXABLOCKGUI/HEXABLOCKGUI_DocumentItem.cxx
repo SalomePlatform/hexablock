@@ -42,7 +42,7 @@ QStandardItem()
 	{
 		setText(m_DocElt->getName());
 		if ( m_DocElt->isAssociated() )
-		    setData(Qt::darkGreen, Qt::ForegroundRole);
+		    setData(QColor(Qt::darkGreen), Qt::ForegroundRole);
 	}
 	setData( treeRole,    HEXA_TREE_ROLE );
 	setData( entry,       HEXA_DOC_ENTRY_ROLE);

@@ -326,8 +326,8 @@ void PatternDataSelectionModel::highlightTreeItems(QModelIndexList& indexes,
     {
         if (anItemIndex.isValid())
         {
-            theModel->setData(anItemIndex, fgColor, Qt::ForegroundRole);
-            theModel->setData(anItemIndex, bgColor, Qt::BackgroundRole);
+            theModel->setData(anItemIndex, QColor(fgColor), Qt::ForegroundRole);
+            theModel->setData(anItemIndex, QColor(bgColor), Qt::BackgroundRole);
             currentHighlightedItems << anItemIndex;
         }
     }
@@ -350,8 +350,8 @@ void PatternDataSelectionModel::unhighlightTreeItems(bool clearSelected)
     {
         if (anItemIndex.isValid())
         {
-            theModel->setData(anItemIndex, Qt::darkGreen, Qt::ForegroundRole);
-            theModel->setData(anItemIndex, Qt::white, Qt::BackgroundRole);
+            theModel->setData(anItemIndex, QColor(Qt::darkGreen), Qt::ForegroundRole);
+            theModel->setData(anItemIndex, QColor(Qt::white), Qt::BackgroundRole);
         }
     }
     currentHighlightedItems.clear();
@@ -591,8 +591,8 @@ void PatternGeomSelectionModel::highlightTreeItems(QModelIndexList& indexes,
     {
         if (anItemIndex.isValid())
         {
-            theModel->setData(anItemIndex, fgColor, Qt::ForegroundRole);
-            theModel->setData(anItemIndex, bgColor, Qt::BackgroundRole);
+            theModel->setData(anItemIndex, QColor(fgColor), Qt::ForegroundRole);
+            theModel->setData(anItemIndex, QColor(bgColor), Qt::BackgroundRole);
             currentHighlightedItems << anItemIndex;
         }
     }
@@ -614,8 +614,8 @@ void PatternGeomSelectionModel::unhighlightTreeItems(bool clearSelected)
     {
         if (anItemIndex.isValid())
         {
-            theModel->setData(anItemIndex, Qt::darkGreen, Qt::ForegroundRole);
-            theModel->setData(anItemIndex, Qt::white, Qt::BackgroundRole);
+            theModel->setData(anItemIndex, QColor(Qt::darkGreen), Qt::ForegroundRole);
+            theModel->setData(anItemIndex, QColor(Qt::white), Qt::BackgroundRole);
         }
     }
     currentHighlightedItems.clear();

@@ -27,6 +27,7 @@
 #include <iostream>
 #include <QtGui>
 #include <QFlags>
+#include <QStyledItemDelegate>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>

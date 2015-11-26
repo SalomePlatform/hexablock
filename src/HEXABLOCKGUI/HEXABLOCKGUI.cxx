@@ -25,6 +25,8 @@
 #include <QInputDialog>
 #include <QIcon>
 #include <QStackedWidget>
+#include <QMenu>
+#include <QSplitter>
 
 #include <QtxTreeView.h>
 #include <SUIT_MessageBox.h>
