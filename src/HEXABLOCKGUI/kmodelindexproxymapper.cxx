@@ -23,8 +23,13 @@
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QWeakPointer>
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QtGui/QAbstractProxyModel>
 #include <QtGui/QItemSelectionModel>
+#else 
+#include <QtCore/QAbstractProxyModel>
+#include <QtCore/QItemSelectionModel>
+#endif
 
 // #include "kdebug.h"
 

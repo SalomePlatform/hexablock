@@ -25,8 +25,13 @@
 #include "HEXABLOCKGUI_Export.hxx"
 
 #include <QtCore/QObject>
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QtGui/QItemSelectionModel>
 #include <QtGui/QAbstractProxyModel>
+#else
+#include <QtCore/QItemSelectionModel>
+#include <QtCore/QAbstractProxyModel>
+#endif
 
 #include <iostream>
 
