@@ -25,8 +25,9 @@
 
 #include "Hex.hxx"
 #include <iostream>
-#include <QtGui>
 #include <QFlags>
+#include <QKeyEvent>
+#include <QStyledItemDelegate>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>

@@ -21,10 +21,10 @@
 
 #include "kmodelindexproxymapper.hxx"
 
-#include <QtCore/QAbstractItemModel>
-#include <QtCore/QWeakPointer>
-#include <QtGui/QAbstractProxyModel>
-#include <QtGui/QItemSelectionModel>
+#include <QAbstractItemModel>
+#include <QWeakPointer>
+#include <QAbstractProxyModel>
+#include <QItemSelectionModel>
 
 // #include "kdebug.h"
 

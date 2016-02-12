@@ -24,9 +24,9 @@
 
 #include "HEXABLOCKGUI_Export.hxx"
 
-#include <QtCore/QObject>
-#include <QtGui/QItemSelectionModel>
-#include <QtGui/QAbstractProxyModel>
+#include <QObject>
+#include <QItemSelectionModel>
+#include <QAbstractProxyModel>
 
 #include <iostream>
 

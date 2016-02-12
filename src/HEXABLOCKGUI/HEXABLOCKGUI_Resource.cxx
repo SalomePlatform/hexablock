@@ -55,11 +55,11 @@ bool HEXABLOCKGUI_Resource::booleanValue(const QString& name, const bool def) co
   return _resource->booleanValue(RESOURCE_HEXABLOCK, name, def);
 }
 
-QFont HEXABLOCKGUI_Resource::fontValue(const QString& name, const QFont def) const {
+QFont HEXABLOCKGUI_Resource::fontValue(const QString& name, const QFont& def) const {
   return _resource->fontValue(RESOURCE_HEXABLOCK, name, def);
 }
 
-QColor HEXABLOCKGUI_Resource::colorValue(const QString& name, const QColor def) const {
+QColor HEXABLOCKGUI_Resource::colorValue(const QString& name, const QColor& def) const {
   return _resource->colorValue(RESOURCE_HEXABLOCK, name, def);
 }
 
@@ -74,7 +74,7 @@ QColor HEXABLOCKGUI_Resource::colorValue(const QString& name, const int h, const
   return colorValue(name, col);
 }
 
-QString HEXABLOCKGUI_Resource::stringValue(const QString& name, const QString def) const {
+QString HEXABLOCKGUI_Resource::stringValue(const QString& name, const QString& def) const {
   return _resource->stringValue(RESOURCE_HEXABLOCK, name, def);
 }
 
@@ -93,15 +93,15 @@ void HEXABLOCKGUI_Resource::setValue( const QString& name, const bool val ) {
     _resource->setValue(RESOURCE_HEXABLOCK, name, val);
 }
 
-void HEXABLOCKGUI_Resource::setValue( const QString& name, const QFont val ) {
+void HEXABLOCKGUI_Resource::setValue( const QString& name, const QFont& val ) {
     _resource->setValue(RESOURCE_HEXABLOCK, name, val);
 }
 
-void HEXABLOCKGUI_Resource::setValue( const QString& name, const QColor val ) {
+void HEXABLOCKGUI_Resource::setValue( const QString& name, const QColor& val ) {
     _resource->setValue(RESOURCE_HEXABLOCK, name, val);
 }
 
-void HEXABLOCKGUI_Resource::setValue( const QString& name, const QString val ) {
+void HEXABLOCKGUI_Resource::setValue( const QString& name, const QString& val ) {
     _resource->setValue(RESOURCE_HEXABLOCK, name, val);
 }
 
