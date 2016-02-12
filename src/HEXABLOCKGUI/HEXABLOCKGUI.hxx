@@ -45,6 +45,7 @@
 #include "HEXABLOCKGUI_OCCSelector.h"
 #include "hexa_base.hxx"
 
+class QDir;
 
 // #include CORBA_CLIENT_HEADER(HEXABLOCK_Gen)  // Abu Juin 2013
 

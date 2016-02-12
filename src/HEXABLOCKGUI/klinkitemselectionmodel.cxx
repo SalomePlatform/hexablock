@@ -19,7 +19,7 @@
     02110-1301, USA.
 */
 
-#include <QtCore/QObject>
+#include <QObject>
 #include "klinkitemselectionmodel.hxx"
 // #include "klinkitemselectionmodel_p.hxx"
 

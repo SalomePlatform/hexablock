@@ -21,7 +21,7 @@
 
 #include <cassert>
 
-
+#include <QDir>
 #include <QInputDialog>
 #include <QIcon>
 #include <QStackedWidget>

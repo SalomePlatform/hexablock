@@ -34,6 +34,7 @@
 #include <QRadioButton>
 #include <QMenu>
 #include <QTimer>
+#include <QVector3D>
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
