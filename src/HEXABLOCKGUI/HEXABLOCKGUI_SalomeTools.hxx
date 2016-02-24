@@ -25,8 +25,8 @@
 #include <SalomeApp_Application.h>
 #include <SALOME_Actor.h>
 #include <SALOME_ListIO.hxx>
-#include <Handle_AIS_InteractiveObject.hxx>
-#include <Handle_AIS_InteractiveContext.hxx>
+#include <AIS_InteractiveObject.hxx>
+#include <AIS_InteractiveContext.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SALOME_Actor.h>
 #include <SVTK_ViewWindow.h>
