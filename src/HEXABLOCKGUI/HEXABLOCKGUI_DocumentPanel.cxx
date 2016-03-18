@@ -32,7 +32,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #ifndef DISABLE_PYCONSOLE
-#include <SalomePyConsole_Console.h>
+#include <PyConsole_Console.h>
 #endif
 #include <SalomeApp_Tools.h>
 
@@ -5887,7 +5887,7 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
     								                                          .arg( _fact->text() );
 
     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-    SalomePyConsole_Console* pyConsole = app->pythonConsole();
+    PyConsole_Console* pyConsole = app->pythonConsole();
 
     if ( pyConsole )
         pyConsole->exec( command );
