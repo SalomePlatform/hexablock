@@ -42,8 +42,8 @@ site:
 
   <http://www.salome-platform.org/downloads/license/>
 
-Note: SALOME HexaBlock module needs SALOME KERNEL, SALOME GUI, SALOME Geometry and
-SALOME Mesh as pre-requisites.
+Note: SALOME HexaBlock module needs SALOME KERNEL, SALOME GUI and SALOME
+Geometry as pre-requisites.
 
 ------------------
 Basic Installation
