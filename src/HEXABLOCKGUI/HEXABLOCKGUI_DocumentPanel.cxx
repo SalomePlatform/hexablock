@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #ifndef DISABLE_PYCONSOLE
-#include <SalomePyConsole_Console.h>
+#include <PyConsole_Console.h>
 #endif
 #include <SalomeApp_Tools.h>
 
@@ -5887,7 +5887,7 @@ bool ComputeMeshDialog::apply(QModelIndex& result)
     								                                          .arg( _fact->text() );
 
     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() );
-    SalomePyConsole_Console* pyConsole = app->pythonConsole();
+    PyConsole_Console* pyConsole = app->pythonConsole();
 
     if ( pyConsole )
         pyConsole->exec( command );
