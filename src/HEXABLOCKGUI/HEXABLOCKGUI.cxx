@@ -1987,7 +1987,6 @@ void HEXABLOCKGUI::showDockWidgets(bool isVisible)
     DEBTRACE("HEXABLOCKGUI::showDockWidgets " << isVisible);
 
     if (_dwObjectBrowser) _dwObjectBrowser->setVisible(isVisible);
-    if (_dwObjectBrowser) _dwObjectBrowser->toggleViewAction()->setVisible(isVisible);
 
     if (_dwPattern) _dwPattern->setVisible(isVisible);
     if (_dwPattern) _dwPattern->toggleViewAction()->setVisible(isVisible);
