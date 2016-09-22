@@ -5,7 +5,7 @@
     <name>HEXABLOCK::GUI::ComputeMeshDialog</name>
     <message>
       <source>Compute mesh</source>
-      <translation type="unfinished">メッシュの生成</translation>
+      <translation>メッシュの生成</translation>
     </message>
   </context>
   <context>
@@ -23,7 +23,7 @@
     <name>HEXABLOCK::GUI::CylinderDialog</name>
     <message>
       <source>Cylinder Information</source>
-      <translation type="unfinished">シリンダー情報</translation>
+      <translation>シリンダー情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -169,7 +169,7 @@
     <name>HEXABLOCK::GUI::EdgeDialog</name>
     <message>
       <source>Edge Information</source>
-      <translation type="unfinished">エッジ情報</translation>
+      <translation>エッジ情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -184,15 +184,15 @@
     <name>HEXABLOCK::GUI::GroupDialog</name>
     <message>
       <source>Group Construction</source>
-      <translation type="unfinished">グループの作成</translation>
+      <translation>グループの作成</translation>
     </message>
     <message>
       <source>Group Modification</source>
-      <translation type="unfinished">グループの編集</translation>
+      <translation>グループの編集</translation>
     </message>
     <message>
       <source>Group Information</source>
-      <translation type="unfinished">グループ情報</translation>
+      <translation>グループ情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -271,19 +271,19 @@
     </message>
     <message>
       <source>Close</source>
-      <translation type="unfinished">閉じる</translation>
+      <translation>閉じる</translation>
     </message>
     <message>
       <source>Help</source>
-      <translation type="unfinished">ヘルプ</translation>
+      <translation>ヘルプ</translation>
     </message>
     <message>
       <source>Apply And Close</source>
-      <translation type="unfinished">適用して閉じる</translation>
+      <translation>適用して閉じる</translation>
     </message>
     <message>
       <source>Apply</source>
-      <translation type="unfinished">適用</translation>
+      <translation>適用</translation>
     </message>
     <message>
       <source>HEXA_INFO</source>
@@ -296,14 +296,14 @@
     <message>
       <source>%1: Bad type selected
 Please select a %2.</source>
-      <translation type="unfinished">%1: 悪いタイプが選択されました．%2を選択してください．</translation>
+      <translation>%1: 悪いタイプが選択されました．%2を選択してください．</translation>
     </message>
   </context>
   <context>
     <name>HEXABLOCK::GUI::HexaDialog</name>
     <message>
       <source>Hexahedron Information</source>
-      <translation type="unfinished">六面体情報</translation>
+      <translation>六面体情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -329,11 +329,11 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::LawDialog</name>
     <message>
       <source>Law Construction</source>
-      <translation type="unfinished">法則の作成</translation>
+      <translation>法則の作成</translation>
     </message>
     <message>
       <source>Law Modification</source>
-      <translation type="unfinished">法則の修正</translation>
+      <translation>法則の修正</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -447,155 +447,155 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::MyBasicGUI_PointDlg</name>
     <message>
       <source>ICON_DLG_POINT</source>
-      <translation type="unfinished">point2.png</translation>
+      <translation>point2.png</translation>
     </message>
     <message>
       <source>ICON_DLG_POINT_EDGE</source>
-      <translation type="unfinished">pointonedge.png</translation>
+      <translation>pointonedge.png</translation>
     </message>
     <message>
       <source>ICON_SELECT</source>
-      <translation type="unfinished">select1.png</translation>
+      <translation>select1.png</translation>
     </message>
     <message>
       <source>ICON_DLG_POINT_REF</source>
-      <translation type="unfinished">point3.png</translation>
+      <translation>point3.png</translation>
     </message>
     <message>
       <source>ICON_DLG_POINT_LINES</source>
-      <translation type="unfinished">point_line_intersection.png</translation>
+      <translation>point_line_intersection.png</translation>
     </message>
     <message>
       <source>ICON_DLG_POINT_FACE</source>
-      <translation type="unfinished">pointonface.png</translation>
+      <translation>pointonface.png</translation>
     </message>
     <message>
       <source>ICO_LINE</source>
-      <translation type="unfinished">line.png</translation>
+      <translation>line.png</translation>
     </message>
     <message>
       <source>ICO_WIRE</source>
-      <translation type="unfinished">build_wire.png</translation>
+      <translation>build_wire.png</translation>
     </message>
     <message>
       <source>Vertex Association</source>
-      <translation type="unfinished">頂点の関連付け</translation>
+      <translation>頂点の関連付け</translation>
     </message>
     <message>
       <source>GEOM_POINTS</source>
-      <translation type="unfinished">点</translation>
+      <translation>点</translation>
     </message>
     <message>
       <source>GEOM_PARAM_VALUE</source>
-      <translation type="unfinished">パラメータ値</translation>
+      <translation>パラメータ値</translation>
     </message>
     <message>
       <source>GEOM_LENGTH_VALUE</source>
-      <translation type="unfinished">長さの値</translation>
+      <translation>長さの値</translation>
     </message>
     <message>
       <source>GEOM_COORD_VALUE</source>
-      <translation type="unfinished">座標値</translation>
+      <translation>座標値</translation>
     </message>
     <message>
       <source>GEOM_COORDINATES</source>
-      <translation type="unfinished">座標</translation>
+      <translation>座標</translation>
     </message>
     <message>
       <source>GEOM_X</source>
-      <translation type="unfinished">X</translation>
+      <translation>X</translation>
     </message>
     <message>
       <source>GEOM_Y</source>
-      <translation type="unfinished">Y</translation>
+      <translation>Y</translation>
     </message>
     <message>
       <source>GEOM_Z</source>
-      <translation type="unfinished">Z</translation>
+      <translation>Z</translation>
     </message>
     <message>
       <source>GEOM_POINT_ON_EDGE</source>
-      <translation type="unfinished">エッジ上の点</translation>
+      <translation>エッジ上の点</translation>
     </message>
     <message>
       <source>GEOM_EDGE</source>
-      <translation type="unfinished">エッジ</translation>
+      <translation>エッジ</translation>
     </message>
     <message>
       <source>GEOM_START_POINT</source>
-      <translation type="unfinished">始点</translation>
+      <translation>始点</translation>
     </message>
     <message>
       <source>GEOM_PARAMETER</source>
-      <translation type="unfinished">パラメータ</translation>
+      <translation>パラメータ</translation>
     </message>
     <message>
       <source>GEOM_POINT_ON_FACE</source>
-      <translation type="unfinished">面上の点</translation>
+      <translation>面上の点</translation>
     </message>
     <message>
       <source>GEOM_FACE</source>
-      <translation type="unfinished">面</translation>
+      <translation>面</translation>
     </message>
     <message>
       <source>GEOM_UPARAMETER</source>
-      <translation type="unfinished">U パラメーター:</translation>
+      <translation>U パラメーター:</translation>
     </message>
     <message>
       <source>GEOM_VPARAMETER</source>
-      <translation type="unfinished">V パラメーター:</translation>
+      <translation>V パラメーター:</translation>
     </message>
     <message>
       <source>GEOM_REF_POINT</source>
-      <translation type="unfinished">参照点</translation>
+      <translation>参照点</translation>
     </message>
     <message>
       <source>GEOM_POINT</source>
-      <translation type="unfinished">点</translation>
+      <translation>点</translation>
     </message>
     <message>
       <source>GEOM_DX</source>
-      <translation type="unfinished">Dx</translation>
+      <translation>Dx</translation>
     </message>
     <message>
       <source>GEOM_DY</source>
-      <translation type="unfinished">Dy</translation>
+      <translation>Dy</translation>
     </message>
     <message>
       <source>GEOM_DZ</source>
-      <translation type="unfinished">Dz</translation>
+      <translation>Dz</translation>
     </message>
     <message>
       <source>GEOM_LINE_INTERSECTION</source>
-      <translation type="unfinished">交差点</translation>
+      <translation>交差点</translation>
     </message>
     <message>
       <source>GEOM_LINE1</source>
-      <translation type="unfinished">ライン1</translation>
+      <translation>ライン1</translation>
     </message>
     <message>
       <source>GEOM_LINE2</source>
-      <translation type="unfinished">ライン2</translation>
+      <translation>ライン2</translation>
     </message>
     <message>
       <source>GEOM_COORDINATES_RES</source>
-      <translation type="unfinished">結果の座標</translation>
+      <translation>結果の座標</translation>
     </message>
     <message>
       <source>GEOM_VERTEX</source>
-      <translation type="unfinished">頂点</translation>
+      <translation>頂点</translation>
     </message>
     <message>
       <source>GEOM_COMPOUND</source>
-      <translation type="unfinished">複合物</translation>
+      <translation>複合物</translation>
     </message>
     <message>
       <source>GEOM_LENGTH</source>
-      <translation type="unfinished">長さ:</translation>
+      <translation>長さ:</translation>
     </message>
     <message>
       <source>HEXA_INFO</source>
-      <translation type="unfinished">六面体</translation>
+      <translation>六面体</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -607,7 +607,7 @@ Please select a %2.</source>
     </message>
     <message>
       <source>Bad selection type: please select a %1</source>
-      <translation type="unfinished">選択方法に問題あり: %1 を選択してください．</translation>
+      <translation>選択方法に問題あり: %1 を選択してください．</translation>
     </message>
   </context>
   <context>
@@ -625,7 +625,7 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::PerformTransformationDialog</name>
     <message>
       <source>ERR_ERROR</source>
-      <translation type="unfinished">エラー</translation>
+      <translation>エラー</translation>
     </message>
     <message>
       <source>CANNOT PERFORM TRANSFORMATION</source>
@@ -636,7 +636,7 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::PipeDialog</name>
     <message>
       <source>Pipe Information</source>
-      <translation type="unfinished">パイプ情報</translation>
+      <translation>パイプ情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -662,15 +662,15 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::PropagationDialog</name>
     <message>
       <source>Propagation Information</source>
-      <translation type="unfinished">伝搬に関する情報</translation>
+      <translation>伝搬に関する情報</translation>
     </message>
     <message>
       <source>Propagation Modification</source>
-      <translation type="unfinished">伝搬の変更</translation>
+      <translation>伝搬の変更</translation>
     </message>
     <message>
       <source>Propagation Setting</source>
-      <translation type="unfinished">伝搬パラメータ</translation>
+      <translation>伝搬パラメータ</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -733,7 +733,7 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::VectorDialog</name>
     <message>
       <source>Vector Information</source>
-      <translation type="unfinished">ベクトル情報</translation>
+      <translation>ベクトル情報</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -748,11 +748,11 @@ Please select a %2.</source>
     <name>HEXABLOCK::GUI::VertexDialog</name>
     <message>
       <source>Vertex Construction</source>
-      <translation type="unfinished">頂点の作成</translation>
+      <translation>頂点の作成</translation>
     </message>
     <message>
       <source>Vertex Modification</source>
-      <translation type="unfinished">頂点の修正</translation>
+      <translation>頂点の修正</translation>
     </message>
     <message>
       <source>ERR_ERROR</source>
@@ -771,235 +771,235 @@ Please select a %2.</source>
     </message>
     <message>
       <source>Create a new document</source>
-      <translation type="unfinished">ドキュメントを作成します。</translation>
+      <translation>ドキュメントを作成します。</translation>
     </message>
     <message>
       <source>ICON_NEW_DOCUMENT</source>
-      <translation type="unfinished">new_document.png</translation>
+      <translation>new_document.png</translation>
     </message>
     <message>
       <source>New Document</source>
-      <translation type="unfinished">新規作成</translation>
+      <translation>新規作成</translation>
     </message>
     <message>
       <source>Load a document</source>
-      <translation type="unfinished">ドキュメントを開く</translation>
+      <translation>ドキュメントを開く</translation>
     </message>
     <message>
       <source>ICON_LOAD_DOCUMENT</source>
-      <translation type="unfinished">load_document.png</translation>
+      <translation>load_document.png</translation>
     </message>
     <message>
       <source>Load Document</source>
-      <translation type="unfinished">開く</translation>
+      <translation>開く</translation>
     </message>
     <message>
       <source>Save the document</source>
-      <translation type="unfinished">ドキュメントを保存します。</translation>
+      <translation>ドキュメントを保存します。</translation>
     </message>
     <message>
       <source>ICON_SAVE_DOCUMENT</source>
-      <translation type="unfinished">save_document.png</translation>
+      <translation>save_document.png</translation>
     </message>
     <message>
       <source>Save Document</source>
-      <translation type="unfinished">保存</translation>
+      <translation>保存</translation>
     </message>
     <message>
       <source>Create a vertex</source>
-      <translation type="unfinished">頂点を作成します。</translation>
+      <translation>頂点を作成します。</translation>
     </message>
     <message>
       <source>ICON_ADD_VERTEX</source>
-      <translation type="unfinished">add_vertex.png</translation>
+      <translation>add_vertex.png</translation>
     </message>
     <message>
       <source>Add Vertex</source>
-      <translation type="unfinished">頂点追加</translation>
+      <translation>頂点追加</translation>
     </message>
     <message>
       <source>Create a new vertex</source>
-      <translation type="unfinished">新規頂点作成</translation>
+      <translation>新規頂点作成</translation>
     </message>
     <message>
       <source>Create an edge</source>
-      <translation type="unfinished">エッジ作成</translation>
+      <translation>エッジ作成</translation>
     </message>
     <message>
       <source>ICON_ADD_EDGE</source>
-      <translation type="unfinished">add_edge.png</translation>
+      <translation>add_edge.png</translation>
     </message>
     <message>
       <source>Add Edge</source>
-      <translation type="unfinished">エッジの追加</translation>
+      <translation>エッジの追加</translation>
     </message>
     <message>
       <source>Create a new edge</source>
-      <translation type="unfinished">新規エッジ作成</translation>
+      <translation>新規エッジ作成</translation>
     </message>
     <message>
       <source>Create a quadrangle</source>
-      <translation type="unfinished">四角形の作成</translation>
+      <translation>四角形の作成</translation>
     </message>
     <message>
       <source>ICON_ADD_QUAD</source>
-      <translation type="unfinished">add_quad.png</translation>
+      <translation>add_quad.png</translation>
     </message>
     <message>
       <source>Add Quadrangle</source>
-      <translation type="unfinished">四角形の追加</translation>
+      <translation>四角形の追加</translation>
     </message>
     <message>
       <source>Create a new quadrangle</source>
-      <translation type="unfinished">新しい四角形を作成します。</translation>
+      <translation>新しい四角形を作成します。</translation>
     </message>
     <message>
       <source>Create an hexahedron</source>
-      <translation type="unfinished">六面体の作成</translation>
+      <translation>六面体の作成</translation>
     </message>
     <message>
       <source>ICON_ADD_HEXA</source>
-      <translation type="unfinished">add_hexa.png</translation>
+      <translation>add_hexa.png</translation>
     </message>
     <message>
       <source>Add Hexahedron</source>
-      <translation type="unfinished">六面体の追加</translation>
+      <translation>六面体の追加</translation>
     </message>
     <message>
       <source>Create a new hexahedron</source>
-      <translation type="unfinished">新規六面体の作成</translation>
+      <translation>新規六面体の作成</translation>
     </message>
     <message>
       <source>Create a vector</source>
-      <translation type="unfinished">ベクトル作成</translation>
+      <translation>ベクトル作成</translation>
     </message>
     <message>
       <source>ICON_ADD_VECTOR</source>
-      <translation type="unfinished">add_vector.png</translation>
+      <translation>add_vector.png</translation>
     </message>
     <message>
       <source>Add Vector</source>
-      <translation type="unfinished">ベクトル追加</translation>
+      <translation>ベクトル追加</translation>
     </message>
     <message>
       <source>Create a new vector</source>
-      <translation type="unfinished">新規ベクトル作成</translation>
+      <translation>新規ベクトル作成</translation>
     </message>
     <message>
       <source>Create a cylinder</source>
-      <translation type="unfinished">シリンダー作成</translation>
+      <translation>シリンダー作成</translation>
     </message>
     <message>
       <source>ICON_ADD_CYLINDER</source>
-      <translation type="unfinished">add_cylinder.png</translation>
+      <translation>add_cylinder.png</translation>
     </message>
     <message>
       <source>Add Cylinder</source>
-      <translation type="unfinished">シリンダー追加</translation>
+      <translation>シリンダー追加</translation>
     </message>
     <message>
       <source>Create a new cylinder</source>
-      <translation type="unfinished">新規シリンダー作成</translation>
+      <translation>新規シリンダー作成</translation>
     </message>
     <message>
       <source>Create a pipe</source>
-      <translation type="unfinished">パイプ作成</translation>
+      <translation>パイプ作成</translation>
     </message>
     <message>
       <source>ICON_ADD_PIPE</source>
-      <translation type="unfinished">add_pipe.png</translation>
+      <translation>add_pipe.png</translation>
     </message>
     <message>
       <source>Add Pipe</source>
-      <translation type="unfinished">パイプ追加</translation>
+      <translation>パイプ追加</translation>
     </message>
     <message>
       <source>Create a new pipe</source>
-      <translation type="unfinished">新規パイプ作成</translation>
+      <translation>新規パイプ作成</translation>
     </message>
     <message>
       <source>Make a grid</source>
-      <translation type="unfinished">グリッド作成</translation>
+      <translation>グリッド作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_GRID</source>
-      <translation type="unfinished">make_grid.png</translation>
+      <translation>make_grid.png</translation>
     </message>
     <message>
       <source>Make Grid</source>
-      <translation type="unfinished">グリッド作成</translation>
+      <translation>グリッド作成</translation>
     </message>
     <message>
       <source>Make a cylinder</source>
-      <translation type="unfinished">シリンダ作成</translation>
+      <translation>シリンダ作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_CYLINDER</source>
-      <translation type="unfinished">make_cylinder.png</translation>
+      <translation>make_cylinder.png</translation>
     </message>
     <message>
       <source>Make Cylinder</source>
-      <translation type="unfinished">シリンダ作成</translation>
+      <translation>シリンダ作成</translation>
     </message>
     <message>
       <source>Make a pipe</source>
-      <translation type="unfinished">パイプ作成</translation>
+      <translation>パイプ作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_PIPE</source>
-      <translation type="unfinished">make_pipe.png</translation>
+      <translation>make_pipe.png</translation>
     </message>
     <message>
       <source>Make Pipe</source>
-      <translation type="unfinished">パイプ作成</translation>
+      <translation>パイプ作成</translation>
     </message>
     <message>
       <source>Make cylinders</source>
-      <translation type="unfinished">シリンダ作成</translation>
+      <translation>シリンダ作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_CYLINDERS</source>
-      <translation type="unfinished">make_cylinders.png</translation>
+      <translation>make_cylinders.png</translation>
     </message>
     <message>
       <source>Make Cylinders</source>
-      <translation type="unfinished">シリンダ作成</translation>
+      <translation>シリンダ作成</translation>
     </message>
     <message>
       <source>Make pipes</source>
-      <translation type="unfinished">パイプ作成</translation>
+      <translation>パイプ作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_PIPES</source>
-      <translation type="unfinished">make_pipes.png</translation>
+      <translation>make_pipes.png</translation>
     </message>
     <message>
       <source>Make Pipes</source>
-      <translation type="unfinished">パイプ作成</translation>
+      <translation>パイプ作成</translation>
     </message>
     <message>
       <source>Make an hemisphere</source>
-      <translation type="unfinished">半球の作成</translation>
+      <translation>半球の作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_HEMISPHERE</source>
-      <translation type="unfinished">make_hemisphere.png</translation>
+      <translation>make_hemisphere.png</translation>
     </message>
     <message>
       <source>Make Hemisphere</source>
-      <translation type="unfinished">半球の作成</translation>
+      <translation>半球の作成</translation>
     </message>
     <message>
       <source>Remove hexahedra</source>
-      <translation type="unfinished">六面体の削除</translation>
+      <translation>六面体の削除</translation>
     </message>
     <message>
       <source>ICON_REMOVE_HEXA</source>
-      <translation type="unfinished">remove_hexa.png</translation>
+      <translation>remove_hexa.png</translation>
     </message>
     <message>
       <source>Remove Hexahedra</source>
-      <translation type="unfinished">六面体の削除</translation>
+      <translation>六面体の削除</translation>
     </message>
     <message>
       <source>Prism quadrangles</source>
@@ -1007,7 +1007,7 @@ Please select a %2.</source>
     </message>
     <message>
       <source>ICON_PRISM_QUAD</source>
-      <translation type="unfinished">prism_quad.png</translation>
+      <translation>prism_quad.png</translation>
     </message>
     <message>
       <source>Prism Quadrangles</source>
@@ -1015,235 +1015,235 @@ Please select a %2.</source>
     </message>
     <message>
       <source>Join quadrangles</source>
-      <translation type="unfinished">四角形の結合</translation>
+      <translation>四角形の結合</translation>
     </message>
     <message>
       <source>ICON_JOIN_QUAD</source>
-      <translation type="unfinished">join_quad.png</translation>
+      <translation>join_quad.png</translation>
     </message>
     <message>
       <source>Join Quadrangles</source>
-      <translation type="unfinished">四角形の結合</translation>
+      <translation>四角形の結合</translation>
     </message>
     <message>
       <source>Join quadrangles with hexahedra</source>
-      <translation type="unfinished">四角形、六面体による参加します。</translation>
+      <translation>四角形、六面体による参加します。</translation>
     </message>
     <message>
       <source>Merge</source>
-      <translation type="unfinished">マージ</translation>
+      <translation>マージ</translation>
     </message>
     <message>
       <source>ICON_MERGE</source>
-      <translation type="unfinished">join_quad.png</translation>
+      <translation>join_quad.png</translation>
     </message>
     <message>
       <source>Disconnect</source>
-      <translation type="unfinished">切断</translation>
+      <translation>切断</translation>
     </message>
     <message>
       <source>ICON_DISCONNECT</source>
-      <translation type="unfinished">disconnect.png</translation>
+      <translation>disconnect.png</translation>
     </message>
     <message>
       <source>Disconnect edges, vertexes or quadrangles</source>
-      <translation type="unfinished">エッジ、頂点または四角形を切断します。</translation>
+      <translation>エッジ、頂点または四角形を切断します。</translation>
     </message>
     <message>
       <source>Cut edge</source>
-      <translation type="unfinished">エッジのカット</translation>
+      <translation>エッジのカット</translation>
     </message>
     <message>
       <source>ICON_CUT_EDGE</source>
-      <translation type="unfinished">cut_edge.png</translation>
+      <translation>cut_edge.png</translation>
     </message>
     <message>
       <source>Cut Edge</source>
-      <translation type="unfinished">エッジのカット</translation>
+      <translation>エッジのカット</translation>
     </message>
     <message>
       <source>Make transformation</source>
-      <translation type="unfinished">変換の作成</translation>
+      <translation>変換の作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_TRANSFORMATION</source>
-      <translation type="unfinished">make_transformation.png</translation>
+      <translation>make_transformation.png</translation>
     </message>
     <message>
       <source>Make Transformation</source>
-      <translation type="unfinished">変換の作成</translation>
+      <translation>変換の作成</translation>
     </message>
     <message>
       <source>Make symmetry</source>
-      <translation type="unfinished">対称形状の作成</translation>
+      <translation>対称形状の作成</translation>
     </message>
     <message>
       <source>ICON_MAKE_SYMMETRY</source>
-      <translation type="unfinished">make_symmetry.png</translation>
+      <translation>make_symmetry.png</translation>
     </message>
     <message>
       <source>Make Symmetry</source>
-      <translation type="unfinished">対称形状の作成</translation>
+      <translation>対称形状の作成</translation>
     </message>
     <message>
       <source>Perform transformation</source>
-      <translation type="unfinished">アイテムを有効に</translation>
+      <translation>アイテムを有効に</translation>
     </message>
     <message>
       <source>ICON_PERFORM_TRANSFORMATION</source>
-      <translation type="unfinished">perform_transformation.png</translation>
+      <translation>perform_transformation.png</translation>
     </message>
     <message>
       <source>Perform Transformation</source>
-      <translation type="unfinished">要素の変換</translation>
+      <translation>要素の変換</translation>
     </message>
     <message>
       <source>Perform symmetry</source>
-      <translation type="unfinished">対称形状の適用</translation>
+      <translation>対称形状の適用</translation>
     </message>
     <message>
       <source>ICON_PERFORM_SYMMETRY</source>
-      <translation type="unfinished">perform_symmetry.png</translation>
+      <translation>perform_symmetry.png</translation>
     </message>
     <message>
       <source>Perform Symmetry</source>
-      <translation type="unfinished">対称形状の適用</translation>
+      <translation>対称形状の適用</translation>
     </message>
     <message>
       <source>Replace hexahedron</source>
-      <translation type="unfinished">六面体の置換</translation>
+      <translation>六面体の置換</translation>
     </message>
     <message>
       <source>ICON_REPLACE_HEXA</source>
-      <translation type="unfinished">replace_hexa.png</translation>
+      <translation>replace_hexa.png</translation>
     </message>
     <message>
       <source>Replace Hexahedron</source>
-      <translation type="unfinished">直方体の置換</translation>
+      <translation>直方体の置換</translation>
     </message>
     <message>
       <source>Quad revolution</source>
-      <translation type="unfinished">四角形の改良</translation>
+      <translation>四角形の改良</translation>
     </message>
     <message>
       <source>ICON_QUAD_REVOLUTION</source>
-      <translation type="unfinished">quad_revolution.png</translation>
+      <translation>quad_revolution.png</translation>
     </message>
     <message>
       <source>Quad Revolution</source>
-      <translation type="unfinished">四角形の改良</translation>
+      <translation>四角形の改良</translation>
     </message>
     <message>
       <source>Make vertex association</source>
-      <translation type="unfinished">頂点の関連付け</translation>
+      <translation>頂点の関連付け</translation>
     </message>
     <message>
       <source>ICON_VERTEX_ASSOCIATION</source>
-      <translation type="unfinished">assoc_vertex.png</translation>
+      <translation>assoc_vertex.png</translation>
     </message>
     <message>
       <source>Make Vertex association</source>
-      <translation type="unfinished">頂点の関連付け</translation>
+      <translation>頂点の関連付け</translation>
     </message>
     <message>
       <source>Make edge association</source>
-      <translation type="unfinished">エッジの関連付け</translation>
+      <translation>エッジの関連付け</translation>
     </message>
     <message>
       <source>ICON_EDGE_ASSOCIATION</source>
-      <translation type="unfinished">assoc_edge.png</translation>
+      <translation>assoc_edge.png</translation>
     </message>
     <message>
       <source>Make Edge Association</source>
-      <translation type="unfinished">エッジの関連付け</translation>
+      <translation>エッジの関連付け</translation>
     </message>
     <message>
       <source>Make quad association</source>
-      <translation type="unfinished">四角形の准</translation>
+      <translation>四角形の准</translation>
     </message>
     <message>
       <source>ICON_QUAD_ASSOCIATION</source>
-      <translation type="unfinished">assoc_quad.png</translation>
+      <translation>assoc_quad.png</translation>
     </message>
     <message>
       <source>Make Quad Association</source>
-      <translation type="unfinished">四角形の関連付け</translation>
+      <translation>四角形の関連付け</translation>
     </message>
     <message>
       <source>Add a group</source>
-      <translation type="unfinished">グループの追加</translation>
+      <translation>グループの追加</translation>
     </message>
     <message>
       <source>ICON_ADD_GROUP</source>
-      <translation type="unfinished">add_group.png</translation>
+      <translation>add_group.png</translation>
     </message>
     <message>
       <source>Add Group</source>
-      <translation type="unfinished">グループの追加</translation>
+      <translation>グループの追加</translation>
     </message>
     <message>
       <source>Remove a group</source>
-      <translation type="unfinished">グループの削除</translation>
+      <translation>グループの削除</translation>
     </message>
     <message>
       <source>ICON_REMOVE_GROUP</source>
-      <translation type="unfinished">remove_group.png</translation>
+      <translation>remove_group.png</translation>
     </message>
     <message>
       <source>Remove Group</source>
-      <translation type="unfinished">グループの削除</translation>
+      <translation>グループの削除</translation>
     </message>
     <message>
       <source>Add a law</source>
-      <translation type="unfinished">法則の追加</translation>
+      <translation>法則の追加</translation>
     </message>
     <message>
       <source>ICON_ADD_LAW</source>
-      <translation type="unfinished">add_law.png</translation>
+      <translation>add_law.png</translation>
     </message>
     <message>
       <source>Add Law</source>
-      <translation type="unfinished">法則の追加</translation>
+      <translation>法則の追加</translation>
     </message>
     <message>
       <source>Remove a law</source>
-      <translation type="unfinished">法則の削除</translation>
+      <translation>法則の削除</translation>
     </message>
     <message>
       <source>ICON_REMOVE_LAW</source>
-      <translation type="unfinished">remove_law.png</translation>
+      <translation>remove_law.png</translation>
     </message>
     <message>
       <source>Remove Law</source>
-      <translation type="unfinished">法則の削除</translation>
+      <translation>法則の削除</translation>
     </message>
     <message>
       <source>Set propagation</source>
-      <translation type="unfinished">伝搬設定</translation>
+      <translation>伝搬設定</translation>
     </message>
     <message>
       <source>ICON_SET_PROPAGATION</source>
-      <translation type="unfinished">set_propagation.png</translation>
+      <translation>set_propagation.png</translation>
     </message>
     <message>
       <source>Set Propagation</source>
-      <translation type="unfinished">伝搬設定</translation>
+      <translation>伝搬設定</translation>
     </message>
     <message>
       <source>Compute mesh</source>
-      <translation type="unfinished">メッシュの生成</translation>
+      <translation>メッシュの生成</translation>
     </message>
     <message>
       <source>ICON_COMPUTE_MESH</source>
-      <translation type="unfinished">compute_mesh.png</translation>
+      <translation>compute_mesh.png</translation>
     </message>
     <message>
       <source>Compute Mesh</source>
-      <translation type="unfinished">メッシュの生成</translation>
+      <translation>メッシュの生成</translation>
     </message>
     <message>
       <source>MEN_FILE</source>
-      <translation type="unfinished">ファイル(&amp;F)</translation>
+      <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
       <source>HEXABLOCK</source>
@@ -1251,39 +1251,39 @@ Please select a %2.</source>
     </message>
     <message>
       <source>Document</source>
-      <translation type="unfinished">ドキュメント</translation>
+      <translation>ドキュメント</translation>
     </message>
     <message>
       <source>Model</source>
-      <translation type="unfinished">モデル</translation>
+      <translation>モデル</translation>
     </message>
     <message>
       <source>Association</source>
-      <translation type="unfinished">関連付け</translation>
+      <translation>関連付け</translation>
     </message>
     <message>
       <source>Groups</source>
-      <translation type="unfinished">グループ</translation>
+      <translation>グループ</translation>
     </message>
     <message>
       <source>Mesh</source>
-      <translation type="unfinished">メッシュ</translation>
+      <translation>メッシュ</translation>
     </message>
     <message>
       <source>HexaBlock Toolbar</source>
-      <translation type="unfinished">HexaBlock ツールバー</translation>
+      <translation>HexaBlock ツールバー</translation>
     </message>
     <message>
       <source>Open HexaBlock Document</source>
-      <translation type="unfinished">HexaBlock ドキュメントを開く</translation>
+      <translation>HexaBlock ドキュメントを開く</translation>
     </message>
     <message>
       <source>XML-Files (*.xml);;All Files (*)</source>
-      <translation type="unfinished">XML ファイル (*.xml);すべてのファイル (*)</translation>
+      <translation>XML ファイル (*.xml);すべてのファイル (*)</translation>
     </message>
     <message>
       <source>Save HexaBlock Document</source>
-      <translation type="unfinished">HexaBlock ドキュメントの保存</translation>
+      <translation>HexaBlock ドキュメントの保存</translation>
     </message>
     <message>
       <source>CANNOT REMOVE %1</source>
@@ -1385,63 +1385,63 @@ Please select a %2.</source>
     </message>
     <message>
       <source>WRN_STUDY_LOCKED</source>
-      <translation type="unfinished">現在のStudyはロックされています</translation>
+      <translation>現在のStudyはロックされています</translation>
     </message>
     <message>
       <source>GEOM_PRP_DONE</source>
-      <translation type="unfinished">行う操作</translation>
+      <translation>行う操作</translation>
     </message>
     <message>
       <source>GEOM_PRP_ABORT</source>
-      <translation type="unfinished">操作は中断されました</translation>
+      <translation>操作は中断されました</translation>
     </message>
     <message>
       <source>GEOM_ERROR_STATUS</source>
-      <translation type="unfinished">エラーステータス</translation>
+      <translation>エラーステータス</translation>
     </message>
     <message>
       <source>GEOM_INCORRECT_INPUT</source>
-      <translation type="unfinished">不正な入力データ ！</translation>
+      <translation>不正な入力データ ！</translation>
     </message>
     <message>
       <source>GEOM_ERROR</source>
-      <translation type="unfinished">エラー</translation>
+      <translation>エラー</translation>
     </message>
     <message>
       <source>GEOM_VERTEX</source>
-      <translation type="unfinished">Vertex</translation>
+      <translation>Vertex</translation>
     </message>
     <message>
       <source>GEOM_EDGE</source>
-      <translation type="unfinished">Edge</translation>
+      <translation>Edge</translation>
     </message>
     <message>
       <source>GEOM_WIRE</source>
-      <translation type="unfinished">Wire</translation>
+      <translation>Wire</translation>
     </message>
     <message>
       <source>GEOM_FACE</source>
-      <translation type="unfinished">Face</translation>
+      <translation>Face</translation>
     </message>
     <message>
       <source>GEOM_SHELL</source>
-      <translation type="unfinished">Shell</translation>
+      <translation>Shell</translation>
     </message>
     <message>
       <source>GEOM_SOLID</source>
-      <translation type="unfinished">Solid</translation>
+      <translation>Solid</translation>
     </message>
     <message>
       <source>GEOM_COMPOUNDSOLID</source>
-      <translation type="unfinished">結合ソリッド</translation>
+      <translation>結合ソリッド</translation>
     </message>
     <message>
       <source>GEOM_COMPOUND</source>
-      <translation type="unfinished">結合</translation>
+      <translation>結合</translation>
     </message>
     <message>
       <source>GEOM_PRECISION_HINT</source>
-      <translation type="unfinished">入力値の精度は、ジオメトリのモジュール設定に '%1' パラメーターを使用して調整できます。</translation>
+      <translation>入力値の精度は、ジオメトリのモジュール設定に '%1' パラメーターを使用して調整できます。</translation>
     </message>
   </context>
 </TS>
