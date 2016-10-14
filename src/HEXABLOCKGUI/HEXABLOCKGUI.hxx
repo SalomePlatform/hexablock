@@ -136,7 +136,7 @@ public:
 
   // static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
   static LightApp_SelectionMgr*   selectionMgr();
-  static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
+  static SALOMEDS::Study_var  ClientStudy();
   static ViewType getActiveViewType();
   static HEXABLOCKGUI*  getInstance();
 
@@ -161,7 +161,6 @@ public:
   virtual void setResource(SUIT_ResourceMgr* r);
   virtual void createPreferences();
   virtual void preferencesChanged( const QString& sect, const QString& name );
-  virtual void studyActivated();
 
   ///Returns a new HEXA_NS::Document and it's entry in the study
   std::pair <QString, HEXA_NS::Document*> newHexaDocument();
@@ -247,7 +246,6 @@ protected:
   HEXABLOCK::GUI::VtkDocumentGraphicView* lastVtkDocGView;
 
   HEXABLOCKGUI_Resource* _myresource;
-  static int _oldStudyId;
   // static HEXABLOCK_ORB::HEXABLOCK_Gen_var _hexaEngine;  // Hexa6 TODo
 private slots:
 
