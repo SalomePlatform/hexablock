@@ -136,7 +136,7 @@ public:
 
   // static HEXABLOCK_ORB::HEXABLOCK_Gen_ptr InitHEXABLOCKGen( SalomeApp_Application* );
   static LightApp_SelectionMgr*   selectionMgr();
-  static SALOMEDS::Study_var  ClientStudy();
+  static SALOMEDS::Study_var  getStudyServant();
   static ViewType getActiveViewType();
   static HEXABLOCKGUI*  getInstance();
 

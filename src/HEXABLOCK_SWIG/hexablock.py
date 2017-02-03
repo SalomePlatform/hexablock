@@ -28,12 +28,12 @@ import salome
 salome.salome_init()
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 
 import SMESH
 from salome.smesh import smeshBuilder
-smesh = smeshBuilder.New(salome.myStudy)
+smesh = smeshBuilder.New()
 
 component = hexablock_swig.hex_instance ()
 
@@ -149,7 +149,7 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
 
     geompy.addToStudy(shape, name)
     comp_smesh = salome.lcc.FindOrLoadComponent(container, "SMESH")
-    comp_smesh.init_smesh(study, geomBuilder.geom)
+    comp_smesh.init_smesh(geomBuilder.geom)
     meshexa = comp_smesh.Mesh(shape)
 
     so = "libHexaBlockPluginEngine.so"
@@ -188,8 +188,8 @@ def getFromStudy(entry):
 
 # ==================================================== findOrCreateComponent
 # Find or create HexaBlock Study Component
-def findOrCreateComponent( study, builder ):
-    father = study.FindComponent( moduleName() )
+def findOrCreateComponent( builder ):
+    father = salome.myStudy.FindComponent( moduleName() )
     if father is None:
        father = builder.NewComponent( moduleName() )
        attr = builder.FindOrCreateAttribute( father, "AttributeName" )
@@ -208,7 +208,7 @@ def addToStudy(doc):
 
     study   = salome.myStudy
     builder = study.NewBuilder()
-    father  = findOrCreateComponent( study, builder )
+    father  = findOrCreateComponent( builder )
     name    = doc.getName ()
 
     present = study.FindObjectByName(name, moduleName())

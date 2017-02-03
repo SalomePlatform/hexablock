@@ -32,7 +32,6 @@
 
 #include <SUIT_Session.h>
 
-#include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 
 #include <OCCViewer_ViewWindow.h>
@@ -89,13 +88,12 @@ namespace GUI
 	}
 
 
-	_PTR(Study) GetActiveStudyDocument()
+	_PTR(Study) getStudy()
 	{
-		SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(GetActiveStudy());
-		if (aStudy)
-			return aStudy->studyDS();
-		else
-			return _PTR(Study)();
+      static _PTR(Study) _study;
+        if(!_study)
+          _study = SalomeApp_Application::getStudy();
+      return _study;
 	}
 
 
