@@ -18,7 +18,6 @@
 //
 
 
-
 #include "HEXABLOCKGUI_OccGraphicView.hxx"
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
@@ -42,7 +41,7 @@ OccGraphicView::OccGraphicView( OCCViewer_ViewWindow* view, QWidget* parent ):
     TopoDS_Shape shapeToPreview;
     previewShape = new AIS_Shape(shapeToPreview);
 //    previewShape->SetColor(Quantity_NOC_RED);
-    getContext()->SetColor( previewShape, Quantity_NOC_RED );
+    getContext()->SetColor( previewShape, Quantity_NOC_RED, Standard_True );
 }
 
 void OccGraphicView::setSelectionMode(TopAbs_ShapeEnum mode)
@@ -318,7 +317,7 @@ void OccGraphicView::displayPreview(TopoDS_Shape& shape)
 
     previewShape->Set(shape);
 //    previewShape->SetColor(Quantity_NOC_RED);
-    getContext()->SetColor( previewShape, Quantity_NOC_RED );
+    getContext()->SetColor( previewShape, Quantity_NOC_RED, Standard_True );
     previewShape->Redisplay();
     vf->Repaint();
 }
