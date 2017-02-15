@@ -22,7 +22,7 @@
 INCLUDE_DIRECTORIES(
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
-  ${CAS_INCLUDE_DIRS}
+  ${OpenCASCADE_INCLUDE_DIR}
   ${VTK_INCLUDE_DIRS}
   ${GEOM_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
@@ -33,21 +33,21 @@ INCLUDE_DIRECTORIES(
 # additional preprocessor / compiler flags
 ADD_DEFINITIONS(
   ${KERNEL_DEFINITIONS}
-  ${CAS_DEFINITIONS}
+  ${OpenCASCADE_DEFINITIONS}
   ${BOOST_DEFINITIONS}
 )
 
 # libraries to link to
 SET(_link_LIBRARIES
-  ${CAS_TKBRep}
-  ${CAS_TKPrim}
-  ${CAS_TKG3d}
-  ${CAS_TKG2d}
-  ${CAS_TKTopAlgo}
-  ${CAS_TKGeomBase}
-  ${CAS_TKGeomAlgo}
-  ${CAS_TKBool}
-  ${CAS_TKBO}
+  TKBRep
+  TKPrim
+  TKG3d
+  TKG2d
+  TKTopAlgo
+  TKGeomBase
+  TKGeomAlgo
+  TKBool
+  TKBO
   ${KERNEL_SALOMELocalTrace}
   ${KERNEL_SALOMEBasics}
   ${PYTHON_LIBRARIES}
