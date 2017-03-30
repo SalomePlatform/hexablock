@@ -26,7 +26,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test cylindre..."
+print("test cylindre...")
 doc = hexablock.addDocument()
 
 base = doc.addVertex(0, 0, 0)
@@ -47,4 +47,4 @@ elts = doc.makeCylinder(cyl, vb, nr, na, nl)
 file_name = os.path.join(os.environ['TMP'], 'cylindre.vtk')
 ####  elts.saveVtk(file_name)
 
-print "...test cylindre OK"
+print("...test cylindre OK")

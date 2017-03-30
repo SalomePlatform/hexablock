@@ -68,7 +68,7 @@ def test_revolution () :
     for nx in range (nr) :
         for ny in range (na) :
             cell = grid.getQuadIJ (nx, ny, nl)
-            print " ... cell = ", cell
+            print(" ... cell = ", cell)
             liste.append (cell);
 
     center = doc.addVertex (0, -10, 0);
@@ -94,7 +94,7 @@ def test_prism () :
     for nx in range (nr) :
         for ny in range (na) :
             cell = grid.getQuadIJ (nx, ny, nl)
-            print " ... cell = ", cell
+            print(" ... cell = ", cell)
             liste.append (cell);
 
     axis = doc.addVector (1, 1, 1);
@@ -117,7 +117,7 @@ def test_prism_vec () :
     for nx in range (nr) :
         for ny in range (na) :
             cell = grid.getQuadIJ (nx, ny, nl)
-            print " ... cell = ", cell
+            print(" ... cell = ", cell)
             liste.append (cell);
 
     axis = doc.addVector (1, 1, 1);

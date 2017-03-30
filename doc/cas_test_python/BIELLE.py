@@ -961,34 +961,34 @@ for j in range(N_Propa):
 # Générer des maillages
 #====================================
 
-print  " --- MAILLAGE HEXAHEDRIQUE --- "
+print(" --- MAILLAGE HEXAHEDRIQUE --- ")
 mesh_hexas = hexablock.mesh(doc, "Bielle:hexas")
 
-print "Nombre d hexaedres:"   , mesh_hexas.NbHexas()
-print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
-print "Nombre de segments:"   , mesh_hexas.NbEdges()
-print "Nombre de noeuds:"     , mesh_hexas.NbNodes()
+print("Nombre d hexaedres:"   , mesh_hexas.NbHexas())
+print("Nombre de quadrangles:", mesh_hexas.NbQuadrangles())
+print("Nombre de segments:"   , mesh_hexas.NbEdges())
+print("Nombre de noeuds:"     , mesh_hexas.NbNodes())
 
-print  " --- MAILLAGE QUADRANGULAIRE --- "
+print(" --- MAILLAGE QUADRANGULAIRE --- ")
 mesh_quads = hexablock.mesh(doc, "Bielle:quads", 2)
 
-print "Nombre d hexaedres:"   , mesh_quads.NbHexas()
-print "Nombre de quadrangles:", mesh_quads.NbQuadrangles()
-print "Nombre de segments:"   , mesh_quads.NbEdges()
-print "Nombre de noeuds:"     , mesh_quads.NbNodes()
+print("Nombre d hexaedres:"   , mesh_quads.NbHexas())
+print("Nombre de quadrangles:", mesh_quads.NbQuadrangles())
+print("Nombre de segments:"   , mesh_quads.NbEdges())
+print("Nombre de noeuds:"     , mesh_quads.NbNodes())
 
-print  " --- MAILLAGE 1D --- "
+print(" --- MAILLAGE 1D --- ")
 mesh_edges = hexablock.mesh(doc, "Bielle:edges", 1)
 
-print "Nombre d hexaedres:"   , mesh_edges.NbHexas()
-print "Nombre de quadrangles:", mesh_edges.NbQuadrangles()
-print "Nombre de segments:"   , mesh_edges.NbEdges()
-print "Nombre de noeuds:"     , mesh_edges.NbNodes()
+print("Nombre d hexaedres:"   , mesh_edges.NbHexas())
+print("Nombre de quadrangles:", mesh_edges.NbQuadrangles())
+print("Nombre de segments:"   , mesh_edges.NbEdges())
+print("Nombre de noeuds:"     , mesh_edges.NbNodes())
 
-print  " --- MAILLAGE des sommets --- "
+print(" --- MAILLAGE des sommets --- ")
 mesh_nodes = hexablock.mesh(doc, "Bielle:nodes", 0)
 
-print "Nombre d hexaedres:"   , mesh_nodes.NbHexas()
-print "Nombre de quadrangles:", mesh_nodes.NbQuadrangles()
-print "Nombre de segments:"   , mesh_nodes.NbEdges()
-print "Nombre de noeuds:"     , mesh_nodes.NbNodes()
+print("Nombre d hexaedres:"   , mesh_nodes.NbHexas())
+print("Nombre de quadrangles:", mesh_nodes.NbQuadrangles())
+print("Nombre de segments:"   , mesh_nodes.NbEdges())
+print("Nombre de noeuds:"     , mesh_nodes.NbNodes())

@@ -45,12 +45,12 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     if len(args) != 1:
-        print usage
+        print(usage)
         sys.exit(1)
     
     file_name = os.path.join(os.environ['TMP'], args[0])
 
-    print file_name
+    print(file_name)
     process(file_name)
     
     sys.exit() 

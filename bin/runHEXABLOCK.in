@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright (C) 2009-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ searchFreePort() {
             local myhost=`hostname`
             export OMNIORB_CONFIG=${HOME}/.omniORB_${myhost}_${NSPORT}.cfg
             local initref="NameService=corbaname::"`hostname`":$NSPORT"
-            if [[ `python -c "import CORBA; print CORBA.ORB_ID"` = "omniORB4" ]]; then
+            if [[ `python -c "import CORBA; print(CORBA.ORB_ID)"` = "omniORB4" ]]; then
                 echo "InitRef = $initref" > $OMNIORB_CONFIG
             else
                 echo "ORBInitRef $initref" > $OMNIORB_CONFIG

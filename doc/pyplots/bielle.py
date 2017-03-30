@@ -564,12 +564,12 @@ doc.saveVtk(file_name)
 ## #=================================================
 
 # vertices :
-for key, value in dic_vert_names.iteritems():
+for key, value in list(dic_vert_names.items()):
     geompy.addToStudy(geom_vert_grd[value], key + '_g')
     geompy.addToStudy(geom_vert_pte[value], key + '_p')
 
 # edges :
-for key, value in dic_edge_names.iteritems():
+for key, value in list(dic_edge_names.items()):
     geompy.addToStudy(all_edges_bielle[value], key)
 
 #====================================
@@ -621,7 +621,7 @@ for j in range(doc.countPropagation()):
 # G�n�rer des maillages
 #====================================
 
-print  " --- MAILLAGE HEXAHEDRIQUE --- "
+print(" --- MAILLAGE HEXAHEDRIQUE --- ")
 mesh_hexas = hexablock.mesh(doc)
 
 ## print "Nombre d hexaedres:", mesh_hexas.NbHexas()

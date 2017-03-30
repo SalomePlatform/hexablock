@@ -26,7 +26,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test join..."
+print("test join...")
 doc = hexablock.addDocument()
 
 orig1 = doc.addVertex(0, 0, 0)
@@ -76,4 +76,4 @@ for nh in range(height):
 file_name = os.path.join(os.environ['TMP'], 'joint.vtk')
 ####  elts.saveVtk(file_name)
 
-print "...test join OK"
+print("...test join OK")

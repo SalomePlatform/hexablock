@@ -98,7 +98,7 @@ doc.setShape(bielle)
 # Netoyer les associations implicites du prisme
 # ---------------------------------------------
 
-for i in xrange( prisme.countEdge() ):
+for i in range( prisme.countEdge() ):
   em = prisme.getEdge(i)
   if em != None:
     em.clearAssociation()
@@ -137,14 +137,14 @@ arc(grille_g, 0, 2, 1, ga_ghcd)
 # --------------------------------------
 
 hm = prisme.getHexa(0)
-for i in xrange(0, 4):
+for i in range(0, 4):
   em = hm.getEdge(i+8)
   ga = aretes[ aretes_petit[i] ]
 
   em.addAssociation(ga, 0, 1)
 
 hm = prisme.getHexa(2)
-for i in xrange(0, 4):
+for i in range(0, 4):
   em = hm.getEdge(i+8)
   ga = aretes[ aretes_grand[i] ]
 
@@ -152,13 +152,13 @@ for i in xrange(0, 4):
 # --------------------------------------------------
 
 hm = prisme.getHexa(1)
-for i in xrange(0, 4):
+for i in range(0, 4):
   vm = hm.getVertex(i)
   ga = sommets[ sommets_petit[i] ]
   vm.setAssociation(ga)
 
 hm = prisme.getHexa(2)
-for i in xrange(0, 4):
+for i in range(0, 4):
   vm = hm.getVertex(i)
   ga = sommets[ sommets_grand[i] ]
   vm.setAssociation(ga)
@@ -167,14 +167,14 @@ for i in xrange(0, 4):
 # --------------------------------------
 
 hm = prisme.getHexa(0)
-for i in xrange(0, 4):
+for i in range(0, 4):
   em = hm.getEdge(i+8)
   ga = aretes[ aretes_petit[i] ]
   em.clearAssociation()
   em.addAssociation(ga, 0, 1)
 
 hm = prisme.getHexa(2)
-for i in xrange(0, 4):
+for i in range(0, 4):
   em = hm.getEdge(i+8)
   ga = aretes[ aretes_grand[i] ]
   em.clearAssociation()
@@ -204,9 +204,9 @@ for nro in range (nbedges) :
     edge  = doc.getEdge (nro)
     assos = edge.getAssociations()
     nbass = len (assos)
-    print " ... %d Edge = %s, nb asso = %d" % (nro, edge.getName(), nbass)
+    print(" ... %d Edge = %s, nb asso = %d" % (nro, edge.getName(), nbass))
     for na in range (nbass) :
-        print " ... Asso(", na, ") = ", assos[na]
+        print(" ... Asso(", na, ") = ", assos[na])
 
 
 # Mailler le modèle de bloc
@@ -224,21 +224,21 @@ groupe_contour = doc.addQuadGroup("Contour")
 # Constituer les groupes petit et grand
 # -------------------------------------
 
-for i in xrange(3):
+for i in range(3):
   groupe_petit.addElement( grille_p.getQuadJK(0, i, 0) )
   groupe_grand.addElement( grille_g.getQuadJK(0, i, 0) )
 
 # Constituer les groupes bas et haut
 # ----------------------------------
 
-for i in xrange(3):
+for i in range(3):
   groupe_bas.addElement(  grille_p.getQuadIJ(0, i, 0) )
   groupe_bas.addElement(  grille_g.getQuadIJ(0, i, 0) )
 
   groupe_haut.addElement( grille_p.getQuadIJ(0, i, 1) )
   groupe_haut.addElement( grille_g.getQuadIJ(0, i, 1) )
 
-for i in xrange(3):
+for i in range(3):
   h = prisme.getHexa(i)
   groupe_bas.addElement(  h.getQuad(2) )
   groupe_haut.addElement( h.getQuad(3) )
@@ -246,13 +246,13 @@ for i in xrange(3):
 # Constituer le groupe contour
 # ----------------------------
 
-for i in xrange(2):
+for i in range(2):
   groupe_contour.addElement( grille_p.getQuadJK(1, i, 0) )
 
 for i in [0, 2]:
   groupe_contour.addElement( grille_g.getQuadJK(1, i, 0) )
 
-for i in xrange(3):
+for i in range(3):
   h = prisme.getHexa(i)
 
   groupe_contour.addElement( h.getQuad(4) )
@@ -265,11 +265,11 @@ groupe_petit  = doc.addHexaGroup("Petit")
 groupe_grand  = doc.addHexaGroup("Grand")
 groupe_prisme = doc.addHexaGroup("Prisme")
 
-for i in xrange(3):
+for i in range(3):
   groupe_petit.addElement( grille_p.getHexa(i) )
   groupe_grand.addElement( grille_g.getHexa(i) )
 
-for i in xrange(3):
+for i in range(3):
   groupe_prisme.addElement( prisme.getHexa(i) )
 
 # Mailler le modèle de bloc avec association

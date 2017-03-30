@@ -76,5 +76,5 @@ def printMessage () :
        return
     for ni in range (nl) :
         mess = hexa.getMessageLine (ni)
-        print mess
+        print(mess)
 
