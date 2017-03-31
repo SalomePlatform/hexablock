@@ -45,9 +45,9 @@ for nro in range(doc.countPropagation()):
     for edge in edges:
 # test impossible en python car impossible de recuperer le nom des vertex
         if edge.getWay():
-            print("( ", edge.getVertex(0).name, ",", edge.getVertex(1).name, " )")
+            print(("( ", edge.getVertex(0).name, ",", edge.getVertex(1).name, " )"))
         else:
-            print("( ", edge.getVertex(1).getName(), ",", edge.getVertex(0).getName(), " )")
+            print(("( ", edge.getVertex(1).getName(), ",", edge.getVertex(0).getName(), " )"))
         pass
     pass
 
