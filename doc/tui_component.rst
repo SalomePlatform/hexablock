@@ -31,10 +31,6 @@ Get the document number *i*::
 Remove a document in the session::
 
     hexablock.removeDocument(doc_i)
-    
-Set the current study::
-
-	hexablock.SetCurrentStudy(theStudy)
 
 Get a document from the current study::
 
