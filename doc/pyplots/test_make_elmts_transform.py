@@ -24,7 +24,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test make elements by transforming elements..."
+print("test make elements by transforming elements...")
 doc = hexablock.addDocument()
 
 size_x = 1
@@ -53,6 +53,6 @@ file_name = os.path.join(os.environ['TMP'], 'transfo_rotation.vtk')
 ####  doc.saveVtk(file_name)
 
 
-print "...test make elements by transforming elements OK"
+print("...test make elements by transforming elements OK")
 
 

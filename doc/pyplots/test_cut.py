@@ -24,7 +24,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test cut hexaedra..."
+print("test cut hexaedra...")
 doc = hexablock.addDocument()
 
 size_x = 2
@@ -50,6 +50,6 @@ file_name = os.path.join(os.environ['TMP'], 'decoupe.vtk')
 ####  doc.saveVtk(file_name)
 
 
-print "...test cut hexaedra OK"
+print("...test cut hexaedra OK")
 
 

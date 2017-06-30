@@ -27,7 +27,7 @@ import hexablock
 # differents cas possibles de remplissage possibles :
 
 
-print "test grille cylindrique..."
+print("test grille cylindrique...")
 doc = hexablock.addDocument()
 
 orig1 = doc.addVertex(0, 0, 0)
@@ -59,6 +59,6 @@ for i in range(2):
 file_name = os.path.join(os.environ['TMP'], 'grilles_cylindriques.vtk')
 ####  doc.saveVtk(file_name)
 
-print "...test grille cylindrique OK"
+print("...test grille cylindrique OK")
 
 

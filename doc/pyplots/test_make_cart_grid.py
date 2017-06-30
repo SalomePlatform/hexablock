@@ -27,7 +27,7 @@ import SALOMEDS
 import hexablock
 
 
-print "test grille cartesienne..."
+print("test grille cartesienne...")
 doc = hexablock.addDocument()
 
 orig = doc.addVertex(0, 0, 0)
@@ -47,4 +47,4 @@ grid = doc.makeCartesian(orig, dx, dy, dz, ni, nj, nk)
 file_name = os.path.join(os.environ['TMP'], 'grille_cartesienne.vtk')
 ####  grid.saveVtk(file_name)
 
-print "...test grille cartesienne OK"
+print("...test grille cartesienne OK")

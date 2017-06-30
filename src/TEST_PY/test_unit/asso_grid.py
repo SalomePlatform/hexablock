@@ -53,9 +53,9 @@ for j in range(doc.countPropagation()):
 
 mesh_hexas = hexablock.mesh(doc, "Grille:hexas")
 
-print "Nombre d hexaedres:", mesh_hexas.NbHexas()
-print "Nombre de quadrangles:", mesh_hexas.NbQuadrangles()
-print "Nombre de segments:", mesh_hexas.NbEdges()
-print "Nombre de noeuds:", mesh_hexas.NbNodes()
+print("Nombre d hexaedres:", mesh_hexas.NbHexas())
+print("Nombre de quadrangles:", mesh_hexas.NbQuadrangles())
+print("Nombre de segments:", mesh_hexas.NbEdges())
+print("Nombre de noeuds:", mesh_hexas.NbNodes())
 
 

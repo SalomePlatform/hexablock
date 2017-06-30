@@ -27,7 +27,7 @@ import hexablock
 # differents cas possibles de remplissage possibles :
 
 
-print "test disconnect elements..."
+print("test disconnect elements...")
 doc = hexablock.addDocument()
 
 size_x = 2;
@@ -76,6 +76,6 @@ file_name = os.path.join(os.environ['TMP'], 'disconnect2.vtk')
 ####  doc.saveVtk(file_name)
 
 
-print "...test disconnect elements OK"
+print("...test disconnect elements OK")
 
 

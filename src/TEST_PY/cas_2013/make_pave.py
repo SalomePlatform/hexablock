@@ -236,7 +236,7 @@ def make_pave () :
     trait_vertical ()
 
     if maillage_actif :
-       print "  ________________________ Maillage"
+       print("  ________________________ Maillage")
        the_doc.addLaws (2, True)
        mesh_hexas = hexablock.mesh(the_doc)
 

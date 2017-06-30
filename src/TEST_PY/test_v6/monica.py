@@ -74,7 +74,7 @@ def nearest (grid, vertex) :
            result = v1
            dmin   = d2
 
-    print  vertex.getName () , px, py, pz, " -> ", result.getName()
+    print(vertex.getName () , px, py, pz, " -> ", result.getName())
     return result
 
 # ======================================================= nearest_quad
@@ -92,7 +92,7 @@ def nearest_quad (grid, quad) :
               result = q1
               dmin   = d2
 
-    print  quad.getName () , px, py, pz, " -> ", result.getName()
+    print(quad.getName () , px, py, pz, " -> ", result.getName())
     return result
 
 # ======================================================= insert_cylinder
@@ -137,7 +137,7 @@ def insert_cylinder (plaque, nx, ny) :
         quad = pipe.getQuadJK (1, nq, 1)
         tabquad.append (quad)
 
-    print  " .. tabquad[0] = ", tabquad[0].getName ()
+    print(" .. tabquad[0] = ", tabquad[0].getName ())
     cible = nearest_quad (plaque, tabquad[0])
     tabquad[0]. setColor (5)
     cible . setColor (5)
@@ -156,7 +156,7 @@ def insert_cylinder (plaque, nx, ny) :
     doc.setLevel (1)
     for nv in range (8) :
         ier = doc.mergeVertices (tabv0[nv], tabv1[nv])
-        print "ier = ", ier
+        print("ier = ", ier)
         save_vtk ()
 
 
