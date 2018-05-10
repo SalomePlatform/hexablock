@@ -285,8 +285,10 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
 
     connect( getApp()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
             this, SLOT(onWindowActivated( SUIT_ViewWindow* )), Qt::UniqueConnection );
-    connect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
-            this, SLOT( onObjectBrowserClick(const QModelIndex&) ), Qt::UniqueConnection );
+    if ( getApp()->objectBrowser() ) {
+      connect( getApp()->objectBrowser()->treeView(),SIGNAL( clicked(const QModelIndex&) ),
+	       this, SLOT( onObjectBrowserClick(const QModelIndex&) ), Qt::UniqueConnection );
+    }
 
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
 
@@ -1019,24 +1021,32 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     _meshTreeView->show();
 
 //    QDockWidget *_dwObjectBrowser = 0;
-    QWidget* wid = getApp()->objectBrowser()->treeView();
-    QWidget *w   = wid->parentWidget();
-    while ( w && !_dwObjectBrowser ) {
-        _dwObjectBrowser = ::qobject_cast<QDockWidget*>( w );
-        w = w->parentWidget();
+    QWidget* wid = 0;
+    if ( getApp()->objectBrowser() )
+      wid = getApp()->objectBrowser()->treeView();
+    while ( wid && !_dwObjectBrowser ) {
+        _dwObjectBrowser = ::qobject_cast<QDockWidget*>( wid );
+        wid = wid->parentWidget();
     }
-    _dwObjectBrowser->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
-    _dwObjectBrowser->setWindowTitle("Study");
+    
+    if ( _dwObjectBrowser ) {
+      _dwObjectBrowser->setMinimumWidth(DW_MINIMUM_WIDTH); // --- force a minimum until display
+      _dwObjectBrowser->setWindowTitle("Study");
+    }
 
     // dock widget position
-    aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwObjectBrowser );
+    if ( _dwObjectBrowser ) {
+      aParent->addDockWidget( Qt::LeftDockWidgetArea, _dwObjectBrowser );
+    }
     aParent->addDockWidget( Qt::RightDockWidgetArea, _dwInputPanel );
 
 //    aParent->tabifyDockWidget( _dwPattern, _dwObjectBrowser );
 //    aParent->tabifyDockWidget( _dwGroups, _dwPattern );
 //    aParent->tabifyDockWidget( _dwMesh, _dwGroups );
 
-    aParent->tabifyDockWidget( _dwObjectBrowser, _dwPattern );
+    if ( _dwObjectBrowser ) {
+      aParent->tabifyDockWidget( _dwObjectBrowser, _dwPattern );
+    }
     aParent->tabifyDockWidget( _dwPattern, _dwGroups );
     aParent->tabifyDockWidget( _dwGroups, _dwMesh );
 
