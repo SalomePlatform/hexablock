@@ -88,7 +88,7 @@ elements = doc.cut(arete, 4)
 l = doc.addLaw("Uniform", 5)
 n = doc.countPropagation()
 
-for i in xrange(n):
+for i in range(n):
   p = doc.getPropagation(i)
   p.setLaw(l)
 
@@ -99,14 +99,14 @@ maillage = hexablock.mesh (doc)
 # Afficher des informations
 # -------------------------
 
-print "Sur le document:"
-print "nombre de sommets     du modèle de bloc: ", doc.countUsedVertex()
-print "nombre d'arêtes       du modèle de bloc: ", doc.countUsedEdge()
-print "nombre de quadrangles du modèle de bloc: ", doc.countUsedQuad()
-print "nombre de blocs       du modèle de bloc: ", doc.countUsedHexa()
+print("Sur le document:")
+print("nombre de sommets     du modèle de bloc: ", doc.countUsedVertex())
+print("nombre d'arêtes       du modèle de bloc: ", doc.countUsedEdge())
+print("nombre de quadrangles du modèle de bloc: ", doc.countUsedQuad())
+print("nombre de blocs       du modèle de bloc: ", doc.countUsedHexa())
 
-print "Sur le maillage:"
-print "  - Nombre de noeuds     : ", maillage.NbNodes()
-print "  - Nombre de segments   : ", maillage.NbEdges()
-print "  - Nombre de quadrangles: ", maillage.NbQuadrangles()
-print "  - Nombre d'hexaèdres   : ", maillage.NbHexas()
+print("Sur le maillage:")
+print("  - Nombre de noeuds     : ", maillage.NbNodes())
+print("  - Nombre de segments   : ", maillage.NbEdges())
+print("  - Nombre de quadrangles: ", maillage.NbQuadrangles())
+print("  - Nombre d'hexaèdres   : ", maillage.NbHexas())

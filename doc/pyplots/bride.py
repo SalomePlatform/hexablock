@@ -83,7 +83,7 @@ def merge_quads(doc, quart, demi, ni1, nj1, ni2, nj2, option=0) :
         pass
     else:
 ##         doc.closeQuads(dest, orig)
-        print "closeQuads() : not yet implemented"
+        print("closeQuads() : not yet implemented")
         pass
 
     return None

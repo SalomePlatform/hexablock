@@ -190,7 +190,7 @@ rayons = [ petit_rayon, interne_rayon-petit_rayon, externe_rayon-interne_rayon, 
 points = [ point_1, point_2, point_3, point_4, point_5, point_6, point_7, point_8, point_1 ]
 
 angles = []
-for i in xrange(8):
+for i in range(8):
   angle = calculer_angle(points[i], points[i+1])
   angles.append(angle)
 
@@ -229,7 +229,7 @@ part_0  = geompy.MakePartition([piquage_1_feh], [plan_0], [], [], geompy.ShapeTy
 point_0 = geompy.SubShapeAllSortedCentres(part_0, geompy.ShapeType["VERTEX"])[1]
 
 enceinte_quads = []
-for j in xrange(8):
+for j in range(8):
   q = grille.getQuadIJ(1, j, 1)
   enceinte_quads.append(q)
 
@@ -298,7 +298,7 @@ piquage_vz = doc.addVector(0, 0, 1)
 
 piquage = doc.makeCylindrical(piquage_centre, piquage_vx, piquage_vz,  1, 360, 1,  1, 4, 1,  False)
 
-piquage_quads = [ piquage.getQuadIJ(0, j, 0) for j in xrange(4) ]
+piquage_quads = [ piquage.getQuadIJ(0, j, 0) for j in range(4) ]
 
 piquage_s1 = piquage.getVertexIJK(1, 0, 0)
 piquage_s2 = piquage.getVertexIJK(1, 1, 0)
@@ -331,9 +331,9 @@ doc.setShape(cuve)
 # Nettoyer les associations implicites du centre et de la périphérie
 # ------------------------------------------------------------------
 
-for i in xrange(0, 4, 3):
-  for j in xrange(8):
-    for k in xrange(2):
+for i in range(0, 4, 3):
+  for j in range(8):
+    for k in range(2):
       e = grille.getEdgeJ(i, j, k)
       e.clearAssociation()
 
@@ -368,11 +368,11 @@ supports_points = [
   [ support_b_o, support_b_x, support_b_d, support_b_y ]
 ]
 
-for s in xrange(4):
+for s in range(4):
   qb = supports_quads_b[s]
   qh = supports_quads_h[s]
   cs = supports_points[s]
-  for i in xrange(4):
+  for i in range(4):
     smb = qb.getVertex(i)
     sgb = cs[i]
     smb.setAssociation(sgb)
@@ -407,7 +407,7 @@ for j, ag, p in periph_grille:
 
 periph_deco = [ [cote_c, par_2], [cote_a, par_1], [cote_b, par_1] ]
 
-for i in xrange(3):
+for i in range(3):
   hxa = periph_hexas[i]
   ag, p = periph_deco[i]
   smb = hxa.getVertex(2)
@@ -538,27 +538,27 @@ groupe_p1 = doc.addHexaGroup("piquage:1")
 groupe_p2 = doc.addHexaGroup("piquage:2")
 groupe_su = doc.addHexaGroup("supports")
 
-for i in xrange( doc.countUsedHexa() ):
+for i in range( doc.countUsedHexa() ):
   h = doc.getUsedHexa(i)
   groupe_fd.addElement(h)
 
-for i in xrange( enceinte.countHexa() ):
+for i in range( enceinte.countHexa() ):
   h = enceinte.getHexa(i)
   if h != None:
     groupe_en.addElement(h)
     groupe_fd.removeElement(h)
 
-for i in xrange( piquage_1.countHexa() ):
+for i in range( piquage_1.countHexa() ):
   h = piquage_1.getHexa(i)
   groupe_p1.addElement(h)
   groupe_fd.removeElement(h)
 
-for i in xrange( piquage_2.countHexa() ):
+for i in range( piquage_2.countHexa() ):
   h = piquage_2.getHexa(i)
   groupe_p2.addElement(h)
   groupe_fd.removeElement(h)
 
-for i in xrange( supports.countHexa() ):
+for i in range( supports.countHexa() ):
   h = supports.getHexa(i)
   groupe_su.addElement(h)
   groupe_fd.removeElement(h)

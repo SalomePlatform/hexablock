@@ -128,9 +128,9 @@ cylindres_gp = doc.makeCylinders (grand_oppo, grand_dir_b, grand_rayon, grand_ha
 
 doc.saveVtk ("tuyauterie0.vtk")
 
-print "grand_rayon = ", grand_rayon
-print "moyen_rayon = ", moyen_rayon
-print "petit_rayon = ", petit_rayon
+print("grand_rayon = ", grand_rayon)
+print("moyen_rayon = ", moyen_rayon)
+print("petit_rayon = ", petit_rayon)
 
 
 # Joindre les 2 croix
@@ -189,7 +189,7 @@ doc.addShape(geometrie, nom)
 # Associer les arêtes du modèle issues du joinQuads
 # -------------------------------------------------
 
-for i in xrange(hexablock.CV_MAXI_EXT):
+for i in range(hexablock.CV_MAXI_EXT):
     asso_h  = prisme.getHexa(i)
     asso_a  = [ hexablock.E_CE, hexablock.E_CF, hexablock.E_CE, hexablock.E_CF, hexablock.E_CE, hexablock.E_CF, hexablock.E_CE, hexablock.E_CF ][i]
     asso_e  = asso_h.getEdge(asso_a)
@@ -202,7 +202,7 @@ for i in xrange(hexablock.CV_MAXI_EXT):
     asso_pts = [ asso_v1 ]
     n = 9
     pas = math.sqrt( (x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2 ) / n
-    for i in xrange(1, n):
+    for i in range(1, n):
         x = x1 + (x2 - x1) * i * pas
         y = y1 + (y2 - y1) * i * pas
         z = z1 + (z2 - z1) * i * pas
@@ -215,7 +215,7 @@ for i in xrange(hexablock.CV_MAXI_EXT):
 # Associer les quadrangles du modèle issues du joinQuads
 # ------------------------------------------------------
 
-for i in xrange(hexablock.CV_MAXI_EXT):
+for i in range(hexablock.CV_MAXI_EXT):
     asso_h = prisme.getHexa(i)
     asso_f = [ hexablock.Q_C, hexablock.Q_F, hexablock.Q_E, hexablock.Q_F, hexablock.Q_E, hexablock.Q_F, hexablock.Q_E, hexablock.Q_F ][i]
     asso_q = asso_h.getQuad(asso_f)
@@ -232,8 +232,8 @@ groupe_d_moyen = doc.addQuadGroup("moyen:disque")
 groupe_d_petit = doc.addQuadGroup("petit:disque")
 groupe_d_coude = doc.addQuadGroup("coude:disque")
 
-for i in xrange(2):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
+for i in range(2):
+    for j in range( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
         quad = cylindres_gm.getQuadIJ(hexablock.CYL_BIG  , i, j, 0)
         groupe_d_grand.addElement(quad)
 
@@ -243,7 +243,7 @@ for i in xrange(2):
         quad = cylindres_gp.getQuadIJ(hexablock.CYL_SMALL, i, j, 0)
         groupe_d_petit.addElement(quad)
 
-for i in xrange( hexablock.CV_MAXI_INT + hexablock.CV_MAXI_EXT ):
+for i in range( hexablock.CV_MAXI_INT + hexablock.CV_MAXI_EXT ):
     h = coude.getHexa(i)
     quad = h.getQuad(hexablock.Q_B)
     groupe_d_coude.addElement(quad)
@@ -255,12 +255,12 @@ groupe_grand = doc.addHexaGroup("grand")
 groupe_moyen = doc.addHexaGroup("moyen")
 groupe_petit = doc.addHexaGroup("petit")
 
-for i in xrange( doc.countUsedHexa() ):
+for i in range( doc.countUsedHexa() ):
     h = doc.getUsedHexa(i)
     groupe_grand.addElement(h)
 
-for i in xrange(2):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
+for i in range(2):
+    for j in range( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
         h = cylindres_gm.getHexaIJK(hexablock.CYL_SMALL, i, j, 0)
         groupe_moyen.addElement(h)
         groupe_grand.removeElement(h)

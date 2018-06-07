@@ -26,7 +26,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test pipe..."
+print("test pipe...")
 doc = hexablock.addDocument()
 
 orig = doc.addVertex(50, 0, 0)
@@ -48,4 +48,4 @@ elts = doc.makePipe(pi, vb, nr, na, nl)
 file_name = os.path.join(os.environ['TMP'], 'pipe.vtk')
 ####  elts.saveVtk(file_name)
 
-print "...test pipe OK"
+print("...test pipe OK")

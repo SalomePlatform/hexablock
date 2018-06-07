@@ -26,7 +26,7 @@ import GEOM
 import SALOMEDS
 import hexablock
 
-print "test prism..."
+print("test prism...")
 doc = hexablock.addDocument()
 
 orig = doc.addVertex(0, 0, 0)
@@ -53,4 +53,4 @@ elts = doc.prismQuads(liste, vec, 5)
 file_name = os.path.join(os.environ['TMP'], 'prisme.vtk')
 ####  elts.saveVtk(file_name)
 
-print "...test prism OK"
+print("...test prism OK")

@@ -125,8 +125,8 @@ croix = doc.makeCylinders(moy_p_cylindre, petit_cylindre)
 
 croix_quads = []
 
-for i in xrange(1, -1, -1):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
+for i in range(1, -1, -1):
+    for j in range( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
         quad = croix.getQuadIJ(hexablock.CYL_BIG, i, j, hexablock.CYL_BIG_SLICES)
         croix_quads.append(quad)
 
@@ -157,8 +157,8 @@ groupe_moyen_f = doc.addQuadGroup("Moyen")
 groupe_petit_a = doc.addQuadGroup("Petit_A")
 groupe_petit_b = doc.addQuadGroup("Petit_B")
 
-for i in xrange(2):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
+for i in range(2):
+    for j in range( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
         quad = en_te.getQuadIJ(hexablock.CYL_BIG  , i, j, 0)
         groupe_grand_a.addElement(quad)
 
@@ -181,12 +181,12 @@ groupe_grand = doc.addHexaGroup("Grand")
 groupe_moyen = doc.addHexaGroup("Moyen")
 groupe_petit = doc.addHexaGroup("Petit")
 
-for i in xrange( doc.countUsedHexa() ):
+for i in range( doc.countUsedHexa() ):
     h = doc.getUsedHexa(i)
     groupe_moyen.addElement(h)
 
-for i in xrange(2):
-    for j in xrange( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
+for i in range(2):
+    for j in range( [hexablock.CV_MAXI_INT, hexablock.CV_MAXI_EXT][i] ):
         for k in [ 0, hexablock.CYL_BIG_SLICES-1 ]:
             h = en_te.getHexaIJK(hexablock.CYL_BIG, i, j, k)
             groupe_grand.addElement(h)

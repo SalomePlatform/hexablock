@@ -41,7 +41,7 @@ namespace HEXABLOCK
   {
 
 HEXABLOCK_EXPORT  SALOME_Actor* findActorByEntry( SVTK_ViewWindow *theVtkViewWindow, const char* theEntry );
-  _PTR(Study)   GetActiveStudyDocument();
+  _PTR(Study)   getStudy();
 
 HEXABLOCK_EXPORT int GetNameOfSelectedElements( SVTK_ViewWindow *theWindow,/* SVTK_Selector* theSelector,*/
                                  const Handle(SALOME_InteractiveObject)& theIO,

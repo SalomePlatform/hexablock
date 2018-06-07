@@ -67,13 +67,13 @@ def get_vertices_from_cylindrical(grille_cyl, nr, na, nl=1):
 
     # dans cette première version, on considère une grille cylindrique avec nr = 1 et nl = 1
     if (nr !=1) or (nl != 1):
-        print "nr ou nl invalide(s) !!"
+        print("nr ou nl invalide(s) !!")
         return None
     
     vertices = []
     li_z = [nl, 0] # indice nl => face du haut, indice 0 => face du bas
     li_x = [nr, 0] # indice nr => externe, indice 0 => interne
-    li_y = range(na) # indices de 0 à (na-1)
+    li_y = list(range(na)) # indices de 0 à (na-1)
     for k in li_z: # suivant z
         for i in li_x: # suivant x
             for j in li_y: # suivant y 
@@ -297,7 +297,7 @@ geom_vert_grd_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -h) for vertex i
 geom_vert_grd.extend(geom_vert_grd_bas)
 
 
-print "nombre vertex grand cylindre geom = ", len(geom_vert_grd)
+print("nombre vertex grand cylindre geom = ", len(geom_vert_grd))
 
 # ajout des vertex de la géométrie à l'étude :
 for num, vertex in enumerate(geom_vert_grd):
@@ -344,7 +344,7 @@ geom_vert_pte.extend([y_h_p_t, x_h_p_t, z_h_p_t, u_h_p_t, w_h_p_t, v_h_p_t])
 geom_vert_pte_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -h) for vertex in geom_vert_pte]
 geom_vert_pte.extend(geom_vert_pte_bas)
 
-print "nombre vertex petit cylindre geom = ", len(geom_vert_pte)
+print("nombre vertex petit cylindre geom = ", len(geom_vert_pte))
 
 # ajout des vertex de la géométrie à l'étude :
 for num, vertex in enumerate(geom_vert_pte):
@@ -353,12 +353,3 @@ for num, vertex in enumerate(geom_vert_pte):
 
 # association :
 set_association_from_cylindrical(mod_pte, geom_vert_pte)
-
-le meme ordre :
-# sommets externes puis internes) :
-geom_vert_pte_bas = [geompy.MakeVertexWithRef(vertex, 0.0, 0.0, -h) for vertex in geom_vert_pte]
-geom_vert_pte.extend(geom_vert_pte_bas)
-
-print "nombre vertex petit cylindre geom = ", len(geom_vert_pte)
-
-# ajout des vertex

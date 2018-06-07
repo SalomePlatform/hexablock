@@ -127,8 +127,6 @@
 using namespace std;
 using namespace HEXABLOCK::GUI;
 
-int  HEXABLOCKGUI::_oldStudyId = -1;
-
 // HEXABLOCK_ORB::HEXABLOCK_Gen_var HEXABLOCKGUI::_hexaEngine  = HEXABLOCK_ORB::HEXABLOCK_Gen::_nil();
 //
 VtkDocumentGraphicView* HEXABLOCKGUI::currentDocGView = NULL;
@@ -252,7 +250,6 @@ void HEXABLOCKGUI::initialize( CAM_Application* app )
     createActions();
     createMenus();
     createTools();
-    studyActivated();
 }
 
 void HEXABLOCKGUI::viewManagers( QStringList& list ) const
@@ -342,15 +339,6 @@ bool HEXABLOCKGUI::activateModule( SUIT_Study* theStudy )
                 this, SLOT( onWindowClosed(SUIT_ViewWindow *) ), Qt::UniqueConnection );
     }
 
-    /* ************************************   TODO Hexa6
-    _hexaEngine->SetCurrentStudy(SALOMEDS::Study::_nil());
-    if ( SalomeApp_Study* s = dynamic_cast<SalomeApp_Study*>( theStudy ))
-        if ( _PTR(Study) aStudy = s->studyDS()) {
-            _hexaEngine->SetCurrentStudy( _CAST(Study,aStudy)->GetStudy() );
-            updateObjBrowser(); // objects can be removed
-        }
-     ************************************ */
-
     if (currentOccGView != NULL && currentOccGView->getViewWindow() != NULL)
             currentOccGView->getViewWindow()->installEventFilter(this);
 
@@ -423,13 +411,11 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
     return bOk;
 }
 
-SALOMEDS::Study_var HEXABLOCKGUI::ClientStudyToStudy (_PTR(Study) theStudy)
+SALOMEDS::Study_var HEXABLOCKGUI::getStudyServant()
 {
   SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
-  CORBA::Object_var aSMObject = aNamingService->Resolve("/myStudyManager");
-  SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(aSMObject);
-  int aStudyID = theStudy->StudyId();
-  SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
+  CORBA::Object_var aSMObject = aNamingService->Resolve("/Study");
+  SALOMEDS::Study_var aDSStudy = SALOMEDS::Study::_narrow(aSMObject);
   return aDSStudy._retn();
 }
 
@@ -442,8 +428,7 @@ void HEXABLOCKGUI::addInStudy(QMap<QString, TopoDS_Shape>& topo_shapes,
 
     SalomeApp_Study* appStudy = HEXABLOCKGUI::activeStudy();
     if(!appStudy) return;
-    _PTR(Study) aStudy = appStudy->studyDS();
-    SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( aStudy );
+    SALOMEDS::Study_var aDSStudy = getStudyServant();
     SALOMEDS::StudyBuilder_var     aBuilder (aDSStudy->NewBuilder());
     QString entry = currentDocGView->getDocumentModel()->documentEntry();
     SALOMEDS::SObject_var aFatherSO = aDSStudy->FindObjectID( qPrintable(entry) );
@@ -507,29 +492,18 @@ bool HEXABLOCKGUI::renameObject( const QString& entry, const QString& name)
     if (dgview == NULL || dgview->getDocumentModel() == NULL)
         return result;
 
-    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication());
-    SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
-
-    if(!appStudy)
-        return result;
-
-    _PTR(Study) aStudy = appStudy->studyDS();
-
-    if(!aStudy)
-        return result;;
-
-    _PTR(SObject) obj ( aStudy->FindObjectID(qPrintable(entry)) );
+    _PTR(SObject) obj ( SalomeApp_Application::getStudy()->FindObjectID(qPrintable(entry)) );
     _PTR(GenericAttribute) anAttr;
     if ( obj ){
-        if ( obj->FindAttribute(anAttr, "AttributeName") ){
-            _PTR(AttributeName) aName (anAttr);
-            DocumentModel* docModel = dgview->getDocumentModel();
-            docModel->setName( name );
-            aName->SetValue( name.toLatin1().data() );
-            getApp()->updateObjectBrowser();
-//            _dwPattern->setWindowTitle( name );
-            result = true;
-        }
+      if ( obj->FindAttribute(anAttr, "AttributeName") ) {
+        _PTR(AttributeName) aName (anAttr);
+        DocumentModel* docModel = dgview->getDocumentModel();
+        docModel->setName( name );
+        aName->SetValue( name.toLatin1().data() );
+        getApp()->updateObjectBrowser();
+//        _dwPattern->setWindowTitle( name );
+        result = true;
+      }
     }
     return result;
 }
@@ -832,7 +806,7 @@ bool HEXABLOCKGUI::createSComponent() //addComponent
     DEBTRACE("HEXABLOCKGUI::createSComponent");
     // --- Find or create (if not done yet) "HEXABLOCK" SComponent in the study
 
-    _PTR(Study)            aStudy = (( SalomeApp_Study* )(getApp()->activeStudy()))->studyDS();
+    _PTR(Study)            aStudy = SalomeApp_Application::getStudy();
     _PTR(StudyBuilder)     aBuilder (aStudy->NewBuilder());
     _PTR(GenericAttribute) anAttr;
     _PTR(AttributeName)    aName;
@@ -875,26 +849,6 @@ void HEXABLOCKGUI::preferencesChanged( const QString& sect, const QString& name 
     _myresource->preferencesChanged(sect, name);
 //    if(name=="userCatalog")
 //        _genericGui->getCatalogWidget()->addCatalogFromFile(Resource::userCatalog.toStdString());
-}
-
-void HEXABLOCKGUI::studyActivated() //CS_TODO
-{
-    int newStudyId = getApp()->activeStudy()->id();
-    DEBTRACE("HEXABLOCKGUI::studyActivated " << _oldStudyId << " " << newStudyId);
-//    if (_oldStudyId != -1)
-//    {
-//        _studyContextMap[_oldStudyId] = QtGuiContext::getQtCurrent();
-//        if (_studyContextMap.count(newStudyId))
-//        {
-//            DEBTRACE("switch to valid context " << QtGuiContext::getQtCurrent() << " " << _studyContextMap[newStudyId]);
-//            QtGuiContext::setQtCurrent(_studyContextMap[newStudyId]);
-//        }
-//        else
-//        {
-//            DEBTRACE("no switch to null context");
-//        }
-//    }
-    _oldStudyId = newStudyId;
 }
 
 void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
@@ -3249,8 +3203,7 @@ QString HEXABLOCKGUI::addDocInStudy (HEXA_NS::Document* document)
     if (app_study == NULL)
         return docEntry;
 
-    _PTR(Study)         study    = app_study->studyDS();
-    SALOMEDS::Study_var ds_study = ClientStudyToStudy (study);
+    SALOMEDS::Study_var ds_study = getStudyServant();
     SALOMEDS::StudyBuilder_var aBuilder (ds_study->NewBuilder());
     QString entry = app_study->centry("HEXABLOCK");
     SALOMEDS::SObject_var aFatherSO = ds_study->FindObjectID( qPrintable(entry) );

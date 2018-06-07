@@ -28,12 +28,12 @@ import salome
 salome.salome_init()
 
 from salome.geom import geomBuilder
-geompy = geomBuilder.New(salome.myStudy)
+geompy = geomBuilder.New()
 
 
 import SMESH
 from salome.smesh import smeshBuilder
-smesh = smeshBuilder.New(salome.myStudy)
+smesh = smeshBuilder.New()
 
 component = hexablock_swig.hex_instance ()
 
@@ -80,43 +80,43 @@ def findDocument (name) :
 def dump(doc, mesh=None, full=False):
     if full:
         hn = doc.countUsedHexa()
-        print "Model dump: number of hexas: ", hn
-        for hi in xrange(hn):
+        print("Model dump: number of hexas: ", hn)
+        for hi in range(hn):
             hh = doc.getUsedHexa(hi)
-            print "  hexa: ", hi, "name: ", hh.getName()
-            for fi in xrange(6):
+            print("  hexa: ", hi, "name: ", hh.getName())
+            for fi in range(6):
                 ff = hh.getQuad(fi)
                 fa = ff.getAssociations()
-                print "    quadrangle: ", fi, "name: ", ff.getName(), " associated: ", fa!=[]
-                for ei in xrange(4):
+                print("    quadrangle: ", fi, "name: ", ff.getName(), " associated: ", fa!=[])
+                for ei in range(4):
                     ee = ff.getEdge(ei)
                     ea = ee.getAssociations()
-                    print "      edge: ", ei, "name: ", ee.getName(), " associated: ", ea!=[]
-                    for vi in xrange(2):
+                    print("      edge: ", ei, "name: ", ee.getName(), " associated: ", ea!=[])
+                    for vi in range(2):
                         vv = ee.getVertex(vi)
                         va = vv.getAssociation()
-                        print "        vertex: ", vi, "name: ", vv.getName(), " associated: ", va!=None
-                        print "          model: x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ()
+                        print("        vertex: ", vi, "name: ", vv.getName(), " associated: ", va!=None)
+                        print("          model: x= ", vv.getX(), " y= ", vv.getY(), " z= ", vv.getZ())
                         if va!=None:
                             x, y, z = geompy.PointCoordinates(va)
-                            print "          assoc: x= ", x, " y= ", y, " z= ", z
+                            print("          assoc: x= ", x, " y= ", y, " z= ", z)
 
     uv = doc.countUsedVertex()
     ue = doc.countUsedEdge()
     uq = doc.countUsedQuad()
     uh = doc.countUsedHexa()
 
-    print "Model vertices    number: ", uv
-    print "Model edges       number: ", ue
-    print "Model quadrangles number: ", uq
-    print "Model blocks      number: ", uh
+    print("Model vertices    number: ", uv)
+    print("Model edges       number: ", ue)
+    print("Model quadrangles number: ", uq)
+    print("Model blocks      number: ", uh)
 
     if mesh != None:
-        print
-        print "Mesh nodes       number: ", mesh.NbNodes()
-        print "Mesh segments    number: ", mesh.NbEdges()
-        print "Mesh quadrangles number: ", mesh.NbQuadrangles()
-        print "Mesh hexas       number: ", mesh.NbHexas()
+        print()
+        print("Mesh nodes       number: ", mesh.NbNodes())
+        print("Mesh segments    number: ", mesh.NbEdges())
+        print("Mesh quadrangles number: ", mesh.NbQuadrangles())
+        print("Mesh hexas       number: ", mesh.NbHexas())
 
     return uv, ue, uq, uh
 
@@ -125,7 +125,7 @@ def dump(doc, mesh=None, full=False):
 def mesh (doc, name=None, dim=3, container="FactoryServer"):
     study = salome.myStudy
 
-    if type(doc) == type(""):
+    if isinstance(doc, type("")):
         doc = component.findDocument (doc)
     docname = doc.getName()
 
@@ -149,7 +149,7 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
 
     geompy.addToStudy(shape, name)
     comp_smesh = salome.lcc.FindOrLoadComponent(container, "SMESH")
-    comp_smesh.init_smesh(study, geomBuilder.geom)
+    comp_smesh.init_smesh(geomBuilder.geom)
     meshexa = comp_smesh.Mesh(shape)
 
     so = "libHexaBlockPluginEngine.so"
@@ -161,7 +161,7 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
     meshexa.mesh.AddHypothesis(shape, hypo)
 
     ### hypo.SetDocument(doc.getXml())   ## Hexa6 TODO et a verifier
-    print " Maillage du document ", docname
+    print(" Maillage du document ", docname)
     hypo.SetDocument (docname);
     hypo.SetDimension(dim)
 
@@ -174,7 +174,7 @@ def getFromStudy(entry):
     study    = salome.myStudy
     sobject  = study.FindObjectID(entry)
     if sobject == None :
-       print " **** Entry ", entry, " is undefined"
+       print(" **** Entry ", entry, " is undefined")
        return None
 
     builder  = study.NewBuilder()
@@ -182,14 +182,14 @@ def getFromStudy(entry):
     docname  = attname.Value()
     doc = component.findDocument(docname)
     if doc == None :
-       print " **** Entry ", entry, " doesn't correspond to an HexaBlock Document"
+       print(" **** Entry ", entry, " doesn't correspond to an HexaBlock Document")
 
     return doc
 
 # ==================================================== findOrCreateComponent
 # Find or create HexaBlock Study Component
-def findOrCreateComponent( study, builder ):
-    father = study.FindComponent( moduleName() )
+def findOrCreateComponent( builder ):
+    father = salome.myStudy.FindComponent( moduleName() )
     if father is None:
        father = builder.NewComponent( moduleName() )
        attr = builder.FindOrCreateAttribute( father, "AttributeName" )
@@ -203,17 +203,17 @@ def findOrCreateComponent( study, builder ):
 # Add a document in the current study
 def addToStudy(doc):
     if doc == None :
-       print " *** addToStudy : Bad Document Pointer"
+       print(" *** addToStudy : Bad Document Pointer")
        return
 
     study   = salome.myStudy
     builder = study.NewBuilder()
-    father  = findOrCreateComponent( study, builder )
+    father  = findOrCreateComponent( builder )
     name    = doc.getName ()
 
     present = study.FindObjectByName(name, moduleName())
     if present != [] :
-       print " *** addToStudy : Document ", name, "is already in the study"
+       print(" *** addToStudy : Document ", name, "is already in the study")
        return
 
     object  = builder.NewObject( father )
@@ -224,6 +224,6 @@ def addToStudy(doc):
 # ==================================================== addShape
 # Add a document in the current study
 def addShape (doc, shape, name):
-    print "Call addShape"
+    print("Call addShape")
     forme = doc.addShape (shape.getShape(), name)
     return forme

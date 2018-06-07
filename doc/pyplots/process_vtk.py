@@ -18,7 +18,7 @@
 #
 import sys
 import os
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 def process (file_name):
     """
@@ -27,12 +27,12 @@ def process (file_name):
     """
 
     wr_data = ""
-    with open(file_name, 'r') as f:
+    with open(file_name, 'r', encoding='utf8') as f:
         read_data = f.read()
         wr_data = read_data.replace(',', '.')
         pass
 
-    with open(file_name, 'w') as f:
+    with open(file_name, 'w', encoding='utf8') as f:
         f.write(wr_data)
         pass
 
@@ -40,17 +40,13 @@ def process (file_name):
 
 if __name__ == '__main__':
 
-    usage = "usage: %prog file_name"
-    parser = OptionParser(usage=usage)
-    (options, args) = parser.parse_args()
-
-    if len(args) != 1:
-        print usage
-        sys.exit(1)
+    parser = ArgumentParser()
+    parser.add_argument('file_name', help='Nom du fichier vtk dans $TMP')
+    args = parser.parse_args()
     
-    file_name = os.path.join(os.environ['TMP'], args[0])
+    file_name = os.path.join(os.environ['TMP'], args.file_name)
 
-    print file_name
+    print(file_name)
     process(file_name)
     
     sys.exit() 

@@ -116,7 +116,7 @@ cer_ext_dep = modele.getVertexIJK(1, 0, 1)
 
 cer_int = []
 cer_ext = []
-for j in xrange(4):
+for j in range(4):
     a = modele.getEdgeJ(0, j, 1)
     cer_int.append(a)
 
@@ -134,7 +134,7 @@ ell_ext_dep = modele.getVertexIJK(1, 0, 0)
 
 ell_int = []
 ell_ext = []
-for j in xrange(4):
+for j in range(4):
     a = modele.getEdgeJ(0, j, 0)
     ell_int.append(a)
 
@@ -150,7 +150,7 @@ doc.associateClosedLine(ell_ext_dep, ell_ext, [sh_tuyau], [15, 8], 1, True)
 def generatrice(face):
     n = 10
     l = []
-    for i in xrange(0, n+1):
+    for i in range(0, n+1):
         v = float(i) / n
         s = geompy.MakeVertexOnSurface(face, 0.5, v)
         l.append(s)
@@ -216,8 +216,8 @@ groupe_exterieur = doc.addQuadGroup("Exterieur")
 # Constituer les groupes d'aretes
 # -------------------------------
 
-for i in xrange(2):
-    for j in xrange(4):
+for i in range(2):
+    for j in range(4):
         arete = modele.getEdgeJ(i, j, 1)
         groupe_cercles.addElement(arete)
 
@@ -230,7 +230,7 @@ for i in xrange(2):
 # Constituer les groupes de faces
 # -------------------------------
 
-for j in xrange(4):
+for j in range(4):
     quad = modele.getQuadIJ(0, j, 1)
     groupe_couronne.addElement(quad)
 
