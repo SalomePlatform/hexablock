@@ -30,6 +30,8 @@
 #include "HexVertexShape.hxx"
 #include "HexKas_functions.hxx"
 
+#include <algorithm>
+
 BEGIN_NAMESPACE_HEXA
 
 static bool db =  on_debug ();  // == getenv ("HEXA_DB") > 0

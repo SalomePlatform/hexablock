@@ -28,6 +28,8 @@
 
 #include <GCPnts_AbscissaPoint.hxx>
 
+#include <algorithm>
+
 BEGIN_NAMESPACE_HEXA
 
 // static bool db = on_debug ();

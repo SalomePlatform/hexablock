@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <algorithm>
 #include <sys/stat.h>
 
 BEGIN_NAMESPACE_HEXA

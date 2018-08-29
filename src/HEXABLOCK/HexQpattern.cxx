@@ -31,6 +31,7 @@
 #include "HexGlobale.hxx"
 
 #include <cmath>
+#include <algorithm>
 #include <map>
 
 BEGIN_NAMESPACE_HEXA

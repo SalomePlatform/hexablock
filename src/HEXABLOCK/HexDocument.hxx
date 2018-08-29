@@ -26,6 +26,8 @@
 #include "Hex_defines.hxx"
 #include "HexEltBase.hxx"
 
+#include <algorithm>
+
 #ifdef WIN32
  #ifdef max
   #undef max

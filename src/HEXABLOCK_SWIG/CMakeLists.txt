@@ -74,9 +74,14 @@ SET(_bin_SCRIPTS
 ADD_LIBRARY(hexablock_swig_lib ${_hexablock_swig_SOURCES})
 TARGET_LINK_LIBRARIES(hexablock_swig_lib ${_link_LIBRARIES} )
 
-add_library(_hexablock_swig MODULE ${_hexablock_swig_SOURCES})
-target_link_libraries(_hexablock_swig ${_link_LIBRARIES} ${hexablock_swig_lib}) # does nothing but reproduces previous SWIG_LINK_LIBRARIES line
-set_target_properties(_hexablock_swig PROPERTIES PREFIX "")
+IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+  SWIG_ADD_MODULE(hexablock_swig python hexablock_swig.i)
+ELSE()
+  SWIG_ADD_LIBRARY(hexablock_swig LANGUAGE python SOURCES hexablock_swig.i)
+ENDIF()
+
+
+SWIG_LINK_LIBRARIES(hexablock_swig ${_link_LIBRARIES} ${hexablock_swig_lib})
 INSTALL(TARGETS _hexablock_swig DESTINATION ${SALOME_INSTALL_LIBS})
 
 SALOME_INSTALL_SCRIPTS("${_bin_SCRIPTS}" ${SALOME_INSTALL_SCRIPT_PYTHON})
