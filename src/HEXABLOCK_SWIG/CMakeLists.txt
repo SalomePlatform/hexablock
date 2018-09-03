@@ -74,8 +74,9 @@ SET(_bin_SCRIPTS
 ADD_LIBRARY(hexablock_swig_lib ${_hexablock_swig_SOURCES})
 TARGET_LINK_LIBRARIES(hexablock_swig_lib ${_link_LIBRARIES} )
 
-SWIG_ADD_MODULE(hexablock_swig python ${_hexablock_swig_SOURCES})
-SWIG_LINK_LIBRARIES(hexablock_swig ${_link_LIBRARIES} ${hexablock_swig_lib})
+add_library(_hexablock_swig MODULE ${_hexablock_swig_SOURCES})
+target_link_libraries(_hexablock_swig ${_link_LIBRARIES} ${hexablock_swig_lib}) # does nothing but reproduces previous SWIG_LINK_LIBRARIES line
+set_target_properties(_hexablock_swig PROPERTIES PREFIX "")
 INSTALL(TARGETS _hexablock_swig DESTINATION ${SALOME_INSTALL_LIBS})
 
 SALOME_INSTALL_SCRIPTS("${_bin_SCRIPTS}" ${SALOME_INSTALL_SCRIPT_PYTHON})
