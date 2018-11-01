@@ -28,7 +28,7 @@
     <parameter name="documentation" value="hexablock_help"/>
   </section>
   <section name="hexablock_help" >
-    <parameter name="User's Guide/HexaBlock module"      value="%HEXABLOCK_ROOT_DIR%/share/doc/salome/gui/HEXABLOCK/index.html"/>
+    <parameter name="User's Guide/HexaBlock module"      value="%HEXABLOCK_ROOT_DIR%/share/doc/salome/gui/HEXABLOCK/index.html;;http://docs.salome-platform.org/latest/gui/HEXABLOCK/index.html"/>
   </section>
   <section name="resources">
     <!-- Module resources -->
