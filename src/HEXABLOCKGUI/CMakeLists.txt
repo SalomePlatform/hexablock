@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -190,7 +190,6 @@ SALOME_CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/resources/HEXABLOCKCatalog.xml
 
 # resource files / static
 SET(_other_RESOURCES
-  resources/LightApp.xml
   resources/ModuleHexablock.png
   resources/ModuleHexablock15x15.png
   resources/new_document.png
