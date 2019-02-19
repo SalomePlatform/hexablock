@@ -22,6 +22,8 @@
 #include "HEXABLOCKGUI.hxx"
 #include "HEXABLOCKGUI_VtkDocumentGraphicView.hxx"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <SOCC_ViewModel.h>
 #include <SUIT_ViewManager.h>
 
@@ -202,7 +204,11 @@ void OccGraphicView::highlightSubShapes(const Handle(AIS_Shape)& anObj,
 
     //get the context
     Handle (AIS_InteractiveContext) anIC = getContext();
-    if ( anIC.IsNull() || !anIC->HasOpenedContext() )
+    if ( anIC.IsNull() 
+#if OCC_VERSION_LARGE <= 0x07030000
+	 || !anIC->HasOpenedContext() 
+#endif
+	 )
         return;
 
     // ** highlight
