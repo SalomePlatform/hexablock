@@ -551,7 +551,7 @@ void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
 {
    tedge.clear ();
    cpchar who    = target ? "Target" : "Pattern";
-   string nmedge = target ? "Vertices of target (args 5 and 6)" 
+   std::string nmedge = target ? "Vertices of target (args 5 and 6)" 
                           : "Vertices of pattern (args 3 and 4)" ;
    nmedge += "don't define an edge" ;
 
@@ -563,8 +563,8 @@ void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
       return;
       }
 
-   map <Edge*, int> edge_count;
-   map <Edge*, int> :: iterator iter;
+   std::map <Edge*, int> edge_count;
+   std::map <Edge*, int> :: iterator iter;
    int nbre = tquad.size();
    for (int nq=0 ; nq<nbre ; ++nq)
         {
@@ -634,7 +634,7 @@ void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
 {
    tvertex.clear ();
    cpchar who    = target ? "Target" : "Pattern";
-   string nmedge = target ? "Vertices of target (args 4 and 6)" 
+   std::string nmedge = target ? "Vertices of target (args 4 and 6)" 
                           : "Vertices of pattern (args 3 and 5)" ;
    nmedge += "don't define an edge" ;
 
@@ -646,8 +646,8 @@ void Elements::checkContour (Quads& tquad, Vertex* v1, Vertex* v2, bool target,
       return;
       }
 
-   map <Edge*, int> edge_count;
-   map <Edge*, int> :: iterator iter;
+   std::map <Edge*, int> edge_count;
+   std::map <Edge*, int> :: iterator iter;
    int nbre = tquad.size();
    for (int nq=0 ; nq<nbre ; ++nq)
         {

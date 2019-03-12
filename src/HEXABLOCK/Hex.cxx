@@ -85,7 +85,7 @@ Document* Hex::addDocument (cpchar nomdoc)
    if (actif)
        glob->dump << nomdoc;
 
-   string name;
+   std::string name;
    makeName (nomdoc, name);
    Document* doc = new Document (name.c_str(), this);
 
@@ -160,7 +160,7 @@ Document* Hex::findDocument (cpchar name)
    return NULL;
 }
 // ======================================================== makeName
-void Hex::makeName (cpchar radical, string& name)
+void Hex::makeName (cpchar radical, std::string& name)
 {
    char cnum [8];
    int  numero = 0;

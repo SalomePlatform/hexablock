@@ -45,7 +45,7 @@ public:
    Document* addDocument  (cpchar name="default");
    Document* loadDocument (cpchar name);
    Document* findDocument (cpchar name);
-   Document* findDocument (const string& name) 
+   Document* findDocument (const std::string& name) 
              { return findDocument (name.c_str()) ; }
    void what ();
    int    sizeofMessage  ();
@@ -54,7 +54,7 @@ public:
 #ifndef SWIG
    int loadAllDocs (cpchar flow);
    int saveAllDocs (cpchar filename);
-   void makeName   (cpchar radical, string& name);
+   void makeName   (cpchar radical, std::string& name);
 
    void lockDump();
    void restoreDump();
@@ -66,7 +66,7 @@ public:
 
 private:
    static Hex* first_instance;
-   vector <Document*> liste_documents;
+   std::vector <Document*> liste_documents;
    Globale*    glob;
 #endif    // not SWIG
 };

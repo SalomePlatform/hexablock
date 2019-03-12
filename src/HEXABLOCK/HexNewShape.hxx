@@ -103,7 +103,7 @@ private :     // ________________________________________________________
    TopoDS_Shape    geo_shape;
 
    EnumShape    sh_origin;
-   string       geo_brep;
+   std::string  geo_brep;
    bool         brep_defined, shape_defined;
 
    TopTools_IndexedMapOfShape map_shape;

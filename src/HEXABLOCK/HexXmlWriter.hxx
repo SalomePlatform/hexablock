@@ -49,13 +49,13 @@ public :
    void addAttribute (cpchar attrib, cpchar  valeur); // attrib="valeur"
    void addAttribute (cpchar attrib, int     valeur);
    void addAttribute (cpchar attrib, double  valeur);
-   void addAttribute (cpchar attrib, string& valeur);
+   void addAttribute (cpchar attrib, std::string& valeur);
 
 private :
     void jumpLine ();
     void alaLigne (bool force=false);
     void ecrire   (cpchar  mot);
-    void ecrire   (string& mot) { ecrire (mot.c_str()) ; }
+    void ecrire   (std::string& mot) { ecrire (mot.c_str()) ; }
     void addMot   (cpchar  mot);
 
 private :
@@ -85,7 +85,7 @@ inline void XmlWriter::addAttribute (cpchar attrib, double valeur)
    addAttribute (attrib, buffer);
 }
 // ====================================================== addAttribute (stl)
-inline void XmlWriter::addAttribute (cpchar attrib, string& valeur)
+inline void XmlWriter::addAttribute (cpchar attrib, std::string& valeur)
 {
    addAttribute (attrib, valeur.c_str());
 }

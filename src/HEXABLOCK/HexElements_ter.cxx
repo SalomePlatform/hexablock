@@ -171,7 +171,7 @@ void Elements::assoCylinders (double* ori, double* vk, double angle,
    NewShape* geom = el_root->addShape (name, SH_CYLINDER);
    geom -> openShape();
 
-   string brep;
+   std::string brep;
    // Real3 vk = { normal->getDx(), normal->getDy(), normal->getDz() };
    // normer_vecteur (vk);
 
@@ -283,7 +283,7 @@ void Elements::assoCircle (double* center, Edge* ed1, Edge* ed2, NewShape* geom)
 {
    Real3 oa,  ob, normal;
    Real3 pta, ptb, ptc, ptd;
-   string brep;
+   std::string brep;
 
 //  Les 2 edges dont les petits cotes d'un rectangle de rapport L/l=sqrt(2)
 //  Soit le cercle circonscrit a ce rectangle.
@@ -366,7 +366,7 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
    if (vo1==NULL || vd1==NULL)
       return HERR;
 
-   string  trep;
+   std::string  trep;
    Real3   pa, pb, vdir1, vdir2;
    calc_vecteur (vo1->getPoint (pa), vd1->getPoint (pb), vdir1);
    calc_vecteur (vo2->getPoint (pa), vd2->getPoint (pb), vdir2);
@@ -381,7 +381,7 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
           Shape* shape  = tab_shapes[nro];
           if (shape!=NULL)
              {
-             string brep   = shape->getBrep();
+             std::string brep   = shape->getBrep();
              translate_brep (brep, vdir1, trep);
              // Shape* tshape = new Shape (trep);
              // tshape->setBounds (shape->getStart(), shape->getEnd());
@@ -396,7 +396,7 @@ int Elements::propagateAssociation (Edge* orig, Edge* dest, Edge* dir)
        Shape* shape = vo1->getAssociation ();
        if (shape!=NULL && vd1->getAssociation ()==NULL)
           {
-          string brep   = shape->getBrep();
+          std::string brep   = shape->getBrep();
           translate_brep (brep, vdir, trep);
           // Shape* tshape = new Shape (trep);
           // vd1->setAssociation (tshape);
@@ -430,7 +430,7 @@ int Elements::prismAssociation (Edge* lorig, Edge* ldest, int nh)
        char       name [24];
 
        sprintf (name, "0x%lx#%d", (unsigned long) shape, nh);
-       map<string,int>::iterator iter = map_shape.find (name);
+       std::map<std::string,int>::iterator iter = map_shape.find (name);
        if (iter != map_shape.end())
           subid = iter->second;
        else
@@ -660,7 +660,7 @@ int Elements::saveVtk  (cpchar radical, int &nro)
    sprintf (num, "%d", nro);
    nro ++;
 
-   string filename = radical;
+   std::string filename = radical;
    filename += num;
    filename += ".vtk";
    int ier = saveVtk (filename.c_str());

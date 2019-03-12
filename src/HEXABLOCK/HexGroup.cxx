@@ -32,7 +32,7 @@ static const cpchar kind_name[] = { "HexaCell", "QuadCell", "EdgeCell",
 Group::Group   (Document* dad, cpchar nom, EnumGroup grp)
      : EltBase (dad, EL_GROUP) 
 {
-   string name = std::string(nom);
+   std::string name = std::string(nom);
    name.erase (name.find_last_not_of (" \n\r\t" ) + 1);
    name.erase (0, name.find_first_not_of (" \n\r\t" ));
 

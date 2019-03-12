@@ -26,14 +26,14 @@
 BEGIN_NAMESPACE_HEXA
 
 // ====================================================== Constructeur
-Shape::Shape  (string brep)
+Shape::Shape  (std::string brep)
 {
    b_rep  = brep;
    debut  = 0;
    fin    = 1;
    ident  = "";
 }
-void clean_brep (string& brep);
+void clean_brep (std::string& brep);
 // ====================================================== saveXml
 void Shape::saveXml (XmlWriter* xml)
 {

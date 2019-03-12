@@ -36,10 +36,10 @@ int HexaExport geom_create_cylcyl (double* borig, double* bnorm, double* bbase,
 int HexaExport geom_asso_cylcyl (Edge* edge);
 
 bool HexaExport same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsil2=1e-6);
-void HexaExport save_brep   (cpchar nom, string brep, int& nro);
-void HexaExport clean_brep  (string& brep);
+void HexaExport save_brep   (cpchar nom, std::string brep, int& nro);
+void HexaExport clean_brep  (std::string& brep);
 
-void HexaExport geom_make_brep  (TopoDS_Shape& shape, string& brep);
+void HexaExport geom_make_brep  (TopoDS_Shape& shape, std::string& brep);
 int  HexaExport geom_brep2point (rcstring brep, double& px, double& py, double& pz);
 int  HexaExport geom_brep2shape (rcstring brep, TopoDS_Shape& shape);
 

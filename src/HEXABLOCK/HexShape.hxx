@@ -30,18 +30,18 @@ BEGIN_NAMESPACE_HEXA
 class HexaExport Shape 
 {
 public :
-    Shape (string brep);
-    string getBrep  () { return b_rep; }
-    string getIdent () { return ident; }
-    string getIor   () { return ior; }
+    Shape (std::string brep);
+    std::string getBrep  () { return b_rep; }
+    std::string getIdent () { return ident; }
+    std::string getIor   () { return ior; }
 
     double getStart () { return debut;  }
     double getEnd   () { return fin;   }
     void   getBounds (double& pdeb, double& pfin)  { pdeb=debut ; pfin = fin; }
 
-    void  setBrep   (string brep)               { b_rep = brep; }
-    void  setIdent  (string name)               { ident = name; }
-    void  setIor    (string val)                { ior   = val; }
+    void  setBrep   (std::string brep)               { b_rep = brep; }
+    void  setIdent  (std::string name)               { ident = name; }
+    void  setIor    (std::string val)                { ior   = val; }
 
     void  setBounds (double pdeb, double pfin)  { debut = pdeb ; fin = pfin; }
     void  setStart  (double val)                { debut = val ; }
@@ -52,8 +52,8 @@ public :
 private :
     double debut;
     double fin;
-    string ident;
-    string ior;
+    std::string ident;
+    std::string ior;
 
     std::string b_rep;
 };

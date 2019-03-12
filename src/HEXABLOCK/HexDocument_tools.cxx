@@ -328,7 +328,7 @@ int Document::saveVtk  (cpchar radical, int &nro)
    sprintf (num, "%d", nro);
    nro ++;
 
-   string filename = radical;
+   std::string filename = radical;
    filename += num;
    filename += ".vtk";
    int ier = saveVtk (filename.c_str());

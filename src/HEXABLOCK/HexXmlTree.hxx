@@ -35,32 +35,32 @@ BEGIN_NAMESPACE_HEXA
 class HexaExport XmlTree
 {
 public :
-   XmlTree (const string& name, XmlTree* dad=NULL);
+   XmlTree (const std::string& name, XmlTree* dad=NULL);
   ~XmlTree ();
 
-   int  parseFile   (const string& name);
+   int  parseFile   (const std::string& name);
    int  parseStream (cpchar flux, int& posit);
 
    cpchar getName  ()   { return item_name.c_str() ; }
    int    getNbrAttributs  ()   { return nbr_attributs ; }
    int    getNbrChildren   ()   { return nbr_items     ; }
 
-   int           findAttribute (const string& nom);
-   const string& findValue     (const string& nom);
-   int           findInteger   (const string& nom);
+   int           findAttribute (const std::string& nom);
+   const std::string& findValue     (const std::string& nom);
+   int           findInteger   (const std::string& nom);
 
    cpchar   getAttribute  (int nro)    { return tab_attributs [nro].c_str(); }
    cpchar   getValue      (int nro)    { return tab_values    [nro].c_str(); }
 
-   XmlTree* findChild    (const string& nom);
+   XmlTree* findChild    (const std::string& nom);
    XmlTree* getChild     (int nro)    { return tab_items [nro]; }
    XmlTree* getParent    ()           { return xml_parent; }
 
                   // ------------------------- Modifications
 
-   XmlTree* addChild    (const string& nom);
-   void     addAttribut (const string& nom, const string& valeur);
-   void     setName     (const string&  nom)   { item_name = nom; }
+   XmlTree* addChild    (const std::string& nom);
+   void     addAttribut (const std::string& nom, const std::string& valeur);
+   void     setName     (const std::string&  nom)   { item_name = nom; }
    void     dump        (int niveau=0);
 
    int      goTo        (cpchar  ouca);
@@ -68,25 +68,25 @@ public :
 private :
    int  parseXml ();
    int  readLine ();
-   EnumItem  readItem  (string& item);
-   EnumItem  getItem   (string& item, EnumItem waited=M_NONE);
-   int       getString (string& item);
-   int       getIdent  (string& item);
+   EnumItem  readItem  (std::string& item);
+   EnumItem  getItem   (std::string& item, EnumItem waited=M_NONE);
+   int       getString (std::string& item);
+   int       getIdent  (std::string& item);
    int       getChar   ();
    void      putError  (cpchar why);
 
 private :
-   string   item_name;
-   string   item_vide;
+   std::string   item_name;
+   std::string   item_vide;
    int      nbr_attributs;
    int      nbr_items;
    XmlTree* xml_parent;
 
-   vector <string>   tab_attributs;
-   vector <string>   tab_values;
-   vector <XmlTree*> tab_items;
+   std::vector <std::string>   tab_attributs;
+   std::vector <std::string>   tab_values;
+   std::vector <XmlTree*> tab_items;
                                // Lecture
-   string   fic_buffer;
+   std::string   fic_buffer;
    int      len_buffer;
    int      nro_ligne;
    int      fic_pos;

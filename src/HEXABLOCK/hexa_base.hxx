@@ -83,13 +83,12 @@ typedef FILE*       pfile;
 typedef const std::string& rcstring;
                        // Impressions de mise au point
 #include <iostream>
-using namespace std;
 
-#define HexDisplay(x)   cout << " ... " #x " = " << x << endl
-#define PutData(x)      cout << " ... " #x " = " << x << endl
-#define PutCoord(x)     cout << " ... " #x " = (" << x[0] << ", " \
-                              << x[1] << ", " << x[2] << ")"  << endl
-#define Echo(m)         cout << " _______________ " << m << endl
+#define HexDisplay(x)   std::cout << " ... " #x " = " << x << std::endl
+#define PutData(x)      std::cout << " ... " #x " = " << x << std::endl
+#define PutCoord(x)     std::cout << " ... " #x " = (" << x[0] << ", " \
+                              << x[1] << ", " << x[2] << ")"  << std::endl
+#define Echo(m)         std::cout << " _______________ " << m << std::endl
 
 //  #define Libere(obj)     { if (obj!=NULL) free (obj)      ;  obj=NULL; }
 //  #define Destroy(obj)    { delete obj       ;  obj=NULL   ;            }
@@ -279,15 +278,15 @@ HexaExport bool   on_debug();     // == getenv ("HEXA_DB") > 0
 HexaExport bool   in_test ();     // == getenv ("HEXA_TEST") > 0
 HexaExport int    niv_debug();    // Implemente prochainement
 
-HexaExport void   set_minus (string& chaine);
+HexaExport void   set_minus (std::string& chaine);
 
 HexaExport bool   special_option ();
 HexaExport void   set_special_option (bool opt);
 
 HexaExport int    sizeof_file (cpchar filename);
 HexaExport char*  read_file   (cpchar filename, int& size);
-HexaExport cpchar get_time   (string& buffer);
-HexaExport int make_basename (cpchar filename, string& base);
+HexaExport cpchar get_time   (std::string& buffer);
+HexaExport int make_basename (cpchar filename, std::string& base);
 
 const double Epsil   = 1e-6;
 const double UnEpsil = 0.999999;

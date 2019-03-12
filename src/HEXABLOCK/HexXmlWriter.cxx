@@ -71,12 +71,12 @@ int XmlWriter::setFileName (cpchar nomfic)
    int  pext = strlen (nomfic) - 4;
    if (pext > 0)
       {
-      string sext = &nomfic[pext];
+      std::string sext = &nomfic[pext];
       set_minus (sext);
       suff = sext != ".xml";
       }
 
-   string fname = nomfic;
+   std::string fname = nomfic;
    if (suff) 
       fname   += ".xml";
 
@@ -136,7 +136,7 @@ void XmlWriter::endMark ()
 void XmlWriter::openMark (cpchar balise)
 {
    jumpLine ();
-   string mot = "<";
+   std::string mot = "<";
    mot +=  balise;
    ecrire (mot);
 
@@ -147,8 +147,8 @@ void XmlWriter::openMark (cpchar balise)
 // ========================================================= closeMark
 void XmlWriter::closeMark (bool jump)
 {
-   string balise = pile_mark.top ();
-   string mot    = "</";
+   std::string balise = pile_mark.top ();
+   std::string mot    = "</";
    int    etat   = pile_etat.top ();
 
    xml_level --;
@@ -177,7 +177,7 @@ void XmlWriter::jumpLine ()
    xml_pos = xml_level * xml_decal;
    if (xml_pos > 0)
       {
-      string  space (xml_pos, ' ');
+      std::string  space (xml_pos, ' ');
       addMot (space.c_str());
       }
 }
@@ -207,7 +207,7 @@ void XmlWriter::alaLigne (bool force)
 // ========================================================= addAttribute 
 void XmlWriter::addAttribute (cpchar cle, cpchar valeur)
 {
-   string phrase = " ";
+   std::string phrase = " ";
    phrase += cle;
    phrase += " = \"";
    phrase += valeur;

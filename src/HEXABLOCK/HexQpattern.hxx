@@ -94,9 +94,9 @@ private :
     void projeter  (Vertex* vertex, double& ux, double& uy);
 
 private :
-   vector <QpatVertex> pat_vertex;
-   vector <QpatEdge  > pat_edge;
-   vector <QpatQuad  > pat_quad;
+   std::vector <QpatVertex> pat_vertex;
+   std::vector <QpatEdge  > pat_edge;
+   std::vector <QpatQuad  > pat_quad;
 
    Quads    old_top, old_bottom;
    Hexas    old_hexa;

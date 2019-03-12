@@ -403,7 +403,7 @@ NewShape* Elements::getShape()
 {
    if (grid_geom==NULL)
       {
-      string name = "extrud_" + el_name;
+      std::string name = "extrud_" + el_name;
       grid_geom   = el_root->addShape (name.c_str(), SH_EXTRUD);
       grid_geom -> openShape();
       }

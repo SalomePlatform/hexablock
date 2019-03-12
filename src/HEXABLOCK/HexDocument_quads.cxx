@@ -48,7 +48,7 @@ static bool db = false;
 // ======================================================== copyDocument
 Document* Document::copyDocument ()
 {
-   string nom = "CopyOf_";
+   std::string nom = "CopyOf_";
    nom += el_name;
  
    Document* clone = new Document (nom.c_str());
@@ -624,11 +624,11 @@ Elements* Document::replace (Quads motif, Quads cible, Vertex* p1, Vertex* c1,  
 // ========================================================= print_replace
 void print_replace (Edge* zig, Edge*  zag)
 {
-   cout << zig->getName() << " = (" << zig->getVertex(0)->getName() 
+   std::cout << zig->getName() << " = (" << zig->getVertex(0)->getName() 
         << ", " << zig->getVertex(1)->getName() << ") est clone en ";
 
-   cout << zag->getName() << " = (" << zag->getVertex(0)->getName() 
-        << ", " << zag->getVertex(1)->getName() << ")" << endl;
+   std::cout << zag->getName() << " = (" << zag->getVertex(0)->getName() 
+        << ", " << zag->getVertex(1)->getName() << ")" << std::endl;
 }
 // ========================================================= only_in_hexas
 bool only_in_hexas (Hexas& thexas, Quad* quad)
@@ -656,11 +656,11 @@ bool only_in_hexas (Hexas& thexas, Edge*  edge)
        Quad* quad = edge->getParent   (nq); 
        if (NOT only_in_hexas (thexas, quad))
           {
-          cout << " ... inMoreHexas " << edge->makeDefinition() << endl; 
+          std::cout << " ... inMoreHexas " << edge->makeDefinition() << std::endl; 
           return false;
           }
        }
-   cout << " ... only_in_hexas " << edge->makeDefinition() << endl; 
+   std::cout << " ... only_in_hexas " << edge->makeDefinition() << std::endl; 
    return true;
 }
 // ========================================================= replace_vertex
@@ -676,7 +676,7 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
    DumpStart ("disconnectEdges",  thexas << tedges);
    
    if (db)
-      cout << " +++ Disconnect Edges" << endl;
+      std::cout << " +++ Disconnect Edges" << std::endl;
 
    Elements* grid  = new Elements (this);
 
@@ -687,9 +687,9 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
 
    if (nbhexas != nbedges) 
       {
-      cout << " **** Error in Document::disconnectEdges\n" << endl;
-      cout << " **** Number of Edges and number of Hexas are different\n" 
-           << endl;
+      std::cout << " **** Error in Document::disconnectEdges\n" << std::endl;
+      std::cout << " **** Number of Edges and number of Hexas are different\n" 
+           << std::endl;
       return NULL;
       }
    else if (nbhexas==1)
@@ -703,22 +703,22 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
        {
        if (BadElement (tedges[nro]))
           {
-          cout << " **** Eddge number " << nro+1 << " is incorrect"
-               << endl;
+          std::cout << " **** Eddge number " << nro+1 << " is incorrect"
+               << std::endl;
           return NULL;
           }
        if (BadElement (thexas[nro]))
           {
-          cout << " **** Hexa number " << nro+1 << " is incorrect"
-               << endl;
+          std::cout << " **** Hexa number " << nro+1 << " is incorrect"
+               << std::endl;
           return NULL;
           }
        if (db)
-          cout << nro+1 << " hexa = " << thexas[nro]->getName () 
+          std::cout << nro+1 << " hexa = " << thexas[nro]->getName () 
                         << ", edge = " << tedges[nro]->getName () 
                         << " = (" << tedges[nro]->getVertex(0)->getName () 
                         << ", "   << tedges[nro]->getVertex(1)->getName () 
-                        << ")" << endl;
+                        << ")" << std::endl;
        }
 
    for (int nro=0 ; nro<nbhexas ; nro++)
@@ -726,21 +726,21 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
        int ned = thexas[nro]->findEdge (tedges[nro]);
        if (ned==NOTHING)
           {
-          cout << " **** Edge number " << nro+1 
-               << " doesnt belong to correspondant hexa" << endl;
+          std::cout << " **** Edge number " << nro+1 
+               << " doesnt belong to correspondant hexa" << std::endl;
           return NULL;
           }
        }
 
-   vector <Vertex*> tvertex (nbedges+1);
+   std::vector <Vertex*> tvertex (nbedges+1);
 
    for (int nro=1 ; nro<nbedges ; nro++)
        {
        tvertex[nro] = tedges[nro]->commonVertex (tedges[nro-1]);
        if (tvertex[nro]==NULL)
           {
-          cout << " **** Edge number " << nro 
-               << " doesnt intesect next edge" << endl;
+          std::cout << " **** Edge number " << nro 
+               << " doesnt intesect next edge" << std::endl;
           return NULL;
           }
        }
@@ -755,24 +755,24 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
        int ned = thexas[nro]->findEdge (tedges[nro]);
        if (ned==NOTHING)
           {
-          cout << " **** Edge number " << nro+1 
-               << " doesnt belong to correspondant hexa" << endl;
+          std::cout << " **** Edge number " << nro+1 
+               << " doesnt belong to correspondant hexa" << std::endl;
           return NULL;
           }
        }
                       // Fin des controles, on peut y aller ...
 
-   map <Edge*, int> state_edge;
-   map <Quad*, int> state_quad;
+   std::map <Edge*, int> state_edge;
+   std::map <Quad*, int> state_quad;
    enum { UNDEFINED, REPLACED, AS_IS };
 
-   map <Vertex*, Vertex*> new_vertex;
-   map <Edge*,   Edge*>   new_edge;
-   map <Quad*,   Quad*>   new_quad;
+   std::map <Vertex*, Vertex*> new_vertex;
+   std::map <Edge*,   Edge*>   new_edge;
+   std::map <Quad*,   Quad*>   new_quad;
 
-   map <Vertex*, Vertex*> :: iterator it_vertex;
-   map <Edge*,   Edge*>   :: iterator it_edge;
-   map <Quad*,   Quad*>   :: iterator it_quad;
+   std::map <Vertex*, Vertex*> :: iterator it_vertex;
+   std::map <Edge*,   Edge*>   :: iterator it_edge;
+   std::map <Quad*,   Quad*>   :: iterator it_quad;
 
 #define VertexIsNew(v) (it_vertex=new_vertex.find(v))!=new_vertex.end()
 
@@ -786,8 +786,8 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
        new_vertex [tvertex[nro]] = node1;
        if (db)
           {
-          cout << nro << " : "         << tvertex[nro]->getName() 
-               << " est clone en " << node1->getName() << endl;
+          std::cout << nro << " : "         << tvertex[nro]->getName() 
+               << " est clone en " << node1->getName() << std::endl;
           }
 
        if (nro>0)
@@ -802,7 +802,7 @@ Elements* Document::disconnectEdges (Hexas thexas, Edges  tedges)
        }
 
    if (db)
-      cout << "_____________________________ Autres substitutions" << endl;
+      std::cout << "_____________________________ Autres substitutions" << std::endl;
 
    // Un edge non remplace, qui contient un vertex remplace
    //         commun a plus de 2 faces (donc appartenant a un autre hexa)

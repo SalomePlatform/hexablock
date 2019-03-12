@@ -65,13 +65,13 @@ public :
 
     bool lock ();
     void restore  (bool reactive);
-    void getBegin (string& begin);
+    void getBegin (std::string& begin);
 
 private :
    cpchar findName   (EltBase* elt);
    void addArgVector (EnumElt type, TabElts& table);
    void addArgument  (cpchar  arg);
-   void addArgument  (string& arg) { addArgument (arg.c_str()) ; }
+   void addArgument  (std::string& arg) { addArgument (arg.c_str()) ; }
    void declareVectors ();
    void addVector (cpchar name);
    void majVector (cpchar value);
@@ -82,12 +82,12 @@ private :
    std::vector <std::string>           tab_declar;
 
    int    tab_count [EL_MAXI];
-   string curr_vector;
+   std::string curr_vector;
    int    nbr_values;
 
    FILE*    fic_dump;
-   string   this_name;
-   string   right_part;
+   std::string   this_name;
+   std::string   right_part;
    bool     is_open;
    int      nbr_nulls;
    int      nbr_args;

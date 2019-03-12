@@ -102,19 +102,19 @@ public :
    void  dumpRef ();
 
    cpchar getName ();
-   void   setName (const string& nom) { el_name = nom ; }
+   void   setName (const std::string& nom) { el_name = nom ; }
    void   setName (cpchar nom)        { el_name = nom ; }
 
    bool    debug (int niv=0);
    bool    isAssociated ()            { return is_associated ; }
-   string  getNextName ();
+   std::string  getNextName ();
 
 protected :
    EnumElt   el_type;
    EltBase*  el_next;
    int       el_id;
    Document* el_root;
-   string    el_name;
+   std::string    el_name;
 
    int       el_status;
    int       el_mark;

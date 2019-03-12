@@ -35,13 +35,13 @@
 %include "std_vector.i"
 namespace std
 {
-%template(VectorHexas)    vector <Hex::Hexa*>;
-%template(VectorQuads)    vector <Hex::Quad*>;
-%template(VectorEdges)    vector <Hex::Edge*>;
-%template(VectorVertices) vector <Hex::Vertex*>;
-%template(VectorShapes)   vector <Hex::NewShape*>;
-%template(VectorReal)    vector <double>;
-%template(VectorInt)     vector <int>;
+%template(VectorHexas)    std::vector <Hex::Hexa*>;
+%template(VectorQuads)    std::vector <Hex::Quad*>;
+%template(VectorEdges)    std::vector <Hex::Edge*>;
+%template(VectorVertices) std::vector <Hex::Vertex*>;
+%template(VectorShapes)   std::vector <Hex::NewShape*>;
+%template(VectorReal)    std::vector <double>;
+%template(VectorInt)     std::vector <int>;
 }
 
 %include "hexa_base.hxx"

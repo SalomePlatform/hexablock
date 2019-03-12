@@ -2598,7 +2598,7 @@ QModelIndex DocumentModel::makeCartesianUni(const QModelIndex& icenter,
 
 QModelIndex DocumentModel::makeCartesian(const QModelIndex& icenter,
                                          const QModelIndex& ibase, const QModelIndex& ivec, const QModelIndex& iaxis,
-                                         vector<double>& radius, vector<double>& angles, vector<double>& heights)
+                                         std::vector<double>& radius, std::vector<double>& angles, std::vector<double>& heights)
 {
     QModelIndex result;
 
@@ -2656,7 +2656,7 @@ QModelIndex DocumentModel::makeSphereUni (QModelIndex& icenter,
 
 QModelIndex DocumentModel::makeSphere    (QModelIndex& icenter,
                                           QModelIndex& ivec_x, QModelIndex& ivec_z,
-                                          vector<double>& tray, vector<double>& tang, vector<double>& thaut)
+                                          std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut)
 {
     QModelIndex result;
 
@@ -2709,7 +2709,7 @@ QModelIndex DocumentModel::makeSphericalUni (QModelIndex& icenter,
 
 QModelIndex DocumentModel::makeSpherical    (QModelIndex& icenter,
                                              QModelIndex& ivec_x, QModelIndex& ivec_z,
-                                             vector<double>& rayon,
+                                             std::vector<double>& rayon,
                                              int crit)
 {
     QModelIndex result;
@@ -2766,7 +2766,7 @@ QModelIndex DocumentModel::makeRindUni (QModelIndex& icenter,
 
 QModelIndex DocumentModel::makeRind    (QModelIndex& icenter,
                                         QModelIndex& ivec_x, QModelIndex& ivec_z,
-                                        vector<double>& tray, vector<double>& tang, vector<double>& thaut)
+                                        std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut)
 {
     QModelIndex result;
 
@@ -2819,7 +2819,7 @@ QModelIndex DocumentModel::makeCylinderUni(QModelIndex& iorig, QModelIndex& ivec
 }
 
 QModelIndex DocumentModel::makeCylinder(QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
-                                        vector<double>& tray, vector<double>& tang, vector<double>& thaut)
+                                        std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut)
 {
     QModelIndex result;
 
@@ -2893,7 +2893,7 @@ QModelIndex DocumentModel::makePipeUni(QModelIndex& iorig, QModelIndex& ivecx, Q
 }
 
 QModelIndex DocumentModel::makePipe(QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
-                                    vector<double>& tray, vector<double>& tang, vector<double>& thaut)
+                                    std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut)
 {
     QModelIndex result;
 
@@ -2954,7 +2954,7 @@ QModelIndex DocumentModel::joinQuadUni(QModelIndex&  istart, QModelIndex& idest,
 }
 
 QModelIndex DocumentModel::joinQuad(QModelIndex&  istart, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
-                     QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen)
+                     QModelIndex& iva2, QModelIndex& ivb2, std::vector<double>& tlen)
 {
     QModelIndex result;
 
@@ -3000,7 +3000,7 @@ QModelIndex DocumentModel::joinQuadsUni(QModelIndexList& istarts, QModelIndex& i
 }
 
 QModelIndex DocumentModel::joinQuads(QModelIndexList& istarts, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
-                                     QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen)
+                                     QModelIndex& iva2, QModelIndex& ivb2, std::vector<double>& tlen)
 {
     QModelIndex result;
 
@@ -3044,7 +3044,7 @@ QModelIndex DocumentModel::revolutionQuadUni(QModelIndex& istart, QModelIndex& i
 }
 
 QModelIndex DocumentModel::revolutionQuad(QModelIndex& istart, QModelIndex& icenter, QModelIndex& iaxis,
-                                          vector<double>& angles)
+                                          std::vector<double>& angles)
 {
     QModelIndex result;
 
@@ -3084,7 +3084,7 @@ QModelIndex DocumentModel::revolutionQuadsUni(QModelIndexList& istarts, QModelIn
 }
 
 QModelIndex DocumentModel::revolutionQuads(QModelIndexList& istarts, QModelIndex& icenter, QModelIndex& iaxis,
-                                           vector<double>& angles)
+                                           std::vector<double>& angles)
 {
     QModelIndex result;
 
@@ -3137,7 +3137,7 @@ QModelIndex DocumentModel::extrudeQuadUni(QModelIndex& istart, QModelIndex& dv, 
     return result;
 }
 
-QModelIndex DocumentModel::extrudeQuad(QModelIndex& istart, QModelIndex& dv, vector<double>& tlen)
+QModelIndex DocumentModel::extrudeQuad(QModelIndex& istart, QModelIndex& dv, std::vector<double>& tlen)
 {
     QModelIndex result;
 
@@ -3188,7 +3188,7 @@ QModelIndex DocumentModel::extrudeQuadsUni (QModelIndexList& istarts, QModelInde
     return result;
 }
 
-QModelIndex DocumentModel::extrudeQuads(QModelIndexList& istarts, QModelIndex& iaxis, vector<double>& tlen)
+QModelIndex DocumentModel::extrudeQuads(QModelIndexList& istarts, QModelIndex& iaxis, std::vector<double>& tlen)
 {
     QModelIndex result;
 
@@ -3222,7 +3222,7 @@ QModelIndex DocumentModel::cutUni(QModelIndex& iEdge, int nbre)
     return result;
 }
 
-QModelIndex DocumentModel::cut(QModelIndex& iEdge, vector<double>& tlen)
+QModelIndex DocumentModel::cut(QModelIndex& iEdge, std::vector<double>& tlen)
 {
     QModelIndex result;
 

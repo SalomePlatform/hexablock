@@ -437,7 +437,7 @@ int NewShape::addPoint (double* point)
    int  subid = tab_vertex.size() + 2;
 
    sprintf (suffix, ":vertex_%02d", subid);
-   string name = el_name + suffix;
+   std::string name = el_name + suffix;
 
    VertexShape* sub_shape = new VertexShape (this, subid, point);
    sub_shape->setName (name);
@@ -447,7 +447,7 @@ int NewShape::addPoint (double* point)
 // ===================================================== saveBrep
 int NewShape::saveBrep ()
 {
-   string filename = el_name + ".brep";
+   std::string filename = el_name + ".brep";
 
    int ier   = updateBrep ();
    if (ier != HOK)
@@ -518,7 +518,7 @@ void NewShape::parseShape (const TopoDS_Shape& shape)
 void NewShape::addSubShape (const TopoDS_Shape& shape)
 {
    char chnum [32];
-   string name;
+   std::string name;
    sh_indice ++;
 
    int subid = map_shape.Add (shape);

@@ -39,7 +39,7 @@ public :
     int         getDim   ()             { return sub_dim ; }
     virtual EnumKindOfShape kindOf ()   { return kind_of ; }
 
-    const string&       getBrep  ();
+    const std::string&       getBrep  ();
     virtual const TopoDS_Shape& getShape ();
 
     void   saveXml (XmlWriter* xml);
@@ -55,7 +55,7 @@ protected :
     int       sub_dim;     // 0 = point, 1 = arete, 2 = face;
 
     TopoDS_Shape    geo_shape;
-    string          geo_brep;
+    std::string          geo_brep;
     bool            maj_brep, maj_shape;
     EnumKindOfShape kind_of;
 };

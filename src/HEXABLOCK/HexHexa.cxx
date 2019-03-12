@@ -422,7 +422,7 @@ void Hexa::propager (Propagation* prop, int nro)
 void Hexa::saveXml (XmlWriter* xml)
 {
    char ident[12];
-   string quads;
+   std::string quads;
 
    for (int nro=0 ; nro<HQ_MAXI ; nro++)
        {

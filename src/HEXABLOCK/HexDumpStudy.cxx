@@ -49,7 +49,7 @@ DumpStudy::DumpStudy ()
    if (fic_dump==NULL)
        fic_dump = stdout;
 
-   string buff;
+   std::string buff;
    cpchar when = get_time (buff);
 
    fprintf (fic_dump, "\n");
@@ -117,7 +117,7 @@ DumpStudy& DumpStudy::operator << (cpchar val)
    if (NOT is_open)
       return *this; 
 
-   string valeur ("'");
+   std::string valeur ("'");
    valeur += val;
    valeur += "'";
 
@@ -270,7 +270,7 @@ void DumpStudy::restore (bool reactive)
       is_open = false;
 }
 // =================================================== getBegin 
-void DumpStudy::getBegin (string& begin)
+void DumpStudy::getBegin (std::string& begin)
 {
    begin  = right_part;
    begin += ")";
@@ -351,7 +351,7 @@ void DumpStudy::closeVector ()
 cpchar DumpStudy::findName (EltBase* elt)
 {
    cpchar name = "Unknown";
-   map <EltBase*, string> :: iterator iter = map_name.find (elt);
+   std::map <EltBase*, std::string> :: iterator iter = map_name.find (elt);
    if (iter != map_name.end())
       name = iter->second.c_str();
    else

@@ -20923,7 +20923,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_set_minus(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  string *arg1 = 0 ;
+  std::string *arg1 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
@@ -20936,7 +20936,7 @@ SWIGINTERN PyObject *_wrap_set_minus(PyObject *SWIGUNUSEDPARM(self), PyObject *a
   if (!argp1) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "set_minus" "', argument " "1"" of type '" "string &""'"); 
   }
-  arg1 = reinterpret_cast< string * >(argp1);
+  arg1 = reinterpret_cast< std::string * >(argp1);
   Hex::set_minus(*arg1);
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -21043,7 +21043,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_get_time(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  string *arg1 = 0 ;
+  std::string *arg1 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
@@ -21057,7 +21057,7 @@ SWIGINTERN PyObject *_wrap_get_time(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
   if (!argp1) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "get_time" "', argument " "1"" of type '" "string &""'"); 
   }
-  arg1 = reinterpret_cast< string * >(argp1);
+  arg1 = reinterpret_cast< std::string * >(argp1);
   result = (cpchar)Hex::get_time(*arg1);
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
@@ -21069,7 +21069,7 @@ fail:
 SWIGINTERN PyObject *_wrap_make_basename(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   cpchar arg1 = (cpchar) 0 ;
-  string *arg2 = 0 ;
+  std::string *arg2 = 0 ;
   int res1 ;
   char *buf1 = 0 ;
   int alloc1 = 0 ;
@@ -21092,7 +21092,7 @@ SWIGINTERN PyObject *_wrap_make_basename(PyObject *SWIGUNUSEDPARM(self), PyObjec
   if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "make_basename" "', argument " "2"" of type '" "string &""'"); 
   }
-  arg2 = reinterpret_cast< string * >(argp2);
+  arg2 = reinterpret_cast< std::string * >(argp2);
   result = (int)Hex::make_basename((char const *)arg1,*arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
@@ -22469,7 +22469,7 @@ fail:
 SWIGINTERN PyObject *_wrap_EltBase_setName__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::EltBase *arg1 = (Hex::EltBase *) 0 ;
-  string *arg2 = 0 ;
+  std::string *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -22490,8 +22490,8 @@ SWIGINTERN PyObject *_wrap_EltBase_setName__SWIG_0(PyObject *SWIGUNUSEDPARM(self
   if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "EltBase_setName" "', argument " "2"" of type '" "string const &""'"); 
   }
-  arg2 = reinterpret_cast< string * >(argp2);
-  (arg1)->setName((string const &)*arg2);
+  arg2 = reinterpret_cast< std::string * >(argp2);
+  (arg1)->setName((std::string const &)*arg2);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -22707,7 +22707,7 @@ SWIGINTERN PyObject *_wrap_EltBase_getNextName(PyObject *SWIGUNUSEDPARM(self), P
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  string result;
+  std::string result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:EltBase_getNextName",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Hex__EltBase, 0 |  0 );
@@ -22716,7 +22716,7 @@ SWIGINTERN PyObject *_wrap_EltBase_getNextName(PyObject *SWIGUNUSEDPARM(self), P
   }
   arg1 = reinterpret_cast< Hex::EltBase * >(argp1);
   result = (arg1)->getNextName();
-  resultobj = SWIG_NewPointerObj((new string(static_cast< const string& >(result))), SWIGTYPE_p_string, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new std::string(static_cast< const std::string& >(result))), SWIGTYPE_p_string, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -32594,7 +32594,7 @@ fail:
 SWIGINTERN PyObject *_wrap_Hex_findDocument__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Hex::Hex *arg1 = (Hex::Hex *) 0 ;
-  string *arg2 = 0 ;
+  std::string *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -32616,8 +32616,8 @@ SWIGINTERN PyObject *_wrap_Hex_findDocument__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
   if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Hex_findDocument" "', argument " "2"" of type '" "string const &""'"); 
   }
-  arg2 = reinterpret_cast< string * >(argp2);
-  result = (Hex::Document *)(arg1)->findDocument((string const &)*arg2);
+  arg2 = reinterpret_cast< std::string * >(argp2);
+  result = (Hex::Document *)(arg1)->findDocument((std::string const &)*arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Hex__Document, 0 |  0 );
   return resultobj;
 fail:

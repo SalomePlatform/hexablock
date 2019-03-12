@@ -47,7 +47,7 @@ public :
    EnumElt   getTypeElt ()                 { return grp_typelt ; }
 
    static EnumGroup getKind (cpchar kind);
-   static EnumGroup getKind (const string& k) { return getKind (k.c_str());}
+   static EnumGroup getKind (const std::string& k) { return getKind (k.c_str());}
 
 private :
    int grp_id;

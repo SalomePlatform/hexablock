@@ -513,13 +513,13 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
                                        // 1) marquage des hexas
    el_root->markAll (NO_USED);
                                        // 2) Memo noeuds
-   vector <Quad*> q_amont;
-   vector <Quad*> q_aval;
-   map    <Vertex*, Vertex*> vis_a_vis;
+   std::vector <Quad*> q_amont;
+   std::vector <Quad*> q_aval;
+   std::map    <Vertex*, Vertex*> vis_a_vis;
 
    int nbnodes = t_edges.size();
-   vector <Vertex*> v_amont (nbnodes);
-   vector <Vertex*> v_aval  (nbnodes);
+   std::vector <Vertex*> v_amont (nbnodes);
+   std::vector <Vertex*> v_aval  (nbnodes);
 
    int nbfaces = 0;
    for (int nro=0; nro<nbnodes ; nro++)
@@ -584,7 +584,7 @@ int Elements::cutHexas  (const Edges& t_edges, int nbcuts)
    tab_edge.resize   (nbr_edges,  NULL);
    tab_hexa.resize   (nbr_hexas,  NULL);
    tab_vertex.resize (nbr_vertex, NULL);
-   vector <Edge*>    tab_pilier (nbpiliers);
+   std::vector <Edge*>    tab_pilier (nbpiliers);
 
    int nbinter = nbcuts + 1;
    for (int ned=0; ned<nbnodes ; ned++)

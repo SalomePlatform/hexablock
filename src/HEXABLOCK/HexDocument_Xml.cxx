@@ -50,7 +50,7 @@
 BEGIN_NAMESPACE_HEXA
 
 // ======================================================== get_coords
-int get_coords (const string& chaine, double& x, double& y, double& z)
+int get_coords (const std::string& chaine, double& x, double& y, double& z)
 {
    // int nv = sscanf (chaine.c_str (), "%lg %lg %lg", &x, &y, &z);
    cpchar buffer = chaine.c_str ();
@@ -59,7 +59,7 @@ int get_coords (const string& chaine, double& x, double& y, double& z)
    return HOK;
 }
 // ======================================================== get_coords
-int get_coords (const string& chaine, double& x, double& y)
+int get_coords (const std::string& chaine, double& x, double& y)
 {
    cpchar buffer = chaine.c_str ();
    int nv = sscanf (buffer, "%lg %lg", &x, &y);
@@ -67,7 +67,7 @@ int get_coords (const string& chaine, double& x, double& y)
    return HOK;
 }
 // ======================================================== parse_name
-int parse_name (XmlTree* node, const string& nom, EltBase* elt)
+int parse_name (XmlTree* node, const std::string& nom, EltBase* elt)
 {
    int lg    = nom.size();
    int nroid = 0;
@@ -76,7 +76,7 @@ int parse_name (XmlTree* node, const string& nom, EltBase* elt)
 
    elt->setId (nroid);
 
-   const  string& name = node->findValue ("name");
+   const  std::string& name = node->findValue ("name");
    if (name=="")
       return HERR;
 
@@ -84,11 +84,11 @@ int parse_name (XmlTree* node, const string& nom, EltBase* elt)
    return HOK;
 }
 // ======================================================== get_names
-void get_names (const string& chaine, int size, vector<string>& table)
+void get_names (const std::string& chaine, int size, std::vector<std::string>& table)
 {
    table.clear ();
    int    lg    = chaine.size();
-   string mot   = "";
+   std::string mot   = "";
    bool encours = false;
 
    for (int nc=0 ; nc<lg ; nc++)
@@ -120,7 +120,7 @@ int count_children (XmlTree* dad)
 int Document::loadXml (cpchar ficname)
 {
    XmlTree xml("");
-   string filename = ficname;
+   std::string filename = ficname;
    //el_name         = Kernel_Utils::GetBaseName ((pchar)ficname);
    make_basename (ficname, el_name);
 
@@ -173,21 +173,21 @@ int Document::parseXml (XmlTree& xml)
 {
    // xml.dump ();
 
-   map <std::string, Vertex*> t_vertex;
-   map <std::string, Edge*>   t_edge;
-   map <std::string, Quad*>   t_quad;
-   map <std::string, Hexa*>   t_hexa;
-   map <std::string, Vector*> t_vector;
-   vector <string> tname;
+   std::map <std::string, Vertex*> t_vertex;
+   std::map <std::string, Edge*>   t_edge;
+   std::map <std::string, Quad*>   t_quad;
+   std::map <std::string, Hexa*>   t_hexa;
+   std::map <std::string, Vector*> t_vector;
+   std::vector <std::string> tname;
 
-   const  string& version = xml.findValue ("version");
+   const  std::string& version = xml.findValue ("version");
    if (version == "")
        {
        cout << " **** Format du fichier XML perime"
             << endl;
        return HERR;
        }
-   const  string& name = xml.findValue ("name");
+   const  std::string& name = xml.findValue ("name");
    if (name != el_name)
        setName (name.c_str());
 
@@ -200,12 +200,12 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
-       const string& type = node->getName();
+       const std::string& type = node->getName();
        double px, py, pz;
        if (type=="Vertex")
           {
-          const  string& nom    = node->findValue ("id");
-          const  string& coords = node->findValue ("coord");
+          const  std::string& nom    = node->findValue ("id");
+          const  std::string& coords = node->findValue ("coord");
           get_coords (coords, px, py, pz);
 
           vertex = addVertex (px, py, pz);
@@ -225,11 +225,11 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree*      node = rubrique->getChild (nro);
-       const string& type = node->getName();
+       const std::string& type = node->getName();
        if (type=="Edge")
           {
-          const  string& nom      = node->findValue ("id");
-          const  string& vertices = node->findValue ("vertices");
+          const  std::string& nom      = node->findValue ("id");
+          const  std::string& vertices = node->findValue ("vertices");
           get_names (vertices, V_TWO, tname);
           edge = new Edge (t_vertex [tname[0]], t_vertex [tname[1]]);
           t_edge [nom] = edge;
@@ -248,11 +248,11 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree*      node = rubrique->getChild (nro);
-       const string& type = node->getName();
+       const std::string& type = node->getName();
        if (type=="Quad")
           {
-          const string& nom   = node->findValue ("id");
-          const string& edges = node->findValue ("edges");
+          const std::string& nom   = node->findValue ("id");
+          const std::string& edges = node->findValue ("edges");
           get_names (edges, V_TWO, tname);
 
           quad = new Quad (t_edge [tname[0]], t_edge [tname[1]],
@@ -272,8 +272,8 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
-       const  string& nom   = node->findValue ("id");
-       const  string& quads = node->findValue ("quads");
+       const  std::string& nom   = node->findValue ("id");
+       const  std::string& quads = node->findValue ("quads");
        get_names (quads, V_TWO, tname);
 
        Hexa* hexa =  new Hexa (t_quad [tname[0]], t_quad [tname[1]],
@@ -290,8 +290,8 @@ int Document::parseXml (XmlTree& xml)
        {
        XmlTree* node = rubrique->getChild (nro);
        double px, py, pz;
-       const  string& nom    = node->findValue ("id");
-       const  string& coords = node->findValue ("coord");
+       const  std::string& nom    = node->findValue ("id");
+       const  std::string& coords = node->findValue ("coord");
        get_coords (coords, px, py, pz);
 
        Vector* vector = addVector (px, py, pz);
@@ -305,10 +305,10 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
-       const  string& id    = node->findValue ("id");
-       const  string& kind  = node->findValue ("kind");
-       const  string& nodes = node->findValue ("nodes");
-       const  string& coeff = node->findValue ("coeff");
+       const  std::string& id    = node->findValue ("id");
+       const  std::string& kind  = node->findValue ("kind");
+       const  std::string& nodes = node->findValue ("nodes");
+       const  std::string& coeff = node->findValue ("coeff");
 
        int    nbnodes = atoi (nodes.c_str());
        double koeff   = atof (coeff.c_str());
@@ -326,9 +326,9 @@ int Document::parseXml (XmlTree& xml)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree* node = rubrique->getChild (nro);
-       const  string& nmedge  = node->findValue ("edge");
-       const  string& nmlaw   = node->findValue ("law");
-       //  const  string& nmway   = node->findValue ("way");
+       const  std::string& nmedge  = node->findValue ("edge");
+       const  std::string& nmlaw   = node->findValue ("law");
+       //  const  std::string& nmway   = node->findValue ("way");
 
        edge     = t_edge [nmedge];
        Law* law = findLaw (nmlaw.c_str());
@@ -345,8 +345,8 @@ int Document::parseXml (XmlTree& xml)
        {
        XmlTree*  ndgroup = rubrique->getChild (nro);
        XmlTree*  node    = ndgroup ->getChild (0);
-       const  string& nom   = node->findValue ("name");
-       const  string& ckind = node->findValue ("kind");
+       const  std::string& nom   = node->findValue ("name");
+       const  std::string& ckind = node->findValue ("kind");
 
        EnumGroup kind   = Group::getKind (ckind);
        Group*    groupe = addGroup (nom.c_str(), kind);
@@ -356,7 +356,7 @@ int Document::parseXml (XmlTree& xml)
        for (int nelt=1 ; nelt < nbrelts ; nelt++)
            {
            node = ndgroup ->getChild (nelt);
-           const string& id = node->findValue ("id");
+           const std::string& id = node->findValue ("id");
            switch (type)
               {
               case EL_HEXA : groupe->addElement (t_hexa [id]);
@@ -770,7 +770,7 @@ void Document::hputError (cpchar mess, EltBase* e1, EltBase* e2)
 // ======================================================== parseSubShape
 SubShape* Document::parseSubShape (XmlTree* node)
 {
-   const string& name  = node->findValue   ("shape");
+   const std::string& name  = node->findValue   ("shape");
    int           subid = node->findInteger ("subid");
    NewShape*     shape = findShape (name);
    if (shape==NULL)
@@ -801,7 +801,7 @@ void Document::parseAssociation (XmlTree* node, Edge* edge)
    if (shape->getDim()!=1)
       return;
 
-   const  string& inter = node->findValue ("interval");
+   const  std::string& inter = node->findValue ("interval");
    double pdeb, pfin;
    get_coords (inter, pdeb, pfin);
 
@@ -829,12 +829,12 @@ void Document::parseShapes (XmlTree& root)
    for (int nro=0 ; nro < nbrelts ; nro++)
        {
        XmlTree*      node = rubrique->getChild (nro);
-       const string& type = node->getName();
+       const std::string& type = node->getName();
        if (type=="Shape")
           {
-          const string& nom   = node->findValue   ("id"  );
+          const std::string& nom   = node->findValue   ("id"  );
           int           orig  = node->findInteger ("type");
-          const string& brep  = node->findValue   ("brep");
+          const std::string& brep  = node->findValue   ("brep");
           NewShape*     shape = new NewShape (this, (EnumShape)orig);
 
           parse_name (node, nom, shape);
@@ -848,7 +848,7 @@ void Document::parseShapes (XmlTree& root)
               {
               Real3    point;
               XmlTree* sommet = node->getChild (nv);
-              const  string& coords = sommet->findValue ("coord");
+              const  std::string& coords = sommet->findValue ("coord");
               get_coords (coords, point[dir_x], point[dir_y], point[dir_z]);
               doc_cloud->addPoint (point);
               }

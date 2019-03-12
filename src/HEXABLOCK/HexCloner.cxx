@@ -34,7 +34,7 @@
 
 BEGIN_NAMESPACE_HEXA
 
-void transfo_brep (string& brep, Matrix* matrice, string& trep);
+void transfo_brep (std::string& brep, Matrix* matrice, std::string& trep);
 static bool db = false;
 
 // ============================================================= Constructeur
@@ -98,8 +98,8 @@ Edge* Cloner::clonerEdge (Edge* orig)
    for (int nro=0 ; nro < nbass ; nro++)
        {
        Shape* shape = tab_asso [nro];
-       string brep  = shape->getBrep();
-       string trep;
+       std::string brep  = shape->getBrep();
+       std::string trep;
        transfo_brep (brep, matrice, trep);
        Shape* tshape = new Shape (trep);
        tshape->setBounds (shape->getStart(), shape->getEnd());
@@ -146,8 +146,8 @@ Quad* Cloner::clonerQuad (Quad* orig)
    for (int nro=0 ; nro < nbass ; nro++)
        {
        Shape* shape = tab_asso [nro];
-       string brep  = shape->getBrep();
-       string trep;
+       std::string brep  = shape->getBrep();
+       std::string trep;
        transfo_brep (brep, matrice, trep);
        Shape* tshape = new Shape (trep);
        copie ->addAssociation (tshape);

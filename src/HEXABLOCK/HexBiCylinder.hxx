@@ -108,8 +108,8 @@ private :
     Real3     cross_oribig,   cross_dirbig;
     Real3     cross_orismall, cross_dirsmall;
 
-    map <int,int> map_vertex, map_edge, map_quad, map_hexa;
-    map <int,int> :: iterator it_map;
+    std::map <int,int> map_vertex, map_edge, map_quad, map_hexa;
+    std::map <int,int> :: iterator it_map;
 
     int    nbr_hexas1, nbr_quads1, nbr_edges1, nbr_vertex1;
     double cross_rayext  [V_TWO];

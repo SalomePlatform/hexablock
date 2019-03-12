@@ -50,7 +50,7 @@ private :
     Real3  ss_coord;   // Pour les vertex
     bool   maj_coords;
     bool   free_point;
-    vector <Vertex*> tab_assoc;
+    std::vector <Vertex*> tab_assoc;
 };
 END_NAMESPACE_HEXA
 #endif

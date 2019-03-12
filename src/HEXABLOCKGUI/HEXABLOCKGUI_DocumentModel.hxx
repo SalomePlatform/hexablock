@@ -207,7 +207,7 @@ namespace HEXABLOCK
       QModelIndex makeCartesianUni(const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& ivec,
                                    const QModelIndex& iaxis, double lx, double ly, double lz, int nx, int ny, int nz);
       QModelIndex makeCartesian(const QModelIndex& icenter, const QModelIndex& ibase, const QModelIndex& ivec,
-                                const QModelIndex& iaxis, vector<double>& radius, vector<double>& angles, vector<double>& heights);
+                                const QModelIndex& iaxis, std::vector<double>& radius, std::vector<double>& angles, std::vector<double>& heights);
 
       // ====== SPHERE
 
@@ -221,7 +221,7 @@ namespace HEXABLOCK
 
       QModelIndex makeSphere    (QModelIndex& icenter,
                                  QModelIndex& ivec_x, QModelIndex& ivec_z,
-                                 vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+                                 std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut);
 
       // ====== SPHERICAL
 
@@ -234,7 +234,7 @@ namespace HEXABLOCK
 
       QModelIndex makeSpherical    (QModelIndex& icenter,
                                     QModelIndex& ivec_x, QModelIndex& ivec_z,
-                                    vector<double>& rayon,
+                                    std::vector<double>& rayon,
                                     int crit);
 
       // =========== RIND
@@ -248,7 +248,7 @@ namespace HEXABLOCK
 
       QModelIndex makeRind   (QModelIndex& icenter,
                               QModelIndex& ivec_x, QModelIndex& ivec_z,
-                              vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+                              std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut);
 
       // ======== Cylinder
       QModelIndex makeCylinderTop(int nr, int na, int nh);
@@ -258,7 +258,7 @@ namespace HEXABLOCK
                                    int nr, int na, int nh);
 
       QModelIndex makeCylinder   (QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
-                                  vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+                                  std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut);
 
       // ======== Cylinders
       QModelIndex makeCylinders  (QModelIndex& iorig1, QModelIndex& ivecz1,  double r1, double h1,
@@ -272,7 +272,7 @@ namespace HEXABLOCK
                                int nr, int na, int nh);
 
       QModelIndex makePipe    (QModelIndex& iorig, QModelIndex& ivecx, QModelIndex& ivecz,
-                               vector<double>& tray, vector<double>& tang, vector<double>& thaut);
+                               std::vector<double>& tray, std::vector<double>& tang, std::vector<double>& thaut);
 
       // ======== Pipes
       QModelIndex makePipes  (QModelIndex& iorig1, QModelIndex& ivecz1, double rint1, double rex1, double h1,
@@ -283,39 +283,39 @@ namespace HEXABLOCK
                               QModelIndex& iv3, QModelIndex& iv4, int nb);
 
       QModelIndex joinQuad   (QModelIndex&  istart, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
-                              QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen);
+                              QModelIndex& iva2, QModelIndex& ivb2, std::vector<double>& tlen);
 
       QModelIndex joinQuadsUni (QModelIndexList& istarts, QModelIndex& idest, QModelIndex& iv1, QModelIndex& iv2,
                                 QModelIndex& iv3, QModelIndex& iv4, int nb);
 
       QModelIndex joinQuads    (QModelIndexList& istarts, QModelIndex& idest, QModelIndex& iva1, QModelIndex& ivb1,
-                                QModelIndex& iva2, QModelIndex& ivb2, vector<double>& tlen);
+                                QModelIndex& iva2, QModelIndex& ivb2, std::vector<double>& tlen);
 
       // ======== Quad Revolution
       QModelIndex revolutionQuadUni(QModelIndex& istart, QModelIndex& icenter, QModelIndex& iaxis,
                                     double angle, int nbre);
 
       QModelIndex revolutionQuad(QModelIndex& istart, QModelIndex& icenter, QModelIndex& iaxis,
-                                 vector<double>& angles);
+                                 std::vector<double>& angles);
 
       QModelIndex revolutionQuadsUni(QModelIndexList& istarts, QModelIndex& icenter, QModelIndex& iaxis,
                                      double angle, int nbre);
 
       QModelIndex revolutionQuads(QModelIndexList& istarts, QModelIndex& icenter, QModelIndex& iaxis,
-                                  vector<double>& angles);
+                                  std::vector<double>& angles);
 
       // ==== PrismQuad or ExtrudeQuad
       QModelIndex extrudeQuadTop (QModelIndex& istart, int nbre);
       QModelIndex extrudeQuadUni (QModelIndex& istart, QModelIndex& dv, double len, int nbre);
-      QModelIndex extrudeQuad    (QModelIndex& istart, QModelIndex& dv, vector<double>& tlen);
+      QModelIndex extrudeQuad    (QModelIndex& istart, QModelIndex& dv, std::vector<double>& tlen);
 
       QModelIndex extrudeQuadsTop (QModelIndexList& istarts, int nbre);
       QModelIndex extrudeQuadsUni (QModelIndexList& istarts, QModelIndex& axis, double len, int nbre);
-      QModelIndex extrudeQuads    (QModelIndexList& istarts, QModelIndex& iaxis, vector<double>& tlen);
+      QModelIndex extrudeQuads    (QModelIndexList& istarts, QModelIndex& iaxis, std::vector<double>& tlen);
 
       // ==== Cut Edge
       QModelIndex cutUni     (QModelIndex& iEdge, int nbre);
-      QModelIndex cut        (QModelIndex& iEdge, vector<double>& tlen);
+      QModelIndex cut        (QModelIndex& iEdge, std::vector<double>& tlen);
 
       // ============================== END NEW ================================
 

@@ -77,14 +77,14 @@ Hex::Vertex* nearest (Hex::Elements* grid, Hex::Vertex* vertex)
            }
         }
 
-    cout << " nearest : " << vertex->getName()
+    std::cout << " nearest : " << vertex->getName()
          << " -> "        << result->getName()
-         << " ( " << px << ",  " << py << ",  " << pz << ") " << endl;
+         << " ( " << px << ",  " << py << ",  " << pz << ") " << std::endl;
     return result;
 }
 
 // ======================================================== eplucher
-void eplucher (Hex::Document* doc, Hex::Elements* grid, string& radical)
+void eplucher (Hex::Document* doc, Hex::Elements* grid, std::string& radical)
 {
    int nbfic = 0;
    int nbre  = grid->countHexa();
@@ -355,25 +355,25 @@ int test_pipes6 (int nbargs, cpchar tabargs[])
 
    for (int narg=1 ; narg<nbargs ; narg++)
        {
-       string arg = tabargs [narg];
+       std::string arg = tabargs [narg];
        if (arg=="-cyl")        pipe    = false;
        else if (arg=="-pipe")  pipe    = true;
        else if (arg=="-left")  t_left  = true;
        else if (arg=="-right") t_right = true;
        else
           {
-          cout << " Syntax : " << endl;
-          cout << " $ " << tabargs[0]  << " <args> " << endl;
-          cout << " avec args parmi :" << endl;
-          cout << " -cyl   : croisement de 2 cylindres " << endl;
-          cout << " -pipe  : croisement de 2 tuyaux "    << endl;
-          cout << " -left  : Forme en T, barre a gauche " << endl;
-          cout << " -right : Forme en T, barre a droite " << endl;
+          std::cout << " Syntax : " << std::endl;
+          std::cout << " $ " << tabargs[0]  << " <args> " << std::endl;
+          std::cout << " avec args parmi :" << std::endl;
+          std::cout << " -cyl   : croisement de 2 cylindres " << std::endl;
+          std::cout << " -pipe  : croisement de 2 tuyaux "    << std::endl;
+          std::cout << " -left  : Forme en T, barre a gauche " << std::endl;
+          std::cout << " -right : Forme en T, barre a droite " << std::endl;
           return HOK;
           }
        }
 
-   string radical = pipe ? "makePipes" : "makeCylinders";
+   std::string radical = pipe ? "makePipes" : "makeCylinders";
 
    double rext1 =  2*sqrt (2.0);
    double rext2 =  3*sqrt (2.0);
@@ -720,7 +720,7 @@ int test_monica (int nbargs, cpchar tabargs[])
    save_file ();
 
    Hex::Hexa* trou = plaque->getHexaIJK (1, 1, 0);
-   vector <Hex::Vertex*> tabv0, tabv1;
+   std::vector <Hex::Vertex*> tabv0, tabv1;
    for (int nv=0 ; nv<8 ; nv++)
        tabv1.push_back (trou->getVertex(nv));
 
@@ -740,7 +740,7 @@ int test_monica (int nbargs, cpchar tabargs[])
    for (int nv=0 ; nv<8 ; nv++)
        {
        int ier = doc->mergeVertices (tabv0[nv], tabv1[nv]);
-       cout << " nro = " << nv << ", ier = " << ier << endl;
+       std::cout << " nro = " << nv << ", ier = " << ier << std::endl;
        Hex::what ();
        save_file ();
        }

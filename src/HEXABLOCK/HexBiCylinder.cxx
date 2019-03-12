@@ -886,7 +886,7 @@ int BiCylinder::assoIntersection (int nxs, int nzs)
    int ier = HOK;
    Real3  pse, psw, sorig, sbase;
    Real3  pbe, pbw, borig, bbase;
-   string brep;
+   std::string brep;
    int ny0 = 0;
    int nyd = NbrCotes/2;
    int MiddleSlice1 = 3;

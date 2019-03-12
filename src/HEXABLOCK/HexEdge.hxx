@@ -81,7 +81,7 @@ public:
     virtual void duplicate ();
     Edge*   getClone  ()                    { return e_clone ;   }
     double* getVector (double vecteur[]);
-    string  makeDefinition ();
+    std::string  makeDefinition ();
 
     int addAssociation (EdgeShape* gline, double deb, double fin);
     int checkAssociation ();

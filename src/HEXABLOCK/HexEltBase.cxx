@@ -173,14 +173,14 @@ bool EltBase::debug (int niv)
    return el_root != NULL && el_root->getLevel() > niv ;
 }
 // ========================================================= getNextName
-string EltBase::getNextName ()
+std::string EltBase::getNextName ()
 {
    if (el_root != NULL)
       return el_root->getNextName (el_type);
 
    char name [16];
    makeName  (el_type, 0, name);
-   return string (name);
+   return std::string (name);
 }
 END_NAMESPACE_HEXA
 

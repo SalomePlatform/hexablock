@@ -334,9 +334,9 @@ void Elements::fillCenterOdd ()
    int nx0 = 0;
    int nbsecteurs = size_hy / 2;
 
-   vector <Edge*> ker_hedge (nbsecteurs*size_vz);
-   vector <Quad*> ker_hquad (nbsecteurs*size_vz);
-   vector <Quad*> ker_vquad (nbsecteurs*size_vz);
+   std::vector <Edge*> ker_hedge (nbsecteurs*size_vz);
+   std::vector <Quad*> ker_hquad (nbsecteurs*size_vz);
+   std::vector <Quad*> ker_vquad (nbsecteurs*size_vz);
 
    for (int nz=0 ; nz<size_vz ; nz++)
        {

@@ -38,7 +38,7 @@ struct OrientedQuad
      Vertex* v2;
      };
 
-void propagateOrientation (queue <OrientedQuad> &queue_quads, Quad* orig);
+void propagateOrientation (std::queue <OrientedQuad> &queue_quads, Quad* orig);
 void makeSkin (Quad* orig);
 
 // ========================================================= reorderFaces
@@ -79,7 +79,7 @@ void Document::reorderQuads ()
 void makeSkin (Quad* orig)
 {
    OrientedQuad triplet;
-   queue <OrientedQuad> queue_quads;
+   std::queue <OrientedQuad> queue_quads;
 
    orig->setOrientation();  // Q_DIRECT=1, Q_INVERSE=2 
    propagateOrientation (queue_quads, orig);
@@ -103,7 +103,7 @@ void makeSkin (Quad* orig)
       }
 }
 // ==================================================== propagateOrientation
-void propagateOrientation (queue <OrientedQuad> &queue_quads, Quad* orig)
+void propagateOrientation (std::queue <OrientedQuad> &queue_quads, Quad* orig)
 {
    OrientedQuad triplet;
                 // Q_DIRECT : le sens des vertex est l'exterieur 

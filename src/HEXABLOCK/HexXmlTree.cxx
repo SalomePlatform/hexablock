@@ -27,7 +27,7 @@ BEGIN_NAMESPACE_HEXA
 enum { HEND_FILE = -2, HEND_LINE = -1, CRLF = 13 };
 
 // ====================================================== Constructeur
-XmlTree::XmlTree (const string& nom, XmlTree* dad)
+XmlTree::XmlTree (const std::string& nom, XmlTree* dad)
 {
    item_name     = nom;
    item_vide     = "";
@@ -50,7 +50,7 @@ XmlTree::~XmlTree ()
 {
 }
 // ====================================================== findChild
-XmlTree* XmlTree::findChild (const string& nom)
+XmlTree* XmlTree::findChild (const std::string& nom)
 {
    for (int nro = 0 ; nro<nbr_items ; nro++)
        {
@@ -60,7 +60,7 @@ XmlTree* XmlTree::findChild (const string& nom)
    return NULL;
 }
 // ====================================================== findAttribute
-int XmlTree::findAttribute (const string& nom)
+int XmlTree::findAttribute (const std::string& nom)
 {
    for (int nro = 0 ; nro<nbr_attributs ; nro++)
        {
@@ -70,7 +70,7 @@ int XmlTree::findAttribute (const string& nom)
    return NOTHING;
 }
 // ====================================================== findValue
-const string& XmlTree::findValue (const string& nom)
+const std::string& XmlTree::findValue (const std::string& nom)
 {
    for (int nro = 0 ; nro<nbr_attributs ; nro++)
        {
@@ -80,10 +80,10 @@ const string& XmlTree::findValue (const string& nom)
    return item_vide;
 }
 // ====================================================== findInteger
-int XmlTree::findInteger (const string& nom)
+int XmlTree::findInteger (const std::string& nom)
 {
    int   val = 0;
-   const string chnum = findValue (nom);
+   const std::string chnum = findValue (nom);
    if (chnum==item_vide)
       return val;
 
@@ -97,7 +97,7 @@ int XmlTree::findInteger (const string& nom)
    return val;
 }
 // ====================================================== parseFile
-int XmlTree::parseFile (const string& ficnom)
+int XmlTree::parseFile (const std::string& ficnom)
 {
    fic_buffer  = "";
    len_buffer  = 0;
@@ -110,8 +110,8 @@ int XmlTree::parseFile (const string& ficnom)
    xml_file = fopen (ficnom.c_str(), "r");
    if (xml_file==NULL)
       {
-      cout << " **** Fichier XML '" << ficnom << "' inaccessible"
-           << endl;
+      std::cout << " **** Fichier XML '" << ficnom << "' inaccessible"
+           << std::endl;
       return HERR;
       }
 
@@ -143,7 +143,7 @@ int XmlTree::parseXml ()
 
    XmlTree* node = this;
    EnumItem item_lu;
-   string   nom, valeur, foo;
+   std::string   nom, valeur, foo;
    while ((item_lu=readItem (nom)) != M_NONE)
       {
       switch (item_lu)
@@ -203,7 +203,7 @@ int XmlTree::parseXml ()
    return HOK;
 }
 // ====================================================== getItem
-EnumItem XmlTree::getItem (string& value, EnumItem waited)
+EnumItem XmlTree::getItem (std::string& value, EnumItem waited)
 {
    EnumItem item = readItem (value);
 
@@ -213,7 +213,7 @@ EnumItem XmlTree::getItem (string& value, EnumItem waited)
    return item;
 }
 // ====================================================== readItem
-EnumItem XmlTree::readItem (string& value)
+EnumItem XmlTree::readItem (std::string& value)
 {
    value  = "";
 
@@ -274,7 +274,7 @@ EnumItem XmlTree::readItem (string& value)
          }
 }
 // ====================================================== getIdent
-int XmlTree::getIdent (string& ident)
+int XmlTree::getIdent (std::string& ident)
 {
    ident = "";
 
@@ -315,7 +315,7 @@ int XmlTree::goTo (cpchar ouca)
    return HERR;
 }
 // ====================================================== getString
-int XmlTree::getString (string& chaine)
+int XmlTree::getString (std::string& chaine)
 {
    chaine  = "";
    int car = ' ';
@@ -395,7 +395,7 @@ void XmlTree::putError (cpchar mess)
      //  exit (102);
 }
 // ====================================================== addChild
-XmlTree* XmlTree::addChild (const string& nom)
+XmlTree* XmlTree::addChild (const std::string& nom)
 {
    XmlTree* child = new XmlTree (nom, this);
    tab_items.push_back (child);
@@ -403,7 +403,7 @@ XmlTree* XmlTree::addChild (const string& nom)
    return child;
 }
 // ====================================================== addAttribut
-void XmlTree::addAttribut (const string& nom, const string& value)
+void XmlTree::addAttribut (const std::string& nom, const std::string& value)
 {
    tab_attributs.push_back (nom);
    tab_values   .push_back (value);
@@ -413,17 +413,17 @@ void XmlTree::addAttribut (const string& nom, const string& value)
 // ====================================================== dump
 void XmlTree::dump (int niveau)
 {
-   string marge = "";
+   std::string marge = "";
    for (int niv=0 ; niv<niveau ; niv++)
        marge += " | ";
 
-   cout << marge << item_name << endl;
+   std::cout << marge << item_name << std::endl;
 
    for (int nc=0 ; nc<nbr_attributs ; nc++)
        {
-       cout << marge  << " : "
+       std::cout << marge  << " : "
             << tab_attributs [nc] << " = '" << tab_values [nc]
-            << "'" << endl;
+            << "'" << std::endl;
        }
 
    for (int nc=0 ; nc<nbr_items ; nc++)

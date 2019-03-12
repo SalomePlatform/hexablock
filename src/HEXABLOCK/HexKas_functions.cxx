@@ -44,13 +44,13 @@ bool same_coords (gp_Pnt& pa, gp_Pnt& pb, double epsilon)
    return d2 < epsilon;
 }
 // ====================================================== save_brep
-void save_brep (cpchar nom, string brep, int& compteur)
+void save_brep (cpchar nom, std::string brep, int& compteur)
 {
     char buff[8];
     compteur ++;
     sprintf (buff ,"%d", compteur);
 
-    string name (nom);
+    std::string name (nom);
     name += buff;
     name += ".brep";
     FILE*    fic = fopen (name.c_str(), "w");
@@ -58,9 +58,9 @@ void save_brep (cpchar nom, string brep, int& compteur)
     fclose  (fic);
 }
 // ====================================================== geom_make_brep
-void geom_make_brep (TopoDS_Shape& shape, string& brep)
+void geom_make_brep (TopoDS_Shape& shape, std::string& brep)
 {
-   ostringstream  stream_shape;
+   std::ostringstream  stream_shape;
    BRepTools::Write (shape, stream_shape);
    brep = stream_shape.str();
 }
@@ -68,7 +68,7 @@ void geom_make_brep (TopoDS_Shape& shape, string& brep)
 TopoDS_Shape geom_brep2shape (rcstring brep)
 {
    TopoDS_Shape topo;
-   istringstream streamBrep(brep);
+   std::istringstream streamBrep(brep);
    BRep_Builder aBuilder;
    BRepTools::Read (topo, streamBrep, aBuilder);
    return topo;
@@ -76,7 +76,7 @@ TopoDS_Shape geom_brep2shape (rcstring brep)
 // ====================================================== geom_brep2shape
 int geom_brep2shape (rcstring brep, TopoDS_Shape& shape)
 {
-   istringstream streamBrep(brep);
+   std::istringstream streamBrep(brep);
    BRep_Builder  aBuilder;
    BRepTools::Read (shape, streamBrep, aBuilder);
    return HOK;
@@ -106,16 +106,16 @@ int geom_brep2point (rcstring brep, double& px, double& py, double& pz)
    //  edge->getVertex(V_AVAL )->clearAssociation();
 //  }
 // ====================================================== clean_brep
-void clean_brep (string& brep)
+void clean_brep (std::string& brep)
 {
    TopoDS_Shape  shape;
    BRep_Builder  builder;
-   istringstream stream_brep (brep);
+   std::istringstream stream_brep (brep);
 
    BRepTools::Read  (shape, stream_brep, builder);
    BRepTools::Clean (shape);
 
-   ostringstream    stream_shape;
+   std::ostringstream    stream_shape;
    BRepTools::Write (shape, stream_shape);
    brep = stream_shape.str();
 }

@@ -343,8 +343,8 @@ public:
     void  reorderQuads ();
 
    // --------------------------------------------------- Evols Hexa5
-   cpchar getNextName (EnumElt type, string& name);
-   string getNextName (EnumElt type);
+   cpchar getNextName (EnumElt type, std::string& name);
+   std::string getNextName (EnumElt type);
 
    virtual char* makeVarName (char* name);
    void    lockDump();

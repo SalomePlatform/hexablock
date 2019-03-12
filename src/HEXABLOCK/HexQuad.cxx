@@ -470,7 +470,7 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
 void Quad::saveXml (XmlWriter* xml)
 {
    char buffer[12];
-   string edges;
+   std::string edges;
 
    for (int nro=0 ; nro<QUAD4 ; nro++)
        {

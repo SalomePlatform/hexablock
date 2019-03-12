@@ -98,12 +98,12 @@ void Witness::printMessage ()
    if (nbre ==0)
        return;
 
-   cout << endl 
-        << " ... In function :" << endl;
-   cout << bla_bla [0] << endl << endl;
+   std::cout << std::endl 
+        << " ... In function :" << std::endl;
+   std::cout << bla_bla [0] << std::endl << std::endl;
    for (int nro=1 ; nro<nbre ; nro++)
-       cout << bla_bla [nro] << endl;
-   cout << endl;
+       std::cout << bla_bla [nro] << std::endl;
+   std::cout << std::endl;
 }
 // =================================================== getMessage
 TabText& Witness::getMessage ()

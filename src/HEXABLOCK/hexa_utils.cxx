@@ -64,7 +64,7 @@ bool in_test ()
 
 }
 // ======================================================== set_minus
-void set_minus (string& chaine)
+void set_minus (std::string& chaine)
 {
    int lg = chaine.size();
    for (int nc=0 ; nc<lg ; nc++)
@@ -251,7 +251,7 @@ char* read_file (cpchar filename, int& size)
    return buffer;
 }
 // ====================================================== get_time
-cpchar get_time (string& buffer)
+cpchar get_time (std::string& buffer)
 {
    char   quand[24];
    time_t tps;
@@ -278,7 +278,7 @@ bool requals (const double* lun, const double* lautre)
           && requals (lun [1], lautre [1]) && requals (lun [2], lautre [2]) ;
 }
 // ======================================================== make_basename
-int make_basename (cpchar filename, string& base)
+int make_basename (cpchar filename, std::string& base)
 {
    const char slash = '/';
    const char antis = '\\';

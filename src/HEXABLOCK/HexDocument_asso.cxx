@@ -34,9 +34,9 @@ BEGIN_NAMESPACE_HEXA
 static bool db = on_debug ();  // == getenv ("HEXA_DB") > 0
 
 
-int vertexInLine (Vertex* vfirst, Edges& mline, vector<int> &tsens);
+int vertexInLine (Vertex* vfirst, Edges& mline, std::vector<int> &tsens);
 // ====================================================== vertexInLine
-int vertexInLine (Vertex* vfirst, Edges& mline, vector<int> &tsens)
+int vertexInLine (Vertex* vfirst, Edges& mline, std::vector<int> &tsens)
 {
    int nbseg = mline.size ();
 

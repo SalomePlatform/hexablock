@@ -161,7 +161,7 @@ Quad* Edge::getParent  (int nro)
 void Edge::saveXml (XmlWriter* xml)
 {
    char buffer[12];
-   string vertices = e_vertex [V_AMONT]->getName(buffer);
+   std::string vertices = e_vertex [V_AMONT]->getName(buffer);
    vertices += " ";
    vertices       += e_vertex [V_AVAL ]->getName(buffer);
 
@@ -247,9 +247,9 @@ void Edge::dumpPlus ()
        }
 }
 // ======================================================== makeDefinition
-string Edge::makeDefinition ()
+std::string Edge::makeDefinition ()
 {
-   string definition = el_name;
+   std::string definition = el_name;
 
    definition += " = (";
    definition += e_vertex [V_AMONT]->getName();

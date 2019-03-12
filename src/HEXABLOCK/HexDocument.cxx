@@ -676,13 +676,13 @@ int Document::mergeVertices (Vertex* vpar, Vertex* vold)
       return ier;
       }
 
-   map <Quad*,   Quad*>   rep_quad;
-   map <Edge*,   Edge*>   rep_edge;
-   map <Vertex*, Vertex*> rep_vertex;
+   std::map <Quad*,   Quad*>   rep_quad;
+   std::map <Edge*,   Edge*>   rep_edge;
+   std::map <Vertex*, Vertex*> rep_vertex;
 
-   map <Quad*,   Quad*>   :: iterator itq;
-   map <Edge*,   Edge*>   :: iterator ited;
-   map <Vertex*, Vertex*> :: iterator itv;
+   std::map <Quad*,   Quad*>   :: iterator itq;
+   std::map <Edge*,   Edge*>   :: iterator ited;
+   std::map <Vertex*, Vertex*> :: iterator itv;
    
    rep_vertex [vold] = vpar;
    int nbparv  = vold->getNbrParents ();
@@ -875,7 +875,7 @@ Law* Document::findLaw (const char* name)
 {
    DumpStart ("findLaw", name);
 
-   string nom = name;
+   std::string nom = name;
    Law*   loi = NULL;
 
    for (int nro=0 ;loi==NULL &&  nro<nbr_laws; nro++)
@@ -1068,7 +1068,7 @@ int Document::setName (cpchar prefix)
        ier = HERR;
    else
        {
-       string name = prefix;
+       std::string name = prefix;
        if (hex_parent != NULL)
            hex_parent->makeName (prefix, name);
        el_name = name;
@@ -1124,7 +1124,7 @@ bool Document::isEmpty ()
    return nombre <= 0 && countLaw  () <= 1;
 }
 // ======================================================== getNextName
-cpchar Document::getNextName (EnumElt type, string& buff)
+cpchar Document::getNextName (EnumElt type, std::string& buff)
 {
    char name [8];
    EltBase::makeName (type, doc_nbr_elt [type], name);
@@ -1134,12 +1134,12 @@ cpchar Document::getNextName (EnumElt type, string& buff)
 }
 
 // ======================================================== getNextName
-string Document::getNextName (EnumElt type)
+std::string Document::getNextName (EnumElt type)
 {
    char name [8];
    EltBase::makeName (type, doc_nbr_elt [type], name);
 
-   return string(name);
+   return std::string(name);
 }
 
 // ======================================================== lockDump
