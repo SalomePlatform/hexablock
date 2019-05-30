@@ -1003,10 +1003,7 @@ void HEXABLOCKGUI::createAndFillDockWidget()
     }
     aParent->tabifyDockWidget( _dwPattern, _dwGroups );
     aParent->tabifyDockWidget( _dwGroups, _dwMesh );
-
-#if QT_VERSION >= 0x040500
     aParent->setTabPosition(Qt::AllDockWidgetAreas, Resource::tabPanelsUp? QTabWidget::North: QTabWidget::South);
-#endif
 
     // popup menu on data tree view
     _patternDataTreeView->setContextMenuPolicy(Qt::CustomContextMenu);

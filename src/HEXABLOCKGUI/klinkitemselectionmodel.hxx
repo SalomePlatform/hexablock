@@ -56,37 +56,6 @@ private:
 
 };
 
-
-// QAbstractProxyModel::mapSelectionFromSource creates invalid ranges to we filter
-// those out manually in a loop. Hopefully fixed in Qt 4.7.2, so we ifdef it out.
-// http://qt.gitorious.org/qt/qt/merge_requests/2474
-// http://qt.gitorious.org/qt/qt/merge_requests/831
-#if QT_VERSION < 0x040702
-#define RANGE_FIX_HACK
-#endif
-
-#ifdef RANGE_FIX_HACK
-static QItemSelection klink_removeInvalidRanges(const QItemSelection &selection)
-{
-//   std::cout<< " klink_removeInvalidRanges " << std::endl;
-  QItemSelection result;
-  Q_FOREACH(const QItemSelectionRange &range, selection)
-  {
-
-//    Q_FOREACH(const QModelIndex &i, range.indexes ())
-//    {
-////       std::cout<< " =====> " << i.data().toString().toStdString() << std::endl;
-//    }
-    if (!range.isValid())
-      continue;
-//     std::cout<< " is VALID !!"<< std::endl;
-    result << range;
-  }
-  return result;
-}
-#endif
-
-
 class KLinkItemSelectionModelPrivate
 {
 public:
@@ -120,15 +89,8 @@ void sourceSelectionChanged(const QItemSelection& selected, const QItemSelection
 
     
     Q_Q(KLinkItemSelectionModel);
-#ifdef RANGE_FIX_HACK
-//     std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! RANGE_FIX_HACK"<<std::endl;
-    QItemSelection _selected = klink_removeInvalidRanges(selected);
-    QItemSelection _deselected = klink_removeInvalidRanges(deselected);
-#else
-//     std::cout<<"XXXXXXXXXXXXX  sourceSelectionChanged!!!!!!!! "<<std::endl;
     QItemSelection _selected = selected;
     QItemSelection _deselected = deselected;
-#endif
     Q_ASSERT(assertSelectionValid(_selected));
     Q_ASSERT(assertSelectionValid(_deselected));
 
