@@ -140,7 +140,7 @@ def mesh (doc, name=None, dim=3, container="FactoryServer"):
 
     stream = doc.getFirstExplicitShape ()
     if stream != None :
-       shape = geompy.RestoreShape (stream)
+       shape = geompy.RestoreShape (stream.encode())
     else :
        shape = geompy.MakeBox(0, 0, 0,  1, 1, 1)
 
