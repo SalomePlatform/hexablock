@@ -613,7 +613,7 @@ void DocumentModel::fillGeometry()
             shapeById[shapeName+","+QString::number(node->getIdent())] = node;
 
             // * update the compound of vertices
-            if (shape->getOrigin() == HEXA_NS::SH_CLOUD && !vertexCompound.IsNull())
+            if (shape->getOrigin() == HEXA_NS::SH_CLOUD && !vertexCompound.IsNull() && !node->getShape().IsNull())
                 compoundBuilder.Add(topo_shapes[shapeName], node->getShape());
         }
 
