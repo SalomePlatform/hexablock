@@ -854,6 +854,11 @@ void HEXABLOCKGUI::preferencesChanged( const QString& sect, const QString& name 
 void HEXABLOCKGUI::treeContextMenu(const QPoint& aPosition)
 {
     QModelIndex currentIndex = _patternDataTreeView->currentIndex();
+
+    // if nothing is selected, return
+    if (! currentIndex.isValid())
+      return;
+
     QVariant currentAssocVariant;
     QString currentAssocEntry;
 
