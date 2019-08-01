@@ -797,10 +797,13 @@ void HexaBaseDialog::onSelectionChanged( const QItemSelection& sel, const QItemS
 // ============================================================== showEvent
 void HexaBaseDialog::showEvent( QShowEvent * event )
 {
-    if ( _editMode == INFO_MODE )
-        getDocumentModel()->allowEdition();
-    else
-        getDocumentModel()->disallowEdition();
+    // Do not disallow edition, otherwise we can't expand group items
+    // (e.g. vertices) when creating an item (e.g. a vertex or an edge).
+    // Hence, no need to allow edition in info mode.
+    //if ( _editMode == INFO_MODE )
+    //    getDocumentModel()->allowEdition();
+    //else
+    //    getDocumentModel()->disallowEdition();
 
     //Connect to salome selection signals
     if (HEXABLOCKGUI::selectionMgr() != NULL)
