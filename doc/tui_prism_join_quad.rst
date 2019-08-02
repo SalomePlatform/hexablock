@@ -113,22 +113,21 @@ The following data are required:
 
 - *quad*      : the quad to be joined and from which hexahedra will be created (one quad case).
 - *quads*     : the set of quadrangles to be joined and from which hexahedra will be created (multiple quad case).
-- *fromPointA*: a vertex belonging to the first quadrangle of the set of quadrangles.
-- *fromPointB*: a vertex, consecutive to previous Point a, belonging to the first quadrangle.
-    
 - *quadDest*  : a quadrangle from the set of targeted quadrangles.
+- *fromPointA*: a vertex belonging to the first quadrangle of the set of quadrangles.
 - *toPointA*  : the target vertex (in the target quadrangle) for *fromPointA*.
+- *fromPointB*: a vertex, consecutive to previous Point a, belonging to the first quadrangle.
 - *toPointB*  : the target vertex (in the target quadrangle) for *fromPointB*.
 
 - *nbLayers*  : number of layers of hexahedra issued from the operation.
 
 To join one quad to an other use the function **joinQuadUni**::
 
-	elts = doc.joinQuadUni(quad, quadDest, fromPointA, fromPointB, toPointA, toPointB, nbLayers)
+	elts = doc.joinQuadUni(quad, quadDest, fromPointA, toPointA, fromPointB, toPointB, nbLayers)
 
 To join a set of quads to another quad use the function **joinQuadsUni**::
 
-	elts = doc.joinQuadsUni(quads, quadDest, fromPointA, fromPointB, toPointA, toPointB, nbLayers)
+	elts = doc.joinQuadsUni(quads, quadDest, fromPointA, toPointA, fromPointB, toPointB, nbLayers)
 
 GUI command: :ref:`guijoinquadsuniform`
 
@@ -142,22 +141,21 @@ The following data are required:
 
 - *quad*      : the quad to be joined and from which hexahedra will be created (one quad case).
 - *quads*     : the set of quadrangles to be joined and from which hexahedra will be created (multiple quads case).
-- *fromPointA*: a vertex belonging to the first quadrangle of the set of quadrangles.
-- *fromPointB*: a vertex, consecutive to previous Point a, belonging to the first quadrangle.
-    
 - *quadDest*  : a quadrangle from the set of targeted quadrangles.
+- *fromPointA*: a vertex belonging to the first quadrangle of the set of quadrangles.
 - *toPointA*  : the target vertex (in the target quadrangle) for *fromPointA*.
+- *fromPointB*: a vertex, consecutive to previous Point a, belonging to the first quadrangle.
 - *toPointB*  : the target vertex (in the target quadrangle) for *fromPointB*.
 
 - *th*    : a list of heights to specify the size of each layer of hexahedra issued from the operation.
 
 To make a custom join of one quad to another use the function **joinQuad**::
 
-	elts = doc.joinQuad(quad, quadDest, fromPointA, fromPointB, toPointA, toPointB, th)
+	elts = doc.joinQuad(quad, quadDest, fromPointA, toPointA, fromPointB, toPointB, th)
 	
 To make a custom join of a set of quads to another quad use the function **joinQuads**::
 
-	elts = doc.joinQuads(quads, quadDest, fromPointA, fromPointB, toPointA, toPointB, th)
+	elts = doc.joinQuads(quads, quadDest, fromPointA, toPointA, fromPointB, toPointB, th)
 
 GUI command: :ref:`guijoinquadscustom`
 

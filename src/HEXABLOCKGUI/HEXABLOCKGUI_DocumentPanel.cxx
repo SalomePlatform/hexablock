@@ -3441,10 +3441,10 @@ bool JoinQuadDialog::apply(QModelIndex& result)
             iquads << iquad;
     }
     QModelIndex iquaddest = patternDataModel->mapToSource( _index[quad_dest_le] );
-    QModelIndex ivex0 = patternDataModel->mapToSource( _index[vex0_le] );
-    QModelIndex ivex1 = patternDataModel->mapToSource( _index[vex1_le] );
-    QModelIndex ivex2 = patternDataModel->mapToSource( _index[vex2_le] );
-    QModelIndex ivex3 = patternDataModel->mapToSource( _index[vex3_le] );
+    QModelIndex ivex0 = patternDataModel->mapToSource( _index[vex0_le] ); // from point a
+    QModelIndex ivex1 = patternDataModel->mapToSource( _index[vex1_le] ); // from point b
+    QModelIndex ivex2 = patternDataModel->mapToSource( _index[vex2_le] ); // to point a
+    QModelIndex ivex3 = patternDataModel->mapToSource( _index[vex3_le] ); // to point b
     double nb = nb_spb->value();
 
     vector<double> heights;

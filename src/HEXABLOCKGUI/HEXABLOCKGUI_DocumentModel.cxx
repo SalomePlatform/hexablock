@@ -2944,7 +2944,9 @@ QModelIndex DocumentModel::joinQuadUni(QModelIndex&  istart, QModelIndex& idest,
     HEXA_NS::Vertex* hv3 = getHexaPtr<HEXA_NS::Vertex*>(iv3);
     HEXA_NS::Vertex* hv4 = getHexaPtr<HEXA_NS::Vertex*>(iv4);
 
-    HEXA_NS::Elements* helts = _hexaDocument->joinQuadUni(hstart, hdest, hv1, hv2, hv3, hv4, nb);
+    // Be careful, the order of vertices is not the same in joinQuadUni of HexDocument_v6.cxx
+    // and corresponding python dump
+    HEXA_NS::Elements* helts = _hexaDocument->joinQuadUni(hstart, hdest, hv1, hv3, hv2, hv4, nb);
     if (BadElement(helts))
         return result;
 
@@ -2965,7 +2967,9 @@ QModelIndex DocumentModel::joinQuad(QModelIndex&  istart, QModelIndex& idest, QM
     HEXA_NS::Vertex* hva2 = getHexaPtr<HEXA_NS::Vertex*>(iva2);
     HEXA_NS::Vertex* hvb2 = getHexaPtr<HEXA_NS::Vertex*>(ivb2);
 
-    HEXA_NS::Elements* helts = _hexaDocument->joinQuad(hstart, hdest, hva1, hvb1, hva2, hvb2, tlen);
+    // Be careful, the order of vertices is not the same in joinQuadUni of HexDocument_v6.cxx
+    // and corresponding python dump
+    HEXA_NS::Elements* helts = _hexaDocument->joinQuad(hstart, hdest, hva1, hva2, hvb1, hvb2, tlen);
     if (BadElement(helts))
         return result;
 
@@ -2990,7 +2994,9 @@ QModelIndex DocumentModel::joinQuadsUni(QModelIndexList& istarts, QModelIndex& i
     HEXA_NS::Vertex* hv3 = getHexaPtr<HEXA_NS::Vertex*>(iv3);
     HEXA_NS::Vertex* hv4 = getHexaPtr<HEXA_NS::Vertex*>(iv4);
 
-    HEXA_NS::Elements* helts = _hexaDocument->joinQuadsUni(hstarts, hdest, hv1, hv2, hv3, hv4, nb);
+    // Be careful, the order of vertices is not the same in joinQuadUni of HexDocument_v6.cxx
+    // and corresponding python dump
+    HEXA_NS::Elements* helts = _hexaDocument->joinQuadsUni(hstarts, hdest, hv1, hv3, hv2, hv4, nb);
     if (BadElement(helts))
         return result;
 
@@ -3015,7 +3021,9 @@ QModelIndex DocumentModel::joinQuads(QModelIndexList& istarts, QModelIndex& ides
     HEXA_NS::Vertex* hva2 = getHexaPtr<HEXA_NS::Vertex*>(iva2);
     HEXA_NS::Vertex* hvb2 = getHexaPtr<HEXA_NS::Vertex*>(ivb2);
 
-    HEXA_NS::Elements* helts = _hexaDocument->joinQuads(hstarts, hdest, hva1, hvb1, hva2, hvb2, tlen);
+    // Be careful, the order of vertices is not the same in joinQuadUni of HexDocument_v6.cxx
+    // and corresponding python dump
+    HEXA_NS::Elements* helts = _hexaDocument->joinQuads(hstarts, hdest, hva1, hva2, hvb1, hvb2, tlen);
     if (BadElement(helts))
         return result;
 

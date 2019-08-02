@@ -304,7 +304,7 @@ void Elements::checkSense (int nro, Vertex* v1, Vertex* v2, Quad* quad)
    cpchar where = nro < 4 ? "start" : "target";
    setError (HERR);
    Mess << "Arguments nr " << nro << " and " << nro+2 
-        << " : these vertices doenst define an edge of the "
+        << " : these vertices do not define an edge of the "
         << where << " quad";
 }
 // ======================================================== checkPhi
