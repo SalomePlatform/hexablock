@@ -112,36 +112,36 @@ void Elements::cutAssociation (Edge* orig, Edges& tedges)
 // ====================================================== geom_dump_asso
 void geom_dump_asso (Edge* edge)
 {
-   cout << endl;
-   cout << " _______________________________________________________ "
-         << " dump_edge :" << endl;
+  std::cout << std::endl;
+  std::cout << " _______________________________________________________ "
+	    << " dump_edge :" << std::endl;
 
    if (edge==NULL || NOT edge->isHere ())
       {
-      cout << "*** deleted ***" << endl;
+      std::cout << "*** deleted ***" << std::endl;
       return;
       }
 
-   cout << endl;
-   cout << " ... Edge = " << edge->getName ()
-        << " = (" << edge->getVertex(V_AMONT)->getName()
-        <<   ", " << edge->getVertex(V_AVAL )->getName() << ")" << endl;
+   std::cout << std::endl;
+   std::cout << " ... Edge = " << edge->getName ()
+	     << " = (" << edge->getVertex(V_AMONT)->getName()
+	     <<   ", " << edge->getVertex(V_AVAL )->getName() << ")" << std::endl;
 
    for (int nro=0 ; nro<V_TWO ; nro++)
        {
        Vertex* node  = edge->getVertex (nro);
-       cout << " ... " << node->getName()
+       std::cout << " ... " << node->getName()
             <<  " = (" << node->getX()
             <<    ", " << node->getY()
             <<    ", " << node->getZ() << ")";
 
        if (node->isAssociated())
-           cout << " --> (" << node->getAssoX()
-                <<     ", " << node->getAssoY()
-                <<     ", " << node->getAssoZ() << ")";
+	 std::cout << " --> (" << node->getAssoX()
+		   <<     ", " << node->getAssoY()
+		   <<     ", " << node->getAssoZ() << ")";
        else
-           cout << " (not associated)";
-       cout << endl;
+	 std::cout << " (not associated)";
+       std::cout << std::endl;
        }
 
    int nbr_associations = edge->countAssociation ();
@@ -150,7 +150,7 @@ void geom_dump_asso (Edge* edge)
    for (int nro=0 ; nro<nbr_associations ; nro++)
        {
        AssoEdge* asso = edge->getAssociation (nro);
-       cout << " *** Association nro " << nro+1 << endl;
+       std::cout << " *** Association nro " << nro+1 << std::endl;
        const double* shape_origin = asso->getOrigin();
        const double* shape_extrem = asso->getExtrem();
        PutData  (asso->getStart());
@@ -158,6 +158,6 @@ void geom_dump_asso (Edge* edge)
        PutCoord (shape_origin);
        PutCoord (shape_extrem);
        }
-   cout << endl << endl;
+   std::cout << std::endl << std::endl;
 }
 END_NAMESPACE_HEXA

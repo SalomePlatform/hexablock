@@ -123,8 +123,8 @@ void AssoEdge::setEnd (double param)
 // ========================================================= dump
 void AssoEdge::dump ()
 {
-   cout << " AssoEddge = " << arc_line->getName()
-        << " (" << arc_para1 << ", " << arc_para2 << ")" << endl;
+  std::cout << " AssoEddge = " << arc_line->getName()
+	    << " (" << arc_para1 << ", " << arc_para2 << ")" << std::endl;
 
    PutCoord (arc_start);
    PutCoord (arc_end);

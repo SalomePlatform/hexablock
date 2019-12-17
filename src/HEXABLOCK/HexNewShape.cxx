@@ -91,7 +91,7 @@ void NewShape::setShape (const TopoDS_Shape& shape, EnumShape type)
    sh_face_max = sh_edge_max = sh_vertex_max = 0;
 
    if (db)
-      cout <<  " ------------------- setShape " << el_name << endl;
+     std::cout <<  " ------------------- setShape " << el_name << std::endl;
    parseShape (geo_shape);
 }
 // ====================================================== setBrep
@@ -140,12 +140,12 @@ int NewShape::addCircle (double* milieu, double rayon, double* normale,
    geo_builder.Add (geo_compound, geom_circ);
 
    if (db)
-   cout << " .... AddCircle subid " << curr_subid << " : rayon=" << rayon
-        << " centre = " << milieu[dir_x] << "," << milieu[dir_y]
-        << "," << milieu[dir_z]
-        << " norm = " << normale[dir_x] << "," << normale[dir_y]
-        << "," << normale[dir_z]
-        << endl;
+   std::cout << " .... AddCircle subid " << curr_subid << " : rayon=" << rayon
+	     << " centre = " << milieu[dir_x] << "," << milieu[dir_y]
+	     << "," << milieu[dir_z]
+	     << " norm = " << normale[dir_x] << "," << normale[dir_y]
+	     << "," << normale[dir_z]
+	     << std::endl;
 
    int  subid  = curr_subid;
    curr_subid += 2;
@@ -163,9 +163,9 @@ int NewShape::addSphere (double* milieu, double radius)
    geo_builder.Add (geo_compound, geom_sphere);
 
    if (db)
-   cout << " .... AddSphere subid " << curr_subid << " : rayon=" << radius
-        << " centre = " << milieu[dir_x] << "," << milieu[dir_y]
-        << "," << milieu[dir_z] << endl;
+     std::cout << " .... AddSphere subid " << curr_subid << " : rayon=" << radius
+	       << " centre = " << milieu[dir_x] << "," << milieu[dir_y]
+	       << "," << milieu[dir_z] << std::endl;
 
    int  subid  = curr_subid;
    curr_subid += 7;
@@ -224,11 +224,11 @@ void NewShape::addAssociation (Edge* edge, int subid, double pmin, double pmax)
 
    if (db0) 
       {
-      cout << edge->getName() 
-           << " = (" << edge->getVertex(0)->getName() 
-           << ", "   << edge->getVertex(1)->getName() 
-           << ") --> subid= " << subid << " [ " 
-           << pmin << ", " << pmax << "]" << endl;
+      std::cout << edge->getName() 
+		<< " = (" << edge->getVertex(0)->getName() 
+		<< ", "   << edge->getVertex(1)->getName() 
+		<< ") --> subid= " << subid << " [ " 
+		<< pmin << ", " << pmax << "]" << std::endl;
       }
 
    asso_edge.push_back (edge);
@@ -251,7 +251,7 @@ void NewShape::closeShape ()
    geo_shape     = geo_compound;
    shape_defined = true;
    if (db)
-   cout <<  " ------------------- closeShape " << el_name << endl;
+   std::cout <<  " ------------------- closeShape " << el_name << std::endl;
    parseShape (geo_shape);
 
    int nombre = asso_edge.size ();
@@ -567,20 +567,20 @@ void NewShape::addSubShape (const TopoDS_Shape& shape)
    if (db0)
       {
       sprintf (chnum, "%4d : ", sh_indice);
-      cout <<  chnum;
-      for (int nro=1; nro<sh_level; nro++) cout << " | ";
-      cout <<  name;
+      std::cout <<  chnum;
+      for (int nro=1; nro<sh_level; nro++) std::cout << " | ";
+      std::cout <<  name;
 
       if (type == TopAbs_VERTEX)
          {
          TopoDS_Vertex gver = TopoDS::Vertex (shape);
          gp_Pnt      gpoint = BRep_Tool::Pnt (gver);
 
-         cout << " = (" << gpoint.X()
-              << ","    << gpoint.Y()
-              << ","    << gpoint.Z() << ")";
+         std::cout << " = (" << gpoint.X()
+		   << ","    << gpoint.Y()
+		   << ","    << gpoint.Z() << ")";
          }
-      cout << endl;
+      std::cout << std::endl;
       }
 }
 // ===================================================== updateShape
@@ -594,7 +594,7 @@ int NewShape::updateShape ()
 
    shape_defined = true;
    geom_brep2shape (geo_brep, geo_shape);
-   cout <<  " ------------------- updateShape " << el_name << endl;
+   std::cout <<  " ------------------- updateShape " << el_name << std::endl;
    parseShape (geo_shape);
    return HOK;
 }

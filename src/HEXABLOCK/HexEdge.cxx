@@ -144,13 +144,13 @@ void Edge::setPropag  (int nro, bool sens)
    Vertex* v1 = getVertex (  prems);
    Vertex* v2 = getVertex (1-prems);
 
-   cout << " setPropag " << el_name
-           << " = "   << nro 
-           <<  " = (" << v1->getName() << ", "    << v2->getName()
-           << ") = (" << v2->getX() - v1->getX() 
-           << ", "    << v2->getY() - v1->getY() 
-           << ", "    << v2->getZ() - v1->getZ() 
-           << ")"     << endl;
+   std::cout << " setPropag " << el_name
+	     << " = "   << nro 
+	     <<  " = (" << v1->getName() << ", "    << v2->getName()
+	     << ") = (" << v2->getX() - v1->getX() 
+	     << ", "    << v2->getY() - v1->getY() 
+	     << ", "    << v2->getZ() - v1->getZ() 
+	     << ")"     << std::endl;
 }
 // ========================================================= getParent
 Quad* Edge::getParent  (int nro)
@@ -271,12 +271,12 @@ int Edge::addAssociation (EdgeShape* gline, double deb, double fin)
 
    if (db)
       {
-      cout << " Edge " << el_name
-           << " = (" << e_vertex[V_AMONT]->getName()
-           << " , "  << e_vertex[V_AVAL ]->getName()
-           << ") addAssociation " << gline->getName ()
-           << " (" << deb << ", " << fin << ")"
-           << endl;
+	std::cout << " Edge " << el_name
+		  << " = (" << e_vertex[V_AMONT]->getName()
+		  << " , "  << e_vertex[V_AVAL ]->getName()
+		  << ") addAssociation " << gline->getName ()
+		  << " (" << deb << ", " << fin << ")"
+		  << std::endl;
       PutCoord (asso->getOrigin ());
       PutCoord (asso->getExtrem ());
       }
@@ -289,8 +289,8 @@ int Edge::addAssociation (NewShape* geom, int subid, double deb, double fin)
    if (geom == NULL)
       {
       if (el_root->debug ())
-          cout << "  Edge " << el_name << " addAssociation of NULL ignored"
-               << endl;
+	std::cout << "  Edge " << el_name << " addAssociation of NULL ignored"
+		  << std::endl;
       return HERR;
       }
 
@@ -444,12 +444,12 @@ int Edge::checkAssociation ()
               {
               if (arc[nro] != NOTHING)
                  {
-                 if (ier==HOK) cout << endl;
-                 cout << " Association Edge "  << el_name
-                      << " : Le vertex " << e_vertex[nro]->getName()
-                      << " : Le vertex " << e_vertex[nro]->getName()
-                      << " Touche les lignes " << arc [nro]
-                      << " et " << nass << endl;
+		 if (ier==HOK) std::cout << std::endl;
+                 std::cout << " Association Edge "  << el_name
+			   << " : Le vertex " << e_vertex[nro]->getName()
+			   << " : Le vertex " << e_vertex[nro]->getName()
+			   << " Touche les lignes " << arc [nro]
+			   << " et " << nass << std::endl;
                  ier   = 112;
                  }
               arc  [nro] = nass;
@@ -462,11 +462,11 @@ int Edge::checkAssociation ()
        {
        if (arc [nro] == NOTHING)
           {
-          if (ier==HOK) cout << endl;
-          cout << " Association Edge " << el_name
-               << " : Le vertex nro " << nro
-               << " = " << e_vertex[nro]->getName()
-               << " est isole" << endl;
+	  if (ier==HOK) std::cout << std::endl;
+          std::cout << " Association Edge " << el_name
+		    << " : Le vertex nro " << nro
+		    << " = " << e_vertex[nro]->getName()
+		    << " est isole" << std::endl;
           PutCoord (ver_assoc[nro]);
           ier = 111;
           }
@@ -474,24 +474,24 @@ int Edge::checkAssociation ()
    if (ier==HOK)
        return ier;
 
-   cout << " ** Controle associations (" << nombre << ") edge " << el_name
-        << " = (" << e_vertex[V_AMONT]->getName()
-        << " , "  << e_vertex[V_AVAL ]->getName()
-        << ")" << endl;
+   std::cout << " ** Controle associations (" << nombre << ") edge " << el_name
+	     << " = (" << e_vertex[V_AMONT]->getName()
+	     << " , "  << e_vertex[V_AVAL ]->getName()
+	     << ")" << std::endl;
 
    for (int nv=0 ; nv<2 ; ++nv)
        {
        Vertex* node = e_vertex[nv];
-       cout << node->getName()         << " = (" << node->getX()
-             << ", "   << node->getY() << ", "   << node->getZ()
-             << ") -> "<< ver_assoc [nv][0] << ", " << ver_assoc [nv][1]
-             << ", "   << ver_assoc [nv][2] << ")"  << endl;
+       std::cout << node->getName()         << " = (" << node->getX()
+		 << ", "   << node->getY() << ", "   << node->getZ()
+		 << ") -> "<< ver_assoc [nv][0] << ", " << ver_assoc [nv][1]
+		 << ", "   << ver_assoc [nv][2] << ")"  << std::endl;
        }
 
    for (int nass=0 ; nass<nombre ; ++nass)
        {
        AssoEdge*  asso = tab_assoc[nass];
-       cout << " " << nass << " :";
+       std::cout << " " << nass << " :";
        asso->dump ();
        }
 
@@ -539,20 +539,20 @@ int Edge::findAssociation (NewShape* geom)
    EdgeShape*  gline = geom->findEdge (point, p2);
    if (gline==NULL)
       { 
-      cout << " *** FindAssociation "  << el_name << endl;
+      std::cout << " *** FindAssociation "  << el_name << std::endl;
       for (int nv=0 ; nv < V_TWO ; ++nv)
           {
           e_vertex [nv]-> getAssoCoord (point);
           VertexShape* shape = geom->findVertex (point);
-          cout << " *** Vertex nro "  << nv;
+          std::cout << " *** Vertex nro "  << nv;
           if (shape==NULL)
              {
-             cout << " absent : ";
+	     std::cout << " absent : ";
              PutCoord (point);
              }
           else
              {
-             cout << " : Subid = " << shape->getIdent() << endl;
+	       std::cout << " : Subid = " << shape->getIdent() << std::endl;
              }
           }
       return NOTHING;
@@ -568,8 +568,8 @@ int Edge::setAssociation (NewShape* geom, int subid)
    if (geom == NULL)
       {
       if (el_root->debug ())
-          cout << "  Edge " << el_name << " addAssociation of NULL ignored"
-               << endl;
+	std::cout << "  Edge " << el_name << " addAssociation of NULL ignored"
+		  << std::endl;
       return HERR;
       }
 
@@ -577,8 +577,8 @@ int Edge::setAssociation (NewShape* geom, int subid)
    if (gline == NULL)
       {
       if (el_root->debug ())
-          cout << "  Edge " << el_name << " addAssociation bad subid : "
-               << subid << endl;
+	std::cout << "  Edge " << el_name << " addAssociation bad subid : "
+		  << subid << std::endl;
       return HERR;
       }
 
@@ -592,7 +592,7 @@ int Edge::setAssociation (NewShape* geom, int subid)
    double db1 = calc_d2 (pb, p1);
    double db2 = calc_d2 (pb, p2);
    
-   cout << "setAssociation " << el_name << " :" <<endl;
+   std::cout << "setAssociation " << el_name << " :" <<std::endl;
 
    if (da2 < da1 && db1 < db2) 
       {

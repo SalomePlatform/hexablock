@@ -218,10 +218,10 @@ int Document::associateOpenedLine (Edges  mline, NewShapes gline,
                                    IntVector tabid,
                                    double pstart, double pend)
 {
-   cout << "_________________________________ Asso Open Line"
-        << " ed=" << mline.size()
-        << " sh=" << tabid.size()
-        << endl;
+  std::cout << "_________________________________ Asso Open Line"
+	    << " ed=" << mline.size()
+	    << " sh=" << tabid.size()
+	    << std::endl;
    int ier = associateLine (NULL, mline, gline, tabid, pstart, pend, false);
    return ier;
 }
@@ -236,12 +236,12 @@ int Document::associateClosedLine (Vertex* vfirst,   Edges  mline,
       return HERR;
       }
 
-   cout << "_________________________________ Asso Closed Line"
-        << " first=" << vfirst->getName()
-        << " ed=" << mline.size()
-        << " sh=" << tabid.size()
-        << " inv=" << inv
-        << endl;
+   std::cout << "_________________________________ Asso Closed Line"
+	     << " first=" << vfirst->getName()
+	     << " ed=" << mline.size()
+	     << " sh=" << tabid.size()
+	     << " inv=" << inv
+	     << std::endl;
    int ier = associateLine (vfirst, mline, gline, tabid, pstart, 1.0, inv);
    PutData (ier);
    return ier;
@@ -528,8 +528,8 @@ int Document::checkAssociations ()
        if (ier != HOK) nberrors ++;
        }
 
-   cout << " ... Check edges assotiations : " << nberrors
-        << " error(s)." << endl;
+   std::cout << " ... Check edges assotiations : " << nberrors
+	     << " error(s)." << std::endl;
 
    if (nberrors>0) return HERR;
       else         return HOK;

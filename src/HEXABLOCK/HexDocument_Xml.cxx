@@ -183,8 +183,8 @@ int Document::parseXml (XmlTree& xml)
    const  std::string& version = xml.findValue ("version");
    if (version == "")
        {
-       cout << " **** Format du fichier XML perime"
-            << endl;
+       std::cout << " **** Format du fichier XML perime"
+		 << std::endl;
        return HERR;
        }
    const  std::string& name = xml.findValue ("name");
@@ -513,10 +513,10 @@ int Document::saveVtk0 (cpchar nomfic)
    pfile vtk = fopen (nomfic, "w");
    if (vtk==NULL)
       {
-      cout << " ****" << endl;
-      cout << " **** Document::saveVtk : " << endl;
-      cout << " **** Can't open file "     << endl;
-      cout << " ****" << endl;
+      std::cout << " ****" << std::endl;
+      std::cout << " **** Document::saveVtk : " << std::endl;
+      std::cout << " **** Can't open file "     << std::endl;
+      std::cout << " ****" << std::endl;
 
       }
    fprintf (vtk, "# vtk DataFile Version 3.1\n");
@@ -577,10 +577,10 @@ int Document::saveVtk (cpchar nomfic)
    pfile vtk = fopen (nomfic, "w");
    if (vtk==NULL)
       {
-      cout << " ****" << endl;
-      cout << " **** Document::saveVtk : " << endl;
-      cout << " **** Can't open file "     << endl;
-      cout << " ****" << endl;
+      std::cout << " ****" << std::endl;
+      std::cout << " **** Document::saveVtk : " << std::endl;
+      std::cout << " **** Can't open file "     << std::endl;
+      std::cout << " ****" << std::endl;
 
       }
    fprintf (vtk, "# vtk DataFile Version 3.1\n");

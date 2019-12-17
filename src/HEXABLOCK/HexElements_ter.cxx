@@ -203,9 +203,9 @@ void Elements::assoCylinders (double* ori, double* vk, double angle,
                double pmax = t_angles [ny+1]/360;
                Edge*  edge = getEdgeJ (nx, ny, nz);
                geom->addAssociation (edge, subid, pmin, pmax);
-               if (db) cout << " assoCylinders : ny= " << ny 
-                            << ", nz= " << nz << " param = (" 
-                            << pmin << ", " << pmax  << ")\n";
+               if (db) std::cout << " assoCylinders : ny= " << ny 
+				 << ", nz= " << nz << " param = (" 
+				 << pmin << ", " << pmax  << ")\n";
                }
            }
        }
@@ -269,8 +269,8 @@ void Elements::assoRind (double* ori, double* vi, int nx, NewShape* geom)
            Vertex* nd2 = edge->getVertex (V_AVAL);
            double pmin = calcul_param (ori, vi, nd1);
            double pmax = calcul_param (ori, vi, nd2);
-           cout << " assoRind : ny= " << ny << ", nz= " << nz 
-                << " param = (" << pmin << ", " << pmax  << ")\n";
+           std::cout << " assoRind : ny= " << ny << ", nz= " << nz 
+		     << " param = (" << pmin << ", " << pmax  << ")\n";
 
            geom->addAssociation (edge, subid, pmin, pmax);
            geom->addAssociation (quad, sphid);

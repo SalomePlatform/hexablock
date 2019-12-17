@@ -133,9 +133,9 @@ int Vertex::setAssociation (VertexShape* forme)
    forme->getCoords (gc_x, gc_y, gc_z);
    v_shape = forme;
 
-   if (db) cout << " Vertex "           << el_name
-                << " setAssociation-> " << forme->getName ()
-                << " = (" << gc_x << ", " << gc_y << ", " << gc_z << ") \n" ;
+   if (db) std::cout << " Vertex "           << el_name
+		     << " setAssociation-> " << forme->getName ()
+		     << " = (" << gc_x << ", " << gc_y << ", " << gc_z << ") \n" ;
 
    is_associated = true;
    return HOK;

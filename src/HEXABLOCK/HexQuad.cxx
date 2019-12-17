@@ -343,8 +343,8 @@ int Quad::coupler (Quad* other, StrOrient* orient, Elements* table)
       return HERR;
    if (db)
       {
-      cout << " Quads::coupler " << el_name << " -> " << other->getName () 
-           << endl;
+      std::cout << " Quads::coupler " << el_name << " -> " << other->getName () 
+		<< std::endl;
       }
 
    Hexa* hexa = other->getParent(0);
@@ -452,7 +452,7 @@ Edge* Quad::getOpposEdge (Edge* start, int& sens)
            }
        }
    //             TODO : traiter l'erreur
-   cout << " ... Probleme dans Quad::getOpposedEdge :" << endl;
+   std::cout << " ... Probleme dans Quad::getOpposedEdge :" << std::endl;
    HexDisplay (el_name);
    PutName (start);
    PutName (vaprim);

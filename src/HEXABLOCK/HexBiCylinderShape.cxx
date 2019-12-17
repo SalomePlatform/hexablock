@@ -120,10 +120,10 @@ int BiCylinderShape::anaVertex (Vertex* node, int* tline, double* tpara)
        {
        EdgeShape* line  = bi_shape->getEdgeShape (nl);
        double     param = line->getParam (point);
-       if (db) cout << " ... getParam " << node->getName()
-                    << ", point=(" << point[0] << ", " << point[1]
-                    << ", " << point[2]
-                    << "), nl=" << nl << ", param=" << param << endl;
+       if (db) std::cout << " ... getParam " << node->getName()
+			 << ", point=(" << point[0] << ", " << point[1]
+			 << ", " << point[2]
+			 << "), nl=" << nl << ", param=" << param << std::endl;
        if (param>=0)
           {
           if (nbsol>=2)

@@ -726,9 +726,9 @@ int Document::mergeVertices (Vertex* vpar, Vertex* vold)
            }
        }
 
-   cout << " +++ Intersection : veq = "   << rep_vertex.size() 
-        << " " << rep_edge.size() <<  " " << rep_quad.size()
-        << endl;
+   std::cout << " +++ Intersection : veq = "   << rep_vertex.size() 
+	     << " " << rep_edge.size() <<  " " << rep_quad.size()
+	     << std::endl;
 
    for (itq=rep_quad.begin(); itq!=rep_quad.end() ; ++itq)
       {
