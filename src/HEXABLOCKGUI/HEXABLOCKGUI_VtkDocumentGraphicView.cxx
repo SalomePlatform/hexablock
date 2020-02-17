@@ -22,6 +22,7 @@
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkUnsignedCharArray.h>
 #include <vtkDataSetMapper.h>
 #include "vtkCellArray.h"
 #include "vtkPolyData.h"
@@ -223,7 +224,8 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
     //   std::cout << "aNbCells =>" << aNbCells << std::endl;
 
     aConnectivity->InitTraversal();
-    for( vtkIdType idType = 0, *pts, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
+	vtkIdType const *pts(nullptr);
+    for( vtkIdType idType = 0, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
         aCellLocationsArray->SetValue( idType, aConnectivity->GetTraversalLocation( npts ) );
     }
     theGrid->SetCells( aCellTypesArray, aCellLocationsArray,aConnectivity );
@@ -413,7 +415,8 @@ vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
     //   std::cout << "aNbCells =>" << aNbCells << std::endl;
 
     aConnectivity->InitTraversal();
-    for( vtkIdType idType = 0, *pts, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
+	vtkIdType const *pts(nullptr);
+    for( vtkIdType idType = 0, npts; aConnectivity->GetNextCell( npts, pts ); idType++ ){
         aCellLocationsArray->SetValue( idType, aConnectivity->GetTraversalLocation( npts ) );
     }
     theGrid->SetCells( aCellTypesArray, aCellLocationsArray,aConnectivity );
