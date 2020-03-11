@@ -33,7 +33,7 @@ Hex* Hex::first_instance = NULL;
 // ======================================================== Constructeur
 Hex::Hex ()
 {
-   setlocale (LC_NUMERIC, "C");
+   //setlocale (LC_NUMERIC, "C"); // VSR 2020-03-11: commented out - initial locale has to be restored somewhere...
    glob = Globale::getInstance ();
 }
 // ======================================================== Destructeur
