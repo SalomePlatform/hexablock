@@ -1065,8 +1065,11 @@ void MyBasicGUI_PointDlg::onWindowActivated(SUIT_ViewManager* vm)
     QString vmType = vm->getType();
     if ( ((vmType == SVTK_Viewer::Type()) || (vmType == VTKViewer_Viewer::Type())) &&
             !mainFrame()->RadioButton4->isChecked() &&
-            !myParamCoord->button(LENGTH_VALUE)->isChecked() )
-        mainFrame()->_vertex_le->setFocus();
+	 !myParamCoord->button(LENGTH_VALUE)->isChecked() ){
+      // VSR 2020-04-06 bos #17637
+      // next line is commented out to prevent resetting focus when mouse enters the view
+      //mainFrame()->_vertex_le->setFocus();
+    }
     else if ( vmType == OCCViewer_Viewer::Type() ){
         if (mainFrame()->RadioButton1->isChecked())
             // Make the field "Vertex of the model" lose the focus
