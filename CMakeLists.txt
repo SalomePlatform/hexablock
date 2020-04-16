@@ -19,12 +19,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8 FATAL_ERROR)
 PROJECT(SalomeHEXABLOCK C CXX)
 
-# Ensure a proper linker behavior:
-CMAKE_POLICY(SET CMP0003 NEW)
-IF(WIN32)
-  CMAKE_POLICY(SET CMP0020 OLD) # disable automatic linking to qtmain.lib 
-ENDIF(WIN32)
-
 # Versioning
 # ===========
 # Project name, upper case
