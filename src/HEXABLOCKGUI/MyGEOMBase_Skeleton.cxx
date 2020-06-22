@@ -36,6 +36,7 @@
 #include <QKeyEvent>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QButtonGroup>
 
 using namespace HEXABLOCK::GUI;
 
