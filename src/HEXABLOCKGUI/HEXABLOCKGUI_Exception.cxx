@@ -48,11 +48,11 @@ Exception::Exception(const std::string& what):_what(what)
 #endif
 }
 
-const char *Exception::what( void ) const throw ()
+const char *Exception::what( void ) const noexcept
 {
   return _what.c_str();
 }
 
-Exception::~Exception() throw ()
+Exception::~Exception() noexcept
 {
 }
