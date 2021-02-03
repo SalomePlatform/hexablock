@@ -26,6 +26,7 @@
 #include <map>
 #include <set>
 
+#include <QPointer>
 #include <QTreeView>
 #include <QModelIndex>
 #include <QDockWidget>
@@ -342,7 +343,7 @@ private:
   QDockWidget *_dwAssociation;   // Hexablock association edition
   QDockWidget *_dwGroups;        // Hexablock groups edition
   QDockWidget *_dwMesh;          // Hexablock meshing edtion
-  QDockWidget *_dwObjectBrowser; // Salome study
+  QPointer<QDockWidget> _dwObjectBrowser; // Salome study
   QDockWidget *_dwInputPanel;    // user Input
 
 

@@ -142,7 +142,7 @@ HEXABLOCKGUI::HEXABLOCKGUI() :
           _dwAssociation(0),
           _dwGroups(0),
           _dwMesh(0),
-          _dwObjectBrowser(0),
+//          _dwObjectBrowser(0),
           _dwInputPanel(0),
           _patternDataTreeView(0),
 //          _patternBuilderTreeView(0),
@@ -407,6 +407,16 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
         _dwInputPanel->close();
 
     hideActor();
+
+    if(currentOccGView) {
+      delete currentOccGView;
+      currentOccGView = NULL;
+    }
+
+    if(currentDocGView) {
+      delete currentDocGView;
+      currentDocGView = NULL;
+    }
 
     return bOk;
 }
