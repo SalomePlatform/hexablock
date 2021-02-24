@@ -423,7 +423,7 @@ bool HEXABLOCKGUI::deactivateModule( SUIT_Study* theStudy )
 
 SALOMEDS::Study_var HEXABLOCKGUI::getStudyServant()
 {
-  SALOME_NamingService *aNamingService = SalomeApp_Application::namingService();
+  SALOME_NamingService_Abstract *aNamingService = SalomeApp_Application::namingService();
   CORBA::Object_var aSMObject = aNamingService->Resolve("/Study");
   SALOMEDS::Study_var aDSStudy = SALOMEDS::Study::_narrow(aSMObject);
   return aDSStudy._retn();
