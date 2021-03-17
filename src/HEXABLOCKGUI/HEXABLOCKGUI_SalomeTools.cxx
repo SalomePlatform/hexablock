@@ -126,17 +126,17 @@ namespace GUI
 
 		theName = "";
 
-		TColStd_IndexedMapOfInteger aMapIndex;
+		SVTK_TIndexedMapOfVtkId aMapIndex;
 		theSelector->GetIndex(theIO,aMapIndex);
 
 		typedef std::set<int> TIdContainer;
 
-		std::set<int> anIdContainer;
+		std::set<vtkIdType> anIdContainer;
 
-		for( int i = 1; i <= aMapIndex.Extent(); i++)
+		for( vtkIdType i = 1; i <= aMapIndex.Extent(); i++)
 			anIdContainer.insert(aMapIndex(i));
 
-		std::set<int>::const_iterator anIter = anIdContainer.begin();
+		std::set<vtkIdType>::const_iterator anIter = anIdContainer.begin();
 
 		for( ; anIter != anIdContainer.end(); anIter++)
 			theName += QString(" %1").arg(*anIter);

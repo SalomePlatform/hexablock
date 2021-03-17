@@ -27,7 +27,7 @@
 #include "vtkCellArray.h"
 #include "vtkPolyData.h"
 
-#include <VTKViewer_CellLocationsArray.h>
+//#include <VTKViewer_CellLocationsArray.h>
 #include <SVTK_ViewModel.h>
 
 #include "HEXABLOCKGUI_Trace.hxx"
@@ -218,7 +218,7 @@ vtkUnstructuredGrid* Document_Actor::getUnstructuredGrid()
     // 0        1     3      2        4    5      7      6
 
     // Insert cells in grid
-    VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
+    vtkIdTypeArray* aCellLocationsArray = vtkIdTypeArray::New();
     aCellLocationsArray->SetNumberOfComponents( 1 );
     aCellLocationsArray->SetNumberOfTuples( aNbCells );
     //   std::cout << "aNbCells =>" << aNbCells << std::endl;
@@ -409,7 +409,7 @@ vtkUnstructuredGrid* Associate_Actor::getUnstructuredGrid()
     // 0        1     3      2        4    5      7      6
 
     // Insert cells in grid
-    VTKViewer_CellLocationsArray* aCellLocationsArray = VTKViewer_CellLocationsArray::New();
+    vtkIdTypeArray* aCellLocationsArray = vtkIdTypeArray::New();
     aCellLocationsArray->SetNumberOfComponents( 1 );
     aCellLocationsArray->SetNumberOfTuples( aNbCells );
     //   std::cout << "aNbCells =>" << aNbCells << std::endl;
@@ -650,8 +650,8 @@ void VtkDocumentGraphicView::highlight( const QModelIndexList& elts )
 //    viewWindow->SetSelectionMode(VolumeSelection);
 
     // --- elements highlight ---
-    TColStd_IndexedMapOfInteger aMap;
-    int vtkElemsId;
+    SVTK_TIndexedMapOfVtkId aMap;
+    vtkIdType vtkElemsId;
     QString eltEntry;
 
     foreach( const QModelIndex& iElt, elts ){
@@ -697,8 +697,8 @@ void VtkDocumentGraphicView::highlightGroups( const QModelIndex& eltIndex )
      case VertexNode: viewWindow->SetSelectionMode(NodeSelection); break;
     }
 
-    TColStd_MapOfInteger aMap;
-    int vtkElemsId;
+    SVTK_TVtkIDsMap aMap;
+    vtkIdType vtkElemsId;
     QString eltEntry;
 
     foreach( const QModelIndex& iElt, iElements ){
@@ -740,8 +740,8 @@ void VtkDocumentGraphicView::highlightPropagation( const QModelIndex& eltIndex )
     // Set selection mode in VTK view
     viewWindow->SetSelectionMode(EdgeSelection);
 
-    TColStd_MapOfInteger aMap;
-    int vtkElemsId;
+    SVTK_TVtkIDsMap aMap;
+    vtkIdType vtkElemsId;
     QString edgeEntry;
 
     foreach( const QModelIndex& iEdge, iEdges ){
