@@ -1,7 +1,7 @@
 //
 // CC++ : Ancienne interface Cascade de la classe Elements ** A SUPPRIMER **
 //
-// Copyright (C) 2009-2021  CEA/DEN, EDF R&D
+// Copyright (C) 2009-2022  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
