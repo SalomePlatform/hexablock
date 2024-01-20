@@ -1,7 +1,7 @@
 
 // C++ : Element de base
 
-// Copyright (C) 2009-2023  CEA, EDF
+// Copyright (C) 2009-2024  CEA, EDF
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
