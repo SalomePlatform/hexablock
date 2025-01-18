@@ -20,6 +20,7 @@
 # --- options ---
 # additional include directories
 INCLUDE_DIRECTORIES(
+  ${SALOMEBOOTSTRAP_INCLUDE_DIRS}
   ${KERNEL_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
   ${OpenCASCADE_INCLUDE_DIR}
@@ -47,8 +48,8 @@ SET(_link_LIBRARIES
   TKGeomAlgo
   TKBool
   TKBO
-  ${KERNEL_SALOMELocalTrace}
-  ${KERNEL_SALOMEBasics}
+  ${SALOMEBOOTSTRAP_SALOMELocalTrace}
+  ${SALOMEBOOTSTRAP_SALOMEBasics}
   ${PYTHON_LIBRARIES}
 )
 
