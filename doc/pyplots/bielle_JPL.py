@@ -33,12 +33,12 @@
 # pour cela, il serait utile de pouvoir récupérer les propriétés de la grille cylindrique (qui ne sont pour le moment
 # pas conservées toutes conservées dans le moteur HEXA, ou en tout cas pas toutes accessibles avec l'API python)
 
-import GEOM
+from salome.kernel import GEOM
 import geompy
 import smesh
 import HexaBlocks
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 def get_vertices_from_cylindrical(grille_cyl, nr, na, nl=1):
     """

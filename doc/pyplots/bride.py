@@ -19,12 +19,12 @@
 #
 
 import os
-import GEOM
+from salome.kernel import GEOM
 import geompy
 import smesh
 import hexablock
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 k1 = 1
 

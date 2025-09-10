@@ -20,8 +20,8 @@
 #
 
 import os
-import GEOM
-import SALOMEDS
+from salome.kernel import GEOM
+from salome.kernel import SALOMEDS
 import hexablock
 
 # differents cas possibles de remplissage possibles :

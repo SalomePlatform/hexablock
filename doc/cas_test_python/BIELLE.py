@@ -24,12 +24,12 @@
 
 
 import os
-import GEOM
+from salome.kernel import GEOM
 import geompy
 import smesh
 import hexablock
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 
 STEP_PATH = os.path.expandvars("$HEXABLOCK_ROOT_DIR/bin/salome/crank.stp")
@@ -334,8 +334,8 @@ Face_haut = geompy.GetFaceNearPoint(Bielle_geom, Pt_A)
 Face_bas = geompy.GetFaceNearPoint(Bielle_geom, Pt_B)
 
 
-# Paramètre pour:
-# -récupération des points.
+# Param\E8tre pour:
+# -r\E9cup\E9ration des points.
 # -et associations.
 u_1 = 0.75#0.8
 u_2 = 0.5
@@ -958,7 +958,7 @@ for j in range(N_Propa):
     Propa.setLaw( Law )# appliquer la loi de discretisation sur tout le modele et generer le maillage
 
 #====================================
-# Générer des maillages
+# G\E9n\E9rer des maillages
 #====================================
 
 print(" --- MAILLAGE HEXAHEDRIQUE --- ")

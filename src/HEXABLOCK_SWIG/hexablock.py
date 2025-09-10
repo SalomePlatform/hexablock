@@ -22,16 +22,16 @@
 
 import hexablock_swig
 
-import HEXABLOCKPlugin
+from salome.kernel import HEXABLOCKPlugin
 
-import salome
+from salome.kernel import salome
 salome.salome_init()
 
 from salome.geom import geomBuilder
 geompy = geomBuilder.New()
 
 
-import SMESH
+from salome.kernel import SMESH
 from salome.smesh import smeshBuilder
 smesh = smeshBuilder.New()
 

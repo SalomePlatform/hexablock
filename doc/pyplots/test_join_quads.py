@@ -22,8 +22,8 @@
 # exemple repris de test_hexa1.cxx (test_joint())
 
 import os
-import GEOM
-import SALOMEDS
+from salome.kernel import GEOM
+from salome.kernel import SALOMEDS
 import hexablock
 
 print("test join...")
