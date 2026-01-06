@@ -1,7 +1,7 @@
 
 // C++ : Gestion des soous-shapes
 
-// Copyright (C) 2009-2025  CEA, EDF
+// Copyright (C) 2009-2026  CEA, EDF
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
